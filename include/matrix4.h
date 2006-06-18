@@ -53,7 +53,7 @@ namespace core
 			void makeIdentity();
 
 			//! Returns true if the matrix is the identity matrix
-			bool isIdentity();
+			bool isIdentity() const;
 
 			//! Set the translation of the current matrix. Will erase any previous values.
 			void setTranslation( const vector3df& translation );			
@@ -129,7 +129,7 @@ namespace core
 			//! returns the inversed matrix of this one
 			//! \param Target, where result matrix is written to.
 			//! \return Returns false if there is no inverse matrix.
-			bool getInverse(matrix4& out);
+			bool getInverse(matrix4& out) const;
 
 			//! Builds a right-handed perspective projection matrix based on a field of view
 			void buildProjectionMatrixPerspectiveFovRH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar);
@@ -160,7 +160,7 @@ namespace core
 			//! \param plane: plane into which the geometry if flattened into
 			//! \param point: value between 0 and 1, describing the light source. 
 			//! If this is 1, it is a point light, if it is 0, it is a directional light.
-			void buildShadowMatrix(core::vector3df light, core::plane3df plane, f32 point=1.0f);
+			void buildShadowMatrix(const core::vector3df& light, core::plane3df plane, f32 point=1.0f);
 
 			//! Builds a matrix which transforms a normalized Device Corrdinate to Device Coordinates. 
 			/** Used to scale <-1,-1><1,1> to viewport, for example from von <-1,-1> <1,1> to the viewport <0,0><0,640> */
@@ -169,10 +169,10 @@ namespace core
 			//! creates a new matrix as interpolated matrix from to other ones.
 			//! \param b: other matrix to interpolate with
 			//! \param time: Must be a value between 0 and 1.
-			matrix4 interpolate(core::matrix4& b, f32 time);
+			matrix4 interpolate(const core::matrix4& b, f32 time);
 
 			//! returns transposed matrix
-			matrix4 getTransposed();
+			matrix4 getTransposed() const;
 
 			//! Matrix data, stored in column-major order
 			f32 M[16];
@@ -387,7 +387,7 @@ namespace core
 	}
 
 
-	inline bool matrix4::isIdentity()
+	inline bool matrix4::isIdentity() const
 	{
 		for (s32 i=0; i<4; ++i)
 			for (s32 j=0; j<4; ++j)
@@ -526,7 +526,7 @@ namespace core
 	}
 
 
-	inline bool matrix4::getInverse(matrix4& out)
+	inline bool matrix4::getInverse(matrix4& out) const
 	{
 		/// Calculates the inverse of this Matrix 
 		/// The inverse is calculated using Cramers rule.
@@ -767,7 +767,7 @@ namespace core
 
 
 	//! Builds a matrix that flattens geometry into a plane.
-	inline void matrix4::buildShadowMatrix(core::vector3df light, core::plane3df plane, f32 point)
+	inline void matrix4::buildShadowMatrix(const core::vector3df& light, core::plane3df plane, f32 point)
 	{
 		plane.Normal.normalize();
 		f32 d = plane.Normal.dotProduct(light);
@@ -866,7 +866,7 @@ namespace core
 
 	//! creates a new matrix as interpolated matrix from to other ones.
 	//! \param time: Must be a value between 0 and 1.
-	inline matrix4 matrix4::interpolate(core::matrix4& b, f32 time)
+	inline matrix4 matrix4::interpolate(const core::matrix4& b, f32 time)
 	{
 		f32 ntime = 1.0f - time;
 		matrix4 mat;
@@ -877,7 +877,7 @@ namespace core
 	}
 
 	//! returns transposed matrix
-	inline matrix4 matrix4::getTransposed()
+	inline matrix4 matrix4::getTransposed() const
 	{
 		matrix4 t;
 		for (s32 r=0; r<4; ++r)

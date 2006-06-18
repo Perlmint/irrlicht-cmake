@@ -183,7 +183,7 @@ public:
 		// a part of the current string.
 		T* oldArray = array;
 
-        allocated = used = len+1;
+		allocated = used = len+1;
 		array = allocator.allocate(used); //new T[used];
 
 		for (s32 l = 0; l<len+1; ++l)
@@ -194,7 +194,7 @@ public:
 	}
 
 	//! Add operator for other strings
-	string<T> operator+(const string<T>& other)
+	string<T> operator+(const string<T>& other) const
 	{
 		string<T> str(*this);
 		str.append(other);
@@ -204,7 +204,7 @@ public:
 
 	//! Add operator for strings, ascii and unicode
 	template <class B>
-	string<T> operator+(const B* c)
+	string<T> operator+(const B* c) const
 	{
 		string<T> str(*this);
 		str.append(c);
@@ -215,7 +215,7 @@ public:
 
 
 	//! Direct access operator
-	T& operator [](const s32 index)  const
+	T& operator [](const s32 index) const
 	{
 		_IRR_DEBUG_BREAK_IF(index>=used) // bad index
 
@@ -332,7 +332,7 @@ public:
 
 
 	//! compares the first n characters of the strings
-	bool equalsn(const string<T>& other, int len)
+	bool equalsn(const string<T>& other, int len) const
 	{
 		int i;
 		for(i=0; array[i] && other[i] && i < len; ++i)
@@ -346,7 +346,7 @@ public:
 
 
 	//! compares the first n characters of the strings
-	bool equalsn(const T* str, int len)
+	bool equalsn(const T* str, int len) const
 	{
 		int i;
 		for(i=0; array[i] && str[i] && i < len; ++i)
@@ -538,7 +538,7 @@ public:
 	//! Returns a substring
 	//! \param begin: Start of substring.
 	//! \param length: Length of substring.
-	string<T> subString(s32 begin, s32 length)
+	string<T> subString(s32 begin, s32 length) const
 	{
 		if (length <= 0)
 			return string<T>("");

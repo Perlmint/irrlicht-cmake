@@ -73,7 +73,7 @@ class quaternion
 		matrix4 getMatrix() const;
 
 		//! Inverts this quaternion
-        void makeInverse();
+		void makeInverse();
 
 		//! Interpolates the quaternion between to quaternions based on time
 		quaternion slerp(quaternion q1, quaternion q2, f32 time);
@@ -83,7 +83,7 @@ class quaternion
 		//!  q = cos(A/2)+sin(A/2)*(x*i+y*j+z*k) 
 		void fromAngleAxis (f32 angle, const vector3df& axis);
 
-		void toEuler(vector3df& euler);
+		void toEuler(vector3df& euler) const;
 
 		f32 X, Y, Z, W;
 };
@@ -394,7 +394,7 @@ inline void quaternion::fromAngleAxis(f32 angle, const vector3df& axis)
 	Z = fSin*axis.Z; 
 } 
 
-inline void quaternion::toEuler(vector3df& euler)
+inline void quaternion::toEuler(vector3df& euler) const
 { 
 	double sqw = W*W;    
 	double sqx = X*X;    
