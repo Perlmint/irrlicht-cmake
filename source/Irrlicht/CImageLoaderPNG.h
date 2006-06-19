@@ -52,7 +52,7 @@ private:
 	int filter;
 
 	// semi global buffer for reading in row data 
-	unsigned char g_png_load_buffer[0x1000];   // 32768
+	unsigned char g_png_load_buffer[0x8000]; // 32768
 }; 
 
 

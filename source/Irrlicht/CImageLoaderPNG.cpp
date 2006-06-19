@@ -200,9 +200,9 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 		&filter);   // Extract info 
 
 	// Check the number of bytes per row 
-	int bytes_per_row = png_get_rowbytes(png_ptr, info_ptr); 
+	u32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr); 
 
-	if( bytes_per_row >= (int)sizeof( g_png_load_buffer ) )
+	if( bytes_per_row > sizeof( g_png_load_buffer ) )
 	{
 		os::Printer::log("PNG LOAD: Failure - Format not supported - must be 24 or 32 bits per pixel", ELL_ERROR); 
 		if(png_ptr) 
