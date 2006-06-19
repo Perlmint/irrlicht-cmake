@@ -620,7 +620,7 @@ void CSoftwareDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices, 
 }
 
 
-//! clips a triangle agains the viewing frustrum
+//! clips a triangle against the viewing frustrum
 void CSoftwareDriver::clipTriangle(f32* transformedPos)
 {
 	

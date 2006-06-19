@@ -157,7 +157,6 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
 	unsigned width = cinfo.image_width;
 	unsigned height = cinfo.image_height;
 
-	bool has_alpha= false;  //(JPEG never has alpha)
 	bool greyscale;
 
 	if (cinfo.jpeg_color_space == JCS_GRAYSCALE)

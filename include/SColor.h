@@ -62,10 +62,10 @@ namespace video
 */
 	}
 
-	//! Returns the red component from A1R5G5B5 color
+	//! Returns the alpha component from A1R5G5B5 color
 	inline s32 getAlpha(s16 color)
 	{
-		return ((color >> 11)&0x1);
+		return ((color >> 15)&0x1);
 	}
 
 	//! Returns the red component from A1R5G5B5 color. 

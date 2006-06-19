@@ -1793,7 +1793,7 @@ void COpenGLDriver::setAmbientLight(const SColorf& color)
 }
 
 
-// this code was sent in by Oliver Klems, thank you! (I modified the glVieport
+// this code was sent in by Oliver Klems, thank you! (I modified the glViewport
 // method just a bit.
 void COpenGLDriver::setViewPort(const core::rect<s32>& area)
 {
@@ -1801,12 +1801,10 @@ void COpenGLDriver::setViewPort(const core::rect<s32>& area)
 	core::rect<s32> rendert(0,0, ScreenSize.Width, ScreenSize.Height);
 	vp.clipAgainst(rendert);
 
-
 	if (vp.getHeight()>0 && vp.getWidth()>0)
 		glViewport(vp.UpperLeftCorner.X,
 		           ScreenSize.Height - vp.UpperLeftCorner.Y - vp.getHeight(),
-				   vp.getWidth(),
-				   vp.getHeight());
+			   vp.getWidth(), vp.getHeight());
 
 	ViewPort = vp;
 }

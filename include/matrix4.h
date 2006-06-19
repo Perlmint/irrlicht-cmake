@@ -82,6 +82,9 @@ namespace core
 			//! Set Scale
 			void setScale( const vector3df& scale );
 			
+			//! Get Scale
+			core::vector3df getScale() const;
+
 			//! Translate a vector by the inverse of the translation part of this matrix.
 			void inverseTranslateVect( vector3df& vect ) const;			
 
@@ -278,6 +281,11 @@ namespace core
 		M[10] = scale.Z;
 	}
 
+	inline vector3df matrix4::getScale() const
+	{
+		return vector3df(M[0],M[5],M[10]);
+	}
+
 	inline void matrix4::setRotationDegrees( const vector3df& rotation )
 	{
 		setRotationRadians( rotation * (f32)3.1415926535897932384626433832795 / 180.0 );
@@ -320,7 +328,6 @@ namespace core
 		const matrix4 &mat = *this; 
 
 		f64 Y = -asin(mat(2,0)); 
-		f64 D = Y; 
 		f64 C = cos(Y); 
 		Y *= GRAD_PI; 
 

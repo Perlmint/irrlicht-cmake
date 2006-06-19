@@ -390,7 +390,7 @@ namespace scene
 
 		//! Sets the rotation of the node.
 		/** This only modifies the relative rotation of the node.
-		\param roation: New rotation of the node in degrees. */
+		\param rotation: New rotation of the node in degrees. */
 		virtual void setRotation(const core::vector3df& rotation)
 		{
 			RelativeRotation = rotation;
