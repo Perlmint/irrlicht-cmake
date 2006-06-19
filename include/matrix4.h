@@ -172,7 +172,7 @@ namespace core
 			//! creates a new matrix as interpolated matrix from to other ones.
 			//! \param b: other matrix to interpolate with
 			//! \param time: Must be a value between 0 and 1.
-			matrix4 interpolate(const core::matrix4& b, f32 time);
+			matrix4 interpolate(const core::matrix4& b, f32 time) const;
 
 			//! returns transposed matrix
 			matrix4 getTransposed() const;
@@ -873,7 +873,7 @@ namespace core
 
 	//! creates a new matrix as interpolated matrix from to other ones.
 	//! \param time: Must be a value between 0 and 1.
-	inline matrix4 matrix4::interpolate(const core::matrix4& b, f32 time)
+	inline matrix4 matrix4::interpolate(const core::matrix4& b, f32 time) const
 	{
 		f32 ntime = 1.0f - time;
 		matrix4 mat;

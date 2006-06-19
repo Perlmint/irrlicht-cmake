@@ -130,11 +130,11 @@ class aabbox3d
 		//! Tests if the box intersects with a line
 		//! \return Returns true if there is an intersection and false if not.
 		bool intersectsWithLine(const vector3d<T>& linemiddle, 
-								const vector3d<T>& linevect,
-								T halflength) const
+						const vector3d<T>& linevect,
+						T halflength) const
 		{
-			const vector3d<T> e = (MaxEdge - MinEdge) * (T)0.5;
-			const vector3d<T> t = (MinEdge + e) - linemiddle;
+			const vector3d<T> e = getExtent() * (T)0.5;
+			const vector3d<T> t = getCenter() - linemiddle;
 			float r;
 
 			if ((fabs(t.X) > e.X + halflength * fabs(linevect.X)) || 
@@ -210,22 +210,22 @@ class aabbox3d
 
 		//! stores all 8 edges of the box into a array
 		//! \param edges: Pointer to array of 8 edges
-        void getEdges(vector3d<T> *edges) const
+		void getEdges(vector3d<T> *edges) const
 		{
-			core::vector3df middle = (MinEdge + MaxEdge) / 2;
+			core::vector3df middle = getCenter();
 			core::vector3df diag = middle - MaxEdge;
 
 			/*
 			Edges are stored in this way:
 			Hey, am I an ascii artist, or what? :) niko.
-                  /1--------/3
+                  /4--------/0
                  /  |      / |
                 /   |     /  |
-                5---------7  |
-                |   0- - -| -2
+                6---------2  |
+                |   5- - -| -1
                 |  /      |  /
                 |/        | /
-                4---------6/ 
+                7---------3/ 
 			*/
 
 			edges[0].set(middle.X + diag.X, middle.Y + diag.Y, middle.Z + diag.Z);

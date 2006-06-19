@@ -34,15 +34,15 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 
 	Fovy = core::PI / 2.5f;	// Field of view, in radians. 
 	Aspect = 4.0f / 3.0f;	// Aspect ratio. 
-	ZNear = 1.0f;				// value of the near view-plane. 
-	ZFar = 3000.0f;			// Z-value of the far view-plane. 
+	ZNear = 1.0f;		// value of the near view-plane. 
+	ZFar = 3000.0f;		// Z-value of the far view-plane. 
 
 	video::IVideoDriver* d = mgr->getVideoDriver();
 	if (d)
 	{
 		screenDim.Width = (f32)d->getScreenSize().Width;
 		screenDim.Height = (f32)d->getScreenSize().Height;
-		Aspect = screenDim.Height / screenDim.Width;
+		Aspect = screenDim.Width / screenDim.Height;
 	}
 
 	recalculateProjectionMatrix();
