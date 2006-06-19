@@ -138,29 +138,28 @@ namespace scene
 		};
 
 		void createAnimationData();
-		void createJointData(CXFileReader::SXFrame* f, s32 JointParent);
+		void createJointData(const CXFileReader::SXFrame& f, s32 JointParent);
 		void createMeshData();
-		void addFrameToMesh(CXFileReader::SXFrame* frame);
-		video::SMaterial getMaterialFromXMaterial(CXFileReader::SXMaterial& xmat);
-		void addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh& mesh, s32 matnr, CXFileReader::SXFrame* frame);
-		core::stringc getTextureFileName(core::stringc texture);
+		void addFrameToMesh(CXFileReader::SXFrame& frame);
+		video::SMaterial getMaterialFromXMaterial(const CXFileReader::SXMaterial& xmat);
+		void addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh& mesh, s32 matnr, const CXFileReader::SXFrame& frame);
+		core::stringc getTextureFileName(const core::stringc& texture);
 
-		s32 getJointNumberFromName(core::stringc& name);
-		void addLineToSkeleton(core::vector3df start, core::vector3df end);
+		s32 getJointNumberFromName(const core::stringc& name) const;
 
 		//! prepares animation data which was read in from the .x file
 		void prepareAnimationData();
 
 		//! animates the skeleton based on the animation data
-        void animateSkeleton();
+		void animateSkeleton();
 
 		//! modifies the skin based on the animated skeleton
 		void modifySkin();
 
 		void updateBoundingBoxFromAnimation();
 
-		void addVirtualWeight(s32 meshbuffernr, s32 vtxidx, CXFileReader::SXMesh& mesh,
-			CXFileReader::SXFrame* frame);
+		void addVirtualWeight(s32 meshbuffernr, s32 vtxidx,
+			const CXFileReader::SXFrame& frame);
 
 		video::IVideoDriver* Driver;
 		scene::SMesh OriginalMesh;

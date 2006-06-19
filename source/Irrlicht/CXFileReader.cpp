@@ -55,7 +55,7 @@ CXFileReader::~CXFileReader()
 
 
 //! Returns an error occured during reading the file
-bool CXFileReader::errorHappened()
+bool CXFileReader::errorHappened() const
 {
 	return ErrorHappened;
 }
@@ -1498,13 +1498,13 @@ void CXFileReader::readUntilEndOfLine()
 
 
 //! Returns if the loaded mesh is static
-bool CXFileReader::isStaticMesh()
+bool CXFileReader::isStaticMesh() const
 {
 	return AnimationSets.empty();
 }
 
 //! returns count of animations 
-s32 CXFileReader::getAnimationSetCount()
+s32 CXFileReader::getAnimationSetCount() const
 {
 	return AnimationSets.size();
 }

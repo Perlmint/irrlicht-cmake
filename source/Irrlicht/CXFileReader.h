@@ -32,13 +32,13 @@ public:
 	~CXFileReader();
 
 	//! Returns an error occured during reading the file
-	bool errorHappened();
+	bool errorHappened() const;
 
 	//! Returns if the loaded mesh is static
-	bool isStaticMesh();
+	bool isStaticMesh() const;
 
 	//! returns count of animations 
-	s32 getAnimationSetCount();
+	s32 getAnimationSetCount() const;
 
 	//! returns a specific animation set
 	SXAnimationSet& getAnimationSet(s32 i);
@@ -179,17 +179,17 @@ public:
 
 		}
 
-		inline core::matrix4& getMatrix(s32 nr)
+		inline core::matrix4& getMatrix(s32 nr) const
 		{
 			return ((core::matrix4*)data)[nr];
 		}
 
-		inline core::vector3df& getVector(s32 nr)
+		inline core::vector3df& getVector(s32 nr) const
 		{
 			return ((core::vector3df*)data)[nr];
 		}
 
-		inline core::quaternion& getQuaternion(s32 nr)
+		inline core::quaternion& getQuaternion(s32 nr) const
 		{
 			return ((core::quaternion*)data)[nr];
 		}
