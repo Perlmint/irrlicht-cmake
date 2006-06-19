@@ -230,7 +230,7 @@ namespace irr
 			{
 			}
 
-			s32 X11Key;
+			KeySym X11Key;
 			s32 Win32Key;
 
 			bool operator<(const SKeyMap& o) const

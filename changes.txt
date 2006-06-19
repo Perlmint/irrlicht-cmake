@@ -1,5 +1,10 @@
 Changes in version 1.1 (??? 2006)
 
+- Fixed Linux keyhandling for many keys.
+
+- .x normals now correctly transformed in animations, bounding boxes are
+  slightly better transformed, but not yet correct.
+
 - Added possibility to load and save Irrlicht scenes to and from xml files via 
   ISceneManager::saveScene and ISceneManager::loadScene. Note that not all scene nodes are supported
   yet, but most features should already work.
