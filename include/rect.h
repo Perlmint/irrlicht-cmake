@@ -57,15 +57,17 @@ namespace core
 			return *this;
 		}
 
-        bool operator == (const rect<T>& other) const
+		bool operator == (const rect<T>& other) const
 		{
-			return UpperLeftCorner == other.UpperLeftCorner && LowerRightCorner == other.LowerRightCorner;
+			return (UpperLeftCorner == other.UpperLeftCorner &&
+				LowerRightCorner == other.LowerRightCorner);
 		}
 
 
 		bool operator != (const rect<T>& other) const
 		{
-			return UpperLeftCorner != other.UpperLeftCorner || LowerRightCorner != other.LowerRightCorner;
+			return (UpperLeftCorner != other.UpperLeftCorner ||
+				LowerRightCorner != other.LowerRightCorner);
 		}
 
 		const rect<T>& operator = (const rect<T>& other)
@@ -80,15 +82,19 @@ namespace core
 		//! \return Returns true if the position is within the rectangle, false if not.
 		bool isPointInside(const position2d<T>& pos) const
 		{
-			return UpperLeftCorner.X <= pos.X && UpperLeftCorner.Y <= pos.Y &&
-				LowerRightCorner.X >= pos.X && LowerRightCorner.Y >= pos.Y;
+			return (UpperLeftCorner.X <= pos.X &&
+				UpperLeftCorner.Y <= pos.Y &&
+				LowerRightCorner.X >= pos.X &&
+				LowerRightCorner.Y >= pos.Y);
 		}
 
-		//! Returns if the rectangle collides with an other rectangle.
+		//! Returns if the rectangle collides with another rectangle.
 		bool isRectCollided(const rect<T>& other) const
 		{
-			return (LowerRightCorner.Y > other.UpperLeftCorner.Y && UpperLeftCorner.Y < other.LowerRightCorner.Y &&
-					LowerRightCorner.X > other.UpperLeftCorner.X && UpperLeftCorner.X < other.LowerRightCorner.X);
+			return (LowerRightCorner.Y > other.UpperLeftCorner.Y &&
+				UpperLeftCorner.Y < other.LowerRightCorner.Y &&
+				LowerRightCorner.X > other.UpperLeftCorner.X &&
+				UpperLeftCorner.X < other.LowerRightCorner.X);
 		}
 
 		//! Clips this rectangle with another one.
@@ -105,10 +111,10 @@ namespace core
 				UpperLeftCorner.Y = other.UpperLeftCorner.Y;
 
 			// correct possible invalid rect resulting from clipping
-            if (UpperLeftCorner.Y > LowerRightCorner.Y)
-                UpperLeftCorner.Y = LowerRightCorner.Y;
-            if (UpperLeftCorner.X > LowerRightCorner.X)
-                UpperLeftCorner.X = LowerRightCorner.X;
+			if (UpperLeftCorner.Y > LowerRightCorner.Y)
+				UpperLeftCorner.Y = LowerRightCorner.Y;
+			if (UpperLeftCorner.X > LowerRightCorner.X)
+				UpperLeftCorner.X = LowerRightCorner.X;
 		}
 
 		//! Returns width of rectangle.
@@ -123,34 +129,34 @@ namespace core
 			return LowerRightCorner.Y - UpperLeftCorner.Y;
 		}
 
-		//! If the lower right corner of the rect is smaller then the upper left,
-		//! the points are swapped.
+		//! If the lower right corner of the rect is smaller then the
+		//! upper left, the points are swapped.
 		void repair()
 		{
 			if (LowerRightCorner.X < UpperLeftCorner.X)
 			{
-				s32 t = LowerRightCorner.X;
+				T t = LowerRightCorner.X;
 				LowerRightCorner.X = UpperLeftCorner.X;
 				UpperLeftCorner.X = t;
 			}
 
 			if (LowerRightCorner.Y < UpperLeftCorner.Y)
 			{
-				s32 t = LowerRightCorner.Y;
+				T t = LowerRightCorner.Y;
 				LowerRightCorner.Y = UpperLeftCorner.Y;
 				UpperLeftCorner.Y = t;
 			}
 		}
 
-		//! Returns if the rect is valid to draw. It could be invalid, if
-		//! The UpperLeftCorner is lower or more right than the LowerRightCorner,
-		//! or if the area described by the rect is 0.
+		//! Returns if the rect is valid to draw. It could be invalid
+		//! if the UpperLeftCorner is lower or more right than the
+		//! LowerRightCorner, or if the area described by the rect is 0.
 		bool isValid() const
 		{
 			// thx to jox for a correction to this method
 
-			s32 xd = LowerRightCorner.X - UpperLeftCorner.X;
-			s32 yd = LowerRightCorner.Y - UpperLeftCorner.Y;
+			T xd = LowerRightCorner.X - UpperLeftCorner.X;
+			T yd = LowerRightCorner.Y - UpperLeftCorner.Y;
 
 			return !(xd < 0 || yd < 0 || (xd == 0 && yd == 0));
 		}
