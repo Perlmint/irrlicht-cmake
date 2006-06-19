@@ -76,7 +76,7 @@ to make it easy, we use a pragma comment lib:
 
 
 /*
-This is the main method. We can use void main() on every platform.
+This is the main method. We can use int main() on every platform.
 On Windows platforms, we could also use the WinMain method
 if we would want to get rid of the console window, which pops up when
 starting a program with main(), but to keep this example simple,
