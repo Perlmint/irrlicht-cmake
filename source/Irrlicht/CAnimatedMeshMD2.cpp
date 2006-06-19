@@ -281,7 +281,7 @@ SMD2AnimationType MD2AnimationTypeList[21] =
     { 135, 153, 10 },   // CROUCH_STAND
     { 154, 159,  7 },   // CROUCH_WALK
     { 160, 168, 10 },   // CROUCH_ATTACK
-    { 196, 172,  7 },   // CROUCH_PAIN
+    { 169, 172,  7 },   // CROUCH_PAIN
     { 173, 177,  5 },   // CROUCH_DEATH
     { 178, 183,  7 },   // DEATH_FALLBACK
     { 184, 189,  7 },   // DEATH_FALLFORWARD
@@ -508,7 +508,7 @@ inline s32 CAnimatedMeshMD2::min(s32 a, s32 b)
 }
 
 
-//! loads an md3 file
+//! loads an md2 file
 bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 {
 	if (!file)

@@ -867,9 +867,9 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_X, KEY_KEY_X));
 	KeyMap.push_back(SKeyMap(XK_Y, KEY_KEY_Y));
 	KeyMap.push_back(SKeyMap(XK_Z, KEY_KEY_Z));
-	KeyMap.push_back(SKeyMap(XK_Adiaresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_Odiaresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_Udiaresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_Adiaeresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_Odiaeresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_Udiaeresis, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_bracketleft, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_backslash, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_bracketright, 0)); //?
@@ -906,9 +906,9 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_y, KEY_KEY_Y));
 	KeyMap.push_back(SKeyMap(XK_z, KEY_KEY_Z));
 	KeyMap.push_back(SKeyMap(XK_ssharp, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_adiaresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_odiaresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_udiaresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_adiaeresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_odiaeresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_udiaeresis, 0)); //?
 
 	KeyMap.sort();
 }
