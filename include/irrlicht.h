@@ -111,7 +111,6 @@
 #include "irrList.h"
 #include "matrix4.h"
 #include "plane3d.h"
-#include "plane3d.h"
 #include "vector2d.h"
 #include "vector3d.h"
 #include "triangle3d.h"
