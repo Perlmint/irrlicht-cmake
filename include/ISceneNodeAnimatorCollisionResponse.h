@@ -65,7 +65,7 @@ namespace scene
 		//! the center of the scene node, which means that the ellipsoid surrounds
 		//! it completely. If this is not what you want, you may specify a translation
 		//! for the ellipsoid.
-		//! \param Translation of the ellipsoid relative 
+		//! \param translation: Translation of the ellipsoid relative 
 		//! to the position of the scene node.
 		virtual void setEllipsoidTranslation(core::vector3df translation) = 0;
 

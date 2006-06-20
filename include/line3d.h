@@ -89,6 +89,7 @@ class line3d
 		//! Returns if the line intersects with a shpere
 		//! \param sorigin: Origin of the shpere.
 		//! \param sradius: Radius if the sphere.
+		//! \param outdistance: The distance to the firest intersection point.
 		//! \return Returns true if there is an intersection.
 		//! If there is one, the distance to the first intersection point
 		//! is stored in outdistance.

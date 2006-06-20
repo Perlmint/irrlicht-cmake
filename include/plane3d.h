@@ -137,7 +137,7 @@ class plane3d
 			D = - MPoint.dotProduct(Normal);
 		}
 
-		//!\return Returns a member point of the plane.
+		//! Returns a member point of the plane.
 		vector3d<T> getMemberPoint() const
 		{
 			return Normal * -D;

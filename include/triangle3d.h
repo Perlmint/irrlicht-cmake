@@ -103,8 +103,7 @@ namespace core
 
 
 		//! Returns an intersection with a 3d line.
-		//! \param lineVect: Vector of the line to intersect with.
-		//! \param linePoint: Point of the line to intersect with.
+		//! \param line: Line to intersect with.
 		//! \param outIntersection: Place to store the intersection point, if there is one.
 		//! \return Returns true if there was an intersection, false if there was not.
 		bool getIntersectionWithLimitedLine(const line3d<T>& line,

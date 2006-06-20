@@ -64,7 +64,8 @@ namespace gui
 		//! Returns the selected item in the menu
 		virtual s32 getSelectedItem();
 
-		//! \return Returns a pointer to the submenu of an item. 
+		//! Returns a pointer to the submenu of an item.
+		//! \return Pointer to the submenu of an item. 
 		virtual IGUIContextMenu* getSubMenu(s32 idx);
 
 		//! Sets the visible state of this element.

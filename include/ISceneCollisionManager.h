@@ -56,11 +56,12 @@ namespace scene
 		//! \param ellipsoidRadius: Radius of the ellipsoid.
 		//! \param ellipsoidDirectionAndSpeed: Direction and speed of 
 		//! the movement of the ellipsoid.
-		//! \param gravityDirectionAndSpeed: Direction and force of gravity.
 		//! \param triout: Optional parameter where the last triangle causing a 
 		//! collision is stored, if there is a collision.
-		//! \param outFallint: Is set to true if the ellipsoid is falling down, caused
+		//! \param outFalling: Is set to true if the ellipsoid is falling down, caused
 		//! by gravity.
+		//! \param slidingSpeed: DOCUMENTATION NEEDED.
+		//! \param gravityDirectionAndSpeed: Direction and force of gravity.
 		//! \return Returns the new position of the ellipsoid.
 		virtual core::vector3df getCollisionResultPosition(
 			ITriangleSelector* selector,
@@ -78,7 +79,7 @@ namespace scene
 		//! \param camera: Camera from which the ray starts. If null, the
 		//! active camera is used. 
 		//! \return Returns a ray starting from the position of the camera
-		//! and ending at a lenght of the far value of the camera at a position
+		//! and ending at a length of the far value of the camera at a position
 		//! which would be behind the 2d screen coodinates.
 		virtual core::line3d<f32> getRayFromScreenCoordinates(
 			core::position2d<s32> pos, ICameraSceneNode* camera = 0) = 0;
@@ -131,7 +132,7 @@ namespace scene
 		//! against this ray. The collision tests are done using a bounding
 		//! box for each scene node.
 		//! \param camera: Camera from which the ray is casted.
-		//! \param idBitMaks: Only scene nodes with an id with bits set like in this mask
+		//! \param idBitMask: Only scene nodes with an id with bits set like in this mask
 		//! will be tested. If the BitMask is 0, this feature is disabled.
 		//! \param bNoDebugObjects: Doesn't take debug objects into account when true. These
 		//  are scene nodes with IsDebugObject() = true.

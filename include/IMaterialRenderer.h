@@ -47,7 +47,7 @@ public:
 	\param services: Interface providing some methods for changing advanced, internal
 	states of a IVideoDriver. */
 	virtual void OnSetMaterial(SMaterial& material, const SMaterial& lastMaterial,
-		bool resetAllRenderstates, IMaterialRendererServices* service) {};
+		bool resetAllRenderstates, IMaterialRendererServices* services) {};
 
 	//! Called every time before a new bunch of geometry is being drawn using this material with
 	//! for example drawIndexedTriangleList() call.

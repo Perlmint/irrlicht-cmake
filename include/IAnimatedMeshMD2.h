@@ -46,18 +46,21 @@ namespace scene
 	{
 	public:
 
-		//! Returns frame loop data for a default MD2 animation type.
-		//! \Returns Returns the beginframe, endframe and frames per 
-		//! second for a default MD2 animation type.
+		//! Returns the beginframe, endframe and frames per second for a default MD2 animation type.
+		//! \param l: The EMD2_ANIMATION_TYPE to get the frames for.
+		//! \param outBegin: The returned beginning frame for animation type specified.
+		//! \param outEnd: The returned ending frame for the animation type specified.
+		//! \param outFPS: The number of frames per second, this animation should be played at.
 		virtual void getFrameLoop(EMD2_ANIMATION_TYPE l, s32& outBegin,
 			s32& outEnd, s32& outFPS) const = 0;
 
-		//! Returns frame loop data for a special MD2 animation type, identified
-		//! by a string.
-		//! \Returns Returns the beginframe, endframe and frames per 
-		//! second for a special MD2 animation type.
+		//! Returns the beginframe, endframe and frames per second for a special MD2 animation type.
+		//! \param name: Name of the animation.
+		//! \param outBegin: The returned beginning frame for animation type specified.
+		//! \param outEnd: The returned ending frame for the animation type specified.
+		//! \param outFPS: The number of frames per second, this animation should be played at.
 		virtual bool getFrameLoop(const c8* name, 
-			s32& outBegin, s32& outEnd, s32& outFps) const = 0;
+			s32& outBegin, s32& outEnd, s32& outFPS) const = 0;
 
 		//! Returns amount of md2 animations in this file.
 		virtual s32 getAnimationCount() const = 0;

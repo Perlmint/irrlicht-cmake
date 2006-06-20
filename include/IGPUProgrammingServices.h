@@ -182,6 +182,9 @@ public:
 	//! Set to null if no shader should be created.
 	//! \param pixelShaderProgram: Text file containing the source of the pixel shader program. Set to 
 	//! 0 if no shader should be created.
+ 	//! \param callback: Pointer to an IShaderConstantSetCallback object to which the
+ 	//! OnSetConstants function is called.
+ 	//! \param baseMaterial: baseMaterial
 	virtual s32 addShaderMaterialFromFiles(io::IReadFile* vertexShaderProgram,
 		io::IReadFile* pixelShaderProgram,
 		IShaderConstantSetCallBack* callback = 0,
@@ -195,6 +198,9 @@ public:
 	//! Set to null if no shader should be created.
 	//! \param pixelShaderProgramFileName: Text file name containing the source of the
 	//! pixel shader program. Set to 0 if no shader should be created.
+ 	//! \param callback: Pointer to an IShaderConstantSetCallback object to which the
+ 	//! OnSetConstants function is called.
+ 	//! \param baseMaterial: baseMaterial
 	virtual s32 addShaderMaterialFromFiles(const c8* vertexShaderProgramFileName,
 		const c8* pixelShaderProgramFileName,
 		IShaderConstantSetCallBack* callback = 0,

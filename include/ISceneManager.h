@@ -501,6 +501,7 @@ namespace scene
 		 \param left: Texture for the left plane of the box.
 		 \param right: Texture for the right plane of the box.
 		 \param front: Texture for the front plane of the box.
+ 		 \param back: Texture for the back plane of the box.
 		 \param parent: Parent scene node of the skybox. A skybox usually has no parent,
 		 so this should be null. Note: If a parent is set to the skybox, the box will not 
 		 change how it is drawed.
@@ -781,8 +782,8 @@ namespace scene
 		virtual ISceneNodeAnimator* createTextureAnimator(const core::array<video::ITexture*>& textures,
 			s32 timePerFrame, bool loop=true) = 0;
 
-		//! Creates a scene node animator, which deletes the scene node after some time automaticly.
-		/** \param when: Time in milliseconds, after when the node will be deleted.
+		//! Creates a scene node animator, which deletes the scene node after some time automatically.
+		/** \param timeMs: Time in milliseconds, after when the node will be deleted.
 		 \return Returns the animator. Attach it to a scene node with ISceneNode::addAnimator()
 		 and the animator will animate it.
 		 If you no longer need the animator, you should call ISceneNodeAnimator::drop().
@@ -813,6 +814,7 @@ namespace scene
 		 the center of the scene node, which means that the ellipsoid surrounds
 		 it completely. If this is not what you want, you may specify a translation
 		 for the ellipsoid.
+		 \param slidingValue: DOCUMENTATION NEEDED.
 		 \return Returns the animator. Attach it to a scene node with ISceneNode::addAnimator()
 		 and the animator will cause it to do collision detection and response.
 		 If you no longer need the animator, you should call ISceneNodeAnimator::drop().

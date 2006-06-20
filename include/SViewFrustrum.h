@@ -57,8 +57,8 @@ namespace scene
 		//! bouding box around the view frustrum
 		core::aabbox3d<f32> boundingBox;
 
-		//! transforms the furstum by the matrix
-		//! \param Matrix by which the view frustrum is transformed.
+		//! transforms the frustrum by the matrix
+		//! \param mat: Matrix by which the view frustrum is transformed.
 		void transform(const core::matrix4 &mat);
 
 		//! returns the point which is on the far left upper corner inside the

@@ -233,6 +233,7 @@ namespace video
 		EMF_MATERIAL_FLAG_COUNT 
 	};
 
+ 	//! Maximum number of texture an SMaterial can have.
 	const s32 MATERIAL_MAX_TEXTURES = 8;
 
 

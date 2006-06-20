@@ -49,6 +49,8 @@ namespace scene
 		//! getFrameCount() - 1;
 		//! \param detailLevel: Level of detail. 0 is the lowest,
 		//! 255 the highest level of detail. Most meshes will ignore the detail level.
+		//! \param startFrameLoop: start frame
+		//! \param endFrameLoop: end frame
 		//! \return Returns the animated mesh based on a detail level. 
 		virtual IMesh* getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop=-1, s32 endFrameLoop=-1)
 		{

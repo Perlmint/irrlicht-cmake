@@ -74,16 +74,20 @@ namespace scene
 		/** \return Returns the up vector of the camera. */
 		virtual core::vector3df getUpVector() const = 0;
 
-		//! \return Returns the value of the near plane of the camera.
+		//! Gets the value of the near plane of the camera.
+		/** \return Returns the value of the near plane of the camera. */
 		virtual f32 getNearValue() = 0;
 
-		//! \return Returns the value of the far plane of the camera.
+		//! Gets the value of the far plane of the camera.
+		/** \return Returns the value of the far plane of the camera. */
 		virtual f32 getFarValue() = 0;
 
-		//! \return Returns the aspect ratio of the camera.
+		//! Gets the aspect ratio of the camera.
+		/** \return Returns the aspect ratio of the camera. */
 		virtual f32 getAspectRatio() = 0;
 
-		//! \return Returns the field of view of the camera in radiants.
+		//! Gets the field of view of the camera.
+		/** \return Returns the field of view of the camera in radiants. */
 		virtual f32 getFOV() = 0;
 
 		//! Sets the value of the near clipping plane. (default: 1.0f)

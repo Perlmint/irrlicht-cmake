@@ -12,7 +12,7 @@ namespace irr
 {
 namespace video
 {
-
+	//! CTRTextureGouraud class
 	class CTRTextureGouraud : public ITriangleRenderer
 	{
 	public:

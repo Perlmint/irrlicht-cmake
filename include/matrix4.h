@@ -130,7 +130,7 @@ namespace core
 			bool makeInverse();
 
 			//! returns the inversed matrix of this one
-			//! \param Target, where result matrix is written to.
+			//! \param out: where result matrix is written to.
 			//! \return Returns false if there is no inverse matrix.
 			bool getInverse(matrix4& out) const;
 

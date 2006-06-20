@@ -29,6 +29,7 @@ public:
 		const core::vector3df& position = core::vector3df(0,0,0))
 		: ISceneNode(parent, mgr, id, position) {}
 
+	//! Gets the light data associated with this ILightSceneNode
 	//! \return Returns the light data.
 	virtual video::SLight& getLightData() = 0;
 };

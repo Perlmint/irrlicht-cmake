@@ -24,7 +24,7 @@ class IVideoDriver;
 class IShaderConstantSetCallBack;
 class IMaterialRenderer;
 
-//! Class for using vertex and pixel shaders with D3D9
+//! Class for using vertex and pixel shaders with D3D8
 class CD3D8ShaderMaterialRenderer : public IMaterialRenderer
 {
 public:

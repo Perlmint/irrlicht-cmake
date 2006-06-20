@@ -89,8 +89,8 @@ public:
 	//! \param maxStartColor: Maximal initial start color of a particle. 
 	//! The real color of every particle is calculated as random interpolation
 	//! between minStartColor and maxStartColor.
-	//! \param lifetimeMin: Minimal lifetime of a particle, in milliseconds.
-	//! \param lifetimeMax: Maximal lifetime of a particle, in milliseconds.
+	//! \param lifeTimeMin: Minimal lifetime of a particle, in milliseconds.
+	//! \param lifeTimeMax: Maximal lifetime of a particle, in milliseconds.
 	//! \param maxAngleDegrees: Maximal angle in degrees, the emitting direction
 	//! of the particle will differ from the orignial direction.
 	//! \return Returns a pointer to the created particle emitter.
@@ -101,13 +101,14 @@ public:
 	virtual IParticleEmitter* createPointEmitter(
 		core::vector3df direction = core::vector3df(0.0f,0.03f,0.0f), 
 		u32 minParticlesPerSecond = 5,
-		u32 maxParticlePerSecond = 10,
+		u32 maxParticlesPerSecond = 10,
 		video::SColor minStartColor = video::SColor(255,0,0,0),
 		video::SColor maxStartColor = video::SColor(255,255,255,255),
 		u32 lifeTimeMin=2000, u32 lifeTimeMax=4000,
 		s32 maxAngleDegrees=0) = 0;
 
 	//! Creates a box particle emitter.
+	//! \param box: The box for the emitter.
 	//! \param direction: Direction and speed of particle emission.
 	//! \param minParticlesPerSecond: Minimal amount of particles emitted
 	//! per second.
@@ -119,8 +120,8 @@ public:
 	//! \param maxStartColor: Maximal initial start color of a particle. 
 	//! The real color of every particle is calculated as random interpolation
 	//! between minStartColor and maxStartColor.
-	//! \param lifetimeMin: Minimal lifetime of a particle, in milliseconds.
-	//! \param lifetimeMax: Maximal lifetime of a particle, in milliseconds.
+	//! \param lifeTimeMin: Minimal lifetime of a particle, in milliseconds.
+	//! \param lifeTimeMax: Maximal lifetime of a particle, in milliseconds.
 	//! \param maxAngleDegrees: Maximal angle in degrees, the emitting direction
 	//! of the particle will differ from the orignial direction.
 	//! \return Returns a pointer to the created particle emitter.
@@ -132,7 +133,7 @@ public:
 		core::aabbox3d<f32> box = core::aabbox3d<f32>(-10,28,-10,10,30,10),
 		core::vector3df direction = core::vector3df(0.0f,0.03f,0.0f), 
 		u32 minParticlesPerSecond = 5,
-		u32 maxParticlePerSecond = 10,
+		u32 maxParticlesPerSecond = 10,
 		video::SColor minStartColor = video::SColor(255,0,0,0),
 		video::SColor maxStartColor = video::SColor(255,255,255,255),
 		u32 lifeTimeMin=2000, u32 lifeTimeMax=4000,
@@ -162,7 +163,7 @@ public:
 	//! and is catched by the gravity then. This affector is ideal for
 	//! creating things like fountains.
 	//! \param gravity: Direction and force of gravity.
-    //! \param timeForceList: Time in milli seconds when the force 
+	//! \param timeForceLost: Time in milli seconds when the force 
 	//! of the emitter is totally lost and the particle does not move any more.
 	//! This is the time where gravity fully affects the particle.
 	//! \return Returns a pointer to the created particle affector.

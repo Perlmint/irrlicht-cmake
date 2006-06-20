@@ -182,13 +182,13 @@ namespace io
 		//! No xml node. This is usually the node if you did not read anything yet.
 		EXN_NONE,
 
-		//! A xml element, like <foo>
+		//! An xml element such as &lt;foo&gt;
 		EXN_ELEMENT,
 
-		//! End of an xml element, like </foo>
+		//! End of an xml element such as &lt;/foo&gt;
 		EXN_ELEMENT_END,
 
-		//! Text within a xml element: <foo> this is the text. </foo>
+		//! Text within an xml element: &lt;foo&gt; this is the text. &lt;foo&gt;
 		EXN_TEXT,
 
 		//! An xml comment like &lt;!-- I am a comment --&gt; or a DTD definition.

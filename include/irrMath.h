@@ -17,10 +17,10 @@ namespace core
 	//! Constant for PI.
 	const f32 PI				= 3.14159f;
 
-	//! Constant for converting bettween degrees and radiants.
+	//! Constant for converting radians to degrees.
 	const f64 GRAD_PI		= 180.0 / 3.1415926535897932384626433832795;
 
-	//! Constant for converting bettween degrees and radiants.
+	//! Constant for converting degrees to radians.
 	const f64 GRAD_PI2		= 3.1415926535897932384626433832795 / 180.0;
 
 	//! returns minimum of two values. Own implementation to get rid of the STL (VS6 problems)

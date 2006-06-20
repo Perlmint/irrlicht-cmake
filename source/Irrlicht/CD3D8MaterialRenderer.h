@@ -21,7 +21,7 @@ namespace video
 D3DMATRIX UnitMatrixD3D8;
 D3DMATRIX SphereMapMatrixD3D8;
 
-//! Base class for all internal D3D9 material renderers
+//! Base class for all internal D3D8 material renderers
 class CD3D8MaterialRenderer : public IMaterialRenderer
 {
 public:

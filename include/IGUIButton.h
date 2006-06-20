@@ -42,7 +42,7 @@ namespace gui
 
 		//! Sets an image which should be displayed on the button when it is in normal state. 
 		/** \param image: Texture containing the image to be displayed
-		 \param rect: Position in the texture, where the image is located */
+		 \param pos: Position in the texture, where the image is located */
 		virtual void setImage(video::ITexture* image, const core::rect<s32>& pos) = 0;
 
 		//! Sets an image which should be displayed on the button when it is in pressed state. 
@@ -53,7 +53,7 @@ namespace gui
 
 		//! Sets an image which should be displayed on the button when it is in pressed state. 
 		/** \param image: Texture containing the image to be displayed
-		 \param rect: Position in the texture, where the image is located */
+		 \param pos: Position in the texture, where the image is located */
 		virtual void setPressedImage(video::ITexture* image, const core::rect<s32>& pos) = 0;
 
 		//! Sets if the button should behave like a push button. 

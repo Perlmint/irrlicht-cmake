@@ -96,21 +96,21 @@ public:
 
 
 
-	//! Constructor for copying a string from a pointer with a given lenght
+	//! Constructor for copying a string from a pointer with a given length
 	template <class B>
-	string(const B* c, s32 lenght)
+	string(const B* c, s32 length)
 	: allocated(0), used(0), array(0)
 	{
 		if (!c)
 			return;
 
-        allocated = used = lenght+1;
+		allocated = used = length+1;
 		array = allocator.allocate(used); // new T[used];
 
-		for (s32 l = 0; l<lenght; ++l)
+		for (s32 l = 0; l<length; ++l)
 			array[l] = (T)c[l];
 
-		array[lenght] = 0;
+		array[length] = 0;
 	}
 
 
@@ -340,7 +340,7 @@ public:
 				return false;
 
 		// if one (or both) of the strings was smaller then they
-		// are only equal if they have the same lenght
+		// are only equal if they have the same length
 		return (i == len) || (used == other.used);
 	}
 
@@ -354,7 +354,7 @@ public:
 				return false;
 
 		// if one (or both) of the strings was smaller then they
-		// are only equal if they have the same lenght
+		// are only equal if they have the same length
 		return (i == len) || (array[i] == 0 && str[i] == 0);
 	}
 

@@ -143,7 +143,7 @@ IFileList* CFileSystem::createFileList()
 }
 
 
-//! determinates if a file exists and would be able to be opened.
+//! determines if a file exists and would be able to be opened.
 bool CFileSystem::existFile(const c8* filename)
 {
 	for (u32 i=0; i<ZipFileSystems.size(); ++i)

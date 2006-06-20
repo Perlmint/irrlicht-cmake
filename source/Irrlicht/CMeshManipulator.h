@@ -34,6 +34,7 @@ public:
 
 	//! Sets the alpha vertex color value of the whole mesh to a new value
 	//! \param mesh: Mesh on which the operation is performed.
+	//! \param alpha: New alpha for the vertex color.
 	virtual void setVertexColorAlpha(scene::IMesh* mesh, s32 alpha) const;
 
 	//! Sets the colors of all vertices to one color
@@ -49,6 +50,7 @@ public:
 
 	//! Scales the whole mesh.
 	//! \param mesh: Mesh on which the operation is performed.
+	//! \param scale: 3D Vector, defining the value, for each axis, to scale the mesh by.
 	virtual void scaleMesh(scene::IMesh* mesh, const core::vector3df& scale) const;
 
 	//! Clones a static IMesh into a modifyable SMesh.

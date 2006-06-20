@@ -76,7 +76,7 @@ namespace scene
 		//! the node later.
 		//! \param zfailmethod: If set to true, the shadow will use the zfail method,
 		//! if not, zpass is used. 
-		//! \param intinity: Value used by the shadow volume algorithm to scale the 
+		//! \param infinity: Value used by the shadow volume algorithm to scale the 
 		//! shadow volume. 
 		//! \return Returns pointer to the created shadow scene node.
 		//! This pointer should not be dropped. See IUnknown::drop() for more information.

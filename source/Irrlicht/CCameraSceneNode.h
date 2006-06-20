@@ -52,7 +52,7 @@ namespace scene
 		//! \return Returns the current look at target of the camera
 		virtual core::vector3df getTarget() const;
 
-		//! sets the up vector of the camera
+		//! Sets the up vector of the camera.
 		//! \param pos: New upvector of the camera.
 		virtual void setUpVector(const core::vector3df& pos);
 
@@ -60,40 +60,44 @@ namespace scene
 		//! \return Returns the up vector of the camera.
 		virtual core::vector3df getUpVector() const;
 
-		//! \return returns value of the near plane of the camera
+		//! Gets distance from the camera to the near plane.
+		//! \return Value of the near plane of the camera.
 		virtual f32 getNearValue();
 
-		//! \return returns value of the far plane of the camera
+		//! Gets the distance from the camera to the far plane.
+		//! \return Value of the far plane of the camera.
 		virtual f32 getFarValue();
 
-		//! \return returns aspect ration of the camera
+		//! Get the aspect ratio of the camera.
+		//! \return The aspect ratio of the camera.
 		virtual f32 getAspectRatio();
 
-		//! \return returns field of view of the camera
+		//! Gets the field of view of the camera.
+		//! \return Field of view of the camera
 		virtual f32 getFOV();
 
-		//! sets the value of the near clipping plane. (default: 1.0f)
+		//! Sets the value of the near clipping plane. (default: 1.0f)
 		virtual void setNearValue(f32 zn);
 
-		//! sets the value of the far clipping plane (default: 2000.0f)
+		//! Sets the value of the far clipping plane (default: 2000.0f)
 		virtual void setFarValue(f32 zf);
 
-		//! sets the aspect ratio (default: 4.0f / 3.0f)
+		//! Sets the aspect ratio (default: 4.0f / 3.0f)
 		virtual void setAspectRatio(f32 aspect);
 
-		//! sets the field of view (Default: PI / 3.5f)
+		//! Sets the field of view (Default: PI / 3.5f)
 		virtual void setFOV(f32 fovy);
 
-		//! pre render event
+		//! PreRender event
 		virtual void OnPreRender();
 
-		//! render
+		//! Render
 		virtual void render();
 
-		//! returns the axis aligned bounding box of this node
+		//! Returns the axis aligned bounding box of this node
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
-		//! returns the view area. needed sometimes by bsp or lod render nodes.
+		//! Returns the view area. Sometimes needed by bsp or lod render nodes.
 		virtual const SViewFrustrum* getViewFrustrum();
 
 		//! Disables or enables the camera to get key or mouse inputs.

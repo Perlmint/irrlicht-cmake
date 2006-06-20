@@ -5,24 +5,22 @@
 #ifndef __C_LIMIT_READ_FILE_H_INCLUDED__
 #define __C_LIMIT_READ_FILE_H_INCLUDED__
 
-/*! this is a read file, which is limited to some boundaries, 
-	so that it may only start from a certain file position
-	and may only read until a certain file position.
-	This can be useful, for example for reading uncompressed files
-	in an archive (zip).
-!*/
-
 #include "IReadFile.h"
 #include "irrString.h"
 
 namespace irr
 {
-
 	class CUnicodeConverter;
 
 namespace io
 {
 
+	/*! this is a read file, which is limited to some boundaries, 
+		so that it may only start from a certain file position
+		and may only read until a certain file position.
+		This can be useful, for example for reading uncompressed files
+		in an archive (zip).
+	!*/
 	class CLimitReadFile : public IReadFile
 	{
 	public:
@@ -61,8 +59,6 @@ namespace io
 
 } // end namespace io
 } // end namespace irr
-
-
 
 #endif
 

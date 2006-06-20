@@ -96,6 +96,8 @@ namespace core
 		}
 
 		//! Calculates the cross product with another vector
+ 		//! \param p: vector to multiply with.
+ 		//! \return Crossproduct of this vector with p.
 		vector3d<T> crossProduct(const vector3d<T>& p) const
 		{
 			return vector3d<T>(Y * p.Z - Z * p.Y, Z * p.X - X * p.Z, X * p.Y - Y * p.X);
@@ -103,6 +105,9 @@ namespace core
 
 		//! Returns if this vector interpreted as a point is on a line between two other points.
 		/** It is assumed that the point is on the line. */
+ 		//! \param begin: Beginning vector to compare between.
+ 		//! \param end: Ending vector to compare between.
+ 		//! \return True if this vector is between begin and end.  False if not.
 		bool isBetweenPoints(const vector3d<T>& begin, const vector3d<T>& end) const
 		{
 			f32 f = (f32)(end - begin).getLengthSQ();
@@ -124,7 +129,7 @@ namespace core
 			return *this;
 		}
 
-		//! Sets the lenght of the vector to a new value
+		//! Sets the length of the vector to a new value
 		void setLength(T newlength)
 		{
 			normalize();
@@ -139,6 +144,10 @@ namespace core
 			Z *= -1.0f;
 		}
 
+		//! Rotates the vector by a specified number of degrees around the Y 
+		//! axis and the specified center.
+		//! \param degrees: Number of degrees to rotate around the Y axis.
+		//! \param center: The center of the rotation.
 		void rotateXZBy(f64 degrees, const vector3d<T>& center)
 		{
 			degrees *=GRAD_PI2;
@@ -151,6 +160,10 @@ namespace core
 			Z += center.Z;
 		}
 
+		//! Rotates the vector by a specified number of degrees around the Z 
+		//! axis and the specified center.
+		//! \param degrees: Number of degrees to rotate around the Z axis.
+		//! \param center: The center of the rotation.
 		void rotateXYBy(f64 degrees, const vector3d<T>& center)
 		{
 			degrees *=GRAD_PI2;
@@ -163,6 +176,10 @@ namespace core
 			Y += center.Y;
 		}
 
+		//! Rotates the vector by a specified number of degrees around the X
+		//! axis and the specified center.
+		//! \param degrees: Number of degrees to rotate around the X axis.
+		//! \param center: The center of the rotation.
 		void rotateYZBy(f64 degrees, const vector3d<T>& center)
 		{
 			degrees *=GRAD_PI2;
