@@ -212,8 +212,8 @@ class aabbox3d
 		//! \param edges: Pointer to array of 8 edges
 		void getEdges(vector3d<T> *edges) const
 		{
-			core::vector3df middle = getCenter();
-			core::vector3df diag = middle - MaxEdge;
+			core::vector3d<T> middle = getCenter();
+			core::vector3d<T> diag = middle - MaxEdge;
 
 			/*
 			Edges are stored in this way:
@@ -243,7 +243,7 @@ class aabbox3d
 		//! no space within the min and the max edge.
 		bool isEmpty() const
 		{
-			core::vector3df d = MinEdge - MaxEdge;
+			core::vector3d<T> d = MinEdge - MaxEdge;
 			if (d.X < 0) d.X = -d.X;
 			if (d.Y < 0) d.Y = -d.Y;
 			if (d.Z < 0) d.Z = -d.Z;
