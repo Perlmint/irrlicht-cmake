@@ -20,7 +20,7 @@ namespace irr
 namespace scene
 {
 
-//! This is a x file reader. It only reads data from ascii x files.
+//! This is a .x file reader. It only reads data from uncompressed .x files.
 class CXFileReader : public virtual IUnknown
 {
 public:
@@ -245,6 +245,8 @@ private:
 	//! reads a x file style string
 	bool getNextTokenAsString(core::stringc& out);
 
+	u16 readBinWord();
+	u32 readBinDWord();
 	s32 readInt();
 	f32 readFloat();
 	bool readVector2(core::vector2df& vec);
@@ -281,6 +283,7 @@ private:
 
 	s32 MajorVersion;
 	s32 MinorVersion;	
+	bool binary;
 
 	c8* Buffer;
 	s32 Size;
