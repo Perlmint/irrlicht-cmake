@@ -47,7 +47,6 @@ public:
 	SXFrame& getRootFrame();
 
 
-
 	struct SXMaterial
 	{
 		video::SColorf FaceColor; // note: RGBA
@@ -101,8 +100,8 @@ public:
 		core::stringc TransformNodeName; // name of the bone
 		core::array< SXWeight > Weights;
 		core::matrix4 MatrixOffset; // transforms the mesh vertices to the space of the bone
-									// When concatenated to the bone's transform, this provides the
-									// world space coordinates of the mesh as affected by the bone
+					// When concatenated to the bone's transform, this provides the
+					// world space coordinates of the mesh as affected by the bone
 	};
 
 	struct SXMesh
@@ -122,7 +121,7 @@ public:
 		// optional:
 		
 		core::array<core::vector2df> TextureCoords;	
-		core::array<core::vector3df> Normals; // normals 
+		core::array<core::vector3df> Normals;
 		core::array<s32> NormalIndices; // amount is equal to Indices amount
 
 		core::array< s32 > IndexCountPerFace; // default 3, but could be more
@@ -144,10 +143,7 @@ public:
 
 	struct SXAnimationKey
 	{
-		SXAnimationKey()
-			: time(0), data(0), keyType(-1)
-		{
-		}
+		SXAnimationKey() : time(0), data(0), keyType(-1) { }
 
 		void del()
 		{
@@ -179,17 +175,17 @@ public:
 
 		}
 
-		inline core::matrix4& getMatrix(s32 nr) const
+		core::matrix4& getMatrix(s32 nr) const
 		{
 			return ((core::matrix4*)data)[nr];
 		}
 
-		inline core::vector3df& getVector(s32 nr) const
+		core::vector3df& getVector(s32 nr) const
 		{
 			return ((core::vector3df*)data)[nr];
 		}
 
-		inline core::quaternion& getQuaternion(s32 nr) const
+		core::quaternion& getQuaternion(s32 nr) const
 		{
 			return ((core::quaternion*)data)[nr];
 		}
@@ -251,6 +247,10 @@ private:
 
 	s32 readInt();
 	f32 readFloat();
+	bool readVector2(core::vector2df& vec);
+	bool readVector3(core::vector3df& vec);
+	bool readRGB(video::SColorf& color);
+	bool readRGBA(video::SColorf& color);
 
 	bool parseDataObjectTemplate();
 	bool parseDataObjectFrame(SXFrame &frame);
@@ -275,7 +275,7 @@ private:
 
 	void readUntilEndOfLine();
 
-	void computeGlobalFrameMatrizes(SXFrame& frame, SXFrame* parent);
+	void computeGlobalFrameMatrices(SXFrame& frame, const SXFrame* const parent);
 
 	bool validateMesh(SXFrame* frame);
 
@@ -297,5 +297,4 @@ private:
 } // end namespace irr
 
 #endif
-
 

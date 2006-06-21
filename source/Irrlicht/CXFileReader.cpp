@@ -34,11 +34,11 @@ CXFileReader::CXFileReader(io::IReadFile* file)
 		return;
 	}	
 
-	#ifdef _XREADER_DEBUG
-		validateMesh(&RootFrame);
-	#endif
+#ifdef _XREADER_DEBUG
+	validateMesh(&RootFrame);
+#endif
 
-	computeGlobalFrameMatrizes(RootFrame, 0);
+	computeGlobalFrameMatrices(RootFrame, 0);
 }
 
 
@@ -76,11 +76,9 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 		s32 ncnt = frame->Meshes[m].Normals.size();
 		s32 nicnt = frame->Meshes[m].NormalIndices.size();
 
-		s32 i;
-
 		// validate indices in mesh
 
-		for (i=0; i<icnt; ++i)
+		for (s32 i=0; i<icnt; ++i)
 		{
 			if (frame->Meshes[m].Indices[i] < 0)
 			{
@@ -101,7 +99,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 
 		// validate normal indices
 
-		for (i=0; i<nicnt; ++i)
+		for (s32 i=0; i<nicnt; ++i)
 		{
 			if (frame->Meshes[m].NormalIndices[i] < 0)
 			{
@@ -266,8 +264,8 @@ bool CXFileReader::parseDataObjectFrame(SXFrame& frame)
 		return false;
 	}
 
-	// jetzt sind wir im frame.
-	// solange tokens lesen, bis closing brace erreicht
+	// Now inside a frame.
+	// read tokens until closing brace is reached.
 
 	while(true)
 	{
@@ -410,14 +408,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 	mesh.Vertices.set_used(nVertices);
 
 	for (s32 n=0; n<nVertices; ++n)
-	{
-		findNextNoneWhiteSpaceNumber();
-		mesh.Vertices[n].X = readFloat();
-		++P; //findNextNoneWhiteSpaceNumber();		
-		mesh.Vertices[n].Y = readFloat();
-		++P; //findNextNoneWhiteSpaceNumber();		
-		mesh.Vertices[n].Z = readFloat();
-	}
+		readVector3(mesh.Vertices[n]);
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -787,43 +778,17 @@ bool CXFileReader::parseDataObjectMaterial(SXMaterial& material)
 	}
 
 	// read RGBA
-
-	findNextNoneWhiteSpaceNumber();
-	material.FaceColor.a = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.FaceColor.r = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.FaceColor.g = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.FaceColor.b = readFloat();
+	readRGBA(material.FaceColor);
 
 	// read power
 	findNextNoneWhiteSpaceNumber();		
 	material.Power = readFloat();
 
 	// read specular
-	findNextNoneWhiteSpaceNumber();		
-	material.Specular.r = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.Specular.g = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.Specular.b = readFloat();
+	readRGB(material.Specular);
 
 	// read emissive
-	findNextNoneWhiteSpaceNumber();		
-	material.Emissive.r = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.Emissive.g = readFloat();
-	findNextNoneWhiteSpaceNumber();		
-	material.Emissive.b = readFloat();
-
-	// read two closing semicolons
-
-	if (!checkForTwoFollowingSemicolons())
-	{
-		os::Printer::log("No finishing semicolon in Mesh Materials found in x file", ELL_WARNING);
-		return false;
-	}
+	readRGB(material.Emissive);
 
 	// read other data objects
 	while(true)
@@ -864,16 +829,25 @@ bool CXFileReader::parseDataObjectMaterial(SXMaterial& material)
 //! reads a x file style string
 bool CXFileReader::getNextTokenAsString(core::stringc& out)
 {
-	core::stringc s = getNextToken();
-	s32 sl = s.size();
+	findNextNoneWhiteSpace();
+
+	if (P >= End)
+		return false;
 	
-	if (sl < 3)
+	if (P[0] != '"')
 		return false;
+	++P;
 
-	if (s[0] != '"' || s[sl-1] != ';' || s[sl-2] != '"')
+	while(P < End && P[0]!='"')
+	{
+		out.append(P[0]);
+		++P;		
+	}
+
+	if ( P[1] != ';' || P[0] != '"')
 		return false;
+	P+=2;
 
-	out = s.subString(1, sl-3);	    
 	return true;
 }
 
@@ -1060,7 +1034,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 				animkey.getQuaternion(i).Z = -readFloat();
 
 				
-				if (P[0] != ';' || P[1] != ';')
+				if (!checkForTwoFollowingSemicolons())
 				{
 					os::Printer::log("No following two semicolons missing after quaternion animation key in x file", ELL_WARNING);
 					return false;
@@ -1089,13 +1063,9 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 				}
 
 				++P; 
-				animkey.getVector(i).X = readFloat();
-				++P;
-				animkey.getVector(i).Y = readFloat();
-				++P;
-				animkey.getVector(i).Z = readFloat();
+				readVector3(animkey.getVector(i));
 
-				if (P[0] != ';' || P[1] != ';')
+				if (!checkForTwoFollowingSemicolons())
 				{
 					os::Printer::log("No following two semicolons missing after vector animation key in x file", ELL_WARNING);
 					return false;
@@ -1132,7 +1102,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 						animkey.getMatrix(i)(m,n) = readFloat();
 					}
 
-				if (P[0] != ';' || P[1] != ';')
+				if (!checkForTwoFollowingSemicolons())
 				{
 					os::Printer::log("No following two semicolons missing after matrix animation key in x file", ELL_WARNING);
 					return false;
@@ -1211,14 +1181,7 @@ bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& norm
 	// read normals
 
 	for (s32 i=0; i<nNormals; ++i)
-	{
-		findNextNoneWhiteSpaceNumber();
-		normals[i].X = readFloat();
-		++P;
-		normals[i].Y = readFloat();
-		++P;
-		normals[i].Z = readFloat();
-	}
+		readVector3(normals[i]);
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -1312,12 +1275,7 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 	textureCoords.set_used(nCoords);
 
 	for (s32 i=0; i<nCoords; ++i)
-	{
-		findNextNoneWhiteSpaceNumber();
-		textureCoords[i].X = readFloat();
-		++P; 
-		textureCoords[i].Y = readFloat();
-	}
+		readVector2(textureCoords[i]);
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -1522,42 +1480,29 @@ CXFileReader::SXFrame& CXFileReader::getRootFrame()
 }
 
 
-void CXFileReader::computeGlobalFrameMatrizes(SXFrame& frame, SXFrame* parent)
+void CXFileReader::computeGlobalFrameMatrices(SXFrame& frame, const SXFrame* const parent)
 {
-    if (!parent)
+	if (!parent)
 		frame.GlobalMatrix = frame.LocalMatrix;
 	else
 		frame.GlobalMatrix = parent->GlobalMatrix * frame.LocalMatrix;
 
 #ifdef _XREADER_DEBUG
-	if (frame.Name != "")
+	char tmp[255];
+	sprintf(tmp, "CXFileReader: Frame %s ", frame.Name);
+	os::Printer::log(tmp);
+	for (int i=0; i<4; ++i)
 	{
-		char tmp[255];
-		sprintf(tmp, "CXFileReader: Frame %s ", frame.Name);
+		sprintf(tmp, "    %f, %f, %f, %f", 
+			frame.LocalMatrix(i,0), 
+			frame.LocalMatrix(i,1),
+			frame.LocalMatrix(i,2),
+			frame.LocalMatrix(i,3));
 		os::Printer::log(tmp);
-		for (int i=0; i<4; ++i)
-		{
-			sprintf(tmp, "    %f, %f, %f, %f", 
-				frame.LocalMatrix(i,0), 
-				frame.LocalMatrix(i,1),
-				frame.LocalMatrix(i,2),
-				frame.LocalMatrix(i,3));
-			os::Printer::log(tmp);
-		}
 	}
 #endif
-
-	/*if (frame.Name == "")
-	{
-		// frames without name or with mesh data in them (not sure exactly)
-		// seem to have to be ignored. TODO: check this out
-
-		for (u32 c=0; c<frame.ChildFrames.size(); ++c)
-			computeGlobalFrameMatrizes(frame.ChildFrames[c], parent);
-	}
-	else*/
 	for (u32 c=0; c<frame.ChildFrames.size(); ++c)
-		computeGlobalFrameMatrizes(frame.ChildFrames[c], &frame);
+		computeGlobalFrameMatrices(frame.ChildFrames[c], &frame);
 }
 
 inline s32 CXFileReader::readInt()
@@ -1572,6 +1517,51 @@ inline f32 CXFileReader::readFloat()
 	f32 ftmp;
 	P = core::fast_atof_move(P, ftmp);
 	return ftmp;
+}
+
+bool CXFileReader::readVector2(core::vector2df& vec)
+{
+	findNextNoneWhiteSpaceNumber();
+	vec.X = readFloat();
+	++P;
+	vec.Y = readFloat();
+	return true;
+}
+
+bool CXFileReader::readVector3(core::vector3df& vec)
+{
+	findNextNoneWhiteSpaceNumber();
+	vec.X = readFloat();
+	++P;
+	vec.Y = readFloat();
+	++P;
+	vec.Z = readFloat();
+	return true;
+}
+
+bool CXFileReader::readRGB(video::SColorf& color)
+{
+	color.a = 1.0f;
+	findNextNoneWhiteSpaceNumber();		
+	color.r = readFloat();
+	findNextNoneWhiteSpaceNumber();		
+	color.g = readFloat();
+	findNextNoneWhiteSpaceNumber();		
+	color.b = readFloat();
+	return checkForTwoFollowingSemicolons();
+}
+
+bool CXFileReader::readRGBA(video::SColorf& color)
+{
+	findNextNoneWhiteSpaceNumber();
+	color.a = readFloat();
+	findNextNoneWhiteSpaceNumber();		
+	color.r = readFloat();
+	findNextNoneWhiteSpaceNumber();		
+	color.g = readFloat();
+	findNextNoneWhiteSpaceNumber();		
+	color.b = readFloat();
+	return checkForTwoFollowingSemicolons();
 }
 
 } // end namespace scene
