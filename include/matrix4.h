@@ -618,7 +618,7 @@ namespace core
 	inline void matrix4::buildProjectionMatrixPerspectiveFovRH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
 	    f32 h = (f32)(cos(fieldOfViewRadians/2) / sin(fieldOfViewRadians/2));
-		f32 w = h / aspectRatio;
+		f32 w = h * aspectRatio;
 
 		(*this)(0,0) = 2*zNear/w;
 		(*this)(1,0) = 0;
@@ -647,7 +647,7 @@ namespace core
 	inline void matrix4::buildProjectionMatrixPerspectiveFovLH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
 		f32 h = (f32)(cos(fieldOfViewRadians/2) / sin(fieldOfViewRadians/2));
-		f32 w = h / aspectRatio;
+		f32 w = h * aspectRatio;
 
 		(*this)(0,0) = 2*zNear/w;
 		(*this)(1,0) = 0;
