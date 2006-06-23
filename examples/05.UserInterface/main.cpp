@@ -213,9 +213,12 @@ int main()
 	env->addStaticText(L"Transparent Control:", rect<s32>(150,20,350,40), true);
 	IGUIScrollBar* scrollbar = env->addScrollBar(true, rect<s32>(150, 45, 350, 60), 0, 104);
 	scrollbar->setMax(255);
+	// set scrollbar position to alpha value of an arbitrary element
+	scrollbar->setPos(env->getSkin()->getColor((EGUI_DEFAULT_COLOR)0).getAlpha());
 
 	env->addStaticText(L"Logging ListBox:", rect<s32>(50,80,250,100), true);
 	listbox = env->addListBox(rect<s32>(50, 110, 250, 180));
+	env->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
 
 	/*
 	That's all, we only have to draw everything.
