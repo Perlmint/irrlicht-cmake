@@ -143,6 +143,7 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 	Buffer = new c8[Size];
 	
 	//! read all into memory
+	file->seek(0); // apparently sometimes files have been read already, so reset it
 	if (file->read(Buffer, Size) != Size)
 	{
 		os::Printer::log("Could not read from x file.", ELL_WARNING);
@@ -151,15 +152,14 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 
 	End = Buffer + Size;
 
-	//! check header xof 0302
-	if (Buffer[0] != 'x' || Buffer[1] != 'o' ||
-		Buffer[2] != 'f' || Buffer[3] != ' ')
+	//! check header "xof "
+	if (strncmp(Buffer, "xof ", 4)!=0)
 	{
 		os::Printer::log("Not an x file, wrong header.", ELL_WARNING);
 		return false;
 	}
 
-	//! read minor and major version
+	//! read minor and major version, e.g. 0302 or 0303
 	c8 tmp[3];
 	tmp[2] = 0x0;
 	tmp[0] = Buffer[4];
@@ -418,7 +418,6 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 	}
 
 	// read vertex count
-	findNextNoneWhiteSpaceNumber();
 	s32 nVertices = readInt();
 
 	// read vertices
@@ -465,10 +464,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 		numRead = 1;
 	}
 	else
-	{
-		findNextNoneWhiteSpaceNumber();
-		nFaces = strtol(P, &P, 10);
-	}
+		nFaces = readInt();
 
 	mesh.Indices.set_used(nFaces * 3);
 	mesh.IndexCountPerFace.set_used(nFaces);
@@ -485,10 +481,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 			++numRead;
 		}
 		else
-		{
-			findNextNoneWhiteSpaceNumber();
-			fcnt = strtol(P, &P, 10);
-		}
+			fcnt = readInt();
 
 		if (fcnt != 3)
 		{
@@ -513,8 +506,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 				}
 				else
 				{
-					++P;
-					polygonfaces[f] = strtol(P, &P, 10);
+					polygonfaces[f] = readInt();
 				}
 			}
 
@@ -538,12 +530,9 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 			}
 			else
 			{
-				++P;
-				mesh.Indices[currentIndex++] = strtol(P, &P, 10);
-				++P;
-				mesh.Indices[currentIndex++] = strtol(P, &P, 10);
-				++P;
-				mesh.Indices[currentIndex++] = strtol(P, &P, 10);
+				mesh.Indices[currentIndex++] = readInt();
+				mesh.Indices[currentIndex++] = readInt();
+				mesh.Indices[currentIndex++] = readInt();
 			}
 			mesh.IndexCountPerFace[k] = 3;
 		}
@@ -650,27 +639,19 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 
 	// read vertex weights
 
-	findNextNoneWhiteSpaceNumber();
-	s32 nWeights = strtol(P, &P, 10);
-
+	s32 nWeights = readInt();
 	weights.Weights.set_used(nWeights);
 
 	// read vertex indices
 
 	s32 i;
 	for (i=0; i<nWeights; ++i)
-	{
-		findNextNoneWhiteSpaceNumber();
-		weights.Weights[i].VertexIndex = strtol(P, &P, 10);
-	}
+		weights.Weights[i].VertexIndex = readInt();
 
 	// read vertex weights
 
 	for (i=0; i<nWeights; ++i)
-	{
-		findNextNoneWhiteSpaceNumber();
 		weights.Weights[i].Weight = readFloat();
-	}
 
 	// sort weights
 
@@ -680,13 +661,8 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 	// read matrix offset
 
 	for (i=0; i<4; ++i)
-	{
 		for (s32 j=0; j<4; ++j)
-		{
-			findNextNoneWhiteSpaceNumber();
 			weights.MatrixOffset(j,i) = readFloat();
-		}
-	}
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -702,7 +678,7 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 	}
 	++P;
 
-    return true;
+	return true;
 }
 
 
@@ -718,12 +694,9 @@ bool CXFileReader::parseDataObjectSkinMeshHeader(SXSkinMeshHeader& header)
 		return false;
 	}
 
-	findNextNoneWhiteSpaceNumber();
-	header.MaxSkinWeightsPerVertex = strtol(P, &P, 10);
-	findNextNoneWhiteSpaceNumber();
-	header.MaxSkinWeightsPerFace = strtol(P, &P, 10);
-	findNextNoneWhiteSpaceNumber();
-	header.BoneCount = strtol(P, &P, 10);
+	header.MaxSkinWeightsPerVertex = readInt();
+	header.MaxSkinWeightsPerFace = readInt();
+	header.BoneCount = readInt();
 	++P;
 
 	core::stringc objectName = getNextToken();
@@ -769,10 +742,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 		numRead=1;
 	}
 	else
-	{
-		findNextNoneWhiteSpaceNumber();
-		nMaterials = strtol(P, &P, 10);
-	}
+		nMaterials = readInt();
 
 	// read non triangulated face material index count
 	s32 nFaceIndices;
@@ -782,10 +752,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 		++numRead;
 	}
 	else
-	{
-		findNextNoneWhiteSpaceNumber();
-		nFaceIndices = strtol(P, &P, 10);
-	}
+		nFaceIndices = readInt();
 
 	// read non triangulated face indices
 
@@ -801,8 +768,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 		}
 		else
 		{
-			findNextNoneWhiteSpaceNumber();
-			nonTriFaceIndices[i] = strtol(P, &P, 10);
+			nonTriFaceIndices[i] = readInt();
 			++P;
 		}
 	}
@@ -911,7 +877,6 @@ bool CXFileReader::parseDataObjectMaterial(SXMaterial& material)
 	readRGBA(material.FaceColor);
 
 	// read power
-	findNextNoneWhiteSpaceNumber();		
 	material.Power = readFloat();
 
 	// read specular
@@ -1154,13 +1119,9 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 					return false;
 				}
 
-				++P; 
 				animkey.getQuaternion(i).W = -readFloat();
-				++P;
 				animkey.getQuaternion(i).X = -readFloat();
-				++P;
 				animkey.getQuaternion(i).Y = -readFloat();
-				++P;
 				animkey.getQuaternion(i).Z = -readFloat();
 
 				
@@ -1227,10 +1188,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 				// read matrix
 				for (s32 n=0; n<4; ++n)
 					for (s32 m=0; m<4; ++m)
-					{
-						findNextNoneWhiteSpaceNumber();
 						animkey.getMatrix(i)(m,n) = readFloat();
-					}
 
 				if (!checkForTwoFollowingSemicolons())
 				{
@@ -1326,13 +1284,7 @@ bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& norm
 	// read count
 	s32 nNormals;
 	s32 count;
-	if (binary)
-		nNormals = readInt();
-	else
-	{
-		findNextNoneWhiteSpaceNumber();
-		nNormals = strtol(P, &P, 10);
-	}
+	nNormals = readInt();
 	normals.set_used(nNormals);
 
 	// read normals
@@ -1493,9 +1445,9 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 	s32 nCoords;
 	u32 count;
 	u32 numRead;
+	nCoords = readInt();
 	if (binary)
 	{
-		nCoords = readInt();
 		if (readBinWord() != 7)
 		{
 			os::Printer::log("Binary X: MeshTextureCoords: Expecting float list", ELL_WARNING);
@@ -1503,11 +1455,6 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 		}
 		count = readBinDWord();
 		numRead=0;
-	}
-	else
-	{
-		findNextNoneWhiteSpaceNumber();
-		nCoords = strtol(P, &P, 10);
 	}
 	textureCoords.set_used(nCoords);
 
@@ -1838,10 +1785,11 @@ inline s32 CXFileReader::readInt()
 	if (binary)
 	{
 		readBinWord();
-		readBinDWord();
+		readBinDWord(); // This should only exist for Integer lists !?
 		return readBinDWord();
 	}
 	f32 ftmp;
+	findNextNoneWhiteSpaceNumber();
 	P = core::fast_atof_move(P, ftmp);
 	return (s32)ftmp;
 }
@@ -1865,65 +1813,45 @@ inline f32 CXFileReader::readFloat()
 			return *(f32 *)tmp;
 		}
 	}
+	findNextNoneWhiteSpaceNumber();
 	f32 ftmp;
 	P = core::fast_atof_move(P, ftmp);
 	return ftmp;
 }
 
+// read 2-dimensional vector. Stops at semicolon after second value for text file format
 bool CXFileReader::readVector2(core::vector2df& vec)
 {
-	if (binary)
-	{
-		vec.X = readFloat();
-		vec.Y = readFloat();
-		return true;
-	}
-	findNextNoneWhiteSpaceNumber();
 	vec.X = readFloat();
-	++P;
 	vec.Y = readFloat();
 	return true;
 }
 
+// read 3-dimensional vector. Stops at semicolon after third value for text file format
 bool CXFileReader::readVector3(core::vector3df& vec)
 {
-	if (binary)
-	{
-		vec.X = readFloat();
-		vec.Y = readFloat();
-		vec.Z = readFloat();
-		return true;
-	}
-	findNextNoneWhiteSpaceNumber();
 	vec.X = readFloat();
-	++P;
 	vec.Y = readFloat();
-	++P;
 	vec.Z = readFloat();
 	return true;
 }
 
+// read color without alpha value. Stops after second semicolon after blue value
 bool CXFileReader::readRGB(video::SColorf& color)
 {
 	color.a = 1.0f;
-	findNextNoneWhiteSpaceNumber();		
 	color.r = readFloat();
-	findNextNoneWhiteSpaceNumber();		
 	color.g = readFloat();
-	findNextNoneWhiteSpaceNumber();		
 	color.b = readFloat();
 	return checkForTwoFollowingSemicolons();
 }
 
+// read color with alpha value. Stops after second semicolon after blue value
 bool CXFileReader::readRGBA(video::SColorf& color)
 {
-	findNextNoneWhiteSpaceNumber();
 	color.a = readFloat();
-	findNextNoneWhiteSpaceNumber();		
 	color.r = readFloat();
-	findNextNoneWhiteSpaceNumber();		
 	color.g = readFloat();
-	findNextNoneWhiteSpaceNumber();		
 	color.b = readFloat();
 	return checkForTwoFollowingSemicolons();
 }
