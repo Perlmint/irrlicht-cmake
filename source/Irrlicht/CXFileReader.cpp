@@ -5,6 +5,7 @@
 #include "CXFileReader.h"
 #include "os.h"
 #include "fast_atof.h"
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <cstring>
@@ -180,6 +181,7 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 		os::Printer::log("Only uncompressed x files currently supported.", ELL_WARNING);
 		return false;
 	}
+	binaryNumCount=0;
 
 	//! read float size
 	if (strncmp(&Buffer[12], "0032", 4) ==0)
@@ -207,7 +209,7 @@ bool CXFileReader::parseFile()
 		// loop
 	}
 
-    return true;
+	return true;
 }
 
 
@@ -333,12 +335,25 @@ bool CXFileReader::parseDataObjectTransformationMatrix(core::matrix4 &mat)
 		return false;
 	}
 
+	if (binary)
+	{
+		// read matrix in binary format
+		if (readBinWord() != 7)
+		{
+			os::Printer::log("Binary X: Mesh: Expecting float list (for matrix)", ELL_WARNING);
+			return false;
+		}
+		
+		if (readBinDWord() != 0x10)
+		{
+			os::Printer::log("Binary X: Mesh: Should be 16 floats in matrix", ELL_WARNING);
+			return false;
+		}
+	}
+
 	for (s32 i=0; i<4; ++i)
 		for (s32 j=0; j<4; ++j)
-		{
-			findNextNoneWhiteSpaceNumber();
-			P = core::fast_atof_move(P, mat(j,i));
-		}
+			mat(j,i)=readFloat();
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -346,13 +361,11 @@ bool CXFileReader::parseDataObjectTransformationMatrix(core::matrix4 &mat)
 		return false;
 	}
 
-	findNextNoneWhiteSpace();
-	if (P[0] != '}')
+	if (getNextToken() != "}")
 	{
 		os::Printer::log("No closing brace in Transformation Matrix found in x file", ELL_WARNING);
 		return false;
 	}
-	++P;
 
 	return true;
 }
@@ -368,32 +381,21 @@ bool CXFileReader::parseDataObjectTemplate()
 	core::stringc name = getNextToken();
 
 	// ignore left delimiter
-	if (binary)
+	if (getNextToken() != "{")
 	{
-		if (readBinWord() != 10)
-		{
-			os::Printer::log("Left delimiter in template data object missing.", 
-				name.c_str(), ELL_ERROR);
-			return false;
-		}
+		os::Printer::log("Left delimiter in template data object missing.", 
+			name.c_str(), ELL_ERROR);
+		return false;
 	}
-	else
-	{
-		if (getNextToken() != "{")
-		{
-			os::Printer::log("Left delimiter in template data object missing.", 
-				name.c_str(), ELL_ERROR);
-			return false;
-		}
 
-		// read UUID
-		core::stringc uuid = getNextToken();
-	}
+	// read GUID
+	core::stringc guid = getNextToken();
 	
 	// read and ignore data members
 	while(true)
 	{
 		core::stringc s = getNextToken();
+
 		if (s == "}")
 			break;
 
@@ -450,21 +452,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 	}
 
 	// read faces
-	s32 numRead = 0;
-	s32 nFaces;
-
-	if (binary)
-	{
-		if (readBinWord() != 6) {
-			os::Printer::log("Binary X: Mesh: Expecting integer list (for face data)", ELL_WARNING);
-			return false;
-		}
-		count = readBinDWord();
-		nFaces = readBinDWord();
-		numRead = 1;
-	}
-	else
-		nFaces = readInt();
+	s32 nFaces = readInt();
 
 	mesh.Indices.set_used(nFaces * 3);
 	mesh.IndexCountPerFace.set_used(nFaces);
@@ -474,14 +462,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 	
 	for (s32 k=0; k<nFaces; ++k)
 	{
-		s32 fcnt;
-		if (binary)
-		{
-			fcnt = readBinDWord();
-			++numRead;
-		}
-		else
-			fcnt = readInt();
+		s32 fcnt = readInt();
 
 		if (fcnt != 3)
 		{
@@ -498,17 +479,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 			mesh.IndexCountPerFace[k] = triangles * 3;
 
 			for (int f=0; f<fcnt; ++f)
-			{
-				if (binary)
-				{
-					polygonfaces[f] = readBinDWord();
-					++numRead;
-				}
-				else
-				{
-					polygonfaces[f] = readInt();
-				}
-			}
+				polygonfaces[f] = readInt();
 
 			for (s32 jk=0; jk<triangles; ++jk)
 			{
@@ -521,24 +492,14 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 		}
 		else
 		{
-			if (binary)
-			{
-				mesh.Indices[currentIndex++] = readBinDWord();
-				mesh.Indices[currentIndex++] = readBinDWord();
-				mesh.Indices[currentIndex++] = readBinDWord();
-				numRead+=3;
-			}
-			else
-			{
-				mesh.Indices[currentIndex++] = readInt();
-				mesh.Indices[currentIndex++] = readInt();
-				mesh.Indices[currentIndex++] = readInt();
-			}
+			mesh.Indices[currentIndex++] = readInt();
+			mesh.Indices[currentIndex++] = readInt();
+			mesh.Indices[currentIndex++] = readInt();
 			mesh.IndexCountPerFace[k] = 3;
 		}
 	}
 
-	if (binary && (numRead != count))
+	if (binary && binaryNumCount)
 	{
 		os::Printer::log("Binary X: Mesh: Integer count mismatch", ELL_WARNING);
 		return false;
@@ -612,9 +573,8 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 			if (!parseUnknownDataObject())
 				return false;
 		}
-
 	}
-		
+
 	return true;
 }
 
@@ -644,13 +604,27 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 
 	// read vertex indices
 
-	s32 i;
-	for (i=0; i<nWeights; ++i)
+	for (s32 i=0; i<nWeights; ++i)
 		weights.Weights[i].VertexIndex = readInt();
 
 	// read vertex weights
 
-	for (i=0; i<nWeights; ++i)
+	if (binary)
+	{
+		// read float list in binary format
+		if (readBinWord() != 7)
+		{
+			os::Printer::log("Binary X: Mesh: Expecting float list (for SkinWeights)", ELL_WARNING);
+			return false;
+		}
+		
+		if (readBinDWord() != nWeights+16)
+		{
+			os::Printer::log("Binary X: Mesh: Wrong number of floats", ELL_WARNING);
+			return false;
+		}
+	}
+	for (s32 i=0; i<nWeights; ++i)
 		weights.Weights[i].Weight = readFloat();
 
 	// sort weights
@@ -660,8 +634,8 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 
 	// read matrix offset
 
-	for (i=0; i<4; ++i)
-		for (s32 j=0; j<4; ++j)
+	for (u32 i=0; i<4; ++i)
+		for (u32 j=0; j<4; ++j)
 			weights.MatrixOffset(j,i) = readFloat();
 
 	if (!checkForTwoFollowingSemicolons())
@@ -670,13 +644,11 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 		return false;
 	}
 
-	findNextNoneWhiteSpace();
-	if (P[0] != '}')
+	if (getNextToken() != "}")
 	{
 		os::Printer::log("No closing brace in Skin Weights found in x file", ELL_WARNING);
 		return false;
 	}
-	++P;
 
 	return true;
 }
@@ -697,8 +669,8 @@ bool CXFileReader::parseDataObjectSkinMeshHeader(SXSkinMeshHeader& header)
 	header.MaxSkinWeightsPerVertex = readInt();
 	header.MaxSkinWeightsPerFace = readInt();
 	header.BoneCount = readInt();
-	++P;
-
+	if (!binary)
+		getNextToken(); // skip semicolon
 	core::stringc objectName = getNextToken();
 
 	if (objectName != "}")
@@ -725,34 +697,11 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 		return false;
 	}
 
-	u32 count=0;
-	u32 numRead = 0;
-
 	// read material count
-	s32 nMaterials;
-	if (binary)
-	{
-		if (readBinWord() != 6)
-		{
-			os::Printer::log("Binary X: MeshMaterialList: Expecting integer list", ELL_WARNING);
-			return false;
-		}
-		count = readBinDWord();
-		nMaterials = readBinDWord();
-		numRead=1;
-	}
-	else
-		nMaterials = readInt();
+	s32 nMaterials = readInt();
 
 	// read non triangulated face material index count
-	s32 nFaceIndices;
-	if (binary)
-	{
-		nFaceIndices = readBinDWord();
-		++numRead;
-	}
-	else
-		nFaceIndices = readInt();
+	s32 nFaceIndices = readInt();
 
 	// read non triangulated face indices
 
@@ -760,18 +709,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 	nonTriFaceIndices.set_used(nFaceIndices);
 
 	for (s32 i=0; i<nFaceIndices; ++i)
-	{
-		if (binary)
-		{
-			nonTriFaceIndices[i] = readBinDWord();
-			++numRead;
-		}
-		else
-		{
-			nonTriFaceIndices[i] = readInt();
-			++P;
-		}
-	}
+		nonTriFaceIndices[i] = readInt();
 
 	// create triangulated face indices
 
@@ -788,7 +726,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 			mlist.FaceIndices[triangulatedindex++] = nonTriFaceIndices[tfi];
 
 	// in version 03.02, the face indices end with two semicolons.
-	if (MajorVersion == 3 && MinorVersion <= 2)
+	if (!binary && MajorVersion == 3 && MinorVersion <= 2)
 	{
 		if (P[0] == ';')
 			++P;
@@ -924,6 +862,11 @@ bool CXFileReader::parseDataObjectMaterial(SXMaterial& material)
 //! reads a x file style string
 bool CXFileReader::getNextTokenAsString(core::stringc& out)
 {
+	if (binary)
+	{
+		out=getNextToken();
+		return true;
+	}
 	findNextNoneWhiteSpace();
 
 	if (P >= End)
@@ -1082,20 +1025,16 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 	}
 
 	// read key type
-	findNextNoneWhiteSpaceNumber();
-	animkey.keyType = strtol(P, &P, 10);
+	animkey.keyType = readInt();
 
-	if (!(animkey.keyType == 0 || animkey.keyType == 1 || 
-		animkey.keyType == 2 || animkey.keyType == 3 ||
-		animkey.keyType == 4))
+	if ((animkey.keyType < 0) || (animkey.keyType > 4))
 	{
 		os::Printer::log("Unknown key type found in Animation Key in x file", ELL_WARNING);
 		return false;
 	}
 
 	// read number of keys
-	findNextNoneWhiteSpaceNumber();
-	animkey.numberOfKeys = strtol(P, &P, 10);
+	animkey.numberOfKeys = readInt();
 
 	animkey.init();	
 
@@ -1108,30 +1047,39 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 			for (s32 i=0; i<animkey.numberOfKeys; ++i)
 			{
 				// read time
-				findNextNoneWhiteSpaceNumber();
-				animkey.time[i] = strtol(P, &P, 10);
+				animkey.time[i] = readInt();
 
 				// read count
-				++P;
-				if (strtol(P, &P, 10) != 4)
+				if (readInt() != 4)
 				{
 					os::Printer::log("Expected 4 numbers in animation key in x file", ELL_WARNING);
 					return false;
 				}
 
+				if (binary)
+				{
+					if (readBinWord() != 7)
+					{
+						os::Printer::log("Binary X: Animation Key: Expecting float list", ELL_WARNING);
+						return false;
+					}
+					
+					if (readBinDWord() != 4)
+					{
+						os::Printer::log("Binary X: Animation Key : Value count not correct", ELL_WARNING);
+						return false;
+					}
+				}
 				animkey.getQuaternion(i).W = -readFloat();
 				animkey.getQuaternion(i).X = -readFloat();
 				animkey.getQuaternion(i).Y = -readFloat();
 				animkey.getQuaternion(i).Z = -readFloat();
 
-				
 				if (!checkForTwoFollowingSemicolons())
 				{
-					os::Printer::log("No following two semicolons missing after quaternion animation key in x file", ELL_WARNING);
+					os::Printer::log("No finishing semicolon after quaternion animation key in x file", ELL_WARNING);
 					return false;
 				}
-
-				P+=3;
 			}
 		}
 		break;
@@ -1142,27 +1090,36 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 			for (s32 i=0; i<animkey.numberOfKeys; ++i)
 			{
 				// read time
-				findNextNoneWhiteSpaceNumber();
-				animkey.time[i] = strtol(P, &P, 10);
+				animkey.time[i] = readInt();
 
 				// read count
-				++P;
-				if (strtol(P, &P, 10) != 3)
+				if (readInt() != 3)
 				{
 					os::Printer::log("Expected 3 numbers in animation key in x file", ELL_WARNING);
 					return false;
 				}
 
-				++P; 
+				if (binary)
+				{
+					if (readBinWord() != 7)
+					{
+						os::Printer::log("Binary X: Animation Key: Expecting float list", ELL_WARNING);
+						return false;
+					}
+					
+					if (readBinDWord() != 3)
+					{
+						os::Printer::log("Binary X: Animation Key : Value count not correct", ELL_WARNING);
+						return false;
+					}
+				}
 				readVector3(animkey.getVector(i));
 
 				if (!checkForTwoFollowingSemicolons())
 				{
-					os::Printer::log("No following two semicolons missing after vector animation key in x file", ELL_WARNING);
+					os::Printer::log("No finishing semicolon after vector animation key in x file", ELL_WARNING);
 					return false;
 				}
-
-				P+=3;
 			}
 		}
 		break;
@@ -1170,39 +1127,49 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 	case 4:
 		{
 			// read matrix
-
 			for (s32 i=0; i<animkey.numberOfKeys; ++i)
 			{
 				// read time
-				findNextNoneWhiteSpaceNumber();
-				animkey.time[i] = strtol(P, &P, 10);
+				animkey.time[i] = readInt();
 
 				// read count
-				++P;
-				if (strtol(P, &P, 10) != 16)
+				if (readInt() != 16)
 				{
 					os::Printer::log("Expected 16 numbers in animation key in x file", ELL_WARNING);
 					return false;
 				}
 
 				// read matrix
+				if (binary)
+				{
+					if (readBinWord() != 7)
+					{
+						os::Printer::log("Binary X: Animation Key: Expecting float list", ELL_WARNING);
+						return false;
+					}
+					
+					if (readBinDWord() != 16)
+					{
+						os::Printer::log("Binary X: Animation Key : Value count not correct", ELL_WARNING);
+						return false;
+					}
+				}
 				for (s32 n=0; n<4; ++n)
 					for (s32 m=0; m<4; ++m)
 						animkey.getMatrix(i)(m,n) = readFloat();
 
 				if (!checkForTwoFollowingSemicolons())
 				{
-					os::Printer::log("No following two semicolons missing after matrix animation key in x file", ELL_WARNING);
+					os::Printer::log("No finishing semicolon after matrix animation key in x file", ELL_WARNING);
 					return false;
 				}
-
-				P+=3;
 			}
 		}
 		break;
 	} // end switch
 
-
+	if (!binary)
+		getNextToken(); // skip another semicolon
 	core::stringc objectName = getNextToken();
 
 	if (objectName != "}")
@@ -1227,39 +1194,16 @@ bool CXFileReader::parseDataObjectTextureFilename(core::stringc& texturename)
 		return false;
 	}
 
-	if (binary)
+	if (!getNextTokenAsString(texturename))
 	{
-		u32 len;
-		if (readBinWord() != 2)
-		{
-			os::Printer::log("Binary X: TextureFilename: Expecting string", ELL_WARNING);
-			return false;
-		}
-		len = readBinDWord();
-		texturename = core::stringc(P, len);
-		P += (len + 2);
-
-		if (readBinWord() != 11)
-		{
-			os::Printer::log("Binary X: TextureFilename: No closing brace", ELL_WARNING);
-			return false;
-		}
+		os::Printer::log("Unknown syntax while reading texture filename string in x file", ELL_WARNING);
+		return false;
 	}
-	else
-	{
-		if (!getNextTokenAsString(texturename))
-		{
-			os::Printer::log("Unknown syntax while reading texture filename string in x file", ELL_WARNING);
-			return false;
-		}
 
-		findNextNoneWhiteSpace();
-		if (P[0] != '}')
-		{
-			os::Printer::log("No closing brace in Texture filename found in x file", ELL_WARNING);
-			return false;
-		}
-		++P;
+	if (getNextToken() != "}")
+	{
+		os::Printer::log("No closing brace in Texture filename found in x file", ELL_WARNING);
+		return false;
 	}
 
 	return true;
@@ -1312,41 +1256,14 @@ bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& norm
 	}
 
 	// read face normal indices
-	s32 nFNormals;
-	s32 numRead=0;
-	if (binary)
-	{
-		if (readBinWord() != 6)
-		{
-			os::Printer::log("Binary X: MeshNormals: Expect integer list (face normal indices)", ELL_WARNING);
-			return false;
-		}
-		count = readBinDWord();
-		nFNormals = readBinDWord();
-		numRead=1;
-	}
-	else
-	{
-		findNextNoneWhiteSpaceNumber();
-		nFNormals = strtol(P, &P, 10);
-	}
+	s32 nFNormals = readInt();
 	normalIndices.set_used(triangulatedIndexCount);
 
 	s32 normalidx = 0;
 	core::array<s32> polygonfaces;
 	for (s32 k=0; k<nFNormals; ++k)
 	{
-		s32 fcnt;
-		if (binary)
-		{
-			fcnt = readBinDWord();
-			++numRead;
-		}
-		else
-		{
-			findNextNoneWhiteSpaceNumber();
-			fcnt = strtol(P, &P, 10);
-		}
+		s32 fcnt = readInt();
 		s32 triangles = fcnt - 2;
 		s32 indexcount = triangles * 3;
 
@@ -1360,18 +1277,7 @@ bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& norm
 		{
 			// default, only one triangle in this face
 			for (s32 h=0; h<3; ++h)
-			{
-				if (binary)
-				{
-					normalIndices[normalidx++] = readBinDWord();
-					++numRead;
-				}
-				else
-				{
-					++P;
-					normalIndices[normalidx++] = strtol(P, &P, 10);
-				}
-			}
+				normalIndices[normalidx++] = readInt();
 		}
 		else
 		{
@@ -1379,18 +1285,7 @@ bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& norm
 			polygonfaces.set_used(fcnt);
 
 			for (s32 h=0; h<fcnt; ++h)
-			{
-				if (binary)
-				{
-					polygonfaces[h] = readBinDWord();
-					++numRead;
-				}
-				else
-				{
-					++P;
-					polygonfaces[h] = strtol(P, &P, 10);
-				}
-			}
+				polygonfaces[h] = readInt();
 
 			for (s32 jk=0; jk<triangles; ++jk)
 			{
@@ -1401,28 +1296,15 @@ bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& norm
 		}
 	}
 
-	if (binary)
+	if (!checkForTwoFollowingSemicolons())
 	{
-		if (readBinWord() != 11)
-		{
-			os::Printer::log("Binary X: MeshNormals: Missing closing brace", ELL_WARNING);
-			return false;
-		}
+		os::Printer::log("No finishing semicolon in Mesh Face Normals Array found in x file", ELL_WARNING);
+		return false;
 	}
-	else
+	if (getNextToken() != "}")
 	{
-		if (!checkForTwoFollowingSemicolons())
-		{
-			os::Printer::log("No finishing semicolon in Mesh Face Normals Array found in x file", ELL_WARNING);
-			return false;
-		}
-		findNextNoneWhiteSpace();
-		if (P[0] != '}')
-		{
-			os::Printer::log("No closing brace in Mesh Normals found in x file", ELL_WARNING);
-			return false;
-		}
-		++P;
+		os::Printer::log("No closing brace in Mesh Normals found in x file", ELL_WARNING);
+		return false;
 	}
 
 	return true;
@@ -1444,7 +1326,6 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 
 	s32 nCoords;
 	u32 count;
-	u32 numRead;
 	nCoords = readInt();
 	if (binary)
 	{
@@ -1454,36 +1335,22 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 			return false;
 		}
 		count = readBinDWord();
-		numRead=0;
 	}
 	textureCoords.set_used(nCoords);
 
 	for (s32 i=0; i<nCoords; ++i)
 		readVector2(textureCoords[i]);
 
-	if (binary)
+	if (!checkForTwoFollowingSemicolons())
 	{
-		if (readBinWord() != 11)
-		{
-			os::Printer::log("Binary X: MeshTextureCoords: Missing closing brace in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
-			return false;
-		}
+		os::Printer::log("No finishing semicolon in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
+		return false;
 	}
-	else
-	{
-		if (!checkForTwoFollowingSemicolons())
-		{
-			os::Printer::log("No finishing semicolon in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
-			return false;
-		}
 
-		findNextNoneWhiteSpace();
-		if (P[0] != '}')
-		{
-			os::Printer::log("No closing brace in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
-			return false;
-		}
-		++P;
+	if (getNextToken() != "}")
+	{
+		os::Printer::log("No closing brace in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
+		return false;
 	}
 
 	return true;
@@ -1564,8 +1431,8 @@ bool CXFileReader::readHeadOfDataObject(core::stringc* outname)
 			return true;
 		}
 
-		nameOrBrace = getNextToken();
-		if (nameOrBrace != "{")
+		
+		if (getNextToken() != "{")
 			return false;
 	}
 
@@ -1617,12 +1484,54 @@ core::stringc CXFileReader::getNextToken()
 				len = readBinDWord();
 				P += (len * FloatSize);
 				return "<flt_list>";
-			case 10:
+			case 0x0a:
 				return "{";
-			case 11:
+			case 0x0b:
 				return "}";
-			case 31:
+			case 0x0c:
+				return "(";
+			case 0x0d:
+				return ")";
+			case 0x0e:
+				return "[";
+			case 0x0f:
+				return "]";
+			case 0x10:
+				return "<";
+			case 0x11:
+				return ">";
+			case 0x12:
+				return ".";
+			case 0x13:
+				return ",";
+			case 0x14:
+				return ";";
+			case 0x1f:
 				return "template";
+			case 0x28:
+				return "WORD";
+			case 0x29:
+				return "DWORD";
+			case 0x2a:
+				return "FLOAT";
+			case 0x2b:
+				return "DOUBLE";
+			case 0x2c:
+				return "CHAR";
+			case 0x2d:
+				return "UCHAR";
+			case 0x2e:
+				return "SWORD";
+			case 0x2f:
+				return "SDWORD";
+			case 0x30:
+				return "void";
+			case 0x31:
+				return "string";
+			case 0x32:
+				return "unicode";
+			case 0x34:
+				return "array";
 		}
 	}
 	// process text-formatted file
@@ -1633,7 +1542,7 @@ core::stringc CXFileReader::getNextToken()
 		if (P >= End)
 			return s;
 
-		while(P < End && P[0]!=' ' && P[0]!='\n' && P[0]!='\r' && P[0]!='\t')
+		while(P < End && !isspace(P[0]))
 		{
 			s.append(P[0]);
 			++P;		
@@ -1652,17 +1561,15 @@ void CXFileReader::findNextNoneWhiteSpaceNumber()
 
 	while(1)
 	{
-		while(P < End && P[0]!='-' &&
-				((P[0]==' ' || P[0]=='\n' || P[0]=='\r' || P[0]=='\t') ||
-				  (P[0] < '0' || P[0] > '9')))
+		while((P < End) && (P[0] != '-') && (P[0] != '.') &&
+				!(isdigit(P[0])))
 			++P;
 
 		if (P >= End)
 			return;
 
 		// check if this is a comment
-		if ((P[0] == '/' && P[1] == '/') ||
-			P[0] == '#')
+		if ((P[0] == '/' && P[1] == '/') || P[0] == '#')
 			readUntilEndOfLine();
 		else
 			break;
@@ -1784,14 +1691,21 @@ inline s32 CXFileReader::readInt()
 {
 	if (binary)
 	{
-		readBinWord();
-		readBinDWord(); // This should only exist for Integer lists !?
+		if (!binaryNumCount)
+		{
+			readBinWord(); // 0x06
+			binaryNumCount=readBinDWord(); // 0x0001
+		}
+		--binaryNumCount;
 		return readBinDWord();
 	}
-	f32 ftmp;
-	findNextNoneWhiteSpaceNumber();
-	P = core::fast_atof_move(P, ftmp);
-	return (s32)ftmp;
+	else
+	{
+		f32 ftmp;
+		findNextNoneWhiteSpaceNumber();
+		P = core::fast_atof_move(P, ftmp);
+		return (s32)ftmp;
+	}
 }
 
 inline f32 CXFileReader::readFloat()

@@ -284,6 +284,7 @@ private:
 	s32 MajorVersion;
 	s32 MinorVersion;	
 	bool binary;
+	s32 binaryNumCount;
 
 	c8* Buffer;
 	s32 Size;
