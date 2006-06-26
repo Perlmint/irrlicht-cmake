@@ -98,7 +98,7 @@
         a little bit more interesting.</p>
       <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
         <tr> 
-          <td><pre>node = smgr-&gt;addTestSceneNode();<br>node-&gt;setPosition(core::vector3df(0,0,30));<br>node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));</pre></td>
+          <td><pre>node = smgr-&gt;addCubeSceneNode();<br>node-&gt;setPosition(core::vector3df(0,0,30));<br>node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));</pre></td>
         </tr>
       </table>
       <p>Now we create another node, moving using a scene node animator. Scene 
@@ -113,7 +113,7 @@
       <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
         <tr> 
           <td>
-<pre>scene::ISceneNode* n = smgr-&gt;addTestSceneNode();<br>n-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/t351sml.jpg&quot;));</pre>
+<pre>scene::ISceneNode* n = smgr-&gt;addCubeSceneNode();<br>n-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/t351sml.jpg&quot;));</pre>
             <pre>scene::ISceneNodeAnimator* anim = 
      smgr-&gt;createFlyCircleAnimator(core::vector3df(0,0,30), 20.0f);
 n-&gt;addAnimator(anim);

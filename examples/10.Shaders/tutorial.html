@@ -142,13 +142,13 @@
           and important. </p>
         <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
           <tr> 
-            <td><pre><font color="#006600">	// create test scene node 1, with the new created material type 1</font><br><br>	scene::ISceneNode* node = smgr-&gt;addTestSceneNode(50);<br>	node-&gt;setPosition(core::vector3df(0,0,0));<br>	node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));<br>	node-&gt;setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);<br><br>	smgr-&gt;addTextSceneNode(gui-&gt;getBuiltInFont(), <br>			L&quot;PS &amp; VS &amp; EMT_SOLID&quot;, <br>			video::SColor(255,255,255,255),	node);<br><br>	scene::ISceneNodeAnimator* anim = smgr-&gt;createRotationAnimator(<br>			core::vector3df(0,0.3f,0));<br>	node-&gt;addAnimator(anim);<br>	anim-&gt;drop();</pre></td>
+            <td><pre><font color="#006600">	// create test scene node 1, with the new created material type 1</font><br><br>	scene::ISceneNode* node = smgr-&gt;addCubeSceneNode(50);<br>	node-&gt;setPosition(core::vector3df(0,0,0));<br>	node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));<br>	node-&gt;setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);<br><br>	smgr-&gt;addTextSceneNode(gui-&gt;getBuiltInFont(), <br>			L&quot;PS &amp; VS &amp; EMT_SOLID&quot;, <br>			video::SColor(255,255,255,255),	node);<br><br>	scene::ISceneNodeAnimator* anim = smgr-&gt;createRotationAnimator(<br>			core::vector3df(0,0.3f,0));<br>	node-&gt;addAnimator(anim);<br>	anim-&gt;drop();</pre></td>
           </tr>
         </table>
         <p> Same for the second cube, but with the second material we created.</p>
         <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
           <tr> 
-            <td><pre>	<font color="#006600">// create test scene node 2, with the new created material type 2</font><br><br>	node = smgr-&gt;addTestSceneNode(50);<br>	node-&gt;setPosition(core::vector3df(0,-10,50));<br>	node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));<br>	node-&gt;setMaterialType((video::E_MATERIAL_TYPE)newMaterialType2);<br><br>	smgr-&gt;addTextSceneNode(gui-&gt;getBuiltInFont(), <br>			L&quot;PS &amp; VS &amp; EMT_TRANSPARENT&quot;, <br>			video::SColor(255,255,255,255),	node);<br><br>	anim = smgr-&gt;createRotationAnimator(core::vector3df(0,0.3f,0));<br>	node-&gt;addAnimator(anim);<br>	anim-&gt;drop();</pre></td>
+            <td><pre>	<font color="#006600">// create test scene node 2, with the new created material type 2</font><br><br>	node = smgr-&gt;addCubeSceneNode(50);<br>	node-&gt;setPosition(core::vector3df(0,-10,50));<br>	node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));<br>	node-&gt;setMaterialType((video::E_MATERIAL_TYPE)newMaterialType2);<br><br>	smgr-&gt;addTextSceneNode(gui-&gt;getBuiltInFont(), <br>			L&quot;PS &amp; VS &amp; EMT_TRANSPARENT&quot;, <br>			video::SColor(255,255,255,255),	node);<br><br>	anim = smgr-&gt;createRotationAnimator(core::vector3df(0,0.3f,0));<br>	node-&gt;addAnimator(anim);<br>	anim-&gt;drop();</pre></td>
           </tr>
         </table>
         <br>
@@ -157,7 +157,7 @@
         <br>
         <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
           <tr> 
-            <td><pre>	<font color="#006600">// add a scene node with no shader </font><br><br>	node = smgr-&gt;addTestSceneNode(50);<br>	node-&gt;setPosition(core::vector3df(0,50,25));<br>	node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));<br>	smgr-&gt;addTextSceneNode(gui-&gt;getBuiltInFont(), L&quot;NO SHADER&quot;,<br>		video::SColor(255,255,255,255), node);<br></pre></td>
+            <td><pre>	<font color="#006600">// add a scene node with no shader </font><br><br>	node = smgr-&gt;addCubeSceneNode(50);<br>	node-&gt;setPosition(core::vector3df(0,50,25));<br>	node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));<br>	smgr-&gt;addTextSceneNode(gui-&gt;getBuiltInFont(), L&quot;NO SHADER&quot;,<br>		video::SColor(255,255,255,255), node);<br></pre></td>
           </tr>
         </table>
         <br>

@@ -301,7 +301,7 @@ int main()
 
 	// create test scene node 1, with the new created material type 1
 
-	scene::ISceneNode* node = smgr->addTestSceneNode(50);
+	scene::ISceneNode* node = smgr->addCubeSceneNode(50);
 	node->setPosition(core::vector3df(0,0,0));
 	node->setMaterialTexture(0, driver->getTexture("../../media/wall.bmp"));
 	node->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);
@@ -321,7 +321,7 @@ int main()
 
 	// create test scene node 2, with the new created material type 2
 
-	node = smgr->addTestSceneNode(50);
+	node = smgr->addCubeSceneNode(50);
 	node->setPosition(core::vector3df(0,-10,50));
 	node->setMaterialTexture(0, driver->getTexture("../../media/wall.bmp"));
 	node->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType2);
@@ -341,7 +341,7 @@ int main()
 
 	// add a scene node with no shader 
 
-	node = smgr->addTestSceneNode(50);
+	node = smgr->addCubeSceneNode(50);
 	node->setPosition(core::vector3df(0,50,25));
 	node->setMaterialTexture(0, driver->getTexture("../../media/wall.bmp"));
 	smgr->addTextSceneNode(gui->getBuiltInFont(), L"NO SHADER",

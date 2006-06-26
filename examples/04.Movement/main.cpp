@@ -89,7 +89,7 @@ int main()
 	purposes. We place the node a (0,0,30) and we	assign a texture to it
 	to let it look a little bit more interesting.
 	*/
-	node = smgr->addTestSceneNode();
+	node = smgr->addCubeSceneNode();
 	node->setPosition(core::vector3df(0,0,30));
 	node->setMaterialTexture(0, driver->getTexture("../../media/wall.bmp"));
 
@@ -103,7 +103,7 @@ int main()
 	We create a test scene node again an attach a 'fly circle' scene node to it, letting
 	this node fly around our first test scene node.
 	*/
-	scene::ISceneNode* n = smgr->addTestSceneNode();
+	scene::ISceneNode* n = smgr->addCubeSceneNode();
 	n->setMaterialTexture(0, driver->getTexture("../../media/t351sml.jpg"));
 
 	scene::ISceneNodeAnimator* anim = smgr->createFlyCircleAnimator(

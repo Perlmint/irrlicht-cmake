@@ -99,7 +99,7 @@ int main()
 	device->getCursorControl()->setVisible(false);
 
 	// create test cube
-	scene::ISceneNode* test = smgr->addTestSceneNode(60);
+	scene::ISceneNode* test = smgr->addCubeSceneNode(60);
 
 	// let the cube rotate and set some light settings
 	scene::ISceneNodeAnimator* anim = smgr->createRotationAnimator(

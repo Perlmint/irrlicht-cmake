@@ -167,7 +167,7 @@ int main()
 	cam->addAnimator(anim);
 	anim->drop();
 
-	scene::ISceneNode* cube = smgr->addTestSceneNode(25);
+	scene::ISceneNode* cube = smgr->addCubeSceneNode(25);
 	
 	cube->setMaterialTexture(0, driver->getTexture("../../media/rockwall.bmp"));
 

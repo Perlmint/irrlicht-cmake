@@ -116,7 +116,7 @@ int main()
 	cam->addAnimator(anim);
 	anim->drop();
 
-	scene::ISceneNode* cube = smgr->addTestSceneNode(20);
+	scene::ISceneNode* cube = smgr->addCubeSceneNode(20);
 
 	cube->setMaterialTexture(0, driver->getTexture("../../media/wall.bmp"));
 	cube->setMaterialTexture(1, driver->getTexture("../../media/water.jpg"));
