@@ -338,7 +338,7 @@ IMesh* CAnimatedMeshMD2::getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop,
 
 
 //! returns amount of mesh buffers.
-s32 getMeshBufferCount()
+s32 CAnimatedMeshMD2::getMeshBufferCount()
 {
 	return 1;
 }
@@ -418,13 +418,6 @@ u16* CAnimatedMeshMD2::getIndices()
 s32 CAnimatedMeshMD2::getIndexCount() const
 {
 	return Indices.size();
-}
-
-
-//! returns amount of mesh buffers.
-s32 CAnimatedMeshMD2::getMeshBufferCount()
-{
-	return 1;
 }
 
 
