@@ -371,7 +371,7 @@ IShadowVolumeSceneNode* CAnimatedMeshSceneNode::addShadowVolumeSceneNode(s32 id,
 		return 0;
 	}
 
-	Shadow = new CShadowVolumeSceneNode(this, SceneManager, -1,  zfailmethod, infinity);
+	Shadow = new CShadowVolumeSceneNode(this, SceneManager, id,  zfailmethod, infinity);
 	return Shadow;
 }
 
