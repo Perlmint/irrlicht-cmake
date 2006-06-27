@@ -90,9 +90,9 @@ protected:
 	//! constructor only for use by derived classes who want to
 	//! create a fall back material for example.
 	COpenGLSLMaterialRenderer(COpenGLDriver* driver,
-								IShaderConstantSetCallBack* callback,
-								IMaterialRenderer* baseMaterial,
-								s32 userData=0);
+					IShaderConstantSetCallBack* callback,
+					IMaterialRenderer* baseMaterial,
+					s32 userData=0);
 
 	void init(s32& outMaterialTypeNr, 
 		const c8* vertexShaderProgram, 
@@ -108,7 +108,7 @@ protected:
 
 	struct SUniformInfo 
 	{
-		core::string<c8> name;
+		core::stringc name;
 		GLenum type;
 	};
 	

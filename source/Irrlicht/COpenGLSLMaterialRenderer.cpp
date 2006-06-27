@@ -128,9 +128,9 @@ bool COpenGLSLMaterialRenderer::OnRender(IMaterialRendererServices* service,
 
 
 void COpenGLSLMaterialRenderer::OnSetMaterial(video::SMaterial& material,
-											  const video::SMaterial& lastMaterial,
-											  bool resetAllRenderstates, 
-											  video::IMaterialRendererServices* services)
+				  const video::SMaterial& lastMaterial,
+				  bool resetAllRenderstates, 
+				  video::IMaterialRendererServices* services)
 {
 	if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 	{
@@ -201,50 +201,44 @@ bool COpenGLSLMaterialRenderer::linkProgram()
 		return false;
 	}
 	
-	  // get uniforms information
+	// get uniforms information
 
-    int num = 0;
-    Driver->extGlGetObjectParameterivARB(Program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &num);
+	int num = 0;
+	Driver->extGlGetObjectParameterivARB(Program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &num);
 
-    if (num == 0)
+	if (num == 0)
 	{
-        // no uniforms
-        return true;
-    }
+		// no uniforms
+		return true;
+	}
 
-    int maxlen = 0;
-    Driver->extGlGetObjectParameterivARB(Program, GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB, &maxlen);
+	int maxlen = 0;
+	Driver->extGlGetObjectParameterivARB(Program, GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB, &maxlen);
 
-    if (maxlen == 0) 
+	if (maxlen == 0) 
 	{
-        os::Printer::log("GLSL: failed to retrieve uniform information");
-        return false;
-    }
+		os::Printer::log("GLSL: failed to retrieve uniform information");
+		return false;
+	}
 
-    c8 *buf = new c8[maxlen];
-    SUniformInfo ui;
+	c8 *buf = new c8[maxlen];
 
-    UniformInfo.clear();
-    UniformInfo.reallocate(num);
+	UniformInfo.clear();
+	UniformInfo.reallocate(num);
 
-    for (int i=0; i < num; i++)
+	for (int i=0; i < num; ++i)
 	{
-        memset(&ui, 0, sizeof(SUniformInfo));
-        memset(buf, 0, maxlen);
+		SUniformInfo ui;
+		memset(buf, 0, maxlen);
 
-        #ifdef MACOSX
-			GLint size;
-		#else
-			int size;   // not needed
-		#endif
+		GLint size;
+		Driver->extGlGetActiveUniformARB(Program, i, maxlen, 0, &size, &ui.type, buf);
+		ui.name = buf;
 
-        Driver->extGlGetActiveUniformARB(Program, i, maxlen, 0, &size, &ui.type, buf);
-        ui.name = buf;
+		UniformInfo.push_back(ui);
+	}
 
-        UniformInfo.push_back(ui);
-    }
-
-    delete [] buf;
+	delete [] buf;
 
 	return true;
 }
@@ -252,8 +246,8 @@ bool COpenGLSLMaterialRenderer::linkProgram()
 
 
 void COpenGLSLMaterialRenderer::setBasicRenderStates(const SMaterial& material, 
-													 const SMaterial& lastMaterial, 
-													 bool resetAllRenderstates)
+						 const SMaterial& lastMaterial, 
+						 bool resetAllRenderstates)
 {
     // forward
     Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
