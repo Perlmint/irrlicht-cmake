@@ -1,6 +1,6 @@
 [Project]
 FileName=example.dev
-Name=Projekt1
+Name=Irrlicht Example 14 Win32 Window
 UnitCount=1
 Type=1
 Ver=1
@@ -15,17 +15,19 @@ CppCompiler=
 Linker=../../lib/Win32-gcc/libIrrlicht.a_@@_
 IsCpp=1
 Icon=
-ExeOutput=
+ExeOutput=../../bin/Win32-gcc
 ObjectOutput=
-OverrideOutput=0
-OverrideOutputName=example.exe
+OverrideOutput=1
+OverrideOutputName=14.Win32Window.exe
 HostApplication=
 Folders=
 CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000000000000
+CompilerSettings=0000000000000000000000
+UseCustomMakefile=0
+CustomMakefile=
 
 [Unit1]
 FileName=main.cpp

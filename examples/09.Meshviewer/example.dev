@@ -1,13 +1,13 @@
 [Project]
 FileName=example.dev
-Name=Projekt1
-UnitCount=1
+Name=Irrlicht Example 09 Mesh Viewer
+UnitCount=3
 Type=1
 Ver=1
 ObjFiles=
 Includes=..\..\include
 Libs=
-PrivateResource=
+PrivateResource=example_private.rc
 ResourceIncludes=
 MakeIncludes=
 Compiler=
@@ -15,17 +15,19 @@ CppCompiler=
 Linker=../../lib/Win32-gcc/libIrrlicht.a_@@_
 IsCpp=1
 Icon=
-ExeOutput=
+ExeOutput=../../bin/Win32-gcc
 ObjectOutput=
-OverrideOutput=0
-OverrideOutputName=example.exe
+OverrideOutput=1
+OverrideOutputName=09.MeshViewer.exe
 HostApplication=
 Folders=
 CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000000000000
+CompilerSettings=0000000000000000000000
+UseCustomMakefile=0
+CustomMakefile=
 
 [Unit1]
 FileName=main.cpp
@@ -54,4 +56,23 @@ OriginalFilename=
 ProductName=
 ProductVersion=
 AutoIncBuildNr=0
+
+[Unit2]
+FileName=..\..\..\irrlicht-svnnew\irrlicht\examples\09.Meshviewer\resource.h
+CompileCpp=1
+Folder=Irrlicht Example 09 Mesh Viewer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
+FileName=..\..\..\irrlicht-svnnew\irrlicht\examples\09.Meshviewer\9.Meshviewer.rc
+Folder=Irrlicht Example 09 Mesh Viewer
+Compile=1
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
