@@ -18,20 +18,16 @@ namespace scene
 
 // creates a hill plane
 IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32>& tileSize, const core::dimension2d<s32>& tc,
-	video::SMaterial* material,	f32 hillHeight, const core::dimension2d<f32>& ch,
+	video::SMaterial* material, f32 hillHeight, const core::dimension2d<f32>& ch,
 	const core::dimension2d<f32>& textureRepeatCount)
 {
 	core::dimension2d<s32> tileCount = tc;
-	tileCount.Height += 1;
-	tileCount.Width += 1;
-
-    core::dimension2d<f32> countHills = ch;
+	core::dimension2d<f32> countHills = ch;
     
 	SMeshBuffer* buffer = new SMeshBuffer();
 	SMesh* mesh = new SMesh();
 	video::S3DVertex vtx;
 	vtx.Color.set(255,255,255,255);
-	vtx.Normal.set(0,0,0);
 
 	if (countHills.Width < 0.01f) countHills.Width = 1;
 	if (countHills.Height < 0.01f) countHills.Height = 1;
@@ -39,21 +35,21 @@ IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32
 	float halfX = (tileSize.Width * tileCount.Width) / 2;
 	float halfY = (tileSize.Height * tileCount.Height) / 2;
 
-	// create vertices
-
-	s32 x = 0;
-	s32 y = 0;
-
 	core::dimension2d<f32> tx;
 	tx.Width = 1.0f / (tileCount.Width / textureRepeatCount.Width);
 	tx.Height = 1.0f / (tileCount.Height / textureRepeatCount.Height);
-	
 
-	for (x=0; x<tileCount.Width; ++x)
-		for (y=0; y<tileCount.Height; ++y)
+	++tileCount.Height;
+	++tileCount.Width;
+
+	// create vertices
+
+	for (s32 x=0; x<tileCount.Width; ++x)
+	{
+		for (s32 y=0; y<tileCount.Height; ++y)
 		{
 			vtx.Pos.set(tileSize.Width * x - halfX, 0, tileSize.Height * y - halfY);
-			vtx.TCoords.set(-(f32)x * tx.Width, (f32)y * tx.Height);
+			vtx.TCoords.set(x * tx.Width, 1.0f - y * tx.Height);
 			
 			if (hillHeight)
 				vtx.Pos.Y = (f32)(sin(vtx.Pos.X * countHills.Width * irr::core::PI / halfX) *
@@ -62,11 +58,13 @@ IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32
 
 			buffer->Vertices.push_back(vtx);
 		}
+	}
 
 	// create indices
 
-	for (x=0; x<tileCount.Width-1; ++x)
-		for (y=0; y<tileCount.Height-1; ++y)
+	for (s32 x=0; x<tileCount.Width-1; ++x)
+	{
+		for (s32 y=0; y<tileCount.Height-1; ++y)
 		{
 			s32 current = y*tileCount.Width + x;
 
@@ -78,6 +76,7 @@ IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32
 			buffer->Indices.push_back(current + 1 + tileCount.Width);
 			buffer->Indices.push_back(current + tileCount.Width);
 		}
+	}
 
 	// recalculate normals
 	for (s32 i=0; i<(s32)buffer->Indices.size(); i+=3)
@@ -139,7 +138,7 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 
 	core::dimension2d<s32> hMapSize= heightmap->getDimension();
 	core::dimension2d<s32> tMapSize= texture->getDimension();
-	core::position2d<f32> thRel((f32)tMapSize.Width / (s32)hMapSize.Width, (f32)tMapSize.Height / (s32)hMapSize.Height); 
+	core::position2d<f32> thRel((f32)tMapSize.Width / hMapSize.Width, (f32)tMapSize.Height / hMapSize.Height); 
 	core::position2d<s32> processed(0,0);
 
 	while (processed.Y<hMapSize.Height)
@@ -153,11 +152,11 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 				blockSize.Height = hMapSize.Height - processed.Y;
 
 			SMeshBuffer* buffer = new SMeshBuffer();
-			s32 x,y;
 
 			// add vertices of vertex block
-			for (y=0; y<blockSize.Height; ++y)
-				for (x=0; x<blockSize.Width; ++x)
+			for (s32 y=0; y<blockSize.Height; ++y)
+			{
+				for (s32 x=0; x<blockSize.Width; ++x)
 				{
 					video::SColor clr = heightmap->getPixel(x+processed.X, y+processed.Y);
 					f32 height = ((clr.getRed() + clr.getGreen() + clr.getBlue()) / 3.0f)/255.0f * maxHeight;
@@ -167,23 +166,25 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 
 					vtx.TCoords.set((f32)(x+0.5f) / ((f32)blockSize.Width), 
 						(f32)(y+0.5f) / ((f32)blockSize.Height));
-
 					buffer->Vertices.push_back(vtx);
 				}
+			}
 
-            // add indices of vertex block
-			for (y=0; y<blockSize.Height-1; ++y)
-				for (x=0; x<blockSize.Width-1; ++x)
+			// add indices of vertex block
+			for (s32 y=0; y<blockSize.Height-1; ++y)
 			{
-				s32 c = (y*blockSize.Width) + x;
+				for (s32 x=0; x<blockSize.Width-1; ++x)
+				{
+					s32 c = (y*blockSize.Width) + x;
 
-				buffer->Indices.push_back(c);
-				buffer->Indices.push_back(c + blockSize.Width);
-				buffer->Indices.push_back(c + 1);
+					buffer->Indices.push_back(c);
+					buffer->Indices.push_back(c + blockSize.Width);
+					buffer->Indices.push_back(c + 1);
 
-				buffer->Indices.push_back(c + 1);
-				buffer->Indices.push_back(c + blockSize.Width);
-				buffer->Indices.push_back(c + 1 + blockSize.Width);				
+					buffer->Indices.push_back(c + 1);
+					buffer->Indices.push_back(c + blockSize.Width);
+					buffer->Indices.push_back(c + 1 + blockSize.Width);
+				}
 			}
 
 			// recalculate normals
@@ -230,7 +231,7 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 			mesh->addMeshBuffer(buffer);
 			buffer->drop();
 
-            // keep on processing
+			// keep on processing
 			processed.X += maxVtxBlockSize.Width - borderSkip;
 		}
 
