@@ -2,6 +2,12 @@ Changes in version 1.1 (??? 2006)
 
 - Fixed Linux keyhandling for many keys.
 
+- The aspect ratio has been inverted in the matrix, which means when setting a new aspect ratio
+  for cameras, set it to screen.width/screen.height now instead of screen.height/screen.width
+  as previously.
+
+- added support for reading/importing binary .x files.
+
 - .x normals now correctly transformed in animations, bounding boxes are
   slightly better transformed, but not yet correct.
 
