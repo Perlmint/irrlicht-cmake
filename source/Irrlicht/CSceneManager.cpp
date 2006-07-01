@@ -318,12 +318,14 @@ IAnimatedMeshSceneNode* CSceneManager::addAnimatedMeshSceneNode(IAnimatedMesh* m
 //! scenes with lots of geometry. The Octree is built on the fly from the mesh, much
 //! faster then a bsp tree.
 ISceneNode* CSceneManager::addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent, 
-			s32 id, s32 minimalPolysPerNode)
+			s32 id, s32 minimalPolysPerNode, bool alsoAddIfMeshPointerZero)
 {
-	if (!mesh || !mesh->getFrameCount())
+	if (!alsoAddIfMeshPointerZero && (!mesh || !mesh->getFrameCount()))
 		return 0;
 
-	return addOctTreeSceneNode(mesh->getMesh(0), parent, id, minimalPolysPerNode);
+	return addOctTreeSceneNode(mesh ? mesh->getMesh(0) : 0, 
+							   parent, id, minimalPolysPerNode,
+							   alsoAddIfMeshPointerZero);
 }
 
 
@@ -332,21 +334,24 @@ ISceneNode* CSceneManager::addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* 
 //! scenes with lots of geometry. The Octree is built on the fly from the mesh, much
 //! faster then a bsp tree.
 ISceneNode* CSceneManager::addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent,
-											   s32 id, s32 minimalPolysPerNode)
+											   s32 id, s32 minimalPolysPerNode,
+											   bool alsoAddIfMeshPointerZero)
 {
-	if (!mesh)
+	if (!alsoAddIfMeshPointerZero && !mesh)
 		return 0;
 
 	if (!parent)
 		parent = this;
 
 	COctTreeSceneNode* node = new COctTreeSceneNode(parent, this, id, minimalPolysPerNode);
-	node->createTree(mesh);
+
+	if (mesh)
+		node->createTree(mesh);
+
 	node->drop();
 
     return node;
 }
-
 
 
 //! Adds a camera scene node to the tree and sets it as active camera.

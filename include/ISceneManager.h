@@ -365,7 +365,7 @@ namespace scene
 		 \return Returns the pointer to the octtree if successful, otherwise 0. 
 		 This pointer should not be dropped. See IUnknown::drop() for more information. */
 		virtual ISceneNode* addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent=0, 
-			s32 id=-1, s32 minimalPolysPerNode=128) = 0;
+			s32 id=-1, s32 minimalPolysPerNode=128, bool alsoAddIfMeshPointerZero=false) = 0;
 
 		//! Adds a scene node for rendering using a octtree to the scene graph.
 		/** This a good method for rendering 
@@ -380,7 +380,7 @@ namespace scene
 		 \return Returns the pointer to the octtree if successful, otherwise 0. 
 		 This pointer should not be dropped. See IUnknown::drop() for more information. */
 		virtual ISceneNode* addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent=0, 
-			s32 id=-1, s32 minimalPolysPerNode=128) = 0;
+			s32 id=-1, s32 minimalPolysPerNode=128, bool alsoAddIfMeshPointerZero=false) = 0;
 
 		//! Adds a camera scene node to the scene graph and sets it as active camera.
 		/** This camera does not react on user input like for example the one created with
