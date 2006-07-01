@@ -21,7 +21,7 @@ namespace scene
 //! visual studio 6.0 didn't like it.
 template<class VTXTYPE>
 inline void recalculateNormalsT_Flat(VTXTYPE* v, int vtxcnt,
-								u16* idx, int idxcnt)
+					u16* idx, int idxcnt)
 {
 	for (int i=0; i<idxcnt; i+=3)
 	{
@@ -36,7 +36,7 @@ inline void recalculateNormalsT_Flat(VTXTYPE* v, int vtxcnt,
 
 template<class VTXTYPE>
 inline void recalculateNormalsT_Smooth(VTXTYPE* v, int vtxcnt,
-								u16* idx, int idxcnt)
+					u16* idx, int idxcnt)
 {
 	s32 i;
 
@@ -68,8 +68,8 @@ inline void recalculateNormalsT_Smooth(VTXTYPE* v, int vtxcnt,
 //! visual studio 6.0 didn't like it.
 template<class VERTEXTYPE>
 inline void makePlanarMappingT(VERTEXTYPE *v,
-							   int vtxcnt,
-							   u16* idx, int idxcnt, f32 resolution)
+				   int vtxcnt,
+				   u16* idx, int idxcnt, f32 resolution)
 {
 	for (int i=0; i<idxcnt; i+=3)
 	{
@@ -154,8 +154,6 @@ void CMeshManipulator::setVertexColorAlpha(scene::IMesh* mesh, s32 alpha) const
 	if (!mesh)
 		return;
 
-	s32 i = 0;
-
 	s32 bcount = mesh->getMeshBufferCount();
 	for (s32 b=0; b<bcount; ++b)
 	{
@@ -166,15 +164,15 @@ void CMeshManipulator::setVertexColorAlpha(scene::IMesh* mesh, s32 alpha) const
 		switch(buffer->getVertexType())
 		{
 		case video::EVT_STANDARD:
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 				((video::S3DVertex*)v)[i].Color.setAlpha(alpha);
 			break;
 		case video::EVT_2TCOORDS:
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 				((video::S3DVertex2TCoords*)v)[i].Color.setAlpha(alpha);
 			break;
 		case video::EVT_TANGENTS:
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 				((video::S3DVertexTangents*)v)[i].Color.setAlpha(alpha);
 			break;
 		}
@@ -187,8 +185,6 @@ void CMeshManipulator::setVertexColors(IMesh* mesh, video::SColor color) const
 	if (!mesh)
 		return;
 
-	s32 i = 0;
-
 	s32 bcount = mesh->getMeshBufferCount();
 	for (s32 b=0; b<bcount; ++b)
 	{
@@ -199,15 +195,15 @@ void CMeshManipulator::setVertexColors(IMesh* mesh, video::SColor color) const
 		switch(buffer->getVertexType())
 		{
 		case video::EVT_STANDARD:
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 				((video::S3DVertex*)v)[i].Color = color;
 			break;
 		case video::EVT_2TCOORDS:
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 				((video::S3DVertex2TCoords*)v)[i].Color = color;
 			break;
 		case video::EVT_TANGENTS:
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 				((video::S3DVertexTangents*)v)[i].Color = color;
 			break;
 		}
@@ -288,8 +284,6 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 	s32 bcount = mesh->getMeshBufferCount();
 	for (s32 b=0; b<bcount; ++b)
 	{
-		s32 i = 0;
-
 		IMeshBuffer* buffer = mesh->getMeshBuffer(b);
 		void* v = buffer->getVertices();
 		s32 vtxcnt = buffer->getVertexCount();
@@ -300,7 +294,7 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 		case video::EVT_STANDARD:
 			if (vtxcnt != 0)
 				bufferbox.reset(((video::S3DVertex*)v)[0].Pos * scale);
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 			{
 				((video::S3DVertex*)v)[i].Pos *= scale;
 				bufferbox.addInternalPoint(((video::S3DVertex*)v)[i].Pos);
@@ -309,7 +303,7 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 		case video::EVT_2TCOORDS:
 			if (vtxcnt != 0)
 				bufferbox.reset(((video::S3DVertex2TCoords*)v)[0].Pos * scale);
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 			{
 				((video::S3DVertex2TCoords*)v)[i].Pos *= scale;
 				bufferbox.addInternalPoint(((video::S3DVertex2TCoords*)v)[i].Pos);
@@ -318,7 +312,7 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 		case video::EVT_TANGENTS:
 			if (vtxcnt != 0)
 				bufferbox.reset(((video::S3DVertexTangents*)v)[0].Pos * scale);
-			for (; i<vtxcnt; ++i)
+			for (s32 i=0; i<vtxcnt; ++i)
 			{
 				((video::S3DVertexTangents*)v)[i].Pos *= scale;
 				bufferbox.addInternalPoint(((video::S3DVertexTangents*)v)[i].Pos);
@@ -345,26 +339,24 @@ void CMeshManipulator::recalculateBoundingBox(scene::IMeshBuffer* buffer) const
 	s32 vtxcnt = buffer->getVertexCount();
 	core::aabbox3df box;
 	
-	s32 i = 1;
-
 	switch(buffer->getVertexType())
 	{
 	case video::EVT_STANDARD:
 		if (vtxcnt != 0)
 			box.reset(((video::S3DVertex*)v)[0].Pos);
-		for (; i<vtxcnt; ++i)
+		for (s32 i=1; i<vtxcnt; ++i)
 			box.addInternalPoint(((video::S3DVertex*)v)[i].Pos);
 		break;
 	case video::EVT_2TCOORDS:
 		if (vtxcnt != 0)
 			box.reset(((video::S3DVertex2TCoords*)v)[0].Pos);
-		for (; i<vtxcnt; ++i)
+		for (s32 i=1; i<vtxcnt; ++i)
 			box.addInternalPoint(((video::S3DVertex2TCoords*)v)[i].Pos);
 		break;
 	case video::EVT_TANGENTS:
 		if (vtxcnt != 0)
 			box.reset(((video::S3DVertexTangents*)v)[0].Pos);
-		for (; i<vtxcnt; ++i)
+		for (s32 i=1; i<vtxcnt; ++i)
 			box.addInternalPoint(((video::S3DVertexTangents*)v)[i].Pos);
 		break;
 	}
@@ -384,7 +376,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 
 	s32 meshBufferCount = mesh->getMeshBufferCount();
 	
-    for (s32 b=0; b<meshBufferCount; ++b)
+	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		s32 vtxCnt = mesh->getMeshBuffer(b)->getVertexCount();
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
@@ -514,7 +506,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 
 	s32 meshBufferCount = mesh->getMeshBufferCount();
 	
-    for (s32 b=0; b<meshBufferCount; ++b)
+	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		s32 vtxCnt = mesh->getMeshBuffer(b)->getVertexCount();
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
@@ -530,8 +522,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 				video::S3DVertex* v = 
 					(video::S3DVertex*)mesh->getMeshBuffer(b)->getVertices();
 
-				s32 i;
-				for (i=0; i<idxCnt; i += 3)
+				for (s32 i=0; i<idxCnt; i += 3)
 				{
 					buffer->Vertices.push_back( v[idx[i + 0 ]] );
 					buffer->Vertices.push_back( v[idx[i + 1 ]] );
@@ -554,8 +545,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 				video::S3DVertex2TCoords* v = 
 					(video::S3DVertex2TCoords*)mesh->getMeshBuffer(b)->getVertices();
 
-				s32 i;
-				for (i=0; i<idxCnt; i += 3)
+				for (s32 i=0; i<idxCnt; i += 3)
 				{
 					buffer->Vertices.push_back( v[idx[i + 0 ]] );
 					buffer->Vertices.push_back( v[idx[i + 1 ]] );
@@ -577,8 +567,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 				video::S3DVertexTangents* v = 
 					(video::S3DVertexTangents*)mesh->getMeshBuffer(b)->getVertices();
 
-				s32 i;
-				for (i=0; i<idxCnt; i += 3)
+				for (s32 i=0; i<idxCnt; i += 3)
 				{
 					buffer->Vertices.push_back( v[idx[i + 0 ]] );
 					buffer->Vertices.push_back( v[idx[i + 1 ]] );
@@ -615,8 +604,7 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 	SMesh* clone = new SMesh();
 	s32 meshBufferCount = mesh->getMeshBufferCount();
 		
-	s32 b=0;
-    for (; b<meshBufferCount; ++b)
+	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		s32 vtxCnt = mesh->getMeshBuffer(b)->getVertexCount();
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
@@ -676,8 +664,7 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 	clone->BoundingBox = mesh->getBoundingBox();
 
 	// now calculate tangents
-	b=0;
-    for (; b<meshBufferCount; ++b)
+	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		int vtxCnt = clone->getMeshBuffer(b)->getVertexCount();
 		int idxCnt = clone->getMeshBuffer(b)->getIndexCount();
