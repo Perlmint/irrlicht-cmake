@@ -40,7 +40,7 @@ CFileList::CFileList()
 	Path = tmp;
 
 	struct _finddata_t c_file;
-	s32 hFile;
+	intptr_t hFile;
 	FileEntry entry;
 
 	if( (hFile = _findfirst( "*", &c_file )) != -1L )
