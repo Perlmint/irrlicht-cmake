@@ -385,6 +385,7 @@ namespace scene
 
 		preRenderLODCalculations();
 		preRenderIndicesCalculations();
+		ISceneNode::OnPreRender();
 	}
 
 	void CTerrainSceneNode::preRenderLODCalculations()

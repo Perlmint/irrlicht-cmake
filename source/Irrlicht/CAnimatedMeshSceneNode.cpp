@@ -106,14 +106,13 @@ void CAnimatedMeshSceneNode::OnPreRender()
 
 		if (transparentCount)
 			SceneManager->registerNodeForRendering(this, scene::ESNRP_TRANSPARENT);
-	}
 
-	ISceneNode::OnPreRender();
+		ISceneNode::OnPreRender();
 
-	if (IsVisible)
 		for (s32 i=0; i<(s32)JointChildSceneNodes.size(); ++i)
 			if (JointChildSceneNodes[i])
 				JointChildSceneNodes[i]->OnPreRender();
+	}
 }
 
 

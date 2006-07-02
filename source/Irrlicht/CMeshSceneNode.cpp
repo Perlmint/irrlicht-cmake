@@ -104,9 +104,9 @@ void CMeshSceneNode::OnPreRender()
 
 		if (transparentCount)
 			SceneManager->registerNodeForRendering(this, scene::ESNRP_TRANSPARENT);
-	}
 
-	ISceneNode::OnPreRender();
+		ISceneNode::OnPreRender();
+	}
 }
 
 

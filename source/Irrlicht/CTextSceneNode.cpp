@@ -39,9 +39,10 @@ CTextSceneNode::~CTextSceneNode()
 void CTextSceneNode::OnPreRender()
 {
 	if (IsVisible)
+	{
 		SceneManager->registerNodeForRendering(this, ESNRP_SHADOW);
-
-	ISceneNode::OnPreRender();
+		ISceneNode::OnPreRender();
+	}
 }
 
 //! renders the node.

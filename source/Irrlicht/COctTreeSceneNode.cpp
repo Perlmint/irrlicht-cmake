@@ -83,9 +83,10 @@ void COctTreeSceneNode::OnPreRender()
 
 		if (transparentCount)
 			SceneManager->registerNodeForRendering(this, scene::ESNRP_TRANSPARENT);
+
+		ISceneNode::OnPreRender();
 	}
 
-	ISceneNode::OnPreRender();
 }
 
 
@@ -117,7 +118,7 @@ void COctTreeSceneNode::render()
 
 	frust.transform(invTrans);
 
-    core::aabbox3d<float> box = frust.getBoundingBox();
+	core::aabbox3d<float> box = frust.getBoundingBox();
 
 	switch(vertexType)
 	{

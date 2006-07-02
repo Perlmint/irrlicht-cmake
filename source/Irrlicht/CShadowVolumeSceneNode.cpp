@@ -384,7 +384,10 @@ void CShadowVolumeSceneNode::setMeshToRenderFrom(IMesh* mesh)
 void CShadowVolumeSceneNode::OnPreRender()
 {
 	if (IsVisible)
+	{
 		SceneManager->registerNodeForRendering(this, scene::ESNRP_SHADOW);
+		ISceneNode::OnPreRender();
+	}
 }
 
 

@@ -232,7 +232,8 @@ void CCameraSceneNode::OnPreRender()
 		SceneManager->registerNodeForRendering(this, ESNRP_LIGHT_AND_CAMERA);
 	}
 
-	ISceneNode::OnPreRender();
+	if (IsVisible)
+		ISceneNode::OnPreRender();
 }
 
 

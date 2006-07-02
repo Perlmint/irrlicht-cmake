@@ -58,11 +58,13 @@ CWaterSurfaceSceneNode::~CWaterSurfaceSceneNode()
 void CWaterSurfaceSceneNode::OnPreRender()
 {
 	if (IsVisible)
+	{
 		SceneManager->registerNodeForRendering(this);
 
-	animateWaterSurface();
+		animateWaterSurface();
 
-	CMeshSceneNode::OnPreRender();
+		CMeshSceneNode::OnPreRender();
+	}
 }
 
 

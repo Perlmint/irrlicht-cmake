@@ -126,6 +126,9 @@ bool CGUIEditBox::processKey(SEvent& event)
 			}
 			break;
 		case KEY_KEY_X:
+			if ( !this->IsEnabled )
+				break;
+
 			// cut to the clipboard
 			if (Operator && MarkBegin != MarkEnd)
 			{
@@ -149,6 +152,9 @@ bool CGUIEditBox::processKey(SEvent& event)
 			}
 			break;
 		case KEY_KEY_V:
+			if ( !this->IsEnabled )
+				break;
+
 			// paste from the clipboard
 			if (Operator)
 			{
@@ -198,7 +204,7 @@ bool CGUIEditBox::processKey(SEvent& event)
 			return false;
 		}
 	}
-	
+
 	// default keyboard handling
 
 	if (!event.KeyInput.Control)
@@ -288,6 +294,9 @@ bool CGUIEditBox::processKey(SEvent& event)
 		break;
 
 	case KEY_BACK:
+		if ( !this->IsEnabled )
+			break;
+
 		if (Text.size()!=0)
 		{
 			core::stringw s;
@@ -321,6 +330,9 @@ bool CGUIEditBox::processKey(SEvent& event)
 		}
 		break;
 	case KEY_DELETE:
+		if ( !this->IsEnabled )
+			break;
+
 		if (Text.size() != 0)
 		{
 			core::stringw s;
@@ -354,6 +366,9 @@ bool CGUIEditBox::processKey(SEvent& event)
 		}
 		break;
 	default:
+		if ( !this->IsEnabled )
+			break;
+
 		if (event.KeyInput.Char != 0)
 		{
 			if (Text.size() < Max || Max == 0)
@@ -520,6 +535,16 @@ void CGUIEditBox::draw()
 			rct = frameRect;
 			rct.UpperLeftCorner.X -= charscrollpos;
 
+			// Save the override color information.
+			// Then, alter it if the edit box is disabled.
+			bool prevOver = OverrideColorEnabled;
+			video::SColor prevColor = OverrideColor;
+			if ( !this->IsEnabled && !OverrideColorEnabled )
+			{
+				OverrideColorEnabled = true;
+				OverrideColor = skin->getColor( EGDC_GRAY_TEXT );
+			}
+
 			if (focus && MarkBegin != MarkEnd)
 			{
 				// marked text
@@ -549,6 +574,10 @@ void CGUIEditBox::draw()
 					OverrideColorEnabled ? OverrideColor : skin->getColor(EGDC_BUTTON_TEXT),
 					false, true, &AbsoluteClippingRect);
 			}
+
+			// Return the override color information to its previous settings.
+			OverrideColorEnabled = prevOver;
+			OverrideColor = prevColor;
 		}
 	}
 }
