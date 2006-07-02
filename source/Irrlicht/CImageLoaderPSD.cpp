@@ -61,7 +61,6 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 	delete [] imageData;
 	imageData = 0;
 
-	file->seek(0);
 	file->read(&header, sizeof(PsdHeader));
 
 	header.version = convert2le(header.version);

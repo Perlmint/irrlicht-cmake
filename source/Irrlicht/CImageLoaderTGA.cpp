@@ -104,7 +104,6 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 {
 	STGAHeader header;
 
-	file->seek(0);
 	file->read(&header, sizeof(STGAHeader));
 
 #ifdef __BIG_ENDIAN__

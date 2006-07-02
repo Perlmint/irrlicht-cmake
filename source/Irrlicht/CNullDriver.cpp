@@ -112,8 +112,7 @@ CNullDriver::~CNullDriver()
 
 	// delete surface loader
 
-	int i=0;
-	for (i=0; i<(int)SurfaceLoader.size(); ++i)
+	for (u32 i=0; i<SurfaceLoader.size(); ++i)
 		SurfaceLoader[i]->drop();
 
 	deleteMaterialRenders();
@@ -1032,35 +1031,35 @@ IImage* CNullDriver::createImageFromFile(const char* filename)
 IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 {
 	IImage* image = 0;
+
 	// try to load file based on file extension
-
-	u32 i;
-
-	for (i=0; i<SurfaceLoader.size(); ++i)
+	for (u32 i=0; i<SurfaceLoader.size(); ++i)
+	{
 		if (SurfaceLoader[i]->isALoadableFileExtension(file->getFileName()))
 		{
+			// reset file position which might have changed due to previous loadImage calls
+			file->seek(0);
 			image = SurfaceLoader[i]->loadImage(file);
 			if (image)
-				break;
+				return image;
 		}
+	}
 
 	// try to load file based on what is in it
-	if (!image)
-		for (i=0; i<SurfaceLoader.size(); ++i)
+	for (u32 i=0; i<SurfaceLoader.size(); ++i)
+	{
+		// dito
+		file->seek(0);
+		if (SurfaceLoader[i]->isALoadableFileFormat(file))
 		{
-			if (i!=0)
-				file->seek(0);
-
-			if (SurfaceLoader[i]->isALoadableFileFormat(file))
-			{
-				file->seek(0);
-				image = SurfaceLoader[i]->loadImage(file);
-				if (image)
-					break;
-			}
+			file->seek(0);
+			image = SurfaceLoader[i]->loadImage(file);
+			if (image)
+				return image;
 		}
+	}
 
-	return image;
+	return 0; // failed to load
 }
 
 //! Creates a software image from a byte array.

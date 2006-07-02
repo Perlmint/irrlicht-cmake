@@ -61,7 +61,6 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 {
 	SPCXHeader header;
 
-	file->seek(0);
 	file->read(&header, sizeof(header));
 
 	s32 pitch = 0;

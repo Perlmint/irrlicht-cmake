@@ -231,7 +231,6 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 {
 	SBMPHeader header;
 
-	file->seek(0);
 	file->read(&header, sizeof(header));
 
 #ifdef __BIG_ENDIAN__

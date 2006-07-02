@@ -109,7 +109,6 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
     return 0;
     #else
     
-	file->seek(0);
 	u8* input = new u8[file->getSize()];
 	file->read(input, file->getSize());
 
