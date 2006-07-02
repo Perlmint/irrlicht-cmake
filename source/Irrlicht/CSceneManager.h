@@ -177,7 +177,7 @@ namespace scene
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f),
 			video::SColor vertexColor = video::SColor(255,255,255,255),
-			s32 maxLOD=5, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17);
+			s32 maxLOD=4, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17);
 
 		//! Adds a terrain scene node to the scene graph.
 		virtual ITerrainSceneNode* addTerrainSceneNode(
@@ -187,7 +187,7 @@ namespace scene
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f),
 			video::SColor vertexColor = video::SColor(255,255,255,255),
-			s32 maxLOD=5, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17);
+			s32 maxLOD=4, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17);
 
 		//! Adds a dummy transformation scene node to the scene graph.
 		virtual IDummyTransformationSceneNode* addDummyTransformationSceneNode(

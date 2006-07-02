@@ -77,36 +77,47 @@ namespace scene
 		// Get the dimension of the heightmap data
 		TerrainData.Size = heightMap->getDimension().Width;
 
-		// Make sure the maximum level of detail is compatible with the heightmap size
-		if( TerrainData.Size <= 17 && TerrainData.MaxLOD > 1 )
-			TerrainData.MaxLOD = 1;
-		else 
-		if( TerrainData.Size <= 33 && TerrainData.MaxLOD > 2 )
-			TerrainData.MaxLOD = 2;
-		else 
-		if( TerrainData.Size <= 65 && TerrainData.MaxLOD > 3 )
-			TerrainData.MaxLOD = 3;
-		else 
-		if( TerrainData.Size <= 129 && TerrainData.MaxLOD > 4 )
-			TerrainData.MaxLOD = 4;
-		else 
-		if( TerrainData.Size <= 257 && TerrainData.MaxLOD > 4 )
-			TerrainData.MaxLOD = 5;
-		else 
-		if( TerrainData.Size <= 513 && TerrainData.MaxLOD > 6 )
-			TerrainData.MaxLOD = 6;
-		else 
-		if( TerrainData.Size <= 1025 && TerrainData.MaxLOD > 7 )
-			TerrainData.MaxLOD = 7;
+		switch( TerrainData.PatchSize )
+		{
+		    case ETPS_9:
+			if( TerrainData.MaxLOD > 3 )
+			{
+				TerrainData.MaxLOD = 3;
+			}
+			break;
+		    case ETPS_17:
+			if( TerrainData.MaxLOD > 4 )
+			{
+				TerrainData.MaxLOD = 4;
+			}
+			break;
+		    case ETPS_33:
+			if( TerrainData.MaxLOD > 5 )
+			{
+				TerrainData.MaxLOD = 5;
+			}
+			break;
+		    case ETPS_65:
+			if( TerrainData.MaxLOD > 6 )
+			{
+				TerrainData.MaxLOD = 6;
+			}
+			break;
+		    case ETPS_129:
+			if( TerrainData.MaxLOD > 7 )
+			{
+				TerrainData.MaxLOD = 7;
+			}
+			break;
+		}
 
 		// --- Generate vertex data from heightmap ----
 		// resize the vertex array for the mesh buffer one time ( makes loading faster )
 		SMeshBufferLightMap* pMeshBuffer = new SMeshBufferLightMap();
-		pMeshBuffer->Vertices.reallocate( TerrainData.Size * TerrainData.Size );
 		pMeshBuffer->Vertices.set_used( TerrainData.Size * TerrainData.Size );
 
 		video::S3DVertex2TCoords vertex;
-		core::vector3df normal = core::vector3df( 0.0f, 1.0f, 0.0f );
+		vertex.Normal.set( 0.0f, 1.0f, 0.0f );
 		vertex.Color = vertexColor;
 
 		// Read the heightmap to get the vertex data
@@ -118,10 +129,9 @@ namespace scene
 				s32 index = x * TerrainData.Size + z;
 
 				vertex.Pos.X = (f32)x;
-				vertex.Pos.Y = (f32)( heightMap->getPixel(x,z).getRed() + heightMap->getPixel(x,z).getGreen() + heightMap->getPixel(x,z).getBlue() ) / 3.0f;
+				video::SColor pixelColor(heightMap->getPixel(x,z));
+				vertex.Pos.Y = ( pixelColor.getRed() + pixelColor.getGreen() + pixelColor.getBlue() ) / 3.0f;
 				vertex.Pos.Z = (f32)z;
-
-				vertex.Normal = normal;
 
 				vertex.TCoords.X = x / (f32)TerrainData.Size;
 				vertex.TCoords.Y = z / (f32)TerrainData.Size;
@@ -201,29 +211,41 @@ namespace scene
 		s32 heightMapSize = (s32)sqrt( (f32)( fileSize / bytesPerPixel ) );
 
 		// Get the dimension of the heightmap data
-		TerrainData.Size = heightMapSize;		
+		TerrainData.Size = heightMapSize;
 
-		// Make sure the maximum level of detail is compatible with the heightmap size
-		if( TerrainData.Size <= 17 && TerrainData.MaxLOD > 1 )
-			TerrainData.MaxLOD = 1;
-		else 
-		if( TerrainData.Size <= 33 && TerrainData.MaxLOD > 2 )
-			TerrainData.MaxLOD = 2;
-		else 
-		if( TerrainData.Size <= 65 && TerrainData.MaxLOD > 3 )
-			TerrainData.MaxLOD = 3;
-		else 
-		if( TerrainData.Size <= 129 && TerrainData.MaxLOD > 4 )
-			TerrainData.MaxLOD = 4;
-		else 
-		if( TerrainData.Size <= 257 && TerrainData.MaxLOD > 4 )
-			TerrainData.MaxLOD = 5;
-		else 
-		if( TerrainData.Size <= 513 && TerrainData.MaxLOD > 6 )
-			TerrainData.MaxLOD = 6;
-		else 
-		if( TerrainData.Size <= 1025 && TerrainData.MaxLOD > 7 )
-			TerrainData.MaxLOD = 7;
+		switch( TerrainData.PatchSize )
+		{
+		    case ETPS_9:
+			if( TerrainData.MaxLOD > 3 )
+			{
+				TerrainData.MaxLOD = 3;
+			}
+			break;
+		    case ETPS_17:
+			if( TerrainData.MaxLOD > 4 )
+			{
+				TerrainData.MaxLOD = 4;
+			}
+			break;
+		    case ETPS_33:
+			if( TerrainData.MaxLOD > 5 )
+			{
+				TerrainData.MaxLOD = 5;
+			}
+			break;
+		    case ETPS_65:
+			if( TerrainData.MaxLOD > 6 )
+			{
+				TerrainData.MaxLOD = 6;
+			}
+			break;
+		    case ETPS_129:
+			if( TerrainData.MaxLOD > 7 )
+			{
+				TerrainData.MaxLOD = 7;
+			}
+			break;
+		} 
 
 		// --- Generate vertex data from heightmap ----
 		// resize the vertex array for the mesh buffer one time ( makes loading faster )
@@ -232,7 +254,7 @@ namespace scene
 		pMeshBuffer->Vertices.set_used( TerrainData.Size * TerrainData.Size );
 
 		video::S3DVertex2TCoords vertex;
-		core::vector3df normal = core::vector3df( 0.0f, 1.0f, 0.0f );
+		vertex.Normal.set( 0.0f, 1.0f, 0.0f );
 		vertex.Color = vertexColor;
 
 		// Read the heightmap to get the vertex data
@@ -251,8 +273,6 @@ namespace scene
 				}
 
 				vertex.Pos.Z = (f32)z;
-
-				vertex.Normal = normal;
 
 				vertex.TCoords.X = x / (f32)TerrainData.Size;
 				vertex.TCoords.Y = z / (f32)TerrainData.Size;
@@ -746,7 +766,7 @@ namespace scene
 		}
 	}
 
-	//! used to get the indices when generatin index data for patches at varying levels of detail.
+	//! used to get the indices when generating index data for patches at varying levels of detail.
 	u32 CTerrainSceneNode::getIndex(const s32& PatchX, const s32& PatchZ,
 									const s32& PatchIndex, u32 vX, u32 vZ)
 	{
@@ -925,7 +945,7 @@ namespace scene
 			}
 	}
 
-	//! create patches, stuff that needs to only be done once for patches goes here.
+	//! create patches, stuff that needs to be done only once for patches goes here.
 	void CTerrainSceneNode::createPatches()
 	{
 		TerrainData.PatchCount = (TerrainData.Size - 1) / ( TerrainData.CalcPatchSize );
@@ -963,7 +983,7 @@ namespace scene
 				// get center of Patch
 				TerrainData.Patches[index].Center = TerrainData.Patches[index].BoundingBox.getCenter();
 
-				// Assign Neighbors
+				// Assign Neighbours
 				// Top
 				if( x > 0 )
 					TerrainData.Patches[index].Top = &TerrainData.Patches[(x-1) * TerrainData.PatchCount + z];
@@ -1037,7 +1057,7 @@ namespace scene
 	void CTerrainSceneNode::setCurrentLODOfPatches(core::array<s32>& lodarray)
 	{
 		for (s32 i=0; i<TerrainData.PatchCount * TerrainData.PatchCount; ++i)
-			TerrainData.Patches[i].CurrentLOD = lodarray[i];	
+			TerrainData.Patches[i].CurrentLOD = lodarray[i];
 	}
 
 
