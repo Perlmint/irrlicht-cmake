@@ -56,12 +56,36 @@ class line2d
 		//! \return Returns true if there is an intersection, false if not.
 		bool intersectWith(const line2d<T>& l, vector2d<T>& out)
 		{
-			bool found = getInterSectionOfLines(	start.X, start.Y, end.X-start.X, end.Y-start.Y,
-													l.start.X, l.start.Y, l.end.X-l.start.X, l.end.Y-l.start.Y,
-													out.X, out.Y);
-			return (found
-				&&	isPointBetweenPoints(out.X, out.Y, start.X, start.Y, end.X, end.Y)
-				&&	isPointBetweenPoints(out.X, out.Y, l.start.X, l.start.Y, l.end.X, l.end.Y));
+
+			bool found=false;
+
+			f32 a1,a2,b1,b2;
+
+			// calculate slopes, deal with infinity
+			if (end.X-start.X == 0)
+				b1 = (f32)1e+10;
+			else
+				b1 = (end.Y-start.Y)/(end.X-start.X);
+			if (l.end.X-l.start.X == 0)
+				b2 = (f32)1e+10;
+			else
+				b2 = (l.end.Y-l.start.Y)/(l.end.X-l.start.X);
+
+			// calculate position
+			a1 = start.Y   - b1 *  start.X;
+			a2 = l.start.Y - b2 * l.start.X;
+			out.X = - (a1-a2)/(b1-b2);
+			out.Y = a1 + b1*out.X;
+
+			// did the lines cross?
+			if ( (start.X-out.X) *(out.X-end.X)  >=0 &&
+				(l.start.X-out.X)*(out.X-l.end.X)>=0 &&
+				(start.Y-out.Y)  *(out.Y-end.Y)  >=0 &&
+				(l.start.Y-out.Y)*(out.Y-l.end.Y)>=0 )
+			{
+				found = true;
+			}
+			return found;
 		}
 
 		//! Returns unit vector of the line.
@@ -76,11 +100,11 @@ class line2d
 		{
 			vector2d<T> vect = getVector();
 			vector2d<T> vect2 = l.getVector();
-			return vectorAngle(vect.X, vect.Y, vect2.X, vect2.Y);
+			return vect.getAngleWith(vect2)
 		}
-		
+
 		// member variables
-		
+
 		vector2d<T> start;
 		vector2d<T> end;
 };
