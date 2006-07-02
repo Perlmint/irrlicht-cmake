@@ -20,9 +20,10 @@
 #define bswap_32(X) _byteswap_ulong(X)
 #else
 #ifdef MACOSX
-#else
 #define bswap_16(X) OSReadSwapInt16(X,0)
 #define bswap_32(X) OSReadSwapInt32(X,0)
+#else
+#include "byteswap.h"
 #endif
 #endif
 
