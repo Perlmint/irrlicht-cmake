@@ -144,7 +144,6 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 	Buffer = new c8[Size];
 
 	//! read all into memory
-	file->seek(0); // apparently sometimes files have been read already, so reset it
 	if (file->read(Buffer, Size) != Size)
 	{
 		os::Printer::log("Could not read from x file.", ELL_WARNING);

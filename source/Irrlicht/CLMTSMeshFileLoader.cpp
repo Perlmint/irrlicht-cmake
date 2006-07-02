@@ -153,8 +153,6 @@ IAnimatedMesh* CLMTSMeshFileLoader::createMesh(irr::io::IReadFile* file) {
 	u32 i;
 	u32 id;
 
-	file->seek(0);
-
 	// HEADER
 
 	file->read(&Header, sizeof(SLMTSHeader));

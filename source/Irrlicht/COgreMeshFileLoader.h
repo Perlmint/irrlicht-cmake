@@ -14,6 +14,17 @@
 #include "SMeshBuffer.h"
 #include "IMeshManipulator.h"
 #include "matrix4.h"
+#ifdef _IRR_WINDOWS_
+#include <stdlib.h>
+#define bswap_16(X) _byteswap_ushort(X)
+#define bswap_32(X) _byteswap_ulong(X)
+#else
+#ifdef MACOSX
+#else
+#define bswap_16(X) OSReadSwapInt16(X,0)
+#define bswap_32(X) OSReadSwapInt32(X,0)
+#endif
+#endif
 
 namespace irr
 {
@@ -76,13 +87,59 @@ private:
 		u32 read;
 	};
 
-	struct OgreMaterial
+	struct OgreTexture
 	{
-		OgreMaterial() : Name(""), Filename("") {}
+		OgreTexture() : Filename("") {}
+
+		core::stringc Filename;
+		core::stringc Alias;
+		core::stringc CoordsType;
+		core::stringc MipMaps;
+		core::stringc Alpha;
+	};
+
+	struct OgrePass
+	{
+		OgrePass() : AmbientTokenColor(false),
+			DiffuseTokenColor(false), SpecularTokenColor(false),
+			EmissiveTokenColor(false), ColorWrite(true),
+			MaxLights(8), PointSize(1.0f), PointSprites(false),
+			PointSizeMin(0), PointSizeMax(0) {}
 
 		video::SMaterial Material;
+		OgreTexture Texture;
+		bool AmbientTokenColor;
+		bool DiffuseTokenColor;
+		bool SpecularTokenColor;
+		bool EmissiveTokenColor;
+		bool ColorWrite;
+		u32 MaxLights;
+		f32 PointSize;
+		bool PointSprites;
+		u32 PointSizeMin;
+		u32 PointSizeMax;
+	};
+
+	struct OgreTechnique
+	{
+		OgreTechnique() : Name(""), LODIndex(0) {}
+
 		core::stringc Name;
-		core::stringc Filename;
+		core::stringc Scheme;
+		u16 LODIndex;
+		core::array<OgrePass> Passes;
+	};
+
+	struct OgreMaterial
+	{
+		OgreMaterial() : Name(""), ReceiveShadows(true),
+			TransparencyCastsShadows(false) {}
+
+		core::stringc Name;
+		bool ReceiveShadows;
+		bool TransparencyCastsShadows;
+		core::array<f32> LODDistances;
+		core::array<OgreTechnique> Techniques;
 	};
 
 	struct OgreVertexBuffer
@@ -162,20 +219,14 @@ private:
 
 	scene::SMeshBuffer* composeMeshBuffer(const core::array<s32>& indices, const OgreGeometry& geom, const core::stringc& material);
 	void composeObject(void);
-	void getMaterialToken(io::IReadFile* file, core::stringc& token);
+	bool readColor(io::IReadFile* meshFile, video::SColor& col);
+	void getMaterialToken(io::IReadFile* file, core::stringc& token, bool noNewLine=false);
+	void readTechnique(io::IReadFile* meshFile, OgreMaterial& mat);
+	void readPass(io::IReadFile* file, OgreTechnique& technique);
 	void loadMaterials(io::IReadFile* file);
 	core::stringc getTextureFileName(const core::stringc& texture, core::stringc& model);
 	void setCurrentlyLoadingPath(io::IReadFile* file);
 	void clearMeshes();
-
-	inline bool isspace(c8 c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
-	inline u16 bswap_16(u16 c)   { return (c >> 8) | (c << 8); }
-	inline u32 bswap_32(u32 c)   
-	{
-		c = (c >> 16) | (c << 16);
-		c = ((c >> 8) & 0xFF00FF) | ((c << 8) & 0xFF00FF00);
-		return c;
-	}
 
 	io::IFileSystem* FileSystem;
 	video::IVideoDriver* Driver;

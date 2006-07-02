@@ -12,7 +12,6 @@
 
 #include "os.h"
 #include <wchar.h>
-#include <string.h>
 
 #include "CGeometryCreator.h"
 
@@ -193,6 +192,8 @@ IAnimatedMesh* CSceneManager::getMesh(const c8* filename)
 	for (s32 i=count-1; i>=0; --i)
 		if (MeshLoaderList[i]->isALoadableFileExtension(name.c_str()))
 		{
+			// reset file to avoid side effects of previous calls to createMesh
+			file->seek(0);
 			msh = MeshLoaderList[i]->createMesh(file);
 			if (msh)
 			{

@@ -82,8 +82,6 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 	//os::Printer::log(msg.c_str(), ELL_INFORMATION);
 
     // read file into memory
-	file->seek(0);    
-
 	u16 id;
 	c8 name[256];
 

@@ -112,8 +112,6 @@ IAnimatedMesh* C3DSMeshFileLoader::createMesh(io::IReadFile* file)
 {
 	ChunkData data;
 
-	file->seek(0);
-
 	file->read(&data.header, sizeof(ChunkHeader));
 
 #ifdef __BIG_ENDIAN__

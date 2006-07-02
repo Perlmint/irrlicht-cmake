@@ -9,6 +9,7 @@
 #include "SAnimatedMesh.h"
 #include "fast_atof.h"
 #include <string.h>
+#include <ctype.h>
 
 
 namespace irr
@@ -88,7 +89,6 @@ IAnimatedMesh* COgreMeshFileLoader::createMesh(io::IReadFile* file)
 {
 	s16 id;
 
-	file->seek(0);
 	file->read(&id, 2);
 
 	if (id == COGRE_HEADER)
@@ -359,24 +359,25 @@ scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32
 {
 	scene::SMeshBuffer *mb=new scene::SMeshBuffer();
 	for (u32 k=0; k<Materials.size(); ++k)
-		if (material==Materials[k].Name)
+	{
+		if ((material==Materials[k].Name)&&(Materials[k].Techniques.size())&&(Materials[k].Techniques[0].Passes.size()))
 		{
-			mb->Material=Materials[k].Material;
-			if (Materials[k].Filename.size())
+			mb->Material=Materials[k].Techniques[0].Passes[0].Material;
+			if (Materials[k].Techniques[0].Passes[0].Texture.Filename.size())
 			{
-				mb->Material.Texture1 = Driver->getTexture(Materials[k].Filename.c_str());
-
+				mb->Material.Texture1=Driver->getTexture(Materials[k].Techniques[0].Passes[0].Texture.Filename.c_str());
 				if (!mb->Material.Texture1)
 				{
 					// retry with relative path
 					core::stringc relative = CurrentlyLoadingFromPath;
 					relative += "\\";
-					relative += Materials[k].Filename;
+					relative += Materials[k].Techniques[0].Passes[0].Texture.Filename;
 					mb->Material.Texture1 = Driver->getTexture(relative.c_str());
-				}	
+				}
 			}
 			break;
 		}
+	}
 	mb->Indices.set_used(indices.size());
 	for (u32 i=0; i<indices.size(); ++i)
 		mb->Indices[i]=indices[i];
@@ -478,21 +479,25 @@ core::stringc COgreMeshFileLoader::getTextureFileName(const core::stringc& textu
 }
 
 
-void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& token)
+void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& token, bool noNewLine)
 {
 	c8 c=0;
 	token = "";
 
 	file->read(&c, sizeof(c8));
 	while (isspace(c) && (file->getPos() < file->getSize()))
+	{
+		if (noNewLine && c=='\n')
+			return;
 		file->read(&c, sizeof(c8));
+	}
 	do
 	{
 		if (c=='/')
 		{
 			file->read(&c, sizeof(c8));
 			if (c=='/')
-			{
+			{ // skip comments
 				while(c!='\n')
 					file->read(&c, sizeof(c8));
 			}
@@ -510,9 +515,207 @@ void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& t
 }
 
 
+bool COgreMeshFileLoader::readColor(io::IReadFile* file, video::SColor& col)
+{
+	core::stringc token;
+
+	getMaterialToken(file, token);
+	if (token!="vertexcolour")
+	{
+		video::SColorf col_f;
+		col_f.r=core::fast_atof(token.c_str());
+		getMaterialToken(file, token);
+		col_f.g=core::fast_atof(token.c_str());
+		getMaterialToken(file, token);
+		col_f.b=core::fast_atof(token.c_str());
+		getMaterialToken(file, token);
+		col_f.a=core::fast_atof(token.c_str());
+		if ((col_f.r==0.0f)&&(col_f.g==0.0f)&&(col_f.b==0.0f))
+			col.set(255,255,255,255);
+		else
+			col=col_f.toSColor();
+		return false;
+	}
+	return true;
+}
+
+
+void COgreMeshFileLoader::readPass(io::IReadFile* file, OgreTechnique& technique)
+{
+	core::stringc token;
+	technique.Passes.push_back(OgrePass());
+	OgrePass& pass=technique.Passes.getLast();
+
+	getMaterialToken(file, token); //open brace or name
+	if (token != "{")
+		getMaterialToken(file, token); //open brace
+
+	getMaterialToken(file, token);
+	u32 inBlocks=1;
+	while(inBlocks)
+	{
+		if (token=="ambient")
+			pass.AmbientTokenColor=readColor(file, pass.Material.AmbientColor);
+		else if (token=="diffuse")
+			pass.DiffuseTokenColor=readColor(file, pass.Material.AmbientColor);
+		else if (token=="specular")
+		{
+			pass.SpecularTokenColor=readColor(file, pass.Material.AmbientColor);
+			getMaterialToken(file, token);
+			pass.Material.Shininess=core::fast_atof(token.c_str());
+		}
+		else if (token=="emissive")
+			pass.EmissiveTokenColor=readColor(file, pass.Material.AmbientColor);
+		else if (token=="scene_blend")
+		{ // TODO: Choose correct values
+			getMaterialToken(file, token);
+			if (token=="add")
+				pass.Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
+			else if (token=="modulate")
+				pass.Material.MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+			else if (token=="alpha_blend")
+				pass.Material.MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+			else if (token=="colour_blend")
+				pass.Material.MaterialType=video::EMT_TRANSPARENT_VERTEX_ALPHA;
+			else
+				getMaterialToken(file, token);
+		}
+		else if (token=="depth_check")
+		{
+			getMaterialToken(file, token);
+			pass.Material.ZBuffer=(token=="on");
+		}
+		else if (token=="depth_write")
+		{
+			getMaterialToken(file, token);
+			pass.Material.ZWriteEnable=(token=="on");
+		}
+		else if (token=="depth_func")
+		{
+			getMaterialToken(file, token); // Function name
+		}
+		else if (token=="depth_bias")
+		{
+			getMaterialToken(file, token); // bias value
+		}
+		else if (token=="alpha_rejection")
+		{
+			getMaterialToken(file, token); // function name
+			getMaterialToken(file, token); // value
+		}
+		else if (token=="cull_hardware")
+		{
+			getMaterialToken(file, token); // rotation name
+		}
+		else if (token=="cull_software")
+		{
+			getMaterialToken(file, token); // culling side
+		}
+		else if (token=="lighting")
+		{
+			getMaterialToken(file, token);
+			pass.Material.Lighting=(token=="on");
+		}
+		else if (token=="shading")
+		{
+			getMaterialToken(file, token);
+			// We take phong as gouraud
+			pass.Material.GouraudShading=(token!="flat");
+		}
+		else if (token=="polygon_mode")
+		{
+			getMaterialToken(file, token);
+			// We take points as wireframe
+			pass.Material.Wireframe=(token!="solid");
+		}
+		else if (token=="colour_write")
+		{
+			getMaterialToken(file, token);
+			pass.ColorWrite=(token=="on");
+		}
+		else if (token=="max_lights")
+		{
+			getMaterialToken(file, token);
+			pass.MaxLights=strtol(token.c_str(),NULL,10);
+		}
+		else if (token=="point_size")
+		{
+			getMaterialToken(file, token);
+			pass.PointSize=core::fast_atof(token.c_str());
+		}
+		else if (token=="point_sprites")
+		{
+			getMaterialToken(file, token);
+			pass.PointSprites=(token=="on");
+		}
+		else if (token=="point_size_min")
+		{
+			getMaterialToken(file, token);
+			pass.PointSizeMin=strtol(token.c_str(),NULL,10);
+		}
+		else if (token=="point_size_max")
+		{
+			getMaterialToken(file, token);
+			pass.PointSizeMax=strtol(token.c_str(),NULL,10);
+		}
+		else if (token=="texture_unit")
+		{
+			getMaterialToken(file, token); //open brace
+			getMaterialToken(file, token);
+			while(token != "}")
+			{
+				if (token=="texture")
+				{
+					getMaterialToken(file, pass.Texture.Filename);
+					getMaterialToken(file, pass.Texture.CoordsType, true);
+					getMaterialToken(file, pass.Texture.MipMaps, true);
+					getMaterialToken(file, pass.Texture.Alpha, true);
+				}
+				else if (token=="texture_alias")
+					getMaterialToken(file, pass.Texture.Alias);
+				getMaterialToken(file, token);
+			}
+		}
+		//fog_override, iteration, point_size_attenuation
+		//not considered yet!
+		getMaterialToken(file, token);
+		if (token=="{")
+			++inBlocks;
+		else if (token=="}")
+			--inBlocks;
+	}
+}
+
+
+void COgreMeshFileLoader::readTechnique(io::IReadFile* file, OgreMaterial& mat)
+{
+	core::stringc token;
+	mat.Techniques.push_back(OgreTechnique());
+	OgreTechnique& technique=mat.Techniques.getLast();
+
+	getMaterialToken(file, technique.Name); //open brace or name
+	if (technique.Name != "{")
+		getMaterialToken(file, token); //open brace
+	else
+		technique.Name=core::stringc((int)mat.Techniques.size());
+
+	getMaterialToken(file, token);
+	while (token != "}")
+	{
+		if (token == "pass")
+			readPass(file, technique);
+		else if (token == "scheme")
+			getMaterialToken(file, token);
+		else if (token == "lod_index")
+			getMaterialToken(file, token);
+		getMaterialToken(file, token);
+	}
+}
+
+
 void COgreMeshFileLoader::loadMaterials(io::IReadFile* meshFile)
 {
-	core::stringc token, filename = meshFile->getFileName();
+	core::stringc token,filename=meshFile->getFileName();
 	core::stringc material = filename.subString(0, filename.size()-4) + "material";
 	io::IReadFile* file = FileSystem->createAndOpenFile(material.c_str());
 
@@ -534,128 +737,28 @@ void COgreMeshFileLoader::loadMaterials(io::IReadFile* meshFile)
 		getMaterialToken(file, mat.Name);
 		getMaterialToken(file, token); //open brace
 		getMaterialToken(file, token);
-		while(token != "technique")
-			getMaterialToken(file, token);
-		getMaterialToken(file, token); //open brace
-		getMaterialToken(file, token);
-		while(token != "pass")
-			getMaterialToken(file, token);
-		getMaterialToken(file, token); //open brace
-		getMaterialToken(file, token);
-		u32 inBlocks=3;
-		while(inBlocks)
+		while(token != "}")
 		{
-			if (token=="ambient")
+			if (token=="lod_distances") // can have several items
+				getMaterialToken(file, token);
+			else if (token=="receive_shadows")
 			{
 				getMaterialToken(file, token);
-				if (token!="vertexcolour")
-				{
-					video::SColorf col;
-					col.r=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.g=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.b=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.a=core::fast_atof(token.c_str());
-					if ((col.r==0.0f)&&(col.g==0.0f)&&(col.b==0.0f))
-						mat.Material.AmbientColor=video::SColor(255,255,255,255);
-					else
-						mat.Material.AmbientColor=col.toSColor();
-				}
+				mat.ReceiveShadows=(token=="on");
 			}
-			else if (token=="diffuse")
+			else if (token=="transparency_casts_shadows")
 			{
 				getMaterialToken(file, token);
-				if (token!="vertexcolour")
-				{
-					video::SColorf col;
-					col.r=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.g=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.b=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.a=core::fast_atof(token.c_str());
-					if ((col.r==0.0f)&&(col.g==0.0f)&&(col.b==0.0f))
-						mat.Material.DiffuseColor=video::SColor(255,255,255,255);
-					else
-						mat.Material.DiffuseColor=col.toSColor();
-				}
+				mat.TransparencyCastsShadows=(token=="on");
 			}
-			else if (token=="specular")
+			else if (token=="set_texture_alias")
 			{
 				getMaterialToken(file, token);
-				if (token!="vertexcolour")
-				{
-					video::SColorf col;
-					col.r=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.g=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.b=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.a=core::fast_atof(token.c_str());
-					if ((col.r==0.0f)&&(col.g==0.0f)&&(col.b==0.0f))
-						mat.Material.SpecularColor=video::SColor(255,255,255,255);
-					else
-						mat.Material.SpecularColor=col.toSColor();
-					getMaterialToken(file, token);
-					mat.Material.Shininess=core::fast_atof(token.c_str());
-				}
-			}
-			else if (token=="emissive")
-			{
 				getMaterialToken(file, token);
-				if (token!="vertexcolour")
-				{
-					video::SColorf col;
-					col.r=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.g=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.b=core::fast_atof(token.c_str());
-					getMaterialToken(file, token);
-					col.a=core::fast_atof(token.c_str());
-					if ((col.r==0.0f)&&(col.g==0.0f)&&(col.b==0.0f))
-						mat.Material.EmissiveColor=video::SColor(255,255,255,255);
-					else
-						mat.Material.EmissiveColor=col.toSColor();
-				}
 			}
-			else if (token=="lighting")
-			{
-				getMaterialToken(file, token);
-				mat.Material.Lighting=(token=="on");
-			}
-			else if (token=="scene_blend")
-			{
-				getMaterialToken(file, token);
-				if (token=="add")
-					mat.Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
-				else if (token=="alpha_blend")
-					mat.Material.MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL;
-				else if (token=="colour_blend")
-					mat.Material.MaterialType=video::EMT_TRANSPARENT_VERTEX_ALPHA;
-			}
-			else if (token=="texture_unit")
-			{
-				getMaterialToken(file, token); //open brace
-				getMaterialToken(file, token);
-				while(token != "}")
-				{
-					if (token=="texture")
-					{
-						getMaterialToken(file, mat.Filename);
-					}
-					getMaterialToken(file, token);
-				}
-			}
+			else if (token=="technique")
+				readTechnique(file, mat);
 			getMaterialToken(file, token);
-			if (token=="{")
-				++inBlocks;
-			else if (token=="}")
-				--inBlocks;
 		}
 		getMaterialToken(file, token);
 	}

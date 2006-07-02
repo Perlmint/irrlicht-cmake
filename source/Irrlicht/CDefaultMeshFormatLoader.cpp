@@ -66,8 +66,6 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	// load quake 2 md2 model
 	if (strstr(file->getFileName(), ".md2"))
 	{
-		file->seek(0);
-	
 		msh = new CAnimatedMeshMD2();
 		success = ((CAnimatedMeshMD2*)msh)->loadFile(file);
 		if (success)
@@ -79,8 +77,6 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	// load maya obj
 	if (strstr(file->getFileName(), ".obj"))
 	{
-		file->seek(0);
-
 		msh = new CStaticMeshOBJ();
 		success = ((CStaticMeshOBJ*)msh)->loadFile(file);
 		if (success)
@@ -92,8 +88,6 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	// load milkshape
 	if (strstr(file->getFileName(), ".ms3d"))
 	{
-		file->seek(0);
-
 		msh = new CAnimatedMeshMS3D(Driver);
 		success = ((CAnimatedMeshMS3D*)msh)->loadFile(file);
 		if (success)
@@ -105,8 +99,6 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	// load quake 3 bsp
 	if (strstr(file->getFileName(), ".bsp"))
 	{
-		file->seek(0);
-
 		msh = new CQ3LevelMesh(FileSystem, Driver);
 		success = ((CQ3LevelMesh*)msh)->loadFile(file);
 		if (success)
