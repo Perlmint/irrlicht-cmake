@@ -100,7 +100,7 @@ class line2d
 		{
 			vector2d<T> vect = getVector();
 			vector2d<T> vect2 = l.getVector();
-			return vect.getAngleWith(vect2)
+			return vect.getAngleWith(vect2);
 		}
 
 		// member variables

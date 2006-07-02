@@ -36,7 +36,7 @@ IImageLoader* createImageLoaderPNG();
 
 
 //! Array holding the built in material type names
-const char* const sBuiltInMaterialTypeNames[] = 
+const char* const sBuiltInMaterialTypeNames[] =
 {
 	"solid",
 	"solid_2layer",
@@ -66,7 +66,7 @@ const char* const sBuiltInMaterialTypeNames[] =
 
 //! constructor
 CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<s32>& screenSize)
-: ScreenSize(screenSize), ViewPort(0,0,0,0), 
+: ScreenSize(screenSize), ViewPort(0,0,0,0),
  FileSystem(io), PrimitivesDrawn(0), TextureCreationFlags(0)
 {
 	#ifdef _DEBUG
@@ -90,7 +90,7 @@ CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<s32>& scre
 	SurfaceLoader.push_back(video::createImageLoaderTGA());
 	SurfaceLoader.push_back(video::createImageLoaderPSD());
 	SurfaceLoader.push_back(video::createImageLoaderPCX());
-	SurfaceLoader.push_back(video::createImageLoaderPNG());	
+	SurfaceLoader.push_back(video::createImageLoaderPNG());
 
 	// set ExposedData to 0
 	memset(&ExposedData, 0, sizeof(ExposedData));
@@ -101,7 +101,7 @@ CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<s32>& scre
 //! destructor
 CNullDriver::~CNullDriver()
 {
-	// delete file system 
+	// delete file system
 
 	if (FileSystem)
 		FileSystem->drop();
@@ -120,7 +120,7 @@ CNullDriver::~CNullDriver()
 }
 
 
-//! Adds an external surface loader to the engine. 
+//! Adds an external surface loader to the engine.
 void CNullDriver::addExternalImageLoader(IImageLoader* loader)
 {
 	if (!loader)
@@ -190,7 +190,7 @@ void CNullDriver::setMaterial(const SMaterial& material)
 
 
 //! Removes a texture from the texture cache and deletes it, freeing lot of
-//! memory. 
+//! memory.
 void CNullDriver::removeTexture(ITexture* texture)
 {
 	for (u32 i=0; i<Textures.size(); ++i)
@@ -203,7 +203,7 @@ void CNullDriver::removeTexture(ITexture* texture)
 
 
 //! Removes all texture from the texture cache and deletes them, freeing lot of
-//! memory. 
+//! memory.
 void CNullDriver::removeAllTextures()
 {
 	deleteAllTextures();
@@ -297,7 +297,7 @@ video::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file)
 {
 	ITexture* texture = 0;
 	IImage* image = createImageFromFile(file);
-	
+
 	if (image)
 	{
 		// create texture from surface
@@ -397,7 +397,7 @@ ITexture* CNullDriver::createDeviceDependentTexture(IImage* surface, const char*
 
 
 //! sets a render target
-bool CNullDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer, 
+bool CNullDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
 								 bool clearZBuffer, SColor color)
 {
 	return false;
@@ -460,7 +460,7 @@ void CNullDriver::drawIndexedTriangleFan(const S3DVertex* vertices,
 
 
 //! Draws a 3d line.
-void CNullDriver::draw3DLine(const core::vector3df& start, 
+void CNullDriver::draw3DLine(const core::vector3df& start,
 							const core::vector3df& end, SColor color)
 {
 	core::vector3df vect = start.crossProduct(end);
@@ -479,7 +479,7 @@ void CNullDriver::draw3DLine(const core::vector3df& start,
 
 	vtx[2].Pos = start + vect;
 	vtx[3].Pos = end + vect;
-	
+
 	u16 idx[12] = {0,1,2, 0,2,1,   0,1,3, 0,3,1};
 
 	drawIndexedTriangleList(vtx, 4, idx, 4);
@@ -502,7 +502,7 @@ void CNullDriver::draw3DBox(const core::aabbox3d<f32> box, SColor color)
 {
 	core::vector3df edges[8];
 	box.getEdges(edges);
-	
+
 	// TODO: optimize into one big drawIndexePrimitive call.
 
 	draw3DLine(edges[5], edges[1], color);
@@ -560,21 +560,21 @@ void CNullDriver::draw2DRectangle(const core::rect<s32>& pos,
 }
 
 
-//! Draws a 2d line. 
+//! Draws a 2d line.
 void CNullDriver::draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end, 
+								const core::position2d<s32>& end,
 								SColor color)
 {
 }
 
 
 //! Draws a non filled concyclic reqular 2d polyon.
-void CNullDriver::draw2DPolygon(core::position2d<s32> center, 
+void CNullDriver::draw2DPolygon(core::position2d<s32> center,
 	f32 radius, video::SColor color, s32 count)
 {
 	if (count < 2)
 		return;
-	
+
 	core::position2d<s32> first;
 	core::position2d<s32> a,b;
 
@@ -650,8 +650,8 @@ void CNullDriver::drawStencilShadowVolume(const core::vector3df* triangles, s32 
 
 //! Fills the stencil shadow with color. After the shadow volume has been drawn
 //! into the stencil buffer using IVideoDriver::drawStencilShadowVolume(), use this
-//! to draw the color of the shadow. 
-void CNullDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor leftUpEdge, 
+//! to draw the color of the shadow.
+void CNullDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor leftUpEdge,
 	video::SColor rightUpEdge,	video::SColor leftDownEdge,	video::SColor rightDownEdge)
 {
 }
@@ -843,7 +843,7 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 }
 
 
-//! Creates a normal map from a height map texture. 
+//! Creates a normal map from a height map texture.
 //! \param amplitude: Constant value by which the height information is multiplied.
 void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 {
@@ -890,7 +890,7 @@ void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 				core::vector3df h2((x+1)*hh, nml32(x+1, y, pitch, dim.Height, in)*amplitude, y*vh);
 				//core::vector3df v1(x*hh, nml32(x, y-1, pitch, dim.Height, in)*amplitude, (y-1)*vh);
 				//core::vector3df v2(x*hh, nml32(x, y+1, pitch, dim.Height, in)*amplitude, (y+1)*vh);
-				core::vector3df v1(x*hh, nml32(x, y+1, pitch, dim.Height, in)*amplitude, (y-1)*vh); 
+				core::vector3df v1(x*hh, nml32(x, y+1, pitch, dim.Height, in)*amplitude, (y-1)*vh);
 				core::vector3df v2(x*hh, nml32(x, y-1, pitch, dim.Height, in)*amplitude, (y+1)*vh);
 
 				core::vector3df v = v1-v2;
@@ -901,7 +901,7 @@ void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 				n *= 0.5f;
 				n += core::vector3df(0.5f,0.5f,0.5f); // now between 0 and 1
 				n *= 255.0f;
-			
+
 				s32 height = (s32)nml32(x, y, pitch, dim.Height, in);
 				p[y*pitch + x] = video::SColor(
 					height, // store height in alpha
@@ -948,7 +948,7 @@ void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 				n *= 0.5f;
 				n += core::vector3df(0.5f,0.5f,0.5f); // now between 0 and 1
 				n *= 255.0f;
-			
+
 				p[y*pitch + x] = video::RGB16((s32)n.X, (s32)n.Z, (s32)n.Y);
 			}
 
@@ -998,7 +998,7 @@ void CNullDriver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enab
 	}
 
 	// set flag
-	TextureCreationFlags = (TextureCreationFlags & (~flag)) | 
+	TextureCreationFlags = (TextureCreationFlags & (~flag)) |
 		((((u32)!enabled)-1) & flag);
 }
 
@@ -1010,7 +1010,7 @@ bool CNullDriver::getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag)
 }
 
 
-//! Creates a software image from a file. 
+//! Creates a software image from a file.
 IImage* CNullDriver::createImageFromFile(const char* filename)
 {
 	IImage* image = 0;
@@ -1019,7 +1019,7 @@ IImage* CNullDriver::createImageFromFile(const char* filename)
 	if (file)
 	{
 		image = createImageFromFile(file);
-		file->drop();	
+		file->drop();
 	}
 	else
 		os::Printer::log("Could not open file of image", filename, ELL_ERROR);
@@ -1028,12 +1028,12 @@ IImage* CNullDriver::createImageFromFile(const char* filename)
 }
 
 
-//! Creates a software image from a file. 
+//! Creates a software image from a file.
 IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 {
 	IImage* image = 0;
 	// try to load file based on file extension
-	
+
 	u32 i;
 
 	for (i=0; i<SurfaceLoader.size(); ++i)
@@ -1064,7 +1064,7 @@ IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 }
 
 //! Creates a software image from a byte array.
-IImage* CNullDriver::createImageFromData(ECOLOR_FORMAT format, 
+IImage* CNullDriver::createImageFromData(ECOLOR_FORMAT format,
 										const core::dimension2d<s32>& size, void *data,
 										bool ownForeignMemory)
 {
@@ -1148,7 +1148,7 @@ s32 CNullDriver::addMaterialRenderer(IMaterialRenderer* renderer, const char* na
 
 	if (name == 0 && (MaterialRenderers.size() < sizeof(sBuiltInMaterialTypeNames) / sizeof(char*)))
 	{
-		// set name of built in renderer so that we don't have to implement name 
+		// set name of built in renderer so that we don't have to implement name
 		// setting in all 5 available renderers.
 		r.Name = sBuiltInMaterialTypeNames[MaterialRenderers.size()];
 	}
@@ -1160,10 +1160,10 @@ s32 CNullDriver::addMaterialRenderer(IMaterialRenderer* renderer, const char* na
 }
 
 
-//! Sets the name of a material renderer. 
+//! Sets the name of a material renderer.
 void CNullDriver::setMaterialRendererName(s32 idx, const char* name)
 {
-	if (idx < (sizeof(sBuiltInMaterialTypeNames) / sizeof(char*)) ||
+	if (idx < s32(sizeof(sBuiltInMaterialTypeNames) / sizeof(char*)) ||
 		idx >= (s32)MaterialRenderers.size())
 		return;
 
@@ -1233,7 +1233,7 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 	outMaterial.AmbientColor = attr->getAttributeAsColor("Ambient");
 	outMaterial.DiffuseColor = attr->getAttributeAsColor("Diffuse");
 	outMaterial.EmissiveColor = attr->getAttributeAsColor("Emissive");
-	outMaterial.SpecularColor = attr->getAttributeAsColor("Specular");	
+	outMaterial.SpecularColor = attr->getAttributeAsColor("Specular");
 
 	outMaterial.Shininess = attr->getAttributeAsFloat("Shininess");
 	outMaterial.MaterialTypeParam = attr->getAttributeAsFloat("Param1");
@@ -1316,13 +1316,13 @@ IGPUProgrammingServices* CNullDriver::getGPUProgrammingServices()
 	return 0;
 }
 
-//! Adds a new material renderer to the VideoDriver, based on a high level shading 
-//! language. Currently only HLSL in D3D9 is supported. 
+//! Adds a new material renderer to the VideoDriver, based on a high level shading
+//! language. Currently only HLSL in D3D9 is supported.
 s32 CNullDriver::addHighLevelShaderMaterial(
 	const c8* vertexShaderProgram,
 	const c8* vertexShaderEntryPointName,
 	E_VERTEX_SHADER_TYPE vsCompileTarget,
-	const c8* pixelShaderProgram, 
+	const c8* pixelShaderProgram,
 	const c8* pixelShaderEntryPointName,
 	E_PIXEL_SHADER_TYPE psCompileTarget,
 	IShaderConstantSetCallBack* callback,
@@ -1334,12 +1334,12 @@ s32 CNullDriver::addHighLevelShaderMaterial(
 }
 
 //! Like IGPUProgrammingServices::addShaderMaterial() (look there for a detailed description),
-//! but tries to load the programs from files. 
+//! but tries to load the programs from files.
 s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 	const c8* vertexShaderProgram,
 	const c8* vertexShaderEntryPointName,
 	E_VERTEX_SHADER_TYPE vsCompileTarget,
-	const c8* pixelShaderProgram, 
+	const c8* pixelShaderProgram,
 	const c8* pixelShaderEntryPointName,
 	E_PIXEL_SHADER_TYPE psCompileTarget,
 	IShaderConstantSetCallBack* callback,
@@ -1354,7 +1354,7 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 		vsfile = FileSystem->createAndOpenFile(vertexShaderProgram);
 		if (!vsfile)
 		{
-			os::Printer::log("Could not open vertex shader program file", 
+			os::Printer::log("Could not open vertex shader program file",
 				vertexShaderProgram, ELL_WARNING);
 			return -1;
 		}
@@ -1365,7 +1365,7 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 		psfile = FileSystem->createAndOpenFile(pixelShaderProgram);
 		if (!psfile)
 		{
-			os::Printer::log("Could not open pixel shader program file", 
+			os::Printer::log("Could not open pixel shader program file",
 				pixelShaderProgram, ELL_WARNING);
 			if (vsfile)
 				vsfile->drop();
@@ -1374,7 +1374,7 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 	}
 
 	s32 result = addHighLevelShaderMaterialFromFiles(
-		vsfile, vertexShaderEntryPointName, vsCompileTarget, 
+		vsfile, vertexShaderEntryPointName, vsCompileTarget,
 		psfile, pixelShaderEntryPointName, psCompileTarget,
 		callback, baseMaterial, userData);
 
@@ -1388,12 +1388,12 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 }
 
 //! Like IGPUProgrammingServices::addShaderMaterial() (look there for a detailed description),
-//! but tries to load the programs from files. 
+//! but tries to load the programs from files.
 s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 	io::IReadFile* vertexShaderProgram,
 	const c8* vertexShaderEntryPointName,
 	E_VERTEX_SHADER_TYPE vsCompileTarget,
-	io::IReadFile* pixelShaderProgram, 
+	io::IReadFile* pixelShaderProgram,
 	const c8* pixelShaderEntryPointName,
 	E_PIXEL_SHADER_TYPE psCompileTarget,
 	IShaderConstantSetCallBack* callback,
@@ -1426,8 +1426,8 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 	}
 
 	s32 result = this->addHighLevelShaderMaterial(
-		vs, vertexShaderEntryPointName, vsCompileTarget, 
-		ps, pixelShaderEntryPointName, psCompileTarget, 
+		vs, vertexShaderEntryPointName, vsCompileTarget,
+		ps, pixelShaderEntryPointName, psCompileTarget,
 		callback, baseMaterial, userData);
 
 	delete [] vs;
@@ -1436,7 +1436,7 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 	return result;
 }
 
-//! Adds a new material renderer to the VideoDriver, using pixel and/or 
+//! Adds a new material renderer to the VideoDriver, using pixel and/or
 //! vertex shaders to render geometry.
 s32 CNullDriver::addShaderMaterial(const c8* vertexShaderProgram,
 	const c8* pixelShaderProgram,
@@ -1448,7 +1448,7 @@ s32 CNullDriver::addShaderMaterial(const c8* vertexShaderProgram,
 	return -1;
 }
 
-//! Like IGPUProgrammingServices::addShaderMaterial(), but tries to load the 
+//! Like IGPUProgrammingServices::addShaderMaterial(), but tries to load the
 //! programs from files.
 s32 CNullDriver::addShaderMaterialFromFiles(io::IReadFile* vertexShaderProgram,
 	io::IReadFile* pixelShaderProgram,
@@ -1491,12 +1491,12 @@ s32 CNullDriver::addShaderMaterialFromFiles(io::IReadFile* vertexShaderProgram,
 
 
 
-//! Like IGPUProgrammingServices::addShaderMaterial(), but tries to load the 
+//! Like IGPUProgrammingServices::addShaderMaterial(), but tries to load the
 //! programs from files.
 s32 CNullDriver::addShaderMaterialFromFiles(const c8* vertexShaderProgramFileName,
 	const c8* pixelShaderProgramFileName,
 	IShaderConstantSetCallBack* callback,
-	E_MATERIAL_TYPE baseMaterial, 
+	E_MATERIAL_TYPE baseMaterial,
 	s32 userData)
 {
 	io::IReadFile* vsfile = 0;
@@ -1507,7 +1507,7 @@ s32 CNullDriver::addShaderMaterialFromFiles(const c8* vertexShaderProgramFileNam
 		vsfile = FileSystem->createAndOpenFile(vertexShaderProgramFileName);
 		if (!vsfile)
 		{
-			os::Printer::log("Could not open vertex shader program file", 
+			os::Printer::log("Could not open vertex shader program file",
 				vertexShaderProgramFileName, ELL_WARNING);
 			return -1;
 		}
@@ -1518,7 +1518,7 @@ s32 CNullDriver::addShaderMaterialFromFiles(const c8* vertexShaderProgramFileNam
 		psfile = FileSystem->createAndOpenFile(pixelShaderProgramFileName);
 		if (!psfile)
 		{
-			os::Printer::log("Could not open pixel shader program file", 
+			os::Printer::log("Could not open pixel shader program file",
 				pixelShaderProgramFileName, ELL_WARNING);
 			if (vsfile)
 				vsfile->drop();
@@ -1526,7 +1526,7 @@ s32 CNullDriver::addShaderMaterialFromFiles(const c8* vertexShaderProgramFileNam
 		}
 	}
 
-	s32 result = addShaderMaterialFromFiles(vsfile, psfile, callback, 
+	s32 result = addShaderMaterialFromFiles(vsfile, psfile, callback,
 		baseMaterial, userData);
 
 	if (psfile)
@@ -1544,7 +1544,7 @@ ITexture* CNullDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 	return 0;
 }
 
-//! Clears the ZBuffer. 
+//! Clears the ZBuffer.
 void CNullDriver::clearZBuffer()
 {
 }

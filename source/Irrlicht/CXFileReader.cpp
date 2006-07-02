@@ -34,7 +34,7 @@ CXFileReader::CXFileReader(io::IReadFile* file)
 	{
 		ErrorHappened = true;
 		return;
-	}	
+	}
 
 #ifdef _XREADER_DEBUG
 	validateMesh(&RootFrame);
@@ -96,7 +96,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 					i, m, frame->Meshes[m].Indices[i], frame->Name.c_str());
 				os::Printer::log(tmp, ELL_ERROR);
 				error = true;
-			} 
+			}
 		}
 
 		// validate normal indices
@@ -117,7 +117,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 					i, m, frame->Meshes[m].NormalIndices[i], frame->Name.c_str());
 				os::Printer::log(tmp, ELL_ERROR);
 				error = true;
-			} 
+			}
 		}
 	}
 
@@ -142,7 +142,7 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 	}
 
 	Buffer = new c8[Size];
-	
+
 	//! read all into memory
 	file->seek(0); // apparently sometimes files have been read already, so reset it
 	if (file->read(Buffer, Size) != Size)
@@ -240,13 +240,13 @@ bool CXFileReader::parseDataObject()
 		AnimationSets.push_back(SXAnimationSet());
 		return parseDataObjectAnimationSet(AnimationSets[AnimationSets.size()-1]);
 	}
-	else 
-	if (objectName == "Material") 
-	{ 
+	else
+	if (objectName == "Material")
+	{
 		// template materials now available thanks to joeWright
-		TemplateMaterials.push_back(SXTemplateMaterial()); 
-		TemplateMaterials.getLast().Name = getNextToken(); 
-		return parseDataObjectMaterial(TemplateMaterials.getLast().Material); 
+		TemplateMaterials.push_back(SXTemplateMaterial());
+		TemplateMaterials.getLast().Name = getNextToken();
+		return parseDataObjectMaterial(TemplateMaterials.getLast().Material);
 	}
 
 	os::Printer::log("Unknown data object in x file", objectName.c_str());
@@ -263,8 +263,8 @@ bool CXFileReader::parseDataObjectFrame(SXFrame& frame)
 
 	// A coordinate frame, or "frame of reference." The Frame template
 	// is open and can contain any object. The Direct3D extensions (D3DX)
-	// mesh-loading functions recognize Mesh, FrameTransformMatrix, and 
-	// Frame template instances as child objects when loading a Frame 
+	// mesh-loading functions recognize Mesh, FrameTransformMatrix, and
+	// Frame template instances as child objects when loading a Frame
 	// instance.
 
 	if (!readHeadOfDataObject(&frame.Name))
@@ -318,7 +318,7 @@ bool CXFileReader::parseDataObjectFrame(SXFrame& frame)
 		}
 
 	}
-		
+
 	return true;
 }
 
@@ -343,7 +343,7 @@ bool CXFileReader::parseDataObjectTransformationMatrix(core::matrix4 &mat)
 			os::Printer::log("Binary X: Mesh: Expecting float list (for matrix)", ELL_WARNING);
 			return false;
 		}
-		
+
 		if (readBinDWord() != 0x10)
 		{
 			os::Printer::log("Binary X: Mesh: Should be 16 floats in matrix", ELL_WARNING);
@@ -383,14 +383,14 @@ bool CXFileReader::parseDataObjectTemplate()
 	// ignore left delimiter
 	if (getNextToken() != "{")
 	{
-		os::Printer::log("Left delimiter in template data object missing.", 
+		os::Printer::log("Left delimiter in template data object missing.",
 			name.c_str(), ELL_ERROR);
 		return false;
 	}
 
 	// read GUID
 	core::stringc guid = getNextToken();
-	
+
 	// read and ignore data members
 	while(true)
 	{
@@ -459,7 +459,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 
 	core::array<s32> polygonfaces;
 	s32 currentIndex = 0;
-	
+
 	for (s32 k=0; k<nFaces; ++k)
 	{
 		s32 fcnt = readInt();
@@ -617,8 +617,8 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 			os::Printer::log("Binary X: Mesh: Expecting float list (for SkinWeights)", ELL_WARNING);
 			return false;
 		}
-		
-		if (readBinDWord() != nWeights+16)
+
+		if (readBinDWord() != (u32)(nWeights+16))
 		{
 			os::Printer::log("Binary X: Mesh: Wrong number of floats", ELL_WARNING);
 			return false;
@@ -748,15 +748,15 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 		{
 			break; // material list finished
 		}
-		else 
-		if (objectName == "{") 
-		{ 
+		else
+		if (objectName == "{")
+		{
 			// template materials now available thanks to joeWright
-			objectName = getNextToken(); 
-			for (u32 i=0; i<TemplateMaterials.size(); ++i) 
-				if (TemplateMaterials[i].Name == objectName) 
-					mlist.Materials.push_back(TemplateMaterials[i].Material); 
-			getNextToken(); // skip } 
+			objectName = getNextToken();
+			for (u32 i=0; i<TemplateMaterials.size(); ++i)
+				if (TemplateMaterials[i].Name == objectName)
+					mlist.Materials.push_back(TemplateMaterials[i].Material);
+			getNextToken(); // skip }
 		}
 		else
 		if (objectName == "Material")
@@ -777,7 +777,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 				return false;
 		}
 
-	}	
+	}
 
 	return true;
 }
@@ -853,7 +853,7 @@ bool CXFileReader::parseDataObjectMaterial(SXMaterial& material)
 				return false;
 		}
 
-	}	
+	}
 
 	return true;
 }
@@ -871,7 +871,7 @@ bool CXFileReader::getNextTokenAsString(core::stringc& out)
 
 	if (P >= End)
 		return false;
-	
+
 	if (P[0] != '"')
 		return false;
 	++P;
@@ -879,7 +879,7 @@ bool CXFileReader::getNextTokenAsString(core::stringc& out)
 	while(P < End && P[0]!='"')
 	{
 		out.append(P[0]);
-		++P;		
+		++P;
 	}
 
 	if ( P[1] != ';' || P[0] != '"')
@@ -931,7 +931,7 @@ bool CXFileReader::parseDataObjectAnimationSet(SXAnimationSet& set)
 		}
 
 	}
-		
+
 	return true;
 }
 
@@ -1007,7 +1007,7 @@ bool CXFileReader::parseDataObjectAnimation(SXAnimation& anim)
 		}
 
 	}
-		
+
 	return true;
 }
 
@@ -1036,7 +1036,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 	// read number of keys
 	animkey.numberOfKeys = readInt();
 
-	animkey.init();	
+	animkey.init();
 
 	// read keys
 	switch(animkey.keyType)
@@ -1063,7 +1063,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 						os::Printer::log("Binary X: Animation Key: Expecting float list", ELL_WARNING);
 						return false;
 					}
-					
+
 					if (readBinDWord() != 4)
 					{
 						os::Printer::log("Binary X: Animation Key : Value count not correct", ELL_WARNING);
@@ -1106,7 +1106,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 						os::Printer::log("Binary X: Animation Key: Expecting float list", ELL_WARNING);
 						return false;
 					}
-					
+
 					if (readBinDWord() != 3)
 					{
 						os::Printer::log("Binary X: Animation Key : Value count not correct", ELL_WARNING);
@@ -1147,7 +1147,7 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 						os::Printer::log("Binary X: Animation Key: Expecting float list", ELL_WARNING);
 						return false;
 					}
-					
+
 					if (readBinDWord() != 16)
 					{
 						os::Printer::log("Binary X: Animation Key : Value count not correct", ELL_WARNING);
@@ -1414,7 +1414,7 @@ bool CXFileReader::checkForTwoFollowingSemicolons()
 
 
 //! reads header of dataobject including the opening brace.
-//! returns false if error happened, and writes name of object 
+//! returns false if error happened, and writes name of object
 //! if there is one
 bool CXFileReader::readHeadOfDataObject(core::stringc* outname)
 {
@@ -1424,14 +1424,14 @@ bool CXFileReader::readHeadOfDataObject(core::stringc* outname)
 		if (outname)
 			(*outname) = nameOrBrace;
 
-		if (nameOrBrace.size() != 0 && 
+		if (nameOrBrace.size() != 0 &&
 			nameOrBrace[nameOrBrace.size()-1] == '{')
 		{
 			(*outname) = nameOrBrace.subString(0, nameOrBrace.size()-1);
 			return true;
 		}
 
-		
+
 		if (getNextToken() != "{")
 			return false;
 	}
@@ -1545,7 +1545,7 @@ core::stringc CXFileReader::getNextToken()
 		while(P < End && !isspace(P[0]))
 		{
 			s.append(P[0]);
-			++P;		
+			++P;
 		}
 	}
 	return s;
@@ -1625,7 +1625,7 @@ bool CXFileReader::isStaticMesh() const
 	return AnimationSets.empty();
 }
 
-//! returns count of animations 
+//! returns count of animations
 s32 CXFileReader::getAnimationSetCount() const
 {
 	return AnimationSets.size();
@@ -1657,8 +1657,8 @@ void CXFileReader::computeGlobalFrameMatrices(SXFrame& frame, const SXFrame* con
 	os::Printer::log(tmp);
 	for (int i=0; i<4; ++i)
 	{
-		sprintf(tmp, "    %f, %f, %f, %f", 
-			frame.LocalMatrix(i,0), 
+		sprintf(tmp, "    %f, %f, %f, %f",
+			frame.LocalMatrix(i,0),
 			frame.LocalMatrix(i,1),
 			frame.LocalMatrix(i,2),
 			frame.LocalMatrix(i,3));

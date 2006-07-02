@@ -23,18 +23,18 @@ public:
 	CBoolAttribute(const char* name, bool value)
 	{
 		Name = name;
-		setBool(value); 
+		setBool(value);
 	}
 
 	bool BoolValue;
 
-	virtual s32 getInt() 
+	virtual s32 getInt()
 	{
-		return BoolValue ? 1 : 0; 
+		return BoolValue ? 1 : 0;
 	}
 
 	virtual f32 getFloat()
-	{ 
+	{
 		return BoolValue ? 1.0f : 0.0f;
 	}
 
@@ -43,27 +43,27 @@ public:
 		return BoolValue;
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		strcpy(target, BoolValue ? "true" : "false");
 	}
 
-	virtual void setInt(s32 intValue) 
+	virtual void setInt(s32 intValue)
 	{
 		BoolValue = (intValue != 0);
 	}
 
-	virtual void setFloat(f32 floatValue) 
+	virtual void setFloat(f32 floatValue)
 	{
 		BoolValue = (floatValue != 0);
 	}
 
 	virtual void setBool(bool boolValue)
-	{ 
+	{
 		BoolValue = boolValue;
 	}
 
-	virtual void setString(const char* string) 
+	virtual void setString(const char* string)
 	{
 		BoolValue = strcmp(string, "true") == 0;
 	}
@@ -96,20 +96,20 @@ public:
 
 		if (enumerationLiterals)
 		{
-			for (s32 i=0; enumerationLiterals[i]; ++i) 
+			for (s32 i=0; enumerationLiterals[i]; ++i)
 				++literalCount;
 
 			EnumLiterals.reallocate(literalCount);
-			for (s32 i=0; enumerationLiterals[i]; ++i) 
+			for (s32 i=0; enumerationLiterals[i]; ++i)
 				EnumLiterals.push_back(enumerationLiterals[i]);
 		}
 
 		setString(enumValue);
 	}
 
-	virtual s32 getInt() 
-	{ 
-		for (s32 i=0; EnumLiterals.size(); ++i) 
+	virtual s32 getInt()
+	{
+		for (s32 i=0; EnumLiterals.size(); ++i)
 			if (Value.equals_ignore_case(EnumLiterals[i]))
 			{
 				return i;
@@ -118,35 +118,35 @@ public:
 		return -1;
 	}
 
-	virtual f32 getFloat() 
-	{ 
-		return (f32)getInt(); 
+	virtual f32 getFloat()
+	{
+		return (f32)getInt();
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return (getInt() != 0); // does not make a lot of sense, I know
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		strcpy(target, Value.c_str());
 	}
 
-	virtual void setInt(s32 intValue) 
-	{ 
+	virtual void setInt(s32 intValue)
+	{
 		if (intValue>=0 && intValue<(s32)EnumLiterals.size())
 			Value = EnumLiterals[intValue];
 		else
 			Value = "";
 	}
-	
-	virtual void setFloat(f32 floatValue) 
-	{ 
+
+	virtual void setFloat(f32 floatValue)
+	{
 		setInt((s32)floatValue);
 	};
 
-	virtual void setString(const char* text) 
+	virtual void setString(const char* text)
 	{
 		Value = text;
 	}
@@ -161,7 +161,7 @@ public:
 		return EAT_ENUM;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"enum";
@@ -183,37 +183,37 @@ public:
 		setInt(value);
 	}
 
-	virtual s32 getInt() 
-	{ 
+	virtual s32 getInt()
+	{
 		return Value;
 	}
 
-	virtual f32 getFloat() 
-	{ 
-		return (f32)Value; 
+	virtual f32 getFloat()
+	{
+		return (f32)Value;
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return (Value != 0);
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		sprintf(target, "%d", Value);
 	}
 
-	virtual void setInt(s32 intValue) 
-	{ 
-		Value = intValue; 
+	virtual void setInt(s32 intValue)
+	{
+		Value = intValue;
 	}
-	
-	virtual void setFloat(f32 floatValue) 
-	{ 
-		Value = (s32)floatValue; 
+
+	virtual void setFloat(f32 floatValue)
+	{
+		Value = (s32)floatValue;
 	};
 
-	virtual void setString(const char* text) 
+	virtual void setString(const char* text)
 	{
 		Value = atoi(text);
 	}
@@ -223,7 +223,7 @@ public:
 		return EAT_INT;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"int";
@@ -243,37 +243,37 @@ public:
 		setFloat(value);
 	}
 
-	virtual s32 getInt() 
-	{ 
+	virtual s32 getInt()
+	{
 		return (s32)Value;
 	}
 
-	virtual f32 getFloat() 
-	{ 
-		return Value; 
+	virtual f32 getFloat()
+	{
+		return Value;
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return (Value != 0);
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		sprintf(target, "%f", Value);
 	}
 
-	virtual void setInt(s32 intValue) 
-	{ 
-		Value = (f32)intValue; 
+	virtual void setInt(s32 intValue)
+	{
+		Value = (f32)intValue;
 	}
-	
-	virtual void setFloat(f32 floatValue) 
-	{ 
-		Value = floatValue; 
+
+	virtual void setFloat(f32 floatValue)
+	{
+		Value = floatValue;
 	};
 
-	virtual void setString(const char* text) 
+	virtual void setString(const char* text)
 	{
 		Value = core::fast_atof(text);
 	}
@@ -283,7 +283,7 @@ public:
 		return EAT_FLOAT;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"float";
@@ -305,37 +305,37 @@ public:
 		Value = value;
 	}
 
-	virtual s32 getInt() 
-	{ 
+	virtual s32 getInt()
+	{
 		return Value.toSColor().color;
 	}
 
-	virtual f32 getFloat() 
-	{ 
+	virtual f32 getFloat()
+	{
 		return (f32)Value.toSColor().color; // pretty senseless, again
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return (getInt() != 0); // true = not black, if anybody cares
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		sprintf(target, "%f, %f, %f, %f", Value.r, Value.g, Value.b, Value.a);
 	}
 
-	virtual void setInt(s32 intValue) 
-	{ 
-		Value = video::SColorf(video::SColor(intValue)); 
-	}
-	
-	virtual void setFloat(f32 floatValue) 
-	{ 
-		Value = video::SColorf(video::SColor((s32)floatValue)); 
+	virtual void setInt(s32 intValue)
+	{
+		Value = video::SColorf(video::SColor(intValue));
 	}
 
-	virtual void setString(const char* text) 
+	virtual void setFloat(f32 floatValue)
+	{
+		Value = video::SColorf(video::SColor((s32)floatValue));
+	}
+
+	virtual void setString(const char* text)
 	{
 		// parse text
 
@@ -358,9 +358,9 @@ public:
 		}
 	}
 
-	virtual video::SColorf getColorf()		
-	{ 
-		return Value; 
+	virtual video::SColorf getColorf()
+	{
+		return Value;
 	}
 
 	virtual video::SColor getColor()
@@ -383,7 +383,7 @@ public:
 		return EAT_COLORF;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"colorf";
@@ -405,44 +405,44 @@ public:
 		Value = value;
 	}
 
-	virtual s32 getInt() 
-	{ 
+	virtual s32 getInt()
+	{
 		return Value.color;
 	}
 
-	virtual f32 getFloat() 
-	{ 
+	virtual f32 getFloat()
+	{
 		return (f32)Value.color; // pretty senseless, again
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return (getInt() != 0); // true = not black, if anybody cares
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		sprintf(target, "%x", Value.color);
 	}
 
-	virtual void setInt(s32 intValue) 
-	{ 
+	virtual void setInt(s32 intValue)
+	{
 		Value.color = intValue;
 	}
-	
-	virtual void setFloat(f32 floatValue) 
-	{ 
+
+	virtual void setFloat(f32 floatValue)
+	{
 		Value.color = (s32)floatValue;
 	}
 
-	virtual void setString(const char* text) 
+	virtual void setString(const char* text)
 	{
 		scanf(text, L"%x", &Value.color);
 	}
 
-	virtual video::SColorf getColorf()		
-	{ 
-		return video::SColorf(Value); 
+	virtual video::SColorf getColorf()
+	{
+		return video::SColorf(Value);
 	}
 
 	virtual video::SColor getColor()
@@ -465,7 +465,7 @@ public:
 		return EAT_COLOR;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"color";
@@ -493,39 +493,39 @@ public:
 		setBinary(binaryData, lenghtInBytes);
 	}
 
-	virtual s32 getInt() 
-	{ 
+	virtual s32 getInt()
+	{
 		return atoi(Value.c_str());
 	}
 
-	virtual f32 getFloat() 
-	{ 
-		return core::fast_atof(Value.c_str()); 
+	virtual f32 getFloat()
+	{
+		return core::fast_atof(Value.c_str());
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return Value.equals_ignore_case("true");
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		strcpy(target, Value.c_str());
 	}
 
-	virtual void setInt(s32 intValue) 
-	{ 
+	virtual void setInt(s32 intValue)
+	{
 		Value = core::stringc(intValue);
 	}
-	
-	virtual void setFloat(f32 floatValue) 
-	{ 
+
+	virtual void setFloat(f32 floatValue)
+	{
 		char tmp[32];
 		sprintf(tmp, "%f", floatValue);
 		Value = tmp;
 	};
 
-	virtual void setString(const char* text) 
+	virtual void setString(const char* text)
 	{
 		Value = text;
 	}
@@ -535,7 +535,7 @@ public:
 		return EAT_STRING;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"string";
@@ -625,7 +625,7 @@ public:
 		return EAT_BINARY;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"binary";
@@ -644,12 +644,12 @@ public:
 		Value = value;
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		sprintf(target, "%f, %f, %f", Value.X, Value.Y, Value.Z);
 	}
 
-	virtual void setString(const char* text) 
+	virtual void setString(const char* text)
 	{
 		// parse text
 
@@ -693,7 +693,7 @@ public:
 		return EAT_VECTOR3D;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"vector3d";
@@ -727,25 +727,25 @@ public:
 			Value->drop();
 	}
 
-	virtual video::ITexture* getTexture()	
-	{ 
+	virtual video::ITexture* getTexture()
+	{
 		return Value;
 	}
 
 	virtual bool getBool()
-	{ 
+	{
 		return (Value != 0);
 	}
 
-	virtual void getString(char* target) 
+	virtual void getString(char* target)
 	{
 		if (Value)
 			strcpy(target, Value->getName().c_str());
 		else
 			target[0] = 0x0;
 	}
-	
-	virtual void setString(const char* text) 
+
+	virtual void setString(const char* text)
 	{
 		if (Driver)
 		{
@@ -772,7 +772,7 @@ public:
 		return EAT_TEXTURE;
 	}
 
-	
+
 	virtual const wchar_t* getTypeString()
 	{
 		return L"texture";
