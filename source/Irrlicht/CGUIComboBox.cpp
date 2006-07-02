@@ -269,7 +269,7 @@ void CGUIComboBox::openCloseMenu()
 		for (s32 i=0; i<(s32)Items.size(); ++i)
 			ListBox->addItem(Items[i].c_str());
 
-		ListBox->setSelected(-1);
+		ListBox->setSelected(Selected);
 
 		// set focus
 		Environment->setFocus(ListBox);
