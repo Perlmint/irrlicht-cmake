@@ -72,13 +72,22 @@ public:
 		data = allocator.allocate(new_size); //new T[new_size];
 		allocated = new_size;
 
+        // copy old data
 		s32 end = used < new_size ? used : new_size;
-		for (s32 i=0; i<end; ++i)
+		s32 i=0;
+		for ( ; i<end; ++i)
 		{
 			// data[i] = old_data[i];
 			allocator.construct(&data[i], old_data[i]);
 		}
+		// construct new data
+		end=new_size;
+		for ( ; i<end; ++i)
+		{
+		    allocator.construct(&data[i]);
+		}
 
+        // destruct old data
 		for (u32 j=0; j<used; ++j)
 			allocator.destruct(&old_data[j]);
 
@@ -153,7 +162,7 @@ public:
 			reallocate(used * 2 +1);
 
 		for (u32 i=used++; i>index; i--)
-			allocator.construct(&data[i], data[i-1]); // data[i] = data[i-1]; 
+			allocator.construct(&data[i], data[i-1]); // data[i] = data[i-1];
 
 
 		allocator.construct(&data[index], element); // data[index] = element;
@@ -430,7 +439,7 @@ public:
 		_IRR_DEBUG_BREAK_IF(index>=used || index<0) // access violation
 
 		for (u32 i=index+1; i<used; ++i)
-			allocator.construct(&data[i-1], data[i]); // data[i-1] = data[i]; 
+			allocator.construct(&data[i-1], data[i]); // data[i-1] = data[i];
 
 		--used;
 	}

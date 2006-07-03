@@ -43,6 +43,12 @@ public:
 		new ((void*)ptr) T(e);
 	}
 
+	//! construct an element with default constructor
+	void construct(T* ptr)
+	{
+		new ((void*)ptr) T();
+	}
+
 	//! destruct an element
 	void destruct(T* ptr)
 	{
@@ -88,6 +94,12 @@ public:
 	void construct(T* ptr, const T&e)
 	{
 		new ((void*)ptr) T(e);
+	}
+
+	//! construct an element with default constructor
+	void construct(T* ptr)
+	{
+		new ((void*)ptr) T();
 	}
 
 	//! destruct an element

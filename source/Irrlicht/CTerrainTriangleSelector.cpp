@@ -90,7 +90,7 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 	s32 i, j;
 
 	for (i=0; i<TrianglePatches.NumPatches; ++i)
-		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles < count)
+		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles <= count)
 			for (j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
 			{
 				triangles[tIndex] = TrianglePatches.TrianglePatchArray[i].Triangles[j];
@@ -100,7 +100,7 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 				mat.transformVect(triangles[tIndex].pointC);
 
 				++tIndex;
-			}	
+			}
 
 	outTriangleCount = tIndex;
 }
@@ -124,7 +124,7 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 	s32 i, j;
 
 	for (i=0; i<TrianglePatches.NumPatches; ++i)
-		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles < count &&
+		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles <= count &&
 			TrianglePatches.TrianglePatchArray[i].Box.intersectsWithBox(box))
 			for (j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
 			{
@@ -135,14 +135,14 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 				mat.transformVect(triangles[tIndex].pointC);
 
 				++tIndex;
-			}	
+			}
 
 	outTriangleCount = tIndex;
 }
 
 //! Gets all triangles which have or may have contact with a 3d line.
 void CTerrainTriangleSelector::getTriangles(core::triangle3df* triangles, s32 arraySize,
-	s32& outTriangleCount, const core::line3d<f32>& line, 
+	s32& outTriangleCount, const core::line3d<f32>& line,
 	const core::matrix4* transform)
 {
 	s32 count = TrianglePatches.TotalTriangles;
@@ -160,7 +160,8 @@ void CTerrainTriangleSelector::getTriangles(core::triangle3df* triangles, s32 ar
 
 	for (i=0; i<TrianglePatches.NumPatches; ++i)
 	{
-		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles < count && TrianglePatches.TrianglePatchArray[i].Box.intersectsWithLine(line))
+		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles <= count
+            && TrianglePatches.TrianglePatchArray[i].Box.intersectsWithLine(line))
 		{
 			for (j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
 			{
