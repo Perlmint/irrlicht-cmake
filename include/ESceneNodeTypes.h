@@ -12,8 +12,11 @@ namespace scene
 	//! An enumeration for all types of built-in scene nodes 
 	enum ESCENE_NODE_TYPE
 	{
-		//! Test Scene Node
+		//! simple cube scene node
 		ESNT_CUBE = 0,
+
+		//! Sphere scene node
+		ESNT_SPHERE,
 
 		//! Text Scene Node
 		ESNT_TEXT,

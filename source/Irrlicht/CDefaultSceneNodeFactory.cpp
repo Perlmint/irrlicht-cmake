@@ -23,6 +23,7 @@ namespace scene
 const c8* const SceneNodeTypeNames[] =
 {
 	"cube",
+	"sphere",
 	"text",
 	"waterSurface",
 	"terrain",
@@ -63,6 +64,8 @@ ISceneNode* CDefaultSceneNodeFactory::addSceneNode(ESCENE_NODE_TYPE type, IScene
 	{
 	case ESNT_CUBE:
 		return Manager->addCubeSceneNode(10, parent);
+	case ESNT_SPHERE:
+		return Manager->addSphereSceneNode(5, 16, parent);
 	case ESNT_TEXT:
 		return Manager->addTextSceneNode(0, L"example");
 	case ESNT_WATER_SURFACE:

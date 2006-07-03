@@ -12,6 +12,7 @@
 
 #include "os.h"
 #include <wchar.h>
+#include <string.h>
 
 #include "CGeometryCreator.h"
 
@@ -27,6 +28,7 @@
 #include "COgreMeshFileLoader.h"
 
 #include "CCubeSceneNode.h"
+#include "CSphereSceneNode.h"
 #include "CAnimatedMeshSceneNode.h"
 #include "COctTreeSceneNode.h"
 #include "CCameraSceneNode.h"
@@ -253,6 +255,21 @@ ISceneNode* CSceneManager::addCubeSceneNode(f32 size, ISceneNode* parent, s32 id
 	node->drop();
 
 	return node;	
+}
+
+//! Adds a sphere scene node for test purposes to the scene.
+ISceneNode* CSceneManager::addSphereSceneNode(f32 radius, s32 polyCount, ISceneNode* parent, s32 id,
+	const core::vector3df& position,
+	const core::vector3df& rotation,
+	const core::vector3df& scale)
+{
+	if (!parent)
+		parent = this;
+
+	ISceneNode* node = new CSphereSceneNode(radius, polyCount, parent, this, id, position, rotation, scale);
+	node->drop();
+
+	return node;
 }
 
 

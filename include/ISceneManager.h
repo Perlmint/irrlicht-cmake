@@ -297,6 +297,23 @@ namespace scene
 			const core::vector3df& rotation = core::vector3df(0,0,0),
 			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f)) = 0;
 
+		//! Adds a sphere scene node for test purposes to the scene.
+		/** It is a simple sphere.
+		\param radius: Radius of the sphere.
+		\param polyCount: Polycount of the sphere.
+		\param parent: Parent of the scene node. Can be NULL if no parent.
+		\param id: Id of the node. This id can be used to identify the scene node.
+		\param position: Position of the space relative to its parent where the
+		 scene node will be placed.
+		\param rotation: Initital rotation of the scene node.
+		\param scale: Initial scale of the scene node.
+		\return Returns pointer to the created test scene node.
+	     This pointer should not be dropped. See IUnknown::drop() for more information. */
+		virtual ISceneNode* addSphereSceneNode(f32 radius=5.0f, s32 polyCount=16, ISceneNode* parent=0, s32 id=-1,
+			const core::vector3df& position = core::vector3df(0,0,0),
+			const core::vector3df& rotation = core::vector3df(0,0,0),
+			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f)) = 0;
+
 		//! Adds a scene node for rendering an animated mesh model.
 		/** \param mesh: Pointer to the loaded animated mesh to be displayed.
 		\param parent: Parent of the scene node. Can be NULL if no parent.

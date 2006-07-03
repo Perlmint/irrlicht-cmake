@@ -1,5 +1,9 @@
 Changes in version 1.1 (??? 2006)
 
+- In addition to the Cube scene node (formally test scene node) there is now also a sphere scene node available,
+  with an adjustable amount of polygons. Use ISceneManager::addSphereSceneNode to create it. Thx to Alfaz93
+  for making available his code on which this node is based on.
+
 - Fixed Linux keyhandling for many keys.
 
 - The aspect ratio has been inverted in the matrix, which means when setting a new aspect ratio
