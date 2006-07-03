@@ -11,14 +11,14 @@
 //! WIN64 for Windows64
 //! _IRR_WINDOWS_ for all irrlicht supported windows versions
 //! OS2 for OS/2
-//! MACOS for MacOs
+//! MACOSX for Mac OS X
 //! LINUX for linux and unix (it is defined here if no other os is defined)
 
 #if defined(WIN32) || defined(WIN64)
 #define _IRR_WINDOWS_
 #endif
 
-#if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOS)
+#if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX)
 #define LINUX
 #endif
 
@@ -53,7 +53,9 @@ define. */
 /** For being able to do things like multi texturing. It is useful
  to comment out this define to disable opengl extensions in linux because
  on some linux versions, these extensions does not exist. */
+#if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX)
 #define _IRR_LINUX_OPENGL_USE_EXTENSIONS_
+#endif
 
 
 //! Define _IRR_COMPILE_WITH_ZLIB_ to enable compiling the engine using zlib.

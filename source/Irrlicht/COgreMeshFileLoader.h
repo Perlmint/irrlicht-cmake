@@ -27,8 +27,8 @@
 #endif
 #else
 #ifdef MACOSX
-#define bswap_16(X) OSReadSwapInt16(X,0)
-#define bswap_32(X) OSReadSwapInt32(X,0)
+#define bswap_16(X) OSReadSwapInt16(&X,0)
+#define bswap_32(X) OSReadSwapInt32(&X,0)
 #else
 #include "byteswap.h"
 #endif
