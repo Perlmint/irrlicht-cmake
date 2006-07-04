@@ -25,6 +25,9 @@ class irrAllocator
 {
 public:
 
+	//! destructor
+	virtual ~irrAllocator() {}
+
 	//! allocate memory for an array of objects
 	T* allocate(size_t cnt)
 	{

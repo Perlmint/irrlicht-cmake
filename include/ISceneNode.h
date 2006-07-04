@@ -39,10 +39,10 @@ namespace scene
 					const core::vector3df& position = core::vector3df(0,0,0),
 					const core::vector3df& rotation = core::vector3df(0,0,0),
 					const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
-			: IsVisible(true), ID(id), Parent(parent), SceneManager(mgr),
-				AutomaticCullingEnabled(true), DebugDataVisible(false),
-				TriangleSelector(0), RelativeTranslation(position),
-				RelativeRotation(rotation), RelativeScale(scale), IsDebugObject(false)
+			: RelativeTranslation(position), RelativeRotation(rotation), RelativeScale(scale),
+				Parent(parent), ID(id), SceneManager(mgr), TriangleSelector(0),
+				AutomaticCullingEnabled(true), IsVisible(true),
+				DebugDataVisible(false), IsDebugObject(false)
 		{
 			if (Parent)
 				Parent->addChild(this);
@@ -629,11 +629,11 @@ namespace scene
 		//! automatic culling
 		bool AutomaticCullingEnabled;
 
-		//! flag if debug data should be drawed, like Bounding Boxes.
-		bool DebugDataVisible;		
-
 		//! is the node visible?
 		bool IsVisible;
+
+		//! flag if debug data should be drawn, such as Bounding Boxes.
+		bool DebugDataVisible;
 
 		//! is debug object? 
 		bool IsDebugObject;

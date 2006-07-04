@@ -9,7 +9,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 //! Enumeration for different types of lights
@@ -23,7 +23,7 @@ enum E_LIGHT_TYPE
 };
 
 //! Names for light types
-const char* const LightTypeNames[] = 
+const char* const LightTypeNames[] =
 {
 	"Point",
 	"Directional",
@@ -36,27 +36,27 @@ by the irrlicht engine.
 */
 struct SLight
 {
-	SLight() : Type(ELT_POINT), AmbientColor(0.0f,0.0f,0.0f), DiffuseColor(1.0f, 1.0f, 1.0f), 
+	SLight() : AmbientColor(0.0f,0.0f,0.0f), DiffuseColor(1.0f, 1.0f, 1.0f), 
 		SpecularColor(1.0f,1.0f,1.0f), Position(0.0f, 0.0f, 0.0f), Radius(100.0f),
-		CastShadows(true)
+		CastShadows(true), Type(ELT_POINT)
 		 {};
 
 	//! Ambient color emitted by the light
-	SColorf AmbientColor; 
+	SColorf AmbientColor;
 
-	//! Diffuse color emitted by the light. 
+	//! Diffuse color emitted by the light.
 	/** This is the primary color you might want to set. */
 	SColorf DiffuseColor; 
 
 	//! Specular color emitted by the light. 
 	/** For details how to use specular highlights, see SMaterial::Shininess */
-	SColorf SpecularColor; 
+	SColorf SpecularColor;
 
 	//! Position of the light. If Type is ELT_DIRECTIONAL, this is the direction vector the light is coming from.
-	core::vector3df Position; 
+	core::vector3df Position;
 
 	//! Radius of light. Everything within this radius be be lighted.
-	f32 Radius; 
+	f32 Radius;
 
 	//! Does the light cast shadows?
 	bool CastShadows;

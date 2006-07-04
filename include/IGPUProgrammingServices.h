@@ -75,6 +75,9 @@ class IGPUProgrammingServices
 {
 public:
 
+	//! destructor
+	virtual ~IGPUProgrammingServices() {}
+
 	//! Adds a new material renderer to the VideoDriver, based on a high level shading 
 	//! language. Currently only HLSL/D3D9 and GLSL/OpenGL is supported. 
 	//! \param vertexShaderProgram: String containing the source of the vertex shader program.

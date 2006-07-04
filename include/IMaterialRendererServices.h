@@ -22,6 +22,9 @@ class IMaterialRendererServices
 {
 public: 
 
+	//! destructor
+	virtual ~IMaterialRendererServices() {}
+
 	//! Can be called by an IMaterialRenderer to make its work easier.
 	//! Sets all basic renderstates if needed.
 	//! Basic render states are diffuse, ambient, specular, and emissive color, specular power,

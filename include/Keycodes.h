@@ -141,8 +141,8 @@ namespace irr
 		KEY_RCONTROL         = 0xA3,  // Right CONTROL key 
 		KEY_LMENU            = 0xA4,  // Left MENU key 
 		KEY_RMENU            = 0xA5,  // Right MENU key 
-		KEY_COMMA            = 0xBC,  // Comma Key  (,)
 		KEY_PLUS             = 0xBB,  // Plus Key   (+)
+		KEY_COMMA            = 0xBC,  // Comma Key  (,)
 		KEY_MINUS            = 0xBD,  // Minus Key  (-)
 		KEY_PERIOD           = 0xBE,  // Period Key (.)
 		KEY_ATTN             = 0xF6,  // Attn key 

@@ -242,40 +242,41 @@ namespace video
 	{
 		//! default constructor, creates a solid material with standard colors
 		SMaterial()
-		: AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
-		EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255), Texture1(0), Texture2(0),
-			Texture3(0), Texture4(0), MaterialType(EMT_SOLID), Wireframe(false), Lighting(true),
+		: MaterialType(EMT_SOLID), AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
+			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
+			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f),
+			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
+			Wireframe(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
-			GouraudShading(true), Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f),
-			BilinearFilter(true), TrilinearFilter(false), FogEnable(false),
-			NormalizeNormals(false), AnisotropicFilter(false)
+			BilinearFilter(true), TrilinearFilter(false), AnisotropicFilter(false),
+			FogEnable(false), NormalizeNormals(false)
 		{}
 
 		//! Type of the material. Specifies how everything is blended together
-		E_MATERIAL_TYPE MaterialType;	
+		E_MATERIAL_TYPE MaterialType;
 
 		//! How much ambient light (a global light) is reflected by this material.
 		/** The default is full white, meaning objects are completely globally illuminated.
 		 Reduce this if you want to see diffuse or specular light effects. */
-		SColor AmbientColor;		
+		SColor AmbientColor;
 
 		//! How much diffuse light coming from a light source is reflected by this material.
 		/** The default is full white. */
-		SColor DiffuseColor;		
+		SColor DiffuseColor;
 
 		//! Light emitted by this material. Default is to emitt no light.
-		SColor EmissiveColor;	
+		SColor EmissiveColor;
 
 		//! How much specular light (highlights from a light) is reflected. 
 		/** The default is to reflect white specular light.  See SMaterial::Shininess how to 
 		enable specular lights. */
-		SColor SpecularColor;	
+		SColor SpecularColor;
 
 		//! Value affecting the size of specular highlights. A value of 20 is common.
 		/** If set to 0, no specular highlights are being used. Currently, specular highlights
 		are only implemented in the D3D9 and D3D8 driver.
-		To activate, simply set the shininess of a material to a value other than 0: 
-		Using scene nodes: 
+		To activate, simply set the shininess of a material to a value other than 0:
+		Using scene nodes:
 		\code
 		sceneNode->getMaterial(0).Shininess = 20.0f;
 		\endcode
@@ -286,7 +287,7 @@ namespace video
 		\endcode
 
 		The specular color of the dynamic lights (SLight::SpecularColor) will influence
-		the the highlight color too, but they are set to a useful value by default when 
+		the the highlight color too, but they are set to a useful value by default when
 		creating the light scene node. Here is a simple example on how
 		to use specular highlights:
 		\code
@@ -296,12 +297,12 @@ namespace video
 		node->setMaterialTexture(0, driver->getTexture("data/Faerie2.pcx")); // set diffuse texture
 		node->setMaterialFlag(video::EMF_LIGHTING, true); // enable dynamic lighting
 		node->getMaterial(0).Shininess = 20.0f; // set size of specular highlights
-		
+
 		// add white light
 		scene::ILightSceneNode* light = smgr->addLightSceneNode(0,
 		    core::vector3df(5,5,5), video::SColorf(1.0f, 1.0f, 1.0f));
 		\endcode */
-		f32 Shininess;		
+		f32 Shininess;
 
 		//! Free parameter dependend on the material type. 
 		/** Mostly ignored, used for example in EMT_PARALLAX_MAP_SOLID and 
@@ -318,16 +319,16 @@ namespace video
 			struct
 			{
 				//! Primary texture layer.
-				ITexture* Texture1;	
+				ITexture* Texture1;
 
 				//! Secondary texture layer
-				ITexture* Texture2;	
+				ITexture* Texture2;
 
 				//! Third texture layer
-				ITexture* Texture3;	
+				ITexture* Texture3;
 
 				//! Fourth texture layer
-				ITexture* Texture4;	
+				ITexture* Texture4;
 			};
 
 			//! Array of textures, the same as accessing through Texture1 and Texture2
@@ -346,24 +347,24 @@ namespace video
 				bool Wireframe;
 
 				//! Flat or Gouraud shading? Default: true
-				bool GouraudShading;				
+				bool GouraudShading;
 
 				//! Will this material be lighted? Default: true
-				bool Lighting;						
+				bool Lighting;
 
 				//! Is the ZBuffer enabled? Default: true
-				bool ZBuffer;						
+				bool ZBuffer;
 
 				//! May be written to the zbuffer or is it readonly.
 				/** Default: true This flag is ignored, if the MaterialType 
 				is a transparent type. */
-				bool ZWriteEnable;					
+				bool ZWriteEnable;
 
 				//! Is backfaceculling enabled? Default: true
-				bool BackfaceCulling;				
+				bool BackfaceCulling;
 
 				//! Is bilinear filtering enabled? Default: true
-				bool BilinearFilter;	
+				bool BilinearFilter;
 
 				//! Is trilinear filtering enabled? Default: false
 				/** If the trilinear filter flag is enabled,

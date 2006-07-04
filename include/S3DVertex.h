@@ -18,13 +18,13 @@ namespace video
 enum E_VERTEX_TYPE
 {
 	//! Standard vertex type used by the Irrlicht engine, video::S3DVertex.
-	EVT_STANDARD = 0, 
+	EVT_STANDARD = 0,
 
-	//! Vertex with two texture coordinates, video::S3DVertex2TCoords. Usually used 
+	//! Vertex with two texture coordinates, video::S3DVertex2TCoords. Usually used
 	//! for geometry with lightmaps or other special materials.
 	EVT_2TCOORDS,
 
-	//! Vertex with a tangent and binormal vector, video::S3DVertexTangents. Usually 
+	//! Vertex with a tangent and binormal vector, video::S3DVertexTangents. Usually
 	//! used for tangent space normal mapping.
 	EVT_TANGENTS,
 };
@@ -45,29 +45,29 @@ struct S3DVertex
 		: Pos(pos), Normal(normal), Color(color), TCoords(tcoords) {}
 
 	//! Position
-	core::vector3df Pos;	
+	core::vector3df Pos;
 	
 	//! Normal vector
-	core::vector3df Normal;	
+	core::vector3df Normal;
 
 	//! Color
-	irr::video::SColor Color;				
+	irr::video::SColor Color;
 
 	//! Texture coordinates
-	core::vector2d<f32> TCoords;	
+	core::vector2d<f32> TCoords;
 
 
 
 	bool operator == (const S3DVertex& other) const
 	{
 		return (Pos == other.Pos && Normal == other.Normal &&
-					Color == other.Color && TCoords == other.TCoords);				
+					Color == other.Color && TCoords == other.TCoords);
 	}
 
 	bool operator != (const S3DVertex& other) const
 	{
 		return (Pos != other.Pos || Normal != other.Normal ||
-					Color != other.Color || TCoords != other.TCoords);				
+					Color != other.Color || TCoords != other.TCoords);
 	}
 };
 
@@ -86,19 +86,19 @@ struct S3DVertex2TCoords
 		: Pos(x,y,z), Color(c), TCoords(tu,tv), TCoords2(tu2,tv2) {}
 
 	//! Position
-	core::vector3df Pos;		
+	core::vector3df Pos;
 
 	//! Normal
-	core::vector3df Normal;		
+	core::vector3df Normal;
 
 	//! Color
-	SColor Color;				
+	SColor Color;
 
 	//! First set of texture coordinates
-	core::vector2d<f32> TCoords;	
+	core::vector2d<f32> TCoords;
 
 	//! Second set of texture coordinates
-	core::vector2d<f32> TCoords2;	
+	core::vector2d<f32> TCoords2;
 };
 
 
@@ -117,22 +117,22 @@ struct S3DVertexTangents
 		//! constructor
 	S3DVertexTangents(const core::vector3df& pos, 
 		const core::vector2df& tcoords,	video::SColor c)
-		: Pos(pos), TCoords(tcoords), Color(c) { }
+		: Pos(pos), Color(c), TCoords(tcoords) { }
 
 	//! Position
-	core::vector3df Pos;	
+	core::vector3df Pos;
 
 	//! Normal vector
-	core::vector3df Normal;	
+	core::vector3df Normal;
 
 	//! Color
-	irr::video::SColor Color;		
+	irr::video::SColor Color;
 
 	//! Texture coordinates
 	core::vector2d<f32> TCoords;
 
 	//! Tangent vector along the x-axis of the texture
-	core::vector3df Tangent;	
+	core::vector3df Tangent;
 
 	//! Binormal vector (tangent x normal)
 	core::vector3df Binormal;

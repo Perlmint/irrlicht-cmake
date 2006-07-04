@@ -30,7 +30,7 @@ public:
 
 	//! Default constructor
 	string()
-	: allocated(1), used(1), array(0)
+	: array(0), allocated(1), used(1)
 	{
 		array = allocator.allocate(1); // new T[1];
 		array[0] = 0x0;
@@ -40,7 +40,7 @@ public:
 
 	//! Constructor
 	string(const string<T>& other)
-	: allocated(0), used(0), array(0)
+	: array(0), allocated(0), used(0)
 	{
 		*this = other;
 	}
@@ -48,7 +48,7 @@ public:
 
 	//! Constructs a string from an int
 	string(int number)
-	: allocated(0), used(0), array(0)
+	: array(0), allocated(0), used(0)
 	{
 		// store if negative and make positive
 
@@ -99,7 +99,7 @@ public:
 	//! Constructor for copying a string from a pointer with a given length
 	template <class B>
 	string(const B* c, s32 length)
-	: allocated(0), used(0), array(0)
+	: array(0), allocated(0), used(0)
 	{
 		if (!c)
 			return;
@@ -118,7 +118,7 @@ public:
 	//! Constructor for unicode and ascii strings
 	template <class B>
 	string(const B* c)
-	: allocated(0), used(0), array(0)
+	: array(0), allocated(0), used(0)
 	{
 		*this = c;
 	}
