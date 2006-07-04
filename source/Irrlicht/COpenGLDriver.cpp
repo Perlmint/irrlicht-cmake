@@ -241,11 +241,11 @@ COpenGLDriver::~COpenGLDriver()
 // -----------------------------------------------------------------------
 #ifdef LINUX
 //! Linux constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool doublebuffer, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io)
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io)
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-  MaxTextureUnits(1), DoubleBuffered(doublebuffer), XWindow(window), XDisplay(display),
+  MaxTextureUnits(1), XWindow(window), XDisplay(display),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), 
 	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
@@ -566,8 +566,7 @@ bool COpenGLDriver::endScene( s32 windowId, core::rect<s32>* sourceRect )
 #endif
 
 #ifdef LINUX
-	if (DoubleBuffered)
-	  glXSwapBuffers(XDisplay, XWindow);
+	glXSwapBuffers(XDisplay, XWindow);
 	return true;
 #endif
 
@@ -2560,11 +2559,11 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 // -----------------------------------
 #ifdef LINUX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        bool fullscreen, bool doublebuffer, bool stencilBuffer, Window window,
+        bool fullscreen, bool stencilBuffer, Window window,
 		Display* display, io::IFileSystem* io)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
-	return new COpenGLDriver(screenSize, fullscreen, doublebuffer, stencilBuffer,
+	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
 		window, display, io);
 #else
 	return 0;

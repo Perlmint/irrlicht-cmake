@@ -24,7 +24,7 @@ namespace irr
 	namespace video
 	{
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-			bool fullscreen, bool doublebuffer, bool stencilBuffer, 
+			bool fullscreen, bool stencilBuffer, 
 			Window window, Display* display, io::IFileSystem* io);
 	}
 
@@ -45,7 +45,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	bool sbuffer, IEventReceiver* receiver,
 	const char* version)
  : CIrrDeviceStub(version, receiver), close(false), DriverType(driverType),
- stencilbuffer(sbuffer), SoftwareImage(0)
+ Fullscreen(fullscreen), StencilBuffer(sbuffer), SoftwareImage(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CIrrDeviceLinux");
@@ -76,7 +76,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	if (driverType != video::EDT_NULL)
 	{
 		// create the window, only if we do not use the null device
-		if (!createWindow(windowSize, bits, fullscreen, stencilbuffer))
+		if (!createWindow(windowSize, bits))
 			return;
 	}
 
@@ -86,7 +86,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 
 	// create driver
 
-	createDriver(driverType, windowSize, bits, fullscreen, stencilbuffer);
+	createDriver(driverType, windowSize, bits);
 
 	if (!VideoDriver)
 		return;
@@ -113,11 +113,16 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		}
 		#endif // #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-		if (fullscreen)
+		#ifdef _IRR_LINUX_X11_VIDMODE_
+		if (Fullscreen)
 		{
 			XF86VidModeSwitchToMode(display, screennr, &oldVideoMode);
 			XF86VidModeSetViewPort(display, screennr, 0, 0);
 		}
+		#endif
+
+		if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_SOFTWARE2)
+			XDestroyImage(SoftwareImage);
 
 		XCloseDisplay(display);
 	}
@@ -126,11 +131,10 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 
 
 bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
-						  u32 bits, bool fullscr, bool stencilBuffer)
+						  u32 bits)
 {
 	width = windowSize.Width;
 	height = windowSize.Height;
-	fullscreen = fullscr;
 
 	os::Printer::log("Creating X window...", ELL_INFORMATION);
 
@@ -145,16 +149,22 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	// query extension
 
-	s32 minor, major;
-	if (fullscreen && !XF86VidModeQueryVersion(display, &major, &minor))
+	if (Fullscreen)
 	{
-		os::Printer::log("VidMode extension must be intalled to let irrlicht "
-		" be able to switch to fullscreen mode. Running in window mode.", ELL_WARNING);
-		fullscreen = false;
+		#ifdef _IRR_LINUX_X11_VIDMODE_
+		s32 major, minor;
+		if (!XF86VidModeQueryVersion(display, &major, &minor))
+		#endif
+		{
+			os::Printer::log("VidMode extension must be installed to let irrlicht "
+			" be able to switch to fullscreen mode. Running in window mode instead.", ELL_WARNING);
+			Fullscreen = false;
+		}
 	}
 
+	s32 bestMode = -1;
+	#ifdef _IRR_LINUX_X11_VIDMODE_
 	// enumerate video modes
-
 	s32 modeCount;
 	XF86VidModeModeInfo** modes;
 
@@ -168,9 +178,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	bool videoListEmpty = VideoModeList.getVideoModeCount() == 0;
 
-	s32 bestMode = -1;
-	s32 i = 0;
-	for (; i<modeCount; ++i)
+	for (s32 i = 0; i<modeCount; ++i)
 	if (modes[i]->hdisplay == width &&
 		modes[i]->vdisplay == height)
 	{
@@ -179,11 +187,15 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				VideoModeList.addMode(core::dimension2d<s32>(
 					modes[i]->hdisplay, modes[i]->vdisplay), 0);
 	}
+	#endif
 	
 	// get visual
 	XVisualInfo* visual = 0;
 	
 #ifdef _IRR_COMPILE_WITH_OPENGL_
+
+	s32 minor, major;
+	glXQueryVersion(display, &major, &minor);
 
 	// no double buffer, 4 bits per color, 16 bit zbuffer
 	int visualAttrNoDoubleBuffer[] =
@@ -192,6 +204,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	    GLX_RED_SIZE, 4,
 	    GLX_GREEN_SIZE, 4,
 	    GLX_BLUE_SIZE, 4,
+	    GLX_ALPHA_SIZE, 4,
 	    GLX_DEPTH_SIZE, 16,
 	    None
 	  };
@@ -204,6 +217,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	    GLX_RED_SIZE, 4,
 	    GLX_GREEN_SIZE, 4,
 	    GLX_BLUE_SIZE, 4,
+	    GLX_ALPHA_SIZE, 4,
 	    GLX_DEPTH_SIZE, 16,
 	    None
 	  };
@@ -216,50 +230,47 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	    GLX_RED_SIZE, 4,
 	    GLX_GREEN_SIZE, 4,
 	    GLX_BLUE_SIZE, 4,
+	    GLX_ALPHA_SIZE, 4,
 	    GLX_DEPTH_SIZE, 16,
-        GLX_STENCIL_SIZE, 1,
+	    GLX_STENCIL_SIZE, 1,
 	    None
 	};
 
-	if (stencilbuffer)
-	{
-		visual = glXChooseVisual(display, screennr, visualAttrDoubleBuffer);
-		if (visual)
-			doublebuffer = true;
-	}
+	if (StencilBuffer)
+		visual = glXChooseVisual(display, screennr, visualAttrDoubleStencilBuffer);
 
 	if (!visual)
 	{
-		if (stencilbuffer)
+		if (StencilBuffer)
 		{
 			os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-			stencilbuffer = false;
+			StencilBuffer = false;
 		}
 
-		//os::Printer::log("debugtest Choosing visual display with stencil...", ELL_INFORMATION);
-
 		visual = glXChooseVisual(display, screennr, visualAttrDoubleBuffer);
-		doublebuffer = true;
-
 		if (!visual)
 		{
 			os::Printer::log("No doublebuffering available.", ELL_WARNING);
-			doublebuffer = false;
 			visual = glXChooseVisual(display, screennr, visualAttrNoDoubleBuffer);
 		}
 	}
 	
-#else // _IRR_COMPILE_WITH_OPENGL_
-
-	XVisualInfo visTempl; //Template to hold requested values
-	int visNumber; // Return value of available visuals
-
-	visTempl.screen = screennr;
-	visTempl.depth = 16;
-	visual = XGetVisualInfo(display, VisualScreenMask|VisualDepthMask,
-		&visTempl, &visNumber);
-		
 #endif // _IRR_COMPILE_WITH_OPENGL_
+
+	if (!visual)
+	{
+		XVisualInfo visTempl; //Template to hold requested values
+		int visNumber; // Return value of available visuals
+
+		visTempl.screen = screennr;
+		visTempl.depth = 16;
+		while ((!visual) && (visTempl.depth<=32))
+		{
+			visual = XGetVisualInfo(display, VisualScreenMask|VisualDepthMask,
+				&visTempl, &visNumber);
+			visTempl.depth+=8;
+		}
+	}
 
 	if (!visual)
 	{
@@ -272,12 +283,12 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 	// create glx context
-	glXQueryVersion(display, &major, &minor);
 
-	context = glXCreateContext(display, visual, 0, GL_TRUE);
+	context = glXCreateContext(display, visual, 0, true);
 	if (context == NULL)
 	{
 		os::Printer::log("Could not create GLX rendering context.", ELL_WARNING);
+		XFree(visual);
 		return false;
 	}
 	
@@ -298,17 +309,17 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	// switch to fullscreen if extension is installed.
 
-	if (fullscreen && bestMode != -1)
+#ifdef _IRR_LINUX_X11_VIDMODE_
+	if (Fullscreen && bestMode != -1)
 	{
 		os::Printer::log("Starting fullscreen mode...", ELL_INFORMATION);
-
 		XF86VidModeSwitchToMode(display, screennr, modes[bestMode]);
 		XF86VidModeSetViewPort(display, screennr, 0, 0);
 
 		s32 displayW = modes[bestMode]->hdisplay;
 		s32 displayH = modes[bestMode]->vdisplay;
 
-		XFree(modes);
+		XFree(*modes);
 
 		attributes.override_redirect = True;
 
@@ -327,15 +338,14 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 			GrabModeAsync, GrabModeAsync, window, None, CurrentTime);
 	}
 	else
+#endif
 	{
 		// we want windowed mode
-		if (fullscreen)
+		if (Fullscreen)
 		{
 			os::Printer::log("Could not find specified video mode, running windowed.", ELL_WARNING);
-			fullscreen = false;
+			Fullscreen = false;
 		}
-
-		//os::Printer::log("Starting windowed mode...", ELL_INFORMATION);
 
 		attributes.event_mask |= ExposureMask;
 
@@ -364,9 +374,6 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	XGetGeometry(display, window, &tmp, &x, &y, &width, &height, &tmp2, &depth);
 
-	//os::Printer::log("Window created.", ELL_INFORMATION);
-
-
 	// create an XImage for the software renderer 
 	//(thx to Nadav for some clues on how to do that!)
 
@@ -387,25 +394,23 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 //! create the driver
 void CIrrDeviceLinux::createDriver(video::E_DRIVER_TYPE driverType,
-								   const core::dimension2d<s32>& windowSize,
-								   u32 bits,
-								   bool fullscreen,
-								   bool stencilbuffer)
+				   const core::dimension2d<s32>& windowSize,
+				   u32 bits)
 {
 	switch(driverType)
 	{
 
 	case video::EDT_SOFTWARE:
-		VideoDriver = video::createSoftwareDriver(windowSize, fullscreen, FileSystem, this);
+		VideoDriver = video::createSoftwareDriver(windowSize, Fullscreen, FileSystem, this);
 		break;
 		
 	case video::EDT_SOFTWARE2:
-		VideoDriver = video::createSoftwareDriver2(windowSize, fullscreen, FileSystem, this);
+		VideoDriver = video::createSoftwareDriver2(windowSize, Fullscreen, FileSystem, this);
 		break;
 
 	case video::EDT_OPENGL:
 	#ifdef _IRR_COMPILE_WITH_OPENGL_
-		VideoDriver = video::createOpenGLDriver(windowSize, fullscreen, doublebuffer, stencilbuffer, window, display, FileSystem);
+		VideoDriver = video::createOpenGLDriver(windowSize, Fullscreen, StencilBuffer, window, display, FileSystem);
 	#endif
 		break;
 
@@ -540,8 +545,6 @@ bool CIrrDeviceLinux::run()
 			} // end switch
 
 		} // end while
-
-		XSync(display, false);
 	}
 
 	return !close;
@@ -559,7 +562,6 @@ void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 	XSetStandardProperties(display, window, textc.c_str(), textc.c_str(),
 			       None, NULL, 0, NULL);
 }
-
 
 
 
@@ -915,12 +917,7 @@ void CIrrDeviceLinux::createKeyMap()
 
 
 #define IRRLICHT_API
-
-#if defined(_STDCALL_SUPPORTED)
-#define IRRCALLCONV __stdcall  // Declare the calling convention.
-#else
 #define IRRCALLCONV
-#endif // STDCALL_SUPPORTED
 
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationParameters& param)
 {

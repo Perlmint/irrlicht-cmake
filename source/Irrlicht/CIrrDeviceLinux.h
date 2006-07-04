@@ -18,7 +18,9 @@
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <X11/Xlib.h>
+#ifdef _IRR_LINUX_X11_VIDMODE_
 #include <X11/extensions/xf86vmode.h>
+#endif
 #include <X11/keysym.h>
 
 namespace irr
@@ -56,11 +58,9 @@ namespace irr
 
 		//! create the driver
 		void createDriver(video::E_DRIVER_TYPE driverType,
-			const core::dimension2d<s32>& windowSize, u32 bits, bool fullscreen,
-			bool stencilbuffer);
+			const core::dimension2d<s32>& windowSize, u32 bits);
 
-		bool createWindow(const core::dimension2d<s32>& windowSize,
-						  u32 bits, bool fullscreen, bool stencilBuffer);
+		bool createWindow(const core::dimension2d<s32>& windowSize, u32 bits);
 
 		void createKeyMap();
 
@@ -210,10 +210,11 @@ namespace irr
 		int screennr;
 		Window window;
 		XSetWindowAttributes attributes;
-		bool fullscreen;
-		bool doublebuffer;
-		bool stencilbuffer;
+		bool Fullscreen;
+		bool StencilBuffer;
+		#ifdef _IRR_LINUX_X11_VIDMODE_
 		XF86VidModeModeInfo oldVideoMode;
+		#endif
 		XEvent event;
 		XImage* SoftwareImage;
 		video::E_DRIVER_TYPE DriverType;

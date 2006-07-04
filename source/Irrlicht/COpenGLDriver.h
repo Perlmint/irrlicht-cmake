@@ -57,7 +57,7 @@ namespace video
 		#endif
 
 		#ifdef LINUX
-		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool doublebuffer, 
+		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
 			bool stencilBuffer, Window window, Display* display, io::IFileSystem* io);
 		#endif		
 
@@ -365,7 +365,6 @@ namespace video
 			PFNGLGETACTIVEUNIFORMARBPROC pGlGetActiveUniformARB;
 			
 		#ifdef LINUX
-			bool DoubleBuffered;
 			Window XWindow;
 			Display* XDisplay;
 		#endif
