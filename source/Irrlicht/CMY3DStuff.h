@@ -66,22 +66,22 @@ const unsigned long MY_PIXEL_FORMAT_16 = 0x5f31365f; // was: #define MY_PIXEL_FO
 //----------------------------------------------------------------------
 struct SMyColor 
 {   SMyColor () {;}
-    SMyColor (s32 _R, s32 _G, s32 _B, s32 _A)
-        : R(_R), G(_G), B(_B), A(_A) {;}
+    SMyColor (s32 __R, s32 __G, s32 __B, s32 __A)
+        : R(__R), G(__G), B(__B), A(__A) {}
     s32 R, G, B, A;
 } PACK_STRUCT;
 
 struct SMyVector3
 {   SMyVector3 () {;}
-    SMyVector3 (f32 _X, f32 _Y, f32 _Z)
-        : X(_X), Y(_Y), Z(_Z) {;}    
+    SMyVector3 (f32 __X, f32 __Y, f32 __Z)
+        : X(__X), Y(__Y), Z(__Z) {}
     f32 X, Y, Z;
 } PACK_STRUCT;
 
 struct SMyVector2
 {   SMyVector2 () {;}
-    SMyVector2(f32 _X, f32 _Y)
-        : X(_X), Y(_Y) {;}
+    SMyVector2(f32 __X, f32 __Y)
+        : X(__X), Y(__Y) {}
     f32 X, Y;
 } PACK_STRUCT; 
 
@@ -103,8 +103,8 @@ struct SMyTVertex
 
 struct SMyFace
 {   SMyFace() {;}
-    SMyFace(u32 _A, u32 _B, u32 _C)
-        : A(_A), B(_B), C(_C) {;}
+    SMyFace(u32 __A, u32 __B, u32 __C)
+        : A(__A), B(__B), C(__C) {}
     u32 A, B, C;
 } PACK_STRUCT;
 
@@ -131,7 +131,7 @@ struct SMyMaterialHeader
     SMyColor EmissiveColor;
     SMyColor SpecularColor;
     f32 Shininess;   
-    f32 Trasparency;
+    f32 Transparency;
     s32 TextureCount;        // texture count
 } PACK_STRUCT;
 
@@ -154,8 +154,8 @@ struct SMyTexDataHeader
 // pixel color 24bit (R8G8B8)
 struct SMyPixelColor24
 {   SMyPixelColor24() {;}
-    SMyPixelColor24(u8 _r, u8 _g, u8 _b)
-        : r(_r), g(_g), b(_b) {;}    
+    SMyPixelColor24(u8 __r, u8 __g, u8 __b)
+        : r(__r), g(__g), b(__b) {}
     u8 r, g, b;
 } PACK_STRUCT;
 

@@ -669,7 +669,7 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 				buffer->Material.SpecularColor = video::SColor(0, 0, 0, 0);
 	        }
 
-			if (matEnt && matEnt->Header.Trasparency!=0)            
+			if (matEnt && matEnt->Header.Transparency!=0)            
 			{
 				if (buffer->Material.MaterialType == video::EMT_REFLECTION_2_LAYER )
 				{
@@ -715,7 +715,7 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
                     matEnt->Header.DiffuseColor.G, matEnt->Header.DiffuseColor.B);
 
                 vert_color = color.getInterpolated(video::SColor(0,0,0,0),
-					1-matEnt->Header.Trasparency);
+					1-matEnt->Header.Transparency);
             }
             else
             {

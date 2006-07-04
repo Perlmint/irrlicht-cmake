@@ -106,7 +106,6 @@ template <class T>
 T* extractFilePath(T* sourceStr, T* buffer, s32 bufSize)
 {   
     s32 lastDelimiterInStringPos = findLastDelimiter(sourceStr);
-    s32 lenSrc = strlen(sourceStr);
 
     if (lastDelimiterInStringPos>=0 && lastDelimiterInStringPos<bufSize)
         strcpy(sourceStr, buffer, 0, lastDelimiterInStringPos);    
@@ -131,7 +130,7 @@ int rle_encode (
     unsigned char *in_buf,  int in_buf_size,
     unsigned char *out_buf, int out_buf_size
     );
-int process_comp(
+unsigned long process_comp(
     unsigned char *buf, int buf_size,
     unsigned char *out_buf, int out_buf_size
     );
@@ -141,7 +140,7 @@ void process_uncomp(
 void flush_outbuf(
     unsigned char *out_buf, int out_buf_size
     );
-int get_byte (
+unsigned long get_byte (
     unsigned char *ch, 
     unsigned char *in_buf, int in_buf_size,
     unsigned char *out_buf, int out_buf_size
@@ -175,7 +174,7 @@ int rle_encode (
     unsigned char *out_buf, int out_buf_size
     )
 {   
-    int ret_code;
+    unsigned long ret_code;
 
     unsigned char ch;
 
@@ -253,7 +252,7 @@ int rle_encode (
 //      Inputs: tmpbuf[0], input file
 //      Outputs: tmpbuf[0] (sometimes), output file, and return code
 //------------------------------------------------------------------
-int process_comp(
+unsigned long process_comp(
     unsigned char *buf, int buf_size,
     unsigned char *out_buf, int out_buf_size)
 {
@@ -341,7 +340,7 @@ void put_byte(unsigned char ch, unsigned char *out_buf, int out_buf_size)
 // This reads the next byte into ch.  It returns EOD
 // at end-of-data                   
 //---------------------------------------------------
-int get_byte(
+unsigned long get_byte(
     unsigned char *ch, 
     unsigned char *in_buf, int in_buf_size,
     unsigned char *out_buf, int out_buf_size
