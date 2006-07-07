@@ -15,8 +15,11 @@
 #include "IGUIEnvironment.h"
 #include "ICursorControl.h"
 
-#include <GL/glx.h>
+#ifdef _IRR_COMPILE_WITH_OPENGL_
 #include <GL/gl.h>
+#include <GL/glx.h>
+#include <GL/glxext.h>
+#endif
 #include <X11/Xlib.h>
 #ifdef _IRR_LINUX_X11_VIDMODE_
 #include <X11/extensions/xf86vmode.h>
@@ -131,7 +134,7 @@ namespace irr
 			//! Sets the new position of the cursor.
 			virtual void setPosition(f32 x, f32 y)
 			{
-				setPosition((s32)(x*Device->width), (s32)(y*Device->height));
+				setPosition((s32)(x*Device->Width), (s32)(y*Device->Height));
 			}
 
 			//! Sets the new position of the cursor.
@@ -148,8 +151,8 @@ namespace irr
 					XWarpPointer(Device->display,
 						None,
 				 		Device->window, 0, 0,
-				 		Device->width,
-				 		Device->height, x, y);
+				 		Device->Width,
+				 		Device->Height, x, y);
 					XFlush(Device->display);
 				}
 			}
@@ -165,8 +168,8 @@ namespace irr
 			virtual core::position2d<f32> getRelativePosition()
 			{
 				updateCursorPos();
-				return core::position2d<f32>(CursorPos.X / (f32)Device->width,
-					CursorPos.Y / (f32)Device->height);
+				return core::position2d<f32>(CursorPos.X / (f32)Device->Width,
+					CursorPos.Y / (f32)Device->Height);
 			}
 
 		private:
@@ -186,12 +189,12 @@ namespace irr
 
 				if (CursorPos.X < 0)
 					CursorPos.X = 0;
-				if (CursorPos.X > Device->width)
-					CursorPos.X = Device->width;
+				if (CursorPos.X > Device->Width)
+					CursorPos.X = Device->Width;
 				if (CursorPos.Y < 0)
 					CursorPos.Y = 0;
-				if (CursorPos.Y > Device->height)
-					CursorPos.Y = Device->height;
+				if (CursorPos.Y > Device->Height)
+					CursorPos.Y = Device->Height;
 			}
 
 			core::position2d<s32> CursorPos;
@@ -206,9 +209,12 @@ namespace irr
 		friend class CCursorControl;
 
 		Display *display;
-		GLXContext context;
 		int screennr;
 		Window window;
+		#ifdef _IRR_COMPILE_WITH_OPENGL_
+		GLXWindow glxWin;
+		GLXContext Context;
+		#endif
 		XSetWindowAttributes attributes;
 		bool Fullscreen;
 		bool StencilBuffer;
@@ -220,7 +226,7 @@ namespace irr
 		video::E_DRIVER_TYPE DriverType;
 
 		int x,y;
-		unsigned int width, height, depth;
+		unsigned int Width, Height, Depth;
 		bool close;
 
 		struct SKeyMap
