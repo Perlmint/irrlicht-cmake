@@ -74,19 +74,13 @@ public:
 
         // copy old data
 		s32 end = used < new_size ? used : new_size;
-		s32 i=0;
-		for ( ; i<end; ++i)
+		
+		for (s32 i=0; i<end; ++i)
 		{
 			// data[i] = old_data[i];
 			allocator.construct(&data[i], old_data[i]);
 		}
-		// construct new data
-		end=new_size;
-		for ( ; i<end; ++i)
-		{
-		    allocator.construct(&data[i]);
-		}
-
+		
         // destruct old data
 		for (u32 j=0; j<used; ++j)
 			allocator.destruct(&old_data[j]);
@@ -164,7 +158,6 @@ public:
 		for (u32 i=used++; i>index; i--)
 			allocator.construct(&data[i], data[i-1]); // data[i] = data[i-1];
 
-
 		allocator.construct(&data[index], element); // data[index] = element;
 		is_sorted = false;
 	}
@@ -214,8 +207,10 @@ public:
 
 
 
-	//! Sets the size of the array.
-	//! \param usedNow: Amount of elements now used.
+	//! Sets the size of the array and adds some new elements if necessary.
+	/** Please note: This is only secure when using it with simple types, because
+	no default constructor will be called for the added new elements.
+	\param usedNow: Amount of elements now used. */
 	void set_used(u32 usedNow)
 	{
 		if (allocated < usedNow)
