@@ -148,15 +148,15 @@ namespace irr
 		video::E_DRIVER_TYPE DriverType;
 		bool stencilbuffer;
 
-		void					*_window;
-		CGLContextObj			_cglcontext;
-		void*					_oglcontext;
-		int						_width;
-		int						_height;
-		std::map<int,int>		_keycodes;
-		int						_screenWidth;
-		int						_screenHeight;
-		bool					_active;
+		void			*_window;
+		CGLContextObj		_cglcontext;
+		void			*_oglcontext;
+		int			_width;
+		int			_height;
+		std::map<int,int>	_keycodes;
+		int			_screenWidth;
+		int			_screenHeight;
+		bool			_active;
 	};
 
 

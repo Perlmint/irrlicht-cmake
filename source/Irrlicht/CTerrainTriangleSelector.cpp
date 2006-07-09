@@ -34,7 +34,6 @@ CTerrainTriangleSelector::~CTerrainTriangleSelector()
 //! Clears and sets triangle data
 void CTerrainTriangleSelector::setTriangleData(ITerrainSceneNode* node, s32 LOD)
 {
-	s32 x, z, indexCount, i;
 	core::triangle3df tri;
 	core::array<u32> indices;
 	CTerrainSceneNode* terrainNode = (CTerrainSceneNode*)node;
@@ -44,35 +43,33 @@ void CTerrainTriangleSelector::setTriangleData(ITerrainSceneNode* node, s32 LOD)
 
 	// Clear current data
 	TrianglePatches.TotalTriangles = 0;
-	TrianglePatches.NumPatches = 0;
+	TrianglePatches.NumPatches = terrainNode->TerrainData.PatchCount;
 
-	int count = terrainNode->TerrainData.PatchCount * terrainNode->TerrainData.PatchCount;
+	int count = TrianglePatches.NumPatches * TrianglePatches.NumPatches;
 	TrianglePatches.TrianglePatchArray.reallocate(count);
 	for (int o=0; o<count; ++o)
 		TrianglePatches.TrianglePatchArray.push_back(SGeoMipMapTrianglePatch());
 
-	s32 tIndex;
-
-	for( x = 0; x < terrainNode->TerrainData.PatchCount; x++ )
+	for(s32 x = 0; x < terrainNode->TerrainData.PatchCount; ++x )
 	{
-		for( z = 0; z < terrainNode->TerrainData.PatchCount; z++ )
+		for(s32 z = 0; z < terrainNode->TerrainData.PatchCount; ++z )
 		{
-			tIndex = x * terrainNode->TerrainData.PatchCount + z;
+			s32 tIndex = x * terrainNode->TerrainData.PatchCount + z;
 			TrianglePatches.TrianglePatchArray[tIndex].NumTriangles = 0;
 			TrianglePatches.TrianglePatchArray[tIndex].Box = terrainNode->getBoundingBox( x, z );
-			indexCount = terrainNode->getIndicesForPatch( indices, x, z, LOD );
+			u32 indexCount = terrainNode->getIndicesForPatch( indices, x, z, LOD );
 
-			for( i = 0; i < indexCount; i += 3 )
+			TrianglePatches.TrianglePatchArray[tIndex].Triangles.reallocate(indexCount/3);
+			for(u32 i = 0; i < indexCount; i += 3 )
 			{
 				tri.pointA = vertices[indices[i+0]].Pos;
 				tri.pointB = vertices[indices[i+1]].Pos;
 				tri.pointC = vertices[indices[i+2]].Pos;
-				TrianglePatches.TrianglePatchArray[tIndex].Triangles.push_back( tri );
-				TrianglePatches.TrianglePatchArray[tIndex].NumTriangles++;
+				TrianglePatches.TrianglePatchArray[tIndex].Triangles.push_back(tri);
+				++TrianglePatches.TrianglePatchArray[tIndex].NumTriangles;
 			}
 
 			TrianglePatches.TotalTriangles += TrianglePatches.TrianglePatchArray[tIndex].NumTriangles;
-			TrianglePatches.NumPatches++;
 		}
 	}
 }
@@ -92,11 +89,11 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 		mat = (*transform);
 
 	s32 tIndex = 0;
-	s32 i, j;
 
-	for (i=0; i<TrianglePatches.NumPatches; ++i)
+	for (s32 i=0; i<TrianglePatches.NumPatches; ++i)
+	{
 		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles <= count)
-			for (j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
+			for (s32 j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
 			{
 				triangles[tIndex] = TrianglePatches.TrianglePatchArray[i].Triangles[j];
 
@@ -106,6 +103,7 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 
 				++tIndex;
 			}
+	}
 
 	outTriangleCount = tIndex;
 }
@@ -126,12 +124,11 @@ void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 
 		mat = (*transform);
 
 	s32 tIndex = 0;
-	s32 i, j;
 
-	for (i=0; i<TrianglePatches.NumPatches; ++i)
+	for (s32 i=0; i<TrianglePatches.NumPatches; ++i)
 		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles <= count &&
 			TrianglePatches.TrianglePatchArray[i].Box.intersectsWithBox(box))
-			for (j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
+			for (s32 j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
 			{
 				triangles[tIndex] = TrianglePatches.TrianglePatchArray[i].Triangles[j];
 
@@ -161,14 +158,13 @@ void CTerrainTriangleSelector::getTriangles(core::triangle3df* triangles, s32 ar
 		mat = (*transform);
 
 	s32 tIndex = 0;
-	s32 i, j;
 
-	for (i=0; i<TrianglePatches.NumPatches; ++i)
+	for (s32 i=0; i<TrianglePatches.NumPatches; ++i)
 	{
 		if (tIndex + TrianglePatches.TrianglePatchArray[i].NumTriangles <= count
             && TrianglePatches.TrianglePatchArray[i].Box.intersectsWithLine(line))
 		{
-			for (j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
+			for (s32 j=0; j<TrianglePatches.TrianglePatchArray[i].NumTriangles; ++j)
 			{
 				triangles[tIndex] = TrianglePatches.TrianglePatchArray[i].Triangles[j];
 

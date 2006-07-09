@@ -954,8 +954,6 @@ CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size, void* d
 
 
 
-
-
 //! constructor 
 CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
 : Format(format), Data(0)
@@ -974,8 +972,8 @@ CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
 
 
 //! constructor
-CImage::CImage(IImage* imageToCopy,	const core::position2d<s32>& pos,
-			   const core::dimension2d<s32>& size)
+CImage::CImage(IImage* imageToCopy, const core::position2d<s32>& pos,
+		   const core::dimension2d<s32>& size)
  : Data(0), Size(0,0)
 {
 	if (!imageToCopy)
@@ -989,7 +987,6 @@ CImage::CImage(IImage* imageToCopy,	const core::position2d<s32>& pos,
 	core::rect<s32> sClip( pos.X, pos.Y, pos.X + size.Width,pos.Y + size.Height );
 	Blit (	BLITTER_TEXTURE, this, 0, 0, imageToCopy, &sClip,0 );
 }
-
 
 
 
@@ -1235,7 +1232,10 @@ void CImage::drawLine(const core::position2d<s32>& from, const core::position2d<
 		}
 	}
 }
-//! copies this surface into another, scaling it to fit it.
+
+
+
+//! copies this surface into another, scaling it to the target image size
 void CImage::copyToScaling(CImage* target)
 {
 	if (Format != target->getColorFormat() )
@@ -1247,53 +1247,28 @@ void CImage::copyToScaling(CImage* target)
 	// note: this is very very slow. (i didn't want to write a fast version.
 	// but hopefully, nobody wants to scale surfaces every frame.
 
-	core::dimension2d<s32> size = target->getDimension();
+	core::dimension2d<s32> targetSize = target->getDimension();
 
-	if (!size.Width || !size.Height)
+	if (!targetSize.Width || !targetSize.Height)
 		return;
 
 
-	f32 sourceXStep = (f32)Size.Width / (f32)size.Width;
-	f32 sourceYStep = (f32)Size.Height / (f32)size.Height;
-	f32 sy;
-	s32 x;
-	s32 y;
+	f32 sourceXStep = (f32)Size.Width / (f32)targetSize.Width;
+	f32 sourceYStep = (f32)Size.Height / (f32)targetSize.Height;
+	f32 sx,sy;
+	s32 bpp=target->getBytesPerPixel();
 
-	switch ( Format )
+	u8* nData = (u8*)target->lock();
+
+	sy = 0.0f;
+	for (s32 y=0; y<targetSize.Height; ++y)
 	{
-		case video::ECF_A1R5G5B5:
-		case video::ECF_R5G6B5:
+		for (s32 x=0; x<targetSize.Width; ++x)
 		{
-			s16* nData = (s16*)target->lock();
-
-			for ( x=0; x<size.Width; ++x)
-			{
-				sy = 0.0f;
-
-				for ( y=0; y<size.Height; ++y)
-				{
-					nData[(s32)(y*size.Width + x)] = ((s16*)Data)[(s32)(((s32)sy)*Size.Width + x*sourceXStep)];
-					sy+=sourceYStep;
-				}
-			}
-		} break;
-
-		case video::ECF_A8R8G8B8:
-		{
-			u32* nData = (u32*)target->lock();
-
-			for ( x=0; x<size.Width; ++x)
-			{
-				sy = 0.0f;
-
-				for ( y=0; y<size.Height; ++y)
-				{
-					nData[(u32)(y*size.Width + x)] = ((u32*)Data)[(s32)(((s32)sy)*Size.Width + x*sourceXStep)];
-					sy+=sourceYStep;
-				}
-			}
-		} break;
-
+			memcpy(&nData[(y*targetSize.Width + x)*bpp], &((u8*)Data)[((s32)(((s32)sy)*Size.Width + sx))*bpp], bpp);
+			sx+=sourceXStep;
+		}
+		sy+=sourceYStep;
 	}
 
 	target->unlock();

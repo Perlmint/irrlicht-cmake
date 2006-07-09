@@ -337,7 +337,7 @@ bool CD3D9Texture::copyTexture()
 		TextureSize.Width = desc.Width;
 		TextureSize.Height = desc.Height;
 
-		SufaceHasSameSize = (TextureSize == ImageSize);
+		SurfaceHasSameSize = (TextureSize == ImageSize);
 
 		if (desc.Format == D3DFMT_A1R5G5B5)
 			return copyTo16BitTexture();
@@ -368,7 +368,7 @@ bool CD3D9Texture::copyTo32BitTexture()
 	Pitch = rect.Pitch;
 	s32 pitch = rect.Pitch / 4;
 
-	if (SufaceHasSameSize)
+	if (SurfaceHasSameSize)
 	{
 		if (Image->getColorFormat() == ECF_A8R8G8B8)
 		{
@@ -459,7 +459,7 @@ bool CD3D9Texture::copyTo16BitTexture()
 	Pitch = rect.Pitch;
 	s32 pitch = rect.Pitch/2;
 
-	if (SufaceHasSameSize)
+	if (SurfaceHasSameSize)
 	{
 		// copy texture
 

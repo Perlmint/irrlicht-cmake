@@ -168,17 +168,11 @@ bool CSoftwareDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
 	switch (feature)
 	{
-	case EVDF_BILINEAR_FILTER:
-		return false;
 	case EVDF_RENDER_TO_TARGET:
 		return true;
-	case EVDF_HARDWARE_TL:
-		return false;
-	case EVDF_MIP_MAP:
+	default:
 		return false;
 	};
-
-	return false;
 }
 
 
@@ -200,8 +194,6 @@ void CSoftwareDriver::setTexture(video::ITexture* texture)
 		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
 		return;
 	}
-
-	video::ITexture* oldTexture = texture;
 
 	if (Texture)
 		Texture->drop();

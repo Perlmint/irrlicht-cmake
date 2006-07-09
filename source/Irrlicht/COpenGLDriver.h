@@ -20,6 +20,8 @@
 
 #ifdef LINUX
 #define GL_GLEXT_LEGACY 1
+#include <GL/glx.h>
+#include <GL/gl.h>
 #include <X11/Xlib.h>
 #endif // LINUX
 

@@ -106,7 +106,7 @@ private:
 	core::dimension2d<s32> ImageSize;
 	s32 Pitch;
 	ECOLOR_FORMAT ColorFormat;
-	bool SufaceHasSameSize; // true if image has the same dimension as texture.
+	bool SurfaceHasSameSize; // true if image has the same dimension as texture.
 	bool HasMipMaps;
 	bool IsRenderTarget;
 };

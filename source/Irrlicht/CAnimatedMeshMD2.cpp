@@ -508,7 +508,6 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 		return false;
 
 	SMD2Header header;
-	s8* frames = 0;
 
 	file->read(&header, sizeof(SMD2Header));
 

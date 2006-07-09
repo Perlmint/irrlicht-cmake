@@ -34,7 +34,7 @@ CXXINCS = -I../../include -Izlib -Ijpeglib -Ilibpng
 STATIC_LIB = libIrrlicht.a
 SHARED_LIB = libIrrlicht.so
 CPPFLAGS = $(CXXINCS) -DIRRLICHT_EXPORTS=1
-CXXFLAGS = -Wall -Wno-reorder
+CXXFLAGS = -g -Wall -Wno-reorder
 # -fexpensive-optimizations -O3
 INSTALL_DIR = /usr/local/lib
 

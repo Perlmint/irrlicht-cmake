@@ -180,7 +180,7 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosti
 	s32 pitch = texture->getPitch();
 	core::dimension2d<s32> size = texture->getOriginalSize();
 
-    s16* p = (s16*)texture->lock();
+	s16* p = (s16*)texture->lock();
 	if (!p)
 	{
 		os::Printer::log("Could not lock texture while preparing texture for a font.", ELL_ERROR);

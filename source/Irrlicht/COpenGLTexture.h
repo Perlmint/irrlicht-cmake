@@ -103,8 +103,9 @@ private:
 	core::dimension2d<s32> ImageSize;
 	core::dimension2d<s32> OriginalSize;
 	s32 Pitch;
-	bool SufaceHasSameSize; // true if Surface has the same dimension as texture.
-	s32* ImageData;
+	bool SurfaceHasSameSize; // true if Surface has the same dimension as texture.
+	c8* ImageData;
+	ECOLOR_FORMAT ColorFormat;
 	
 	GLuint TextureName;
 	bool hasMipMaps;

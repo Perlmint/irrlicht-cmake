@@ -63,6 +63,8 @@ CCameraFPSSceneNode::CCameraFPSSceneNode(ISceneNode* parent, ISceneManager* mgr,
 				break;
 			case EKA_STRAFE_RIGHT: KeyMap.push_back(SCamKeyMap(3, keyMapArray[i].KeyCode));
 				break;
+			default:
+				break;
 			} // end switch
 		} // end for
 	}// end if

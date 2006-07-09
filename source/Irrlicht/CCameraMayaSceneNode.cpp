@@ -87,6 +87,8 @@ bool CCameraMayaSceneNode::OnEvent(SEvent event)
 			}
 		}
 		break;
+	case EMIE_MOUSE_WHEEL:
+		break;
 	}
 	return true;
 }

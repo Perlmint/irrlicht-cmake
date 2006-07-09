@@ -59,8 +59,8 @@ private:
 	struct SGeoMipMapTrianglePatch
 	{
 		core::array<core::triangle3df>	Triangles;
-		s32								NumTriangles;
-		core::aabbox3df					Box;
+		s32				NumTriangles;
+		core::aabbox3df			Box;
 	};
 
 	struct SGeoMipMapTrianglePatches
@@ -72,8 +72,8 @@ private:
 		}
 
 		core::array<SGeoMipMapTrianglePatch>	TrianglePatchArray;
-		s32										NumPatches;
-		u32										TotalTriangles;
+		s32					NumPatches;
+		u32					TotalTriangles;
 	};
 
 	ITerrainSceneNode*		SceneNode;

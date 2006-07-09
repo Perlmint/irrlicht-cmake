@@ -647,6 +647,8 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 			glLoadMatrixf(glmat);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1312,8 +1314,6 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return true;
 	case EVDF_RENDER_TO_TARGET:
 		return true;
-	case EVDF_HARDWARE_TL:
-		return false;
 	case EVDF_MIP_MAP:
 		return true;
 	case EVDF_STENCIL_BUFFER:
@@ -1324,6 +1324,8 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return ARBFragmentProgramExtension;
 	case EVDF_ARB_GLSL:
 		return ARBShadingLanguage100Extension;
+	default:
+		return false;
 	};
 
 	return false;

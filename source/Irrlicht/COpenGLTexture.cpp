@@ -11,6 +11,7 @@
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 #include "glext.h"
+#include <cstring>
 
 namespace irr
 {
@@ -20,114 +21,91 @@ namespace video
 //! constructor
 COpenGLTexture::COpenGLTexture(IImage* image, bool generateMipLevels, const char* name)
 : ITexture(name), Pitch(0), ImageSize(0,0), hasMipMaps(generateMipLevels),
-ImageData(0), TextureName(0)
+ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0)
 {
 	#ifdef _DEBUG
-    setDebugName("COpenGLTexture");
+	setDebugName("COpenGLTexture");
 	#endif
 
 	#ifdef DISABLE_MIPMAPPING
-		hasMipMaps = false;
+	hasMipMaps = false;
 	#endif
 
-	if (image)
-	{
-		getImageData(image);
+	getImageData(image);
 
-		if (ImageData)
-		{
-			glGenTextures(1, &TextureName);
-			copyTexture();
-		}		
-	}
+	if (ImageData)
+	{
+		glGenTextures(1, &TextureName);
+		copyTexture();
+	}		
 }
 
 
 //! destructor
 COpenGLTexture::~COpenGLTexture()
 {
-	delete [] ImageData;
-	glDeleteTextures(1, &TextureName);
+	if (ImageData)
+	{
+		glDeleteTextures(1, &TextureName);
+		delete [] ImageData;
+		ImageData=0;
+	}
 }
 
 
 void COpenGLTexture::getImageData(IImage* image)
 {
+	if (!image)
+	{
+		os::Printer::log("No image for OpenGL texture.", ELL_ERROR);
+		return;
+	}
+
 	ImageSize = image->getDimension();
 	OriginalSize = ImageSize;
+
+	if ( !ImageSize.Width || !ImageSize.Height)
+	{
+		os::Printer::log("Invalid size of image for OpenGL Texture.", ELL_ERROR);
+		return;
+	}
 
 	core::dimension2d<s32> nImageSize;
 	nImageSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
 	nImageSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
 
-	if (!nImageSize.Width || !nImageSize.Height ||
-		!ImageSize.Width || !ImageSize.Height)
-	{
-		os::Printer::log("Could not create OpenGL Texture.", ELL_ERROR);
-		return;
-	}
+	Pitch = nImageSize.Width*image->getBytesPerPixel();
+	ImageData = new c8[Pitch * nImageSize.Height];
+	ColorFormat = image->getColorFormat();
 
-	ImageData = new s32[nImageSize.Width * nImageSize.Height];
-
+	c8* source = (c8*)image->lock();
 	if (nImageSize == ImageSize)
 	{
-		if (image->getColorFormat() == ECF_A8R8G8B8)
-		{
-			s32 s = nImageSize.Width * nImageSize.Height;
-			s32 *t = (s32*)image->lock();
-			for (s32 i=0; i<s; ++i)
-				ImageData[i] = t[i];
-			image->unlock();
-		}
-		else
-		{
-			// slow converting
-			for (s32 x=0; x<ImageSize.Width; ++x)
-				for (s32 y=0; y<ImageSize.Height; ++y)
-					ImageData[y*nImageSize.Width + x] = image->getPixel(x,y).color;
-		}
+		memcpy(ImageData,source,Pitch * nImageSize.Height);
 	}
 	else
 	{
 		// scale texture
 
-		s32* source = (s32*)image->lock();
-
 		f32 sourceXStep = (f32)ImageSize.Width / (f32)nImageSize.Width;
 		f32 sourceYStep = (f32)ImageSize.Height / (f32)nImageSize.Height;
-		f32 sy;
+		f32 sx,sy;
+		s32 bpp=image->getBytesPerPixel();
 
-		if (image->getColorFormat() == ECF_A8R8G8B8)
+		// copy texture scaling
+		sy = 0.0f;
+		for (s32 y=0; y<nImageSize.Height; ++y)
 		{
-			// copy texture scaling
+			sx = 0.0f;
 			for (s32 x=0; x<nImageSize.Width; ++x)
 			{
-				sy = 0.0f;
-
-				for (s32 y=0; y<nImageSize.Height; ++y)
-				{
-					ImageData[(s32)(y*nImageSize.Width + x)] = source[(s32)(((s32)sy)*ImageSize.Width + x*sourceXStep)];
-					sy+=sourceYStep;
-				}
+				memcpy(&ImageData[(y*nImageSize.Width + x)*bpp],&source[((s32)(((s32)sy)*ImageSize.Width + sx))*bpp],bpp);
+				sx+=sourceXStep;
 			}
+			sy+=sourceYStep;
 		}
-		else
-		{
-			// convert texture scaling, slow
-			for (s32 x=0; x<nImageSize.Width; ++x)
-			{
-				sy = 0.0f;
-
-				for (s32 y=0; y<nImageSize.Height; ++y)
-				{
-					ImageData[(s32)(y*nImageSize.Width + x)] = 
-						image->getPixel((s32)(x*sourceXStep), (s32)sy).color;
-
-					sy+=sourceYStep;
-				}
-			}
-		}
-	}		
+	}
+	image->unlock();
 
 	ImageSize = nImageSize;
 }
@@ -170,18 +148,59 @@ void COpenGLTexture::copyTexture()
 	if (testError())
 		os::Printer::log("Could not bind Texture", ELL_ERROR);
 
-#ifdef MACOSX
+	GLint internalFormat=GL_RGBA;
+	GLenum format=GL_BGRA;
+	GLenum type;
 	#ifdef __BIG_ENDIAN__
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ImageSize.Width, 
-			ImageSize.Height, 0, GL_RGBA , GL_UNSIGNED_BYTE, ImageData);
+	switch (ColorFormat)
+	{
+		case ECF_A1R5G5B5:
+			type=GL_UNSIGNED_SHORT_1_5_5_5;
+			break;
+		case ECF_R5G6B5:
+			internalFormat=GL_RGB;
+			format=GL_BGR;
+			type=GL_UNSIGNED_SHORT_5_6_5;
+			break;
+		case ECF_R8G8B8:
+			internalFormat=GL_RGB8;
+			format=GL_RGB;
+			type=GL_UNSIGNED_BYTE;
+			break;
+		case ECF_A8R8G8B8:
+			type=GL_UNSIGNED_INT_8_8_8_8;
+			break;
+		default:
+			os::Printer::log("Unsupported texture format", ELL_ERROR);
+			break;
+	}
 	#else
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ImageSize.Width, 
-			ImageSize.Height, 0, GL_BGRA , GL_UNSIGNED_BYTE, ImageData);
+	switch (ColorFormat)
+	{
+		case ECF_A1R5G5B5:
+			type=GL_UNSIGNED_SHORT_1_5_5_5_REV;
+			break;
+		case ECF_R5G6B5:
+			internalFormat=GL_RGB;
+			format=GL_BGR;
+			type=GL_UNSIGNED_SHORT_5_6_5_REV;
+			break;
+		case ECF_R8G8B8:
+			internalFormat=GL_RGB8;
+			format=GL_BGR;
+			type=GL_UNSIGNED_BYTE;
+			break;
+		case ECF_A8R8G8B8:
+			type=GL_UNSIGNED_INT_8_8_8_8_REV;
+			break;
+		default:
+			os::Printer::log("Unsupported texture format", ELL_ERROR);
+			break;
+	}
 	#endif
-#else
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ImageSize.Width, 
-			ImageSize.Height, 0, GL_BGRA_EXT , GL_UNSIGNED_BYTE, ImageData);
-#endif
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, ImageSize.Width, 
+		ImageSize.Height, 0, format, type, ImageData);
 
 	if (testError())
 		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
@@ -194,18 +213,8 @@ void COpenGLTexture::copyTexture()
 		s32 ret = 0;
 		
 #ifndef DISABLE_MIPMAPPING
-	#ifdef MACOSX
-		#ifdef __BIG_ENDIAN__
-			ret = gluBuild2DMipmaps(GL_TEXTURE_2D, 4, ImageSize.Width, ImageSize.Height,
- 						GL_RGBA, GL_UNSIGNED_BYTE, ImageData);
-		#else
-			ret = gluBuild2DMipmaps(GL_TEXTURE_2D, 4, ImageSize.Width, ImageSize.Height,
- 						GL_BGRA, GL_UNSIGNED_BYTE, ImageData);
-		#endif
-	#else
-			ret = gluBuild2DMipmaps(GL_TEXTURE_2D, 4, ImageSize.Width, ImageSize.Height,
- 						GL_BGRA_EXT, GL_UNSIGNED_BYTE, ImageData);
-	#endif
+		ret = gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat, ImageSize.Width, ImageSize.Height,
+ 					format, type, ImageData);
 #endif
 
 		if (ret)
@@ -277,7 +286,7 @@ E_DRIVER_TYPE COpenGLTexture::getDriverType()
 //! returns color format of texture
 ECOLOR_FORMAT COpenGLTexture::getColorFormat()
 {
-	return ECF_A8R8G8B8;
+	return ColorFormat;
 }
 
 

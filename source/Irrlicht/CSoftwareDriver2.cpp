@@ -238,22 +238,15 @@ bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	switch (feature)
 	{
 #ifdef SOFTWARE_DRIVER_2_BILINEAR   
-    case EVDF_BILINEAR_FILTER:
+	case EVDF_BILINEAR_FILTER:
 		return true;
 #endif
 	case EVDF_RENDER_TO_TARGET:
 		return true;
-	case EVDF_HARDWARE_TL:
-		return false;
-	case EVDF_MIP_MAP:
+	default:
 		return false;
 	};
-
-	return false;
 }
-
-
-
 
 
 

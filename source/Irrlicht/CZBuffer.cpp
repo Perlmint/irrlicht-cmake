@@ -3,6 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CZBuffer.h"
+#include <cstring>
 
 namespace irr
 {
@@ -36,11 +37,7 @@ CZBuffer::~CZBuffer()
 //! clears the zbuffer
 void CZBuffer::clear()
 {
-	TZBufferType* p = Buffer;
-	while(p != BufferEnd)
-	{
-		*p = 0; ++p;
-	}
+	memset(Buffer, 0, (BufferEnd-Buffer)*sizeof(TZBufferType));
 }
 
 

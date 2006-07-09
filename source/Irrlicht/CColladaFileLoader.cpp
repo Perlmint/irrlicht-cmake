@@ -994,6 +994,8 @@ void CColladaFileLoader::readPolygonSection(io::IXMLReaderUTF8* reader,
 					break;
 				case ECIS_TANGENT:
 					break;
+				default:
+					break;
 				}
 			}
 
