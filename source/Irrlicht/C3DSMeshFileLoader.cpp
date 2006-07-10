@@ -853,6 +853,7 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 	MeshBufferNames.reallocate(Materials.size());
 	for (u32 i=0; i<Materials.size(); ++i)
 	{
+		MeshBufferNames.push_back("");
 		SMeshBuffer* m = new scene::SMeshBuffer();
 		Mesh->addMeshBuffer(m);
 
