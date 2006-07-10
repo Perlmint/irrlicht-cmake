@@ -51,8 +51,6 @@ s32 CParticleBoxEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& outAr
 		if (amount > (s32)MaxParticlesPerSecond*2)
 			amount = MaxParticlesPerSecond * 2;
 
-		f64 len = Direction.getLength();
-
 		for (s32 i=0; i<amount; ++i)
 		{
 			p.pos.X = Box.MinEdge.X + fmodf((f32)os::Randomizer::rand(), extend.X);

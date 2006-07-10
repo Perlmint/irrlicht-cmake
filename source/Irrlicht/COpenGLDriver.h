@@ -307,7 +307,7 @@ namespace video
 		{
 			ERM_NONE = 0,	// no render state has been set yet.
 			ERM_2D,			// 2d drawing rendermode
-			ERM_3D,			// 3d rendering mode
+			ERM_3D			// 3d rendering mode
 		};
 
 		E_RENDER_MODE CurrentRenderMode;

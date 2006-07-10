@@ -32,9 +32,11 @@ Version 1.5 - 15 March 2005
 #define LMTS_LOG Logger->log
 #endif
 
+#ifdef _MSC_VER
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#endif
 
 #include <IMeshLoader.h>
 #include <SMesh.h>

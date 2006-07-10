@@ -110,9 +110,11 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 // those $%&$!! disabled support for it since Dec. 2004 and users are complaining
 // about linker errors. Comment this out only if you are knowing what you are 
 // doing. (Which means you have an old DX9 SDK and VisualStudio6).
+#ifdef _MSC_VER
 #if (_MSC_VER < 1300 && !defined(__GNUC__)) 
 #undef _IRR_COMPILE_WITH_DIRECT3D_9_
 #pragma message("Compiling Irrlicht with Visual Studio 6.0, support for DX9 is disabled.")
+#endif
 #endif
 
 #endif

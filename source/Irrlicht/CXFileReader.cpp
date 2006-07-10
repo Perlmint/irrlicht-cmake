@@ -1324,7 +1324,6 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 	}
 
 	s32 nCoords;
-	u32 count;
 	nCoords = readInt();
 	if (binary)
 	{
@@ -1333,7 +1332,7 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 			os::Printer::log("Binary X: MeshTextureCoords: Expecting float list", ELL_WARNING);
 			return false;
 		}
-		count = readBinDWord();
+		readBinDWord();
 	}
 	textureCoords.set_used(nCoords);
 

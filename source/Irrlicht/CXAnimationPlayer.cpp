@@ -230,10 +230,11 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 
 
 	video::S3DVertex v;
-	v.Color = 0xFFFFFFFF;
+	v.Color.set(255,255,255,255);
 
 	// add only those with material matnr
 	for (s32 i=0; i<(s32)mesh.MaterialList.FaceIndices.size(); ++i)
+	{
 		if (mesh.MaterialList.FaceIndices[i] == matnr)
 		{
 			// add face number i
@@ -297,20 +298,21 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 			} // end for all faces
 
 		} // end for all materials
+	}
 
 	// generate missing normals
 	if (!ncnt)
 	{
-		video::S3DVertex* v = &buf->Vertices[0];
+		video::S3DVertex* vertex = &buf->Vertices[0];
 		fcnt = buf->Indices.size();
 		for (s32 u=0; u<fcnt; u+=3)
 		{
-			core::plane3d<f32> p(v[buf->Indices[u+0]].Pos,
-				v[buf->Indices[u+1]].Pos, v[buf->Indices[u+2]].Pos);
+			core::plane3d<f32> p(vertex[buf->Indices[u+0]].Pos,
+				vertex[buf->Indices[u+1]].Pos, vertex[buf->Indices[u+2]].Pos);
 			p.Normal.normalize();
-			v[buf->Indices[u+0]].Normal = p.Normal;
-			v[buf->Indices[u+1]].Normal = p.Normal;
-			v[buf->Indices[u+2]].Normal = p.Normal;
+			vertex[buf->Indices[u+0]].Normal = p.Normal;
+			vertex[buf->Indices[u+1]].Normal = p.Normal;
+			vertex[buf->Indices[u+2]].Normal = p.Normal;
 		}
 	}
 
@@ -759,7 +761,7 @@ void CXAnimationPlayer::prepareAnimationData()
 				// copy track
 				s32 keyCount = (s32)readerSet.Animations[a].Keys[k].numberOfKeys;
 				s32 type = readerSet.Animations[a].Keys[k].keyType;
-				s32 i;
+				s32 l;
 				myTrack.keyType = type;
 
 		#ifdef _XREADER_DEBUG
@@ -771,24 +773,24 @@ void CXAnimationPlayer::prepareAnimationData()
 				switch(type)
 				{
 				case 0: // quaternion
-					for (i=0; i<keyCount; ++i)
-						myTrack.Quaternions.push_back(readerSet.Animations[a].Keys[k].getQuaternion(i));
+					for (l=0; l<keyCount; ++l)
+						myTrack.Quaternions.push_back(readerSet.Animations[a].Keys[k].getQuaternion(l));
 					break;
 				case 1: // scale
 				case 2: // position
-					for (i=0; i<keyCount; ++i)
-						myTrack.Vectors.push_back(readerSet.Animations[a].Keys[k].getVector(i));
+					for (l=0; l<keyCount; ++l)
+						myTrack.Vectors.push_back(readerSet.Animations[a].Keys[k].getVector(l));
 					break;
 				case 4:
 				case 3: // matrix
-					for (i=0; i<keyCount; ++i)
-						myTrack.Matrices.push_back(readerSet.Animations[a].Keys[k].getMatrix(i));
+					for (l=0; l<keyCount; ++l)
+						myTrack.Matrices.push_back(readerSet.Animations[a].Keys[k].getMatrix(l));
 					break;
 				}
 
 				// copy times
-				for (i=0; i<keyCount; ++i)
-					myTrack.Times.push_back((f32)readerSet.Animations[a].Keys[k].time[i]);
+				for (l=0; l<keyCount; ++l)
+					myTrack.Times.push_back((f32)readerSet.Animations[a].Keys[k].time[l]);
 
 				if (myTrack.Times.getLast() > LastAnimationTime)
 					LastAnimationTime = myTrack.Times.getLast();

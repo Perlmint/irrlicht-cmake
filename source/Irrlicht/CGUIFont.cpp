@@ -105,11 +105,9 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosti
 	s32 colorLowerRight = *(p+1);
 	s32 colorBackGround = *(p+2);
 #ifdef __BIG_ENDIAN__
-	s32 colorBackGroundWithAlphaTrue = (0xFF) | (~(0xFF) & colorBackGround);
 	s32 colorBackGroundWithAlphaFalse = (0x00) | (~(0xFF) & colorBackGround);
 	s32 colorFont = (0xFF) | (~(0xFF) & 0xFFFFFF00);
 #else
-	s32 colorBackGroundWithAlphaTrue = (0xFF<<24) | (~(0xFF<<24) & colorBackGround);
 	s32 colorBackGroundWithAlphaFalse = (0x00<<24) | (~(0xFF<<24) & colorBackGround);
 	s32 colorFont = (0xFF<<24) | (~(0xFF<<24) & 0x00FFFFFF);
 #endif
@@ -190,7 +188,6 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosti
 	s16 colorTopLeft = *p;
 	s16 colorLowerRight = *(p+1);
 	s16 colorBackGround = *(p+2);
-	s16 colorBackGroundWithAlphaTrue = (0x1<<15) | (~(0x1<<15) & colorBackGround);
 	s16 colorBackGroundWithAlphaFalse = (0x0<<15) | (~(0x1<<15) & colorBackGround);
 	s16 colorFont = (0x1<<15) | (~(0x1<<15) & video::RGB16(255,255,255));
 

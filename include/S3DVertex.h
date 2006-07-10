@@ -26,7 +26,7 @@ enum E_VERTEX_TYPE
 
 	//! Vertex with a tangent and binormal vector, video::S3DVertexTangents. Usually
 	//! used for tangent space normal mapping.
-	EVT_TANGENTS,
+	EVT_TANGENTS
 };
 
 //! standard vertex used by the Irrlicht engine.

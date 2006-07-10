@@ -1069,7 +1069,6 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
 	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
 
-	const core::dimension2d<s32> sourceSurfaceSize = texture->getOriginalSize();
 	core::rect<f32> tcoords;
 	tcoords.UpperLeftCorner.X = (((f32)sourcePos.X)+0.5f) / texture->getOriginalSize().Width ;
 	tcoords.UpperLeftCorner.Y = (((f32)sourcePos.Y)+0.5f) / texture->getOriginalSize().Height;
@@ -1327,8 +1326,6 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	default:
 		return false;
 	};
-
-	return false;
 }
 
 
@@ -1451,10 +1448,8 @@ void COpenGLDriver::setRenderStates3DMode()
 				Material, LastMaterial, ResetRenderStates, this);
 	}
 
-	bool shaderOK = true;
-
 	if (Material.MaterialType >= 0 && Material.MaterialType < (s32)MaterialRenderers.size())
-		shaderOK = MaterialRenderers[Material.MaterialType].Renderer->OnRender(this, video::EVT_STANDARD);
+		MaterialRenderers[Material.MaterialType].Renderer->OnRender(this, video::EVT_STANDARD);
 
 	LastMaterial = Material;
 

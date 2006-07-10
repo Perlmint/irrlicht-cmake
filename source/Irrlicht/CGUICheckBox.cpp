@@ -85,7 +85,6 @@ void CGUICheckBox::draw()
 		return;
 
 	IGUISkin* skin = Environment->getSkin();
-	irr::video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32> rect = AbsoluteRect;
 

@@ -619,7 +619,6 @@ bool GetDMFLights(StringList RawFile/**<StringList representing a DMF file.*/,
                          dmfLight lights[]/**<Lights returned.*/){
      
      int offs=3;
-     int offs1=0;
      StringList temp,temp1;
      
       //Checking if this is a DeleD map File of version >= 0.91
@@ -729,12 +728,10 @@ bool GetDMFWaterPlains(StringList RawFile/**<StringList representing a DMF file.
      f32 waveheight=3.0f;
      f32 wavespeed=300.0f;
      f32 wavelength=80.0f;
-     s32 tmp_s32=0;
-     f32 tmp_f32=0.0f;
      offs++;
 
-     for(int i=0;i<objs;i++)
-	 {
+	for(int i=0;i<objs;i++)
+	{
              StringList wat=SubdivideString(RawFile[offs],";");
              StringList wat1=SubdivideString(wat[0],"_");
              offs++;
@@ -745,13 +742,13 @@ bool GetDMFWaterPlains(StringList RawFile/**<StringList representing a DMF file.
              fac=atoi(RawFile[offs].c_str());
              offs++;
 
-             if(wat1[0]==String("water") && wat[2]==String("0"))
-			 {
-                StringList userinfo=SubdivideString(wat[7],",");
-                for (int i=0; i<(int)userinfo.size(); i++)
+		if(wat1[0]==String("water") && wat[2]==String("0"))
+		{
+			StringList userinfo=SubdivideString(wat[7],",");
+			for (int j=0; j<(int)userinfo.size(); j++)
+			{
+				switch(j)
 				{
-                        switch(i)
-						{
                           case 0:
                                if(atoi(userinfo[0].c_str())) 
 								   tilenum.Width = atoi(userinfo[0].c_str());
@@ -774,7 +771,7 @@ bool GetDMFWaterPlains(StringList RawFile/**<StringList representing a DMF file.
                                
                                break;
 				}
-               }                         
+			}                         
                 wat_planes[wat_id].waterID=wat_id;
                 wat_planes[wat_id].numFaces=fac;
                 wat_planes[wat_id].firstFace=face_cnt;
@@ -783,8 +780,8 @@ bool GetDMFWaterPlains(StringList RawFile/**<StringList representing a DMF file.
                 wat_planes[wat_id].waveSpeed=wavespeed;
                 wat_planes[wat_id].waveLength=wavelength;
 
-             for(int j=0;j<fac;j++)
-			 {
+			for(int j=0;j<fac;j++)
+			{
                      temp=SubdivideString(RawFile[offs+j],";");
                      
                      //first value is vertices number for this face

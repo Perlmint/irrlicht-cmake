@@ -160,7 +160,7 @@ bool CGUIListBox::OnEvent(SEvent event)
 		case gui::EGET_SCROLL_BAR_CHANGED:
 			if (event.GUIEvent.Caller == ScrollBar)
 			{
-				s32 pos = ((gui::IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
+//				s32 pos = ((gui::IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
 				return true;
 			}
 			break;

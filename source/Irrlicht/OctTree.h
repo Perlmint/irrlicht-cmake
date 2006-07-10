@@ -159,12 +159,14 @@ private:
 			// find first point for bounding box
 
 			for (i=0; i<(*indices).size(); ++i)
+			{
 				if (!(*indices)[i].Indices.empty())
 				{
 					Box.reset(allmeshdata[i].Vertices[(*indices)[i].Indices[0]].Pos);
 					found = true;
 					break;
 				}
+			}
 
 			if (!found)
 			{
@@ -200,7 +202,7 @@ private:
 
 				bool added = false;
 
-				for (u32 i=0; i<allmeshdata.size(); ++i)
+				for (i=0; i<allmeshdata.size(); ++i)
 				{
 					SIndexChunk ic;
 					ic.MaterialId = allmeshdata[i].MaterialId;

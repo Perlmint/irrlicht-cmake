@@ -92,10 +92,8 @@ bool CGUIEditBox::OnEvent(SEvent event)
 		break;
 	case EET_KEY_INPUT_EVENT:
 		return processKey(event);
-		break;
 	case EET_MOUSE_INPUT_EVENT:
 		return processMouse(event);
-		break;
 	}
 
 	return Parent ? Parent->OnEvent(event) : false;

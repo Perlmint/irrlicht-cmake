@@ -688,7 +688,7 @@ void CQ3LevelMesh::loadTextures()
 	// attach textures to materials.
 
 	for (s32 l=0; l<NumLightMaps+1; ++l)
-		for (s32 t=0; t<NumTextures+1; ++t)
+		for (t=0; t<NumTextures+1; ++t)
 		{
 			SMeshBufferLightMap* b = (SMeshBufferLightMap*)Mesh.getMeshBuffer(l*(NumTextures+1) + t);
 			b->Material.Texture2 = lig[l];

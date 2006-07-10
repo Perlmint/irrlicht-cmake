@@ -164,9 +164,8 @@ bool CGUITabControl::OnEvent(SEvent event)
 	case EET_GUI_EVENT:
 		switch(event.GUIEvent.EventType)
 		{
-		case gui::EGET_ELEMENT_FOCUS_LOST:
+			case gui::EGET_ELEMENT_FOCUS_LOST:
 				return true;
-			break;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:

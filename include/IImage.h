@@ -34,7 +34,7 @@ enum ECOLOR_FORMAT
 
 	//! Default 32 bit color format. 8 bits are used for every component:
 	//! red, green, blue and alpha.
-	ECF_A8R8G8B8,
+	ECF_A8R8G8B8
 };
 
 

@@ -88,13 +88,11 @@ c8* COSOperator::getTextFromClipboard()
 	CloseClipboard();
 	return buffer;
 #else
-	return 0;
-#endif
-
 #ifdef MACOSX
 	return (OSXCopyFromClipboard());
 #else
 	return 0;
+#endif
 #endif
 }
 

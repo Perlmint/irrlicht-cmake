@@ -282,8 +282,6 @@ IAnimatedMesh* CDMFLoader::createMesh(irr::io::IReadFile* file)
 			String colour(materiali[i].textureName);
 			String alpha,red,green,blue;
 
-			char c='F';
-
 			alpha.append((char*)&colour[0]);
 			alpha.append((char*)&colour[1]);
 			blue.append((char*)&colour[2]);

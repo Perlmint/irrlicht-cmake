@@ -104,15 +104,12 @@ const c8* CFileSystem::getWorkingDirectory()
 {
 #ifdef _IRR_WINDOWS_
 	_getcwd(WorkingDirectory, FILE_SYSTEM_MAX_PATH);
-	return WorkingDirectory;
 #endif
 
 #if (defined(LINUX) || defined(MACOSX))
 	getcwd(WorkingDirectory, (size_t)FILE_SYSTEM_MAX_PATH);
-	return WorkingDirectory;
 #endif
-
-	return 0;
+	return WorkingDirectory;
 }
 
 
@@ -124,15 +121,15 @@ const c8* CFileSystem::getWorkingDirectory()
 //! Returns true if successful, otherwise false.
 bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 {
+	bool success=false;
 #ifdef _IRR_WINDOWS_
-	return (_chdir(newDirectory) == 0);
+	success=(_chdir(newDirectory) == 0);
 #endif
 
 #if (defined(LINUX) || defined(MACOSX))
-	return !(chdir(newDirectory) == 0);
+	success=(chdir(newDirectory) != 0);
 #endif
-
-	return false;
+	return success;
 }
 
 

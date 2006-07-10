@@ -124,7 +124,6 @@ void CGUIWindow::draw()
 		return;
 
 	IGUISkin* skin = Environment->getSkin();
-	video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32> rect = AbsoluteRect;
 	core::rect<s32> *cl = &AbsoluteClippingRect;

@@ -34,7 +34,6 @@ CTriangleSelector::CTriangleSelector(IMesh* mesh, ISceneNode* node)
 		IMeshBuffer* buf = mesh->getMeshBuffer(i);
 
 		s32 idxCnt = buf->getIndexCount();
-		s32 vtxCnt = buf->getVertexCount();
 		const u16* indices = buf->getIndices();
 		core::triangle3df tri;
 
@@ -43,11 +42,11 @@ CTriangleSelector::CTriangleSelector(IMesh* mesh, ISceneNode* node)
 		case video::EVT_STANDARD:
 			{
 				video::S3DVertex* vtx = (video::S3DVertex*)buf->getVertices();
-				for (s32 i=0; i<idxCnt; i+=3)
+				for (s32 j=0; j<idxCnt; j+=3)
 				{
-					tri.pointA = vtx[indices[i+0]].Pos;
-					tri.pointB = vtx[indices[i+1]].Pos;
-					tri.pointC = vtx[indices[i+2]].Pos;
+					tri.pointA = vtx[indices[j+0]].Pos;
+					tri.pointB = vtx[indices[j+1]].Pos;
+					tri.pointC = vtx[indices[j+2]].Pos;
 					Triangles.push_back(tri);
 				}
 			}
@@ -55,11 +54,11 @@ CTriangleSelector::CTriangleSelector(IMesh* mesh, ISceneNode* node)
 		case video::EVT_2TCOORDS:
 			{
 				video::S3DVertex2TCoords* vtx = (video::S3DVertex2TCoords*)buf->getVertices();
-				for (s32 i=0; i<idxCnt; i+=3)
+				for (s32 j=0; j<idxCnt; j+=3)
 				{
-					tri.pointA = vtx[indices[i+0]].Pos;
-					tri.pointB = vtx[indices[i+1]].Pos;
-					tri.pointC = vtx[indices[i+2]].Pos;
+					tri.pointA = vtx[indices[j+0]].Pos;
+					tri.pointB = vtx[indices[j+1]].Pos;
+					tri.pointC = vtx[indices[j+2]].Pos;
 					Triangles.push_back(tri);
 				}
 			}

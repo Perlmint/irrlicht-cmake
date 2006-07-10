@@ -43,8 +43,6 @@ void CGUIMenu::draw()
 
 	IGUISkin* skin = Environment->getSkin();
 	IGUIFont* font = skin->getFont();
-	IGUIFont* defaultFont = Environment->getBuiltInFont();
-	video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32> rect = AbsoluteRect;
 	core::rect<s32>* clip = &AbsoluteClippingRect;

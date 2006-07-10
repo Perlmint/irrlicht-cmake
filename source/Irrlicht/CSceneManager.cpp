@@ -1494,10 +1494,10 @@ void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node)
 
 		for (int i=0; i<(int)node->getMaterialCount(); ++i)
 		{
-			io::IAttributes* attr = 
+			io::IAttributes* tmpAttr = 
 				getVideoDriver()->createAttributesFromMaterial(node->getMaterial(i));
-			attr->write(writer);
-			attr->drop();
+			tmpAttr->write(writer);
+			tmpAttr->drop();
 		}
 
 		writer->writeClosingTag(materialElement);

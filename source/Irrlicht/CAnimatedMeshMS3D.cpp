@@ -117,7 +117,7 @@ CAnimatedMeshMS3D::~CAnimatedMeshMS3D()
 //! loads an md2 file
 bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 {
-	s32 i=0;
+	s32 i=0,j;
 	
 	if (!file)
 		return false;
@@ -190,7 +190,6 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		pPtr += sizeof(u16);
 		
 		//pPtr += sizeof(u16) * triangleCount; // triangle indices
-		s32 j;
 		for (j=0; j<triangleCount; ++j) 
 		{
 			grp.VertexIds.push_back (*(u16*)pPtr);
@@ -214,9 +213,9 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		// if there are no materials, add at least one buffer
 
 		Buffers.push_back (SMS3DMeshBuffer ()); 
-		SMS3DMeshBuffer& buffer = Buffers.getLast(); 
-		buffer.BoundingBox = &BoundingBox; 
-		buffer.Vertices = &AnimatedVertices; 
+		SMS3DMeshBuffer& tmpBuffer = Buffers.getLast(); 
+		tmpBuffer.BoundingBox = &BoundingBox; 
+		tmpBuffer.Vertices = &AnimatedVertices; 
 	}
 
 	for (i=0; i<numMaterials; ++i)
@@ -225,18 +224,18 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		pPtr += sizeof(MS3DMaterial);
 
 		Buffers.push_back (SMS3DMeshBuffer ());
-		SMS3DMeshBuffer& buffer = Buffers.getLast();
+		SMS3DMeshBuffer& tmpBuffer = Buffers.getLast();
 
-		buffer.Material.MaterialType = video::EMT_SOLID;
+		tmpBuffer.Material.MaterialType = video::EMT_SOLID;
 
-		buffer.Material.AmbientColor = video::SColorf(material->Ambient[0], material->Ambient[1], material->Ambient[2], material->Ambient[3]).toSColor ();
-		buffer.Material.DiffuseColor = video::SColorf(material->Diffuse[0], material->Diffuse[1], material->Diffuse[2], material->Diffuse[3]).toSColor ();
-		buffer.Material.EmissiveColor = video::SColorf(material->Emissive[0], material->Emissive[1], material->Emissive[2], material->Emissive[3]).toSColor ();
-		buffer.Material.SpecularColor = video::SColorf(material->Specular[0], material->Specular[1], material->Specular[2], material->Specular[3]).toSColor ();
-		buffer.Material.Shininess = material->Shininess;
-		buffer.Material.Texture1 = Driver->getTexture((const c8*)material->Texture);
-		buffer.BoundingBox = &BoundingBox;
-		buffer.Vertices = &AnimatedVertices;
+		tmpBuffer.Material.AmbientColor = video::SColorf(material->Ambient[0], material->Ambient[1], material->Ambient[2], material->Ambient[3]).toSColor ();
+		tmpBuffer.Material.DiffuseColor = video::SColorf(material->Diffuse[0], material->Diffuse[1], material->Diffuse[2], material->Diffuse[3]).toSColor ();
+		tmpBuffer.Material.EmissiveColor = video::SColorf(material->Emissive[0], material->Emissive[1], material->Emissive[2], material->Emissive[3]).toSColor ();
+		tmpBuffer.Material.SpecularColor = video::SColorf(material->Specular[0], material->Specular[1], material->Specular[2], material->Specular[3]).toSColor ();
+		tmpBuffer.Material.Shininess = material->Shininess;
+		tmpBuffer.Material.Texture1 = Driver->getTexture((const c8*)material->Texture);
+		tmpBuffer.BoundingBox = &BoundingBox;
+		tmpBuffer.Vertices = &AnimatedVertices;
 	}
 
 	// animation time
@@ -277,8 +276,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			HasAnimation = true;
 		
 		// get rotation keyframes
-		s32 j;
-		for	(j=0; j<pJoint->NumRotationKeyframes; ++j)
+		for (j=0; j<pJoint->NumRotationKeyframes; ++j)
 		{
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 			pPtr += sizeof(MS3DKeyframe);
@@ -292,7 +290,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		}
 
 		// get translation keyframes
-		for	(j=0; j<pJoint->NumTranslationKeyframes; ++j)
+		for (j=0; j<pJoint->NumTranslationKeyframes; ++j)
 		{
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 			pPtr += sizeof(MS3DKeyframe);
@@ -307,8 +305,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 	}
 
 	//find parent of every joint
-	s32 j;
 	for (i=0; i<(s32)Joints.size(); ++i)
+	{
 		if (Joints[i].ParentName.size() != 0)
 		{
 			for (j=0; j<(s32)Joints.size(); ++j)
@@ -321,6 +319,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			if (Joints[i].Parent == -1)
 				os::Printer::log("Found joint in model without parent.", ELL_WARNING);
 		}
+	}
 
 	// sets up all joints with initial rotation and translation
 	for (i=0; i<(s32)Joints.size(); ++i)
@@ -344,7 +343,6 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 
 	for (i=0; i<numTriangles; ++i)
 	{
-		s32 j;
 		for (j = 0; j<3; ++j)
 		{
 			v.TCoords.X = triangles[i].S[j];
@@ -381,10 +379,9 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		if (grp.MaterialIdx >= Buffers.size()) 
 			grp.MaterialIdx = 0; 
 
-		SMS3DMeshBuffer &buffer = Buffers[grp.MaterialIdx]; 
-		core::array<u16>& indices = buffer.Indices;
+		core::array<u16>& indices = Buffers[grp.MaterialIdx].Indices;
 
-		for (s32 j=0; j<(int)grp.VertexIds.size(); ++j) 
+		for (j=0; j<(int)grp.VertexIds.size(); ++j) 
 		{ 
 			u16 vertexId = vertexIds[j]; 
 			indices.push_back (vertexId * 3); 
@@ -403,7 +400,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 	// inverse translate and rotate all vertices for making animation easier
 	if (HasAnimation)
 	for (i=0; i<(s32)Joints.size(); ++i)
-		for (s32 j=0; j<(s32)Joints[i].VertexIds.size(); ++j)
+	{
+		for (j=0; j<(s32)Joints[i].VertexIds.size(); ++j)
 		{
 			Joints[i].AbsoluteTransformation.inverseTranslateVect(
 				Vertices[Joints[i].VertexIds[j]].Pos);
@@ -414,6 +412,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			Joints[i].AbsoluteTransformation.inverseRotateVect(
 				Vertices[Joints[i].VertexIds[j]].Normal);
 		}
+	}
 
 	AnimatedVertices = Vertices;
 

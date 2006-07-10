@@ -24,9 +24,11 @@
 #define __CMY3D_MESH_FILE_LOADER_H_INCLUDED__
 
 
+#ifdef _MSC_VER
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#endif
 
 
 #include <IMeshLoader.h>

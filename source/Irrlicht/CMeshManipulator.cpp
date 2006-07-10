@@ -508,7 +508,6 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 	
 	for (s32 b=0; b<meshBufferCount; ++b)
 	{
-		s32 vtxCnt = mesh->getMeshBuffer(b)->getVertexCount();
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
 		const u16* idx = mesh->getMeshBuffer(b)->getIndices();
 
@@ -606,7 +605,6 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 		
 	for (s32 b=0; b<meshBufferCount; ++b)
 	{
-		s32 vtxCnt = mesh->getMeshBuffer(b)->getVertexCount();
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
 		const u16* idx = mesh->getMeshBuffer(b)->getIndices();
 
@@ -666,7 +664,6 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 	// now calculate tangents
 	for (s32 b=0; b<meshBufferCount; ++b)
 	{
-		int vtxCnt = clone->getMeshBuffer(b)->getVertexCount();
 		int idxCnt = clone->getMeshBuffer(b)->getIndexCount();
 
 		u16* idx = clone->getMeshBuffer(b)->getIndices();
