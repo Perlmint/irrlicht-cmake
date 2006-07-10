@@ -11,6 +11,7 @@
 #include "irrString.h"
 #include "SMesh.h"
 #include "IMeshManipulator.h"
+#include "matrix4.h"
 
 namespace irr
 {
@@ -79,9 +80,19 @@ private:
 
 		~SCurrentMaterial() { 	};
 
+		void clear() {
+			Material=video::SMaterial();
+			Name="";
+			Filename[0]="";
+			Filename[1]="";
+			Filename[2]="";
+			Filename[3]="";
+			Filename[4]="";
+		}
+
 		video::SMaterial Material;
 		core::stringc Name;
-		core::stringc Filename;
+		core::stringc Filename[5];
 	};
 
 	struct SMaterialGroup
@@ -121,37 +132,41 @@ private:
 
 	bool readChunk(io::IReadFile* file, ChunkData* parent);
 	bool readMaterialChunk(io::IReadFile* file, ChunkData* parent);
+	bool readFrameChunk(io::IReadFile* file, ChunkData* parent);
+	bool readTrackChunk(io::IReadFile* file, ChunkData& data,
+				IMeshBuffer* mb, const core::vector3df& pivot);
 	bool readObjectChunk(io::IReadFile* file, ChunkData* parent);
+	bool readPercentageChunk(io::IReadFile* file, ChunkData* chunk, float&percentage);
 	bool readColorChunk(io::IReadFile* file, ChunkData* chunk, video::SColor& out);
 
 	void readChunkData(io::IReadFile* file, ChunkData& data);
-	void readAndIgnoreString(io::IReadFile* file, ChunkData& data);
 	void readString(io::IReadFile* file, ChunkData& data, core::stringc& out);
 	void readVertices(io::IReadFile* file, ChunkData& data);
 	void readIndices(io::IReadFile* file, ChunkData& data);
 	void readMaterialGroup(io::IReadFile* file, ChunkData& data);
 	void readTextureCoords(io::IReadFile* file, ChunkData& data);
 
-	void composeObject(io::IReadFile* file);
+	void composeObject(io::IReadFile* file, const core::stringc& name);
 	void loadMaterials(io::IReadFile* file);
 	void cleanUp();
-	core::stringc getTextureFileName(core::stringc texture, core::stringc model);
+	core::stringc getTextureFileName(const core::stringc& texture, core::stringc& model);
 
 	io::IFileSystem* FileSystem;
 	video::IVideoDriver* Driver;
 
 	f32* Vertices;
-	u16 CountVertices;
 	u16* Indices;
-	u16 CountIndices;
 	core::array<u16> TempIndices;
-	u16 CountTCoords;
 	f32* TCoords;
+	u16 CountVertices;
+	u16 CountFaces; // = CountIndices/4
+	u16 CountTCoords;
 	core::array<SMaterialGroup> MaterialGroups;
-
 
 	SCurrentMaterial CurrentMaterial;
 	core::array<SCurrentMaterial> Materials;
+	core::array<core::stringc> MeshBufferNames;
+	core::matrix4 TransformationMatrix;
 
 	SMesh* Mesh;
 
