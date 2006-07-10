@@ -74,14 +74,34 @@ void COpenGLTexture::getImageData(IImage* image)
 	nImageSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
 	nImageSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
 
-	Pitch = nImageSize.Width*image->getBytesPerPixel();
+	s32 bpp=0;
+	if (image->getColorFormat()==ECF_R8G8B8)
+	{
+		bpp=4;
+		ColorFormat = ECF_A8R8G8B8;
+	}
+	else
+	{
+		bpp=image->getBytesPerPixel();
+		ColorFormat = image->getColorFormat();
+	}
+
+	Pitch = nImageSize.Width*bpp;
 	ImageData = new c8[Pitch * nImageSize.Height];
-	ColorFormat = image->getColorFormat();
 
 	c8* source = (c8*)image->lock();
 	if (nImageSize == ImageSize)
 	{
-		memcpy(ImageData,source,Pitch * nImageSize.Height);
+		if (image->getColorFormat()==ECF_R8G8B8)
+		{
+			u32* dest = (u32*)ImageData;
+			for (s32 i=0; i<ImageSize.Width*ImageSize.Height; ++i)
+			{
+				*dest++=SColor(255,source[3*i],source[3*i+1],source[3*i+2]).color;
+			}
+		}
+		else
+			memcpy(ImageData,source,Pitch * nImageSize.Height);
 	}
 	else
 	{
@@ -90,7 +110,6 @@ void COpenGLTexture::getImageData(IImage* image)
 		f32 sourceXStep = (f32)ImageSize.Width / (f32)nImageSize.Width;
 		f32 sourceYStep = (f32)ImageSize.Height / (f32)nImageSize.Height;
 		f32 sx,sy;
-		s32 bpp=image->getBytesPerPixel();
 
 		// copy texture scaling
 		sy = 0.0f;
@@ -99,14 +118,17 @@ void COpenGLTexture::getImageData(IImage* image)
 			sx = 0.0f;
 			for (s32 x=0; x<nImageSize.Width; ++x)
 			{
-				memcpy(&ImageData[(y*nImageSize.Width + x)*bpp],&source[((s32)(((s32)sy)*ImageSize.Width + sx))*bpp],bpp);
+				s32 i=((s32)(((s32)sy)*ImageSize.Width + sx));
+				if (image->getColorFormat()==ECF_R8G8B8)
+					((s32*)ImageData)[y*nImageSize.Width + x]=SColor(255,source[3*i],source[3*i+1],source[3*i+2]).color;
+				else
+					memcpy(&ImageData[(y*nImageSize.Width + x)*bpp],&source[i*bpp],bpp);
 				sx+=sourceXStep;
 			}
 			sy+=sourceYStep;
 		}
 	}
 	image->unlock();
-
 	ImageSize = nImageSize;
 }
 
