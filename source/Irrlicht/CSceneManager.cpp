@@ -100,7 +100,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	else
 		MeshCache->grab();
 
-    // create collision manager
+	// create collision manager
 	CollisionManager = new CSceneCollisionManager(this, Driver);
 
 	// create manipulator
@@ -368,7 +368,7 @@ ISceneNode* CSceneManager::addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent,
 
 	node->drop();
 
-    return node;
+	return node;
 }
 
 
@@ -602,7 +602,7 @@ IAnimatedMesh* CSceneManager::addHillPlaneMesh(const c8* name,
 	MeshCache->addMesh(name, animatedMesh);
 
 	animatedMesh->drop();
-    
+
 	return animatedMesh;
 }
 
@@ -626,7 +626,7 @@ IAnimatedMesh* CSceneManager::addTerrainMesh(const c8* name,
 	MeshCache->addMesh(name, animatedMesh);
 
 	animatedMesh->drop();
-    
+
 	return animatedMesh;
 }
 
@@ -696,7 +696,7 @@ bool CSceneManager::isCulled(ISceneNode* node)
 	if (!cam)
 		return false;
 
-    core::aabbox3d<f32> tbox = node->getBoundingBox();
+	core::aabbox3d<f32> tbox = node->getBoundingBox();
 	node->getAbsoluteTransformation().transformBox(tbox);
 	return !(tbox.intersectsWithBox(cam->getViewFrustrum()->boundingBox));
 
@@ -1243,7 +1243,7 @@ bool CSceneManager::saveScene(io::IWriteFile* file)
 		return false;
 
 	writer->writeXMLHeader();
-    writeSceneNode(writer, this);
+	writeSceneNode(writer, this);
 	writer->drop();
 
 	return true;
@@ -1312,7 +1312,7 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent)
 			node = this; // root
 	}
 
-    // read attributes
+	// read attributes
 
 	while(reader->read())
 	{
@@ -1529,8 +1529,9 @@ void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node)
 
 	// write children
 
-	core::list<ISceneNode*>::Iterator it = node->getChildren().begin();
-	for (; it != node->getChildren().end(); ++it)
+	const core::list<ISceneNode*>& list = node->getChildren();
+	core::list<ISceneNode*>::Iterator it = list.begin();
+	for (; it != list.end(); ++it)
 		writeSceneNode(writer, (*it));
 
 	attr->drop();

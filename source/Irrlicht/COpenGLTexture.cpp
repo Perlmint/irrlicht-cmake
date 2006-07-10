@@ -175,7 +175,7 @@ void COpenGLTexture::copyTexture()
 
 	GLint internalFormat=GL_RGBA;
 	GLenum format=GL_BGRA;
-	GLenum type;
+	GLenum type=GL_UNSIGNED_BYTE;
 	#ifdef __BIG_ENDIAN__
 	switch (ColorFormat)
 	{

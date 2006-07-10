@@ -149,8 +149,8 @@ void CD3D8Driver::createMaterialRenderers()
 
 //! initialises the Direct3D API
 bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd,
-                             u32 bits, bool fullScreen, bool pureSoftware, 
-							 bool vsync, bool antiAlias)
+				u32 bits, bool fullScreen, bool pureSoftware, 
+				bool vsync, bool antiAlias)
 {
 	HRESULT hr;
 	D3DLibrary = LoadLibrary( "d3d8.dll" );
@@ -240,16 +240,16 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 		if (!FAILED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, 
 		           devtype , present.BackBufferFormat, !fullScreen, 
 		           D3DMULTISAMPLE_2_SAMPLES)))
-        {        
+		{
 			// enable multi sampling
-            present.SwapEffect         = D3DSWAPEFFECT_DISCARD; 
-            present.MultiSampleType    = D3DMULTISAMPLE_2_SAMPLES; 
-        } 
-		else 
-        { 
-            os::Printer::log("Anti aliasing disabled because hardware/driver lacks necessary caps.", ELL_WARNING);    
+			present.SwapEffect      = D3DSWAPEFFECT_DISCARD;
+			present.MultiSampleType = D3DMULTISAMPLE_2_SAMPLES;
+		}
+		else
+		{ 
+			os::Printer::log("Anti aliasing disabled because hardware/driver lacks necessary caps.", ELL_WARNING);    
 			antiAlias = false;
-        }
+		}
 	}
 
 	// check stencil buffer compatibility
@@ -372,14 +372,14 @@ bool CD3D8Driver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 	if (DeviceLost)
 	{
 		if(FAILED(hr = pID3DDevice->TestCooperativeLevel()))
-        {
-            if (hr == D3DERR_DEVICELOST)
-                return false;
+		{
+			if (hr == D3DERR_DEVICELOST)
+				return false;
 
-            if (hr == D3DERR_DEVICENOTRESET)
+			if (hr == D3DERR_DEVICENOTRESET)
 				reset();
-            return false;
-        }
+			return false;
+		}
 	}
 
 	DWORD flags = 0;
@@ -412,7 +412,7 @@ bool CD3D8Driver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 //! resets the device
 bool CD3D8Driver::reset()
 {
-    // reset
+	// reset
 	os::Printer::log("Resetting D3D8 device.", ELL_INFORMATION);
 	if (FAILED(pID3DDevice->Reset(&present)))
 	{
@@ -1038,7 +1038,7 @@ void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / texture->getOriginalSize().Width;
 	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / texture->getOriginalSize().Height;
 
-    S3DVertex vtx[4];
+	S3DVertex vtx[4];
 	vtx[0] = S3DVertex((f32)(poss.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-poss.UpperLeftCorner.Y ) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
 	vtx[1] = S3DVertex((f32)(poss.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- poss.UpperLeftCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
 	vtx[2] = S3DVertex((f32)(poss.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-poss.LowerRightCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
@@ -1054,8 +1054,8 @@ void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 
 
 void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect, 
-                   const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect, 
-                   video::SColor* colors, bool useAlphaChannelOfTexture) 
+			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect, 
+			video::SColor* colors, bool useAlphaChannelOfTexture) 
 { 
    if(!texture) return; 
 

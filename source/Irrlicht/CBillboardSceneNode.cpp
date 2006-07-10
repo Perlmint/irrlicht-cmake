@@ -121,7 +121,7 @@ void CBillboardSceneNode::render()
 	}
 
 	core::matrix4 mat;
-    driver->setTransform(video::ETS_WORLD, mat);
+	driver->setTransform(video::ETS_WORLD, mat);
 
 	driver->setMaterial(Material);
 

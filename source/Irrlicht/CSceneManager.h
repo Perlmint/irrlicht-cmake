@@ -46,7 +46,7 @@ namespace scene
 		//! returns the video driver
 		virtual video::IVideoDriver* getVideoDriver();
 
-		//! adds a test scene node for test purposes to the scene. It is a simple cube of (1,1,1) size. 
+		//! adds a cube scene node to the scene. It is a simple cube of (1,1,1) size. 
 		//! the returned pointer must not be dropped.
 		virtual ISceneNode* addCubeSceneNode(f32 size=10.0f, ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0,0,0),	const core::vector3df& rotation = core::vector3df(0,0,0),	const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f));

@@ -1263,6 +1263,7 @@ void CImage::copyToScaling(CImage* target)
 	sy = 0.0f;
 	for (s32 y=0; y<targetSize.Height; ++y)
 	{
+		sx = 0.0f;
 		for (s32 x=0; x<targetSize.Width; ++x)
 		{
 			memcpy(&nData[(y*targetSize.Width + x)*bpp], &((u8*)Data)[((s32)(((s32)sy)*Size.Width + sx))*bpp], bpp);

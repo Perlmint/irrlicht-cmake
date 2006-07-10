@@ -50,7 +50,7 @@ namespace scene
 		static const s32 VERSION_4_1;
 
 		Header(){ clear(); }
-        virtual ~Header(){ clear(); }
+		virtual ~Header(){ clear(); }
 
 		const s32 getVersion() const{ return version; }
 		void clear(){ version = 0; }

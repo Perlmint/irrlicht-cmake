@@ -404,7 +404,7 @@ video::ITexture* CAttributes::getAttributeAsTexture(s32 index)
 	video::ITexture* tex = 0;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        tex = Attributes[index]->getTexture();
+		tex = Attributes[index]->getTexture();
 
 	return tex;
 }
@@ -455,7 +455,7 @@ bool CAttributes::getAttributeAsBool(s32 index)
 	bool ret = false;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getBool();
+		ret = Attributes[index]->getBool();
 
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return ret;
@@ -468,7 +468,7 @@ s32 CAttributes::getAttributeAsInt(s32 index)
 	s32 ret = 0;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getInt();
+		ret = Attributes[index]->getInt();
 
 	return ret;
 }
@@ -480,7 +480,7 @@ f32 CAttributes::getAttributeAsFloat(s32 index)
 	f32 ret = 0;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getFloat();
+		ret = Attributes[index]->getFloat();
 
 	return ret;
 }
@@ -492,7 +492,7 @@ video::SColor CAttributes::getAttributeAsColor(s32 index)
 	video::SColor ret;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getColor();
+		ret = Attributes[index]->getColor();
 
 	return ret;
 }
@@ -504,7 +504,7 @@ video::SColorf CAttributes::getAttributeAsColorf(s32 index)
 	video::SColorf ret;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getColorf();
+		ret = Attributes[index]->getColorf();
 
 	return ret;
 }
@@ -516,7 +516,7 @@ core::vector3df CAttributes::getAttributeAsVector3d(s32 index)
 	core::vector3df ret;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getVector();
+		ret = Attributes[index]->getVector();
 
 	return ret;
 }
@@ -536,7 +536,7 @@ const char* CAttributes::getAttributeAsEnumeration(s32 index)
 	const char* ret = 0;
 
 	if (index >= 0 && index < (s32)Attributes.size())
-        ret = Attributes[index]->getEnum();
+		ret = Attributes[index]->getEnum();
 
 	return ret;
 }

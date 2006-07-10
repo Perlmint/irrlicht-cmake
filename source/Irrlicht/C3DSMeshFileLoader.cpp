@@ -181,13 +181,13 @@ IAnimatedMesh* C3DSMeshFileLoader::createMesh(io::IReadFile* file)
 		am->recalculateBoundingBox();
 		Mesh->drop();
 		Mesh = 0;
-        return am;
+		return am;
 	}
 
 	Mesh->drop();
 	Mesh = 0;
 
-    return 0;
+	return 0;
 }
 
 
@@ -819,7 +819,7 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 		else
 			os::Printer::log("Found no matching material for Group in 3ds file.", ELL_WARNING);
 	}
-        
+
 	cleanUp();
 }
 

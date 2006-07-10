@@ -323,7 +323,7 @@ namespace core
 
 	//! Returns the rotation, as set by setRotation(). This code was sent
 	//! in by Chev.
-	core::vector3df matrix4::getRotationDegrees() const
+	inline core::vector3df matrix4::getRotationDegrees() const
 	{
 		const matrix4 &mat = *this; 
 
@@ -360,7 +360,7 @@ namespace core
 		return vector3df((f32)X,(f32)Y,(f32)Z);
 	}
 
-	void matrix4::setInverseRotationRadians( const vector3df& rotation )
+	inline void matrix4::setInverseRotationRadians( const vector3df& rotation )
 	{
 		f64 cr = cos( rotation.X );
 		f64 sr = sin( rotation.X );

@@ -517,7 +517,7 @@ core::matrix4 CColladaFileLoader::readSkewNode(io::IXMLReaderUTF8* reader)
 	// TODO: build skew matrix from this 7 floats
 
 	os::Printer::log("COLLADA loader warning: <skew> not implemented yet.", ELL_WARNING);
-    
+
 	return mat;
 }
 
@@ -529,7 +529,7 @@ core::matrix4 CColladaFileLoader::readMatrixNode(io::IXMLReaderUTF8* reader)
 		return mat;
 
 	readFloatsInsideElement(reader, mat.M, 16);
-    
+
 	return mat;
 }
 
@@ -625,22 +625,22 @@ void CColladaFileLoader::readCameraPrefab(io::IXMLReaderUTF8* reader)
 {
 	CCameraPrefab* prefab = new CCameraPrefab(reader->getAttributeValue("id"));
 
-    if (!reader->isEmptyElement())
+	if (!reader->isEmptyElement())
 	{
 		readColladaParameters(reader, cameraPrefabName);
 
 		SColladaParam* p;
 	
 		p = getColladaParameter(ECPN_YFOV);
-        if (p && p->Type == ECPT_FLOAT)
+		if (p && p->Type == ECPT_FLOAT)
 			prefab->YFov = p->Floats[0];
 
 		p = getColladaParameter(ECPN_ZNEAR);
-        if (p && p->Type == ECPT_FLOAT)
+		if (p && p->Type == ECPT_FLOAT)
 			prefab->ZNear = p->Floats[0];
 
 		p = getColladaParameter(ECPN_ZFAR);
-        if (p && p->Type == ECPT_FLOAT)
+		if (p && p->Type == ECPT_FLOAT)
 			prefab->ZFar = p->Floats[0];
 	}
 
@@ -739,7 +739,7 @@ void CColladaFileLoader::readGeometry(io::IXMLReaderUTF8* reader)
 					accessor.Stride = 1;
 
 				// the accessor contains some information on how to access (boi!) the array,
-                // the info is stored in collada style parameters, so just read them.
+				// the info is stored in collada style parameters, so just read them.
 				readColladaParameters(reader, accessorSectionName);
 				if (!sources.empty())
 				{
@@ -1038,7 +1038,7 @@ void CColladaFileLoader::readLightPrefab(io::IXMLReaderUTF8* reader)
 {
 	CLightPrefab* prefab = new CLightPrefab(reader->getAttributeValue("id"));
 
-    if (!reader->isEmptyElement())
+	if (!reader->isEmptyElement())
 	{
 		readColladaParameters(reader, lightPrefabName);
 	
@@ -1100,7 +1100,7 @@ void CColladaFileLoader::readColladaInputs(io::IXMLReaderUTF8* reader, const cor
 {
 	Inputs.clear();
 
-    while(reader->read())
+	while(reader->read())
 	{
 		if (reader->getNodeType() == io::EXN_ELEMENT &&
 			inputTagName == reader->getNodeName())
