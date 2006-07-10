@@ -95,9 +95,9 @@ void COpenGLTexture::getImageData(IImage* image)
 		if (image->getColorFormat()==ECF_R8G8B8)
 		{
 			u32* dest = (u32*)ImageData;
-			for (s32 i=0; i<ImageSize.Width*ImageSize.Height; ++i)
+			for (s32 i=0; i<3*ImageSize.Width*ImageSize.Height; i+=3)
 			{
-				*dest++=SColor(255,source[3*i],source[3*i+1],source[3*i+2]).color;
+				*dest++=SColor(255,source[i],source[i+1],source[i+2]).color;
 			}
 		}
 		else
@@ -120,7 +120,10 @@ void COpenGLTexture::getImageData(IImage* image)
 			{
 				s32 i=((s32)(((s32)sy)*ImageSize.Width + sx));
 				if (image->getColorFormat()==ECF_R8G8B8)
-					((s32*)ImageData)[y*nImageSize.Width + x]=SColor(255,source[3*i],source[3*i+1],source[3*i+2]).color;
+				{
+					i*=3;
+					((s32*)ImageData)[y*nImageSize.Width + x]=SColor(255,source[i],source[i+1],source[i+2]).color;
+				}
 				else
 					memcpy(&ImageData[(y*nImageSize.Width + x)*bpp],&source[i*bpp],bpp);
 				sx+=sourceXStep;
@@ -186,7 +189,7 @@ void COpenGLTexture::copyTexture()
 			break;
 		case ECF_R8G8B8:
 			internalFormat=GL_RGB8;
-			format=GL_RGB;
+			format=GL_BGR;
 			type=GL_UNSIGNED_BYTE;
 			break;
 		case ECF_A8R8G8B8:
@@ -209,7 +212,7 @@ void COpenGLTexture::copyTexture()
 			break;
 		case ECF_R8G8B8:
 			internalFormat=GL_RGB8;
-			format=GL_BGR;
+			format=GL_RGB;
 			type=GL_UNSIGNED_BYTE;
 			break;
 		case ECF_A8R8G8B8:
@@ -234,10 +237,10 @@ void COpenGLTexture::copyTexture()
 	{
 		s32 ret = 0;
 		
-#ifndef DISABLE_MIPMAPPING
+		#ifndef DISABLE_MIPMAPPING
 		ret = gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat, ImageSize.Width, ImageSize.Height,
  					format, type, ImageData);
-#endif
+		#endif
 
 		if (ret)
 		{
@@ -316,7 +319,7 @@ ECOLOR_FORMAT COpenGLTexture::getColorFormat()
 //! returns pitch of texture (in bytes)
 s32 COpenGLTexture::getPitch()
 {
-	return ImageSize.Width * 4;
+	return Pitch;
 }
 
 
