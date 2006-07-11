@@ -93,15 +93,16 @@ private:
 
 	bool createMipMaps(s32 level=1);
 
-	void copy16BitMipMap(char* src, char* tgt, 
-		s32 width, s32 height,  s32 pitchsrc, s32 pitchtgt);
+	void copy16BitMipMap(char* src, char* tgt,
+		s32 width, s32 height, s32 pitchsrc, s32 pitchtgt);
 
-	void copy32BitMipMap(char* src, char* tgt, 
-		s32 width, s32 height,  s32 pitchsrc, s32 pitchtgt);
+	void copy32BitMipMap(char* src, char* tgt,
+		s32 width, s32 height, s32 pitchsrc, s32 pitchtgt);
 
 	IImage* Image;
 	IDirect3DDevice8* Device;
 	IDirect3DTexture8* Texture;
+	IDirect3DSurface8* RTTSurface;
 	core::dimension2d<s32> TextureSize;
 	core::dimension2d<s32> ImageSize;
 	s32 Pitch;

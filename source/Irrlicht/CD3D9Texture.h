@@ -14,7 +14,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 /*!
@@ -44,7 +44,7 @@ public:
 	virtual const core::dimension2d<s32> getOriginalSize();
 
 	//! Returns (=size) of the texture.
-	virtual const core::dimension2d<s32> getSize();	
+	virtual const core::dimension2d<s32> getSize();
 
 	//! returns driver type of texture (=the driver, who created the texture)
 	virtual E_DRIVER_TYPE getDriverType();
@@ -61,7 +61,7 @@ public:
 	//! returns if texture has mipmap levels
 	bool hasMipMaps();
 
-	//! Regenerates the mip map levels of the texture. Useful after locking and 
+	//! Regenerates the mip map levels of the texture. Useful after locking and
 	//! modifying the texture
 	virtual void regenerateMipMapLevels();
 
@@ -84,7 +84,7 @@ private:
 	//! copies the image to the texture
 	bool copyTexture();
 
-	//! optimized for 16 bit to 16 copy. This is in here because before 
+	//! optimized for 16 bit to 16 copy. This is in here because before
 	//! version 0.4.2, the engine only used A1R5G5B5 hardware textures,
 	bool copyTo16BitTexture();
 
@@ -93,15 +93,16 @@ private:
 
 	bool createMipMaps(s32 level=1);
 
-	void copy16BitMipMap(char* src, char* tgt, 
+	void copy16BitMipMap(char* src, char* tgt,
 		s32 width, s32 height,  s32 pitchsrc, s32 pitchtgt);
 
-	void copy32BitMipMap(char* src, char* tgt, 
+	void copy32BitMipMap(char* src, char* tgt,
 		s32 width, s32 height,  s32 pitchsrc, s32 pitchtgt);
 
 	IImage* Image;
 	IDirect3DDevice9* Device;
 	IDirect3DTexture9* Texture;
+	IDirect3DSurface9* RTTSurface;
 	core::dimension2d<s32> TextureSize;
 	core::dimension2d<s32> ImageSize;
 	s32 Pitch;

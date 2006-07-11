@@ -27,17 +27,17 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 //! rendertarget constructor
 CD3D8Texture::CD3D8Texture(IDirect3DDevice8* device, core::dimension2d<s32> size, const char* name)
-: ITexture(name), Image(0), Device(device), TextureSize(size), 
-	Texture(0), Pitch(0), ImageSize(size), HasMipMaps(0), 
-	IsRenderTarget(true)
+: ITexture(name), Image(0), Device(device), TextureSize(size),
+	Texture(0), Pitch(0), ImageSize(size), HasMipMaps(0),
+	IsRenderTarget(true), RTTSurface(0)
 {
 	#ifdef _DEBUG
-    setDebugName("CD3D8Texture");
+	setDebugName("CD3D8Texture");
 	#endif
 
 	if (Device)
@@ -49,12 +49,13 @@ CD3D8Texture::CD3D8Texture(IDirect3DDevice8* device, core::dimension2d<s32> size
 
 //! constructor
 CD3D8Texture::CD3D8Texture(IImage* image, IDirect3DDevice8* device,
-						   u32 flags, const char* name)
-: ITexture(name), Image(image), Device(device), TextureSize(0,0), 
-Texture(0), Pitch(0), ImageSize(0,0), HasMipMaps(false), IsRenderTarget(false)
+				u32 flags, const char* name)
+: ITexture(name), Image(image), Device(device), TextureSize(0,0),
+Texture(0), Pitch(0), ImageSize(0,0), HasMipMaps(false), IsRenderTarget(false),
+RTTSurface(0)
 {
 	#ifdef _DEBUG
-    setDebugName("CD3D8Texture");
+	setDebugName("CD3D8Texture");
 	#endif
 
 	bool generateMipLevels = (flags & video::ETCF_CREATE_MIP_MAPS) != 0;
@@ -88,7 +89,7 @@ Texture(0), Pitch(0), ImageSize(0,0), HasMipMaps(false), IsRenderTarget(false)
 					createMipMaps();
 					HasMipMaps = true;
 				#endif
-			}				
+			}
 		}
 		else
 			os::Printer::log("Could not create DIRECT3D8 Texture.", ELL_WARNING);
@@ -108,7 +109,7 @@ void CD3D8Texture::createTexture(u32 flags)
 
 	HRESULT hr;
 	D3DFORMAT format = D3DFMT_A1R5G5B5;
-	
+
 	switch(getTextureFormatFromFlags(flags))
 	{
 	case ETCF_ALWAYS_16_BIT:
@@ -202,16 +203,16 @@ bool CD3D8Texture::copyTo32BitTexture()
 		{
 			// direct copy, fast
 
-			for (s32 x=0; x<ImageSize.Width; ++x)
-				for (s32 y=0; y<ImageSize.Height; ++y)
+			for (s32 y=0; y<ImageSize.Height; ++y)
+				for (s32 x=0; x<ImageSize.Width; ++x)
 					dest[x + y*pitch] = source[x + y * ImageSize.Width];
 		}
 		else
 		{
 			// slow convert
 
-			for (s32 x=0; x<ImageSize.Width; ++x)
-				for (s32 y=0; y<ImageSize.Height; ++y)
+			for (s32 y=0; y<ImageSize.Height; ++y)
+				for (s32 x=0; x<ImageSize.Width; ++x)
 					dest[x + y*pitch] = Image->getPixel(x,y).color;
 		}
 	}
@@ -247,7 +248,7 @@ bool CD3D8Texture::copyTo32BitTexture()
 
 				for (s32 y=0; y<TextureSize.Height; ++y)
 				{
-					dest[(s32)(y*pitch + x)] = 
+					dest[(s32)(y*pitch + x)] =
 						Image->getPixel((s32)(x*sourceXStep), (s32)sy).color;
 
 					sy+=sourceYStep;
@@ -270,7 +271,7 @@ bool CD3D8Texture::copyTo32BitTexture()
 }
 
 
-//! optimized for 16 bit to 16 copy. This is in here because before 
+//! optimized for 16 bit to 16 copy. This is in here because before
 //! version 0.4.2, the engine only used A1R5G5B5 hardware textures,
 bool CD3D8Texture::copyTo16BitTexture()
 {
@@ -295,16 +296,16 @@ bool CD3D8Texture::copyTo16BitTexture()
 		{
 			// direct copy, fast
 
-			for (s32 x=0; x<ImageSize.Width; ++x)
-				for (s32 y=0; y<ImageSize.Height; ++y)
+			for (s32 y=0; y<ImageSize.Height; ++y)
+				for (s32 x=0; x<ImageSize.Width; ++x)
 					dest[x + y*pitch] = source[x + y * ImageSize.Width];
 		}
 		else
 		{
 			// slow convert
 
-			for (s32 x=0; x<ImageSize.Width; ++x)
-				for (s32 y=0; y<ImageSize.Height; ++y)
+			for (s32 y=0; y<ImageSize.Height; ++y)
+				for (s32 x=0; x<ImageSize.Width; ++x)
 					dest[x + y*pitch] = Image->getPixel(x,y).toA1R5G5B5();
 		}
 	}
@@ -340,14 +341,14 @@ bool CD3D8Texture::copyTo16BitTexture()
 
 				for (s32 y=0; y<TextureSize.Height; ++y)
 				{
-					dest[(s32)(y*pitch + x)] = 
+					dest[(s32)(y*pitch + x)] =
 						Image->getPixel((s32)(x*sourceXStep), (s32)sy).toA1R5G5B5();
 
 					sy+=sourceYStep;
 				}
 			}
 		}
-	}		
+	}
 
 	Image->unlock();
 
@@ -374,6 +375,9 @@ CD3D8Texture::~CD3D8Texture()
 
 	if (Texture)
 		Texture->Release();
+
+	if (RTTSurface)
+		RTTSurface->Release();
 }
 
 
@@ -384,15 +388,54 @@ void* CD3D8Texture::lock()
 	if (!Texture)
 		return 0;
 
+	HRESULT hr;
 	D3DLOCKED_RECT rect;
-	HRESULT hr = Texture->LockRect(0, &rect, 0, 0);
+	if(!IsRenderTarget)
+	{
+		hr = Texture->LockRect(0, &rect, 0, 0);
+	}
+	else
+	{
+		D3DSURFACE_DESC desc;
+		Texture->GetLevelDesc(0, &desc);
+		if (!RTTSurface)
+		{
+			hr = Device->CreateImageSurface(desc.Width, desc.Height, desc.Format, &RTTSurface);
+			if (FAILED(hr))
+			{
+				os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
+				return 0;
+			}
+		}
+
+		IDirect3DSurface8 *surface = NULL;
+		hr = Texture->GetSurfaceLevel(0, &surface);
+		if (FAILED(hr))
+		{
+			os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
+			return 0;
+		}
+		hr = Device->CopyRects(surface, NULL, 0, RTTSurface, NULL);
+		if(FAILED(hr))
+		{
+			os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
+			return 0;
+		}
+		hr = RTTSurface->LockRect(&rect, NULL, 0);
+		if(FAILED(hr))
+		{
+			os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
+			return 0;
+		}
+		return rect.pBits;
+	}
 	if (FAILED(hr))
 	{
 		os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
 		return 0;
 	}
 
-	return rect.pBits; 
+	return rect.pBits;
 }
 
 
@@ -403,7 +446,10 @@ void CD3D8Texture::unlock()
 	if (!Texture)
 		return;
 
-	Texture->UnlockRect(0);
+	if (!IsRenderTarget)
+		Texture->UnlockRect(0);
+	else if (RTTSurface)
+		RTTSurface->UnlockRect();
 }
 
 
@@ -505,7 +551,7 @@ bool CD3D8Texture::createMipMaps(s32 level)
 	upperSurface->GetDesc(&upperDesc);
 	lowerSurface->GetDesc(&lowerDesc);
 
-	
+
 	D3DLOCKED_RECT upperlr;
 	D3DLOCKED_RECT lowerlr;
 
@@ -530,12 +576,12 @@ bool CD3D8Texture::createMipMaps(s32 level)
 	else
 	{
 		if (upperDesc.Format == D3DFMT_A1R5G5B5)
-			copy16BitMipMap((char*)upperlr.pBits, (char*)lowerlr.pBits, 
+			copy16BitMipMap((char*)upperlr.pBits, (char*)lowerlr.pBits,
 							lowerDesc.Width, lowerDesc.Height,
 							upperlr.Pitch, lowerlr.Pitch);
 		else
 		if (upperDesc.Format == D3DFMT_A8R8G8B8)
-			copy32BitMipMap((char*)upperlr.pBits, (char*)lowerlr.pBits, 
+			copy32BitMipMap((char*)upperlr.pBits, (char*)lowerlr.pBits,
 							lowerDesc.Width, lowerDesc.Height,
 							upperlr.Pitch, lowerlr.Pitch);
 		else
@@ -554,16 +600,16 @@ bool CD3D8Texture::createMipMaps(s32 level)
 
 	if (upperDesc.Width <= 2 || upperDesc.Height <= 2)
 		return true; // stop generating levels
-   
+
 	// generate next level
 	return createMipMaps(level+1);
 }
 
 
 
-void CD3D8Texture::copy16BitMipMap(char* src, char* tgt, 
-									   s32 width, s32 height,
-									   s32 pitchsrc, s32 pitchtgt)
+void CD3D8Texture::copy16BitMipMap(char* src, char* tgt,
+				   s32 width, s32 height,
+				   s32 pitchsrc, s32 pitchtgt)
 {
 	u16 c;
 
@@ -577,29 +623,29 @@ void CD3D8Texture::copy16BitMipMap(char* src, char* tgt,
 				{
 					int tgx = (x*2)+dx;
 					int tgy = (y*2)+dy;
-					
+
 					c = *(u16*)((void*)&src[(tgx*2)+(tgy*pitchsrc)]);
 
 					a += getAlpha(c);
 					r += getRed(c);
 					g += getGreen(c);
-					b += getBlue(c);	
+					b += getBlue(c);
 				}
 
 			a /= 4;
 			r /= 4;
 			g /= 4;
 			b /= 4;
-	
+
 			c = ((a & 0x1) <<15) | ((r & 0x1F)<<10) | ((g & 0x1F)<<5) | (b & 0x1F);
 			*(u16*)((void*)&tgt[(x*2)+(y*pitchtgt)]) = c;
-		}	
+		}
 }
 
 
-void CD3D8Texture::copy32BitMipMap(char* src, char* tgt, 
-									   s32 width, s32 height,
-									   s32 pitchsrc, s32 pitchtgt)
+void CD3D8Texture::copy32BitMipMap(char* src, char* tgt,
+				   s32 width, s32 height,
+				   s32 pitchsrc, s32 pitchtgt)
 {
 	SColor c;
 
@@ -613,20 +659,20 @@ void CD3D8Texture::copy32BitMipMap(char* src, char* tgt,
 				{
 					int tgx = (x*2)+dx;
 					int tgy = (y*2)+dy;
-					
+
 					c = *(u32*)((void*)&src[(tgx<<2)+(tgy*pitchsrc)]);
 
 					a += c.getAlpha();
 					r += c.getRed();
 					g += c.getGreen();
-					b += c.getBlue();	
+					b += c.getBlue();
 				}
 
 			a >>= 2;
 			r >>= 2;
 			g >>= 2;
 			b >>= 2;
-	
+
 			c = ((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff);
 			*(u32*)((void*)&tgt[(x*4)+(y*pitchtgt)]) = c.color;
 		}
@@ -639,18 +685,18 @@ void CD3D8Texture::createRenderTarget()
 	TextureSize.Width = getTextureSizeFromImageSize(TextureSize.Width);
 	TextureSize.Height = getTextureSizeFromImageSize(TextureSize.Height);
 
-	// get backbuffer format to create the render target in the 
+	// get backbuffer format to create the render target in the
 	// same format
 
 	IDirect3DSurface8* bb;
 	D3DFORMAT d3DFormat = D3DFMT_A8R8G8B8;
 
-    if (!FAILED(Device->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &bb)))
+	if (!FAILED(Device->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &bb)))
 	{
 		D3DSURFACE_DESC desc;
 		bb->GetDesc(&desc);
 		d3DFormat = desc.Format;
-		
+
 		if (d3DFormat == D3DFMT_X8R8G8B8)
 			d3DFormat = D3DFMT_A8R8G8B8;
 
@@ -700,7 +746,7 @@ void CD3D8Texture::createRenderTarget()
 
 
 
-//! Regenerates the mip map levels of the texture. Useful after locking and 
+//! Regenerates the mip map levels of the texture. Useful after locking and
 //! modifying the texture
 void CD3D8Texture::regenerateMipMapLevels()
 {
