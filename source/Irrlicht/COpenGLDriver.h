@@ -5,27 +5,31 @@
 #ifndef __C_VIDEO_OPEN_GL_H_INCLUDED__
 #define __C_VIDEO_OPEN_GL_H_INCLUDED__
 
+#include "IrrCompileConfig.h"
 #include "CNullDriver.h"
 #include "IMaterialRendererServices.h"
+
+#ifdef _IRR_COMPILE_WITH_OPENGL_
 
 #ifdef WIN32
 // include windows headers for HWND
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include "glext.h"
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "GLu32.lib")
 #endif
 
-#include "IrrCompileConfig.h"
-
 #ifdef LINUX
 #define GL_GLEXT_LEGACY 1
-#include <GL/glx.h>
 #include <GL/gl.h>
+#include "glext.h"
+#include <GL/glu.h>
+#include <GL/glx.h>
 #include <X11/Xlib.h>
-#endif // LINUX
-
-#ifdef _IRR_COMPILE_WITH_OPENGL_
+#endif
 
 #ifdef MACOSX
 	#define GL_EXT_texture_env_combine	1
@@ -33,9 +37,6 @@
 	#include <OpenGL/gl.h>
 	#include <OpenGL/glu.h>
 	#include <OpenGL/glext.h>
-#else
-	#include <GL/gl.h>
-	#include "glext.h"
 #endif
 
 namespace irr
@@ -330,9 +331,9 @@ namespace video
 
 		core::dimension2d<s32> CurrentRendertargetSize;
 
-	#ifdef MACOSX
-		CIrrDeviceMacOSX	*_device;
-	#else
+		#ifdef MACOSX
+		CIrrDeviceMacOSX *_device;
+		#else
 
 		#ifdef _IRR_WINDOWS_
 			PFNGLACTIVETEXTUREARBPROC pGlActiveTextureARB;

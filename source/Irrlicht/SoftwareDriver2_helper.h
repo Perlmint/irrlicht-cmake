@@ -202,7 +202,7 @@ inline u16 PixelBlend16 ( const u16 c2, const u32 c1, const u32 alpha )
 }
 
 /*
-	return alha in [0;256] Granularity
+	return alpha in [0;256] Granularity
 	 add highbit alpha ( alpha > 127 ? + 1 )
 */
 inline u32 extractAlpha ( u32 c )

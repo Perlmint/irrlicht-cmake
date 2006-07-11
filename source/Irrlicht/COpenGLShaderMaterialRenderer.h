@@ -17,14 +17,16 @@
 
 #ifdef LINUX
 #define GL_GLEXT_LEGACY 1
-#include <GL/glx.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glx.h>
 #include "glext.h"
 #endif
 
 #ifdef MACOSX
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
+#include <OpenGL/glu.h>
 #endif
 
 #include "IMaterialRenderer.h"

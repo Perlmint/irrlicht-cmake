@@ -10,8 +10,6 @@
 #include "IShaderConstantSetCallBack.h"
 #include "IVideoDriver.h"
 #include "os.h"
-#define GL_GLEXT_LEGACY 1
-#include "glext.h"
 #include "COpenGLDriver.h"
 #include <stdio.h>
 #include <string.h>

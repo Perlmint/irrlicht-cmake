@@ -94,7 +94,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosti
 	s32 pitch = texture->getPitch();
 	core::dimension2d<s32> size = texture->getOriginalSize();
 
-    s32* p = (s32*)texture->lock();
+	s32* p = (s32*)texture->lock();
 	if (!p)
 	{
 		os::Printer::log("Could not lock texture while preparing texture for a font.", ELL_ERROR);
@@ -158,7 +158,6 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosti
 
 		row += pitch;
 	}
-
 
 	// Positions parsed.
 
@@ -238,7 +237,6 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosti
 		row += pitch;
 	}
 
-
 	// Positions parsed.
 
 	texture->unlock();
@@ -291,7 +289,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 	core::dimension2d<s32> textDimension;
 	core::position2d<s32> offset = position.UpperLeftCorner;
 
-    if (hcenter || vcenter)
+	if (hcenter || vcenter)
 	{
 		textDimension = getDimension(text);
 

@@ -767,7 +767,7 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor co
 
 //! Creates an 1bit alpha channel of the texture based of an color key position.
 void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
-									 core::position2d<s32> colorKeyPixelPos)
+					 core::position2d<s32> colorKeyPixelPos)
 {
 	if (!texture)
 		return;

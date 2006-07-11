@@ -73,6 +73,7 @@ void COpenGLTexture::getImageData(IImage* image)
 	core::dimension2d<s32> nImageSize;
 	nImageSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
 	nImageSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
+	SurfaceHasSameSize=ImageSize==nImageSize;
 
 	s32 bpp=0;
 	if (image->getColorFormat()==ECF_R8G8B8)
@@ -161,7 +162,7 @@ inline bool COpenGLTexture::testError()
 	};
 
 	return true;
-#endif
+	#endif
 	return false;	
 }
 
@@ -174,12 +175,14 @@ void COpenGLTexture::copyTexture()
 		os::Printer::log("Could not bind Texture", ELL_ERROR);
 
 	GLint internalFormat=GL_RGBA;
-	GLenum format=GL_BGRA;
+	GLenum format=GL_BGRA_EXT;
 	GLenum type=GL_UNSIGNED_BYTE;
 	#ifdef __BIG_ENDIAN__
 	switch (ColorFormat)
 	{
 		case ECF_A1R5G5B5:
+			internalFormat=GL_RGBA;
+			format=GL_BGRA_EXT;
 			type=GL_UNSIGNED_SHORT_1_5_5_5;
 			break;
 		case ECF_R5G6B5:
@@ -193,6 +196,8 @@ void COpenGLTexture::copyTexture()
 			type=GL_UNSIGNED_BYTE;
 			break;
 		case ECF_A8R8G8B8:
+			internalFormat=GL_RGBA;
+			format=GL_BGRA_EXT;
 			type=GL_UNSIGNED_INT_8_8_8_8;
 			break;
 		default:
@@ -203,12 +208,14 @@ void COpenGLTexture::copyTexture()
 	switch (ColorFormat)
 	{
 		case ECF_A1R5G5B5:
+			internalFormat=GL_RGBA;
+			format=GL_BGRA_EXT;
 			type=GL_UNSIGNED_SHORT_1_5_5_5_REV;
 			break;
 		case ECF_R5G6B5:
 			internalFormat=GL_RGB;
-			format=GL_BGR;
-			type=GL_UNSIGNED_SHORT_5_6_5_REV;
+			format=GL_RGB;
+			type=GL_UNSIGNED_SHORT_5_6_5;
 			break;
 		case ECF_R8G8B8:
 			internalFormat=GL_RGB8;
@@ -216,6 +223,8 @@ void COpenGLTexture::copyTexture()
 			type=GL_UNSIGNED_BYTE;
 			break;
 		case ECF_A8R8G8B8:
+			internalFormat=GL_RGBA;
+			format=GL_BGRA_EXT;
 			type=GL_UNSIGNED_INT_8_8_8_8_REV;
 			break;
 		default:
@@ -224,39 +233,27 @@ void COpenGLTexture::copyTexture()
 	}
 	#endif
 
+	if (hasMipMaps)
+	{
+		#ifndef DISABLE_MIPMAPPING
+		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
+		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
+		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		#else
+		os::Printer::log("Did not create OpenGL texture mip maps.", ELL_ERROR);
+		#endif
+	}	
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, ImageSize.Width, 
 		ImageSize.Height, 0, format, type, ImageData);
 
 	if (testError())
 		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	if (hasMipMaps)
-	{
-		s32 ret = 0;
-		
-		#ifndef DISABLE_MIPMAPPING
-		ret = gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat, ImageSize.Width, ImageSize.Height,
- 					format, type, ImageData);
-		#endif
-
-		if (ret)
-		{
-			#ifndef DISABLE_MIPMAPPING
-			os::Printer::log("Could not create OpenGL texture mip maps.",
-				(c8*)gluErrorString(ret), ELL_ERROR);
-			#else
-			os::Printer::log("Did not create OpenGL texture mip maps.", ELL_ERROR);
-			#endif
-		}
-		else
-		{
-			glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
-			glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-		}
-	}	
 }
 
 

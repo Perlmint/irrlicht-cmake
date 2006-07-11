@@ -1195,7 +1195,7 @@ void CImage::copyToWithAlpha(CImage* target, const core::position2d<s32>& pos, c
 
 
 
-//! draws a line from to
+//! draws a line from to with color
 void CImage::drawLine(const core::position2d<s32>& from, const core::position2d<s32>& to, const SColor &color)
 {
 	AbsRectangle clip;
@@ -1236,6 +1236,8 @@ void CImage::drawLine(const core::position2d<s32>& from, const core::position2d<
 
 
 //! copies this surface into another, scaling it to the target image size
+// note: this is very very slow. (i didn't want to write a fast version.
+// but hopefully, nobody wants to scale surfaces every frame.
 void CImage::copyToScaling(CImage* target)
 {
 	if (Format != target->getColorFormat() )
@@ -1244,14 +1246,10 @@ void CImage::copyToScaling(CImage* target)
 		return;
 	}
 
-	// note: this is very very slow. (i didn't want to write a fast version.
-	// but hopefully, nobody wants to scale surfaces every frame.
-
 	core::dimension2d<s32> targetSize = target->getDimension();
 
 	if (!targetSize.Width || !targetSize.Height)
 		return;
-
 
 	f32 sourceXStep = (f32)Size.Width / (f32)targetSize.Width;
 	f32 sourceYStep = (f32)Size.Height / (f32)targetSize.Height;
@@ -1259,6 +1257,13 @@ void CImage::copyToScaling(CImage* target)
 	s32 bpp=target->getBytesPerPixel();
 
 	u8* nData = (u8*)target->lock();
+
+	if (targetSize==Size)
+	{
+		memcpy(nData,Data,targetSize.Width*targetSize.Height*bpp);
+		target->unlock();
+		return;
+	}
 
 	sy = 0.0f;
 	for (s32 y=0; y<targetSize.Height; ++y)
@@ -1276,7 +1281,7 @@ void CImage::copyToScaling(CImage* target)
 }
 
 
-//! fills the surface with black or white
+//! fills the surface with given color
 void CImage::fill(const SColor &color)
 {
 	u32 c;

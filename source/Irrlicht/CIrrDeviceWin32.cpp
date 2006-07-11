@@ -294,13 +294,13 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 		// Register Class
 
 		WNDCLASSEX wcex;
-		wcex.cbSize = sizeof(WNDCLASSEX); 
-		wcex.style			= CS_HREDRAW | CS_VREDRAW;
+		wcex.cbSize		= sizeof(WNDCLASSEX); 
+		wcex.style		= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= (WNDPROC)WndProc;
 		wcex.cbClsExtra		= 0;
 		wcex.cbWndExtra		= 0;
 		wcex.hInstance		= hInstance;
-		wcex.hIcon			= NULL;
+		wcex.hIcon		= NULL;
 		wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 		wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 		wcex.lpszMenuName	= 0;
@@ -409,12 +409,12 @@ CIrrDeviceWin32::~CIrrDeviceWin32()
 
 //! create the driver
 void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
-								   const core::dimension2d<s32>& windowSize,
-								   u32 bits, 
-								   bool fullscreen,
-								   bool stencilbuffer,
-								   bool vsync,
-								   bool antiAlias)
+				   const core::dimension2d<s32>& windowSize,
+				   u32 bits,
+				   bool fullscreen,
+				   bool stencilbuffer,
+				   bool vsync,
+				   bool antiAlias)
 {
 	switch(driverType)
 	{
@@ -598,15 +598,15 @@ void CIrrDeviceWin32::present(video::IImage* image, s32 windowId, core::rect<s32
 		if ( src )
 		{
 			StretchDIBits(dc, 0,0, rect.right, rect.bottom,
-							src->UpperLeftCorner.X, src->UpperLeftCorner.Y,
-							src->getWidth(), src->getHeight(),
-							memory, (const BITMAPINFO*)(&bi), DIB_RGB_COLORS, SRCCOPY);
+					src->UpperLeftCorner.X, src->UpperLeftCorner.Y,
+					src->getWidth(), src->getHeight(),
+					memory, (const BITMAPINFO*)(&bi), DIB_RGB_COLORS, SRCCOPY);
 		}
 		else
 		{
 			StretchDIBits(dc, 0,0, rect.right, rect.bottom,
-							0, 0, image->getDimension().Width, image->getDimension().Height,
-							memory, (const BITMAPINFO*)(&bi), DIB_RGB_COLORS, SRCCOPY);
+					0, 0, image->getDimension().Width, image->getDimension().Height,
+					memory, (const BITMAPINFO*)(&bi), DIB_RGB_COLORS, SRCCOPY);
 		}
 
 		image->unlock();
@@ -736,22 +736,22 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 		if( bOsVersionInfoEx )
 		{
 			#ifdef VER_SUITE_ENTERPRISE
-						if (osvi.wProductType == VER_NT_WORKSTATION)
-						{
-							if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
-								out.append("Personal ");
-							else
-								out.append("Professional ");
-						}
-						else if (osvi.wProductType == VER_NT_SERVER)
-						{
-							if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-								out.append("DataCenter Server ");
-						   else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-							   out.append("Advanced Server ");
-						   else
-							   out.append("Server ");
-						}
+			if (osvi.wProductType == VER_NT_WORKSTATION)
+			{
+				if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
+					out.append("Personal ");
+				else
+					out.append("Professional ");
+			}
+			else if (osvi.wProductType == VER_NT_SERVER)
+			{
+				if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
+					out.append("DataCenter Server ");
+			   else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
+				   out.append("Advanced Server ");
+			   else
+				   out.append("Server ");
+			}
 			#endif
 		}
 		else

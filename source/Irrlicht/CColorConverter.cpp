@@ -281,9 +281,6 @@ void CColorConverter::convert16bitToA8R8G8B8andResize(const s16* in, s32* out, s
 	// note: this is very very slow. (i didn't want to write a fast version.
 	// but hopefully, nobody wants to convert surfaces every frame.	
 
-	s32 nDataSize = newWidth * newHeight;
-	//s32* nData = new s32[nDataSize];
-
 	f32 sourceXStep = (f32)currentWidth / (f32)newWidth;
 	f32 sourceYStep = (f32)currentHeight / (f32)newHeight;
 	f32 sy;

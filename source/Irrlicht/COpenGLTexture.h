@@ -11,10 +11,6 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#ifdef LINUX
-//#define DISABLE_MIPMAPPING
-#endif
-
 #ifdef _IRR_WINDOWS_
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
@@ -22,23 +18,13 @@
 	#include <GL/glu.h>
 #else // _IRR_WINDOWS_
 	#ifdef MACOSX
-		#ifdef DISABLE_MIPMAPPING
-			#include <OpenGL/gl.h>
-			#include <OpenGL/glext.h>
-		#else // DISABLE_MIPMAPPING
-			#include <OpenGL/gl.h>
-			#include <OpenGL/glu.h>
-			#include <OpenGL/glext.h>
-		#endif // DISABLE_MIPMAPPING
+		#include <OpenGL/gl.h>
+		#include <OpenGL/glext.h>
+		#include <OpenGL/glu.h>
 	#else
-		#ifdef DISABLE_MIPMAPPING
-			#include <GL/glx.h>
-			#include <GL/gl.h>
-			#else // DISABLE_MIPMAPPING
-			#include <GL/gl.h>
-			#include <GL/glx.h>
-			#include <GL/glu.h>
-		#endif // DISABLE_MIPMAPPING
+		#include <GL/gl.h>
+		#include <GL/glx.h>
+		#include <GL/glu.h>
 	#endif // MACOSX
 #endif // _IRR_WINDOWS_
 

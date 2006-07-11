@@ -30,8 +30,6 @@ CSceneNodeAnimatorFlyCircle::~CSceneNodeAnimatorFlyCircle()
 //! animates a scene node
 void CSceneNodeAnimatorFlyCircle::animateNode(ISceneNode* node, u32 timeMs)
 {
-	core::matrix4 mat;
-
 	f32 t = (timeMs-StartTime) * Speed;
 
 	core::vector3df circle(Radius * (f32)sin(t), 0, Radius * (f32)cos(t));

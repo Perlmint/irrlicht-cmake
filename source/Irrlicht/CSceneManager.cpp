@@ -756,6 +756,8 @@ void CSceneManager::registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_REND
 		if (!isCulled(node))
 			ShadowNodeList.push_back(node);
 		break;
+	case ESNRP_COUNT: // ignore this one
+		break;
 	}
 }
 

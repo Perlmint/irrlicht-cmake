@@ -8,20 +8,6 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#ifdef _IRR_WINDOWS_
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-#ifdef LINUX
-#define GL_GLEXT_LEGACY 1
-#include <GL/glx.h>
-#include <GL/gl.h>
-#include "glext.h"
-#endif
-
 #include "COpenGLDriver.h"
 #include "IMaterialRenderer.h"
 
@@ -72,7 +58,7 @@ public:
 			// thanks to Murphy, the following line removed some bugs with several OpenGL
 			// implementations.
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-				
+
 			glDisable(GL_BLEND);
 			glDisable(GL_ALPHA_TEST);
 		}
@@ -252,9 +238,9 @@ public:
 	}
 
 	virtual void OnUnsetMaterial() 
-    { 
-        glDisable(GL_ALPHA_TEST); 
-    }
+	{ 
+		glDisable(GL_ALPHA_TEST); 
+	}
 
 	//! Returns if the material is transparent. 
 	virtual bool isTransparent() 
@@ -294,10 +280,10 @@ public:
 		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 
-	virtual void OnUnsetMaterial() 
-    { 
-        glDisable(GL_ALPHA_TEST); 
-    }
+	virtual void OnUnsetMaterial()
+	{
+		glDisable(GL_ALPHA_TEST);
+	}
 
 	//! Returns if the material is transparent. 
 	virtual bool isTransparent() 
@@ -569,7 +555,7 @@ public:
 				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PRIMARY_COLOR_EXT );
 
 				Driver->extGlActiveTextureARB(GL_TEXTURE1_ARB);
-								
+
 				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
 
 				glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
@@ -588,7 +574,7 @@ public:
 			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
 			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);			
+			glEnable(GL_TEXTURE_GEN_T);
 		}
 
 		material.ZWriteEnable = false;
@@ -602,15 +588,15 @@ public:
 			Driver->extGlActiveTextureARB(GL_TEXTURE1_ARB);
 			glDisable(GL_TEXTURE_2D);
 			glDisable(GL_TEXTURE_GEN_S);
-			glDisable(GL_TEXTURE_GEN_T);	
+			glDisable(GL_TEXTURE_GEN_T);
 			Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
-		}	
+		}
 	}
 
-	//! Returns if the material is transparent. 
-	virtual bool isTransparent() 
+	//! Returns if the material is transparent.
+	virtual bool isTransparent()
 	{
-		return true; 
+		return true;
 	}
 };
 
