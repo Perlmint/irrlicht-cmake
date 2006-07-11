@@ -43,11 +43,10 @@ void CTerrainTriangleSelector::setTriangleData(ITerrainSceneNode* node, s32 LOD)
 
 	// Clear current data
 	TrianglePatches.TotalTriangles = 0;
-	TrianglePatches.NumPatches = terrainNode->TerrainData.PatchCount;
+	TrianglePatches.NumPatches = terrainNode->TerrainData.PatchCount * terrainNode->TerrainData.PatchCount;
 
-	int count = TrianglePatches.NumPatches * TrianglePatches.NumPatches;
-	TrianglePatches.TrianglePatchArray.reallocate(count);
-	for (int o=0; o<count; ++o)
+	TrianglePatches.TrianglePatchArray.reallocate(TrianglePatches.NumPatches);
+	for (int o=0; o<TrianglePatches.NumPatches; ++o)
 		TrianglePatches.TrianglePatchArray.push_back(SGeoMipMapTrianglePatch());
 
 	for(s32 x = 0; x < terrainNode->TerrainData.PatchCount; ++x )
