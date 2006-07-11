@@ -6,8 +6,8 @@ The Irrlicht Engine SDK version 1.0
 
   Content of this file:
 
-  1. Directory structure overview
-  2. How to start
+  1. Directory Structure Overview
+  2. How To Start
   3. Requirements
   4. Release Notes
   5. License
@@ -16,31 +16,31 @@ The Irrlicht Engine SDK version 1.0
 
 
 ==========================================================================
-1. Directory structure overview
+1. Directory Structure Overview
 ==========================================================================
 
-  You will find some directories after decompressing the archive in which
-  came the SDK. These are:
+  You will find some directories after uncompressing the archive of the
+  SDK. These are:
   
   \bin         The compiled library Irrlicht.DLL and some compiled demo 
                and example applications, just start them to see the 
-               Irrlicht Engine in action.
+               Irrlicht Engine in action. Windows only.
   \doc         Documentation of the Irrlicht Engine.
-  \examples    Examples and tutorials showing how to use the native engine
-               engine using C++.
+  \examples    Examples and tutorials showing how to use the engine with
+               C++.
   \example.net Examples and tutorials showing how to use the engine with
-               a .net languages.
-  \exporters   Exporters and tools for varous 3D modelling packages. There
+               .NET languages.
+  \exporters   Exporters and tools for various 3D modelling packages. There
                is a readme file with more details in the directory.
-  \include     Header files to include when using the engine.
-  \lib         Lib to link with your programs when using the engine.
-  \media       Graphics and sound data for the demo applications and
+  \include     Header files to include when programming with the engine.
+  \lib         Libs to link with your programs when using the engine.
+  \media       Graphics and sound resources for the demo applications and
                examples.
   \source      The source code of the Irrlicht Engine. This code is
                not needed to develop applications with the engine,
-               but it is included to let you be able to recompile and
-               debug it, if necessary.     
-  \tools       Useful tools and their sourcecode for the engine.
+               but it is included to enable recompilation and
+               debugging, if necessary.     
+  \tools       Useful tools (with sourcecode) for the engine.
 
 
 
@@ -50,26 +50,24 @@ The Irrlicht Engine SDK version 1.0
 
   To see the engine in action in Windows, just go to the \bin\Win32-VisualStudio
   directory, and start some applications. There should also be an
-  application named Demo.exe, this should show the most
-  interesting things.
+  application named Demo.exe which should show the most
+  interesting features of Irrlicht.
   
   To start developing own applications and games with the engine take 
   a look at the 01.HelloWorld example in the \examples directory.
-  There will also be a .html file with a tutorial which should be
-  easy to understand.
+  There is also a .html file with a tutorial which should be
+  easily comprehensible.
 
-  The Irrlicht Engine is a static lib under linux. A precomipled version can be
-  found in \lib\Linux. 
+  The Irrlicht Engine is a static lib under linux. A precompiled version can be
+  generated from the sources using the Makefile in source/Irrlicht. Unzip the
+  file source.zip in the /source directory. Run 'make' in the newly created
+  subfolder source/Irrlicht. After this you should be able to 'make' all
+  example applications in /examples. You can run the examples directly from the
+  directory they are created in.
   
-  If you wish to compile the engine in linux yourself, unzip the file source.zip
-  file in the \source directory. Run a 'make' in the now existing new subfolder
-  'Irrlicht'. After this, you should be able to make all example applications in 
-  \examples. Then just start an X Server and run them, from the directory where 
-  they are.
-  
-  It is also possible to use Irrlicht as shared object (libIrrlicht.so.versionNumber),
-  use the makefile target for this, running 'make sharedlib' in the source folder.
-  See Makefile for details.
+  It is also possible to use Irrlicht as shared object
+  (libIrrlicht.so.versionNumber). Use the proper makefile target for this by
+  running 'make sharedlib' in the source folder. See the Makefile for details.
 
 
 ==========================================================================
@@ -77,9 +75,9 @@ The Irrlicht Engine SDK version 1.0
 ==========================================================================
 
   You can use one of the following compilers/IDEs to develop applications
-  with Irrlicht or recompile the engine. However, other compilers/IDEs make work 
-  as well, we simply didn't test them. 
-  
+  with Irrlicht or recompile the engine. However, other compilers/IDEs may
+  work as well, we simply didn't test them.
+
   * gcc 3.3
   * gcc 3.4
   * gcc 4.0.3
@@ -88,7 +86,7 @@ The Irrlicht Engine SDK version 1.0
   * Visual Studio 2005 (8.0)
   * Code::Blocks 1.0 (& gcc or visual studio toolkit)
   * DevC++ 5.0 & gcc (project files included)
-     
+
   If you ever want to (re)compile the engine yourself (which means you don't
   want to use the precompiled version) you need the following:
   
@@ -98,10 +96,12 @@ The Irrlicht Engine SDK version 1.0
   	* Optional: DirectX 8 SDK, for D3D8 support
   	
   * Linux:
-  	* Needed: XServer with GLX + XF86VidMode extension (should be there by default)
-  	* Optional: OpenGL headers and libraries (libGL and libGLU), for OpenGL support
-  	
-  	
+  	* Needed: XServer with include files
+  	* Optional: OpenGL headers and libraries (libGL and libGLU), for
+                    OpenGL support
+        *           GLX + XF86VidMode extension (X11 support libraries)
+
+
 ==========================================================================
 4. Release Notes
 ==========================================================================
@@ -110,7 +110,7 @@ The Irrlicht Engine SDK version 1.0
   found in changes.txt.
 
   Please note that the textures, 3D models and levels are copyright
-  by their authors and not included in the Irrlicht engine license. 
+  by their authors and not covered by the Irrlicht engine license. 
 
 ==========================================================================
 5. License
@@ -122,10 +122,10 @@ The Irrlicht Engine SDK version 1.0
   would be highly appreciated.
 
   Please note that the Irrlicht Engine is based in part on the work of 
-  the Independent JPEG Group and the zlib. This means that if you use
+  the Independent JPEG Group, the zlib, and libpng. This means that if you use
   the Irrlicht Engine in your product, you must acknowledge somewhere 
-  in your documentation that you've used the IJG code. It would also be
-  nice to mention that you use the Irrlicht Engine and the zlib.
+  in your documentation that you've used the IJG code and libpng. It would
+  also be nice to mention that you use the Irrlicht Engine and the zlib.
   See the README files in the jpeglib and the zlib for
   further informations.
 
@@ -145,9 +145,9 @@ The Irrlicht Engine SDK version 1.0
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
+     in a product, an acknowledgement in the product documentation would be
      appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
+  2. Altered source versions must be clearly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
   
@@ -167,7 +167,7 @@ The Irrlicht Engine SDK version 1.0
   
   If want to contact the author of the engine, please send an email to
   Nikolaus Gebhardt:
-  
+
   irrlicht@users.sourceforge.net
 
   Please also not that parts of the engine have been written or contributed
@@ -176,7 +176,7 @@ The Irrlicht Engine SDK version 1.0
 
   Thomas Alten	  wrote the apfelbaum software rasterizer
   Etienne Petitjean wrote the MacPort of the engine
-  Greg Roelofs 	Created the zlib
+  Greg Roelofs 	Created the zlib and libpng
   The Independent JPEG Group	Created JPEG lib
   Guy Eric Schalnat, Andreas Dilger, Glenn Randers-Pehrson and others	Created libPng
   Chad Austin, Jacky Chong, Theo Reed, Ben Scott 	Made Audiere
