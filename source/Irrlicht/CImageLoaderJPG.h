@@ -13,6 +13,7 @@
 #ifdef _IRR_COMPILE_WITH_LIBJPEG_
 extern "C" {
 	#include "jpeglib/jconfig.h"
+	#define JCONFIG_INCLUDED
 	#ifndef _IRR_USE_NON_SYSTEM_JPEG_LIB_
 	#include <jpeglib.h> // use system lib
 	#else  // _IRR_USE_NON_SYSTEM_JPEG_LIB_

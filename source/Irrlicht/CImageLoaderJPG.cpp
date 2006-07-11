@@ -148,28 +148,17 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
 	// read file parameters with jpeg_read_header() 
 	(void) jpeg_read_header(&cinfo, TRUE);
 
+	cinfo.out_color_space=JCS_RGB;
+	cinfo.out_color_components=3;
+	cinfo.do_fancy_upsampling=FALSE;
+
 	// Start decompressor
 	(void) jpeg_start_decompress(&cinfo);
 
 	// Get image data
-	u16 rowspan = cinfo.image_width * cinfo.num_components;
+	u16 rowspan = cinfo.image_width * cinfo.out_color_components;
 	unsigned width = cinfo.image_width;
 	unsigned height = cinfo.image_height;
-
-	bool greyscale;
-
-	if (cinfo.jpeg_color_space == JCS_GRAYSCALE)
-		greyscale = true;
-	else
-		greyscale = false;
-
-	if ( greyscale )
-	{
-		delete [] input;
-		jpeg_destroy_decompress(&cinfo);
-		os::Printer::log("Greyscale .jpg textures are not supported by Irrlicht, please just convert that file.", ELL_ERROR);
-		return 0;
-	}
 
 	// Allocate memory for buffer
 	u8 *output = new u8[rowspan * height];
