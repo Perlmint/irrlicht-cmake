@@ -330,10 +330,9 @@ GLuint COpenGLTexture::getOpenGLTextureName()
 
 //! Regenerates the mip map levels of the texture. Useful after locking and 
 //! modifying the texture
+//! MipMap updates are automatically performed by OpenGL.
 void COpenGLTexture::regenerateMipMapLevels()
 {
-	if (hasMipMaps)
-		copyTexture();
 }
 
 

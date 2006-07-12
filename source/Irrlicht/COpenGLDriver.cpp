@@ -48,33 +48,31 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
-
-	printVersion();
 }
 
 //! inits the open gl driver
-bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize, HWND window, 
-							  bool fullscreen, bool vsync)
+bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
+				HWND window, bool fullscreen, bool vsync)
 {
 	static	PIXELFORMATDESCRIPTOR pfd =	{
 		sizeof(PIXELFORMATDESCRIPTOR),	// Size Of This Pixel Format Descriptor
-		1,							// Version Number
+		1,				// Version Number
 		PFD_DRAW_TO_WINDOW |		// Format Must Support Window
 		PFD_SUPPORT_OPENGL |		// Format Must Support OpenGL
-		PFD_DOUBLEBUFFER,			// Must Support Double Buffering
-		PFD_TYPE_RGBA,				// Request An RGBA Format
-		16,							// Select Our Color Depth
-		0, 0, 0, 0, 0, 0,			// Color Bits Ignored
-		0,							// No Alpha Buffer
-		0,							// Shift Bit Ignored
-		0,							// No Accumulation Buffer
-		0, 0, 0, 0,					// Accumulation Bits Ignored
-		16,							// 16Bit Z-Buffer (Depth Buffer)
+		PFD_DOUBLEBUFFER,		// Must Support Double Buffering
+		PFD_TYPE_RGBA,			// Request An RGBA Format
+		16,				// Select Our Color Depth
+		0, 0, 0, 0, 0, 0,		// Color Bits Ignored
+		0,				// No Alpha Buffer
+		0,				// Shift Bit Ignored
+		0,				// No Accumulation Buffer
+		0, 0, 0, 0,			// Accumulation Bits Ignored
+		16,				// 16Bit Z-Buffer (Depth Buffer)
 		StencilBuffer ? 1 : 0,		// Stencil Buffer
-		0,							// No Auxiliary Buffer
-		PFD_MAIN_PLANE,				// Main Drawing Layer
-		0,							// Reserved
-		0, 0, 0						// Layer Masks Ignored
+		0,				// No Auxiliary Buffer
+		PFD_MAIN_PLANE,			// Main Drawing Layer
+		0,				// Reserved
+		0, 0, 0				// Layer Masks Ignored
 	};
 
 	for (int i=0; i<3; ++i)
@@ -132,41 +130,16 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize, HWND wi
 		break;
 	}
 
-	// print renderer information
-	const GLubyte* renderer = glGetString(GL_RENDERER);
-	const GLubyte* vendor = glGetString(GL_VENDOR);
-	if (renderer && vendor)
-		os::Printer::log((const c8*)renderer, (const c8*)vendor, ELL_INFORMATION);
-
-
-	// load extensions
-	loadExtensions();
-
-	glViewport(0, 0, screenSize.Width, screenSize.Height); // Reset The Current Viewport
-	glShadeModel(GL_SMOOTH);
-	setAmbientLight(SColor(0,0,0,0));
-	glClearDepth(1.0f);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glDepthFunc(GL_LEQUAL);
-
 	// set vsync
 	if (wglSwapIntervalEXT)
 		wglSwapIntervalEXT(vsync ? 1 : 0);
-
-	// create material renderers
-	createMaterialRenderers();
-
-	// set the renderstates
-	ResetRenderStates = true;
-	setRenderStates3DMode();
-
-	// set fog mode
-	setFog(FogColor, LinearFog, FogStart, FogEnd, FogDensity, PixelFog, RangeFog);
 
 	// set exposed data
 	ExposedData.OpenGLWin32.HDc = reinterpret_cast<s32>(HDc);
 	ExposedData.OpenGLWin32.HRc = reinterpret_cast<s32>(HRc);
 	ExposedData.OpenGLWin32.HWnd = reinterpret_cast<s32>(Window);
+
+	genericDriverInit(screenSize);
 
 	return true;
 }
@@ -217,16 +190,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
-
-	printVersion();
-
-	loadExtensions();
-
-	// create material renderers
-	createMaterialRenderers();
-
-	// set fog mode
-	setFog(FogColor, LinearFog, FogStart, FogEnd, FogDensity, PixelFog, RangeFog);
+	genericDriverInit(screenSize);
 }
 
 COpenGLDriver::~COpenGLDriver()
@@ -254,18 +218,8 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
-
-	printVersion();
-
-	loadExtensions();
-
-	// create material renderers
-	createMaterialRenderers();
-
-	// set fog mode
-	setFog(FogColor, LinearFog, FogStart, FogEnd, FogDensity, PixelFog, RangeFog);
-
 	ExposedData.OpenGLLinux.Window = XWindow;
+	genericDriverInit(screenSize);
 }
 
 //! linux destructor
@@ -295,6 +249,49 @@ PFNGLPROGRAMLOCALPARAMETER4FVARBPROC pGlProgramLocalParameter4fvARB = 0;
 // -----------------------------------------------------------------------
 // METHODS
 // -----------------------------------------------------------------------
+
+bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
+{
+	Name=L"OpenGL ";
+	Name.append(glGetString(GL_VERSION));
+	s32 pos=Name.findNext(L' ', 7);
+	if (pos != -1)
+		Name=Name.subString(0, pos);
+	printVersion();
+
+	// print renderer information
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* vendor = glGetString(GL_VENDOR);
+	if (renderer && vendor)
+	{
+		os::Printer::log((const c8*)renderer, (const c8*)vendor, ELL_INFORMATION);
+	}
+
+	// load extensions
+	loadExtensions();
+
+	glViewport(0, 0, screenSize.Width, screenSize.Height); // Reset The Current Viewport
+	glShadeModel(GL_SMOOTH);
+	setAmbientLight(SColor(0,0,0,0));
+	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+	glClearDepth(1.0f);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glDepthFunc(GL_LEQUAL);
+
+	// create material renderers
+	createMaterialRenderers();
+
+	// set the renderstates
+	ResetRenderStates = true;
+	setRenderStates3DMode();
+
+	// set fog mode
+	setFog(FogColor, LinearFog, FogStart, FogEnd, FogDensity, PixelFog, RangeFog);
+
+	return true;
+}
+
 
 void COpenGLDriver::createMaterialRenderers()
 {
@@ -347,51 +344,23 @@ void COpenGLDriver::createMaterialRenderers()
 void COpenGLDriver::loadExtensions()
 {
 	if (atof((c8*)glGetString(GL_VERSION)) >= 1.2)
-	{
 		os::Printer::log("OpenGL driver version is 1.2 or better.", ELL_INFORMATION);
-	}
 	else
 		os::Printer::log("OpenGL driver version is not 1.2 or better.", ELL_WARNING);
 
 	const GLubyte* t = glGetString(GL_EXTENSIONS);
-	s32 len = (s32)strlen((const char*)t);
-	c8 *str = new c8[len+1];
-	c8* p = str;
-
-	for (s32 i=0; i<len; ++i)
-	{
-		str[i] = (char)t[i];
-
-		if (str[i] == ' ')
-		{
-			str[i] = 0;
-			if (strstr(p, "GL_ARB_multitexture"))
-				MultiTextureExtension = true;
-			else
-			if (strstr(p, "GL_ARB_vertex_program"))
-				ARBVertexProgramExtension = true;
-			else
-			if (strstr(p, "GL_ARB_fragment_program"))
-				ARBFragmentProgramExtension = true;
-			else 
-			if (strstr(p, "GL_ARB_shading_language_100"))
-				ARBShadingLanguage100Extension = true; 
-			else 
-			if (strstr(p, "GL_EXT_texture_filter_anisotropic"))
-				AnisotropyExtension = true;
-
-			p = p + strlen(p) + 1;
-		}
-	}
-
-	delete [] str;
+	MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
+	ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
+	ARBFragmentProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_fragment_program", t);
+	ARBShadingLanguage100Extension = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", t);
+	AnisotropyExtension = gluCheckExtension((const GLubyte*)"GL_EXT_texture_filter_anisotropic", t);
 
 	if (MultiTextureExtension)
 	{
 		#ifdef _IRR_WINDOWS_
 
 		// Windows
-		// get multitextureing function pointers
+		// get multitexturing function pointers
 
 		pGlActiveTextureARB   = (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
 		pGlClientActiveTextureARB= (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
@@ -430,18 +399,10 @@ void COpenGLDriver::loadExtensions()
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
 
 		#else
-			#ifdef MACOSX
-			
-			if (MultiTextureExtension)
-				os::Printer::log("Multittexturing active.");
-			#else
 			#ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 	
 			// Linux
 	
-			if (MultiTextureExtension)
-				os::Printer::log("Multittexturing active.");
-
 			#ifdef GLX_VERSION_1_4
 				#define IRR_OGL_LOAD_EXTENSION glXGetProcAddress
 				#else
@@ -535,10 +496,9 @@ void COpenGLDriver::loadExtensions()
 			MultiTextureExtension = false;
 			ARBVertexProgramExtension = false;
 			ARBFragmentProgramExtension = false;
-			os::Printer::log("Extentions disabled.", ELL_WARNING);
+			os::Printer::log("Extensions disabled.", ELL_WARNING);
 			
 			#endif // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
-			#endif // MACOSX
 		#endif // _IRR_WINDOWS_
 
 		// load common extensions
@@ -552,6 +512,9 @@ void COpenGLDriver::loadExtensions()
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);
 	}
+	if (MultiTextureExtension)
+		os::Printer::log("Multittexturing active.");
+
 }
 
 
@@ -947,7 +910,7 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 
 //! draws an 2d image
 void COpenGLDriver::draw2DImage(video::ITexture* texture, 
-							   const core::position2d<s32>& destPos)
+				   const core::position2d<s32>& destPos)
 {
 	if (!texture)
 		return;
@@ -1177,8 +1140,8 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 
 //! Draws a 2d line. 
 void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
-						const core::position2d<s32>& end, 
-						SColor color)
+				const core::position2d<s32>& end, 
+				SColor color)
 {
 	// thanks to Vash TheStampede who sent in his implementation 
 
@@ -1232,19 +1195,11 @@ void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& positio
 	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
 	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
 
-	core::rect<float> npos;
-	npos.UpperLeftCorner.X = (f32)(pos.UpperLeftCorner.X+xPlus) * xFact;
-	npos.UpperLeftCorner.Y = (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact;
-	npos.LowerRightCorner.X = (f32)(pos.LowerRightCorner.X+xPlus) * xFact;
-	npos.LowerRightCorner.Y = (f32)(yPlus-pos.LowerRightCorner.Y) * yFact;
-
-	glBegin(GL_QUADS);
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-	glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
-	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
-	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y); 
-	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y); 
-	glEnd();
+	glRectf((f32)(pos.UpperLeftCorner.X+xPlus) * xFact,
+		(f32)(yPlus-pos.UpperLeftCorner.Y) * yFact,
+		(f32)(pos.LowerRightCorner.X+xPlus) * xFact,
+		(f32)(yPlus-pos.LowerRightCorner.Y) * yFact);
 }
 
 
@@ -1404,6 +1359,8 @@ inline void COpenGLDriver::printGLError()
 		os::Printer::log("GL_STACK_UNDERFLOW", ELL_ERROR); break;
 	case GL_OUT_OF_MEMORY:
 		os::Printer::log("GL_OUT_OF_MEMORY", ELL_ERROR); break;
+	case GL_TABLE_TOO_LARGE:
+		os::Printer::log("GL_TABLE_TOO_LARGE", ELL_ERROR); break;
 	};
 #endif
 }
@@ -1486,10 +1443,10 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		color[3] = Material.DiffuseColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
 
-		color[0] = 0;//Material.SpecularColor.getRed() * inv;
-		color[1] = 0;//Material.SpecularColor.getGreen() * inv;
-		color[2] = 0;//Material.SpecularColor.getBlue() * inv;
-		color[3] = 0;//Material.SpecularColor.getAlpha() * inv;
+		color[0] = Material.SpecularColor.getRed() * inv;
+		color[1] = Material.SpecularColor.getGreen() * inv;
+		color[2] = Material.SpecularColor.getBlue() * inv;
+		color[3] = Material.SpecularColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
 
 		color[0] = Material.EmissiveColor.getRed() * inv;
@@ -1498,7 +1455,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		color[3] = Material.EmissiveColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color);
 
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0);//Material.Shininess);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material.Shininess);
 	}
 
 	// bilinear
@@ -1684,7 +1641,7 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 //! driver, it would return "Direct3D8.1".
 const wchar_t* COpenGLDriver::getName()
 {
-	return L"OpenGL 1.5";
+	return Name.c_str();
 }
 
 
@@ -1748,10 +1705,10 @@ void COpenGLDriver::addDynamicLight(const SLight& light)
 	glLightfv(lidx, GL_DIFFUSE, data);
 
 	// set specular color
-	data[0] = 0;//light.SpecularColor.r;
-	data[1] = 0;//light.SpecularColor.g;
-	data[2] = 0;//light.SpecularColor.b;
-	data[3] = 0;//light.SpecularColor.a;
+	data[0] = light.SpecularColor.r;
+	data[1] = light.SpecularColor.g;
+	data[2] = light.SpecularColor.b;
+	data[3] = light.SpecularColor.a;
 	glLightfv(lidx, GL_SPECULAR, data);
 
 	// set ambient color
@@ -1950,11 +1907,12 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 
 //! Sets the fog mode.
 void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start, 
-	f32 end, f32 density, bool pixelFog, bool rangeFog)
+			f32 end, f32 density, bool pixelFog, bool rangeFog)
 {
 	CNullDriver::setFog(c, linearFog, start, end, density, pixelFog, rangeFog);
 
 	glFogi(GL_FOG_MODE, linearFog ? GL_LINEAR : GL_EXP); 
+	glFogi(GL_FOG_COORDINATE_SOURCE, GL_FRAGMENT_DEPTH); 
 
 	if(linearFog)
  	{ 
@@ -1972,7 +1930,7 @@ void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start,
 
 //! Draws a 3d line.
 void COpenGLDriver::draw3DLine(const core::vector3df& start,
-	const core::vector3df& end, SColor color)
+				const core::vector3df& end, SColor color)
 {
 	setRenderStates3DMode();
 
@@ -2003,9 +1961,7 @@ void COpenGLDriver::extGlActiveTextureARB(GLenum texture)
 {
 #ifdef MACOSX
 	if (MultiTextureExtension) glActiveTextureARB(texture);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 if (MultiTextureExtension && pGlActiveTextureARB)
 	pGlActiveTextureARB(texture);
 #endif
@@ -2015,9 +1971,7 @@ void COpenGLDriver::extGlClientActiveTextureARB(GLenum texture)
 {
 #ifdef MACOSX
 	if (MultiTextureExtension) glClientActiveTextureARB(texture);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (MultiTextureExtension && pGlClientActiveTextureARB)
 		pGlClientActiveTextureARB(texture);
 #endif
@@ -2027,9 +1981,7 @@ void COpenGLDriver::extGlGenProgramsARB(GLsizei n, GLuint *programs)
 {
 #ifdef MACOSX
 	glGenProgramsARB(n,programs);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlGenProgramsARB)
 		pGlGenProgramsARB(n, programs);
 #endif
@@ -2039,9 +1991,7 @@ void COpenGLDriver::extGlBindProgramARB(GLenum target, GLuint program)
 {
 #ifdef MACOSX
 	glBindProgramARB(target, program);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlBindProgramARB)
 		pGlBindProgramARB(target, program);
 #endif
@@ -2051,9 +2001,7 @@ void COpenGLDriver::extGlProgramStringARB(GLenum target, GLenum format, GLsizei 
 {
 #ifdef MACOSX
 	glProgramStringARB(target,format,len,string);
-#endif
-
-#if defined(WIN32) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(WIN32) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlProgramStringARB)
 		pGlProgramStringARB(target, format, len, string);
 #endif
@@ -2063,9 +2011,7 @@ void COpenGLDriver::extGlDeleteProgramsARB(GLsizei n, const GLuint *programs)
 {
 #ifdef MACOSX
 	glDeleteProgramsARB(n,programs);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlDeleteProgramsARB)
 		pGlDeleteProgramsARB(n, programs);
 #endif
@@ -2075,9 +2021,7 @@ void COpenGLDriver::extGlProgramLocalParameter4fvARB(GLenum n, GLuint i, const G
 {
 #ifdef MACOSX
 	glProgramLocalParameter4fvARB(n,i,f);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlProgramLocalParameter4fvARB)
 		pGlProgramLocalParameter4fvARB(n,i,f);
 #endif
@@ -2087,9 +2031,7 @@ GLhandleARB COpenGLDriver::extGlCreateShaderObjectARB(GLenum shaderType)
 { 
 #ifdef MACOSX
 	return (glCreateShaderObjectARB(shaderType));
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlCreateShaderObjectARB) 
 		return pGlCreateShaderObjectARB(shaderType); 
 #endif 
@@ -2100,12 +2042,10 @@ GLhandleARB COpenGLDriver::extGlCreateShaderObjectARB(GLenum shaderType)
 void COpenGLDriver::extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings) 
 { 
 #ifdef MACOSX
-	glShaderSourceARB(shader, numOfStrings, strings, (GLint *)lenOfStrings); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+	glShaderSourceARB(shader, numOfStrings, strings, (GLint *)lenOfStrings);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlShaderSourceARB) 
-		pGlShaderSourceARB(shader, numOfStrings, strings, lenOfStrings); 
+		pGlShaderSourceARB(shader, numOfStrings, strings, lenOfStrings);
 #endif 
 } 
 
@@ -2113,9 +2053,7 @@ void COpenGLDriver::extGlCompileShaderARB(GLhandleARB shader)
 { 
 #ifdef MACOSX
 	glCompileShaderARB(shader); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlCompileShaderARB) 
 		pGlCompileShaderARB(shader); 
 #endif 
@@ -2125,9 +2063,7 @@ GLhandleARB COpenGLDriver::extGlCreateProgramObjectARB(void)
 { 
 #ifdef MACOSX
 	return (glCreateProgramObjectARB()); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlCreateProgramObjectARB) 
 		return pGlCreateProgramObjectARB(); 
 #endif 
@@ -2139,9 +2075,7 @@ void COpenGLDriver::extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader
 { 
 #ifdef MACOSX
 	glAttachObjectARB(program, shader); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlAttachObjectARB) 
 		pGlAttachObjectARB(program, shader); 
 #endif 
@@ -2151,9 +2085,7 @@ void COpenGLDriver::extGlLinkProgramARB(GLhandleARB program)
 { 
 #ifdef MACOSX
 	glLinkProgramARB(program); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlLinkProgramARB) 
 		pGlLinkProgramARB(program); 
 #endif 
@@ -2163,9 +2095,7 @@ void COpenGLDriver::extGlUseProgramObjectARB(GLhandleARB prog)
 { 
 #ifdef MACOSX
 	glUseProgramObjectARB(prog); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlUseProgramObjectARB) 
 		pGlUseProgramObjectARB(prog); 
 #endif 
@@ -2175,9 +2105,7 @@ void COpenGLDriver::extGlDeleteObjectARB(GLhandleARB object)
 { 
 #ifdef MACOSX
 	glDeleteObjectARB(object); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlDeleteObjectARB) 
 		pGlDeleteObjectARB(object); 
 #endif 
@@ -2187,9 +2115,7 @@ void COpenGLDriver::extGlGetObjectParameterivARB(GLhandleARB object, GLenum type
 { 
 #ifdef MACOSX
 	glGetObjectParameterivARB(object, type, (GLint *)param); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlGetObjectParameterivARB) 
 		pGlGetObjectParameterivARB(object, type, param); 
 #endif 
@@ -2199,9 +2125,7 @@ GLint COpenGLDriver::extGlGetUniformLocationARB(GLhandleARB program, const char 
 {
 #ifdef MACOSX
 	return (glGetUniformLocationARB(program, name)); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlGetUniformLocationARB) 
 		return pGlGetUniformLocationARB(program, name); 
 #endif 
@@ -2213,9 +2137,7 @@ void COpenGLDriver::extGlUniform4fvARB(GLint location, GLsizei count, const GLfl
 {
 #ifdef MACOSX
 	glUniform4fvARB(location, count, v); 
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
 	if (pGlUniform4fvARB) 
 		pGlUniform4fvARB(location, count, v); 
 #endif 
@@ -2225,9 +2147,7 @@ void COpenGLDriver::extGlUniform1fvARB (GLint loc, GLsizei count, const GLfloat 
 {
 #ifdef MACOSX
 	glUniform1fvARB(loc, count, v);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlUniform1fvARB)
         pGlUniform1fvARB(loc, count, v);
 #endif
@@ -2237,9 +2157,7 @@ void COpenGLDriver::extGlUniform2fvARB (GLint loc, GLsizei count, const GLfloat 
 {
 #ifdef MACOSX
 	glUniform2fvARB(loc, count, v);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlUniform2fvARB)
         pGlUniform2fvARB(loc, count, v);
 #endif
@@ -2249,9 +2167,7 @@ void COpenGLDriver::extGlUniform3fvARB (GLint loc, GLsizei count, const GLfloat 
 {
 #ifdef MACOSX
 	glUniform3fvARB(loc, count, v);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlUniform3fvARB)
         pGlUniform3fvARB(loc, count, v);
 #endif
@@ -2261,9 +2177,7 @@ void COpenGLDriver::extGlUniformMatrix2fvARB (GLint loc, GLsizei count, GLboolea
 {
 #ifdef MACOSX
 	glUniformMatrix2fvARB(loc, count, transpose, v);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlUniformMatrix2fvARB)
         pGlUniformMatrix2fvARB(loc, count, transpose, v);
 #endif
@@ -2273,9 +2187,7 @@ void COpenGLDriver::extGlUniformMatrix3fvARB (GLint loc, GLsizei count, GLboolea
 {
 #ifdef MACOSX
 	glUniformMatrix3fvARB(loc, count, transpose, v);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlUniformMatrix3fvARB)
         pGlUniformMatrix3fvARB(loc, count, transpose, v);
 #endif
@@ -2285,9 +2197,7 @@ void COpenGLDriver::extGlUniformMatrix4fvARB (GLint loc, GLsizei count, GLboolea
 {
 #ifdef MACOSX
 	glUniformMatrix4fvARB(loc, count, transpose, v);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlUniformMatrix4fvARB)
         pGlUniformMatrix4fvARB(loc, count, transpose, v);
 #endif
@@ -2297,9 +2207,7 @@ void COpenGLDriver::extGlGetActiveUniformARB (GLhandleARB program, GLuint index,
 {
 #ifdef MACOSX
 	glGetActiveUniformARB(program, index, maxlength, length, size, type, name);
-#endif
-
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
     if (pGlGetActiveUniformARB)
         pGlGetActiveUniformARB(program, index, maxlength, length, size, type, name);
 #endif

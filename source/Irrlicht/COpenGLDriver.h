@@ -54,7 +54,7 @@ namespace video
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen,
 			bool stencilBuffer, io::IFileSystem* io);
 
-		//! inits the open gl driver
+		//! inits the windows specific parts of the open gl driver
 		bool initDriver(const core::dimension2d<s32>& screenSize, HWND window,
 			bool fullscreen, bool vsync);
 		#endif
@@ -267,11 +267,13 @@ namespace video
 
 	private:
 
+		//! inits the parts of the open gl driver used on all platforms
+		bool genericDriverInit(const core::dimension2d<s32>& screenSize);
 		//! returns a device dependent texture from a software surface (IImage)
 		//! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const char* name);
 
-		inline void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
+		void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 		{
 			s32 i = 0;
 			for (s32 r=0; r<4; ++r)
@@ -294,6 +296,7 @@ namespace video
 		void loadExtensions();
 		void createMaterialRenderers();
 
+		core::stringw Name;
 		core::matrix4 Matrizes[ETS_COUNT];
 		core::array<s32> ColorBuffer;
 
@@ -307,8 +310,8 @@ namespace video
 		enum E_RENDER_MODE
 		{
 			ERM_NONE = 0,	// no render state has been set yet.
-			ERM_2D,			// 2d drawing rendermode
-			ERM_3D			// 3d rendering mode
+			ERM_2D,		// 2d drawing rendermode
+			ERM_3D		// 3d rendering mode
 		};
 
 		E_RENDER_MODE CurrentRenderMode;
