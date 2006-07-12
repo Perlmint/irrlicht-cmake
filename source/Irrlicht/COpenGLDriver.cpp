@@ -349,11 +349,45 @@ void COpenGLDriver::loadExtensions()
 		os::Printer::log("OpenGL driver version is not 1.2 or better.", ELL_WARNING);
 
 	const GLubyte* t = glGetString(GL_EXTENSIONS);
+	#ifdef GLU_VERSION_1_3
 	MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
 	ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
 	ARBFragmentProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_fragment_program", t);
 	ARBShadingLanguage100Extension = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", t);
 	AnisotropyExtension = gluCheckExtension((const GLubyte*)"GL_EXT_texture_filter_anisotropic", t);
+	#else
+	s32 len = (s32)strlen((const char*)t);
+	c8 *str = new c8[len+1];
+	c8* p = str;
+
+	for (s32 i=0; i<len; ++i)
+	{
+		str[i] = (char)t[i];
+
+		if (str[i] == ' ')
+		{
+			str[i] = 0;
+			if (strstr(p, "GL_ARB_multitexture"))
+				MultiTextureExtension = true;
+			else
+			if (strstr(p, "GL_ARB_vertex_program"))
+				ARBVertexProgramExtension = true;
+			else
+			if (strstr(p, "GL_ARB_fragment_program"))
+				ARBFragmentProgramExtension = true;
+			else 
+			if (strstr(p, "GL_ARB_shading_language_100"))
+				ARBShadingLanguage100Extension = true; 
+			else 
+			if (strstr(p, "GL_EXT_texture_filter_anisotropic"))
+				AnisotropyExtension = true;
+
+			p = p + strlen(p) + 1;
+		}
+	}
+
+	delete [] str;
+	#endif
 
 	if (MultiTextureExtension)
 	{
@@ -398,11 +432,9 @@ void COpenGLDriver::loadExtensions()
 		// get vsync extension
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
 
-		#else
+		#elif defined(LINUX)
 			#ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
-	
-			// Linux
-	
+
 			#ifdef GLX_VERSION_1_4
 				#define IRR_OGL_LOAD_EXTENSION glXGetProcAddress
 				#else
