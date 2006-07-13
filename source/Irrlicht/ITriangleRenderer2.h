@@ -14,10 +14,8 @@
 #include "S4DVertex.h"
 
 
-
 namespace irr
 {
-
 
 namespace video
 {
@@ -57,7 +55,7 @@ namespace video
 	class ITriangleRenderer2 : public virtual IUnknown
 	{
 	public:
-		ITriangleRenderer2::ITriangleRenderer2(IZBuffer2* zbuffer)
+		ITriangleRenderer2(IZBuffer2* zbuffer)
 			:RenderTarget(0),ZBuffer(zbuffer)
 		{
 			IT[0].Texture = 0;
@@ -71,7 +69,7 @@ namespace video
 				zbuffer->grab();
 		}
 
-	
+
 		//! destructor
 		virtual ~ITriangleRenderer2()
 		{
@@ -100,7 +98,7 @@ namespace video
 			{
 				SurfaceWidth = RenderTarget->getDimension().Width;
 				RenderTarget->grab();
-			}		
+			}
 		}
 
 
@@ -123,7 +121,7 @@ namespace video
 				it->Texture->grab();
 
 				// prepare for optimal fixpoint
-				it->pitch = (it->Texture->getPitch() );
+				it->pitch = it->Texture->getPitch();
 
 				it->textureXMask = s32_to_fixPoint ( it->Texture->getDimension().Width - 1 );
 				it->textureYMask = s32_to_fixPoint ( it->Texture->getDimension().Height - 1 );
@@ -137,7 +135,6 @@ namespace video
 		virtual void drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c ) = 0;
 		virtual void drawLine ( const s4DVertex *a,const s4DVertex *b) {};
 
-
 	protected:
 
 		video::IImage* RenderTarget;
@@ -149,8 +146,6 @@ namespace video
 		tVideoSample* lockedSurface;
 
 		sInternalTexture IT[2];
-
-
 
 	};
 
@@ -176,8 +171,6 @@ namespace video
 	ITriangleRenderer2* createTRTextureGouraudNoZ2();
 	ITriangleRenderer2* createTRTextureGouraudAdd2(IZBuffer2* zbuffer);
 	ITriangleRenderer2* createTRTextureGouraudAddNoZ2(IZBuffer2* zbuffer);
-
-
 
 } // end namespace video
 } // end namespace irr
