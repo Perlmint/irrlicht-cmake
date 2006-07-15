@@ -102,7 +102,7 @@ core::stringc CAttributes::getAttributeAsString(s32 index)
 {
 	core::stringc str;
 
-	if (index >= 0 || index < (int)Attributes.size())
+	if (index >= 0 && index < (int)Attributes.size())
 	{
 		Attributes[index]->getString(tmpBuffer);
 		str = tmpBuffer;
