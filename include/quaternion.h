@@ -298,7 +298,7 @@ inline void quaternion::set(f32 x, f32 y, f32 z)
 	f32 cr = (f32)cos(angle);
 
 	angle = y * 0.5f;
-    f32 sp = (f32)sin(angle);
+	f32 sp = (f32)sin(angle);
 	f32 cp = (f32)cos(angle);
 
 	angle = z * 0.5f;
@@ -395,21 +395,21 @@ inline void quaternion::fromAngleAxis(f32 angle, const vector3df& axis)
 } 
 
 inline void quaternion::toEuler(vector3df& euler) const
-{ 
-	double sqw = W*W;    
-	double sqx = X*X;    
-	double sqy = Y*Y;    
-	double sqz = Z*Z; 
+{
+	double sqw = W*W;
+	double sqx = X*X;
+	double sqy = Y*Y;
+	double sqz = Z*Z;
 
-	// heading = rotaton about z-axis 
-	euler.Z = (f32) (atan2(2.0 * (X*Y +Z*W),(sqx - sqy - sqz + sqw))); 
+	// heading = rotation about z-axis
+	euler.Z = (f32) (atan2(2.0 * (X*Y +Z*W),(sqx - sqy - sqz + sqw)));
 
-	// bank = rotation about x-axis 
-	euler.X = (f32) (atan2(2.0 * (Y*Z +X*W),(-sqx - sqy + sqz + sqw))); 
+	// bank = rotation about x-axis
+	euler.X = (f32) (atan2(2.0 * (Y*Z +X*W),(-sqx - sqy + sqz + sqw)));
 
-	// attitude = rotation about y-axis 
-	euler.Y = (f32) (asin(-2.0 * (X*Z - Y*W))); 
-} 
+	// attitude = rotation about y-axis
+	euler.Y = (f32) (asin(-2.0 * (X*Z - Y*W)));
+}
 
 inline vector3df quaternion::operator* (const vector3df& v) const 
 { 

@@ -95,8 +95,8 @@ class plane3d
 		f32 getKnownIntersectionWithLine(const vector3d<T>& linePoint1,
 			const vector3d<T>& linePoint2) const
 		{
-			core::vector3df vect = linePoint2 - linePoint1;
-			T t2 = Normal.dotProduct(vect);
+			vector3d<T> vect = linePoint2 - linePoint1;
+			f32 t2 = (f32)Normal.dotProduct(vect);
 			return -((Normal.dotProduct(linePoint1) + D) / t2);
 		}
 
@@ -119,7 +119,7 @@ class plane3d
 		//! ISREL3D_PLANAR if the point is within the plane.
 		EIntersectionRelation3D classifyPointRelation(const vector3d<T>& point) const
 		{
-			f32 d = Normal.dotProduct(point) + D;
+			T d = Normal.dotProduct(point) + D;
 
 			if (d < -ROUNDING_ERROR)
 				return ISREL3D_FRONT;
@@ -164,7 +164,7 @@ class plane3d
 			if (fabs(det) < 1e-08f)
 				return false;
 
-            det = 1.0 / det;
+			det = 1.0 / det;
 			f64 fc0 = (fn11*-D + fn01*other.D) * det;
 			f64 fc1 = (fn00*-other.D + fn01*D) * det;
 

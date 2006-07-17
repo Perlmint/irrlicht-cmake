@@ -20,9 +20,9 @@ namespace core
 	{
 	public:
 
-		vector3d(): X(0), Y(0), Z(0) {};
+		vector3d() : X(0), Y(0), Z(0) {};
 		vector3d(T nx, T ny, T nz) : X(nx), Y(ny), Z(nz) {};
-		vector3d(const vector3d<T>& other)	:X(other.X), Y(other.Y), Z(other.Z) {};
+		vector3d(const vector3d<T>& other) : X(other.X), Y(other.Y), Z(other.Z) {};
 
 		// operators
 
@@ -55,7 +55,7 @@ namespace core
 		// functions
 
 		//! returns if this vector equals the other one, taking floating point rounding errors into account
-		bool equals(const vector3d<T>& other)
+		bool equals(const vector3d<T>& other) const
 		{
 			return core::equals(X, other.X) &&
 				   core::equals(Y, other.Y) &&
@@ -71,7 +71,7 @@ namespace core
 		//! Returns squared length of the vector.
 		/** This is useful because it is much faster then
 		getLength(). */
-		f64 getLengthSQ() const { return X*X + Y*Y + Z*Z; }
+		T getLengthSQ() const { return X*X + Y*Y + Z*Z; }
 
 		//! Returns the dot product with another vector.
 		T dotProduct(const vector3d<T>& other) const
@@ -89,9 +89,11 @@ namespace core
 
 		//! Returns squared distance from an other point. 
 		/** Here, the vector is interpreted as point in 3 dimensional space. */
-		f32 getDistanceFromSQ(const vector3d<T>& other) const
+		T getDistanceFromSQ(const vector3d<T>& other) const
 		{
-			f32 vx = X - other.X; f32 vy = Y - other.Y; f32 vz = Z - other.Z;
+			T vx = X - other.X;
+			T vy = Y - other.Y;
+			T vz = Z - other.Z;
 			return (vx*vx + vy*vy + vz*vz);
 		}
 
@@ -110,9 +112,9 @@ namespace core
  		//! \return True if this vector is between begin and end.  False if not.
 		bool isBetweenPoints(const vector3d<T>& begin, const vector3d<T>& end) const
 		{
-			f32 f = (f32)(end - begin).getLengthSQ();
-			return (f32)getDistanceFromSQ(begin) < f && 
-				(f32)getDistanceFromSQ(end) < f;
+			T f = (end - begin).getLengthSQ();
+			return getDistanceFromSQ(begin) < f && 
+				getDistanceFromSQ(end) < f;
 		}
 
 		//! Normalizes the vector.
@@ -199,8 +201,8 @@ namespace core
 		{
 			f32 inv = 1.0f - d;
 			return vector3d<T>(other.X*inv + X*d,
-								other.Y*inv + Y*d,
-								other.Z*inv + Z*d);
+						other.Y*inv + Y*d,
+						other.Z*inv + Z*d);
 		}
 
 		//! Gets the Y and Z rotations of a vector.
@@ -217,15 +219,14 @@ namespace core
 			if (angle.Y < 0.0f) angle.Y += 360.0f; 
 			if (angle.Y >= 360.0f) angle.Y -= 360.0f; 
 			    
-			f32 z1; 
-			z1 = (T)sqrt(X*X + Z*Z); 
+			f32 z1 = (f32)sqrt(X*X + Z*Z); 
 			    
 			angle.X = (T)atan2(z1, Y); 
 			angle.X *= (f32)GRAD_PI;
 			angle.X -= 90.0f; 
 			    
 			if (angle.X < 0.0f) angle.X += 360.0f; 
-			if (angle.X >= 360) angle.X -= 360.0f; 
+			if (angle.X >= 360.0f) angle.X -= 360.0f; 
 
 			return angle;
 		}
@@ -233,7 +234,7 @@ namespace core
 		//! Fills an array of 4 values with the vector data (usually floats).
 		/** Useful for setting in shader constants for example. The fourth value
 		 will always be 0. */
-		void getAs4Values(T* array)
+		void getAs4Values(T* array) const
 		{
 			array[0] = X;
 			array[1] = Y;
@@ -254,7 +255,7 @@ namespace core
 	typedef vector3d<s32> vector3di;
 
 } // end namespace core
-} // end namespac irr
+} // end namespace irr
 
 #endif
 

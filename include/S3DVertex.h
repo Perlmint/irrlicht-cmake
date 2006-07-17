@@ -36,12 +36,12 @@ struct S3DVertex
 	S3DVertex() {};
 
 	//! constructor
-	S3DVertex(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv)
+	S3DVertex(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, const SColor& c, f32 tu, f32 tv)
 		: Pos(x,y,z), Normal(nx,ny,nz), Color(c), TCoords(tu,tv) {}
 
 	//! constructor
 	S3DVertex(const core::vector3df& pos, const core::vector3df& normal,
-		video::SColor& color, const core::vector2d<f32>& tcoords)
+		const SColor& color, const core::vector2d<f32>& tcoords)
 		: Pos(pos), Normal(normal), Color(color), TCoords(tcoords) {}
 
 	//! Position
@@ -61,13 +61,13 @@ struct S3DVertex
 	bool operator == (const S3DVertex& other) const
 	{
 		return (Pos == other.Pos && Normal == other.Normal &&
-					Color == other.Color && TCoords == other.TCoords);
+			Color == other.Color && TCoords == other.TCoords);
 	}
 
 	bool operator != (const S3DVertex& other) const
 	{
 		return (Pos != other.Pos || Normal != other.Normal ||
-					Color != other.Color || TCoords != other.TCoords);
+			Color != other.Color || TCoords != other.TCoords);
 	}
 };
 
@@ -82,7 +82,7 @@ struct S3DVertex2TCoords
 	S3DVertex2TCoords() {};
 
 	//! constructor
-	S3DVertex2TCoords(f32 x, f32 y, f32 z, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2)
+	S3DVertex2TCoords(f32 x, f32 y, f32 z, const SColor& c, f32 tu, f32 tv, f32 tu2, f32 tv2)
 		: Pos(x,y,z), Color(c), TCoords(tu,tv), TCoords2(tu2,tv2) {}
 
 	//! Position
@@ -116,7 +116,7 @@ struct S3DVertexTangents
 
 		//! constructor
 	S3DVertexTangents(const core::vector3df& pos, 
-		const core::vector2df& tcoords,	video::SColor c)
+		const core::vector2df& tcoords,	const SColor& c)
 		: Pos(pos), Color(c), TCoords(tcoords) { }
 
 	//! Position

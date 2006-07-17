@@ -26,7 +26,7 @@ namespace gui
 
 		//! Returns if the cursor is currently visible.
 		/** \return Returns true if the cursor is visible, false if not. */
-        virtual bool isVisible() = 0;
+		virtual bool isVisible() = 0;
 
 		//! Sets the new position of the cursor.
 		/** \param pos: New position of the cursor. The position must be between

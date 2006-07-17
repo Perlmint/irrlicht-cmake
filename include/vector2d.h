@@ -20,9 +20,9 @@ class vector2d
 {
 public:
 
-	vector2d(): X(0), Y(0) {};
+	vector2d() : X(0), Y(0) {};
 	vector2d(T nx, T ny) : X(nx), Y(ny) {};
-	vector2d(const vector2d<T>& other)	:X(other.X), Y(other.Y) {};
+	vector2d(const vector2d<T>& other) : X(other.X), Y(other.Y) {};
 
 	// operators
 
@@ -104,7 +104,7 @@ public:
 	//! Calculates the angle of this vector in grad in the trigonometric sense.
 	//! This method has been suggested by Pr3t3nd3r.
 	//! \return Returns a value between 0 and 360.
-	inline f64 getAngleTrig() const
+	f64 getAngleTrig() const
 	{
 		if (X == 0.0)
 			return Y < 0.0 ? 270.0 : 90.0;
@@ -173,16 +173,16 @@ public:
 	vector2d<T> getInterpolated(const vector2d<T>& other, f32 d) const
 	{
 		f32 inv = 1.0f - d;
-		return vector2d<T>(other.X*inv + X*d,
-						   other.Y*inv + Y*d);
+		return vector2d<T>(other.X*inv + X*d, other.Y*inv + Y*d);
 	}
 
 	//! sets this vector to the interpolated vector between a and b. 
-	inline void interpolate(const vector2d<T>& a, const vector2d<T>& b, const f32 t)
+	void interpolate(const vector2d<T>& a, const vector2d<T>& b, const f32 t)
 	{
 		X = b.X + ( ( a.X - b.X ) * t );
 		Y = b.Y + ( ( a.Y - b.Y ) * t );
 	}
+
 	// member variables
 	T X, Y;
 };

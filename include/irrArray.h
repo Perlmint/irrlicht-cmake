@@ -221,7 +221,7 @@ public:
 
 
 
-	//! Assignement operator
+	//! Assignment operator
 	void operator=(const array<T>& other)
 	{
 		if (data)
@@ -266,15 +266,7 @@ public:
 		return data[index];
 	}
 
-    //! Gets last frame
-	const T& getLast() const
-	{
-		_IRR_DEBUG_BREAK_IF(!used) // access violation
-
-		return data[used-1];
-	}
-
-    //! Gets last frame
+	//! Gets last frame
 	T& getLast()
 	{
 		_IRR_DEBUG_BREAK_IF(!used) // access violation
@@ -282,6 +274,14 @@ public:
 		return data[used-1];
 	}
 
+
+	//! Gets last frame
+	const T& getLast() const
+	{
+		_IRR_DEBUG_BREAK_IF(!used) // access violation
+
+		return data[used-1];
+	}
 
 	//! Returns a pointer to the array.
 	//! \return Pointer to the array.
@@ -330,7 +330,7 @@ public:
 
 
 	//! Sorts the array using heapsort. There is no additional memory waste and
-	//! the algorithm performs (O) n log n in worst case.
+	//! the algorithm performs O(n*log n) in worst case.
 	void sort()
 	{
 		if (is_sorted || used<2)
@@ -400,7 +400,7 @@ public:
 	//! \param element: Element to search for.
 	//! \return Returns position of the searched element if it was found,
 	//! otherwise -1 is returned.
-	s32 linear_search(const T& element)
+	s32 linear_search(const T& element) const
 	{
 		for (u32 i=0; i<used; ++i)
 			if (!(element < data[i]) && !(data[i] < element))
@@ -415,7 +415,7 @@ public:
 	//! \param element: Element to search for.
 	//! \return Returns position of the searched element if it was found,
 	//! otherwise -1 is returned.
-	s32 linear_reverse_search(const T& element)
+	s32 linear_reverse_search(const T& element) const
 	{
 		for (s32 i=used-1; i>=0; --i)
 			if (data[i] == element)
@@ -475,7 +475,6 @@ public:
 
 } // end namespace core
 } // end namespace irr
-
 
 
 #endif

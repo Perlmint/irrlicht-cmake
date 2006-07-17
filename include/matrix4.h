@@ -10,6 +10,7 @@
 #include "plane3d.h"
 #include "aabbox3d.h"
 #include "rect.h"
+#include <cstring>
 
 namespace irr
 {
@@ -56,7 +57,7 @@ namespace core
 			bool isIdentity() const;
 
 			//! Set the translation of the current matrix. Will erase any previous values.
-			void setTranslation( const vector3df& translation );			
+			void setTranslation( const vector3df& translation );
 
 			//! Gets the current translation
 			vector3df getTranslation() const;
@@ -214,8 +215,7 @@ namespace core
 		newMatrix[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
 		newMatrix[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
 		
-		for (s32 i=0; i<16; ++i)
-			M[i] = newMatrix[i];
+		memcpy(M, newMatrix, 16*sizeof(f32));
 
 		return *this;
 	}
@@ -288,12 +288,12 @@ namespace core
 
 	inline void matrix4::setRotationDegrees( const vector3df& rotation )
 	{
-		setRotationRadians( rotation * (f32)3.1415926535897932384626433832795 / 180.0 );
+		setRotationRadians( rotation * (f32)core::GRAD_PI2 );
 	}
 
 	inline void matrix4::setInverseRotationDegrees( const vector3df& rotation )
 	{
-		setInverseRotationRadians( rotation * (f32)3.1415926535897932384626433832795 / 180.0 );
+		setInverseRotationRadians( rotation * (f32)core::GRAD_PI2 );
 	}
 
 	inline void matrix4::setRotationRadians( const vector3df& rotation )
@@ -390,7 +390,7 @@ namespace core
 	{
 		for (s32 i=0; i<16; ++i)
 			M[i] = 0.0f;
-		M[0] = M[5] = M[10] = M[15] = 1;
+		M[0] = M[5] = M[10] = M[15] = 1.0f;
 	}
 
 
@@ -588,8 +588,7 @@ namespace core
 
 	inline matrix4& matrix4::operator=(const matrix4 &other)
 	{
-		for (s32 i = 0; i < 16; ++i)
-			M[i] = other.M[i];
+		memcpy(M, other.M, 16*sizeof(f32));
 
 		return *this;
 	}

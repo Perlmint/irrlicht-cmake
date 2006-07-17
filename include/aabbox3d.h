@@ -94,9 +94,9 @@ class aabbox3d
 		//! \return Returns true if the point is withing the box, and false if it is not.
 		bool isPointInside(const vector3d<T>& p) const
 		{
-			return (	p.X >= MinEdge.X && p.X <= MaxEdge.X &&
-						p.Y >= MinEdge.Y && p.Y <= MaxEdge.Y &&
-						p.Z >= MinEdge.Z && p.Z <= MaxEdge.Z);
+			return (p.X >= MinEdge.X && p.X <= MaxEdge.X &&
+				p.Y >= MinEdge.Y && p.Y <= MaxEdge.Y &&
+				p.Z >= MinEdge.Z && p.Z <= MaxEdge.Z);
 		};
 
 		//! Determinates if a point is within this box and its borders.
@@ -104,9 +104,9 @@ class aabbox3d
 		//! \return Returns true if the point is withing the box, and false if it is not.
 		bool isPointTotalInside(const vector3d<T>& p) const
 		{
-			return (	p.X > MinEdge.X && p.X < MaxEdge.X &&
-						p.Y > MinEdge.Y && p.Y < MaxEdge.Y &&
-						p.Z > MinEdge.Z && p.Z < MaxEdge.Z);
+			return (p.X > MinEdge.X && p.X < MaxEdge.X &&
+				p.Y > MinEdge.Y && p.Y < MaxEdge.Y &&
+				p.Z > MinEdge.Z && p.Z < MaxEdge.Z);
 		};
 
 		//! Determinates if the box intersects with an other box.
@@ -130,8 +130,8 @@ class aabbox3d
 		//! Tests if the box intersects with a line
 		//! \return Returns true if there is an intersection and false if not.
 		bool intersectsWithLine(const vector3d<T>& linemiddle, 
-						const vector3d<T>& linevect,
-						T halflength) const
+					const vector3d<T>& linevect,
+					T halflength) const
 		{
 			const vector3d<T> e = getExtent() * (T)0.5;
 			const vector3d<T> t = getCenter() - linemiddle;
@@ -249,8 +249,8 @@ class aabbox3d
 			if (d.Z < 0) d.Z = -d.Z;
 
 			return (d.X < ROUNDING_ERROR && 
-					d.Y < ROUNDING_ERROR && 
-					d.Z < ROUNDING_ERROR);
+				d.Y < ROUNDING_ERROR && 
+				d.Z < ROUNDING_ERROR);
 		}
 
 		//! repairs the box, if for example MinEdge and MaxEdge are swapped.

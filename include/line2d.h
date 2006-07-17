@@ -19,10 +19,10 @@ class line2d
 {
 	public:
 
-		line2d(): start(0,0), end(1,1) {};
+		line2d() : start(0,0), end(1,1) {};
 		line2d(T xa, T ya, T xb, T yb) : start(xa, ya), end(xb, yb) {};
 		line2d(const vector2d<T>& start, const vector2d<T>& end) : start(start), end(end) {};
-		line2d(const line2d<T>& other) :start(other.start), end(other.end) {};
+		line2d(const line2d<T>& other) : start(other.start), end(other.end) {};
 
 		// operators
 
@@ -54,9 +54,8 @@ class line2d
 		//! \param out: If there is an intersection, the location of the intersection will
 		//! be stored in this vector.
 		//! \return Returns true if there is an intersection, false if not.
-		bool intersectWith(const line2d<T>& l, vector2d<T>& out)
+		bool intersectWith(const line2d<T>& l, vector2d<T>& out) const
 		{
-
 			bool found=false;
 
 			f32 a1,a2,b1,b2;
@@ -92,7 +91,7 @@ class line2d
 		//! \return Returns unit vector of this line.
 		vector2d<T> getUnitVector()
 		{
-			T len = (T)1.0 / (T)getLength();
+			T len = (T)(1.0 / getLength());
 			return vector2d<T>((end.X - start.X) * len, (end.Y - start.Y) * len);
 		}
 
@@ -108,7 +107,6 @@ class line2d
 		vector2d<T> start;
 		vector2d<T> end;
 };
-
 
 
 } // end namespace core

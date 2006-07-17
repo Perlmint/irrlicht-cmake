@@ -625,7 +625,7 @@ private:
 			return t;
 	}
 
-	//! Reallocate the array, make it bigger or smaler
+	//! Reallocate the array, make it bigger or smaller
 	void reallocate(s32 new_size)
 	{
 		T* old_array = array;

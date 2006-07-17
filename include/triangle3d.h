@@ -25,11 +25,11 @@ namespace core
 		//! \param box: Box to check.
 		//! \return Returns true if the triangle is withing the box,
 		//! and false if it is not.
-		bool isTotalInsideBox(const aabbox3d<f32>& box) const
+		bool isTotalInsideBox(const aabbox3d<T>& box) const
 		{
 			return (box.isPointInside(pointA) && 
-				    box.isPointInside(pointB) &&
-					box.isPointInside(pointC));
+				box.isPointInside(pointB) &&
+				box.isPointInside(pointC));
 		}
 
 		bool operator==(const triangle3d<T>& other) const { return other.pointA==pointA && other.pointB==pointB && other.pointC==pointC; }
@@ -37,15 +37,15 @@ namespace core
 
 		//! Returns the closest point on a triangle to a point on the same plane.
 		//! \param p: Point which must be on the same plane as the triangle.
-		core::vector3df closestPointOnTriangle(const core::vector3df& p) const
+		core::vector3d<T> closestPointOnTriangle(const core::vector3d<T>& p) const
 		{
-			core::vector3df rab = line3d<f32>(pointA, pointB).getClosestPoint(p);
-			core::vector3df rbc = line3d<f32>(pointB, pointC).getClosestPoint(p);
-			core::vector3df rca = line3d<f32>(pointC, pointA).getClosestPoint(p);
+			core::vector3d<T> rab = line3d<T>(pointA, pointB).getClosestPoint(p);
+			core::vector3d<T> rbc = line3d<T>(pointB, pointC).getClosestPoint(p);
+			core::vector3d<T> rca = line3d<T>(pointC, pointA).getClosestPoint(p);
 
-			T d1 = (T)rab.getDistanceFrom(p);
-			T d2 = (T)rbc.getDistanceFrom(p);
-			T d3 = (T)rca.getDistanceFrom(p);
+			T d1 = rab.getDistanceFrom(p);
+			T d2 = rbc.getDistanceFrom(p);
+			T d3 = rca.getDistanceFrom(p);
 
 			if (d1 < d2)
 				return d1 < d3 ? rab : rca;
@@ -79,7 +79,7 @@ namespace core
 			f32 b = f.dotProduct(g);
 			f32 c = g.dotProduct(g);
 
-            f32 ac_bb = (a*c)-(b*b);
+			f32 ac_bb = (a*c)-(b*b);
 			vector3d<T> vp = p - pointA;
 
 			f32 d = vp.dotProduct(f);
@@ -149,8 +149,8 @@ namespace core
 			if (t2 == 0.0f)
 				return false;
 
-            T d = pointA.dotProduct(normal);
-			T t =- (normal.dotProduct(linePoint) - d) / t2;
+			T d = pointA.dotProduct(normal);
+			T t = -(normal.dotProduct(linePoint) - d) / t2;
 			outIntersection = linePoint + (lineVect * t);
 			return true;
 		}
@@ -201,7 +201,7 @@ namespace core
 	typedef triangle3d<s32> triangle3di;
 
 } // end namespace core
-} // end namespac irr
+} // end namespace irr
 
 #endif
 

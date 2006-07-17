@@ -242,7 +242,7 @@ public:
 		++size;
 
 		if (it.current == root) 
-             root = node;
+			root = node;
 	}
 
 
