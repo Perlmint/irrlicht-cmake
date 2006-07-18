@@ -76,7 +76,7 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 	s32 meshBufferCount = Mesh->getMeshBufferCount();
 	f32 time = os::Timer::getTime() / WaveSpeed;
 
-    for (s32 b=0; b<meshBufferCount; ++b)
+	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		s32 vtxCnt = Mesh->getMeshBuffer(b)->getVertexCount();
 

@@ -160,7 +160,7 @@ bool CGUIEditBox::processKey(SEvent& event)
 				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				// add new character
-				c8* p = Operator->getTextFromClipboard();
+				const c8* p = Operator->getTextFromClipboard();
 				if (p)
 				{
 					if (MarkBegin == MarkEnd)

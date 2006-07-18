@@ -15,8 +15,7 @@ namespace scene
 {
 
 //! Meshloader capable of loading all Irrlicht default build in formats.
-/** Which are: Quake 3 Bsp level, Quake 2 MD2 model, Maya .obj mesh, 
- Milkshape .ms3d model. */
+/** Which are: Quake 3 Bsp level, Quake 2 MD2 model, Milkshape .ms3d model. */
 class CDefaultMeshFormatLoader : public IMeshLoader
 {
 public:

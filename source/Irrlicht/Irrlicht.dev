@@ -2670,7 +2670,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit265]
-FileName=CStaticMeshOBJ.cpp
+FileName=COBJMeshFileLoader.cpp
 Folder=scene_impl
 Compile=1
 CompileCpp=1
@@ -2680,7 +2680,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit266]
-FileName=CStaticMeshOBJ.h
+FileName=COBJMeshFileLoader.h
 Folder=scene_impl
 Compile=1
 CompileCpp=1

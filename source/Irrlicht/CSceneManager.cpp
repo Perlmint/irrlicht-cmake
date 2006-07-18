@@ -26,6 +26,7 @@
 #include "CColladaFileLoader.h"
 #include "CDMFLoader.h"
 #include "COgreMeshFileLoader.h"
+#include "COBJMeshFileLoader.h"
 
 #include "CCubeSceneNode.h"
 #include "CSphereSceneNode.h"
@@ -118,6 +119,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	MeshLoaderList.push_back(new CColladaFileLoader(Driver, this, FileSystem));
 	MeshLoaderList.push_back(new CDMFLoader(Driver, this));	
 	MeshLoaderList.push_back(new COgreMeshFileLoader(MeshManipulator, FileSystem, Driver));
+	MeshLoaderList.push_back(new COBJMeshFileLoader(FileSystem, Driver));
 
 	// factories 
 

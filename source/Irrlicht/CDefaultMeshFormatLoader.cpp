@@ -4,7 +4,6 @@
 
 #include "CDefaultMeshFormatLoader.h"
 #include "CAnimatedMeshMD2.h"
-#include "CStaticMeshOBJ.h"
 #include "CAnimatedMeshMS3D.h"
 #include "CQ3LevelMesh.h"
 #include <string.h>
@@ -43,7 +42,7 @@ CDefaultMeshFormatLoader::~CDefaultMeshFormatLoader()
 //! based on the file extension (e.g. ".bsp")
 bool CDefaultMeshFormatLoader::isALoadableFileExtension(const c8* filename)
 {
-	return (strstr(filename, ".md2") || strstr(filename, ".obj") || 
+	return (strstr(filename, ".md2") ||
 			strstr(filename, ".ms3d") || strstr(filename, ".bsp"));
 }
 
@@ -68,17 +67,6 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	{
 		msh = new CAnimatedMeshMD2();
 		success = ((CAnimatedMeshMD2*)msh)->loadFile(file);
-		if (success)
-			return msh;
-
-		msh->drop();
-	}
-
-	// load maya obj
-	if (strstr(file->getFileName(), ".obj"))
-	{
-		msh = new CStaticMeshOBJ();
-		success = ((CStaticMeshOBJ*)msh)->loadFile(file);
 		if (success)
 			return msh;
 
