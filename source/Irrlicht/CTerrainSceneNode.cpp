@@ -3,8 +3,8 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 // The code for the TerrainSceneNode is based on the GeoMipMapSceneNode
-// developed by Spinz. He made it available for Irrlicht and allowed it to be 
-// distributed under this licence. I only modified some parts. A lot of thanks go to him. 
+// developed by Spinz. He made it available for Irrlicht and allowed it to be
+// distributed under this licence. I only modified some parts. A lot of thanks go to him.
 
 #include "CTerrainSceneNode.h"
 #include "CTerrainTriangleSelector.h"
@@ -22,7 +22,7 @@ namespace scene
 {
 
 	//! constructor
-	CTerrainSceneNode::CTerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, 
+	CTerrainSceneNode::CTerrainSceneNode(ISceneNode* parent, ISceneManager* mgr,
 			s32 id, s32 maxLOD, E_TERRAIN_PATCH_SIZE patchSize, const core::vector3df& position,
 			const core::vector3df& rotation, const core::vector3df& scale)
 	: ITerrainSceneNode(parent, mgr, id, position, rotation, scale),
@@ -181,9 +181,9 @@ namespace scene
 		setRotation( TerrainData.Rotation );
 
 		// Pre-allocate memory for indices
-		RenderBuffer.Indices.reallocate( TerrainData.PatchCount * TerrainData.PatchCount * 
+		RenderBuffer.Indices.reallocate( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
-		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount * 
+		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 
 		u32 endTime = os::Timer::getTime();
@@ -192,7 +192,7 @@ namespace scene
 		sprintf(tmp, "Generated terrain data (%dx%d) in %.4f seconds",
 			TerrainData.Size, TerrainData.Size, ( endTime - startTime ) / 1000.0f );
 		os::Printer::print( tmp );
-		
+
 		return true;
 	}
 
@@ -245,7 +245,7 @@ namespace scene
 				TerrainData.MaxLOD = 7;
 			}
 			break;
-		} 
+		}
 
 		// --- Generate vertex data from heightmap ----
 		// resize the vertex array for the mesh buffer one time ( makes loading faster )
@@ -319,9 +319,9 @@ namespace scene
 		setRotation( TerrainData.Rotation );
 
 		// Pre-allocate memory for indices
-		RenderBuffer.Indices.reallocate( TerrainData.PatchCount * TerrainData.PatchCount * 
+		RenderBuffer.Indices.reallocate( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
-		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount * 
+		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 
 		u32 endTime = os::Timer::getTime();
@@ -330,11 +330,11 @@ namespace scene
 		sprintf( tmp, "Generated terrain data (%dx%d) in %.4f seconds",
 			TerrainData.Size, TerrainData.Size, (endTime - startTime) / 1000.0f );
 		os::Printer::print( tmp );
-		
+
 		return true;
 	}
 
-	//! Sets the scale of the scene node. 
+	//! Sets the scale of the scene node.
 	//! \param scale: New scale of the node
 	void CTerrainSceneNode::setScale(const core::vector3df& scale)
 	{
@@ -360,7 +360,7 @@ namespace scene
 		TerrainData.RotationPivot = pivot;
 	}
 
-	//! Sets the position of the node. 
+	//! Sets the position of the node.
 	//! \param newpos: New postition of the scene node.
 	void CTerrainSceneNode::setPosition ( const core::vector3df& newpos )
 	{
@@ -394,7 +394,7 @@ namespace scene
 	}
 
 	//! Updates the scene nodes indices if the camera has moved or rotated by a certain
-	//! threshold, which can be changed using the SetCameraMovementDeltaThreshold and 
+	//! threshold, which can be changed using the SetCameraMovementDeltaThreshold and
 	//! SetCameraRotationDeltaThreshold functions.  This also determines if a given patch
 	//! for the scene node is within the view frustrum and if it's not the indices are not
 	//! generated for that patch.
@@ -421,10 +421,10 @@ namespace scene
 		core::vector3df cameraPosition = SceneManager->getActiveCamera()->getPosition ( );
 
 		// Only check on the Camera's Y Rotation
-		if (( fabs(cameraRotation.X - OldCameraRotation.X) < CameraRotationDelta) && 
+		if (( fabs(cameraRotation.X - OldCameraRotation.X) < CameraRotationDelta) &&
 			( fabs(cameraRotation.Y - OldCameraRotation.Y) < CameraRotationDelta))
 		{
-			if ((fabs(cameraPosition.X - OldCameraPosition.X) < CameraMovementDelta) && 
+			if ((fabs(cameraPosition.X - OldCameraPosition.X) < CameraMovementDelta) &&
 				(fabs(cameraPosition.Y - OldCameraPosition.Y) < CameraMovementDelta) &&
 				(fabs(cameraPosition.Z - OldCameraPosition.Z) < CameraMovementDelta))
 			{
@@ -436,14 +436,14 @@ namespace scene
 		OldCameraRotation = cameraRotation;
 		const SViewFrustrum* frustrum = SceneManager->getActiveCamera()->getViewFrustrum();
 
-		// Determine each patches LOD based on distance from camera ( and whether or not they are in 
+		// Determine each patches LOD based on distance from camera ( and whether or not they are in
 		// the view frustrum ).
 		for( s32 j = 0; j < TerrainData.PatchCount * TerrainData.PatchCount; ++j )
 		{
 			if( frustrum->getBoundingBox().intersectsWithBox( TerrainData.Patches[j].BoundingBox ) )
 			{
-				f32 distance = (cameraPosition.X - TerrainData.Patches[j].Center.X) * (cameraPosition.X - TerrainData.Patches[j].Center.X) + 
-					(cameraPosition.Y - TerrainData.Patches[j].Center.Y) * (cameraPosition.Y - TerrainData.Patches[j].Center.Y) + 
+				f32 distance = (cameraPosition.X - TerrainData.Patches[j].Center.X) * (cameraPosition.X - TerrainData.Patches[j].Center.X) +
+					(cameraPosition.Y - TerrainData.Patches[j].Center.Y) * (cameraPosition.Y - TerrainData.Patches[j].Center.Y) +
 					(cameraPosition.Z - TerrainData.Patches[j].Center.Z) * (cameraPosition.Z - TerrainData.Patches[j].Center.Z);
 
 				for( s32 i = TerrainData.MaxLOD - 1; i >= 0; --i )
@@ -538,7 +538,7 @@ namespace scene
 		SceneManager->getVideoDriver()->setMaterial(Mesh.getMeshBuffer(0)->getMaterial());
 
 		// For use with geomorphing
-		SceneManager->getVideoDriver()->drawIndexedTriangleList( 
+		SceneManager->getVideoDriver()->drawIndexedTriangleList(
 			(video::S3DVertex2TCoords*)RenderBuffer.getVertices(),
 			RenderBuffer.getVertexCount(),
 			RenderBuffer.getIndices(),
@@ -549,7 +549,7 @@ namespace scene
 	//! Return the bounding box of the entire terrain.
 	const core::aabbox3d<f32>& CTerrainSceneNode::getBoundingBox() const
 	{
-		return TerrainData.BoundingBox; 
+		return TerrainData.BoundingBox;
 	}
 
 	//! Return the bounding box of a patch
@@ -617,14 +617,14 @@ namespace scene
 					}
 				}
 			}
-		}	
+		}
 	}
 
-	//! Gets the indices for a specified patch at a specified Level of Detail.  
+	//! Gets the indices for a specified patch at a specified Level of Detail.
 	//! \param mb: A reference to an array of u32 indices.
 	//! \param patchX: Patch x coordinate.
 	//! \param patchZ: Patch z coordinate.
-	//! \param LOD: The level of detail to get for that patch.  If -1, then get 
+	//! \param LOD: The level of detail to get for that patch.  If -1, then get
 	//! the CurrentLOD.  If the CurrentLOD is set to -1, meaning it's not shown,
 	//! then it will retrieve the triangles at the highest LOD ( 0 ).
 	//! \return: Number if indices put into the buffer.
@@ -770,17 +770,17 @@ namespace scene
 	u32 CTerrainSceneNode::getIndex(const s32& PatchX, const s32& PatchZ,
 									const s32& PatchIndex, u32 vX, u32 vZ)
 	{
-		// top border 
+		// top border
 		if (vZ == 0)
 		{
-			if (TerrainData.Patches[PatchIndex].Top && 
+			if (TerrainData.Patches[PatchIndex].Top &&
 				TerrainData.Patches[PatchIndex].CurrentLOD < TerrainData.Patches[PatchIndex].Top->CurrentLOD &&
 				(vX % ( 1 << TerrainData.Patches[PatchIndex].Top->CurrentLOD)) != 0 )
 			{
 				vX = vX - vX % ( 1 << TerrainData.Patches[PatchIndex].Top->CurrentLOD );
 			}
 		}
-		else 
+		else
 		if ( vZ == (u32)TerrainData.CalcPatchSize ) // bottom border
 		{
 			if (TerrainData.Patches[PatchIndex].Bottom &&
@@ -790,7 +790,7 @@ namespace scene
 				vX = vX - vX % ( 1 << TerrainData.Patches[PatchIndex].Bottom->CurrentLOD );
 			}
 		}
-	    
+
 		// left border
 		if ( vX == 0 )
 		{
@@ -801,7 +801,7 @@ namespace scene
 				vZ = vZ - vZ % ( 1 << TerrainData.Patches[PatchIndex].Left->CurrentLOD );
 			}
 		}
-		else 
+		else
 		if  ( vX == (u32)TerrainData.CalcPatchSize ) // right border
 		{
 			if (TerrainData.Patches[PatchIndex].Right &&
@@ -811,14 +811,14 @@ namespace scene
 				vZ = vZ - vZ % ( 1 << TerrainData.Patches[PatchIndex].Right->CurrentLOD );
 			}
 		}
-	                
+
 		if ( vZ >= (u32)TerrainData.PatchSize )
 			vZ = TerrainData.CalcPatchSize;
 
 		if ( vX >= (u32)TerrainData.PatchSize )
 			vX = TerrainData.CalcPatchSize;
 
-		return (vZ + ((TerrainData.CalcPatchSize) * PatchZ)) * TerrainData.Size + 
+		return (vZ + ((TerrainData.CalcPatchSize) * PatchZ)) * TerrainData.Size +
 			(vX + ((TerrainData.CalcPatchSize) * PatchX));
 	}
 
@@ -828,7 +828,7 @@ namespace scene
 		s32 count;
 		core::vector3df a, b, c, t;
 		core::vector3df normal = core::vector3df ( 0.0f, 1.0f, 0.0f );
-		
+
 		for (s32 x=0; x<TerrainData.Size; ++x)
 			for (s32 z=0; z<TerrainData.Size; ++z)
 			{
@@ -869,7 +869,7 @@ namespace scene
 					c -= a;
 					t = b.crossProduct ( c );
 					t.normalize ( );
-					normal += t;				
+					normal += t;
 
 					a = pMeshBuffer->Vertices[(x-1)*TerrainData.Size+z].Pos;
 					b = pMeshBuffer->Vertices[x*TerrainData.Size+z+1].Pos;
@@ -878,8 +878,8 @@ namespace scene
 					c -= a;
 					t = b.crossProduct ( c );
 					t.normalize ( );
-					normal += t;				
-					
+					normal += t;
+
 					count += 2;
 				}
 
@@ -893,7 +893,7 @@ namespace scene
 					c -= a;
 					t = b.crossProduct ( c );
 					t.normalize ( );
-					normal += t;				
+					normal += t;
 
 					a = pMeshBuffer->Vertices[x*TerrainData.Size+z+1].Pos;
 					b = pMeshBuffer->Vertices[(x+1)*TerrainData.Size+z+1].Pos;
@@ -902,7 +902,7 @@ namespace scene
 					c -= a;
 					t = b.crossProduct ( c );
 					t.normalize ( );
-					normal += t;				
+					normal += t;
 
 					count += 2;
 				}
@@ -917,7 +917,7 @@ namespace scene
 					c -= a;
 					t = b.crossProduct ( c );
 					t.normalize ( );
-					normal += t;				
+					normal += t;
 
 					a = pMeshBuffer->Vertices[x*TerrainData.Size+z-1].Pos;
 					b = pMeshBuffer->Vertices[(x+1)*TerrainData.Size+z].Pos;
@@ -926,7 +926,7 @@ namespace scene
 					c -= a;
 					t = b.crossProduct ( c );
 					t.normalize ( );
-					normal += t;	
+					normal += t;
 
 					count += 2;
 				}
@@ -973,8 +973,8 @@ namespace scene
 				TerrainData.Patches[index].BoundingBox =  core::aabbox3df (999999.9f, 999999.9f, 999999.9f,
 					-999999.9f, -999999.9f, -999999.9f );
 
-				for( s32 xx = x*(TerrainData.CalcPatchSize); xx < ( x + 1 ) * TerrainData.CalcPatchSize; ++xx )
-					for( s32 zz = z*(TerrainData.CalcPatchSize); zz < ( z + 1 ) * TerrainData.CalcPatchSize; ++zz )
+				for( s32 xx = x*(TerrainData.CalcPatchSize); xx <= ( x + 1 ) * TerrainData.CalcPatchSize; ++xx )
+					for( s32 zz = z*(TerrainData.CalcPatchSize); zz <= ( z + 1 ) * TerrainData.CalcPatchSize; ++zz )
 						TerrainData.Patches[index].BoundingBox.addInternalPoint( RenderBuffer.Vertices[xx * TerrainData.Size + zz].Pos );
 
 				// Reconfigure the bounding box of the terrain as a whole
@@ -1040,9 +1040,9 @@ namespace scene
 
 			for (i=0; i<TerrainData.MaxLOD; ++i)
 			{
-				TerrainData.LODDistanceThreshold[i] = 
-					(TerrainData.PatchSize * TerrainData.PatchSize) * 
-					(TerrainData.Scale.X * TerrainData.Scale.Z) * 
+				TerrainData.LODDistanceThreshold[i] =
+					(TerrainData.PatchSize * TerrainData.PatchSize) *
+					(TerrainData.Scale.X * TerrainData.Scale.Z) *
 					((i+1+ i / 2) * (i+1+ i / 2));
 			}
 		}

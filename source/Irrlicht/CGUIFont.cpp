@@ -52,7 +52,18 @@ bool CGUIFont::load(const c8* filename)
 	if (!Driver)
 		return false;
 
-	return loadTexture(Driver->getTexture(filename));
+    // turn mip-maps off
+    bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
+    Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+
+    // get a pointer to the texture
+    video::ITexture* tex = Driver->getTexture(filename);
+
+    // set previous mip-map state
+    Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
+
+    // load the texture
+	return loadTexture(tex);
 }
 
 
@@ -146,7 +157,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosti
 				Positions[lowerRightPostions].LowerRightCorner = pos;
 				++lowerRightPostions;
 			}
-			else 
+			else
 			if (*p == colorBackGround)
 				*p = colorBackGroundWithAlphaFalse;
 			else
@@ -224,7 +235,7 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosti
 				Positions[lowerRightPostions].LowerRightCorner = pos;
 				++lowerRightPostions;
 			}
-			else 
+			else
 			if (*p == colorBackGround)
 				*p = colorBackGroundWithAlphaFalse;
 			else
@@ -301,7 +312,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 	}
 
 	u32 n;
-	
+
 	while(*text)
 	{
 		n = (*text) - 32;
@@ -309,7 +320,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 			n = WrongCharacter;
 
 		Driver->draw2DImage(Texture, offset, Positions[n], clip, color, true);
-        
+
 		offset.X += Positions[n].getWidth();
 
 		++text;
