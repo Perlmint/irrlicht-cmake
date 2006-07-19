@@ -295,7 +295,7 @@ void CD3D9Texture::createTexture(u32 flags)
 
 	DWORD usage = 0;
 
-	// This enables hardware mip map generation. I disabled this again in 0.7.1, because
+	// This enables hardware mip map generation. Disabled because
 	// some cards or drivers seem to have problems with this.
 	// D3DCAPS9 caps;
 	// Device->GetDeviceCaps(&caps);

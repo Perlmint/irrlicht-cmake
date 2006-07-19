@@ -156,8 +156,8 @@ void CD3D9Driver::createMaterialRenderers()
 
 //! initialises the Direct3D API
 bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd,
-                             u32 bits, bool fullScreen, bool pureSoftware, bool vsync,
-							 bool antiAlias)
+				u32 bits, bool fullScreen, bool pureSoftware,
+				bool vsync, bool antiAlias)
 {
 	HRESULT hr;
 	Fullscreen = fullScreen;
@@ -216,13 +216,13 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 		return false;
 	}
 
-    ZeroMemory(&present, sizeof(present));
+	ZeroMemory(&present, sizeof(present));
 
-	present.SwapEffect					= fullScreen ? D3DSWAPEFFECT_FLIP : D3DSWAPEFFECT_COPY;
-	present.Windowed					= fullScreen ? FALSE : TRUE;
-	present.BackBufferFormat			= d3ddm.Format;
-	present.EnableAutoDepthStencil		= TRUE;
-	present.PresentationInterval		= D3DPRESENT_INTERVAL_IMMEDIATE;
+	present.SwapEffect		= fullScreen ? D3DSWAPEFFECT_FLIP : D3DSWAPEFFECT_COPY;
+	present.Windowed		= fullScreen ? FALSE : TRUE;
+	present.BackBufferFormat	= d3ddm.Format;
+	present.EnableAutoDepthStencil	= TRUE;
+	present.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	if (fullScreen)
 	{
@@ -245,7 +245,7 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	devtype = D3DDEVTYPE_REF;
 	#endif
 
-	// enable anti alias if possible and whished
+	// enable anti alias if possible and desired
 	if (antiAlias)
 	{
 		DWORD qualityLevels = 0; 
@@ -253,12 +253,12 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 		if (!FAILED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, 
 		           devtype, present.BackBufferFormat, !fullScreen, 
 		           D3DMULTISAMPLE_2_SAMPLES, &qualityLevels)))
-        {        
+		{        
 			// enable multi sampling
-            present.SwapEffect         = D3DSWAPEFFECT_DISCARD; 
-            present.MultiSampleType    = D3DMULTISAMPLE_2_SAMPLES; 
+			present.SwapEffect         = D3DSWAPEFFECT_DISCARD; 
+			present.MultiSampleType    = D3DMULTISAMPLE_2_SAMPLES; 
 			present.MultiSampleQuality = qualityLevels-1;
-        } 
+		} 
 		else
 		if (!FAILED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, 
 					devtype, present.BackBufferFormat, !fullScreen, 
@@ -270,10 +270,10 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 			present.MultiSampleQuality = qualityLevels-1;
 		} 		
 		else 
-        { 
-            os::Printer::log("Anti aliasing disabled because hardware/driver lacks necessary caps.", ELL_WARNING);    
+		{ 
+			os::Printer::log("Anti aliasing disabled because hardware/driver lacks necessary caps.", ELL_WARNING);    
 			antiAlias = false;
-        }
+		}
 	}
 
 	// check stencil buffer compatibility
@@ -304,25 +304,25 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 
 	if (pureSoftware)
 	{
-		hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, D3DDEVTYPE_REF,	hwnd,
-									D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
+		hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF,	hwnd,
+					D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
 
 		if (FAILED(hr))
 			os::Printer::log("Was not able to create Direct3D9 software device.", ELL_ERROR);
 	}
 	else
 	{
-		hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, devtype,	hwnd,
-									D3DCREATE_HARDWARE_VERTEXPROCESSING, &present, &pID3DDevice);
+		hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, devtype,	hwnd,
+					D3DCREATE_HARDWARE_VERTEXPROCESSING, &present, &pID3DDevice);
 
 		if(FAILED(hr))
 		{
-			hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, devtype,	hwnd,
+			hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, devtype,	hwnd,
 										D3DCREATE_MIXED_VERTEXPROCESSING , &present, &pID3DDevice);
 
 			if(FAILED(hr))
 			{
-				hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, devtype, hwnd,
+				hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd,
 											D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
 
 				if (FAILED(hr))
@@ -397,14 +397,14 @@ bool CD3D9Driver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 	if (DeviceLost)
 	{
 		if(FAILED(hr = pID3DDevice->TestCooperativeLevel()))
-        {
-            if (hr == D3DERR_DEVICELOST)
-                return false;
+		{
+			if (hr == D3DERR_DEVICELOST)
+				return false;
 
-            if (hr == D3DERR_DEVICENOTRESET)
+			if (hr == D3DERR_DEVICENOTRESET)
 				reset();
-            return false;
-        }
+			return false;
+		}
 	}
 
 	DWORD flags = 0;
@@ -892,67 +892,68 @@ void CD3D9Driver::draw2DLine(const core::position2d<s32>& start,
 }
 
 void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect, 
-                   const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect, 
-                   video::SColor* colors, bool useAlphaChannelOfTexture) 
+		const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect, 
+		video::SColor* colors, bool useAlphaChannelOfTexture) 
 { 
-   if(!texture) return; 
+	if(!texture)
+		return; 
 
-   if (useAlphaChannelOfTexture) 
-      setRenderStates2DMode(false, true, true); 
-   else 
-      setRenderStates2DMode(false, true, false); 
+	if (useAlphaChannelOfTexture) 
+		setRenderStates2DMode(false, true, true); 
+	else 
+		setRenderStates2DMode(false, true, false); 
 
-   setTexture(0, texture); 
+	setTexture(0, texture); 
 
-   core::rect<s32> trgRect=destRect; 
-   core::rect<s32> srcRect=sourceRect; 
+	core::rect<s32> trgRect=destRect; 
+	core::rect<s32> srcRect=sourceRect; 
 
-   const core::dimension2d<s32> ss = texture->getOriginalSize(); 
-   float ssw=1.0f/ss.Width; 
-   float ssh=1.0f/ss.Height; 
+	const core::dimension2d<s32> ss = texture->getOriginalSize(); 
+	float ssw=1.0f/ss.Width; 
+	float ssh=1.0f/ss.Height; 
 
-   core::rect<f32> tcoords; 
-   tcoords.UpperLeftCorner.X = (((f32)srcRect.UpperLeftCorner.X)+0.5f) * ssw ; 
-   tcoords.UpperLeftCorner.Y = (((f32)srcRect.UpperLeftCorner.Y)+0.5f) * ssh; 
-   tcoords.LowerRightCorner.X = (((f32)srcRect.UpperLeftCorner.X +0.5f + (f32)srcRect.getWidth())) * ssw; 
-   tcoords.LowerRightCorner.Y = (((f32)srcRect.UpperLeftCorner.Y +0.5f + (f32)srcRect.getHeight())) * ssh; 
+	core::rect<f32> tcoords; 
+	tcoords.UpperLeftCorner.X = (((f32)srcRect.UpperLeftCorner.X)+0.5f) * ssw ; 
+	tcoords.UpperLeftCorner.Y = (((f32)srcRect.UpperLeftCorner.Y)+0.5f) * ssh; 
+	tcoords.LowerRightCorner.X = (((f32)srcRect.UpperLeftCorner.X +0.5f + (f32)srcRect.getWidth())) * ssw; 
+	tcoords.LowerRightCorner.Y = (((f32)srcRect.UpperLeftCorner.Y +0.5f + (f32)srcRect.getHeight())) * ssh; 
 
-   core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
+	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
 
-   s32 xPlus = -(renderTargetSize.Width>>1); 
-   f32 xFact = 1.0f / (renderTargetSize.Width>>1); 
+	s32 xPlus = -(renderTargetSize.Width>>1); 
+	f32 xFact = 1.0f / (renderTargetSize.Width>>1); 
 
-   s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1); 
-   f32 yFact = 1.0f / (renderTargetSize.Height>>1); 
+	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1); 
+	f32 yFact = 1.0f / (renderTargetSize.Height>>1); 
 
-   core::rect<float> npos; 
-   npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact; 
-   npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact; 
-   npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact; 
-   npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact; 
+	core::rect<float> npos; 
+	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact; 
+	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact; 
+	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact; 
+	npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact; 
 
-   video::SColor temp[4] = 
-   {
+	video::SColor temp[4] = 
+	{
 		0xFFFFFFFF,
 		0xFFFFFFFF,
 		0xFFFFFFFF,
 		0xFFFFFFFF
-   };
+	};
 
-   video::SColor* useColor = colors ? colors : temp;
+	video::SColor* useColor = colors ? colors : temp;
 
-   S3DVertex vtx[4]; // clock wise 
-   vtx[0] = S3DVertex(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, useColor[0], tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y); 
-   vtx[1] = S3DVertex(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, useColor[3], tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y); 
-   vtx[2] = S3DVertex(npos.LowerRightCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, useColor[2], tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y); 
-   vtx[3] = S3DVertex(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, useColor[1], tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);    
+	S3DVertex vtx[4]; // clock wise 
+	vtx[0] = S3DVertex(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, useColor[0], tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y); 
+	vtx[1] = S3DVertex(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, useColor[3], tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y); 
+	vtx[2] = S3DVertex(npos.LowerRightCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, useColor[2], tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y); 
+	vtx[3] = S3DVertex(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, useColor[1], tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);    
 
-   s16 indices[6] = {0,1,2,0,2,3}; 
+	s16 indices[6] = {0,1,2,0,2,3}; 
 
-   setVertexShader(EVT_STANDARD); 
+	setVertexShader(EVT_STANDARD); 
 
-   pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0], 
-      D3DFMT_INDEX16,&vtx[0],   sizeof(S3DVertex)); 
+	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0], 
+				D3DFMT_INDEX16,&vtx[0],   sizeof(S3DVertex)); 
 
 }
 
@@ -1083,7 +1084,7 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / texture->getOriginalSize().Width;
 	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / texture->getOriginalSize().Height;
 
-    S3DVertex vtx[4];
+	S3DVertex vtx[4];
 	vtx[0] = S3DVertex((f32)(poss.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-poss.UpperLeftCorner.Y ) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
 	vtx[1] = S3DVertex((f32)(poss.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- poss.UpperLeftCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
 	vtx[2] = S3DVertex((f32)(poss.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-poss.LowerRightCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
@@ -1119,7 +1120,7 @@ void CD3D9Driver::draw2DRectangle(SColor color, const core::rect<s32>& position,
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
-    S3DVertex vtx[4];
+	S3DVertex vtx[4];
 	vtx[0] = S3DVertex((f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, color, 0.0f, 0.0f);
 	vtx[1] = S3DVertex((f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- pos.UpperLeftCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, 0.0f, 1.0f);
 	vtx[2] = S3DVertex((f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, 1.0f, 0.0f);
@@ -1161,7 +1162,7 @@ void CD3D9Driver::draw2DRectangle(const core::rect<s32>& position,
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
-    S3DVertex vtx[4];
+	S3DVertex vtx[4];
 	vtx[0] = S3DVertex((f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, colorLeftUp, 0.0f, 0.0f);
 	vtx[1] = S3DVertex((f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- pos.UpperLeftCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, colorRightUp, 0.0f, 1.0f);
 	vtx[2] = S3DVertex((f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, colorRightDown, 1.0f, 0.0f);
@@ -1319,12 +1320,15 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 
 	// fillmode
 
-	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe)
+	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
 	{
-		if (!material.Wireframe)
-			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-		else
+		if (material.Wireframe)
 			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		else
+		if (material.PointCloud)
+			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_POINT);
+		else
+			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	}
 
 	// shademode
@@ -1776,7 +1780,7 @@ void CD3D9Driver::drawStencilShadow(bool clearStencilBuffer, video::SColor leftU
 	if (!StencilBuffer)
 		return;
 
-    S3DVertex vtx[4];
+	S3DVertex vtx[4];
 	vtx[0] = S3DVertex(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, leftUpEdge, 0.0f, 0.0f);
 	vtx[1] = S3DVertex(1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, rightUpEdge, 0.0f, 1.0f);
 	vtx[2] = S3DVertex(-1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, leftDownEdge, 1.0f, 0.0f);
@@ -1859,7 +1863,7 @@ void CD3D9Driver::draw3DLine(const core::vector3df& start,
 //! resets the device
 bool CD3D9Driver::reset()
 {
-    // reset
+	// reset
 	os::Printer::log("Resetting D3D9 device.", ELL_INFORMATION);
 	if (FAILED(pID3DDevice->Reset(&present)))
 	{
@@ -2060,7 +2064,7 @@ IVideoDriver* createDirectX9Driver(const core::dimension2d<s32>& screenSize, HWN
 								   io::IFileSystem* io, bool pureSoftware, bool vsync,
 								   bool antiAlias)
 {
-    #ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
+	#ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
 	CD3D9Driver* dx9 =  new CD3D9Driver(screenSize, window, fullscreen, stencilbuffer, io, pureSoftware);
 	if (!dx9->initDriver(screenSize, window, bits, fullscreen, pureSoftware, vsync, antiAlias))
 	{

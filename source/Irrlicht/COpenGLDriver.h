@@ -52,7 +52,7 @@ namespace video
 		#ifdef _IRR_WINDOWS_
 		//! win32 constructor
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen,
-			bool stencilBuffer, io::IFileSystem* io);
+			bool stencilBuffer, io::IFileSystem* io, bool antiAlias);
 
 		//! inits the windows specific parts of the open gl driver
 		bool initDriver(const core::dimension2d<s32>& screenSize, HWND window,
@@ -61,12 +61,12 @@ namespace video
 
 		#ifdef LINUX
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, Window window, Display* display, io::IFileSystem* io);
+			bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias);
 		#endif		
 
 		#ifdef MACOSX
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, CIrrDeviceMacOSX *device,io::IFileSystem* io);
+			bool stencilBuffer, CIrrDeviceMacOSX *device,io::IFileSystem* io, bool antiAlias);
 		#endif
 
 		//! destructor
@@ -297,14 +297,8 @@ namespace video
 		void createMaterialRenderers();
 
 		core::stringw Name;
-		core::matrix4 Matrizes[ETS_COUNT];
+		core::matrix4 Matrices[ETS_COUNT];
 		core::array<s32> ColorBuffer;
-
-		#ifdef _IRR_WINDOWS_		
-		HDC HDc; // Private GDI Device Context
-		HWND Window;
-		HGLRC HRc; // Permanent Rendering Context
-		#endif
 
 		// enumeration for rendering modes such as 2d and 3d for minizing the switching of renderStates.
 		enum E_RENDER_MODE
@@ -319,6 +313,7 @@ namespace video
 		bool Transformation3DChanged;
 		bool MultiTextureExtension;
 		bool StencilBuffer;
+		bool AntiAlias;
 		bool ARBVertexProgramExtension; //GL_ARB_vertex_program
 		bool ARBFragmentProgramExtension; //GL_ARB_fragment_program
 		bool ARBShadingLanguage100Extension; 
@@ -369,7 +364,13 @@ namespace video
 			PFNGLUNIFORMMATRIX3FVARBPROC pGlUniformMatrix3fvARB;
 			PFNGLUNIFORMMATRIX4FVARBPROC pGlUniformMatrix4fvARB;
 			PFNGLGETACTIVEUNIFORMARBPROC pGlGetActiveUniformARB;
-			
+
+		#ifdef _IRR_WINDOWS_		
+		HDC HDc; // Private GDI Device Context
+		HWND Window;
+		HGLRC HRc; // Permanent Rendering Context
+		#endif
+
 		#ifdef LINUX
 			Window XWindow;
 			Display* XDisplay;

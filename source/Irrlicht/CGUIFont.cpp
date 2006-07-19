@@ -52,17 +52,17 @@ bool CGUIFont::load(const c8* filename)
 	if (!Driver)
 		return false;
 
-    // turn mip-maps off
-    bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
-    Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+	// turn mip-maps off
+	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
+	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
 
-    // get a pointer to the texture
-    video::ITexture* tex = Driver->getTexture(filename);
+	// get a pointer to the texture
+	video::ITexture* tex = Driver->getTexture(filename);
 
-    // set previous mip-map state
-    Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
+	// set previous mip-map state
+	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
 
-    // load the texture
+	// load the texture
 	return loadTexture(tex);
 }
 

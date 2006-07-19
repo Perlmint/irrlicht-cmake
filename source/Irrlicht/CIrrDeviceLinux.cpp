@@ -24,8 +24,8 @@ namespace irr
 	namespace video
 	{
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-			bool fullscreen, bool stencilBuffer, 
-			Window window, Display* display, io::IFileSystem* io);
+			Window window, Display* display, bool fullscreen,
+			bool stencilBuffer, io::IFileSystem* io, bool antiAlias);
 	}
 
 
@@ -42,7 +42,8 @@ const char* wmDeleteWindow = "WM_DELETE_WINDOW";
 CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	const core::dimension2d<s32>& windowSize,
 	u32 bits, bool fullscreen,
-	bool sbuffer, IEventReceiver* receiver,
+	bool sbuffer, bool antiAlias,
+	IEventReceiver* receiver,
 	const char* version)
  : CIrrDeviceStub(version, receiver), close(false), DriverType(driverType),
 	Fullscreen(fullscreen), StencilBuffer(sbuffer), SoftwareImage(0)
@@ -338,7 +339,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		s32 displayW = modes[bestMode]->hdisplay;
 		s32 displayH = modes[bestMode]->vdisplay;
 
-		XFree(*modes);
+		XFree(modes);
 
 		attributes.override_redirect = True;
 
@@ -456,7 +457,7 @@ void CIrrDeviceLinux::createDriver(video::E_DRIVER_TYPE driverType,
 	case video::EDT_OPENGL:
 	#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
-			VideoDriver = video::createOpenGLDriver(windowSize, Fullscreen, StencilBuffer, window, display, FileSystem);
+			VideoDriver = video::createOpenGLDriver(windowSize, window, display, Fullscreen, StencilBuffer, FileSystem, false);
 	#else
 		os::Printer::log("No OpenGL support compiled in.", ELL_WARNING);
 	#endif
@@ -975,6 +976,7 @@ IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationP
 		param.Bits,
 		param.Fullscreen, 
 		param.Stencilbuffer, 
+		param.AntiAlias, 
 		param.EventReceiver,
 		param.SDK_version_do_not_use);
 	

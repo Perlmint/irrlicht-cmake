@@ -80,7 +80,7 @@ RTTSurface(0)
 					// compiling with both D3D8 and 9, causing it not to work in the D3D9 device.
 					// So mipmapgeneration is replaced with my own bad generation in d3d 8 when
 					// compiling with both D3D 8 and 9.
-					HRESULT hr  = D3DXFilterTexture(Texture, NULL, 0 , D3DX_DEFAULT );
+					HRESULT hr  = D3DXFilterTexture(Texture, NULL, D3DX_DEFAULT , D3DX_DEFAULT );
 					if (FAILED(hr))
 						os::Printer::log("Could not create direct3d mip map levels.", ELL_WARNING);
 					else

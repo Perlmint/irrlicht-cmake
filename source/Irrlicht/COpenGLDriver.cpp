@@ -27,19 +27,19 @@ namespace video
 // -----------------------------------------------------------------------
 #ifdef _IRR_WINDOWS_
 //! Windows constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io)
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias)
 : CNullDriver(io, screenSize), HDc(0), HRc(0), Window(window),
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
 	MaxTextureUnits(1), pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
-	ARBShadingLanguage100Extension(false),  
-	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false), 
+	ARBShadingLanguage100Extension(false),
+	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
 	CurrentRendertargetSize(0,0), pGlCreateShaderObjectARB(0), pGlShaderSourceARB(0),
-	pGlCompileShaderARB(0), pGlCreateProgramObjectARB(0), pGlAttachObjectARB(0), 
-	pGlLinkProgramARB(0), pGlUseProgramObjectARB(0), pGlDeleteObjectARB(0), 
+	pGlCompileShaderARB(0), pGlCreateProgramObjectARB(0), pGlAttachObjectARB(0),
+	pGlLinkProgramARB(0), pGlUseProgramObjectARB(0), pGlDeleteObjectARB(0),
 	pGlGetObjectParameterivARB(0), pGlGetUniformLocationARB(0), pGlUniform4fvARB(0),
 	pGlUniform1fvARB(0), pGlUniform2fvARB(0), pGlUniform3fvARB(0), pGlUniformMatrix2fvARB(0),
 	pGlUniformMatrix3fvARB(0), pGlUniformMatrix4fvARB(0), pGlGetActiveUniformARB(0),
@@ -179,12 +179,12 @@ COpenGLDriver::~COpenGLDriver()
 // -----------------------------------------------------------------------
 #ifdef MACOSX
 //! Windows constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io)
-: CNullDriver(io, screenSize), 
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer),
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io, bool antiAlias)
+: CNullDriver(io, screenSize),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false),  
-	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false), 
+	MaxTextureUnits(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false), 
+	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
 	CurrentRendertargetSize(0,0), _device(device)
 {
 	#ifdef _DEBUG
@@ -205,13 +205,13 @@ COpenGLDriver::~COpenGLDriver()
 // -----------------------------------------------------------------------
 #ifdef LINUX
 //! Linux constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io)
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias)
 : CNullDriver(io, screenSize),
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-  MaxTextureUnits(1), XWindow(window), XDisplay(display),
+	MaxTextureUnits(1), XWindow(window), XDisplay(display),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
-	ARBShadingLanguage100Extension(false), 
+	ARBShadingLanguage100Extension(false),
 	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
 	CurrentRendertargetSize(0,0)
 {
@@ -299,7 +299,7 @@ void COpenGLDriver::createMaterialRenderers()
 
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_SOLID( this));
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_SOLID_2_LAYER( this));
-	
+
 	// add the same renderer for all lightmap types
 	COpenGLMaterialRenderer_LIGHTMAP* lmr = new COpenGLMaterialRenderer_LIGHTMAP( this);
 	addMaterialRenderer(lmr); // for EMT_LIGHTMAP:
@@ -321,7 +321,7 @@ void COpenGLDriver::createMaterialRenderers()
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_TRANSPARENT_VERTEX_ALPHA( this));
 	//addAndDropMaterialRenderer(new COpenGLMaterialRenderer_SOLID( this));
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_TRANSPARENT_REFLECTION_2_LAYER( this));
-	
+
 	// add normal map renderers
 	s32 tmp = 0;
 	video::IMaterialRenderer* renderer = 0;
@@ -375,10 +375,10 @@ void COpenGLDriver::loadExtensions()
 			else
 			if (strstr(p, "GL_ARB_fragment_program"))
 				ARBFragmentProgramExtension = true;
-			else 
+			else
 			if (strstr(p, "GL_ARB_shading_language_100"))
-				ARBShadingLanguage100Extension = true; 
-			else 
+				ARBShadingLanguage100Extension = true;
+			else
 			if (strstr(p, "GL_EXT_texture_filter_anisotropic"))
 				AnisotropyExtension = true;
 
@@ -410,17 +410,17 @@ void COpenGLDriver::loadExtensions()
 		pGlProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC) wglGetProcAddress("glProgramStringARB");
 		pGlDeleteProgramsARB = (PFNGLDELETEPROGRAMSNVPROC) wglGetProcAddress("glDeleteProgramsARB");
 		pGlProgramLocalParameter4fvARB = (PFNGLPROGRAMLOCALPARAMETER4FVARBPROC) wglGetProcAddress("glProgramLocalParameter4fvARB");
-		pGlCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC) wglGetProcAddress("glCreateShaderObjectARB"); 
-		pGlShaderSourceARB = (PFNGLSHADERSOURCEARBPROC) wglGetProcAddress("glShaderSourceARB"); 
-		pGlCompileShaderARB = (PFNGLCOMPILESHADERARBPROC) wglGetProcAddress("glCompileShaderARB"); 
-		pGlCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC) wglGetProcAddress("glCreateProgramObjectARB"); 
-		pGlAttachObjectARB = (PFNGLATTACHOBJECTARBPROC) wglGetProcAddress("glAttachObjectARB"); 
-		pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) wglGetProcAddress("glLinkProgramARB"); 
-		pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) wglGetProcAddress("glUseProgramObjectARB"); 
-		pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) wglGetProcAddress("glDeleteObjectARB"); 
-		pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)	wglGetProcAddress("glGetObjectParameterivARB");  
-		pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)  wglGetProcAddress("glGetUniformLocationARB");  
-		pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) wglGetProcAddress("glUniform4fvARB");  
+		pGlCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC) wglGetProcAddress("glCreateShaderObjectARB");
+		pGlShaderSourceARB = (PFNGLSHADERSOURCEARBPROC) wglGetProcAddress("glShaderSourceARB");
+		pGlCompileShaderARB = (PFNGLCOMPILESHADERARBPROC) wglGetProcAddress("glCompileShaderARB");
+		pGlCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC) wglGetProcAddress("glCreateProgramObjectARB");
+		pGlAttachObjectARB = (PFNGLATTACHOBJECTARBPROC) wglGetProcAddress("glAttachObjectARB");
+		pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) wglGetProcAddress("glLinkProgramARB");
+		pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) wglGetProcAddress("glUseProgramObjectARB");
+		pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) wglGetProcAddress("glDeleteObjectARB");
+		pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)	wglGetProcAddress("glGetObjectParameterivARB"); 
+		pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)  wglGetProcAddress("glGetUniformLocationARB"); 
+		pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) wglGetProcAddress("glUniform4fvARB"); 
 		pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC)	wglGetProcAddress("glUniform1fvARB");
 		pGlUniform2fvARB = (PFNGLUNIFORM2FVARBPROC)	wglGetProcAddress("glUniform2fvARB");
 		pGlUniform3fvARB = (PFNGLUNIFORM3FVARBPROC)	wglGetProcAddress("glUniform3fvARB");
@@ -442,99 +442,99 @@ void COpenGLDriver::loadExtensions()
 			#endif
 
 			pGlActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glActiveTextureARB")); 
-				
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glActiveTextureARB"));
+
 			pGlClientActiveTextureARB = (PFNGLCLIENTACTIVETEXTUREARBPROC)
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glClientActiveTextureARB")); 
-				
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glClientActiveTextureARB"));
+
 			// get fragment and vertex program function pointers
-			pGlGenProgramsARB = (PFNGLGENPROGRAMSARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenProgramsARB")); 
-			
-			pGlBindProgramARB = (PFNGLBINDPROGRAMARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glBindProgramARB")); 
-			
-			pGlProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramStringARB")); 
-			
+			pGlGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenProgramsARB"));
+
+			pGlBindProgramARB = (PFNGLBINDPROGRAMARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glBindProgramARB"));
+
+			pGlProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramStringARB"));
+
 			pGlDeleteProgramsARB = (PFNGLDELETEPROGRAMSNVPROC)
-			IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteProgramsARB")); 
-			
-			pGlProgramLocalParameter4fvARB = (PFNGLPROGRAMLOCALPARAMETER4FVARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramLocalParameter4fvARB")); 
-			
-			pGlCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateShaderObjectARB"));  
+			IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteProgramsARB"));
 
-			pGlShaderSourceARB = (PFNGLSHADERSOURCEARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glShaderSourceARB"));  
+			pGlProgramLocalParameter4fvARB = (PFNGLPROGRAMLOCALPARAMETER4FVARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramLocalParameter4fvARB"));
 
-			pGlCompileShaderARB = (PFNGLCOMPILESHADERARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompileShaderARB"));  
+			pGlCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateShaderObjectARB")); 
 
-			pGlCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateProgramObjectARB"));  
+			pGlShaderSourceARB = (PFNGLSHADERSOURCEARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glShaderSourceARB")); 
 
-			pGlAttachObjectARB = (PFNGLATTACHOBJECTARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glAttachObjectARB"));  
+			pGlCompileShaderARB = (PFNGLCOMPILESHADERARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompileShaderARB")); 
 
-			pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glLinkProgramARB"));  
+			pGlCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateProgramObjectARB")); 
 
-			pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUseProgramObjectARB"));  
+			pGlAttachObjectARB = (PFNGLATTACHOBJECTARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glAttachObjectARB")); 
 
-			pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteObjectARB"));  
-			
-			pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetObjectParameterivARB"));  
+			pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glLinkProgramARB")); 
 
-			pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetUniformLocationARB"));  
+			pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUseProgramObjectARB")); 
 
-			pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC)  
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform4fvARB"));  
+			pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteObjectARB")); 
 
-			pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC)	
+			pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetObjectParameterivARB")); 
+
+			pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetUniformLocationARB")); 
+
+			pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) 
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform4fvARB")); 
+
+			pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform1fvARB"));
 
-			pGlUniform2fvARB = (PFNGLUNIFORM2FVARBPROC)	
+			pGlUniform2fvARB = (PFNGLUNIFORM2FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform2fvARB"));
 
-			pGlUniform3fvARB = (PFNGLUNIFORM3FVARBPROC)	
+			pGlUniform3fvARB = (PFNGLUNIFORM3FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform3fvARB"));
 
-			pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC)	
+			pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform4fvARB"));
 
-			pGlUniformMatrix2fvARB = (PFNGLUNIFORMMATRIX2FVARBPROC)	
+			pGlUniformMatrix2fvARB = (PFNGLUNIFORMMATRIX2FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniformMatrix2fvARB"));
 
-			pGlUniformMatrix3fvARB = (PFNGLUNIFORMMATRIX3FVARBPROC)	
+			pGlUniformMatrix3fvARB = (PFNGLUNIFORMMATRIX3FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniformMatrix3fvARB"));
 
-			pGlUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC)	
+			pGlUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniformMatrix4fvARB"));
 
-			pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC)	
+			pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetActiveUniformARB"));
-		
+
 			//ARBVertexProgramExtension = false;
 			//ARBFragmentProgramExtension = false;
-				
+
 			#else // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
-			
+
 			MultiTextureExtension = false;
 			ARBVertexProgramExtension = false;
 			ARBFragmentProgramExtension = false;
 			os::Printer::log("Extensions disabled.", ELL_WARNING);
-			
+
 			#endif // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 		#endif // _IRR_WINDOWS_
 
 		// load common extensions
-		
+
 		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &MaxTextureUnits);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
 	}
@@ -604,7 +604,7 @@ bool COpenGLDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 //! Returns the transformation set by setTransform
 core::matrix4 COpenGLDriver::getTransform(E_TRANSFORMATION_STATE state)
 {
-	return Matrizes[state];
+	return Matrices[state];
 }
 
 
@@ -615,28 +615,28 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 	Transformation3DChanged = true;
 
 	GLfloat glmat[16];
-	Matrizes[state] = mat;
+	Matrices[state] = mat;
 
 	switch(state)
 	{
 	case ETS_VIEW:
 		// OpenGL only has a model matrix, view and world is not existent. so lets fake these two.
-		createGLMatrix(glmat, Matrizes[ETS_VIEW] * Matrizes[ETS_WORLD]);
+		createGLMatrix(glmat, Matrices[ETS_VIEW] * Matrices[ETS_WORLD]);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(glmat);
 		break;
 	case ETS_WORLD:
 		// OpenGL only has a model matrix, view and world is not existent. so lets fake these two.
-		createGLMatrix(glmat, Matrizes[ETS_VIEW] * Matrizes[ETS_WORLD]);
+		createGLMatrix(glmat, Matrices[ETS_VIEW] * Matrices[ETS_WORLD]);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(glmat);
 		break;
 	case ETS_PROJECTION:
 		{
 			createGLMatrix(glmat, mat);
-			
+
 			// flip z to compensate OpenGLs right-hand coordinate system
-			glmat[12]*= -1.0f;
+			glmat[12] *= -1.0f;
 
 			glMatrixMode(GL_PROJECTION);
 			glLoadMatrixf(glmat);
@@ -696,7 +696,7 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 verte
 
 
 //! draws an indexed triangle list
-void COpenGLDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, 
+void COpenGLDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount,
 										   const u16* indexList, s32 triangleCount)
 {
 	if (!checkPrimitiveCount(triangleCount))
@@ -733,7 +733,7 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s
 		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
-		
+
 		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
 		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords2);
@@ -802,7 +802,7 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
 	extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
 	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &vertices[0].Tangent);
-	
+
 	extGlClientActiveTextureARB(GL_TEXTURE2_ARB);
 	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &vertices[0].Binormal);
@@ -909,7 +909,7 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
-		
+
 		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
 		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords2);
@@ -941,7 +941,7 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 
 
 //! draws an 2d image
-void COpenGLDriver::draw2DImage(video::ITexture* texture, 
+void COpenGLDriver::draw2DImage(video::ITexture* texture,
 				   const core::position2d<s32>& destPos)
 {
 	if (!texture)
@@ -954,9 +954,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
-void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos, 
-								 const core::rect<s32>& sourceRect, 
-								 const core::rect<s32>* clipRect, SColor color, 
+void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
+								 const core::rect<s32>& sourceRect,
+								 const core::rect<s32>* clipRect, SColor color,
 								 bool useAlphaChannelOfTexture)
 {
 	if (!texture)
@@ -983,7 +983,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 			sourcePos.X -= targetPos.X - clipRect->UpperLeftCorner.X;
 			targetPos.X = clipRect->UpperLeftCorner.X;
 		}
-		
+
 		if (targetPos.X + sourceSize.Width > clipRect->LowerRightCorner.X)
 		{
 			sourceSize.Width -= (targetPos.X + sourceSize.Width) - clipRect->LowerRightCorner.X;
@@ -1000,7 +1000,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 			sourcePos.Y -= targetPos.Y - clipRect->UpperLeftCorner.Y;
 			targetPos.Y = clipRect->UpperLeftCorner.Y;
 		}
-		
+
 		if (targetPos.Y + sourceSize.Height > clipRect->LowerRightCorner.Y)
 		{
 			sourceSize.Height -= (targetPos.Y + sourceSize.Height) - clipRect->LowerRightCorner.Y;
@@ -1020,7 +1020,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 		sourcePos.X -= targetPos.X;
 		targetPos.X = 0;
 	}
-	
+
 	if (targetPos.X + sourceSize.Width > targetSurfaceSize.Width)
 	{
 		sourceSize.Width -= (targetPos.X + sourceSize.Width) - targetSurfaceSize.Width;
@@ -1037,7 +1037,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 		sourcePos.Y -= targetPos.Y;
 		targetPos.Y = 0;
 	}
-	
+
 	if (targetPos.Y + sourceSize.Height > targetSurfaceSize.Height)
 	{
 		sourceSize.Height -= (targetPos.Y + sourceSize.Height) - targetSurfaceSize.Height;
@@ -1048,7 +1048,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	// ok, we've clipped everything.
 	// now draw it.
 
-	setTexture(0, texture);	
+	setTexture(0, texture);
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 	if (useAlphaChannelOfTexture)
@@ -1077,7 +1077,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
 
 	glBegin(GL_QUADS);
-	
+
 	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
 	glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
 
@@ -1085,120 +1085,121 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
 
 	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
-	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y); 
+	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
 
 	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
-	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y); 
-	
+	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
+
 	glEnd();
 }
 
 
-void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect, 
-                   const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect, 
-                   video::SColor* colors, bool useAlphaChannelOfTexture) 
-{ 
-   if (!texture) 
-      return; 
+void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect,
+		const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect,
+		video::SColor* colors, bool useAlphaChannelOfTexture)
+{
+	if (!texture)
+		return;
 
-   core::rect<s32> trgRect=destRect; 
-   core::rect<s32> srcRect=sourceRect; 
+	core::rect<s32> trgRect=destRect;
+	core::rect<s32> srcRect=sourceRect;
 
-   core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-   const core::dimension2d<s32> targetSurfaceSize=currentRendertargetSize; 
+	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
+	const core::dimension2d<s32> targetSurfaceSize=currentRendertargetSize;
 
-   const core::dimension2d<s32> ss = texture->getOriginalSize(); 
-   float ssw=1.0f/ss.Width; 
-   float ssh=1.0f/ss.Height; 
+	const core::dimension2d<s32> ss = texture->getOriginalSize();
+	float ssw=1.0f/ss.Width;
+	float ssh=1.0f/ss.Height;
 
-   core::rect<f32> tcoords; 
-   tcoords.UpperLeftCorner.X = (((f32)srcRect.UpperLeftCorner.X)+0.5f) * ssw ;
-   tcoords.UpperLeftCorner.Y = (((f32)srcRect.UpperLeftCorner.Y)+0.5f) * ssh; 
-   tcoords.LowerRightCorner.X = (((f32)srcRect.UpperLeftCorner.X +0.5f + (f32)srcRect.getWidth())) * ssw; 
-   tcoords.LowerRightCorner.Y = (((f32)srcRect.UpperLeftCorner.Y +0.5f + (f32)srcRect.getHeight())) * ssh; 
+	core::rect<f32> tcoords;
+	tcoords.UpperLeftCorner.X = (((f32)srcRect.UpperLeftCorner.X)+0.5f) * ssw;
+	tcoords.UpperLeftCorner.Y = (((f32)srcRect.UpperLeftCorner.Y)+0.5f) * ssh;
+	tcoords.LowerRightCorner.X = (((f32)srcRect.UpperLeftCorner.X +0.5f + (f32)srcRect.getWidth())) * ssw;
+	tcoords.LowerRightCorner.Y = (((f32)srcRect.UpperLeftCorner.Y +0.5f + (f32)srcRect.getHeight())) * ssh;
 
-   s32 xPlus = -(currentRendertargetSize.Width>>1); 
-   f32 xFact = 1.0f / (currentRendertargetSize.Width>>1); 
+	s32 xPlus = -(currentRendertargetSize.Width>>1);
+	f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
 
-   s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1); 
-   f32 yFact = 1.0f / (currentRendertargetSize.Height>>1); 
+	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
+	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
 
-   core::rect<float> npos; 
-   npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact; 
-   npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact; 
-   npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact; 
-   npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact; 
+	core::rect<float> npos;
+	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact;
+	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact;
+	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact;
+	npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact;
 
-   setTexture(0, texture);    
+	setTexture(0, texture);
 
-   if (useAlphaChannelOfTexture) 
-      setRenderStates2DMode(false, true, true); 
-   else 
-      setRenderStates2DMode(false, true, false); 
+	if (useAlphaChannelOfTexture)
+		setRenderStates2DMode(false, true, true);
+	else
+		setRenderStates2DMode(false, true, false);
 
-   bool bTempColors=false; 
+	bool bTempColors=false;
 
-   if(colors==NULL) 
-   { 
-      colors=new SColor[4];
-      for(int i=0;i<4;i++)colors[i]=SColor(0,255,255,255); 
-      bTempColors=true; 
-   } 
+	if(colors==NULL)
+	{
+		colors=new SColor[4];
+		for(int i=0;i<4;i++)
+			colors[i]=SColor(0,255,255,255);
+		bTempColors=true;
+	}
 
-   glBegin(GL_QUADS); 
+	glBegin(GL_QUADS);
 
-   glColor4ub(colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue(), colors[0].getAlpha()); 
-   glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y); 
-   glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y); 
+	glColor4ub(colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue(), colors[0].getAlpha());
+	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
+	glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
 
-   glColor4ub(colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue(), colors[3].getAlpha()); 
-   glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y); 
-   glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y); 
+	glColor4ub(colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue(), colors[3].getAlpha());
+	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
+	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
 
-   glColor4ub(colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue(), colors[2].getAlpha()); 
-   glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y); 
-   glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y); 
+	glColor4ub(colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue(), colors[2].getAlpha());
+	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
+	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
 
-   glColor4ub(colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue(), colors[1].getAlpha());
-   glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y); 
-   glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y); 
+	glColor4ub(colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue(), colors[1].getAlpha());
+	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
+	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
 
-   glEnd(); 
+	glEnd();
 
-   if(bTempColors) 
-	   delete [] colors; 
+	if(bTempColors)
+		delete [] colors;
 }
 
 
-//! Draws a 2d line. 
+//! Draws a 2d line.
 void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
-				const core::position2d<s32>& end, 
+				const core::position2d<s32>& end,
 				SColor color)
 {
-	// thanks to Vash TheStampede who sent in his implementation 
+	// thanks to Vash TheStampede who sent in his implementation
 
 	setRenderStates2DMode(color.getAlpha() < 255, false, false);
 	setTexture(0,0);
- 
+
 	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
 	const s32 xPlus = -(currentRendertargetSize.Width>>1);
 	const f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
-	 
+	
 	const s32 yPlus =
 	currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
 	const f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
-	 
+	
 	core::position2d<f32> npos_start;
 	npos_start.X  = (f32)(start.X + xPlus) * xFact;
 	npos_start.Y  = (f32)(yPlus - start.Y) * yFact;
-	 
+	
 	core::position2d<f32> npos_end;
 	npos_end.X  = (f32)(end.X + xPlus) * xFact;
 	npos_end.Y  = (f32)(yPlus - end.Y) * yFact;
-	 
+	
 	glBegin(GL_LINES);
 	glColor4ub(color.getRed(), color.getGreen(),
-	color.getBlue(), 
+	color.getBlue(),
 	color.getAlpha());
 	glVertex2f(npos_start.X, npos_start.Y);
 	glVertex2f(npos_end.X,   npos_end.Y);
@@ -1206,7 +1207,7 @@ void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
 }
 
 //! draw an 2d rectangle
-void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& position, 
+void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& position,
 		const core::rect<s32>* clip)
 {
 	setRenderStates2DMode(color.getAlpha() < 255, false, false);
@@ -1242,7 +1243,7 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 			const core::rect<s32>* clip)
 {
 	setRenderStates2DMode(colorLeftUp.getAlpha() < 255 ||
-		colorRightUp.getAlpha() < 255 || 
+		colorRightUp.getAlpha() < 255 ||
 		colorLeftDown.getAlpha() < 255 ||
 		colorRightDown.getAlpha() < 255, false, false);
 
@@ -1277,14 +1278,14 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 	glColor4ub(colorRightUp.getRed(), colorRightUp.getGreen(),
 		colorRightUp.getBlue(), colorRightUp.getAlpha());
 	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
-	
+
 	glColor4ub(colorRightDown.getRed(), colorRightDown.getGreen(),
 		colorRightDown.getBlue(), colorRightDown.getAlpha());
-	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y); 
-	
+	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
+
 	glColor4ub(colorLeftDown.getRed(), colorLeftDown.getGreen(),
 		colorLeftDown.getBlue(), colorLeftDown.getAlpha());
-	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y); 
+	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
 
 	glEnd();
 }
@@ -1327,7 +1328,7 @@ void COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 	else
 		if (stage != 0)
 			return;
-	
+
 	if (texture && texture->getDriverType() != EDT_OPENGL)
 	{
 		glDisable(GL_TEXTURE_2D);
@@ -1407,12 +1408,12 @@ void COpenGLDriver::setRenderStates3DMode()
 		// switch back the matrices
 		GLfloat glmat[16];
 
-		createGLMatrix(glmat, Matrizes[ETS_VIEW] * Matrizes[ETS_WORLD]);
+		createGLMatrix(glmat, Matrices[ETS_VIEW] * Matrices[ETS_WORLD]);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(glmat);
 
-		createGLMatrix(glmat, Matrizes[ETS_PROJECTION]);
-		glmat[12]*= -1.0f;
+		createGLMatrix(glmat, Matrices[ETS_PROJECTION]);
+		glmat[12] *= -1.0f;
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(glmat);
 
@@ -1499,29 +1500,39 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		if (MultiTextureExtension)
 		{
 			extGlActiveTextureARB(GL_TEXTURE1_ARB);
-			
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 				Material.BilinearFilter ? GL_LINEAR : GL_NEAREST);
 
 			if (AnisotropyExtension)
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 					material.AnisotropicFilter ? MaxAnisotropy : 1.0f );
 
 			extGlActiveTextureARB(GL_TEXTURE0_ARB);
 		}
 
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 			Material.BilinearFilter ? GL_LINEAR : GL_NEAREST);
 
 		if (AnisotropyExtension)
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 				material.AnisotropicFilter ? MaxAnisotropy : 1.0f );
 	}
 
 	// fillmode
 
-	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, material.Wireframe ? GL_LINE : GL_FILL);
+	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
+		glPolygonMode(GL_FRONT_AND_BACK, material.Wireframe ? GL_LINE : material.PointCloud? GL_POINT : GL_FILL);
+
+	// shademode
+
+	if (resetAllRenderstates || lastmaterial.GouraudShading != material.GouraudShading)
+	{
+		if (material.GouraudShading)
+			glShadeModel(GL_SMOOTH);
+		else
+			glShadeModel(GL_FLAT);
+	}
 
 	// lighting
 
@@ -1606,7 +1617,7 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);
 
-		glDisable(GL_ALPHA_TEST); 
+		glDisable(GL_ALPHA_TEST);
 		glCullFace(GL_BACK);
 
 		// unset last 3d material
@@ -1682,7 +1693,7 @@ void COpenGLDriver::deleteAllDynamicLights()
 {
 	for (s32 i=0; i<LastSetLight+1; ++i)
 		glDisable(GL_LIGHT0 + i);
-	
+
 	LastSetLight = -1;
 
 	CNullDriver::deleteAllDynamicLights();
@@ -1717,7 +1728,7 @@ void COpenGLDriver::addDynamicLight(const SLight& light)
 		glLightfv(lidx, GL_SPOT_DIRECTION, data);
 
 		glLightf(lidx, GL_SPOT_CUTOFF, 180.0f);
-		glLightf(lidx, GL_SPOT_EXPONENT, 0.0f);		
+		glLightf(lidx, GL_SPOT_EXPONENT, 0.0f);
 	}
 	else
 	{
@@ -1934,29 +1945,29 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-} 
+}
 
 
 //! Sets the fog mode.
-void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start, 
+void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start,
 			f32 end, f32 density, bool pixelFog, bool rangeFog)
 {
 	CNullDriver::setFog(c, linearFog, start, end, density, pixelFog, rangeFog);
 
-	glFogi(GL_FOG_MODE, linearFog ? GL_LINEAR : GL_EXP); 
-	glFogi(GL_FOG_COORDINATE_SOURCE, GL_FRAGMENT_DEPTH); 
+	glFogi(GL_FOG_MODE, linearFog ? GL_LINEAR : GL_EXP);
+	glFogi(GL_FOG_COORDINATE_SOURCE, GL_FRAGMENT_DEPTH);
 
 	if(linearFog)
- 	{ 
+	{
 		glFogf(GL_FOG_START, start);
-		glFogf(GL_FOG_END, end); 
-	}       
-	else 
-		glFogf(GL_FOG_DENSITY, density); 
+		glFogf(GL_FOG_END, end);
+	}      
+	else
+		glFogf(GL_FOG_DENSITY, density);
 
 	SColorf color(c);
 	GLfloat data[4] = {color.r, color.g, color.b, color.a};
-	glFogfv(GL_FOG_COLOR, data); 
+	glFogfv(GL_FOG_COLOR, data);
 }
 
 
@@ -1980,7 +1991,7 @@ void COpenGLDriver::draw3DLine(const core::vector3df& start,
 void COpenGLDriver::OnResize(const core::dimension2d<s32>& size)
 {
 	CNullDriver::OnResize(size);
-	glViewport(0, 0, size.Width, size.Height); 
+	glViewport(0, 0, size.Width, size.Height);
 }
 
 //! Returns type of video driver
@@ -2059,65 +2070,65 @@ void COpenGLDriver::extGlProgramLocalParameter4fvARB(GLenum n, GLuint i, const G
 #endif
 }
 
-GLhandleARB COpenGLDriver::extGlCreateShaderObjectARB(GLenum shaderType) 
-{ 
+GLhandleARB COpenGLDriver::extGlCreateShaderObjectARB(GLenum shaderType)
+{
 #ifdef MACOSX
 	return (glCreateShaderObjectARB(shaderType));
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlCreateShaderObjectARB) 
-		return pGlCreateShaderObjectARB(shaderType); 
-#endif 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlCreateShaderObjectARB)
+		return pGlCreateShaderObjectARB(shaderType);
+#endif
 
 	return 0;
-} 
+}
 
-void COpenGLDriver::extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings) 
-{ 
+void COpenGLDriver::extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings)
+{
 #ifdef MACOSX
 	glShaderSourceARB(shader, numOfStrings, strings, (GLint *)lenOfStrings);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlShaderSourceARB) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlShaderSourceARB)
 		pGlShaderSourceARB(shader, numOfStrings, strings, lenOfStrings);
-#endif 
-} 
+#endif
+}
 
-void COpenGLDriver::extGlCompileShaderARB(GLhandleARB shader) 
-{ 
+void COpenGLDriver::extGlCompileShaderARB(GLhandleARB shader)
+{
 #ifdef MACOSX
-	glCompileShaderARB(shader); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlCompileShaderARB) 
-		pGlCompileShaderARB(shader); 
-#endif 
-} 
+	glCompileShaderARB(shader);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlCompileShaderARB)
+		pGlCompileShaderARB(shader);
+#endif
+}
 
-GLhandleARB COpenGLDriver::extGlCreateProgramObjectARB(void) 
-{ 
+GLhandleARB COpenGLDriver::extGlCreateProgramObjectARB(void)
+{
 #ifdef MACOSX
-	return (glCreateProgramObjectARB()); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlCreateProgramObjectARB) 
-		return pGlCreateProgramObjectARB(); 
-#endif 
+	return (glCreateProgramObjectARB());
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlCreateProgramObjectARB)
+		return pGlCreateProgramObjectARB();
+#endif
 
 	return 0;
-} 
+}
 
-void COpenGLDriver::extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader) 
-{ 
+void COpenGLDriver::extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader)
+{
 #ifdef MACOSX
-	glAttachObjectARB(program, shader); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlAttachObjectARB) 
-		pGlAttachObjectARB(program, shader); 
-#endif 
-} 
+	glAttachObjectARB(program, shader);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlAttachObjectARB)
+		pGlAttachObjectARB(program, shader);
+#endif
+}
 
-void COpenGLDriver::extGlLinkProgramARB(GLhandleARB program) 
-{ 
+void COpenGLDriver::extGlLinkProgramARB(GLhandleARB program)
+{
 #ifdef MACOSX
-	glLinkProgramARB(program); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+	glLinkProgramARB(program);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlLinkProgramARB) 
 		pGlLinkProgramARB(program); 
 #endif 
@@ -2180,8 +2191,8 @@ void COpenGLDriver::extGlUniform1fvARB (GLint loc, GLsizei count, const GLfloat 
 #ifdef MACOSX
 	glUniform1fvARB(loc, count, v);
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlUniform1fvARB)
-        pGlUniform1fvARB(loc, count, v);
+	if (pGlUniform1fvARB)
+		pGlUniform1fvARB(loc, count, v);
 #endif
 }
 
@@ -2190,8 +2201,8 @@ void COpenGLDriver::extGlUniform2fvARB (GLint loc, GLsizei count, const GLfloat 
 #ifdef MACOSX
 	glUniform2fvARB(loc, count, v);
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlUniform2fvARB)
-        pGlUniform2fvARB(loc, count, v);
+	if (pGlUniform2fvARB)
+		pGlUniform2fvARB(loc, count, v);
 #endif
 }
 
@@ -2200,8 +2211,8 @@ void COpenGLDriver::extGlUniform3fvARB (GLint loc, GLsizei count, const GLfloat 
 #ifdef MACOSX
 	glUniform3fvARB(loc, count, v);
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlUniform3fvARB)
-        pGlUniform3fvARB(loc, count, v);
+	if (pGlUniform3fvARB)
+		pGlUniform3fvARB(loc, count, v);
 #endif
 }
 
@@ -2210,8 +2221,8 @@ void COpenGLDriver::extGlUniformMatrix2fvARB (GLint loc, GLsizei count, GLboolea
 #ifdef MACOSX
 	glUniformMatrix2fvARB(loc, count, transpose, v);
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlUniformMatrix2fvARB)
-        pGlUniformMatrix2fvARB(loc, count, transpose, v);
+	if (pGlUniformMatrix2fvARB)
+		pGlUniformMatrix2fvARB(loc, count, transpose, v);
 #endif
 }
 
@@ -2244,7 +2255,7 @@ void COpenGLDriver::extGlGetActiveUniformARB (GLhandleARB program, GLuint index,
         pGlGetActiveUniformARB(program, index, maxlength, length, size, type, name);
 #endif
 }
-		
+
 bool COpenGLDriver::hasMultiTextureExtension()
 {
     return MultiTextureExtension;
@@ -2341,7 +2352,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 		setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
  
 	video::ITexture* rtt = addTexture(size, "rt" , ECF_A1R5G5B5);
-	
+
 	if (rtt) 
 		rtt->grab();
  
@@ -2419,7 +2430,7 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 
 	glClear(mask);
 
-	return ret;	
+	return ret;
 }
 
 
@@ -2459,16 +2470,16 @@ namespace video
 // -----------------------------------
 #ifdef _IRR_WINDOWS_
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        HWND window, bool fullscreen, bool stencilBuffer, bool vsync, io::IFileSystem* io)
+        HWND window, bool fullscreen, bool stencilBuffer, bool vsync, io::IFileSystem* io, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
-	COpenGLDriver* ogl =  new COpenGLDriver(screenSize, window, fullscreen, stencilBuffer, io);
+	COpenGLDriver* ogl =  new COpenGLDriver(screenSize, window, fullscreen, stencilBuffer, io, antiAlias);
 	if (!ogl->initDriver(screenSize, window, fullscreen, vsync))
 	{
 		ogl->drop();
 		ogl = 0;
 	}
-	return ogl;	
+	return ogl;
 #else
 	return 0;
 #endif // _IRR_COMPILE_WITH_OPENGL_
@@ -2480,11 +2491,12 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 // -----------------------------------
 #ifdef MACOSX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io)
+        CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer,
+	io::IFileSystem* io, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
-		device,  io);
+		device, io, antiAlias);
 #else
 	return 0;
 #endif //  _IRR_COMPILE_WITH_OPENGL_
@@ -2496,12 +2508,12 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 // -----------------------------------
 #ifdef LINUX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        bool fullscreen, bool stencilBuffer, Window window,
-		Display* display, io::IFileSystem* io)
+		Window window, Display* display, bool fullscreen,
+		bool stencilBuffer, io::IFileSystem* io, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
-		window, display, io);
+		window, display, io, antiAlias);
 #else
 	return 0;
 #endif //  _IRR_COMPILE_WITH_OPENGL_

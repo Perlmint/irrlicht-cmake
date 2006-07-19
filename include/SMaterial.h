@@ -190,6 +190,9 @@ namespace video
 		//! Draw as wireframe or filled triangles? Default: false
 		EMF_WIREFRAME = 0,
 
+		//! Draw as point cloud or filled triangles? Default: false
+		EMF_POINTCLOUD,
+
 		//! Flat or Gouraud shading? Default: true
 		EMF_GOURAUD_SHADING,
 
@@ -246,7 +249,7 @@ namespace video
 			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f),
 			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
-			Wireframe(false), GouraudShading(true), Lighting(true),
+			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
 			BilinearFilter(true), TrilinearFilter(false), AnisotropicFilter(false),
 			FogEnable(false), NormalizeNormals(false)
@@ -346,6 +349,9 @@ namespace video
 				//! Draw as wireframe or filled triangles? Default: false
 				bool Wireframe;
 
+				//! Draw as point cloud or filled triangles? Default: false
+				bool PointCloud;
+
 				//! Flat or Gouraud shading? Default: true
 				bool GouraudShading;
 
@@ -400,6 +406,7 @@ namespace video
 				Shininess != b.Shininess ||
 				MaterialTypeParam != b.MaterialTypeParam ||
 				Wireframe != b.Wireframe ||
+				PointCloud != b.PointCloud ||
 				GouraudShading != b.GouraudShading ||
 				Lighting != b.Lighting ||
 				ZBuffer != b.ZBuffer ||

@@ -25,7 +25,7 @@ namespace irr
 {
 	namespace video
 	{
-		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io);
+		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias);
 	}
 } // end namespace irr
 
@@ -35,11 +35,11 @@ namespace irr
 {
 //! constructor
 CIrrDeviceMacOSX::CIrrDeviceMacOSX(video::E_DRIVER_TYPE driverType, 
-								 const core::dimension2d<s32>& windowSize,
-								 u32 bits, bool fullscreen,
-								 bool sbuffer, bool vsync, 
-								 bool antiAlias, IEventReceiver* receiver,
-								 const char* version)
+				 const core::dimension2d<s32>& windowSize,
+				 u32 bits, bool fullscreen,
+				 bool sbuffer, bool vsync, 
+				 bool antiAlias, IEventReceiver* receiver,
+				 const char* version)
  : CIrrDeviceStub(version, receiver), DriverType(driverType), stencilbuffer(sbuffer)
 {
 	struct	utsname	name;
@@ -117,17 +117,17 @@ void	CIrrDeviceMacOSX::closeDevice()
 
 bool	CIrrDeviceMacOSX::createWindow(const irr::core::dimension2d<irr::s32>& windowSize, irr::u32 bits, bool fullscreen, bool vsync, bool stencilBuffer)
 {
-	int								index;
-	CGDisplayErr					error;
-	bool							result;
-	NSOpenGLPixelFormat				*format;
-	CGDirectDisplayID				display;
-	CGLPixelFormatObj				pixelFormat;
-	CGRect							displayRect;
-	CGLPixelFormatAttribute			fullattribs[32];
+	int				index;
+	CGDisplayErr			error;
+	bool				result;
+	NSOpenGLPixelFormat		*format;
+	CGDirectDisplayID		display;
+	CGLPixelFormatObj		pixelFormat;
+	CGRect				displayRect;
+	CGLPixelFormatAttribute		fullattribs[32];
 	NSOpenGLPixelFormatAttribute	windowattribs[32];
-	CFDictionaryRef					displaymode,olddisplaymode;
-	long							numPixelFormats,newSwapInterval;
+	CFDictionaryRef			displaymode,olddisplaymode;
+	long				numPixelFormats,newSwapInterval;
 	
 	result = false;
 	display = CGMainDisplayID();
@@ -270,7 +270,7 @@ void	CIrrDeviceMacOSX::createDriver(video::E_DRIVER_TYPE driverType,const core::
 
 		case video::EDT_OPENGL:
 		#ifdef _IRR_COMPILE_WITH_OPENGL_
-			VideoDriver = video::createOpenGLDriver(windowSize, fullscreen, stencilbuffer, this, FileSystem);
+			VideoDriver = video::createOpenGLDriver(windowSize, this, fullscreen, stencilbuffer, FileSystem, AntiAlias);
 		#endif
 			break;
 

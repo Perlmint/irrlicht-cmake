@@ -32,7 +32,8 @@ namespace irr
 			bool pureSoftware, bool vsync, bool antiAlias);
 
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, 
-			bool fullscreen, bool stencilBuffer, bool vsync, io::IFileSystem* io);
+			bool fullscreen, bool stencilBuffer, io::IFileSystem* io,
+			bool vsync, bool antiAlias);
 	}
 
 } // end namespace irr
@@ -261,13 +262,13 @@ namespace irr
 
 //! constructor
 CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType, 
-								 core::dimension2d<s32> windowSize,
-								 u32 bits, bool fullscreen, 
-								 bool stencilbuffer, bool vsync, 
-								 bool antiAlias,
-								 IEventReceiver* receiver,
-								 HWND externalWindow,
-								 const char* version)
+				 core::dimension2d<s32> windowSize,
+				 u32 bits, bool fullscreen, 
+				 bool stencilbuffer, bool vsync, 
+				 bool antiAlias,
+				 IEventReceiver* receiver,
+				 HWND externalWindow,
+				 const char* version)
 : CIrrDeviceStub(version, receiver), HWnd(0), ChangedToFullScreen(false),
 	Win32CursorControl(0), IsNonNTWindows(false), Resized(false),
 	FullScreen(fullscreen), ExternalWindow(false)
@@ -422,16 +423,13 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 		#ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
 		VideoDriver = video::createDirectX8Driver(windowSize, HWnd, bits, fullscreen, 
 			stencilbuffer, FileSystem, false, vsync, antiAlias);
-		#endif
-
 		if (!VideoDriver)
 		{
-			#ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
 			os::Printer::log("Could not create DIRECT3D8 Driver.", ELL_ERROR);
-			#else
-			os::Printer::log("DIRECT3D8 Driver was not compiled into this dll. Try another one.", ELL_ERROR);
-			#endif
 		}
+		#else
+		os::Printer::log("DIRECT3D8 Driver was not compiled into this dll. Try another one.", ELL_ERROR);
+		#endif
 
 		break;	
 
@@ -439,16 +437,13 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 		#ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
 		VideoDriver = video::createDirectX9Driver(windowSize, HWnd, bits, fullscreen, 
 			stencilbuffer, FileSystem, false, vsync, antiAlias);
-		#endif
-
 		if (!VideoDriver)
 		{
-			#ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
 			os::Printer::log("Could not create DIRECT3D9 Driver.", ELL_ERROR);
-			#else
-			os::Printer::log("DIRECT3D9 Driver was not compiled into this dll. Try another one.", ELL_ERROR);
-			#endif
 		}
+		#else
+		os::Printer::log("DIRECT3D9 Driver was not compiled into this dll. Try another one.", ELL_ERROR);
+		#endif
 
 		break;	
 	
@@ -456,18 +451,15 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 
 		#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (fullscreen)	switchToFullScreen(windowSize.Width, windowSize.Height, bits);
-		VideoDriver = video::createOpenGLDriver(windowSize, HWnd, fullscreen, stencilbuffer,
-			vsync, FileSystem);
-		#endif
-		
+		VideoDriver = video::createOpenGLDriver(windowSize, HWnd, fullscreen, stencilbuffer, FileSystem,
+			vsync, antiAlias);
 		if (!VideoDriver)
 		{
-			#ifdef _IRR_COMPILE_WITH_OPENGL_
 			os::Printer::log("Could not create OpenGL driver.", ELL_ERROR);
-			#else
-			os::Printer::log("OpenGL driver was not compiled into this dll.", ELL_ERROR);
-			#endif
 		}
+		#else
+		os::Printer::log("OpenGL driver was not compiled into this dll.", ELL_ERROR);
+		#endif
 		break;	
 
 	case video::EDT_SOFTWARE:

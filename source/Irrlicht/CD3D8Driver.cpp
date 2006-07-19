@@ -1338,12 +1338,15 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 
 	// fillmode
 
-	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe)
+	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
 	{
-		if (!material.Wireframe)
-			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-		else
+		if (material.Wireframe)
 			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		else
+		if (material.PointCloud)
+			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_POINT);
+		else
+			pID3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	}
 
 	// shademode
