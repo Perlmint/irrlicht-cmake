@@ -36,6 +36,11 @@ public:
 			{
 			case irr::KEY_KEY_W: // switch wire frame mode
 				Terrain->setMaterialFlag(video::EMF_WIREFRAME, !Terrain->getMaterial(0).Wireframe);
+				Terrain->setMaterialFlag(video::EMF_POINTCLOUD, false);
+				return true;
+			case irr::KEY_KEY_P: // switch wire frame mode
+				Terrain->setMaterialFlag(video::EMF_POINTCLOUD, !Terrain->getMaterial(0).PointCloud);
+				Terrain->setMaterialFlag(video::EMF_WIREFRAME, false);
 				return true;
 			case irr::KEY_KEY_D: // toggle detail map
 				Terrain->setMaterialType(

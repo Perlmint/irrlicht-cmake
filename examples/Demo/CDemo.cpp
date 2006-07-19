@@ -64,7 +64,7 @@ void CDemo::run()
 
 			// write statistics
 
-			swprintf(tmp, 255, L"%s fps:%d", driver->getName(),	driver->getFPS());
+			swprintf(tmp, 255, L"%ls fps:%d", driver->getName(),	driver->getFPS());
 
 			statusText->setText(tmp);
 		}

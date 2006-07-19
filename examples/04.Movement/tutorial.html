@@ -168,7 +168,7 @@ if (n)<br>	{<br>		anim = smgr-&gt;createFlyStraightAnimator(core::vector3df(100,
             <pre>     if (lastFPS != fps)
      {
         wchar_t tmp[1024];
-        swprintf(tmp, 1024, L&quot;Movement Example - Irrlicht Engine (%s)(fps:%d)&quot;,<br>        driver-&gt;getName(), fps);</pre>
+        swprintf(tmp, 1024, L&quot;Movement Example - Irrlicht Engine (%ls)(fps:%d)&quot;,<br>        driver-&gt;getName(), fps);</pre>
             <pre>       device-&gt;setWindowCaption(tmp);
        lastFPS = fps;
      }

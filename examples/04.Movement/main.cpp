@@ -183,7 +183,7 @@ int main()
 		if (lastFPS != fps)
 		{
 			wchar_t tmp[1024];
-			swprintf(tmp, 1024, L"Movement Example - Irrlicht Engine [%s] fps:%d", 
+			swprintf(tmp, 1024, L"Movement Example - Irrlicht Engine [%ls] fps: %d", 
 				driver->getName(), fps);
 
 			device->setWindowCaption(tmp);

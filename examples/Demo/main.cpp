@@ -42,8 +42,8 @@ int main()
 //#endif
 	{
 		CDemo demo(fullscreen, music, shadows, additive, vsync, driverType);
-		demo.run();		
-	}	
+		demo.run();
+	}
 
 	return 0;
 }
