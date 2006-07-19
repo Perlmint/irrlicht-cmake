@@ -2470,7 +2470,7 @@ namespace video
 // -----------------------------------
 #ifdef _IRR_WINDOWS_
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        HWND window, bool fullscreen, bool stencilBuffer, bool vsync, io::IFileSystem* io, bool antiAlias)
+        HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	COpenGLDriver* ogl =  new COpenGLDriver(screenSize, window, fullscreen, stencilBuffer, io, antiAlias);
