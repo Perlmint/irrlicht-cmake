@@ -456,6 +456,10 @@ void CDemo::loadSceneData()
 	if (music)
 		startAudiere();
 	#endif
+	#ifdef USE_SDL_MIXER
+	if (music)
+		startSound();
+	#endif
 
 	// set background color
 
@@ -595,6 +599,10 @@ void CDemo::shoot()
 	if (ballSound)
 		ballSound->play();
 	#endif
+	#ifdef USE_SDL_MIXER
+	if (ballSound)
+		playSound(ballSound);
+	#endif
 }
 
 
@@ -643,6 +651,10 @@ void CDemo::createParticleImpacts()
 			if (impactSound)
 				impactSound->play();
 			#endif
+			#ifdef USE_SDL_MIXER
+			if (impactSound)
+				playSound(impactSound);
+			#endif
 		}
 }
 
@@ -682,3 +694,37 @@ void CDemo::startAudiere()
 }
 #endif
 
+#ifdef USE_SDL_MIXER
+void CDemo::startSound()
+{
+	stream = NULL;
+	ballSound = NULL;
+	impactSound = NULL;
+
+	SDL_Init(SDL_INIT_AUDIO);
+
+	if (Mix_OpenAudio(22050, AUDIO_S16, 2, 128))
+		return;
+
+	stream = Mix_LoadMUS("../../media/IrrlichtTheme.mp3");
+	if (stream)
+		Mix_PlayMusic(stream, -1);
+
+	ballSound = Mix_LoadWAV("../../media/ball.wav");
+	impactSound = Mix_LoadWAV("../../media/impact.wav");
+}
+
+void CDemo::playSound(Mix_Chunk *sample)
+{
+	if (sample)
+		Mix_PlayChannel(-1, sample, 0);
+}
+
+void CDemo::pollSound(void)
+{
+	SDL_Event event;
+
+	while (SDL_PollEvent(&event))
+		;
+}
+#endif

@@ -1,11 +1,11 @@
 // This is a Demo of the Irrlicht Engine (c) 2005 by N.Gebhardt.
 // This file is not documentated.
 
-#ifdef _WIN32
+#include <irrlicht.h>
+#ifdef _IRR_WINDOWS_
 #include <windows.h>
 #endif
 
-#include <irrlicht.h>
 #include <stdio.h>
 
 #include "CMainMenu.h"
@@ -13,14 +13,12 @@
 
 using namespace irr;
 
+#ifdef _WIN32
 
 #pragma comment(lib, "Irrlicht.lib")
-
-
-#ifdef _WIN32
 INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
 #else
-int main()
+int main(int argc, char* argv[])
 #endif
 {
 	bool fullscreen = false;
@@ -29,7 +27,7 @@ int main()
 	bool additive = false;
 	bool vsync = false;
 
-#ifdef MACOSX
+#ifndef _IRR_WINDOWS_
 	video::E_DRIVER_TYPE driverType = video::EDT_OPENGL;
 #else
 	video::E_DRIVER_TYPE driverType = video::EDT_DIRECT3D9;

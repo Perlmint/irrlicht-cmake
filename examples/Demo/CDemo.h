@@ -1,26 +1,30 @@
-// This is a Demo of the Irrlicht Engine (c) 2005 by N.Gebhardt.
-// This file is not documentated.
+// This is a Demo of the Irrlicht Engine (c) 2006 by N.Gebhardt.
+// This file is not documented.
 
 #ifndef __C_DEMO_H_INCLUDED__
 #define __C_DEMO_H_INCLUDED__
 
-#if !defined(WIN32) && !defined(_XBOX) && !defined(OS2) && !defined(MACOS)
-#define LINUX
-#endif
-
-#ifndef LINUX
 //#define USE_AUDIERE
-#endif
+//#define USE_SDL_MIXER
 
 #include <irrlicht.h>
 
-#ifdef USE_AUDIERE
+#ifdef _IRR_WINDOWS_
 #include <windows.h>
+#endif
+
+#ifdef USE_AUDIERE
 #include <audiere.h> // your compiler throws an error here? get audiere from 
                      // http://audiere.sourceforge.net/ or comment 
                      // the 'define USE_AUDIERE' above.
 using namespace audiere;
+#ifdef _IRR_WINDOWS_
 #pragma comment (lib, "audiere.lib")
+#endif
+#endif
+#ifdef USE_SDL_MIXER
+# include <SDL/SDL.h>
+# include <SDL/SDL_mixer.h>
 #endif
 
 using namespace irr;
@@ -61,6 +65,14 @@ private:
 	OutputStreamPtr ballSound;
 	OutputStreamPtr impactSound;
 #endif
+#ifdef USE_SDL_MIXER
+	void startSound();
+	void playSound(Mix_Chunk *);
+	void pollSound();
+	Mix_Music *stream;
+	Mix_Chunk *ballSound;
+	Mix_Chunk *impactSound;
+#endif
 
 	struct SParticleImpact
 	{
@@ -92,3 +104,4 @@ private:
 };
 
 #endif
+

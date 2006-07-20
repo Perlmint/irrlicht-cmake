@@ -39,7 +39,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	//gui::IGUIImage* img = guienv->addImage(core::rect<int>(0,0,512,384));
 	//img->setImage(driver->getTexture("../../media/demoback.bmp"));
 
-    const s32 leftX = 260;
+	const s32 leftX = 260;
 
 	// add tab control
 	gui::IGUITabControl* tabctrl = guienv->addTabControl(core::rect<int>(leftX,10,512-10,384-10),
@@ -52,7 +52,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,220,105), optTab, 1);
 	box->addItem(L"OpenGL 1.5");
 	box->addItem(L"Direct3D 8.1");
-	box->addItem(L"Direct3D 9.0c");	
+	box->addItem(L"Direct3D 9.0c");
 	box->addItem(L"Apfelbaum Software Renderer 1.0");
 	box->addItem(L"Irrlicht Software Renderer 1.0");
 	box->setSelected(selected);
@@ -65,11 +65,11 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	const s32 d = 50;
 
-	guienv->addCheckBox(fullscreen, core::rect<int>(20,85+d,130,110+d), 
+	guienv->addCheckBox(fullscreen, core::rect<int>(20,85+d,130,110+d),
 		optTab, 3, L"Fullscreen");
-	guienv->addCheckBox(music, core::rect<int>(20,110+d,130,135+d), 
+	guienv->addCheckBox(music, core::rect<int>(20,110+d,130,135+d),
 		optTab, 4, L"Music & Sfx");
-	guienv->addCheckBox(shadows, core::rect<int>(20,135+d,230,160+d), 
+	guienv->addCheckBox(shadows, core::rect<int>(20,135+d,230,160+d),
 		optTab, 5, L"Realtime shadows");
 	guienv->addCheckBox(additive, core::rect<int>(20,160+d,230,185+d),
 		optTab, 6, L"Old HW compatible blending");
@@ -97,7 +97,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	guienv->addStaticText(text2, core::rect<int>(20, 40, 220, 300),
 		true, true, aboutTab);
-	
+
 
 	// add md2 model
 
@@ -114,20 +114,20 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	driver->setAmbientLight ( video::SColorf ( 0x005F6613 ) );
 
 	// add light 1 (nearly red)
-	scene::ILightSceneNode* light1 = 
-		smgr->addLightSceneNode(0, core::vector3df(0,0,0), 
+	scene::ILightSceneNode* light1 =
+		smgr->addLightSceneNode(0, core::vector3df(0,0,0),
 		video::SColorf(0.8f, 0.0f, 0.f, 0.0f), 200.0f);
 
 	light1->getLightData().Type = video::ELT_DIRECTIONAL;
 
 	// add fly circle animator to light 1
-	scene::ISceneNodeAnimator* anim = 
+	scene::ISceneNodeAnimator* anim =
 		smgr->createFlyCircleAnimator (core::vector3df(0,18,0),14.0f, -0.003f);
 	light1->addAnimator(anim);
 	anim->drop();
 
 	// attach billboard to the light
-	scene::ISceneNode* bill = 
+	scene::ISceneNode* bill =
 		smgr->addBillboardSceneNode(light1, core::dimension2d<f32>(10, 10));
 
 	bill->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -135,8 +135,8 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	bill->setMaterialTexture(0, driver->getTexture("../../media/particlered.bmp"));
 
 	// add light 2 (nearly green)
-	scene::ILightSceneNode* light2 = 
-		smgr->addLightSceneNode(0, core::vector3df(0,0,0), 
+	scene::ILightSceneNode* light2 =
+		smgr->addLightSceneNode(0, core::vector3df(0,0,0),
 		video::SColorf(0.f, 0.f, 0.8f, 0.0f), 200.0f);
 
 	light2->getLightData().Type = video::ELT_DIRECTIONAL;
@@ -196,7 +196,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	{
 	case 0:	outDriver = video::EDT_OPENGL; break;
 	case 1:	outDriver = video::EDT_DIRECT3D8; break;
-	case 2:	outDriver = video::EDT_DIRECT3D9; break;	
+	case 2:	outDriver = video::EDT_DIRECT3D9; break;
 	case 3:	outDriver = video::EDT_SOFTWARE2; break;
 	case 4:	outDriver = video::EDT_SOFTWARE; break;
 	}
@@ -268,7 +268,7 @@ bool CMainMenu::OnEvent(SEvent event)
 		case 7:
 			if (event.GUIEvent.EventType == gui::EGET_CHECKBOX_CHANGED )
 				vsync = ((gui::IGUICheckBox*)event.GUIEvent.Caller)->isChecked();
-			break;			
+			break;
 		}
 	}
 
