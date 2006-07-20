@@ -7,6 +7,7 @@
 
 #include "irrTypes.h"
 #include "irrAllocator.h"
+#include <stdio.h>
 
 namespace irr
 {
@@ -45,6 +46,15 @@ public:
 		*this = other;
 	}
 
+
+	//! Constructs a string from a float
+	string(double number)
+	: array(0), allocated(0), used(0)
+	{
+		c8 tmpbuf[32];
+		sprintf(tmpbuf,"%0.6f",number);
+		*this = tmpbuf;
+	}
 
 	//! Constructs a string from an int
 	string(int number)
@@ -571,6 +581,11 @@ public:
 		append(string<T>(i));
 	}
 
+	void operator += (double i)
+	{
+		append(string<T>(i));
+	}
+    	
 	//! replaces all characters of a special type with another one
 	void replace(T toReplace, T replaceWith)
 	{
