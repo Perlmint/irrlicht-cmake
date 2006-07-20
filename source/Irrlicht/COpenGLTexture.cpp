@@ -177,34 +177,6 @@ void COpenGLTexture::copyTexture()
 	GLint internalFormat=GL_RGBA;
 	GLenum format=GL_BGRA_EXT;
 	GLenum type=GL_UNSIGNED_BYTE;
-	#ifdef __BIG_ENDIAN__
-	switch (ColorFormat)
-	{
-		case ECF_A1R5G5B5:
-			internalFormat=GL_RGBA;
-			format=GL_BGRA_EXT;
-			type=GL_UNSIGNED_SHORT_1_5_5_5;
-			break;
-		case ECF_R5G6B5:
-			internalFormat=GL_RGB;
-			format=GL_BGR;
-			type=GL_UNSIGNED_SHORT_5_6_5;
-			break;
-		case ECF_R8G8B8:
-			internalFormat=GL_RGB8;
-			format=GL_BGR;
-			type=GL_UNSIGNED_BYTE;
-			break;
-		case ECF_A8R8G8B8:
-			internalFormat=GL_RGBA;
-			format=GL_BGRA_EXT;
-			type=GL_UNSIGNED_INT_8_8_8_8;
-			break;
-		default:
-			os::Printer::log("Unsupported texture format", ELL_ERROR);
-			break;
-	}
-	#else
 	switch (ColorFormat)
 	{
 		case ECF_A1R5G5B5:
@@ -231,7 +203,6 @@ void COpenGLTexture::copyTexture()
 			os::Printer::log("Unsupported texture format", ELL_ERROR);
 			break;
 	}
-	#endif
 
 	if (hasMipMaps)
 	{
