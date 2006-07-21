@@ -6,6 +6,7 @@
 #include "IReadFile.h"
 #include "IWriteFile.h"
 #include "CZipReader.h"
+#include "CPakReader.h"
 #include "CFileList.h"
 #include "CXMLReader.h"
 #include "CXMLWriter.h"
@@ -43,6 +44,9 @@ CFileSystem::~CFileSystem()
 {
 	for (u32 i=0; i<ZipFileSystems.size(); ++i)
 		ZipFileSystems[i]->drop();
+
+	for (u32 f=0; f<PakFileSystems.size(); ++f)
+		PakFileSystems[f]->drop();
 }
 
 
@@ -55,6 +59,13 @@ IReadFile* CFileSystem::createAndOpenFile(const c8* filename)
 	for (u32 i=0; i<ZipFileSystems.size(); ++i)
 	{
 		file = ZipFileSystems[i]->openFile(filename);
+		if (file)
+			return file;
+	}
+
+	for (u32 f=0; f<PakFileSystems.size(); ++f)
+	{
+		file = PakFileSystems[f]->openFile(filename);
 		if (file)
 			return file;
 	}
@@ -97,6 +108,31 @@ bool CFileSystem::addZipFileArchive(const c8* filename, bool ignoreCase, bool ig
 	return false;
 }
 
+
+//! adds an pak archive to the filesystem
+bool CFileSystem::addPakFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
+{
+	IReadFile* file = createReadFile(filename);
+	if (file)
+	{
+		CPakReader* zr = new CPakReader(file, ignoreCase, ignorePaths);
+		if (zr)
+			PakFileSystems.push_back(zr);
+
+		file->drop();
+
+		bool ret = (zr != 0);
+		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+		return ret;
+	}
+
+	#ifdef _DEBUG
+	os::Printer::log("Could not open file. Pakfile not added", filename, ELL_ERROR);
+	#endif
+
+	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+	return false;
+}
 
 
 //! Returns the string of the current working directory
@@ -145,6 +181,10 @@ bool CFileSystem::existFile(const c8* filename)
 {
 	for (u32 i=0; i<ZipFileSystems.size(); ++i)
 		if (ZipFileSystems[i]->findFile(filename)!=-1)
+			return true;
+
+	for (u32 i=0; i<PakFileSystems.size(); ++i)
+		if (PakFileSystems[i]->findFile(filename)!=-1)
 			return true;
 
 	FILE* f = fopen(filename, "rb");
