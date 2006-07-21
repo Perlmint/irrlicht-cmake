@@ -3,13 +3,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="1"/>
 	<Project>
-		<Option title="Irrlicht Example"/>
+		<Option title="Irrlicht Example 06 2D Graphics"/>
 		<Option makefile="Makefile"/>
 		<Option makefile_is_custom="0"/>
 		<Option compiler="0"/>
 		<Build>
 			<Target title="default">
-				<Option output="2DGraphics.exe"/>
+				<Option output="..\..\bin\Win32-gcc\06.2DGraphics.exe"/>
 				<Option working_dir="."/>
 				<Option object_output=".objs"/>
 				<Option deps_output=".deps"/>
@@ -19,7 +19,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add directory="../../include"/>
+			<Add directory="..\..\include"/>
 		</Compiler>
 		<Linker>
 			<Add option="../../lib/Win32-gcc/libIrrlicht.a"/>
