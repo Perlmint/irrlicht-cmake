@@ -307,7 +307,7 @@ private:
           <br>
           <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
             <tr> 
-              <td> <pre>scene::IMesh* tangentMesh = smgr-&gt;getMeshManipulator()-&gt;createMeshWithTangents(<br>			roomMesh-&gt;getMesh(0));<br>			<br>		room = smgr-&gt;addMeshSceneNode(tangentMesh);<br>		room-&gt;setMaterialTexture(0,	colorMap);<br>		room-&gt;setMaterialTexture(1,	normalMap);<br>		room-&gt;getMaterial(0).EmissiveColor.set(0,0,0,0);<br>		room-&gt;setMaterialFlag(video::EMF_FOG_ENABLE, true);<br>		room-&gt;setMaterialType(video::EMT_PARALLAX_MAP_SOLID); <br>		room-&gt;getMaterial(0).MaterialTypeParam = 0.02f; // adjust height for parallax effect<br>		// drop mesh because we created it with a create.. call.<br>		tangentMesh-&gt;drop();<br>	}<br></pre></td>
+              <td> <pre>scene::IMesh* tangentMesh = smgr-&gt;getMeshManipulator()-&gt;createMeshWithTangents(<br>			roomMesh-&gt;getMesh(0));<br>			<br>		room = smgr-&gt;addMeshSceneNode(tangentMesh);<br>		room-&gt;setMaterialTexture(0,	colorMap);<br>		room-&gt;setMaterialTexture(1,	normalMap);<br>		room-&gt;getMaterial(0).SpecularColor.set(0,0,0,0);<br>		room-&gt;setMaterialFlag(video::EMF_FOG_ENABLE, true);<br>		room-&gt;setMaterialType(video::EMT_PARALLAX_MAP_SOLID); <br>		room-&gt;getMaterial(0).MaterialTypeParam = 0.02f; // adjust height for parallax effect<br>		// drop mesh because we created it with a create.. call.<br>		tangentMesh-&gt;drop();<br>	}<br></pre></td>
             </tr>
           </table>
           <br>

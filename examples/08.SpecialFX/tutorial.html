@@ -76,7 +76,7 @@
             for me: Just use the mesh manipulator and create a planar texture 
             mapping for the mesh. If you want to see the mapping I made with Anim8or, 
             uncomment this line. I also did not figure out how to<br>
-            set the material right in Anim8or, it has an emissive light color 
+            set the material right in Anim8or, it has a specular light color 
             which I don't really<br>
             like. I'll switch it off too with this code.</p>
           <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
@@ -91,7 +91,7 @@
 
 	node = smgr-&gt;addAnimatedMeshSceneNode(mesh);
 	node-&gt;setMaterialTexture(<font color="#800080">0</font>,	driver-&gt;getTexture(<font color="#FF0000">&quot;../../media/wall.jpg&quot;</font>));
-	node-&gt;getMaterial(0).EmissiveColor.set(0,0,0,0);</font></pre></td>
+	node-&gt;getMaterial(0).SpecularColor.set(0,0,0,0);</font></pre></td>
             </tr>
           </table>
           <p> Now, for the first special effect: Animated water. It works like 

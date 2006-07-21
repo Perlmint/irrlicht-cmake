@@ -69,7 +69,7 @@ int main()
 	is able to create a cool texture mapping for me: Just use the mesh manipulator
 	and create a planar texture mapping for the mesh. If you want to see the mapping
 	I made with Anim8or, uncomment this line. I also did not figure out how to
-	set the material right in Anim8or, it has an emissive light color which I don't really
+	set the material right in Anim8or, it has a specular light color which I don't really
 	like. I'll switch it off too with this code.
 	*/
 
@@ -83,7 +83,7 @@ int main()
 
 	node = smgr->addAnimatedMeshSceneNode(mesh);
 	node->setMaterialTexture(0,	driver->getTexture("../../media/wall.jpg"));
-	node->getMaterial(0).EmissiveColor.set(0,0,0,0);
+	node->getMaterial(0).SpecularColor.set(0,0,0,0);
 
 	/*
 	Now, for the first special effect: Animated water. It works like this: The

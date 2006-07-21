@@ -277,7 +277,7 @@ int main()
 		room->setMaterialTexture(0,	colorMap);
 		room->setMaterialTexture(1,	normalMap);
 
-		room->getMaterial(0).EmissiveColor.set(0,0,0,0);
+		room->getMaterial(0).SpecularColor.set(0,0,0,0);
 
 		room->setMaterialFlag(video::EMF_FOG_ENABLE, true);
 		room->setMaterialType(video::EMT_PARALLAX_MAP_SOLID); 
