@@ -14,7 +14,7 @@ namespace scene
 {
 
 //! constructor
-CBillboardSceneNode::CBillboardSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
+CBillboardSceneNode::CBillboardSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 const core::vector3df& position, const core::dimension2d<f32>& size)
 : IBillboardSceneNode(parent, mgr, id, position)
 {
@@ -23,8 +23,6 @@ const core::vector3df& position, const core::dimension2d<f32>& size)
 	#endif
 
 	setSize(size);
-
-	AutomaticCullingEnabled = true;
 
 	indices[0] = 0;
 	indices[1] = 2;
@@ -94,20 +92,20 @@ void CBillboardSceneNode::render()
 	}
 
 	core::vector3df vertical = horizontal.crossProduct(view);
-	vertical.normalize();
-
-	horizontal *= 0.5f * Size.Width;
-	vertical *= 0.5f * Size.Height;	
-
-	vertices[0].Pos = pos + horizontal + vertical;
-	vertices[1].Pos = pos + horizontal - vertical;
-	vertices[2].Pos = pos - horizontal - vertical;
-	vertices[3].Pos = pos - horizontal + vertical;
 
 	view *= -1.0f;
 
 	for (s32 i=0; i<4; ++i)
 		vertices[i].Normal = view;
+
+	horizontal *= 0.5f * Size.Width;
+	vertical.normalize();
+	vertical *= 0.5f * Size.Height;
+
+	vertices[0].Pos = pos + horizontal + vertical;
+	vertices[1].Pos = pos + horizontal - vertical;
+	vertices[2].Pos = pos - horizontal - vertical;
+	vertices[3].Pos = pos - horizontal + vertical;
 
 	// draw
 

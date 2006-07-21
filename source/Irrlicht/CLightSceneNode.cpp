@@ -21,7 +21,7 @@ CLightSceneNode::CLightSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 	setDebugName("CLightSceneNode");
 	#endif
 
-	AutomaticCullingEnabled = false;
+	setAutomaticCulling(false);
 	LightData.Radius = radius;
 	LightData.DiffuseColor = color;
 	LightData.Position = position;

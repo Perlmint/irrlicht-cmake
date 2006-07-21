@@ -56,8 +56,6 @@ struct S3DVertex
 	//! Texture coordinates
 	core::vector2d<f32> TCoords;
 
-
-
 	bool operator == (const S3DVertex& other) const
 	{
 		return (Pos == other.Pos && Normal == other.Normal &&
@@ -99,6 +97,20 @@ struct S3DVertex2TCoords
 
 	//! Second set of texture coordinates
 	core::vector2d<f32> TCoords2;
+
+	bool operator == (const S3DVertex2TCoords& other) const
+	{
+		return (Pos == other.Pos && Normal == other.Normal &&
+			Color == other.Color && TCoords == other.TCoords &&
+			TCoords2 == other.TCoords2);
+	}
+
+	bool operator != (const S3DVertex2TCoords& other) const
+	{
+		return (Pos != other.Pos || Normal != other.Normal ||
+			Color != other.Color || TCoords != other.TCoords ||
+			TCoords2 != other.TCoords2);
+	}
 };
 
 
@@ -136,6 +148,20 @@ struct S3DVertexTangents
 
 	//! Binormal vector (tangent x normal)
 	core::vector3df Binormal;
+
+	bool operator == (const S3DVertexTangents& other) const
+	{
+		return (Pos == other.Pos && Normal == other.Normal &&
+			Color == other.Color && TCoords == other.TCoords &&
+			Tangent == other.Tangent && Binormal == other.Binormal);
+	}
+
+	bool operator != (const S3DVertexTangents& other) const
+	{
+		return (Pos != other.Pos || Normal != other.Normal ||
+			Color != other.Color || TCoords != other.TCoords ||
+			Tangent != other.Tangent || Binormal != other.Binormal);
+	}
 };
 
 

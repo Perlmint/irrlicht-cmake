@@ -163,7 +163,7 @@ bool CSceneCollisionManager::getCollisionPoint(const core::line3d<f32>& ray,
 	f32 nearest = 9999999999999.0f;
 	bool found = false;
 	f32 tmp, tmp2;
-	f32 raylenght = (f32)ray.getLengthSQ();
+	f32 raylength = (f32)ray.getLengthSQ();
     
 	for (s32 i=0; i<cnt; ++i)
 	{
@@ -172,7 +172,7 @@ bool CSceneCollisionManager::getCollisionPoint(const core::line3d<f32>& ray,
 			tmp = (f32)intersection.getDistanceFromSQ(ray.start);
 			tmp2 = (f32)intersection.getDistanceFromSQ(ray.end);
 
-            if (tmp < raylenght && tmp2 < raylenght &&
+			if (tmp < raylength && tmp2 < raylength &&
 				tmp < nearest)
 			{
 				nearest = tmp;

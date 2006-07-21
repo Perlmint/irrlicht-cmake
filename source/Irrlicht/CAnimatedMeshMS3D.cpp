@@ -355,22 +355,31 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			v.Pos.Y = vertices[triangles[i].VertexIndices[j]].Vertex[1];
 			v.Pos.Z = vertices[triangles[i].VertexIndices[j]].Vertex[2];
 
-			s32 boneid = vertices[triangles[i].VertexIndices[j]].BoneID;
-			if (boneid>=0 && boneid<(s32)Joints.size())
-				Joints[boneid].VertexIds.push_back(Vertices.size());
-			//else
-			//{
-			//	os::Debuginfo::print("no bone for vertex, bone", boneid);
-			//}
+			//look, if we already have this vertex in our vertex array
+			s32 index = -1;
+			for (int iV = 0; iV < Vertices.size(); iV++)
+			{
+				if (v == Vertices[iV])
+				{
+					index = iV;
+					break;
+				}
+			}
+			if (index == -1)
+			{
 
-			Vertices.push_back(v);
+				s32 boneid = vertices[triangles[i].VertexIndices[j]].BoneID;
+				if (boneid>=0 && boneid<(s32)Joints.size())
+					Joints[boneid].VertexIds.push_back(Vertices.size());
+				Vertices.push_back(v);
+				index = Vertices.size() - 1;
+			}
+			Indices.push_back(index);
 		}
-
-		Indices.push_back(Vertices.size()-3);
-		Indices.push_back(Vertices.size()-2);
-		Indices.push_back(Vertices.size()-1);
 	}
 
+	//create groups
+	s32 iIndex = -1;
 	for (i=0; i<(int)Groups.size(); ++i) 
 	{ 
 		SGroup& grp = Groups[i]; 
@@ -381,13 +390,9 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 
 		core::array<u16>& indices = Buffers[grp.MaterialIdx].Indices;
 
-		for (j=0; j<(int)grp.VertexIds.size(); ++j) 
-		{ 
-			u16 vertexId = vertexIds[j]; 
-			indices.push_back (vertexId * 3); 
-			indices.push_back (vertexId * 3 + 1); 
-			indices.push_back (vertexId * 3 + 2); 
-		} 
+		for (u32 k=0; k<grp.VertexIds.size(); ++k)
+			for (u32 l=0; l<3; ++l)
+				indices.push_back(Indices[++iIndex]);
 	}
 
 	// calculate bounding box

@@ -21,7 +21,7 @@ namespace scene
 
 //! constructor
 COctTreeSceneNode::COctTreeSceneNode(ISceneNode* parent, ISceneManager* mgr,
-									 s32 id, s32 minimalPolysPerNode)
+					 s32 id, s32 minimalPolysPerNode)
 : ISceneNode(parent, mgr, id), StdOctTree(0), LightMapOctTree(0),
 	MinimalPolysPerNode(minimalPolysPerNode), Mesh(0)
 {
@@ -29,7 +29,6 @@ COctTreeSceneNode::COctTreeSceneNode(ISceneNode* parent, ISceneManager* mgr,
 	setDebugName("COctTreeSceneNode");
 #endif
 
-	AutomaticCullingEnabled = false;
 	vertexType = (video::E_VERTEX_TYPE)-1;
 }
 
@@ -50,8 +49,8 @@ void COctTreeSceneNode::OnPreRender()
 {
 	if (IsVisible)
 	{
-		// because this node supports rendering of mixed mode meshes consisting of 
-		// transparent and solid material at the same time, we need to go through all 
+		// because this node supports rendering of mixed mode meshes consisting of
+		// transparent and solid material at the same time, we need to go through all
 		// materials, check of what type they are and register this node for the right
 		// render pass according to that.
 
@@ -64,7 +63,7 @@ void COctTreeSceneNode::OnPreRender()
 		// count transparent and solid materials in this scene node
 		for (u32 i=0; i<Materials.size(); ++i)
 		{
-			video::IMaterialRenderer* rnd = 
+			video::IMaterialRenderer* rnd =
 				driver->getMaterialRenderer(Materials[i].MaterialType);
 
 			if (rnd && rnd->isTransparent())
@@ -74,7 +73,7 @@ void COctTreeSceneNode::OnPreRender()
 
 			if (solidCount && transparentCount)
 				break;
-		}	
+		}
 
 		// register according to material types counted
 
@@ -103,7 +102,7 @@ void COctTreeSceneNode::render()
 	if (!camera)
 		return;
 
-	bool isTransparentPass = 
+	bool isTransparentPass =
 		SceneManager->getSceneNodeRenderPass() == scene::ESNRP_TRANSPARENT;
 	++PassCount;
 
@@ -136,7 +135,7 @@ void COctTreeSceneNode::render()
 
 				// only render transparent buffer if this is the transparent render pass
 				// and solid only in solid pass
-				if (transparent == isTransparentPass) 
+				if (transparent == isTransparentPass)
 				{
 					driver->setMaterial(Materials[i]);
 					driver->drawIndexedTriangleList(
@@ -155,6 +154,8 @@ void COctTreeSceneNode::render()
 				StdOctTree->renderBoundingBoxes(box, boxes);
 				for (u32 b=0; b<boxes.size(); ++b)
 					driver->draw3DBox(boxes[b], video::SColor(0,255,255,255));
+
+				driver->draw3DBox(Box,video::SColor(0,255,0,0));
 			}
 			break;
 
@@ -173,7 +174,7 @@ void COctTreeSceneNode::render()
 
 				// only render transparent buffer if this is the transparent render pass
 				// and solid only in solid pass
-				if (transparent == isTransparentPass) 
+				if (transparent == isTransparentPass)
 				{
 					driver->setMaterial(Materials[i]);
 					driver->drawIndexedTriangleList(
@@ -192,6 +193,8 @@ void COctTreeSceneNode::render()
 				LightMapOctTree->renderBoundingBoxes(box, boxes);
 				for (u32 b=0; b<boxes.size(); ++b)
 					driver->draw3DBox(boxes[b], video::SColor(0,255,255,255));
+
+				driver->draw3DBox(Box,video::SColor(0,255,0,0));
 			}
 		}
 		break;
@@ -244,7 +247,7 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 					chunk.MaterialId = i;
 					StdMeshes.push_back(chunk);
 					OctTree<video::S3DVertex>::SMeshChunk &nchunk = StdMeshes[StdMeshes.size()-1];
-					
+
 					s32 v;
 
 					for (v=0; v<b->getVertexCount(); ++v)
@@ -270,9 +273,9 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 					OctTree<video::S3DVertex2TCoords>::SMeshChunk chunk;
 					chunk.MaterialId = i;
 					LightMapMeshes.push_back(chunk);
-					OctTree<video::S3DVertex2TCoords>::SMeshChunk& nchunk = 
+					OctTree<video::S3DVertex2TCoords>::SMeshChunk& nchunk =
 						LightMapMeshes[LightMapMeshes.size()-1];
-						
+
 					s32 v;
 
 					for (v=0; v<b->getVertexCount(); ++v)
@@ -293,7 +296,7 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 
 	u32 endTime = os::Timer::getRealTime();
 	c8 tmp[255];
-	sprintf(tmp, "Needed %dms to create OctTree SceneNode.(%d nodes, %d polys)", 
+	sprintf(tmp, "Needed %dms to create OctTree SceneNode.(%d nodes, %d polys)",
 		endTime - beginTime, nodeCount, polyCount/3);
 	os::Printer::log(tmp, ELL_INFORMATION);
 
@@ -362,7 +365,7 @@ void COctTreeSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttribut
 
 	if (loadedNewMesh || MinimalPolysPerNode != oldMinimal)
 	{
-		// recalculate tree 
+		// recalculate tree
 
 		createTree(Mesh);
 	}

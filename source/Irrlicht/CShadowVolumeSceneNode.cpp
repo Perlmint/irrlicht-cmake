@@ -28,7 +28,7 @@ CShadowVolumeSceneNode::CShadowVolumeSceneNode(ISceneNode* parent,
 	setDebugName("CShadowVolumeSceneNode");
 	#endif
 
-	AutomaticCullingEnabled = false;
+	setAutomaticCulling(false);
 }
 
 
