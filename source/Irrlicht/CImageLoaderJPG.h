@@ -18,7 +18,7 @@ extern "C" {
 	#include <jpeglib.h> // use system lib
 	#else  // _IRR_USE_NON_SYSTEM_JPEG_LIB_
 	#include "jpeglib/jpeglib.h" // use irrlicht jpeglib
-#endif // _IRR_USE_NON_SYSTEM_JPEG_LIB_
+    #endif // _IRR_USE_NON_SYSTEM_JPEG_LIB_
 }
 #endif // _IRR_COMPILE_WITH_LIBJPEG_
 
@@ -53,7 +53,17 @@ public:
 private:
 
     #ifdef _IRR_COMPILE_WITH_LIBJPEG_
-    
+
+	/* 	Receives control for a fatal error.  Information sufficient to
+	generate the error message has been stored in cinfo->err; call
+	output_message to display it.  Control must NOT return to the caller;
+	generally this routine will exit() or longjmp() somewhere.
+	Typically you would override this routine to get rid of the exit()
+	default behavior.  Note that if you continue processing, you should
+	clean up the JPEG object with jpeg_abort() or jpeg_destroy().
+	*/
+	static void error_exit (j_common_ptr cinfo);
+
 	/*	Initialize source.  This is called by jpeg_read_header() before any
 	data is actually read.  Unlike init_destination(), it may leave
 	bytes_in_buffer set to 0 (in which case a fill_input_buffer() call
@@ -96,7 +106,10 @@ private:
 	/* Terminate source --- called by jpeg_finish_decompress() after all
 	data has been read.  Often a no-op. */
 	static void term_source (j_decompress_ptr cinfo);
-	
+
+	static void format_message (j_common_ptr cinfo, char * buffer);
+
+
 	#endif // _IRR_COMPILE_WITH_LIBJPEG_
 };
 
