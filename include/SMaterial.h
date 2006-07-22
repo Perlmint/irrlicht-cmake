@@ -17,7 +17,7 @@ namespace video
 	{
 		//! Standard solid material. Only first texture is used, which is
 		//! supposed to be the diffuse material.
-		EMT_SOLID = 0,			
+		EMT_SOLID = 0,
 
 		//! Solid material with 2 texture layers. The second is blended onto the
 		//! first using the alpha value of the vertex colors.
@@ -25,7 +25,7 @@ namespace video
 		//! works with DirectX.
 		EMT_SOLID_2_LAYER,
 
-		//! Material type with standard lightmap technique: 
+		//! Material type with standard lightmap technique:
 		//! There should be 2 textures: The first texture layer is a diffuse map,
 		//! the second is a light map. Vertex light is ignored.
 		EMT_LIGHTMAP,
@@ -34,14 +34,14 @@ namespace video
 		//! lightmap and diffuse texture are not modulated, but added instead.
 		EMT_LIGHTMAP_ADD,
 
-		//! Material type with standard lightmap technique: 
+		//! Material type with standard lightmap technique:
 		//! There should be 2 textures: The first texture layer is a diffuse map,
 		//! the second is a light map. Vertex light is ignored.
 		//! The texture colors are effectively multiplyied by 2 for brightening.
 		//! like known in DirectX as D3DTOP_MODULATE2X.
 		EMT_LIGHTMAP_M2,
 
-		//! Material type with standard lightmap technique: 
+		//! Material type with standard lightmap technique:
 		//! There should be 2 textures: The first texture layer is a diffuse map,
 		//! the second is a light map. Vertex light is ignored.
 		//! The texture colors are effectively multiplyied by 4 for brightening.
@@ -60,10 +60,10 @@ namespace video
 		//! Detail mapped material. The first texture is diffuse color map, the
 		//! second is added to this and usually displayed with a bigger scale value
 		//! so that it adds more detail. The detail map is added to the diffuse map using
-		//! ADD_SIGNED, so that it is possible to add and substract color from the diffuse 
-		//! map. For example a value of (127,127,127) will not change the appearance of 
+		//! ADD_SIGNED, so that it is possible to add and substract color from the diffuse
+		//! map. For example a value of (127,127,127) will not change the appearance of
 		//! the diffuse map at all.
-		//! Often used for terrain rendering. 
+		//! Often used for terrain rendering.
 		EMT_DETAIL_MAP,
 
 		//! Makes the material look like it was reflection the environment
@@ -71,14 +71,14 @@ namespace video
 		//! is used, which must be set as Texture1.
 		EMT_SPHERE_MAP,
 
-		//! A reflecting material with an 
+		//! A reflecting material with an
 		//! optional additional non reflecting texture layer. The reflection
 		//! map should be set as Texture 1.
 		EMT_REFLECTION_2_LAYER,
 
 		//! A transparent material. Only the first texture is used.
 		//! The new color is calculated by simply adding the source color and
-		//! the dest color. This means if for example a billboard using a texture with 
+		//! the dest color. This means if for example a billboard using a texture with
 		//! black background and a red circle on it is drawed with this material, the
 		//! result is that only the red circle will be drawn a little bit transparent,
 		//! and everything which was black is 100% transparent and not visible.
@@ -93,26 +93,26 @@ namespace video
 		//! mode (video::IVideoDriver::setTextureCreationFlag()).
 		//! Also, an alpha ref is used, which can be manipulated using SMaterial::MaterialTypeParam.
 		//! If set to 0, the alpha ref gets its default value which is 0.5f and which means
-		//! that pixels with an alpha value >127 will be written, others not.  In other, simple 
-		//! words: this value controls how sharp the edges become when going from a 
+		//! that pixels with an alpha value >127 will be written, others not.  In other, simple
+		//! words: this value controls how sharp the edges become when going from a
 		//! transparent to a solid spot on the texture.
-		EMT_TRANSPARENT_ALPHA_CHANNEL,	
+		EMT_TRANSPARENT_ALPHA_CHANNEL,
 
 		//! Makes the material transparent based on the texture alpha channel.
 		//! If the alpha channel value is greater than 127, a pixel is written to the
 		//! target, otherwise not. This material does not use alpha blending
-		//! and is a lot faster than EMT_TRANSPARENT_ALPHA_CHANNEL. It 
+		//! and is a lot faster than EMT_TRANSPARENT_ALPHA_CHANNEL. It
 		//! is ideal for drawing stuff like leafes of plants, because the borders
 		//! are not blurry but sharp.
 		//! Only first texture is used. If you are using this material with small
 		//! textures and 3d object, it is a good idea to load the texture in 32 bit
 		//! mode (video::IVideoDriver::setTextureCreationFlag()).
-		EMT_TRANSPARENT_ALPHA_CHANNEL_REF,	
+		EMT_TRANSPARENT_ALPHA_CHANNEL_REF,
 
 		//! Makes the material transparent based on the vertex alpha value.
 		EMT_TRANSPARENT_VERTEX_ALPHA,
 
-		//! A transparent reflecting material with an 
+		//! A transparent reflecting material with an
 		//! optional additional non reflecting texture layer. The reflection
 		//! map should be set as Texture 1. The transparency depends on the
 		//! alpha value in the vertex colors. A texture which will not reflect
@@ -121,54 +121,54 @@ namespace video
 		//! in OpenGL. It works in Direct3D.
 		EMT_TRANSPARENT_REFLECTION_2_LAYER,
 
-		//! A solid normal map renderer. First texture is the color map, the 
+		//! A solid normal map renderer. First texture is the color map, the
 		//! second should be the normal map. Note that you should use this material
-		//! only when drawing geometry consisting of vertices of type S3DVertexTangents 
+		//! only when drawing geometry consisting of vertices of type S3DVertexTangents
 		//! (EVT_TANGENTS). You can convert any mesh into this format using
 		//! IMeshManipulator::createMeshWithTangents() (See SpecialFX2 Tutorial).
-		//! This shader runs on vertex shader 1.1 and pixel shader 1.1 capable hardware and 
+		//! This shader runs on vertex shader 1.1 and pixel shader 1.1 capable hardware and
 		//! falls back on a fixed function lighted material if this hardware is not available.
 		//! Only two lights are supported by this shader, if there are more, the nearest two
 		//! are chosen. Currently, this shader is only implemented for the D3D8 and D3D9 renderers.
 		EMT_NORMAL_MAP_SOLID,
 
-		//! A transparent normal map renderer. First texture is the color map, the 
+		//! A transparent normal map renderer. First texture is the color map, the
 		//! second should be the normal map. Note that you should use this material
-		//! only when drawing geometry consisting of vertices of type S3DVertexTangents 
+		//! only when drawing geometry consisting of vertices of type S3DVertexTangents
 		//! (EVT_TANGENTS). You can convert any mesh into this format using
 		//! IMeshManipulator::createMeshWithTangents() (See SpecialFX2 Tutorial).
-		//! This shader runs on vertex shader 1.1 and pixel shader 1.1 capable hardware and 
+		//! This shader runs on vertex shader 1.1 and pixel shader 1.1 capable hardware and
 		//! falls back on a fixed function lighted material if this hardware is not available.
 		//! Only two lights are supported by this shader, if there are more, the nearest two
 		//! are chosen. Currently, this shader is only implemented for the D3D8 and D3D9 renderers.
 		EMT_NORMAL_MAP_TRANSPARENT_ADD_COLOR,
 
 		//! A transparent (based on the vertex alpha value) normal map renderer.
-		//! First texture is the color map, the 
+		//! First texture is the color map, the
 		//! second should be the normal map. Note that you should use this material
-		//! only when drawing geometry consisting of vertices of type S3DVertexTangents 
+		//! only when drawing geometry consisting of vertices of type S3DVertexTangents
 		//! (EVT_TANGENTS). You can convert any mesh into this format using
 		//! IMeshManipulator::createMeshWithTangents() (See SpecialFX2 Tutorial).
-		//! This shader runs on vertex shader 1.1 and pixel shader 1.1 capable hardware and 
+		//! This shader runs on vertex shader 1.1 and pixel shader 1.1 capable hardware and
 		//! falls back on a fixed function lighted material if this hardware is not available.
 		//! Only two lights are supported by this shader, if there are more, the nearest two
 		//! are chosen. Currently, this shader is only implemented for the D3D8 and D3D9 renderers.
 		EMT_NORMAL_MAP_TRANSPARENT_VERTEX_ALPHA,
 
-		//! Just like EMT_NORMAL_MAP_SOLID, but uses parallax mapping too, which 
-		//! looks a lot more realistic. This only works when the hardware supports at 
-		//! least vertex shader 1.1 and pixel shader 1.4. 
+		//! Just like EMT_NORMAL_MAP_SOLID, but uses parallax mapping too, which
+		//! looks a lot more realistic. This only works when the hardware supports at
+		//! least vertex shader 1.1 and pixel shader 1.4.
 		//! First texture is the color map, the  second should be the normal map.
-		//! The normal map texture should contain the height value in the 
-		//! alpha component. The IVideoDriver::makeNormalMapTexture() method writes 
+		//! The normal map texture should contain the height value in the
+		//! alpha component. The IVideoDriver::makeNormalMapTexture() method writes
 		//! this value automaticly when creating normal maps from a heightmap when using a 32 bit
-		//! texture. 
-		//! The height scale of the material (affecting the bumpiness) is being controlled 
-		//! by the SMaterial::MaterialTypeParam member. 
+		//! texture.
+		//! The height scale of the material (affecting the bumpiness) is being controlled
+		//! by the SMaterial::MaterialTypeParam member.
 		//! If set to zero, the default value (0.02f) will be applied. Otherwise
 		//! the value set in SMaterial::MaterialTypeParam is taken. This value depends on with which
 		//! scale the texture is mapped on the material. Too high or low values of MaterialTypeParam
-		//! can result in strange artifacts. 
+		//! can result in strange artifacts.
 		EMT_PARALLAX_MAP_SOLID,
 
 		//! A material just like EMT_PARALLAX_MAP_SOLID, but it is transparent, using
@@ -179,8 +179,8 @@ namespace video
 		//! EMT_TRANSPARENT_VERTEX_ALPHA as base material.
 		EMT_PARALLAX_MAP_TRANSPARENT_VERTEX_ALPHA,
 
-		//! This value is not used. It only forces this enumeration to compile in 32 bit. 
-		EMT_FORCE_32BIT = 0x7fffffff	
+		//! This value is not used. It only forces this enumeration to compile in 32 bit.
+		EMT_FORCE_32BIT = 0x7fffffff
 	};
 
 
@@ -218,25 +218,26 @@ namespace video
 		EMF_TRILINEAR_FILTER,
 
 		//! Is anisotropic filtering? Default: false
-		//! In Irrlicht you can use anisotropic texture filtering in conjunction with bilinear or trilinear 
-		//! texture filtering to improve rendering results. Primitives will look less blurry with this
-		//! flag switched on.
+		//! In Irrlicht you can use anisotropic texture filtering in
+		//! conjunction with bilinear or trilinear texture filtering
+		//! to improve rendering results. Primitives will look less
+		//! blurry with this flag switched on.
 		EMF_ANISOTROPIC_FILTER,
 
 		//! Is fog enabled? Default: false
 		EMF_FOG_ENABLE,
 
-		//! Normalizes normals.You can enable this if you need 
-		//! to scale a dynamic lighted model. Usually, its normals will get scaled 
+		//! Normalizes normals.You can enable this if you need
+		//! to scale a dynamic lighted model. Usually, its normals will get scaled
 		//! too then and it will get darker. If you enable the EMF_NORMALIZE_NORMALS flag,
 		//! the normals will be normalized again, and the model will look as bright as it should.
 		EMF_NORMALIZE_NORMALS,
 
 		//! This is not a flag, but a value indicating how much flags there are.
-		EMF_MATERIAL_FLAG_COUNT 
+		EMF_MATERIAL_FLAG_COUNT
 	};
 
- 	//! Maximum number of texture an SMaterial can have.
+	//! Maximum number of texture an SMaterial can have.
 	const s32 MATERIAL_MAX_TEXTURES = 8;
 
 
@@ -251,7 +252,7 @@ namespace video
 			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
-			BilinearFilter(true), TrilinearFilter(false), AnisotropicFilter(false),
+			BilinearFilter(true), TrilinearFilter(true), AnisotropicFilter(true),
 			FogEnable(false), NormalizeNormals(false)
 		{}
 
@@ -270,8 +271,8 @@ namespace video
 		//! Light emitted by this material. Default is to emitt no light.
 		SColor EmissiveColor;
 
-		//! How much specular light (highlights from a light) is reflected. 
-		/** The default is to reflect white specular light.  See SMaterial::Shininess how to 
+		//! How much specular light (highlights from a light) is reflected.
+		/** The default is to reflect white specular light.  See SMaterial::Shininess how to
 		enable specular lights. */
 		SColor SpecularColor;
 
@@ -284,7 +285,7 @@ namespace video
 		sceneNode->getMaterial(0).Shininess = 20.0f;
 		\endcode
 
-		You can also change the color of the highlights using 
+		You can also change the color of the highlights using
 		\code
 		sceneNode->getMaterial(0).SpecularColor.set(255,255,255,255);
 		\endcode
@@ -307,12 +308,12 @@ namespace video
 		\endcode */
 		f32 Shininess;
 
-		//! Free parameter dependend on the material type. 
-		/** Mostly ignored, used for example in EMT_PARALLAX_MAP_SOLID and 
-		EMT_TRANSPARENT_ALPHA_CHANNEL. */
+		//! Free parameter dependend on the material type.
+		/** Mostly ignored, used for example in EMT_PARALLAX_MAP_SOLID
+		and EMT_TRANSPARENT_ALPHA_CHANNEL. */
 		f32 MaterialTypeParam;
 
-		//! Second free parameter dependend on the material type. 
+		//! Second free parameter dependend on the material type.
 		/** Mostly ignored. */
 		f32 MaterialTypeParam2;
 
@@ -338,7 +339,7 @@ namespace video
 			ITexture* Textures[MATERIAL_MAX_TEXTURES];
 		};
 
-		//! material flag union. 
+		//! material flag union.
 		/** This enables the user to access the
 		material flag using e.g: material.Wireframe = true or
 		material.flag[EMF_WIREFRAME] = true; */
@@ -362,7 +363,7 @@ namespace video
 				bool ZBuffer;
 
 				//! May be written to the zbuffer or is it readonly.
-				/** Default: true This flag is ignored, if the MaterialType 
+				/** Default: true This flag is ignored, if the MaterialType
 				is a transparent type. */
 				bool ZWriteEnable;
 
@@ -378,7 +379,7 @@ namespace video
 				bool TrilinearFilter;
 
 				//! Is anisotropic filtering enabled? Default: false
-				/** In Irrlicht you can use anisotropic texture filtering in conjunction with bilinear or trilinear 
+				/** In Irrlicht you can use anisotropic texture filtering in conjunction with bilinear or trilinear
 				texture filtering to improve rendering results. Primitives will look less blurry with this
 				flag switched on. */
 				bool AnisotropicFilter;
@@ -416,8 +417,8 @@ namespace video
 				TrilinearFilter != b.TrilinearFilter ||
 				AnisotropicFilter != b.AnisotropicFilter ||
 				FogEnable != b.FogEnable ||
-				NormalizeNormals != NormalizeNormals;
-		}	
+				NormalizeNormals != b.NormalizeNormals;
+		}
 	};
 
 } // end namespace video
