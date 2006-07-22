@@ -422,7 +422,7 @@ public:
 
 	virtual void getString(char* target)
 	{
-		sprintf(target, "%x", Value.color);
+		sprintf(target, "%08x", Value.color);
 	}
 
 	virtual void setInt(s32 intValue)
@@ -437,7 +437,7 @@ public:
 
 	virtual void setString(const char* text)
 	{
-		scanf(text, L"%x", &Value.color);
+		sscanf(text, "%08x", &Value.color);
 	}
 
 	virtual video::SColorf getColorf()
