@@ -2,10 +2,11 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include "COBJMeshFileLoader.h"
 #include <cstring>
 #include <cctype>
 #include <iostream>
+
+#include "COBJMeshFileLoader.h"
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"
 #include "fast_atof.h"
@@ -353,7 +354,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				c8 illumStr[COLOR_BUFFER_LENGTH];
 
 				pBufPtr = goAndCopyNextWord(illumStr, pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
-				pCurrMaterial->illumination = atol(illumStr);
+				pCurrMaterial->illumination = (c8)atol(illumStr);
 			}
 			pBufPtr = goNextLine(pBufPtr, pBufEnd);
 			break;

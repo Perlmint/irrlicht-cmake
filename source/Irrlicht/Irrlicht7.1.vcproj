@@ -1117,6 +1117,12 @@
 					RelativePath=".\CMY3DStuff.h">
 				</File>
 				<File
+					RelativePath=".\COBJMeshFileLoader.cpp">
+				</File>
+				<File
+					RelativePath=".\COBJMeshFileLoader.h">
+				</File>
+				<File
 					RelativePath=".\COCTLoader.cpp">
 				</File>
 				<File
@@ -1133,12 +1139,6 @@
 				</File>
 				<File
 					RelativePath=".\CQ3LevelMesh.h">
-				</File>
-				<File
-					RelativePath=".\CStaticMeshOBJ.cpp">
-				</File>
-				<File
-					RelativePath=".\CStaticMeshOBJ.h">
 				</File>
 				<File
 					RelativePath="CXAnimationPlayer.cpp">
@@ -1424,6 +1424,12 @@
 			</File>
 			<File
 				RelativePath=".\CMemoryReadFile.h">
+			</File>
+			<File
+				RelativePath=".\CPakReader.cpp">
+			</File>
+			<File
+				RelativePath=".\CPakReader.h">
 			</File>
 			<File
 				RelativePath=".\CReadFile.cpp">

@@ -357,7 +357,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 
 			//look, if we already have this vertex in our vertex array
 			s32 index = -1;
-			for (int iV = 0; iV < Vertices.size(); iV++)
+			for (int iV = 0; iV < (s32)Vertices.size(); iV++)
 			{
 				if (v == Vertices[iV])
 				{
