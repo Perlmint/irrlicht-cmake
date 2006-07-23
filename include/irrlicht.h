@@ -43,6 +43,7 @@
 #include "IAnimatedMeshMD2.h"
 #include "IAnimatedMeshMS3D.h"
 #include "IAnimatedMeshX.h"
+#include "IAnimatedMeshB3d.h"
 #include "IAnimatedMeshSceneNode.h"
 #include "ICameraSceneNode.h"
 #include "IDummyTransformationSceneNode.h"

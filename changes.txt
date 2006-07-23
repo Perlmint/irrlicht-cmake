@@ -2,7 +2,7 @@ Changes in version 1.1 (??? 2006)
 
 - Improved .3ds and .obj file importers.
 
-- Added support for .pak files.
+- Added support for .b3d (Blitz Basic) and .pak (Quake archive) files.
 
 - Added support for point rendering.
 

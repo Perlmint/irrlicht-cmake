@@ -16,7 +16,7 @@ namespace irr
 namespace video  
 {
 
-//! Base class for all internal D3D9 material renderers
+//! Base class for all internal OpenGL material renderers
 class COpenGLMaterialRenderer : public IMaterialRenderer
 {
 public:
