@@ -9,16 +9,16 @@ CppCompiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_WINDOWS -D_MBCS -D_USRDLL -DIR
 Includes=..\..\include;zlib
 Linker=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglu32 -lopengl32_@@_
 Libs=
-UnitCount=474
+UnitCount=478
 Folders=doc,gui_impl,include,include/core,include/gui,include/io,include/scene,include/video,io_impl,other_impl,other_impl/extern,other_impl/extern/jpeglib,other_impl/extern/libpng,other_impl/extern/zlib,scene_impl,video_impl,video_impl/DirectX8,video_impl/DirectX9,video_impl/Null,video_impl/OpenGL,video_impl/Software,video_impl/Software2
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Icon=
-ExeOutput=
+ExeOutput=..\..\bin\Win32-gcc
 ObjectOutput=
-OverrideOutput=0
+OverrideOutput=1
 OverrideOutputName=Irrlicht.dll
 HostApplication=
 CommandLine=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001100000000000
+CompilerSettings=0000000001100001000000
 
 [Unit1]
 FileName=..\..\include\EDriverTypes.h
@@ -4766,7 +4766,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit473]
-FileName=CSphereSceneNode.h
+FileName=CSphereSceneNode.cpp
 CompileCpp=1
 Folder=scene_impl
 Compile=1
@@ -4776,7 +4776,47 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit474]
-FileName=CSphereSceneNode.cpp
+FileName=CSphereSceneNode.h
+CompileCpp=1
+Folder=scene_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit475]
+FileName=CPakReader.h
+CompileCpp=1
+Folder=io_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit476]
+FileName=CPakReader.cpp
+CompileCpp=1
+Folder=io_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit477]
+FileName=CAnimatedMeshB3d.h
+CompileCpp=1
+Folder=scene_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit478]
+FileName=CAnimatedMeshB3d.cpp
 CompileCpp=1
 Folder=scene_impl
 Compile=1
