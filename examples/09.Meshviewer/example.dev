@@ -1,7 +1,7 @@
 [Project]
 FileName=example.dev
 Name=Irrlicht Example 09 Mesh Viewer
-UnitCount=3
+UnitCount=1
 Type=1
 Ver=1
 ObjFiles=
@@ -56,23 +56,4 @@ OriginalFilename=
 ProductName=
 ProductVersion=
 AutoIncBuildNr=0
-
-[Unit2]
-FileName=..\..\..\irrlicht-svnnew\irrlicht\examples\09.Meshviewer\resource.h
-CompileCpp=1
-Folder=Irrlicht Example 09 Mesh Viewer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
-FileName=..\..\..\irrlicht-svnnew\irrlicht\examples\09.Meshviewer\9.Meshviewer.rc
-Folder=Irrlicht Example 09 Mesh Viewer
-Compile=1
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
 
