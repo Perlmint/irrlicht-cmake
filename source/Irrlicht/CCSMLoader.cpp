@@ -467,7 +467,7 @@ namespace scene
 					vtx.Normal = *(vtxPtr->getPosition());
 					vtx.Color.set(255,vtxPtr->getColor()->red,vtxPtr->getColor()->green,vtxPtr->getColor()->blue);
 					vtx.TCoords.set(vtxPtr->getTextureCoordinates()->X,vtxPtr->getTextureCoordinates()->Y);
-					vtx.TCoords2.set(vtxPtr->getLightMapCoordinates()->X,0 - vtxPtr->getLightMapCoordinates()->Y);
+					vtx.TCoords2.set(vtxPtr->getLightMapCoordinates()->X,0.0f - vtxPtr->getLightMapCoordinates()->Y);
 					
 					buffer->Vertices.push_back(vtx);
 				}
@@ -593,9 +593,9 @@ namespace scene
 		flags = 0;
 		lightMapId = 0;
 		textureName = 0;
-		uvOffset.set(0,0);
-		uvScale.set(0,0);
-		uvRotation = 0;
+		uvOffset.set(0.0f,0.0f);
+		uvScale.set(0.0f,0.0f);
+		uvRotation = 0.0f;
 		triangles.clear();
 		lines.clear();
 

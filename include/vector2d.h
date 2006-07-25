@@ -51,7 +51,7 @@ public:
 
 	// functions
 
-	void set(const T& nx, const T& ny) {X=nx; Y=ny; }
+	void set(T nx, T ny) {X=nx; Y=ny; }
 	void set(const vector2d<T>& p) { X=p.X; Y=p.Y;}
 
 	//! Returns the length of the vector

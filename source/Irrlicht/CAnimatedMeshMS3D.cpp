@@ -357,17 +357,16 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 
 			//look, if we already have this vertex in our vertex array
 			s32 index = -1;
-			for (int iV = 0; iV < (s32)Vertices.size(); iV++)
+			for (u32 iV = 0; iV < Vertices.size(); ++iV)
 			{
 				if (v == Vertices[iV])
 				{
-					index = iV;
+					index = (s32)iV;
 					break;
 				}
 			}
 			if (index == -1)
 			{
-
 				s32 boneid = vertices[triangles[i].VertexIndices[j]].BoneID;
 				if (boneid>=0 && boneid<(s32)Joints.size())
 					Joints[boneid].VertexIds.push_back(Vertices.size());
@@ -383,7 +382,6 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 	for (i=0; i<(int)Groups.size(); ++i) 
 	{ 
 		SGroup& grp = Groups[i]; 
-		core::array<u16>& vertexIds = grp.VertexIds; 
 
 		if (grp.MaterialIdx >= Buffers.size()) 
 			grp.MaterialIdx = 0; 

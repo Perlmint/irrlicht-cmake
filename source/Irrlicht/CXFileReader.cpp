@@ -1557,7 +1557,7 @@ void CXFileReader::findNextNoneWhiteSpaceNumber()
 	if (binary)
 		return;
 
-	while(1)
+	while(true)
 	{
 		while((P < End) && (P[0] != '-') && (P[0] != '.') &&
 				!(isdigit(P[0])))
@@ -1581,7 +1581,7 @@ void CXFileReader::findNextNoneWhiteSpace()
 	if (binary)
 		return;
 
-	while(1)
+	while(true)
 	{
 		while(P < End && (P[0]==' ' || P[0]=='\n' || P[0]=='\r' || P[0]=='\t'))
 			++P;

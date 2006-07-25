@@ -698,8 +698,8 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	// create indices
 
 	Indices.reallocate(header.numVertices);
-	s32 count = header.numTriangles*3;
-	for (s32 n=0; n<count; n+=3)
+	s16 count = header.numTriangles*3;
+	for (s16 n=0; n<count; n+=3)
 	{
 		Indices.push_back(n);
 		Indices.push_back(n+1);

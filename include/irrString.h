@@ -236,7 +236,7 @@ public:
 	//! Comparison operator
 	bool operator ==(const T* str) const
 	{
-		int i;
+		s32 i;
 		for(i=0; array[i] && str[i]; ++i)
 			if (array[i] != str[i])
 				return false;
@@ -266,6 +266,14 @@ public:
 				return (array[i] < other.array[i]);
 
 		return used < other.used;
+	}
+
+
+
+	//! Equals not operator
+	bool operator !=(const T* str) const
+	{
+		return !(*this == str);
 	}
 
 
