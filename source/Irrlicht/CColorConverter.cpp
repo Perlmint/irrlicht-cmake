@@ -2,13 +2,44 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include "SColor.h"
 #include "CColorConverter.h"
+#include "SColor.h"
 
 namespace irr
 {
 namespace video
 {
+
+//! converts a monochrome bitmap to A1R5G5B5 data
+void CColorConverter::convert1BitTo16BitFlipMirror(const c8* in, s16* out, s32 width, s32 height, s32 pitch)
+{
+	s16* p = out + width * height;
+
+	for (s32 y=0; y<height; ++y)
+	{
+		s32 shift = 7;
+		out = p - y * width - width;
+
+		for (s32 x=0; x<width; ++x)
+		{
+			*out = *in>>shift & 0x01 ? (s16)0xffff : (s16)0x0000;
+			++out;
+							
+			--shift;
+			if (shift<0)
+			{
+				shift=7;
+				++in;
+			}
+		}
+
+		if (shift != 7)
+			++in;
+
+		in += pitch;
+	}
+}
+
 
 //! converts a 4 bit palettized image into R5G5B5
 void CColorConverter::convert4BitTo16BitFlipMirror(const c8* in, s16* out, s32 width, s32 height, s32 pitch, const s32* palette)
@@ -42,6 +73,7 @@ void CColorConverter::convert4BitTo16BitFlipMirror(const c8* in, s16* out, s32 w
 		in+=pitch;
 	}
 }
+
 
 //! converts a 8 bit palettized image into R5G5B5
 void CColorConverter::convert8BitTo16Bit(const c8* in, s16* out, s32 width, s32 height, s32 pitch, const s32* palette)
@@ -87,36 +119,6 @@ void CColorConverter::convert8BitTo16BitFlipMirror(const c8* in, s16* out, s32 w
 }
 
 
-//! converts a monochrome bitmap to A1R5G5B5 data
-void CColorConverter::convert1BitTo16BitFlipMirror(const c8* in, s16* out, s32 width, s32 height, s32 pitch)
-{
-	s16* p = out + width * height;
-
-	for (s32 y=0; y<height; ++y)
-	{
-		s32 shift = 7;
-		out = p - y * width - width;
-
-		for (s32 x=0; x<width; ++x)
-		{
-			*out = *in>>shift & 0x01 ? (s16)0xffff : (s16)0x0000;
-			++out;
-							
-			--shift;
-			if (shift<0)
-			{
-				shift=7;
-				++in;
-			}
-		}
-
-		if (shift != 7)
-			++in;
-
-		in += pitch;
-	}
-}
-
 //! converts R8G8B8 16 bit data to A1R5G5B5 data, and flips and 
 //! mirrors the image during the process.
 void CColorConverter::convert16BitTo16BitFlipMirror(const s16* in, s16* out, s32 width, s32 height, s32 pitch)
@@ -160,30 +162,6 @@ void CColorConverter::convert24BitTo16BitFlipMirror(const c8* in, s16* out, s32 
 	}
 }
 
-
-
-//! copies R8G8B8 24 bit data to 24 data, and flips and 
-//! mirrors the image during the process.
-void CColorConverter::convert24BitTo24BitFlipMirrorColorShuffle(const c8* in, c8* out, s32 width, s32 height, s32 pitch)
-{
-	const c8 *p = in;
-	const s32 lineWidth = 3 * width + pitch;
-	out += width * height * 3;
-
-	for (s32 y=0; y<height; ++y)
-	{
-		for (s32 x=0; x<width; ++x)
-		{
-			p = in + (width-x-1)*3;
-			out -= 3;
-			out[0] = p[2];
-			out[1] = p[1];
-			out[2] = p[0];
-		}
-
-		in += lineWidth;
-	}
-}
 
 
 //! converts R8G8B8 24 bit data to A1R5G5B5 data (used e.g for JPG to A1R5G5B5)
@@ -270,6 +248,30 @@ void CColorConverter::convert32BitTo16BitFlipMirrorColorShuffle(const c8* in, s1
 }
 
 
+//! copies R8G8B8 24 bit data to 24 data, and flips and 
+//! mirrors the image during the process.
+void CColorConverter::convert24BitTo24BitFlipMirrorColorShuffle(const c8* in, c8* out, s32 width, s32 height, s32 pitch)
+{
+	const c8 *p = in;
+	const s32 lineWidth = 3 * width + pitch;
+	out += width * height * 3;
+
+	for (s32 y=0; y<height; ++y)
+	{
+		for (s32 x=0; x<width; ++x)
+		{
+			p = in + (width-x-1)*3;
+			out -= 3;
+			out[0] = p[2];
+			out[1] = p[1];
+			out[2] = p[0];
+		}
+
+		in += lineWidth;
+	}
+}
+
+
 //! Resizes the surface to a new size and converts it at the same time
 //! to an A8R8G8B8 format, returning the pointer to the new buffer.
 //! The returned pointer has to be deleted.
@@ -338,5 +340,7 @@ void CColorConverter::convert32BitTo32BitFlipMirror(const s32* in, s32* out, s32
 	}
 }
 
+
 } // end namespace video
 } // end namespace irr
+

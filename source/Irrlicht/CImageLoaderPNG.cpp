@@ -14,7 +14,6 @@
 
 #include "CImageLoaderPNG.h"
 #include <string.h>
-#include "CColorConverter.h"
 #include "CImage.h"
 #include "CReadFile.h"
 #include "os.h"

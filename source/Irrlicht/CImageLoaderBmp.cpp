@@ -257,14 +257,9 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 	if (header.Id != 0x4d42 && header.Id != 0x424d)
 		return 0;
 
-	// return if ther is a compression uses
-
-	//if (header.Compression > 2) // we'll only handle RLE-Compression
-	//	return 0;
-
-	if (header.Compression != 0)
+	if (header.Compression > 2) // we'll only handle RLE-Compression
 	{
-		os::Printer::log("Compressed BMPs are currently not supported.", ELL_ERROR);
+		os::Printer::log("Compression mode not supported.", ELL_ERROR);
 		return 0;
 	}
 
@@ -281,7 +276,8 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 		PaletteData = new s32[paletteSize];
 		file->read(PaletteData, paletteSize * sizeof(s32));
 #ifdef __BIG_ENDIAN__
-		for (int i=0;i<paletteSize;i++) PaletteData[i] = OSReadSwapInt32(&PaletteData[i],0);
+		for (int i=0; i<paletteSize; ++i)
+			PaletteData[i] = OSReadSwapInt32(&PaletteData[i],0);
 #endif
 	}
 
@@ -289,11 +285,10 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 
 	if (!header.BitmapDataSize)
 	{
-		// okay, wir dürfen raten wie gross die bitmap ist.
-		// manche Ar*******er speichern das nicht ab.
+		// okay, lets guess the size
+		// some tools simply don't set it
 		header.BitmapDataSize = file->getSize() - header.BitmapDataOffset;
 	}
-
 
 	file->seek(header.BitmapDataOffset);
 
@@ -308,7 +303,6 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 	
 	BmpData = new c8[header.BitmapDataSize];
 	file->read(BmpData, header.BitmapDataSize);
-
 
 	// decompress data if needed
 	switch(header.Compression)
@@ -343,6 +337,9 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 		image->unlock();
 		break;
 	case 16:
+		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(header.Width, header.Height));
+		CColorConverter::convert16BitTo16BitFlipMirror((s16*)BmpData, (s16*)image->lock(), header.Width, header.Height, pitch);
+		image->unlock();
 		break;
 	case 24:
 		image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(header.Width, header.Height));

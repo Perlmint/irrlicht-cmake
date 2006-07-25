@@ -4,7 +4,6 @@
 
 #include "CImageLoaderJPG.h"
 #include <string.h>
-#include "CColorConverter.h"
 #include "CImage.h"
 #include "os.h"
 

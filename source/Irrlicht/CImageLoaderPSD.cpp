@@ -5,7 +5,6 @@
 #include "CImageLoaderPSD.h"
 #include <string.h>
 #include "os.h"
-#include "CColorConverter.h"
 #include "CImage.h"
 
 namespace irr
