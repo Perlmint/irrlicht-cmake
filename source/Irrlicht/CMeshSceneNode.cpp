@@ -178,7 +178,7 @@ void CMeshSceneNode::render()
 		scene::IMeshBuffer* mb = Mesh->getMeshBuffer(i);
 		if (mb)
 		{
-			video::SMaterial& material = ReadOnlyMaterials ? mb->getMaterial() : Materials[i];
+			const video::SMaterial& material = ReadOnlyMaterials ? mb->getMaterial() : Materials[i];
 
 			video::IMaterialRenderer* rnd = driver->getMaterialRenderer(material.MaterialType);
 			bool transparent = (rnd && rnd->isTransparent());

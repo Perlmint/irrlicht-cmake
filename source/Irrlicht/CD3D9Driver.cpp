@@ -1390,7 +1390,7 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	// specular highlights
 	if (resetAllRenderstates || !core::equals(lastmaterial.Shininess,material.Shininess))
 	{
-		bool enable = (material.Shininess!=0);
+		bool enable = (material.Shininess!=0.0f);
 		pID3DDevice->SetRenderState(D3DRS_SPECULARENABLE, enable);
 		pID3DDevice->SetRenderState(D3DRS_NORMALIZENORMALS, enable);
 		pID3DDevice->SetRenderState(D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL);

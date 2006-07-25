@@ -247,7 +247,7 @@ namespace video
 		//! default constructor, creates a solid material with standard colors
 		SMaterial()
 		: MaterialType(EMT_SOLID), AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
-			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
+			EmissiveColor(0,0,0,0), SpecularColor(0,0,0,0),
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f),
 			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),

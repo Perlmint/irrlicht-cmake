@@ -62,8 +62,6 @@ public:
 			glDisable(GL_BLEND);
 			glDisable(GL_ALPHA_TEST);
 		}
-
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 };
 
@@ -93,8 +91,6 @@ public:
 			glDisable(GL_BLEND);
 			glDisable(GL_ALPHA_TEST);
 		}
-
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 };
 
@@ -123,9 +119,7 @@ public:
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			glEnable(GL_BLEND);
 		}
-
-		material.ZWriteEnable = false;
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		glDepthMask(GL_FALSE);
 	}
 
 	//! Returns if the material is transparent. 
@@ -170,9 +164,7 @@ public:
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
 		}
-
-		material.ZWriteEnable = false;
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		glDepthMask(GL_FALSE);
 	}
 
 	virtual void OnUnsetMaterial() 
@@ -232,9 +224,6 @@ public:
 
 			glAlphaFunc(GL_GREATER, refValue);
 		}
-
-		//material.ZWriteEnable = false;
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 
 	virtual void OnUnsetMaterial() 
@@ -265,19 +254,15 @@ public:
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			glEnable(GL_ALPHA_TEST); 
-            glDisable(GL_BLEND); 
+			glDisable(GL_BLEND); 
 
-            glAlphaFunc(GL_GREATER, 0.5);    
+			glAlphaFunc(GL_GREATER, 0.5);    
 
-            if (Driver->hasMultiTextureExtension()) 
-                Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB); 
+			if (Driver->hasMultiTextureExtension()) 
+				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB); 
 
-            //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		}
-
-		//material.ZWriteEnable = false;
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 
 	virtual void OnUnsetMaterial()
@@ -352,8 +337,6 @@ public:
 					glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, 1.0f);
 			}
 		}
-
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 };
 
@@ -400,8 +383,6 @@ public:
 				glTexEnvi(GL_TEXTURE_ENV,GL_OPERAND1_RGB_EXT,GL_SRC_COLOR);
 			}
 		}
-
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 };
 
@@ -439,8 +420,6 @@ public:
 			glEnable(GL_TEXTURE_GEN_S);
 			glEnable(GL_TEXTURE_GEN_T);				
 		}
-
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 
 	virtual void OnUnsetMaterial()
@@ -504,8 +483,6 @@ public:
 				glEnable(GL_TEXTURE_GEN_T);
 			 }
 		 }
-
-		 services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 
 	virtual void OnUnsetMaterial()
@@ -576,9 +553,7 @@ public:
 			glEnable(GL_TEXTURE_GEN_S);
 			glEnable(GL_TEXTURE_GEN_T);
 		}
-
-		material.ZWriteEnable = false;
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		glDepthMask(GL_FALSE);
 	}
 
 	virtual void OnUnsetMaterial()

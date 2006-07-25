@@ -367,8 +367,7 @@ ITexture* CNullDriver::addTexture(const c8* name, IImage* image)
 
 //! creates a Texture
 ITexture* CNullDriver::addTexture(const core::dimension2d<s32>& size,
-								 const c8* name,
-								 ECOLOR_FORMAT format)
+				 const c8* name, ECOLOR_FORMAT format)
 {
 	if (!name)
 		return 0;
@@ -397,7 +396,7 @@ ITexture* CNullDriver::createDeviceDependentTexture(IImage* surface, const char*
 
 //! sets a render target
 bool CNullDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
-								 bool clearZBuffer, SColor color)
+					 bool clearZBuffer, SColor color)
 {
 	return false;
 }

@@ -278,6 +278,7 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glClearDepth(1.0f);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glDepthFunc(GL_LEQUAL);
+	glFrontFace( GL_CW );
 
 	// create material renderers
 	createMaterialRenderers();
@@ -319,7 +320,6 @@ void COpenGLDriver::createMaterialRenderers()
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_TRANSPARENT_ALPHA_CHANNEL( this));
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_TRANSPARENT_ALPHA_CHANNEL_REF( this));
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_TRANSPARENT_VERTEX_ALPHA( this));
-	//addAndDropMaterialRenderer(new COpenGLMaterialRenderer_SOLID( this));
 	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_TRANSPARENT_REFLECTION_2_LAYER( this));
 
 	// add normal map renderers
@@ -955,9 +955,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
-								 const core::rect<s32>& sourceRect,
-								 const core::rect<s32>* clipRect, SColor color,
-								 bool useAlphaChannelOfTexture)
+				 const core::rect<s32>& sourceRect,
+				 const core::rect<s32>* clipRect, SColor color,
+				 bool useAlphaChannelOfTexture)
 {
 	if (!texture)
 		return;
@@ -1405,6 +1405,11 @@ void COpenGLDriver::setRenderStates3DMode()
 {
 	if (CurrentRenderMode != ERM_3D)
 	{
+		// Reset Texture Stages
+		glTexEnvi( GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_MODULATE );
+		glDisable( GL_BLEND );
+		glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_COLOR );
+
 		// switch back the matrices
 		GLfloat glmat[16];
 
@@ -1420,9 +1425,6 @@ void COpenGLDriver::setRenderStates3DMode()
 		ResetRenderStates = true;
 	}
 
-	if (ResetRenderStates)
-		glFrontFace(GL_CW);
-
 	if ( ResetRenderStates || LastMaterial != Material)
 	{
 		// unset old material
@@ -1433,17 +1435,16 @@ void COpenGLDriver::setRenderStates3DMode()
 
 		// set new material.
 
+		setBasicRenderStates(Material, LastMaterial, ResetRenderStates);
 		if (Material.MaterialType >= 0 && Material.MaterialType < (s32)MaterialRenderers.size())
 			MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(
 				Material, LastMaterial, ResetRenderStates, this);
+		LastMaterial = Material;
+		ResetRenderStates = false;
 	}
 
 	if (Material.MaterialType >= 0 && Material.MaterialType < (s32)MaterialRenderers.size())
 		MaterialRenderers[Material.MaterialType].Renderer->OnRender(this, video::EVT_STANDARD);
-
-	LastMaterial = Material;
-
-	ResetRenderStates = false;
 
 	CurrentRenderMode = ERM_3D;
 }
@@ -1451,9 +1452,9 @@ void COpenGLDriver::setRenderStates3DMode()
 
 //! Can be called by an IMaterialRenderer to make its work easier.
 void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMaterial& lastmaterial,
-	bool resetAllRenderstates)
+	bool resetAllRenderStates)
 {
-	if (resetAllRenderstates ||
+	if (resetAllRenderStates ||
 		lastmaterial.AmbientColor != material.AmbientColor ||
 		lastmaterial.DiffuseColor != material.DiffuseColor ||
 		lastmaterial.SpecularColor != material.SpecularColor ||
@@ -1489,11 +1490,16 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color);
 
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material.Shininess);
+		// disable Specular colors if no shininess is set
+		if (Material.Shininess != 0.0f)
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+		else
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 	}
 
 	// bilinear
 
-	if (resetAllRenderstates ||
+	if (resetAllRenderStates ||
 		lastmaterial.BilinearFilter != material.BilinearFilter ||
 		lastmaterial.AnisotropicFilter != material.AnisotropicFilter )
 	{
@@ -1521,12 +1527,12 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 	// fillmode
 
-	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
+	if (resetAllRenderStates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
 		glPolygonMode(GL_FRONT_AND_BACK, material.Wireframe ? GL_LINE : material.PointCloud? GL_POINT : GL_FILL);
 
 	// shademode
 
-	if (resetAllRenderstates || lastmaterial.GouraudShading != material.GouraudShading)
+	if (resetAllRenderStates || lastmaterial.GouraudShading != material.GouraudShading)
 	{
 		if (material.GouraudShading)
 			glShadeModel(GL_SMOOTH);
@@ -1536,7 +1542,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 	// lighting
 
-	if (resetAllRenderstates || lastmaterial.Lighting != material.Lighting)
+	if (resetAllRenderStates || lastmaterial.Lighting != material.Lighting)
 	{
 		if (Material.Lighting)
 			glEnable(GL_LIGHTING);
@@ -1546,7 +1552,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 	// zbuffer
 
-	if (resetAllRenderstates || lastmaterial.ZBuffer != material.ZBuffer)
+	if (resetAllRenderStates || lastmaterial.ZBuffer != material.ZBuffer)
 	{
 		if (material.ZBuffer)
 			glEnable(GL_DEPTH_TEST);
@@ -1555,12 +1561,12 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	}
 
 	// zwrite
-	if (resetAllRenderstates || lastmaterial.ZWriteEnable != material.ZWriteEnable)
+	if (resetAllRenderStates || lastmaterial.ZWriteEnable != material.ZWriteEnable)
 			glDepthMask(material.ZWriteEnable ? GL_TRUE : GL_FALSE);
 
 	// back face culling
 
-	if (resetAllRenderstates || lastmaterial.BackfaceCulling != material.BackfaceCulling)
+	if (resetAllRenderStates || lastmaterial.BackfaceCulling != material.BackfaceCulling)
 	{
 		if (material.BackfaceCulling)
 			glEnable(GL_CULL_FACE);
@@ -1569,7 +1575,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	}
 
 	// fog
-	if (resetAllRenderstates || lastmaterial.FogEnable != material.FogEnable)
+	if (resetAllRenderStates || lastmaterial.FogEnable != material.FogEnable)
 	{
 		if (material.FogEnable)
 			glEnable(GL_FOG);
@@ -1578,7 +1584,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	}
 
 	// normalization
-	if (resetAllRenderstates || lastmaterial.NormalizeNormals != material.NormalizeNormals)
+	if (resetAllRenderStates || lastmaterial.NormalizeNormals != material.NormalizeNormals)
 	{
 		if (material.NormalizeNormals)
 			glEnable(GL_NORMALIZE);
@@ -1593,6 +1599,11 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 {
 	if (CurrentRenderMode != ERM_2D || Transformation3DChanged)
 	{
+		// unset last 3d material
+		if (CurrentRenderMode == ERM_3D && Material.MaterialType >= 0 &&
+				Material.MaterialType < (s32)MaterialRenderers.size())
+			MaterialRenderers[Material.MaterialType].Renderer->OnUnsetMaterial();
+
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
@@ -1619,15 +1630,11 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 
 		glDisable(GL_ALPHA_TEST);
 		glCullFace(GL_BACK);
-
-		// unset last 3d material
-		if (CurrentRenderMode == ERM_3D &&
-			Material.MaterialType >= 0 && Material.MaterialType < (s32)MaterialRenderers.size())
-			MaterialRenderers[Material.MaterialType].Renderer->OnUnsetMaterial();
 	}
 
 	if (texture)
 	{
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		if (alphaChannel)
@@ -1835,7 +1842,6 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 	glColorMask(0, 0, 0, 0);
 	glEnable(GL_CULL_FACE);
 
-
 	if (!zfail)
 	{
 		// ZPASS Method
@@ -1896,9 +1902,13 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	if (!StencilBuffer)
 		return;
 
+	// disable textures
 	setTexture(0,0);
 	setTexture(1,0);
+
+	// store attributes
 	glPushAttrib( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT | GL_POLYGON_BIT | GL_STENCIL_BUFFER_BIT );
+	glPushMatrix();
 
 	glDisable( GL_LIGHTING );
 	glDepthMask(GL_FALSE);
@@ -1916,7 +1926,6 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 
 	glDisable(GL_FOG);
 
-	glPushMatrix();
 	glLoadIdentity();
 
 	// draw A shadowing rectangle covering the entire screen
@@ -1936,15 +1945,14 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glVertex3f( 10.1f,-10.1f,0.90f);
 
 	glEnd();
-
-	glPopMatrix();
-	glPopAttrib();
+	glFrontFace( GL_CW );
 
 	if (clearStencilBuffer)
 		glClear(GL_STENCIL_BUFFER_BIT);
 
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
+	// restore settings
+	glPopMatrix();
+	glPopAttrib();
 }
 
 
@@ -2347,9 +2355,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 {
 	//disable mip-mapping
 	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
-
-	if (generateMipLevels) 
-		setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
+	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
  
 	video::ITexture* rtt = addTexture(size, "rt" , ECF_A1R5G5B5);
 
@@ -2357,8 +2363,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 		rtt->grab();
  
 	//restore mip-mapping
-	if (generateMipLevels) 
-		setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, true);
+	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);
 
 	return rtt;
 }
