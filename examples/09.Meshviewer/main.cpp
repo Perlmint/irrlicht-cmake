@@ -85,8 +85,6 @@ void loadModel(const c8* fn)
 	// set default material properties
 
 	Model = Device->getSceneManager()->addAnimatedMeshSceneNode(m);
-	if (!found)
-		Model->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	Model->setMaterialFlag(video::EMF_LIGHTING, false);
 	Model->setDebugDataVisible(true);
 	Model->setAnimationSpeed(30);
