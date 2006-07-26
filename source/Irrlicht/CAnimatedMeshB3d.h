@@ -173,7 +173,6 @@ namespace scene
 		struct B3dChunk
 		{
 			c8 name[4];
-			s32 remaining_length;
 			s32 length;
 			s32 startposition;
 		};
@@ -229,8 +228,7 @@ namespace scene
 
 		core::array<SB3dNode*> Nodes;
 
-		SB3dNode *BaseNode;
-
+		core::array<SB3dNode*> BaseNodes;
 
 		struct SB3dTexture
 		{
@@ -302,8 +300,6 @@ namespace scene
 		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
 
 		void animateNode(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
-
-		void CAnimatedMeshB3d::prepareAnimation(SB3dNode *InNode,SB3dNode *ParentNode);
 
 		void Slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
 

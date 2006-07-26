@@ -6,10 +6,9 @@
 
 #include "CAnimatedMeshB3d.h"
 #include "os.h"
-#include <string.h>
 #include "IVideoDriver.h"
+#include <string.h>
 
-#include <math.h>
 
 namespace irr
 {
@@ -119,11 +118,11 @@ bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		#ifdef __BIG_ENDIAN__ //Never been tested
 			B3dTexture.flags = OSReadSwapInt32(&B3dTexture.flags,0);
 			B3dTexture.blend = OSReadSwapInt32(&B3dTexture.blend,0);
-			B3dTexture.x_pos = OSReadSwapFloat32(&B3dTexture.x_pos,0);
-			B3dTexture.y_pos = OSReadSwapFloat32(&B3dTexture.y_pos,0);
-			B3dTexture.x_scale = OSReadSwapFloat32(&B3dTexture.x_scale,0);
-			B3dTexture.y_scale = OSReadSwapFloat32(&B3dTexture.y_scale,0);
-			B3dTexture.angle = OSReadSwapFloat32(&B3dTexture.angle,0);
+			B3dTexture.x_pos = OSReadSwapInt32(&B3dTexture.x_pos,0);
+			B3dTexture.y_pos = OSReadSwapInt32(&B3dTexture.y_pos,0);
+			B3dTexture.x_scale = OSReadSwapInt32(&B3dTexture.x_scale,0);
+			B3dTexture.y_scale = OSReadSwapInt32(&B3dTexture.y_scale,0);
+			B3dTexture.angle = OSReadSwapInt32(&B3dTexture.angle,0);
 		#endif
 
 		Textures.push_back(B3dTexture);
@@ -204,11 +203,11 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		}
 
 		#ifdef __BIG_ENDIAN__ //Never been tested
-			B3dMaterial.red = OSReadSwapFloat32(&B3dMaterial.red,0);
-			B3dMaterial.green = OSReadSwapFloat32(&B3dMaterial.green,0);
-			B3dMaterial.blue = OSReadSwapFloat32(&B3dMaterial.blue,0);
-			B3dMaterial.alpha = OSReadSwapFloat32(&B3dMaterial.alpha,0);
-			B3dMaterial.shininess = OSReadSwapFloat32(&B3dMaterial.shininess,0);
+			B3dMaterial.red = OSReadSwapInt32(&B3dMaterial.red,0);
+			B3dMaterial.green = OSReadSwapInt32(&B3dMaterial.green,0);
+			B3dMaterial.blue = OSReadSwapInt32(&B3dMaterial.blue,0);
+			B3dMaterial.alpha = OSReadSwapInt32(&B3dMaterial.alpha,0);
+			B3dMaterial.shininess = OSReadSwapInt32(&B3dMaterial.shininess,0);
 			B3dMaterial.blend = OSReadSwapInt32(&B3dMaterial.blend,0);
 			B3dMaterial.fx = OSReadSwapInt32(&B3dMaterial.fx,0);
 
@@ -235,11 +234,12 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 				{
 					if (B3dMaterial.Textures[1]->blend &5)
 					{
+						//B3dMaterial.Material->MaterialType = video::EMT_LIGHTMAP;
 						B3dMaterial.Material->MaterialType = video::EMT_LIGHTMAP_M2 ;
 					}
 					else
 					{
-						B3dMaterial.Material->MaterialType = video::EMT_LIGHTMAP;//Not the way it is meant to work
+						B3dMaterial.Material->MaterialType = video::EMT_LIGHTMAP;
 					}
 				}
 				else
@@ -250,7 +250,7 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 					B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
 				}
 			}
-		else
+		else if (B3dMaterial.Textures[0])
 			{
 				if (B3dMaterial.Textures[0]->flags &2) //Alpha mapped
 				{
@@ -269,20 +269,42 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 				//Material->MaterialType =
 				//EMT_TRANSPARENT_ALPHA_CHANNEL
 			}
+		else
+		{
+			if (B3dMaterial.alpha==1)
+			{
+				B3dMaterial.Material->MaterialType = video::EMT_SOLID;
+			}
+			else
+			{
+				B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
+			}
+		}
 
 		//Material fx...
 
-		if (B3dMaterial.fx &4)
+		if (B3dMaterial.fx &1) //full-bright
+		{
+			//B3dMaterial.Material->AmbientColor = video::SColorf(1, 1, 1, 1).toSColor ();
+			B3dMaterial.Material->AmbientColor = video::SColorf(1, 1, 1, 1).toSColor ();	//Blitz Basic Ambient colour is 127,127,127
+			B3dMaterial.Material->Lighting = false;
+		}
+		else
+		{
+			B3dMaterial.Material->AmbientColor = video::SColorf(B3dMaterial.red, B3dMaterial.green, B3dMaterial.blue, B3dMaterial.alpha).toSColor ();
+		}
+
+		if (B3dMaterial.fx &4) //flatshaded
 			B3dMaterial.Material->GouraudShading=false;
 
-		if (B3dMaterial.fx &16)
+		if (B3dMaterial.fx &16) //disable backface culling
 			B3dMaterial.Material->BackfaceCulling=false;
 
-		B3dMaterial.Material->AmbientColor = video::SColorf(B3dMaterial.red, B3dMaterial.green, B3dMaterial.blue, B3dMaterial.alpha).toSColor ();
+
 		B3dMaterial.Material->DiffuseColor = video::SColorf(B3dMaterial.red, B3dMaterial.green, B3dMaterial.blue, B3dMaterial.alpha).toSColor ();
 		//B3dMaterial.Material->EmissiveColor = video::SColorf(0, 0, 0, 0).toSColor ();
 		//B3dMaterial.Material->SpecularColor = video::SColorf(0, 0, 0, 0).toSColor (); //?
-		B3dMaterial.Material->Shininess = B3dMaterial.shininess;
+		//B3dMaterial.Material->Shininess = B3dMaterial.shininess;
 
 		Materials.push_back(B3dMaterial);
 	}
@@ -332,7 +354,6 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 		B3dStack[B3dStackSize].name[2]=header.name[2];
 		B3dStack[B3dStackSize].name[3]=header.name[3];
 
-		B3dStack[B3dStackSize].remaining_length=header.size+8;
 		B3dStack[B3dStackSize].length=header.size+8;
 
 		B3dStack[B3dStackSize].startposition=file->getPos()-8;
@@ -349,7 +370,6 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 		{
 			read=true;
 
-
 			SB3DMeshBuffer *MeshBuffer = new SB3DMeshBuffer();
 
 			if (brush_id!=-1)
@@ -357,6 +377,16 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 			if(ReadChunkTRIS(file, B3dStack, B3dStackSize,InNode ,MeshBuffer, Vertices_Start)==false)
 				return false;
+
+			if (MeshBuffer->Material.Lighting != false)
+			{
+				//I don't have a pointer to MeshManipulator here
+				//MeshManipulator->recalculateNormals(MeshBuffer); //Any time you would not want this? Other than loading speed loss
+
+				//MeshBuffer->Material.NormalizeNormals=true;
+			}
+
+			MeshBuffer->recalculateBoundingBox();
 
 			Buffers.push_back(MeshBuffer);
 		}
@@ -367,7 +397,11 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 			//cout << "Unknown chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 			//unknown chunk
 
-			file->seek(B3dStack[B3dStackSize].remaining_length-8,true);
+			//file->seek(B3dStack[B3dStackSize].remaining_length-8,true);
+
+
+			file->seek( (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length) , false);
+
 
 			--B3dStackSize;
 		}
@@ -447,33 +481,33 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			file->read(&alpha, sizeof(alpha));
 		}
 
-		for (s32 i=0;i<tex_coord_sets;i++)
-			for (s32 j=0;j<tex_coord_set_size;j++)
+		for (s32 i=0;i<tex_coord_sets;++i)
+			for (s32 j=0;j<tex_coord_set_size;++j)
 				file->read(&tex_coords[i][j], sizeof(f32));
 
 		#ifdef __BIG_ENDIAN__ //Never been tested
-			x = OSReadSwapFloat32(&x,0);
-			y = OSReadSwapFloat32(&y,0);
-			z = OSReadSwapFloat32(&z,0);
+			x = OSReadSwapInt32(&x,0);
+			y = OSReadSwapInt32(&y,0);
+			z = OSReadSwapInt32(&z,0);
 
 			if (flags&1)
 			{
-				nx = OSReadSwapFloat32(&nx,0);
-				ny = OSReadSwapFloat32(&ny,0);
-				nz = OSReadSwapFloat32(&nz,0);
+				nx = OSReadSwapInt32(&nx,0);
+				ny = OSReadSwapInt32(&ny,0);
+				nz = OSReadSwapInt32(&nz,0);
 			}
 
 			if (flags&2)
 			{
-				red = OSReadSwapFloat32(&red,0);
-				green = OSReadSwapFloat32(&green,0);
-				blue = OSReadSwapFloat32(&blue,0);
-				alpha = OSReadSwapFloat32(&alpha,0);
+				red = OSReadSwapInt32(&red,0);
+				green = OSReadSwapInt32(&green,0);
+				blue = OSReadSwapInt32(&blue,0);
+				alpha = OSReadSwapInt32(&alpha,0);
 			}
 
 			for (s32 i=0;i<=tex_coord_sets-1;i++)
 				for (s32 j=0;j<=tex_coord_set_size-1;j++)
-					tex_coords[i][j] = OSReadSwapFloat32(&tex_coords[i][j],0);
+					tex_coords[i][j] = OSReadSwapInt32(&tex_coords[i][j],0);
 		#endif
 
 		f32 tu=0;
@@ -527,7 +561,7 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 	//os::Printer::log("B3d TRIS Chunk"); //for debuging
 	//cout << "B3d TRIS Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
-	s32 triangle_brush_id; //irrlicht can't have different brushes from each triangle (I'm using a workaround)
+	s32 triangle_brush_id; //irrlicht can't have different brushes for each triangle (I'm using a workaround)
 
 	file->read(&triangle_brush_id, sizeof(triangle_brush_id));
 
@@ -544,8 +578,6 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	if (B3dMaterial)
 		MeshBuffer->Material=(*B3dMaterial->Material);
-
-	MeshBuffer->BoundingBox = BoundingBox;
 
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
@@ -597,6 +629,7 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 {
 	core::stringc NodeName=ReadString(file);
 	//cout << "NODE name:" << NodeName.c_str() <<endl; //for debuging
+	//os::Printer::log(NodeName.c_str());
 
 	f32 position[3];
 	f32 scale[3];
@@ -613,13 +646,13 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	#ifdef __BIG_ENDIAN__ //Never been tested
 		for (s32 n=0;n<=2;n++)
-			position[n] = OSReadSwapFloat32(&position[n],0);
+			position[n] = OSReadSwapInt32(&position[n],0);
 
 		for (s32 n=0;n<=2;n++)
-			scale[n] = OSReadSwapFloat32(&scale[n],0);
+			scale[n] = OSReadSwapInt32(&scale[n],0);
 
 		for (s32 n=0;n<=4;n++)
-			rotation[n] = OSReadSwapFloat32(&rotation[n],0);
+			rotation[n] = OSReadSwapInt32(&rotation[n],0);
 	#endif
 
 	SB3dNode *Node=new SB3dNode();
@@ -647,6 +680,7 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 	if (InNode==0)
 	{
 		Node->GlobalMatrix=Node->LocalMatrix;
+		BaseNodes.push_back(Node);
 	}
 	else
 	{
@@ -658,8 +692,6 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	Nodes.push_back(Node);
 
-	if (BaseNode==0)
-		BaseNode=Node;
 
 	if (InNode!=0)
 		InNode->Nodes.push_back(Node);
@@ -688,7 +720,6 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 		B3dStack[B3dStackSize].name[2]=header.name[2];
 		B3dStack[B3dStackSize].name[3]=header.name[3];
 
-		B3dStack[B3dStackSize].remaining_length=header.size+8;
 		B3dStack[B3dStackSize].length=header.size+8;
 
 		B3dStack[B3dStackSize].startposition=file->getPos()-8;
@@ -732,8 +763,9 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 			//cout << "Unknown chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 			//unknown chunk
 
-			file->seek(B3dStack[B3dStackSize].remaining_length-8,true);
 			//datalength+=B3dStack[B3dStackSize].remaining_length;		//jump to end of chunk
+
+			file->seek( (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length) , false);
 
 			--B3dStackSize;
 		}
@@ -762,7 +794,7 @@ bool CAnimatedMeshB3d::ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 			#ifdef __BIG_ENDIAN__ //Never been tested
 				Bone.vertex_id = OSReadSwapInt32(&Bone.vertex_id,0);
-				Bone.weight = OSReadSwapFloat32(&Bone.weight,0);
+				Bone.weight = OSReadSwapInt32(&Bone.weight,0);
 			#endif
 
 			InNode->Bones.push_back(Bone);
@@ -815,15 +847,15 @@ bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 			if (flags&1)
 				for (s32 n=0;n<=2;n++)
-					Key.position[n] = OSReadSwapFloat32(&Key.position[n],0);
+					Key.position[n] = OSReadSwapInt32(&Key.position[n],0);
 
 			if (flags&2)
 				for (s32 n=0;n<=2;n++)
-					Key.scale[n] = OSReadSwapFloat32(&Key.scale[n],0);
+					Key.scale[n] = OSReadSwapInt32(&Key.scale[n],0);
 
 			if (flags&4)
 				for (s32 n=0;n<=3;n++)
-					Key.rotation[n] = OSReadSwapFloat32(&Key.rotation[n],0);
+					Key.rotation[n] = OSReadSwapInt32(&Key.rotation[n],0);
 		#endif
 
 		Key.position=core::vector3df(position[0],position[1],position[2]);
@@ -855,7 +887,7 @@ bool CAnimatedMeshB3d::ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s1
 	#ifdef __BIG_ENDIAN__ //Never been tested
 		anim_flags = OSReadSwapInt32(&anim_flags,0);
 		anim_frames = OSReadSwapInt32(&anim_frames,0);
-		anim_fps = OSReadSwapFloat32(&anim_fps,0);
+		anim_fps = OSReadSwapInt32(&anim_fps,0);
 	#endif
 
 	anim_frames*=100;
@@ -877,14 +909,12 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 	if (!file)
 		return false;
 
-	BaseNode=0;
-
 	totalTime=0;
 	HasAnimation=0;
 	lastCalculatedFrame=-1;
 
 	anim_flags=0;
-	anim_frames=0; //how many frames in anim
+	anim_frames=1; //how many frames in anim
 	anim_fps=0;
 
 	B3dChunkHeader header;
@@ -918,17 +948,12 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 
 	B3dStack[B3dStackSize].length=header.size+8;
 
-	B3dStack[0].remaining_length=header.size+8;
-	B3dStack[0].remaining_length-=sizeof(B3dChunkHeader);
-
 	u32 FileVersion;
 
 	file->read(&FileVersion, sizeof(FileVersion));
 	#ifdef __BIG_ENDIAN__
 		FileVersion = OSReadSwapInt32(&FileVersion,0);
 	#endif
-
-	B3dStack[0].remaining_length-=sizeof(s32);
 
 	while (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos())
 	{
@@ -954,8 +979,6 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 		B3dStack[B3dStackSize].startposition=file->getPos()-8;
 
 		B3dStack[B3dStackSize].length=header.size+8;
-
-		B3dStack[B3dStackSize].remaining_length=header.size+8;
 
 		bool read=false;
 
@@ -984,7 +1007,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 			//cout << "Unknown chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 			//unknown chunk
 
-			file->seek(B3dStack[B3dStackSize].remaining_length-8,true);
+			file->seek( (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length) , false);
 
 			--B3dStackSize;
 		}
@@ -998,8 +1021,6 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 	for (s32 i=0; i<(s32)Vertices.size(); ++i)
 		BoundingBox.addInternalPoint(Vertices[i]->Pos);
 
-	//prepareAnimation(0,0);
-
 	return true;
 }
 
@@ -1008,7 +1029,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 //! returns the amount of frames in milliseconds. If the amount is 1, it is a static (=non animated) mesh.
 s32 CAnimatedMeshB3d::getFrameCount()
 {
-	return (s32)totalTime;
+	return anim_frames;
 }
 
 
@@ -1082,42 +1103,6 @@ s32 CAnimatedMeshB3d::getJointNumber(const c8* name) const
 			return i;
 
 	return -1;
-}
-
-
-
-void CAnimatedMeshB3d::prepareAnimation(SB3dNode *InNode,SB3dNode *ParentNode)
-{
-	if (InNode==0)
-		InNode=BaseNode;
-
-	// Get unanimated matrix (only needs to be done once)...
-	core::matrix4 positionMatrix;
-	positionMatrix.setTranslation(InNode->position);
-
-	core::matrix4 scaleMatrix;
-	scaleMatrix.setScale(InNode->scale);
-
-	core::matrix4 rotationMatrix=InNode->rotation.getMatrix();
-
-	InNode->LocalMatrix=positionMatrix*rotationMatrix*scaleMatrix;
-
-	if (ParentNode==0)
-	{
-		InNode->GlobalMatrix=InNode->LocalMatrix;
-	}
-	else
-	{
-		InNode->GlobalMatrix=ParentNode->GlobalMatrix*InNode->LocalMatrix;
-	}
-
-	InNode->GlobalInversedMatrix=InNode->GlobalMatrix;
-	InNode->GlobalInversedMatrix.makeInverse(); //slow
-
-	for (s32 i=0; i<(s32)InNode->Nodes.size(); ++i)
-	{
-		prepareAnimation(InNode->Nodes[i],InNode);
-	}
 }
 
 
@@ -1359,7 +1344,13 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 		}
 	}
 
-	animateNode(frame,startFrame, endFrame,BaseNode,0);//Mesh might have more than one base so BaseNode should be an array
+
+	for (s32 i=0; i<(s32)BaseNodes.size(); ++i)
+	{
+		animateNode(frame,startFrame, endFrame,BaseNodes[i],0);//Mesh might have more than one base so BaseNode should be an array
+	}
+
+
 }
 
 
