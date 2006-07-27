@@ -261,18 +261,18 @@ bool CGUIContextMenu::highlight(core::position2d<s32> p)
 {
 	// get number of open submenu
 	s32 openmenu = -1;
-	s32 j;
-	for (j=0; j<(s32)Items.size(); ++j)
-		if (Items[j].SubMenu && Items[j].SubMenu->isVisible())
+	s32 i;
+	for (i=0; i<(s32)Items.size(); ++i)
+		if (Items[i].SubMenu && Items[i].SubMenu->isVisible())
 		{
-			openmenu = j;
+			openmenu = i;
 			break;
 		}
 
 	// delegate highlight operation to submenu
 	if (openmenu != -1)
 	{
-		if (Items[j].SubMenu->highlight(p))
+		if (Items[openmenu].SubMenu->highlight(p))
 		{
 			HighLighted = openmenu;
 			return true;
@@ -280,7 +280,7 @@ bool CGUIContextMenu::highlight(core::position2d<s32> p)
 	}
 
 	// highlight myself
-	for (s32 i=0; i<(s32)Items.size(); ++i)
+	for (i=0; i<(s32)Items.size(); ++i)
 		if (getHRect(Items[i], AbsoluteRect).isPointInside(p))
 		{
 			HighLighted = i;

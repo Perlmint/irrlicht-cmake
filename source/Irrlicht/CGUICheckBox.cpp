@@ -60,12 +60,12 @@ bool CGUICheckBox::OnEvent(SEvent event)
 
 			if (wasPressed && Parent)
 			{
-				SEvent event;
-				event.EventType = EET_GUI_EVENT;
-				event.GUIEvent.Caller = this;
+				SEvent newEvent;
+				newEvent.EventType = EET_GUI_EVENT;
+				newEvent.GUIEvent.Caller = this;
 				Checked = !Checked;
-				event.GUIEvent.EventType = EGET_CHECKBOX_CHANGED;
-				Parent->OnEvent(event);
+				newEvent.GUIEvent.EventType = EGET_CHECKBOX_CHANGED;
+				Parent->OnEvent(newEvent);
 			}
 
 			return true;

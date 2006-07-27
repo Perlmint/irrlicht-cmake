@@ -16,7 +16,7 @@ namespace irr
 namespace scene
 {
 
-	class CAnimatedMeshMD2 : public IAnimatedMeshMD2, IMesh, IMeshBuffer
+	class CAnimatedMeshMD2 : public IAnimatedMeshMD2, public IMesh, public IMeshBuffer
 	{
 	public:
 

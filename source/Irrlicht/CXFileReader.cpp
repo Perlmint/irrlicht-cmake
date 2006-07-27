@@ -84,7 +84,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 		{
 			if (frame->Meshes[m].Indices[i] < 0)
 			{
-				sprintf(tmp, "XLoader error: index %d smaller than 0 in mesh %d: %d, frame '%s'",
+				sprintf(tmp, "XLoader error: index %d smaller than 0 in mesh %u: %d, frame '%s'",
 					i, m, frame->Meshes[m].Indices[i], frame->Name.c_str());
 				os::Printer::log(tmp, ELL_ERROR);
 				error = true;
@@ -92,7 +92,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 
 			if (frame->Meshes[m].Indices[i] > vcnt-1)
 			{
-				sprintf(tmp, "XLoader error: invalid index %d in mesh %d: %d, frame '%s'",
+				sprintf(tmp, "XLoader error: invalid index %d in mesh %u: %d, frame '%s'",
 					i, m, frame->Meshes[m].Indices[i], frame->Name.c_str());
 				os::Printer::log(tmp, ELL_ERROR);
 				error = true;
@@ -105,7 +105,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 		{
 			if (frame->Meshes[m].NormalIndices[i] < 0)
 			{
-				sprintf(tmp, "XLoader error: normal index %d smaller than 0 in mesh %d: %d, frame '%s'",
+				sprintf(tmp, "XLoader error: normal index %d smaller than 0 in mesh %u: %d, frame '%s'",
 					i, m, frame->Meshes[m].NormalIndices[i], frame->Name.c_str());
 				os::Printer::log(tmp, ELL_ERROR);
 				error = true;
@@ -113,7 +113,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 
 			if (frame->Meshes[m].NormalIndices[i] > ncnt-1)
 			{
-				sprintf(tmp, "XLoader error: invalid normal index %d in mesh %d: %d, frame '%s'",
+				sprintf(tmp, "XLoader error: invalid normal index %d in mesh %u: %d, frame '%s'",
 					i, m, frame->Meshes[m].NormalIndices[i], frame->Name.c_str());
 				os::Printer::log(tmp, ELL_ERROR);
 				error = true;
@@ -1732,7 +1732,7 @@ inline f32 CXFileReader::readFloat()
 }
 
 // read 2-dimensional vector. Stops at semicolon after second value for text file format
-bool CXFileReader::readVector2(core::vector2df& vec)
+inline bool CXFileReader::readVector2(core::vector2df& vec)
 {
 	vec.X = readFloat();
 	vec.Y = readFloat();
@@ -1740,7 +1740,7 @@ bool CXFileReader::readVector2(core::vector2df& vec)
 }
 
 // read 3-dimensional vector. Stops at semicolon after third value for text file format
-bool CXFileReader::readVector3(core::vector3df& vec)
+inline bool CXFileReader::readVector3(core::vector3df& vec)
 {
 	vec.X = readFloat();
 	vec.Y = readFloat();
@@ -1749,7 +1749,7 @@ bool CXFileReader::readVector3(core::vector3df& vec)
 }
 
 // read color without alpha value. Stops after second semicolon after blue value
-bool CXFileReader::readRGB(video::SColorf& color)
+inline bool CXFileReader::readRGB(video::SColorf& color)
 {
 	color.a = 1.0f;
 	color.r = readFloat();
@@ -1759,7 +1759,7 @@ bool CXFileReader::readRGB(video::SColorf& color)
 }
 
 // read color with alpha value. Stops after second semicolon after blue value
-bool CXFileReader::readRGBA(video::SColorf& color)
+inline bool CXFileReader::readRGBA(video::SColorf& color)
 {
 	color.a = readFloat();
 	color.r = readFloat();

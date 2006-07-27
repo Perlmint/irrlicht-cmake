@@ -88,10 +88,9 @@ private:
 
 	// member variables
 
-	PsdHeader header;
 	u32* imageData;
+	PsdHeader header;
 	bool error;
-
 };
 
 

@@ -90,11 +90,11 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 			if (event.GUIEvent.Caller == DownButton)
 				setPos(Pos+SmallStep);
 
-			SEvent event;
-			event.EventType = EET_GUI_EVENT;
-			event.GUIEvent.Caller = this;
-			event.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED;
-			Parent->OnEvent(event);
+			SEvent newEvent;
+			newEvent.EventType = EET_GUI_EVENT;
+			newEvent.GUIEvent.Caller = this;
+			newEvent.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED;
+			Parent->OnEvent(newEvent);
 
 			return true;
 		}
@@ -111,11 +111,11 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 		case EMIE_MOUSE_WHEEL:
 			{ // thanks to a bug report by REAPER
 				setPos(getPos() + (s32)event.MouseInput.Wheel*-10); 
-				SEvent event; 
-				event.EventType = EET_GUI_EVENT; 
-				event.GUIEvent.Caller = this; 
-				event.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED; 
-				Parent->OnEvent(event); 
+				SEvent newEvent; 
+				newEvent.EventType = EET_GUI_EVENT; 
+				newEvent.GUIEvent.Caller = this; 
+				newEvent.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED; 
+				Parent->OnEvent(newEvent); 
 			}
 			return true;
 		case EMIE_LMOUSE_PRESSED_DOWN:
@@ -133,11 +133,11 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 				setPosFromMousePos(event.MouseInput.X, event.MouseInput.Y);
 				if (Pos != oldPos && Parent)
 				{
-					SEvent event;
-					event.EventType = EET_GUI_EVENT;
-					event.GUIEvent.Caller = this;
-					event.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED;
-					Parent->OnEvent(event);
+					SEvent newEvent;
+					newEvent.EventType = EET_GUI_EVENT;
+					newEvent.GUIEvent.Caller = this;
+					newEvent.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED;
+					Parent->OnEvent(newEvent);
 				}
 				return true;
 			}

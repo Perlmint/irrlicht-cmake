@@ -82,9 +82,9 @@ private:
 
 	void readMTL(const c8* pFileName, core::stringc relPath);
 	c8* readColor(c8* pBufPtr, video::SColor& color, const c8* pBufEnd);
-	SObjMtl * findMtl(const core::stringc& pMtlName);
-	SObjGroup * findGroup(const core::stringc& pGroupName);
-	SObjGroup * findOrAddGroup(const core::stringc& pGroupName);
+	SObjMtl * findMtl(const c8* pMtlName);
+	SObjGroup * findGroup(const c8* pGroupName);
+	SObjGroup * findOrAddGroup(const c8* pGroupName);
 
 	// reads and convert to integer the vertex indices in a line of obj file's face statement
 	// -1 for the index if it doesn't exist

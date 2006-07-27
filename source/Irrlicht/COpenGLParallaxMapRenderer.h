@@ -17,7 +17,7 @@ namespace video
 {
 
 //! Class for rendering normal maps with OpenGL
-class COpenGLParallaxMapRenderer : public COpenGLShaderMaterialRenderer, IShaderConstantSetCallBack
+class COpenGLParallaxMapRenderer : public COpenGLShaderMaterialRenderer, public IShaderConstantSetCallBack
 {
 public:
 

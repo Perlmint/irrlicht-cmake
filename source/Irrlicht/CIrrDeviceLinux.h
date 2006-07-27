@@ -29,7 +29,7 @@
 namespace irr
 {
 
-	class CIrrDeviceLinux : public CIrrDeviceStub, video::IImagePresenter
+	class CIrrDeviceLinux : public CIrrDeviceStub, public video::IImagePresenter
 	{
 	public:
 

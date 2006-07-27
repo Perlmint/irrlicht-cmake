@@ -11,6 +11,7 @@
 #include "irrArray.h"
 #include "irrString.h"
 #include "IImageLoader.h"
+#include "IMeshBuffer.h"
 #include "CFPSCounter.h"
 #include "S3DVertex.h"
 

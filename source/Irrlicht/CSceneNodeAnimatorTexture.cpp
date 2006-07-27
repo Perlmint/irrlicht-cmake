@@ -77,16 +77,16 @@ void CSceneNodeAnimatorTexture::serializeAttributes(io::IAttributes* out, io::SA
 	// add one texture in addition when serializing for editors
 	// to make it easier to add textures quickly
 
-	int count = Textures.size();
+	u32 count = Textures.size();
 	if ( options && (options->Flags & io::EARWF_FOR_EDITOR))
 		count += 1;
 
-	for (int i=0; i<count; ++i)
+	for (u32 i=0; i<count; ++i)
 	{
 		core::stringc tname = "Texture";
-		tname += (i+1);
+		tname += (int)(i+1);
 
-		out->addTexture(tname.c_str(), i<(int)Textures.size() ? Textures[i] : 0);
+		out->addTexture(tname.c_str(), i<Textures.size() ? Textures[i] : 0);
 	}
 }
 
@@ -98,10 +98,10 @@ void CSceneNodeAnimatorTexture::deserializeAttributes(io::IAttributes* in, io::S
 
 	clearTextures();
 
-	for(int i=0; true; ++i)
+	for(u32 i=1; true; ++i)
 	{
 		core::stringc tname = "Texture";
-		tname += (i+1);
+		tname += (int)i;
 
 		if (in->existsAttribute(tname.c_str()))
 		{

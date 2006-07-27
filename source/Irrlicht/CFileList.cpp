@@ -149,7 +149,7 @@ const c8* CFileList::getFullFileName(s32 index)
 		Files[index].FullName = Path;
 
 		if (Path.size() > 3)
-			Files[index].FullName.append("/");
+			Files[index].FullName.append('/');
 
 		Files[index].FullName.append(Files[index].Name);
 	}

@@ -30,7 +30,7 @@ CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, boo
 
 	// create backbuffer
 	BackBuffer = new CImage(ECF_SOFTWARE2, windowSize);
-	BackBuffer->fill(0);
+	BackBuffer->fill(SColor(0));
 	
 	// get presenter
 
@@ -455,7 +455,7 @@ static const sVec4 NDCPlane[6] =
 	sVec4(  0.f,  0.f, -1.f, -1.f )		// far
 };
 
-u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane )
+static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane )
 {
 	u32 outCount;
 	s4DVertex * out;

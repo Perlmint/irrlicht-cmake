@@ -245,14 +245,14 @@ private:
 	//! reads a x file style string
 	bool getNextTokenAsString(core::stringc& out);
 
-	u16 readBinWord();
-	u32 readBinDWord();
-	s32 readInt();
-	f32 readFloat();
-	bool readVector2(core::vector2df& vec);
-	bool readVector3(core::vector3df& vec);
-	bool readRGB(video::SColorf& color);
-	bool readRGBA(video::SColorf& color);
+	inline u16 readBinWord();
+	inline u32 readBinDWord();
+	inline s32 readInt();
+	inline f32 readFloat();
+	inline bool readVector2(core::vector2df& vec);
+	inline bool readVector3(core::vector3df& vec);
+	inline bool readRGB(video::SColorf& color);
+	inline bool readRGBA(video::SColorf& color);
 
 	bool parseDataObjectTemplate();
 	bool parseDataObjectFrame(SXFrame &frame);

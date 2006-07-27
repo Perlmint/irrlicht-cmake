@@ -45,7 +45,7 @@ namespace video
 {
 	class COpenGLTexture;
 	
-	class COpenGLDriver : public CNullDriver, IMaterialRendererServices
+	class COpenGLDriver : public CNullDriver, public IMaterialRendererServices
 	{
 	public:
 

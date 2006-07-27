@@ -45,7 +45,7 @@ CAnimatedMeshB3d::~CAnimatedMeshB3d()
 
 
 
-core::stringc CAnimatedMeshB3d::ReadString(io::IReadFile* file)
+core::stringc CAnimatedMeshB3d::readString(io::IReadFile* file)
 {
 	core::stringc newstring;
 
@@ -64,7 +64,7 @@ core::stringc CAnimatedMeshB3d::ReadString(io::IReadFile* file)
 
 
 
-core::stringc CAnimatedMeshB3d::StripPathString(core::string<c8> oldstring, bool keepPath)
+core::stringc CAnimatedMeshB3d::stripPathString(core::string<c8> oldstring, bool keepPath)
 {
 	s32 lastA=oldstring.findLast('/'); // forward slash
 	s32 lastB=oldstring.findLast('\\'); // back slash
@@ -99,9 +99,9 @@ bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
-		core::stringc TextureName=ReadString(file);
+		core::stringc TextureName=readString(file);
 
-		TextureName=StripPathString(file->getFileName(),true) + StripPathString(TextureName,false);
+		TextureName=stripPathString(file->getFileName(),true) + stripPathString(TextureName,false);
 
 		SB3dTexture B3dTexture;
 
@@ -173,7 +173,7 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
 		// This is what blitz basic calls a brush, like a Irrlicht Material
-		core::stringc MaterialName=ReadString(file); //Not used but we still need the read it
+		core::stringc MaterialName=readString(file); //Not used but we still need the read it
 
 		//cout << MaterialName.c_str() <<endl;//for debuging
 
@@ -627,7 +627,7 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode)
 {
-	core::stringc NodeName=ReadString(file);
+	core::stringc NodeName=readString(file);
 	//cout << "NODE name:" << NodeName.c_str() <<endl; //for debuging
 	//os::Printer::log(NodeName.c_str());
 
@@ -1330,7 +1330,7 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 
 							f32 t=(1.0/(fd1+fd2))*fd1;
 
-							//Slerp(LastKey.rotation,Key.rotation,Node->Animatedrotation,t);
+							//slerp(LastKey.rotation,Key.rotation,Node->Animatedrotation,t);
 
 							Node->Animatedrotation.slerp(LastKey.rotation,Key.rotation,t);
 						}

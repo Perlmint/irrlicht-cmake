@@ -81,7 +81,7 @@ namespace scene
 		core::aabbox3d<f32> getBoundingBox() const;
 
 		//! recalculates the bounding box member based on the planes
-		void recalculateBoundingBox();
+		inline void recalculateBoundingBox();
 	};
 
 

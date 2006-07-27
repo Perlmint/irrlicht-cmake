@@ -35,7 +35,7 @@ COctTreeTriangleSelector::COctTreeTriangleSelector(IMesh* mesh, ISceneNode* node
 
 		u32 end = os::Timer::getRealTime();
 		c8 tmp[255];
-		sprintf(tmp, "Needed %dms to create OctTreeTriangleSelector.(%d nodes, %d polys)", 
+		sprintf(tmp, "Needed %ums to create OctTreeTriangleSelector.(%d nodes, %u polys)", 
 			end - start, NodeCount, Triangles.size());
 		os::Printer::log(tmp, ELL_INFORMATION);
 	}

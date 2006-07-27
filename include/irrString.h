@@ -8,6 +8,7 @@
 #include "irrTypes.h"
 #include "irrAllocator.h"
 #include <stdio.h>
+#include <string.h>
 
 namespace irr
 {
@@ -390,6 +391,30 @@ public:
 		array[used-1] = 0;
 	}
 
+	//! Appends a char string to this string
+	/** \param other: Char string to append. */
+	void append(const T* other)
+	{
+		--used;
+
+		s32 len = 0;
+		const T* p = other;
+		while(*p)
+		{
+			++len;
+			++p;
+		}
+
+		if (used + len + 1 > allocated)
+			reallocate((s32)used + (s32)len + 1);
+
+		for (s32 l=0; l<len+1; ++l)
+			array[l+used] = *(other+l);
+
+		used = used + len + 1;
+	}
+
+
 	//! Appends a string to this string
 	/** \param other: String to append. */
 	void append(const string<T>& other)
@@ -575,6 +600,11 @@ public:
 
 
 	void operator += (T c)
+	{
+		append(c);
+	}
+
+	void operator += (const T* c)
 	{
 		append(c);
 	}

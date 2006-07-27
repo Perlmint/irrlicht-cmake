@@ -264,7 +264,6 @@ IReadFile* CZipReader::openFile(s32 index)
 			return 0; // zlib not compiled, we cannot decompress the data.
 			#endif
 		}
-		break;
 	default:
 		os::Printer::log("file has unsupported compression method.", FileList[index].simpleFileName.c_str(), ELL_ERROR);
 		return 0;

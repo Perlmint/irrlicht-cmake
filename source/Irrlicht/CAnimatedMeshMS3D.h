@@ -21,7 +21,7 @@ namespace video
 namespace scene
 {
 
-	class CAnimatedMeshMS3D : public IAnimatedMeshMS3D, IMesh
+	class CAnimatedMeshMS3D : public IAnimatedMeshMS3D, public IMesh
 	{
 	public:
 

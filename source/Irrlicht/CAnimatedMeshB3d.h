@@ -30,7 +30,7 @@ namespace video
 namespace scene
 {
 
-	class CAnimatedMeshB3d : public IAnimatedMeshB3d, IMesh
+	class CAnimatedMeshB3d : public IAnimatedMeshB3d, public IMesh
 	{
 	public:
 
@@ -251,38 +251,41 @@ namespace scene
 			SB3dTexture *Textures[2];
 		};
 
+		bool ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
+
+		bool ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
+
+		bool ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
+
+		bool ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
+
+		bool ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
+
+		bool ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
+
+
+		bool ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
+
+		bool ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
+
+		bool ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
+
+		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
+
+		void animateNode(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
+
+		void slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
+
 		f32 totalTime;
 		bool HasAnimation;
 		s32 lastCalculatedFrame;
 
-		bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
+		core::stringc readString(io::IReadFile* file);
 
-		bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
-
-		bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-		bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
-
-		bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
-
-		bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-
-		bool CAnimatedMeshB3d::ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-		bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-		bool CAnimatedMeshB3d::ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-
-		core::stringc CAnimatedMeshB3d::ReadString(io::IReadFile* file);
-
-		core::stringc CAnimatedMeshB3d::StripPathString(core::stringc oldstring, bool keepPath);
+		core::stringc stripPathString(core::stringc oldstring, bool keepPath);
 
 		core::aabbox3d<f32> BoundingBox;
-
 		core::array<SB3dMaterial> Materials;
-
 		core::array<SB3dTexture> Textures;
 
 		core::array<video::S3DVertex2TCoords*> Vertices;
@@ -296,12 +299,6 @@ namespace scene
 		core::array<SB3DMeshBuffer*> AnimatedVertices_MeshBuffer;
 
 		core::array<SB3DMeshBuffer*> Buffers;
-
-		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
-
-		void animateNode(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
-
-		void Slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
 
 		video::IVideoDriver* Driver;
 

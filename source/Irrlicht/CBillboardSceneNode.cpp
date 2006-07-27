@@ -32,16 +32,16 @@ const core::vector3df& position, const core::dimension2d<f32>& size)
 	indices[5] = 2;
 
 	vertices[0].TCoords.set(1.0f, 1.0f);
-	vertices[0].Color = 0xffffffff;
+	vertices[0].Color.set(0xffffffff);
 
 	vertices[1].TCoords.set(1.0f, 0.0f);
-	vertices[1].Color = 0xffffffff;
+	vertices[1].Color.set(0xffffffff);
 
 	vertices[2].TCoords.set(0.0f, 0.0f);
-	vertices[2].Color = 0xffffffff;
+	vertices[2].Color.set(0xffffffff);
 
 	vertices[3].TCoords.set(0.0f, 1.0f);
-	vertices[3].Color = 0xffffffff;
+	vertices[3].Color.set(0xffffffff);
 }
 
 

@@ -2,14 +2,13 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include <stdio.h>
+#include <string.h>
 #include "CNullDriver.h"
 #include "CSoftwareTexture.h"
 #include "os.h"
-#include <stdio.h>
 #include "CImage.h"
-#include "IMeshBuffer.h"
 #include "CAttributes.h"
-#include <memory.h>
 
 namespace irr
 {
@@ -1550,7 +1549,7 @@ void CNullDriver::clearZBuffer()
 // prints renderer version
 void CNullDriver::printVersion()
 {
-	core::stringc namePrint = "Using renderer: ";
+	core::stringw namePrint = L"Using renderer: ";
 	namePrint += getName();
 	os::Printer::log(namePrint.c_str(), ELL_INFORMATION);
 }

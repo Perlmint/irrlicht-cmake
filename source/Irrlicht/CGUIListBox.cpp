@@ -169,7 +169,6 @@ bool CGUIListBox::OnEvent(SEvent event)
 				Selecting = false;
 				return true;
 			}
-			break;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:

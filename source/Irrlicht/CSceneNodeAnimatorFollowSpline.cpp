@@ -73,7 +73,7 @@ void CSceneNodeAnimatorFollowSpline::serializeAttributes(io::IAttributes* out, i
 	out->addFloat("Speed", Speed);
 	out->addFloat("Tightness", Tightness);
 
-	int count = Points.size();
+	u32 count = Points.size();
 
 	if ( options && (options->Flags & io::EARWF_FOR_EDITOR))
 	{
@@ -82,12 +82,12 @@ void CSceneNodeAnimatorFollowSpline::serializeAttributes(io::IAttributes* out, i
 		count += 1;
 	}
 
-	for (int i=0; i<count; ++i)
+	for (u32 i=0; i<count; ++i)
 	{
 		core::stringc tname = "Point";
-		tname += (i+1);
+		tname += (int)(i+1);
 
-		out->addVector3d(tname.c_str(), i<(int)Points.size() ? Points[i] : core::vector3df(0,0,0) );
+		out->addVector3d(tname.c_str(), i<Points.size() ? Points[i] : core::vector3df(0,0,0) );
 	}
 }
 
@@ -98,10 +98,10 @@ void CSceneNodeAnimatorFollowSpline::deserializeAttributes(io::IAttributes* in, 
 	Tightness = in->getAttributeAsFloat("Tightness");
 	Points.clear();
 
-	for(int i=0; true; ++i)
+	for(u32 i=1; true; ++i)
 	{
 		core::stringc pname = "Point";
-		pname += (i+1);
+		pname += (int)i;
 
 		if (in->existsAttribute(pname.c_str()))
 		{

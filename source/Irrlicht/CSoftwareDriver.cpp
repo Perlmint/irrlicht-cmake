@@ -26,7 +26,7 @@ CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool 
 	// create backbuffer
 
 	BackBuffer = new CImage(ECF_A1R5G5B5, windowSize);
-	BackBuffer->fill(0);
+	BackBuffer->fill(SColor(0));
 	
 	// get presenter
 

@@ -52,7 +52,7 @@ namespace scene
 		Header(){ clear(); }
 		virtual ~Header(){ clear(); }
 
-		const s32 getVersion() const{ return version; }
+		s32 getVersion() const{ return version; }
 		void clear(){ version = 0; }
 		void load(BinaryFileReader* pReader);
 
@@ -124,8 +124,8 @@ namespace scene
 		virtual ~LightMap(){ clear(); }
 		void clear();
 		void load(BinaryFileReader* pReader);
-		const s32 getWidth() const{ return width; }
-		const s32 getHeight() const{ return height; }
+		s32 getWidth() const{ return width; }
+		s32 getHeight() const{ return height; }
 		const s32* getPixelData() const{ return pixelData; }
 
 	private:
@@ -182,17 +182,17 @@ namespace scene
 		void clear();
 		void load(BinaryFileReader *pReader);
 
-		const s32 getFlags() const{ return flags; }
+		s32 getFlags() const{ return flags; }
 		const core::stringc& getTextureName() const{ return textureName; }
-		const s32 getLightMapId() const{ return lightMapId; }
+		s32 getLightMapId() const{ return lightMapId; }
 		const core::vector2df* getUVOffset() const{ return &uvOffset; }
 		const core::vector2df* getUVScale() const{ return &uvScale; }
-		const f32 getUVRotation() const{ return uvRotation; }
+		f32 getUVRotation() const{ return uvRotation; }
 
-		const s32 getVertexCount() const{ return vertices.size(); }
+		s32 getVertexCount() const{ return vertices.size(); }
 		const Vertex* getVertexAt(const s32 index) const{ return vertices[index]; }
 
-		const s32 getTriangleCount() const{ return triangles.size(); }
+		s32 getTriangleCount() const{ return triangles.size(); }
 		const Triangle& getTriangleAt(const s32 index) const{ return triangles[index]; }
 
 	private:
@@ -218,13 +218,13 @@ namespace scene
 		void clear();
 		void load(BinaryFileReader* pReader, bool bReadVisGroups);
 
-		const s32 getFlags() const { return flags; }
-		const s32 getGroupID() const { return groupId; }
+		s32 getFlags() const { return flags; }
+		s32 getGroupID() const { return groupId; }
 		const core::stringc& getProperties() const { return props; }
 		const color_rgb_t* getColor() const { return &color; }
 		const core::vector3df* getPosition() const { return &position; }
-		const s32 getVisgroupID() const { return visgroupId; }
-		const s32 getSurfaceCount() const { return surfaces.size(); }
+		s32 getVisgroupID() const { return visgroupId; }
+		s32 getSurfaceCount() const { return surfaces.size(); }
 		const Surface* getSurfaceAt(const s32 index) const { return surfaces[index]; }
 
 	private:
@@ -248,8 +248,8 @@ namespace scene
 
 		void clear();
 		void load(BinaryFileReader* pReader);
-		const s32 getVisgroupID() const { return visgroupId; }
-		const s32 getGroupID() const { return groupId; }
+		s32 getVisgroupID() const { return visgroupId; }
+		s32 getGroupID() const { return groupId; }
 		const core::stringc& getProperties() const { return props; }
 		const core::vector3df* getPosition() const { return &position; }
 
@@ -273,8 +273,8 @@ namespace scene
 		void load(BinaryFileReader* pReader);
 
 		const core::vector3df* getPosition(){ return &position; }
-		const f32 getPitch(){ return pitch; }
-		const f32 getYaw(){ return yaw; }
+		f32 getPitch(){ return pitch; }
+		f32 getYaw(){ return yaw; }
 
 	private:
 
@@ -297,19 +297,19 @@ namespace scene
 
 		const Header* getHeader() const{ return &header; }
 		
-		const s32 getGroupCount() const{ return groups.size(); }
+		s32 getGroupCount() const{ return groups.size(); }
 		const Group* getGroupAt(const s32 index) const{ return groups[index]; }
 
-		const s32 getVisGroupCount() const{ return visgroups.size(); }
+		s32 getVisGroupCount() const{ return visgroups.size(); }
 		const VisGroup* getVisGroupAt(const s32 index) const{ return visgroups[index]; }
 
-		const s32 getLightMapCount() const{ return lightmaps.size(); }
+		s32 getLightMapCount() const{ return lightmaps.size(); }
 		const LightMap* getLightMapAt(const s32 index) const { return lightmaps[index]; }
 
-		const s32 getMeshCount() const{ return meshes.size(); }
+		s32 getMeshCount() const{ return meshes.size(); }
 		const Mesh* getMeshAt(const s32 index) const{ return meshes[index]; }
 
-		const s32 getEntityCount() const{ return entities.size(); }
+		s32 getEntityCount() const{ return entities.size(); }
 		const Entity* getEntityAt(const s32 index) const{ return entities[index]; }
 
 		const CameraData* getCameraData() const{ return &cameraData; }

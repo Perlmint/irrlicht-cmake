@@ -26,7 +26,7 @@ namespace scene
 	/*!
 		The Scene Manager manages scene nodes, mesh recources, cameras and all the other stuff.
 	*/
-	class CSceneManager : public ISceneManager, ISceneNode
+	class CSceneManager : public ISceneManager, public ISceneNode
 	{
 	public:
 

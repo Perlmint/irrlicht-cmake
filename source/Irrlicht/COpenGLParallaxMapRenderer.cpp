@@ -306,7 +306,7 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	// the inverse of the view matrix, the resulting vector is the
 	// object space location of the camera.
 
-	f32 floats[4] = {0,0,0,1};
+	f32 floats[4] = {0.0f,0.0f,0.0f,1.0f};
 	core::matrix4 minv = driver->getTransform(video::ETS_VIEW);
 	minv.makeInverse();
 	minv.multiplyWith1x4Matrix(floats);
@@ -347,8 +347,8 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	}
 
 	// set scale factor
-    f32 factor = 0.02f; // default value
-	if (CurrentScale != 0)
+	f32 factor = 0.02f; // default value
+	if (CurrentScale != 0.0f)
 		factor = CurrentScale;
 
 	f32 c6[] = {factor, factor, factor, factor};

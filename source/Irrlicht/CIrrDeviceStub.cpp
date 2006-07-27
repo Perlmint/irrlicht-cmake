@@ -25,7 +25,7 @@ CIrrDeviceStub::CIrrDeviceStub(const char* version, irr::IEventReceiver* resv)
 	Logger = new CLogger(UserReceiver);
 	os::Printer::Logger = Logger;
 
-	core::stringw s = L"Irrlicht Engine version ";
+	core::stringc s = "Irrlicht Engine version ";
 	s.append(getVersion());
 	os::Printer::log(s.c_str(), ELL_NONE);
 
@@ -143,12 +143,12 @@ bool CIrrDeviceStub::checkVersion(const char* version)
 {
 	if (strcmp(getVersion(), version))
 	{
-		core::stringw w;
-		w = L"Warning: The library version of the Irrlicht Engine (";
+		core::stringc w;
+		w = "Warning: The library version of the Irrlicht Engine (";
 		w += getVersion();
-		w += L") does not match the version the application was compiled with (";
+		w += ") does not match the version the application was compiled with (";
 		w += version;
-		w += L"). This may cause problems.";
+		w += "). This may cause problems.";
 		os::Printer::log(w.c_str(), ELL_WARNING);
 		return false;
 	}

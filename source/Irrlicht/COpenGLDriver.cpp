@@ -272,7 +272,7 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 
 	glViewport(0, 0, screenSize.Width, screenSize.Height); // Reset The Current Viewport
 	glShadeModel(GL_SMOOTH);
-	setAmbientLight(SColor(0,0,0,0));
+	setAmbientLight(SColorf(0.0f,0.0f,0.0f,0.0f));
 	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
 	glClearDepth(1.0f);

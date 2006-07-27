@@ -106,7 +106,7 @@ inline u32 GetClipCode ( const AbsRectangle &r, const core::position2d<s32> &p )
 	@return: 1 if valid
 */
 
-int ClipLine (	const AbsRectangle &clipping,
+static int ClipLine (	const AbsRectangle &clipping,
 				core::position2d<s32> &p0,
 				core::position2d<s32> &p1,
 				const core::position2d<s32>& p0_in,
@@ -204,7 +204,7 @@ inline void GetClip ( AbsRectangle &clipping, video::IImage * t)
 
 /*
 */
-void RenderLine32_Decal (	video::IImage *t,
+static void RenderLine32_Decal (	video::IImage *t,
 							const core::position2d<s32> &p0,
 							const core::position2d<s32> &p1,
 							u32 argb )
@@ -266,7 +266,7 @@ void RenderLine32_Decal (	video::IImage *t,
 
 /*
 */
-void RenderLine32_Blend (	video::IImage *t,
+static void RenderLine32_Blend (	video::IImage *t,
 							const core::position2d<s32> &p0,
 							const core::position2d<s32> &p1,
 							u32 argb,
@@ -329,7 +329,7 @@ void RenderLine32_Blend (	video::IImage *t,
 
 /*
 */
-void RenderLine16_Decal (	video::IImage *t,
+static void RenderLine16_Decal (	video::IImage *t,
 							const core::position2d<s32> &p0,
 							const core::position2d<s32> &p1,
 							u32 argb )
@@ -390,7 +390,7 @@ void RenderLine16_Decal (	video::IImage *t,
 
 /*
 */
-void RenderLine16_Blend (	video::IImage *t,
+static void RenderLine16_Blend (	video::IImage *t,
 							const core::position2d<s32> &p0,
 							const core::position2d<s32> &p1,
 							u32 argb,
@@ -454,7 +454,7 @@ void RenderLine16_Blend (	video::IImage *t,
 
 /*!
 */
-void executeBlit_TextureCopy_x_to_x ( const SBlitJob * job )
+static void executeBlit_TextureCopy_x_to_x ( const SBlitJob * job )
 {
 	void *src = (void*) job->src;
 	void *dst = (void*) job->dst;
@@ -471,7 +471,7 @@ void executeBlit_TextureCopy_x_to_x ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureCopy_32_to_16 ( const SBlitJob * job )
+static void executeBlit_TextureCopy_32_to_16 ( const SBlitJob * job )
 {
 	u32 *src = (u32*) job->src;
 	u16 *dst = (u16*) job->dst;
@@ -490,7 +490,7 @@ void executeBlit_TextureCopy_32_to_16 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureCopy_24_to_16 ( const SBlitJob * job )
+static void executeBlit_TextureCopy_24_to_16 ( const SBlitJob * job )
 {
 	void *src = (void*) job->src;
 	u16 *dst = (u16*) job->dst;
@@ -513,7 +513,7 @@ void executeBlit_TextureCopy_24_to_16 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureCopy_16_to_32 ( const SBlitJob * job )
+static void executeBlit_TextureCopy_16_to_32 ( const SBlitJob * job )
 {
 	u16 *src = (u16*) job->src;
 	u32 *dst = (u32*) job->dst;
@@ -532,7 +532,7 @@ void executeBlit_TextureCopy_16_to_32 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureCopy_24_to_32 ( const SBlitJob * job )
+static void executeBlit_TextureCopy_24_to_32 ( const SBlitJob * job )
 {
 	void *src = (void*) job->src;
 	u32 *dst = (u32*) job->dst;
@@ -555,7 +555,7 @@ void executeBlit_TextureCopy_24_to_32 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
+static void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
 {
 	u32 *src = (u32*) job->src;
 	u32 *dst = (u32*) job->dst;
@@ -597,7 +597,7 @@ void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureBlend_32_to_32 ( const SBlitJob * job )
+static void executeBlit_TextureBlend_32_to_32 ( const SBlitJob * job )
 {
 	u32 *src = (u32*) job->src;
 	u32 *dst = (u32*) job->dst;
@@ -615,7 +615,7 @@ void executeBlit_TextureBlend_32_to_32 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureBlendColor_16_to_16 ( const SBlitJob * job )
+static void executeBlit_TextureBlendColor_16_to_16 ( const SBlitJob * job )
 {
 	u16 *src = (u16*) job->src;
 	u16 *dst = (u16*) job->dst;
@@ -635,7 +635,7 @@ void executeBlit_TextureBlendColor_16_to_16 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_TextureBlendColor_32_to_32 ( const SBlitJob * job )
+static void executeBlit_TextureBlendColor_32_to_32 ( const SBlitJob * job )
 {
 	u32 *src = (u32*) job->src;
 	u32 *dst = (u32*) job->dst;
@@ -653,7 +653,7 @@ void executeBlit_TextureBlendColor_32_to_32 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_Color_16_to_16 ( const SBlitJob * job )
+static void executeBlit_Color_16_to_16 ( const SBlitJob * job )
 {
 	u16 *dst = (u16*) job->dst;
 
@@ -684,7 +684,7 @@ void executeBlit_Color_16_to_16 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_Color_32_to_32 ( const SBlitJob * job )
+static void executeBlit_Color_32_to_32 ( const SBlitJob * job )
 {
 	u32 *dst = (u32*) job->dst;
 
@@ -697,7 +697,7 @@ void executeBlit_Color_32_to_32 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_ColorAlpha_16_to_16 ( const SBlitJob * job )
+static void executeBlit_ColorAlpha_16_to_16 ( const SBlitJob * job )
 {
 	u16 *dst = (u16*) job->dst;
 
@@ -716,7 +716,7 @@ void executeBlit_ColorAlpha_16_to_16 ( const SBlitJob * job )
 
 /*!
 */
-void executeBlit_ColorAlpha_32_to_32 ( const SBlitJob * job )
+static void executeBlit_ColorAlpha_32_to_32 ( const SBlitJob * job )
 {
 	u32 *dst = (u32*) job->dst;
 
@@ -735,7 +735,7 @@ void executeBlit_ColorAlpha_32_to_32 ( const SBlitJob * job )
 
 /*!
 */
-tExecuteBlit getBlitter ( eBlitter operation,video::IImage * dest,video::IImage * source )
+static tExecuteBlit getBlitter ( eBlitter operation,video::IImage * dest,video::IImage * source )
 {
 	video::ECOLOR_FORMAT sourceFormat = (video::ECOLOR_FORMAT)-1;
 	video::ECOLOR_FORMAT destFormat = (video::ECOLOR_FORMAT)-1;
@@ -818,7 +818,7 @@ tExecuteBlit getBlitter ( eBlitter operation,video::IImage * dest,video::IImage 
 /*!
 	a generic 2D Blitter
 */
-s32 Blit (	eBlitter operation,
+static s32 Blit (	eBlitter operation,
 			video::IImage * dest,
 			const core::rect<s32> *destClipping,
 			const core::position2d<s32> *destPos,

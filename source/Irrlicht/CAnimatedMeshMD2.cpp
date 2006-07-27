@@ -92,7 +92,7 @@ namespace scene
 
 const s32 Q2_VERTEX_NORMAL_TABLE_SIZE = 162;
 
-const f32 Q2_VERTEX_NORMAL_TABLE[Q2_VERTEX_NORMAL_TABLE_SIZE][3] = {
+static const f32 Q2_VERTEX_NORMAL_TABLE[Q2_VERTEX_NORMAL_TABLE_SIZE][3] = {
 	{-0.525731f, 0.000000f, 0.850651f}, 
 	{-0.442863f, 0.238856f, 0.864188f}, 
 	{-0.295242f, 0.000000f, 0.955423f}, 
@@ -264,7 +264,7 @@ struct SMD2AnimationType
 	s32 fps;
 };
 
-SMD2AnimationType MD2AnimationTypeList[21] =
+static const SMD2AnimationType MD2AnimationTypeList[21] =
 {
     {   0,  39,  9 },   // STAND
     {  40,  45, 10 },   // RUN
@@ -711,10 +711,10 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	// reallocate interpolate buffer
 	if (header.numFrames)
 	{
-		InterpolateBuffer.set_used(FrameList[0].size());
+		s32 currCount = FrameList[0].size();
+		InterpolateBuffer.set_used(currCount);
 
-		s32 count = FrameList[0].size();
-		for (i=0; i<count; ++i)
+		for (i=0; i<currCount; ++i)
 		{
 			InterpolateBuffer[i].TCoords = FrameList[0].pointer()[i].TCoords;
 			InterpolateBuffer[i].Color = vtx.Color;

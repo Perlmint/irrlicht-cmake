@@ -34,10 +34,10 @@ class quaternion
 		bool operator==(const quaternion& other) const;
 
 		//! assignment operator
-		quaternion& operator=(const quaternion& other);
+		inline quaternion& operator=(const quaternion& other);
 
 		//! matrix assignment operator
-		quaternion& operator=(const matrix4& other);
+		inline quaternion& operator=(const matrix4& other);
 
 		//! add operator
 		quaternion operator+(const quaternion& other) const;
@@ -58,16 +58,16 @@ class quaternion
 		quaternion& operator*=(const quaternion& other);
 
 		//! calculates the dot product
-		f32 getDotProduct(const quaternion& other) const;
+		inline f32 getDotProduct(const quaternion& other) const;
 
 		//! sets new quaternion
-		void set(f32 x, f32 y, f32 z, f32 w);
+		inline void set(f32 x, f32 y, f32 z, f32 w);
 
 		//! sets new quaternion based on euler angles
-		void set(f32 x, f32 y, f32 z);
+		inline void set(f32 x, f32 y, f32 z);
 
 		//! normalizes the quaternion
-		quaternion& normalize();
+		inline quaternion& normalize();
 
 		//! Creates a matrix from this quaternion
 		matrix4 getMatrix() const;

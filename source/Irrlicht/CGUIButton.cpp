@@ -74,11 +74,11 @@ bool CGUIButton::OnEvent(SEvent event)
 			
 			if (Parent)
 			{
-				SEvent event;
-				event.EventType = EET_GUI_EVENT;
-				event.GUIEvent.Caller = this;
-				event.GUIEvent.EventType = EGET_BUTTON_CLICKED;
-				Parent->OnEvent(event);
+				SEvent newEvent;
+				newEvent.EventType = EET_GUI_EVENT;
+				newEvent.GUIEvent.Caller = this;
+				newEvent.GUIEvent.EventType = EGET_BUTTON_CLICKED;
+				Parent->OnEvent(newEvent);
 			}
 			return true;
 		}
@@ -124,11 +124,11 @@ bool CGUIButton::OnEvent(SEvent event)
 			if ((!IsPushButton && wasPressed && Parent) ||
 				(IsPushButton && wasPressed != Pressed))
 			{
-				SEvent event;
-				event.EventType = EET_GUI_EVENT;
-				event.GUIEvent.Caller = this;
-				event.GUIEvent.EventType = EGET_BUTTON_CLICKED;
-				Parent->OnEvent(event);
+				SEvent newEvent;
+				newEvent.EventType = EET_GUI_EVENT;
+				newEvent.GUIEvent.Caller = this;
+				newEvent.GUIEvent.EventType = EGET_BUTTON_CLICKED;
+				Parent->OnEvent(newEvent);
 			}
 
 			return true;

@@ -370,7 +370,7 @@ scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32
 				{
 					// retry with relative path
 					core::stringc relative = CurrentlyLoadingFromPath;
-					relative += "\\";
+					relative += '\\';
 					relative += Materials[k].Techniques[0].Passes[0].Texture.Filename;
 					mb->Material.Texture1 = Driver->getTexture(relative.c_str());
 				}

@@ -507,7 +507,7 @@ void CXAnimationPlayer::animateSkeleton()
 			s32 idx1 = -1;
 			s32 idx2 = -1;
 
-			for (int t=0; t<(s32)currentSet.Animations[i].Times.size()-1; ++t)
+			for (s32 t=0; t<(s32)currentSet.Animations[i].Times.size()-1; ++t)
 				if (currentSet.Animations[i].Times[t] <= CurrentAnimationTime &&
 					currentSet.Animations[i].Times[t+1] >= CurrentAnimationTime)
 				{
@@ -668,7 +668,7 @@ void CXAnimationPlayer::modifySkin()
 				av[vt].Pos = ov[vt].Pos;
 			}
 			else*/
-			for (int w=0; w<weight.weightCount; ++w)
+			for (s32 w=0; w<weight.weightCount; ++w)
 			{
 				Joints[weight.joint[w]].CombinedAnimationMatrix.transformVect(
 					orig, vtmp);
@@ -686,7 +686,7 @@ void CXAnimationPlayer::modifySkin()
 			orig = ov[ vt ].Normal + ov[ vt ].Pos;
 			av[ vt ].Normal = core::vector3df( 0, 0, 0 );
 
-			for( int w = 0; w < weight.weightCount; ++w )
+			for( s32 w = 0; w < weight.weightCount; ++w )
 			{
 			        vtmp = orig;
 				Joints[ weight.joint[ w ] ].CombinedAnimationMatrix.transformVect( vtmp );
@@ -727,7 +727,7 @@ void CXAnimationPlayer::modifySkin()
 void CXAnimationPlayer::prepareAnimationData()
 {
     s32 animationSetCount = Reader->getAnimationSetCount();
-	for (int i=0; i<animationSetCount; ++i)
+	for (s32 i=0; i<animationSetCount; ++i)
 	{
 		AnimationSets.push_back(SXAnimationSet());
 		SXAnimationSet& mySet = AnimationSets.getLast();
@@ -736,13 +736,13 @@ void CXAnimationPlayer::prepareAnimationData()
 		mySet.AnimationName = readerSet.AnimationName;
 
 		// through all animations
-		for (int a=0; a<(s32)readerSet.Animations.size(); ++a)
+		for (s32 a=0; a<(s32)readerSet.Animations.size(); ++a)
 		{
 			// through all keys
-			for (int k=0; k<(s32)readerSet.Animations[a].Keys.size(); ++k)
+			for (s32 k=0; k<(s32)readerSet.Animations[a].Keys.size(); ++k)
 			{
 				// link with joint
-				int jntnr = getJointNumberFromName(readerSet.Animations[a].FrameName);
+				s32 jntnr = getJointNumberFromName(readerSet.Animations[a].FrameName);
 
 				if (jntnr == -1)
 				{

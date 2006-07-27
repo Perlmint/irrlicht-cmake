@@ -36,7 +36,7 @@ namespace core
 			const f32& operator()(s32 row, s32 col) const {  return M[col * 4 + row]; }
 
 			//! Sets this matrix equal to the other matrix.
-			matrix4& operator=(const matrix4 &other);
+			inline matrix4& operator=(const matrix4 &other);
 
 			//! Returns true if other matrix is equal to this matrix.
 			bool operator==(const matrix4 &other) const;
@@ -51,7 +51,7 @@ namespace core
 			matrix4 operator*(const matrix4& other) const;
 
 			//! Set matrix to identity. 
-			void makeIdentity();
+			inline void makeIdentity();
 
 			//! Returns true if the matrix is the identity matrix
 			bool isIdentity() const;
@@ -66,7 +66,7 @@ namespace core
 			void setInverseTranslation( const vector3df& translation );	
 
 			//! Make a rotation matrix from Euler angles. The 4th row and column are unmodified.
-			void setRotationRadians( const vector3df& rotation );			
+			inline void setRotationRadians( const vector3df& rotation );			
 
 			//! Make a rotation matrix from Euler angles. The 4th row and column are unmodified.
 			void setRotationDegrees( const vector3df& rotation );			
@@ -75,7 +75,7 @@ namespace core
 			core::vector3df getRotationDegrees() const;			
 
 			//! Make an inverted rotation matrix from Euler angles. The 4th row and column are unmodified.
-			void setInverseRotationRadians( const vector3df& rotation );	
+			inline void setInverseRotationRadians( const vector3df& rotation );	
 
 			//! Make an inverted rotation matrix from Euler angles. The 4th row and column are unmodified.
 			void setInverseRotationDegrees( const vector3df& rotation );	
@@ -616,28 +616,28 @@ namespace core
 	//! Builds a right-handed perspective projection matrix based on a field of view
 	inline void matrix4::buildProjectionMatrixPerspectiveFovRH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
-	    f32 h = (f32)(cos(fieldOfViewRadians/2) / sin(fieldOfViewRadians/2));
+		f32 h = (f32)(cos(fieldOfViewRadians/2.0) / sin(fieldOfViewRadians/2.0));
 		f32 w = h * aspectRatio;
 
-		(*this)(0,0) = 2*zNear/w;
-		(*this)(1,0) = 0;
-		(*this)(2,0) = 0;
-		(*this)(3,0) = 0;
+		(*this)(0,0) = 2.0f*zNear/w;
+		(*this)(1,0) = 0.0f;
+		(*this)(2,0) = 0.0f;
+		(*this)(3,0) = 0.0f;
 
-		(*this)(0,1) = 0;
-		(*this)(1,1) = 2*zNear/h;
-		(*this)(2,1) = 0;
-		(*this)(3,1) = 0;
+		(*this)(0,1) = 0.0f;
+		(*this)(1,1) = 2.0f*zNear/h;
+		(*this)(2,1) = 0.0f;
+		(*this)(3,1) = 0.0f;
 
-		(*this)(0,2) = 0;
-		(*this)(1,2) = 0;
+		(*this)(0,2) = 0.0f;
+		(*this)(1,2) = 0.0f;
 		(*this)(2,2) = zFar/(zFar-zNear);
-		(*this)(3,2) = -1;
+		(*this)(3,2) = -1.0f;
 
-		(*this)(0,3) = 0;
-		(*this)(1,3) = 0;
+		(*this)(0,3) = 0.0f;
+		(*this)(1,3) = 0.0f;
 		(*this)(2,3) = zNear*zFar/(zNear-zFar);
-		(*this)(3,3) = 0;
+		(*this)(3,3) = 0.0f;
 	}
 
 
@@ -645,28 +645,28 @@ namespace core
 	//! Builds a left-handed perspective projection matrix based on a field of view
 	inline void matrix4::buildProjectionMatrixPerspectiveFovLH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
-		f32 h = (f32)(cos(fieldOfViewRadians/2) / sin(fieldOfViewRadians/2));
+		f32 h = (f32)(cos(fieldOfViewRadians/2.0) / sin(fieldOfViewRadians/2.0));
 		f32 w = h * aspectRatio;
 
-		(*this)(0,0) = 2*zNear/w;
-		(*this)(1,0) = 0;
-		(*this)(2,0) = 0;
-		(*this)(3,0) = 0;
+		(*this)(0,0) = 2.0f*zNear/w;
+		(*this)(1,0) = 0.0f;
+		(*this)(2,0) = 0.0f;
+		(*this)(3,0) = 0.0f;
 
-		(*this)(0,1) = 0;
-		(*this)(1,1) = 2*zNear/h;
-		(*this)(2,1) = 0;
-		(*this)(3,1) = 0;
+		(*this)(0,1) = 0.0f;
+		(*this)(1,1) = 2.0f*zNear/h;
+		(*this)(2,1) = 0.0f;
+		(*this)(3,1) = 0.0f;
 
-		(*this)(0,2) = 0;
-		(*this)(1,2) = 0;
+		(*this)(0,2) = 0.0f;
+		(*this)(1,2) = 0.0f;
 		(*this)(2,2) = zFar/(zFar-zNear);
-		(*this)(3,2) = 1;
+		(*this)(3,2) = 1.0f;
 
-		(*this)(0,3) = 0;
-		(*this)(1,3) = 0;
+		(*this)(0,3) = 0.0f;
+		(*this)(1,3) = 0.0f;
 		(*this)(2,3) = zNear*zFar/(zNear-zFar);
-		(*this)(3,3) = 0;
+		(*this)(3,3) = 0.0f;
 	}
 
 

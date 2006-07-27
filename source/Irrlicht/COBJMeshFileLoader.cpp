@@ -528,7 +528,7 @@ c8* COBJMeshFileLoader::readColor(c8* pBufPtr, video::SColor& color, const c8* p
 }
 
 
-COBJMeshFileLoader::SObjMtl* COBJMeshFileLoader::findMtl(const core::stringc& pMtlName)
+COBJMeshFileLoader::SObjMtl* COBJMeshFileLoader::findMtl(const c8* pMtlName)
 {
 	for (u32 i = 0; i < materials.size(); ++i)
 	{
@@ -540,7 +540,7 @@ COBJMeshFileLoader::SObjMtl* COBJMeshFileLoader::findMtl(const core::stringc& pM
 
 
 
-COBJMeshFileLoader::SObjGroup * COBJMeshFileLoader::findGroup(const core::stringc& pGroupName)
+COBJMeshFileLoader::SObjGroup * COBJMeshFileLoader::findGroup(const c8* pGroupName)
 {
 	for (u32 i = 0; i < groups.size(); ++i)
 	{
@@ -551,7 +551,7 @@ COBJMeshFileLoader::SObjGroup * COBJMeshFileLoader::findGroup(const core::string
 }
 
 
-COBJMeshFileLoader::SObjGroup * COBJMeshFileLoader::findOrAddGroup(const core::stringc& pGroupName)
+COBJMeshFileLoader::SObjGroup * COBJMeshFileLoader::findOrAddGroup(const c8* pGroupName)
 {
 	SObjGroup * pGroup = findGroup( pGroupName );
 	if ( 0 != pGroup )

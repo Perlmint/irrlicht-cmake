@@ -47,7 +47,7 @@ class IMaterialRenderer;
 
 //! Class for using GLSL shaders with OpenGL
 //! Please note: This renderer implements its own IMaterialRendererServices
-class COpenGLSLMaterialRenderer : public IMaterialRenderer, IMaterialRendererServices
+class COpenGLSLMaterialRenderer : public IMaterialRenderer, public IMaterialRendererServices
 {
 public:
 

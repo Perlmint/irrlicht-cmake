@@ -323,7 +323,7 @@ void CLMTSMeshFileLoader::loadTextures()
 			tmptex = Driver->getTexture(s.c_str());
 		else
 		{
-			char buf[300]; // filenames my be 256 bytes long
+			char buf[300]; // filenames may be 256 bytes long
 			sprintf(buf, "LMTS WARNING: Texture does not exist: %s", s.c_str());
 			LMTS_LOG(buf, ELL_WARNING);
 		}

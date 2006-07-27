@@ -164,8 +164,8 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 					vtx.Pos.set((f32)(x+processed.X) * stretchSize.Width,
 						height, (f32)(y+processed.Y) * stretchSize.Height);
 
-					vtx.TCoords.set((f32)(x+0.5f) / ((f32)blockSize.Width), 
-						(f32)(y+0.5f) / ((f32)blockSize.Height));
+					vtx.TCoords.set((x+0.5f) / blockSize.Width,
+						(y+0.5f) / blockSize.Height);
 					buffer->Vertices.push_back(vtx);
 				}
 			}
@@ -208,7 +208,7 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 					core::position2d<s32>((s32)(processed.X*thRel.X), (s32)(processed.Y*thRel.Y)),
 					core::dimension2d<s32>((s32)(blockSize.Width*thRel.X), (s32)(blockSize.Height*thRel.Y)));
 
-				sprintf(textureName, "terrain%d_%d", tm, mesh->getMeshBufferCount());
+				sprintf(textureName, "terrain%u_%d", tm, mesh->getMeshBufferCount());
 
 				material.Texture1 = driver->addTexture(textureName, img);
 
