@@ -202,7 +202,7 @@ void CParticleSystemSceneNode::render()
 	// create particle vertex data
 	for (u32 i=0; i<Particles.size(); ++i)
 	{
-		SParticle& particle = Particles[i];
+		const SParticle& particle = Particles[i];
 
 		s32 idx = i*4;
 
@@ -224,13 +224,10 @@ void CParticleSystemSceneNode::render()
 	}
 
 	// render all 
-	if (ParticlesAreGlobal)
-	{
-		core::matrix4 mat;
-		driver->setTransform(video::ETS_WORLD, mat);
-	}
-	else
-		driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
+	core::matrix4 mat;
+	if (!ParticlesAreGlobal)
+		mat.setTranslation(AbsoluteTransformation.getTranslation());
+	driver->setTransform(video::ETS_WORLD, mat);
 		
 
 	driver->setMaterial(Material);
@@ -273,15 +270,22 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 		s32 newParticles = Emitter->emitt(now, timediff, array);
 
 		if (newParticles && array)
-			for (s32 i=0; i<newParticles && Particles.size() < 16250; ++i)
+		{
+			s32 j=Particles.size();
+			if (newParticles > 16250-j)
+				newParticles=16250-j;
+			Particles.set_sorted(false);
+			Particles.set_used(j+newParticles);
+			for (s32 i=0; i<newParticles; ++i)
 			{
 				AbsoluteTransformation.rotateVect(array[i].startVector); 
 
 				if (ParticlesAreGlobal)
 					AbsoluteTransformation.transformVect(array[i].pos);
 
-				Particles.push_back(array[i]);
+				Particles[j]=array[i];
 			}
+		}
 	}
 
 	// run affectors

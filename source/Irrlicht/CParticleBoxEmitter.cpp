@@ -44,7 +44,7 @@ s32 CParticleBoxEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& outAr
 	{
 		Particles.set_used(0);
 		s32 amount = (s32)((Time / everyWhatMillisecond) + 0.5f);
-        Time = 0;
+		Time = 0;
 		SParticle p;
 		core::vector3df extend = Box.getExtent();
 

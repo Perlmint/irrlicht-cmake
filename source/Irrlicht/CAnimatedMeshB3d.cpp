@@ -93,6 +93,17 @@ core::stringc CAnimatedMeshB3d::stripPathString(core::string<c8> oldstring, bool
 
 
 
+void CAnimatedMeshB3d::readFloats(io::IReadFile* file, f32* vec, u32 count)
+{
+	file->read(vec, count*sizeof(f32));
+	#ifdef __BIG_ENDIAN__
+	for (u32 n=0; n<count; ++n)
+		vec[n] = OSReadSwapInt32(vec,n*sizeof(f32));
+	#endif
+}
+
+
+
 bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize)
 {
 	//os::Printer::log("B3d TEXS Chunk"); //for debuging
@@ -107,28 +118,23 @@ bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 		B3dTexture.Texture=Driver->getTexture ( TextureName.c_str() );
 
-		file->read(&B3dTexture.flags, sizeof(B3dTexture.flags));
-		file->read(&B3dTexture.blend, sizeof(B3dTexture.blend));
-		file->read(&B3dTexture.x_pos, sizeof(B3dTexture.x_pos));
-		file->read(&B3dTexture.y_pos, sizeof(B3dTexture.y_pos));       //These values are not being used yet
-		file->read(&B3dTexture.x_scale, sizeof(B3dTexture.x_scale));
-		file->read(&B3dTexture.y_scale, sizeof(B3dTexture.y_scale));
-		file->read(&B3dTexture.angle, sizeof(B3dTexture.angle)); //Not sure if irrlicht can use this
+		file->read(&B3dTexture.Flags, sizeof(s32));
+		file->read(&B3dTexture.Blend, sizeof(s32));
+		readFloats(file, &B3dTexture.Xpos, 1);
+		readFloats(file, &B3dTexture.Ypos, 1);
+		readFloats(file, &B3dTexture.Xscale, 1);
+		readFloats(file, &B3dTexture.Yscale, 1);
+		readFloats(file, &B3dTexture.Angle, 1);
 
 		#ifdef __BIG_ENDIAN__ //Never been tested
-			B3dTexture.flags = OSReadSwapInt32(&B3dTexture.flags,0);
-			B3dTexture.blend = OSReadSwapInt32(&B3dTexture.blend,0);
-			B3dTexture.x_pos = OSReadSwapInt32(&B3dTexture.x_pos,0);
-			B3dTexture.y_pos = OSReadSwapInt32(&B3dTexture.y_pos,0);
-			B3dTexture.x_scale = OSReadSwapInt32(&B3dTexture.x_scale,0);
-			B3dTexture.y_scale = OSReadSwapInt32(&B3dTexture.y_scale,0);
-			B3dTexture.angle = OSReadSwapInt32(&B3dTexture.angle,0);
+			B3dTexture.Flags = OSReadSwapInt32(&B3dTexture.Flags,0);
+			B3dTexture.Blend = OSReadSwapInt32(&B3dTexture.Blend,0);
 		#endif
 
 		Textures.push_back(B3dTexture);
 
 		/*
-		flags:
+		Flags:
 		1: Color (default)
 		2: Alpha
 		4: Masked
@@ -141,7 +147,7 @@ bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		512: Force the use of high color textures
 		65536: texture uses secondary UV values
 
-		blend:
+		Blend:
 		0: Do not blend
 		1: No blend, or Alpha (alpha when texture loaded with alpha flag - not recommended for multitexturing - see below)
 		2: Multiply (default)
@@ -164,7 +170,7 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	s32 n_texs;
 
-	file->read(&n_texs, sizeof(n_texs));
+	file->read(&n_texs, sizeof(s32));
 
 	#ifdef __BIG_ENDIAN__
 		n_texs = OSReadSwapInt32(&n_texs,0);
@@ -232,7 +238,7 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			{
 				if (B3dMaterial.alpha==1)
 				{
-					if (B3dMaterial.Textures[1]->blend &5)
+					if (B3dMaterial.Textures[1]->Blend &5)
 					{
 						//B3dMaterial.Material->MaterialType = video::EMT_LIGHTMAP;
 						B3dMaterial.Material->MaterialType = video::EMT_LIGHTMAP_M2 ;
@@ -252,7 +258,7 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			}
 		else if (B3dMaterial.Textures[0])
 			{
-				if (B3dMaterial.Textures[0]->flags &2) //Alpha mapped
+				if (B3dMaterial.Textures[0]->Flags &2) //Alpha mapped
 				{
 					B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
 				}
@@ -831,40 +837,25 @@ bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		file->read(&Key.frame, sizeof(Key.frame));
 
 		if (flags&1)
-			for (s32 n=0;n<=2;n++)
-				file->read(&position[n], sizeof(f32));
+			readFloats(file, position, 3);
 
 		if (flags&2)
-			for (s32 n=0;n<=2;n++)
-				file->read(&scale[n], sizeof(f32));
+			readFloats(file, scale, 3);
 
 		if (flags&4)
-			for (s32 n=0;n<=3;n++)
-				file->read(&rotation[n], sizeof(f32));
+			readFloats(file, rotation, 4);
 
 		#ifdef __BIG_ENDIAN__ //Never been tested
-			Key.frame = OSReadSwapInt32(&Key.frame,0);
-
-			if (flags&1)
-				for (s32 n=0;n<=2;n++)
-					Key.position[n] = OSReadSwapInt32(&Key.position[n],0);
-
-			if (flags&2)
-				for (s32 n=0;n<=2;n++)
-					Key.scale[n] = OSReadSwapInt32(&Key.scale[n],0);
-
-			if (flags&4)
-				for (s32 n=0;n<=3;n++)
-					Key.rotation[n] = OSReadSwapInt32(&Key.rotation[n],0);
+		Key.frame = OSReadSwapInt32(&Key.frame,0);
 		#endif
+
+		Key.frame*=100;
 
 		Key.position=core::vector3df(position[0],position[1],position[2]);
 
 		Key.scale=core::vector3df(scale[0],scale[1],scale[2]);
 
 		Key.rotation=core::quaternion(rotation[1],rotation[2],rotation[3],rotation[0]);//meant to be in this order
-
-		Key.frame*=100;
 
 		InNode->Keys.push_back(Key);
 	}
@@ -880,19 +871,18 @@ bool CAnimatedMeshB3d::ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s1
 	//os::Printer::log("B3d ANIM Chunk"); //for debuging
 	//cout << "B3d ANIM Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
-	file->read(&anim_flags, sizeof(anim_flags));
-	file->read(&anim_frames, sizeof(anim_frames));
-	file->read(&anim_fps, sizeof(anim_fps));
+	file->read(&AnimFlags, sizeof(s32));
+	file->read(&AnimFrames, sizeof(s32));
+	readFloats(file, &AnimFPS, 1);
 
 	#ifdef __BIG_ENDIAN__ //Never been tested
-		anim_flags = OSReadSwapInt32(&anim_flags,0);
-		anim_frames = OSReadSwapInt32(&anim_frames,0);
-		anim_fps = OSReadSwapInt32(&anim_fps,0);
+		AnimFlags = OSReadSwapInt32(&AnimFlags,0);
+		AnimFrames = OSReadSwapInt32(&AnimFrames,0);
 	#endif
 
-	anim_frames*=100;
+	AnimFrames*=100;
 
-	totalTime=(f32)anim_frames;
+	totalTime=(f32)AnimFrames;
 	HasAnimation=1;
 	lastCalculatedFrame=-1;
 
@@ -913,9 +903,9 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 	HasAnimation=0;
 	lastCalculatedFrame=-1;
 
-	anim_flags=0;
-	anim_frames=1; //how many frames in anim
-	anim_fps=0;
+	AnimFlags=0;
+	AnimFrames=1; //how many frames in anim
+	AnimFPS=0.0f;
 
 	B3dChunkHeader header;
 
@@ -1029,7 +1019,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 //! returns the amount of frames in milliseconds. If the amount is 1, it is a static (=non animated) mesh.
 s32 CAnimatedMeshB3d::getFrameCount()
 {
-	return anim_frames;
+	return AnimFrames;
 }
 
 

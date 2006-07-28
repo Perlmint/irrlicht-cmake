@@ -535,6 +535,9 @@ void CAnimatedMeshMS3D::animate(s32 frame)
 			Joints[i].AbsoluteTransformationAnimated.transformVect(
 			Vertices[Joints[i].VertexIds[j]].Pos, 
 				AnimatedVertices[Joints[i].VertexIds[j]].Pos);
+			Joints[i].AbsoluteTransformationAnimated.transformVect(
+			Vertices[Joints[i].VertexIds[j]].Normal, 
+				AnimatedVertices[Joints[i].VertexIds[j]].Normal);
 
 			// TODO: this could be done much more faster by 
 			// first getting 8 extreme points and putting them in.

@@ -178,9 +178,9 @@ namespace scene
 		};
 
 
-		s32 anim_flags;
-		s32 anim_frames; //how many frames in anim
-		f32 anim_fps;
+		s32 AnimFlags;
+		s32 AnimFrames; //how many frames in anim
+		f32 AnimFPS;
 
 		struct SB3dBone
 		{
@@ -233,13 +233,13 @@ namespace scene
 		struct SB3dTexture
 		{
 			irr::video::ITexture* Texture;
-			s32 flags;
-			s32 blend;
-			f32 x_pos;
-			f32 y_pos;
-			f32 x_scale;
-			f32 y_scale;
-			f32 angle;
+			s32 Flags;
+			s32 Blend;
+			f32 Xpos;
+			f32 Ypos;
+			f32 Xscale;
+			f32 Yscale;
+			f32 Angle;
 		};
 
 		struct SB3dMaterial
@@ -281,8 +281,9 @@ namespace scene
 		s32 lastCalculatedFrame;
 
 		core::stringc readString(io::IReadFile* file);
-
 		core::stringc stripPathString(core::stringc oldstring, bool keepPath);
+
+		void readFloats(io::IReadFile* file, f32* vec, u32 count);
 
 		core::aabbox3d<f32> BoundingBox;
 		core::array<SB3dMaterial> Materials;
