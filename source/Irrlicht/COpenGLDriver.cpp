@@ -271,7 +271,6 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	loadExtensions();
 
 	glViewport(0, 0, screenSize.Width, screenSize.Height); // Reset The Current Viewport
-	glShadeModel(GL_SMOOTH);
 	setAmbientLight(SColorf(0.0f,0.0f,0.0f,0.0f));
 	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
@@ -1545,9 +1544,15 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	if (resetAllRenderStates || lastmaterial.Lighting != material.Lighting)
 	{
 		if (Material.Lighting)
+		{
 			glEnable(GL_LIGHTING);
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+		}
 		else
+		{
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 			glDisable(GL_LIGHTING);
+		}
 	}
 
 	// zbuffer

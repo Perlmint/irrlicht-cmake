@@ -13,7 +13,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 //! Class for rendering normal maps with OpenGL
@@ -22,7 +22,7 @@ class COpenGLParallaxMapRenderer : public COpenGLShaderMaterialRenderer, public 
 public:
 
 	//! Constructor
-	COpenGLParallaxMapRenderer(video::COpenGLDriver* driver, 
+	COpenGLParallaxMapRenderer(video::COpenGLDriver* driver,
 		s32& outMaterialTypeNr, IMaterialRenderer* baseMaterial);
 
 	//! Destructor
@@ -32,16 +32,16 @@ public:
 	//! material renderer should be set.
 	virtual void OnSetConstants(IMaterialRendererServices* services, s32 userData);
 
-	//! Returns the render capability of the material. 
+	//! Returns the render capability of the material.
 	virtual s32 getRenderCapability();
 
-	virtual void OnSetMaterial(video::SMaterial& material, 
+	virtual void OnSetMaterial(video::SMaterial& material,
 		const video::SMaterial& lastMaterial,
 		bool resetAllRenderstates, video::IMaterialRendererServices* services);
 
 protected:
 
-	bool CompiledShaders;	
+	bool CompiledShaders;
 	f32 CurrentScale;
 };
 

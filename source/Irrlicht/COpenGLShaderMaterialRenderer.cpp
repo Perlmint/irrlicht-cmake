@@ -21,7 +21,7 @@ namespace video
 
 
 //! Constructor
-COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(video::COpenGLDriver* driver, 
+COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(video::COpenGLDriver* driver,
 	s32& outMaterialTypeNr, const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 	IShaderConstantSetCallBack* callback, IMaterialRenderer* baseMaterial, s32 userData)
 	: Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
@@ -69,7 +69,7 @@ COpenGLShaderMaterialRenderer::~COpenGLShaderMaterialRenderer()
 		BaseMaterial->drop ();
 }
 
-void COpenGLShaderMaterialRenderer::init(s32& outMaterialTypeNr, const c8* vertexShaderProgram, 
+void COpenGLShaderMaterialRenderer::init(s32& outMaterialTypeNr, const c8* vertexShaderProgram,
 	const c8* pixelShaderProgram, E_VERTEX_TYPE type)
 {
 	outMaterialTypeNr = -1;
@@ -118,8 +118,6 @@ void COpenGLShaderMaterialRenderer::OnSetMaterial(video::SMaterial& material, co
 		if (BaseMaterial)
 			BaseMaterial->OnSetMaterial(material, material, true, services);
 	}
-
-	services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 }
 
 
@@ -139,7 +137,7 @@ void COpenGLShaderMaterialRenderer::OnUnsetMaterial()
 //! Returns if the material is transparent.
 bool COpenGLShaderMaterialRenderer::isTransparent()
 {
-	return BaseMaterial ? BaseMaterial->isTransparent() : false; 
+	return BaseMaterial ? BaseMaterial->isTransparent() : false;
 }
 
 bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
@@ -154,7 +152,7 @@ bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 	while(glGetError() != GL_NO_ERROR)	{}
 
 	// compile
-	Driver->extGlProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, 
+	Driver->extGlProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB,
 		strlen(pxsh), pxsh);
 
 	GLenum g = glGetError();
@@ -187,7 +185,7 @@ bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 	while(glGetError() != GL_NO_ERROR)	{}
 
 	// compile
-	Driver->extGlProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, 
+	Driver->extGlProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB,
 		strlen(vtxsh), vtxsh);
 
 	GLenum g = glGetError();
@@ -205,7 +203,7 @@ bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 		return false;
 	}
 
-	return true;	
+	return true;
 }
 
 

@@ -33,7 +33,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 class COpenGLDriver;
@@ -46,7 +46,7 @@ class COpenGLShaderMaterialRenderer : public IMaterialRenderer
 public:
 
 	//! Constructor
-	COpenGLShaderMaterialRenderer(video::COpenGLDriver* driver, 
+	COpenGLShaderMaterialRenderer(video::COpenGLDriver* driver,
 		s32& outMaterialTypeNr, const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 		IShaderConstantSetCallBack* callback, IMaterialRenderer* baseMaterial, s32 userData);
 
@@ -68,10 +68,10 @@ protected:
 	//! constructor only for use by derived classes who want to
 	//! create a fall back material for example.
 	COpenGLShaderMaterialRenderer(COpenGLDriver* driver,
-								IShaderConstantSetCallBack* callback,
-								IMaterialRenderer* baseMaterial, s32 userData=0);
+					IShaderConstantSetCallBack* callback,
+					IMaterialRenderer* baseMaterial, s32 userData=0);
 
-	void init(s32& outMaterialTypeNr, const c8* vertexShaderProgram, 
+	void init(s32& outMaterialTypeNr, const c8* vertexShaderProgram,
 		const c8* pixelShaderProgram, E_VERTEX_TYPE type);
 
 	bool createPixelShader(const c8* pxsh);

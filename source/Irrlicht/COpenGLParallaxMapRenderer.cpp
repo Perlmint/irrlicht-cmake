@@ -20,9 +20,9 @@ namespace video
 {
 
 // Irrlicht Engine OpenGL render path parallax map vertex shader
-// I guess it could be optimized a lot, because I wrote it in D3D ASM and 
+// I guess it could be optimized a lot, because I wrote it in D3D ASM and
 // transfered it 1:1 to OpenGL
-const char OPENGL_PARALLAX_MAP_VSH[] = 
+const char OPENGL_PARALLAX_MAP_VSH[] =
 	"!!ARBvp1.0\n"\
 	"#input\n"\
 	"# 0-3: transposed world matrix;\n"\
@@ -152,9 +152,9 @@ const char OPENGL_PARALLAX_MAP_VSH[] =
 	"END\n";
 
 // Irrlicht Engine OpenGL render path parallax map pixel shader
-// I guess it could be optimized a bit, because I wrote it in D3D ASM and 
+// I guess it could be optimized a bit, because I wrote it in D3D ASM and
 // transfered it 1:1 to OpenGL
-const char OPENGL_PARALLAX_MAP_PSH[] = 
+const char OPENGL_PARALLAX_MAP_PSH[] =
 	"!!ARBfp1.0\n"\
 	"\n"\
 	"#Input\n"\
@@ -209,11 +209,11 @@ const char OPENGL_PARALLAX_MAP_PSH[] =
 	"END\n";
 
 //! Constructor
-COpenGLParallaxMapRenderer::COpenGLParallaxMapRenderer(video::COpenGLDriver* driver, 
+COpenGLParallaxMapRenderer::COpenGLParallaxMapRenderer(video::COpenGLDriver* driver,
 	s32& outMaterialTypeNr, IMaterialRenderer* baseMaterial)
 	: COpenGLShaderMaterialRenderer(driver, 0, baseMaterial), CompiledShaders(true)
 {
-	// set this as callback. We could have done this in 
+	// set this as callback. We could have done this in
 	// the initialization list, but some compilers don't like it.
 
 	CallBack = this;
@@ -236,7 +236,7 @@ COpenGLParallaxMapRenderer::COpenGLParallaxMapRenderer(video::COpenGLDriver* dri
 
 	if (renderer)
 	{
-		// use the already compiled shaders 
+		// use the already compiled shaders
 		video::COpenGLParallaxMapRenderer* nmr = (video::COpenGLParallaxMapRenderer*)renderer;
 		CompiledShaders = false;
 
@@ -249,7 +249,7 @@ COpenGLParallaxMapRenderer::COpenGLParallaxMapRenderer(video::COpenGLDriver* dri
 	{
 		// compile shaders on our own
 		init(outMaterialTypeNr, OPENGL_PARALLAX_MAP_VSH, OPENGL_PARALLAX_MAP_PSH, EVT_TANGENTS);
-	}	
+	}
 }
 
 
@@ -261,18 +261,18 @@ COpenGLParallaxMapRenderer::~COpenGLParallaxMapRenderer()
 
 	if (!CompiledShaders)
 	{
-		// prevent this from deleting shaders we did not create 
+		// prevent this from deleting shaders we did not create
 		VertexShader = 0;
 		PixelShader = 0;
 	}
 }
 
 
-void COpenGLParallaxMapRenderer::OnSetMaterial(video::SMaterial& material, 
+void COpenGLParallaxMapRenderer::OnSetMaterial(video::SMaterial& material,
 	const video::SMaterial& lastMaterial,
 	bool resetAllRenderstates, video::IMaterialRendererServices* services)
 {
-	COpenGLShaderMaterialRenderer::OnSetMaterial(material, lastMaterial, 
+	COpenGLShaderMaterialRenderer::OnSetMaterial(material, lastMaterial,
 			resetAllRenderstates, services);
 
 	CurrentScale = material.MaterialTypeParam;
@@ -280,7 +280,7 @@ void COpenGLParallaxMapRenderer::OnSetMaterial(video::SMaterial& material,
 
 
 
-//! Returns the render capability of the material. 
+//! Returns the render capability of the material.
 s32 COpenGLParallaxMapRenderer::getRenderCapability()
 {
 	if (Driver->queryFeature(video::EVDF_ARB_FRAGMENT_PROGRAM_1) &&
@@ -301,8 +301,8 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	core::matrix4 tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
 	services->setVertexShaderConstant(&tWorld.M[0], 0, 4);
 
-	// The  viewpoint is at (0., 0., 0.) in eye space. 
-	// Turning this into a vector [0 0 0 1] and multiply it by 
+	// The  viewpoint is at (0., 0., 0.) in eye space.
+	// Turning this into a vector [0 0 0 1] and multiply it by
 	// the inverse of the view matrix, the resulting vector is the
 	// object space location of the camera.
 
@@ -314,7 +314,7 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 
 	// set transposed worldViewProj matrix
 	core::matrix4 worldViewProj;
-	worldViewProj = driver->getTransform(video::ETS_PROJECTION);			
+	worldViewProj = driver->getTransform(video::ETS_PROJECTION);
 	worldViewProj *= driver->getTransform(video::ETS_VIEW);
 	worldViewProj *= driver->getTransform(video::ETS_WORLD);
 	core::matrix4 tr = worldViewProj.getTransposed();
@@ -324,10 +324,10 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	// and set them as constants
 
 	int cnt = driver->getDynamicLightCount();
-	
+
 	for (int i=0; i<2; ++i)
 	{
-		video::SLight light; 
+		video::SLight light;
 
 		if (i<cnt)
 			light = driver->getDynamicLight(i);

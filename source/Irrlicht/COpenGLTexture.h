@@ -30,7 +30,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 //! OpenGL texture.
@@ -53,7 +53,7 @@ public:
 	//! Returns original size of the texture.
 	virtual const core::dimension2d<s32> getOriginalSize();
 
-	//! Returns (=size) of the texture.
+	//! Returns size of the texture.
 	virtual const core::dimension2d<s32> getSize();
 
 	//! returns driver type of texture (=the driver, who created the texture)
@@ -68,8 +68,8 @@ public:
 	//! return open gl texture name
 	GLuint getOpenGLTextureName();
 
-	//! Regenerates the mip map levels of the texture. Useful after locking and 
-	//! modifying the texture
+	//! Regenerates the mip map levels of the texture. Useful after
+	//! locking and modifying the texture
 	virtual void regenerateMipMapLevels();
 
 private:
@@ -78,11 +78,11 @@ private:
 
 	//! copies the the texture into an open gl texture.
 	void copyTexture();
-	
+
 	//! returns the size of a texture which would be the optimize size for rendering it
 	inline s32 getTextureSizeFromSurfaceSize(s32 size);
 
-	//! test if an error occurred, prints the problem, and returns 
+	//! test if an error occurred, prints the problem, and returns
 	//! true if an error happened
 	inline bool testError();
 
@@ -92,7 +92,7 @@ private:
 	bool SurfaceHasSameSize; // true if Surface has the same dimension as texture.
 	c8* ImageData;
 	ECOLOR_FORMAT ColorFormat;
-	
+
 	GLuint TextureName;
 	bool hasMipMaps;
 };
