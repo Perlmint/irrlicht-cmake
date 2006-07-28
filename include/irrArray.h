@@ -426,13 +426,31 @@ public:
 
 
 
+	//! Erases an element from the array. Faster than erase() because it
+	//! does not preserve ordering.
+	//! \param index: Index of element to be erased.
+	void erase_fast(u32 index)
+	{
+		_IRR_DEBUG_BREAK_IF(index>=used) // access violation
+
+		allocator.construct(&data[index], data[--used]);
+		is_sorted=false;
+	}
+
+
+
 	//! Erases an element from the array. May be slow, because all elements
 	//! following after the erased element have to be copied.
 	//! \param index: Index of element to be erased.
 	void erase(u32 index)
 	{
-		_IRR_DEBUG_BREAK_IF(index>=used || index<0) // access violation
+		_IRR_DEBUG_BREAK_IF(index>=used) // access violation
 
+		if (!is_sorted)
+		{
+			erase_fast(index);
+			return;
+		}
 		for (u32 i=index+1; i<used; ++i)
 			allocator.construct(&data[i-1], data[i]); // data[i-1] = data[i];
 
@@ -446,7 +464,7 @@ public:
 	//! \param count: Amount of elements to be erased.
 	void erase(u32 index, s32 count)
 	{
-		_IRR_DEBUG_BREAK_IF(index>=used || index<0 || count<1 || index+count>used) // access violation
+		_IRR_DEBUG_BREAK_IF(index>=used || count<1 || index+count>used) // access violation
 
 		for (u32 i=index+count; i<used; ++i)
 			allocator.construct(&data[i-count], data[i]); // data[i-count] = data[i];
