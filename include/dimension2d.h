@@ -49,6 +49,11 @@ namespace core
 			T Width, Height;
 	};
 
+	//! Typedef for a f32 dimension.
+	typedef dimension2d<f32> dimension2df;
+	//! Typedef for an integer dimension.
+	typedef dimension2d<s32> dimension2di;
+
 } // end namespace core
 } // end namespace irr
 

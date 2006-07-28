@@ -108,6 +108,10 @@ class line2d
 		vector2d<T> end;
 };
 
+	//! Typedef for a f32 line.
+	typedef line2d<f32> line2df;
+	//! Typedef for an integer line.
+	typedef line2d<s32> line2di;
 
 } // end namespace core
 } // end namespace irr

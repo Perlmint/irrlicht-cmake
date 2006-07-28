@@ -113,6 +113,10 @@ class line3d
 		vector3d<T> end;
 };
 
+	//! Typedef for a f32 line.
+	typedef line3d<f32> line3df;
+	//! Typedef for an integer line.
+	typedef line3d<s32> line3di;
 
 } // end namespace core
 } // end namespace irr

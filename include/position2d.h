@@ -77,6 +77,11 @@ namespace core
 			T X, Y;
 	};
 
+	//! Typedef for a f32 position.
+	typedef position2d<f32> position2df;
+	//! Typedef for an integer position.
+	typedef position2d<s32> position2di;
+
 } // end namespace core
 } // end namespace irr
 
