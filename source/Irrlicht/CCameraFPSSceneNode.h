@@ -77,6 +77,7 @@ namespace scene
 
 		core::vector3df TargetVector;
 		core::array<SCamKeyMap> KeyMap;
+		core::position2d<f32> CenterCursor;
 
 		bool NoVerticalMovement;
 	};

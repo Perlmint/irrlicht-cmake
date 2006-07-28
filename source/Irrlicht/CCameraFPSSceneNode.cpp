@@ -135,6 +135,7 @@ void CCameraFPSSceneNode::animate()
 	{
 		if (CursorControl)
 			CursorControl->setPosition(0.5f, 0.5f);
+		CenterCursor = CursorControl->getRelativePosition();
 
 		LastAnimationTime = os::Timer::getTime();
 
@@ -162,15 +163,18 @@ void CCameraFPSSceneNode::animate()
 	{
 		core::position2d<f32> cursorpos = CursorControl->getRelativePosition();
 
-		if (!core::equals(cursorpos.X, 0.5f) ||
-			!core::equals(cursorpos.Y, 0.5f))
+		if (!core::equals(cursorpos.X, CenterCursor.X) ||
+			!core::equals(cursorpos.Y, CenterCursor.Y))
 		{
 			RelativeRotation.Y += (0.5f - cursorpos.X) * RotateSpeed;
 			RelativeRotation.X += (0.5f - cursorpos.Y) * RotateSpeed;
 			CursorControl->setPosition(0.5f, 0.5f);
+			CenterCursor = CursorControl->getRelativePosition();
 
-			if (RelativeRotation.X > MAX_VERTICAL_ANGLE) RelativeRotation.X = MAX_VERTICAL_ANGLE;
-			if (RelativeRotation.X < -MAX_VERTICAL_ANGLE) RelativeRotation.X = -MAX_VERTICAL_ANGLE;
+			if (RelativeRotation.X > MAX_VERTICAL_ANGLE)
+				RelativeRotation.X = MAX_VERTICAL_ANGLE;
+			if (RelativeRotation.X < -MAX_VERTICAL_ANGLE)
+				RelativeRotation.X = -MAX_VERTICAL_ANGLE;
 		}
 	}
 
