@@ -167,7 +167,6 @@ void CGUIButton::draw()
 		{
 			core::position2d<s32> pos = AbsoluteRect.getCenter();
 			pos.X -= ImageRect.getWidth() / 2;
-			pos.X += 1;
 			pos.Y -= ImageRect.getHeight() / 2;
 
 			driver->draw2DImage(Image, pos, ImageRect, clip, 
@@ -183,7 +182,12 @@ void CGUIButton::draw()
 			core::position2d<s32> pos = AbsoluteRect.getCenter();
 			pos.X -= PressedImageRect.getWidth() / 2;
 			pos.Y -= PressedImageRect.getHeight() / 2;
-
+			// patch by Alan Tyndall/Jonas Petersen
+			if (Image == PressedImage)
+			{
+				pos.X += 1;
+				pos.Y += 1;
+			}
 			driver->draw2DImage(PressedImage, pos, PressedImageRect, clip,
 				video::SColor(255,255,255,255), UseAlphaChannel);
 		}

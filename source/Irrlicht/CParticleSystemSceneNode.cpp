@@ -264,7 +264,7 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 
 	// run emitter
 	
-	if (Emitter)	
+	if (Emitter)
 	{
 		SParticle* array = 0;
 		s32 newParticles = Emitter->emitt(now, timediff, array);
@@ -274,7 +274,6 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 			s32 j=Particles.size();
 			if (newParticles > 16250-j)
 				newParticles=16250-j;
-			Particles.set_sorted(false);
 			Particles.set_used(j+newParticles);
 			for (s32 i=0; i<newParticles; ++i)
 			{
