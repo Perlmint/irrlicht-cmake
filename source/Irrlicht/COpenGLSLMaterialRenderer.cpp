@@ -301,7 +301,8 @@ bool COpenGLSLMaterialRenderer::setPixelShaderConstant(const c8* name, const f32
 			Driver->extGlUniformMatrix4fvARB(i, count/16, false, floats); 
 			break;
         default: 
-			return false;
+			Driver->extGlUniform1ivARB(i, count, (GLint*)floats);
+			break;
     }
 
     return true;

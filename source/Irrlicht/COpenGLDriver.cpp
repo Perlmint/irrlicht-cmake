@@ -41,7 +41,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	pGlCompileShaderARB(0), pGlCreateProgramObjectARB(0), pGlAttachObjectARB(0),
 	pGlLinkProgramARB(0), pGlUseProgramObjectARB(0), pGlDeleteObjectARB(0),
 	pGlGetObjectParameterivARB(0), pGlGetUniformLocationARB(0), pGlUniform4fvARB(0),
-	pGlUniform1fvARB(0), pGlUniform2fvARB(0), pGlUniform3fvARB(0), pGlUniformMatrix2fvARB(0),
+	pGlUniform1ivARB(0), pGlUniform1fvARB(0), pGlUniform2fvARB(0), pGlUniform3fvARB(0), pGlUniformMatrix2fvARB(0),
 	pGlUniformMatrix3fvARB(0), pGlUniformMatrix4fvARB(0), pGlGetActiveUniformARB(0),
 	wglSwapIntervalEXT(0)
 {
@@ -183,7 +183,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false), 
+	MaxTextureUnits(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false),
 	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
 	CurrentRendertargetSize(0,0), _device(device)
 {
@@ -417,9 +417,10 @@ void COpenGLDriver::loadExtensions()
 		pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) wglGetProcAddress("glLinkProgramARB");
 		pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) wglGetProcAddress("glUseProgramObjectARB");
 		pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) wglGetProcAddress("glDeleteObjectARB");
-		pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)	wglGetProcAddress("glGetObjectParameterivARB"); 
-		pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)  wglGetProcAddress("glGetUniformLocationARB"); 
-		pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) wglGetProcAddress("glUniform4fvARB"); 
+		pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)	wglGetProcAddress("glGetObjectParameterivARB");
+		pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)  wglGetProcAddress("glGetUniformLocationARB");
+		pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) wglGetProcAddress("glUniform4fvARB");
+		pGlUniform1ivARB = (PFNGLUNIFORM1IVARBPROC)	wglGetProcAddress("glUniform1ivARB");
 		pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC)	wglGetProcAddress("glUniform1fvARB");
 		pGlUniform2fvARB = (PFNGLUNIFORM2FVARBPROC)	wglGetProcAddress("glUniform2fvARB");
 		pGlUniform3fvARB = (PFNGLUNIFORM3FVARBPROC)	wglGetProcAddress("glUniform3fvARB");
@@ -462,38 +463,41 @@ void COpenGLDriver::loadExtensions()
 			pGlProgramLocalParameter4fvARB = (PFNGLPROGRAMLOCALPARAMETER4FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramLocalParameter4fvARB"));
 
-			pGlCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateShaderObjectARB")); 
+			pGlCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateShaderObjectARB"));
 
-			pGlShaderSourceARB = (PFNGLSHADERSOURCEARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glShaderSourceARB")); 
+			pGlShaderSourceARB = (PFNGLSHADERSOURCEARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glShaderSourceARB"));
 
-			pGlCompileShaderARB = (PFNGLCOMPILESHADERARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompileShaderARB")); 
+			pGlCompileShaderARB = (PFNGLCOMPILESHADERARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompileShaderARB"));
 
-			pGlCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateProgramObjectARB")); 
+			pGlCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCreateProgramObjectARB"));
 
-			pGlAttachObjectARB = (PFNGLATTACHOBJECTARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glAttachObjectARB")); 
+			pGlAttachObjectARB = (PFNGLATTACHOBJECTARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glAttachObjectARB"));
 
-			pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glLinkProgramARB")); 
+			pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glLinkProgramARB"));
 
-			pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUseProgramObjectARB")); 
+			pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUseProgramObjectARB"));
 
-			pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteObjectARB")); 
+			pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteObjectARB"));
 
-			pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetObjectParameterivARB")); 
+			pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetObjectParameterivARB"));
 
-			pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetUniformLocationARB")); 
+			pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetUniformLocationARB"));
 
-			pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) 
-				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform4fvARB")); 
+			pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform4fvARB"));
+
+			pGlUniform1ivARB = (PFNGLUNIFORM1IVARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform1ivARB"));
 
 			pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glUniform1fvARB"));
@@ -1183,19 +1187,19 @@ void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
 	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
 	const s32 xPlus = -(currentRendertargetSize.Width>>1);
 	const f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
-	
+
 	const s32 yPlus =
 	currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
 	const f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
-	
+
 	core::position2d<f32> npos_start;
 	npos_start.X  = (f32)(start.X + xPlus) * xFact;
 	npos_start.Y  = (f32)(yPlus - start.Y) * yFact;
-	
+
 	core::position2d<f32> npos_end;
 	npos_end.X  = (f32)(end.X + xPlus) * xFact;
 	npos_end.Y  = (f32)(yPlus - end.Y) * yFact;
-	
+
 	glBegin(GL_LINES);
 	glColor4ub(color.getRed(), color.getGreen(),
 	color.getBlue(),
@@ -1319,11 +1323,11 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 //! sets the current Texture
 void COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 {
-	if (stage > 1)
+	if (stage >= MATERIAL_MAX_TEXTURES)
 		return;
 
 	if (MultiTextureExtension)
-		extGlActiveTextureARB(stage == 0 ? GL_TEXTURE0_ARB : GL_TEXTURE1_ARB);
+		extGlActiveTextureARB(GL_TEXTURE0_ARB + stage);
 	else
 		if (stage != 0)
 			return;
@@ -1364,8 +1368,8 @@ void COpenGLDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	setTexture(0, Material.Texture1);
-	setTexture(1, Material.Texture2);
+	for (int i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
+		setTexture(i, Material.Textures[i]);
 }
 
 
@@ -1902,7 +1906,7 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 
 
 void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor leftUpEdge,
-         video::SColor rightUpEdge, video::SColor leftDownEdge, video::SColor rightDownEdge)
+	video::SColor rightUpEdge, video::SColor leftDownEdge, video::SColor rightDownEdge)
 {
 	if (!StencilBuffer)
 		return;
@@ -1974,7 +1978,7 @@ void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start,
 	{
 		glFogf(GL_FOG_START, start);
 		glFogf(GL_FOG_END, end);
-	}      
+	}
 	else
 		glFogf(GL_FOG_DENSITY, density);
 
@@ -2142,68 +2146,78 @@ void COpenGLDriver::extGlLinkProgramARB(GLhandleARB program)
 #ifdef MACOSX
 	glLinkProgramARB(program);
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
-	if (pGlLinkProgramARB) 
-		pGlLinkProgramARB(program); 
-#endif 
-} 
+	if (pGlLinkProgramARB)
+		pGlLinkProgramARB(program);
+#endif
+}
 
-void COpenGLDriver::extGlUseProgramObjectARB(GLhandleARB prog) 
-{ 
-#ifdef MACOSX
-	glUseProgramObjectARB(prog); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlUseProgramObjectARB) 
-		pGlUseProgramObjectARB(prog); 
-#endif 
-} 
-
-void COpenGLDriver::extGlDeleteObjectARB(GLhandleARB object) 
-{ 
-#ifdef MACOSX
-	glDeleteObjectARB(object); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlDeleteObjectARB) 
-		pGlDeleteObjectARB(object); 
-#endif 
-} 
-
-void COpenGLDriver::extGlGetObjectParameterivARB(GLhandleARB object, GLenum type, int *param) 
-{ 
-#ifdef MACOSX
-	glGetObjectParameterivARB(object, type, (GLint *)param); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlGetObjectParameterivARB) 
-		pGlGetObjectParameterivARB(object, type, param); 
-#endif 
-} 
-
-GLint COpenGLDriver::extGlGetUniformLocationARB(GLhandleARB program, const char *name) 
+void COpenGLDriver::extGlUseProgramObjectARB(GLhandleARB prog)
 {
 #ifdef MACOSX
-	return (glGetUniformLocationARB(program, name)); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlGetUniformLocationARB) 
-		return pGlGetUniformLocationARB(program, name); 
-#endif 
+	glUseProgramObjectARB(prog);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlUseProgramObjectARB)
+		pGlUseProgramObjectARB(prog);
+#endif
+}
+
+void COpenGLDriver::extGlDeleteObjectARB(GLhandleARB object)
+{
+#ifdef MACOSX
+	glDeleteObjectARB(object);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlDeleteObjectARB)
+		pGlDeleteObjectARB(object);
+#endif
+}
+
+void COpenGLDriver::extGlGetObjectParameterivARB(GLhandleARB object, GLenum type, int *param)
+{
+#ifdef MACOSX
+	glGetObjectParameterivARB(object, type, (GLint *)param);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlGetObjectParameterivARB)
+		pGlGetObjectParameterivARB(object, type, param);
+#endif
+}
+
+GLint COpenGLDriver::extGlGetUniformLocationARB(GLhandleARB program, const char *name)
+{
+#ifdef MACOSX
+	return (glGetUniformLocationARB(program, name));
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlGetUniformLocationARB)
+		return pGlGetUniformLocationARB(program, name);
+#endif
 
 	return 0;
 }
 
-void COpenGLDriver::extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v) 
+void COpenGLDriver::extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v)
 {
 #ifdef MACOSX
-	glUniform4fvARB(location, count, v); 
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-	if (pGlUniform4fvARB) 
-		pGlUniform4fvARB(location, count, v); 
-#endif 
+	glUniform4fvARB(location, count, v);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlUniform4fvARB)
+		pGlUniform4fvARB(location, count, v);
+#endif
+}
+
+void COpenGLDriver::extGlUniform1ivARB (GLint loc, GLsizei count, const GLint *v)
+{
+#ifdef MACOSX
+	glUniform1ivARB(loc, count, v);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlUniform1ivARB)
+		pGlUniform1ivARB(loc, count, v);
+#endif
 }
 
 void COpenGLDriver::extGlUniform1fvARB (GLint loc, GLsizei count, const GLfloat *v)
 {
 #ifdef MACOSX
 	glUniform1fvARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlUniform1fvARB)
 		pGlUniform1fvARB(loc, count, v);
 #endif
@@ -2213,7 +2227,7 @@ void COpenGLDriver::extGlUniform2fvARB (GLint loc, GLsizei count, const GLfloat 
 {
 #ifdef MACOSX
 	glUniform2fvARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlUniform2fvARB)
 		pGlUniform2fvARB(loc, count, v);
 #endif
@@ -2223,7 +2237,7 @@ void COpenGLDriver::extGlUniform3fvARB (GLint loc, GLsizei count, const GLfloat 
 {
 #ifdef MACOSX
 	glUniform3fvARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlUniform3fvARB)
 		pGlUniform3fvARB(loc, count, v);
 #endif
@@ -2233,7 +2247,7 @@ void COpenGLDriver::extGlUniformMatrix2fvARB (GLint loc, GLsizei count, GLboolea
 {
 #ifdef MACOSX
 	glUniformMatrix2fvARB(loc, count, transpose, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlUniformMatrix2fvARB)
 		pGlUniformMatrix2fvARB(loc, count, transpose, v);
 #endif
@@ -2243,9 +2257,9 @@ void COpenGLDriver::extGlUniformMatrix3fvARB (GLint loc, GLsizei count, GLboolea
 {
 #ifdef MACOSX
 	glUniformMatrix3fvARB(loc, count, transpose, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlUniformMatrix3fvARB)
-        pGlUniformMatrix3fvARB(loc, count, transpose, v);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlUniformMatrix3fvARB)
+		pGlUniformMatrix3fvARB(loc, count, transpose, v);
 #endif
 }
 
@@ -2253,9 +2267,9 @@ void COpenGLDriver::extGlUniformMatrix4fvARB (GLint loc, GLsizei count, GLboolea
 {
 #ifdef MACOSX
 	glUniformMatrix4fvARB(loc, count, transpose, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlUniformMatrix4fvARB)
-        pGlUniformMatrix4fvARB(loc, count, transpose, v);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlUniformMatrix4fvARB)
+		pGlUniformMatrix4fvARB(loc, count, transpose, v);
 #endif
 }
 
@@ -2263,15 +2277,15 @@ void COpenGLDriver::extGlGetActiveUniformARB (GLhandleARB program, GLuint index,
 {
 #ifdef MACOSX
 	glGetActiveUniformARB(program, index, maxlength, length, size, type, name);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_) 
-    if (pGlGetActiveUniformARB)
-        pGlGetActiveUniformARB(program, index, maxlength, length, size, type, name);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlGetActiveUniformARB)
+		pGlGetActiveUniformARB(program, index, maxlength, length, size, type, name);
 #endif
 }
 
 bool COpenGLDriver::hasMultiTextureExtension()
 {
-    return MultiTextureExtension;
+	return MultiTextureExtension;
 }
 
 //! Sets a vertex shader constant.
@@ -2288,11 +2302,11 @@ void COpenGLDriver::setPixelShaderConstant(f32* data, s32 startRegister, s32 con
 		extGlProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, startRegister+i, &data[i*4]);
 }
 
-//! Sets a constant for the vertex shader based on a name. 
+//! Sets a constant for the vertex shader based on a name.
 bool COpenGLDriver::setVertexShaderConstant(const c8* name, const f32* floats, int count)
 {
-	//pass this along, as in GLSL the same routine is used for both vertex and fragment shaders 
-	return setPixelShaderConstant(name, floats, count); 
+	//pass this along, as in GLSL the same routine is used for both vertex and fragment shaders
+	return setPixelShaderConstant(name, floats, count);
 }
 
 //! Sets a constant for the pixel shader based on a name.
@@ -2303,7 +2317,7 @@ bool COpenGLDriver::setPixelShaderConstant(const c8* name, const f32* floats, in
 }
 
 
-//! Adds a new material renderer to the VideoDriver, using pixel and/or 
+//! Adds a new material renderer to the VideoDriver, using pixel and/or
 //! vertex shaders to render geometry.
 s32 COpenGLDriver::addShaderMaterial(const c8* vertexShaderProgram,
 	const c8* pixelShaderProgram,
@@ -2324,7 +2338,7 @@ s32 COpenGLDriver::addHighLevelShaderMaterial(
 	const c8* vertexShaderProgram,
 	const c8* vertexShaderEntryPointName,
 	E_VERTEX_SHADER_TYPE vsCompileTarget,
-	const c8* pixelShaderProgram, 
+	const c8* pixelShaderProgram,
 	const c8* pixelShaderEntryPointName,
 	E_PIXEL_SHADER_TYPE psCompileTarget,
 	IShaderConstantSetCallBack* callback,
@@ -2334,8 +2348,8 @@ s32 COpenGLDriver::addHighLevelShaderMaterial(
 	s32 nr = -1;
 
 	COpenGLSLMaterialRenderer* r = new COpenGLSLMaterialRenderer(
-		this, nr, vertexShaderProgram, vertexShaderEntryPointName, 
-		vsCompileTarget, pixelShaderProgram, pixelShaderEntryPointName, psCompileTarget, 
+		this, nr, vertexShaderProgram, vertexShaderEntryPointName,
+		vsCompileTarget, pixelShaderProgram, pixelShaderEntryPointName, psCompileTarget,
 		callback,getMaterialRenderer(baseMaterial), userData);
 
 	r->drop();
@@ -2361,19 +2375,19 @@ ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 	//disable mip-mapping
 	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
- 
+
 	video::ITexture* rtt = addTexture(size, "rt" , ECF_A1R5G5B5);
 
-	if (rtt) 
+	if (rtt)
 		rtt->grab();
- 
+
 	//restore mip-mapping
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);
 
 	return rtt;
 }
 
-bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer, 
+bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
 								 bool clearZBuffer, SColor color)
 {
 	// check for right driver type
@@ -2395,7 +2409,7 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 			glBindTexture(GL_TEXTURE_2D, RenderTargetTexture->getOpenGLTextureName());
 
 			// Copy Our ViewPort To The Texture
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, 
+			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0,
 				RenderTargetTexture->getSize().Width, RenderTargetTexture->getSize().Height);
 
 			glViewport(0,0,ScreenSize.Width,ScreenSize.Height);
@@ -2444,7 +2458,7 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 }
 
 
-//! Clears the ZBuffer. 
+//! Clears the ZBuffer.
 void COpenGLDriver::clearZBuffer()
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -2480,7 +2494,7 @@ namespace video
 // -----------------------------------
 #ifdef _IRR_WINDOWS_
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
+	HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	COpenGLDriver* ogl =  new COpenGLDriver(screenSize, window, fullscreen, stencilBuffer, io, antiAlias);
@@ -2501,7 +2515,7 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 // -----------------------------------
 #ifdef MACOSX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-        CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer,
+	CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer,
 	io::IFileSystem* io, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_

@@ -210,6 +210,7 @@ namespace video
 		GLint extGlGetUniformLocationARB(GLhandleARB program, const char *name); 
 		void extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v); 
 		
+		void extGlUniform1ivARB (GLint loc, GLsizei count, const GLint *v);
 		void extGlUniform1fvARB (GLint loc, GLsizei count, const GLfloat *v);
 		void extGlUniform2fvARB (GLint loc, GLsizei count, const GLfloat *v);
 		void extGlUniform3fvARB (GLint loc, GLsizei count, const GLfloat *v);
@@ -357,6 +358,7 @@ namespace video
 			PFNGLGETOBJECTPARAMETERIVARBPROC pGlGetObjectParameterivARB; 
 			PFNGLGETUNIFORMLOCATIONARBPROC pGlGetUniformLocationARB; 
 			PFNGLUNIFORM4FVARBPROC pGlUniform4fvARB; 
+			PFNGLUNIFORM1IVARBPROC pGlUniform1ivARB;
 			PFNGLUNIFORM1FVARBPROC pGlUniform1fvARB;
 			PFNGLUNIFORM2FVARBPROC pGlUniform2fvARB;
 			PFNGLUNIFORM3FVARBPROC pGlUniform3fvARB;
