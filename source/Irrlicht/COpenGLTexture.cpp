@@ -20,7 +20,7 @@ namespace video
 
 //! constructor
 COpenGLTexture::COpenGLTexture(IImage* image, bool generateMipLevels, const char* name)
-: ITexture(name), Pitch(0), ImageSize(0,0), hasMipMaps(generateMipLevels),
+: ITexture(name), Pitch(0), ImageSize(0,0), HasMipMaps(generateMipLevels),
 ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0)
 {
 	#ifdef _DEBUG
@@ -28,7 +28,7 @@ ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0)
 	#endif
 
 	#ifdef DISABLE_MIPMAPPING
-	hasMipMaps = false;
+	HasMipMaps = false;
 	#endif
 
 	getImageData(image);
@@ -204,12 +204,12 @@ void COpenGLTexture::copyTexture()
 			break;
 	}
 
-	if (hasMipMaps)
+	if (HasMipMaps)
 	{
 		#ifndef DISABLE_MIPMAPPING
 		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		#else
 		os::Printer::log("Did not create OpenGL texture mip maps.", ELL_ERROR);
 		#endif
@@ -224,7 +224,6 @@ void COpenGLTexture::copyTexture()
 
 	if (testError())
 		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
-
 }
 
 
@@ -296,6 +295,14 @@ s32 COpenGLTexture::getPitch()
 GLuint COpenGLTexture::getOpenGLTextureName()
 {
 	return TextureName;
+}
+
+
+//! Returns whether this texture has mipmaps
+//! return true if texture has mipmaps
+bool COpenGLTexture::hasMipMaps()
+{
+	return HasMipMaps;
 }
 
 

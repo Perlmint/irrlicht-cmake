@@ -68,6 +68,9 @@ public:
 	//! return open gl texture name
 	GLuint getOpenGLTextureName();
 
+	//! return whether this texture has mipmaps
+	bool hasMipMaps();
+
 	//! Regenerates the mip map levels of the texture. Useful after
 	//! locking and modifying the texture
 	virtual void regenerateMipMapLevels();
@@ -94,7 +97,7 @@ private:
 	ECOLOR_FORMAT ColorFormat;
 
 	GLuint TextureName;
-	bool hasMipMaps;
+	bool HasMipMaps;
 };
 
 

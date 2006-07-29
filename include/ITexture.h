@@ -148,6 +148,10 @@ public:
 	\return Returns pitch of texture in bytes. */
 	virtual s32 getPitch() = 0;
 
+	//! Returns whether the texture has MipMaps
+	/** \return Returns true if texture has MipMaps, else false. */
+	virtual bool hasMipMaps() { return false; }
+
 	//! Regenerates the mip map levels of the texture.
 	/** Useful after locking and modifying the texture */
 	virtual void regenerateMipMapLevels() = 0;

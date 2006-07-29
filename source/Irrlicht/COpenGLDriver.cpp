@@ -1500,10 +1500,11 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 	}
 
-	// bilinear
+	// texture filter
 
 	if (resetAllRenderStates ||
 		lastmaterial.BilinearFilter != material.BilinearFilter ||
+		lastmaterial.TrilinearFilter != material.TrilinearFilter ||
 		lastmaterial.AnisotropicFilter != material.AnisotropicFilter )
 	{
 		if (MultiTextureExtension)
@@ -1511,7 +1512,14 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			extGlActiveTextureARB(GL_TEXTURE1_ARB);
 
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-				Material.BilinearFilter ? GL_LINEAR : GL_NEAREST);
+				(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
+
+			if (material.Texture2 && material.Texture2->hasMipMaps())
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+					Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
+			else
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+					(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
 
 			if (AnisotropyExtension)
 				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
@@ -1521,7 +1529,19 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		}
 
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-			Material.BilinearFilter ? GL_LINEAR : GL_NEAREST);
+			(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
+
+		
+		if (material.Texture1 && material.Texture1->hasMipMaps())
+		{
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+				Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_NEAREST_MIPMAP_LINEAR: GL_NEAREST_MIPMAP_NEAREST );
+		}
+		else
+		{
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+				(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
+		}
 
 		if (AnisotropyExtension)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
@@ -1550,10 +1570,12 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		if (Material.Lighting)
 		{
 			glEnable(GL_LIGHTING);
+			// enable specular colors
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 		}
 		else
 		{
+			// disable specular colors
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 			glDisable(GL_LIGHTING);
 		}
@@ -1571,7 +1593,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 	// zwrite
 	if (resetAllRenderStates || lastmaterial.ZWriteEnable != material.ZWriteEnable)
-			glDepthMask(material.ZWriteEnable ? GL_TRUE : GL_FALSE);
+		glDepthMask(material.ZWriteEnable ? GL_TRUE : GL_FALSE);
 
 	// back face culling
 

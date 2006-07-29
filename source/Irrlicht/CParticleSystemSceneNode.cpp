@@ -282,7 +282,7 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 				if (ParticlesAreGlobal)
 					AbsoluteTransformation.transformVect(array[i].pos);
 
-				Particles[j]=array[i];
+				Particles[j+i]=array[i];
 			}
 		}
 	}
