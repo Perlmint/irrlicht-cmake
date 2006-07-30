@@ -41,7 +41,7 @@ namespace scene
 		//! your terrain to be 12800x12800 in game units, then use a scale factor of ( core::vector ( 100.0f, 100.0f, 100.0f ).
 		//! If you use a Y scaling factor of 0.0f, then your terrain will be flat.
 		CTerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id, 
-			s32 maxLOD = 5, E_TERRAIN_PATCH_SIZE patchSize = ETPS_17,
+			s32 maxLOD = 4, E_TERRAIN_PATCH_SIZE patchSize = ETPS_17,
 			const core::vector3df& position = core::vector3df(0.0f, 0.0f, 0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f, 0.0f, 0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f));

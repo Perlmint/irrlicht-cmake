@@ -662,7 +662,8 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 verte
 
 	setRenderStates3DMode();
 
-	extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
+	if (MultiTextureExtension)
+		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -730,19 +731,16 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s
 	glNormalPointer(GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].Normal);
 	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex2TCoords),  &vertices[0].Pos);
 
-	// texture coordiantes
+	// texture coordinates
 	if (MultiTextureExtension)
 	{
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
-
 		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
 		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords2);
+		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 	}
-	else
-		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
+	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
+	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
 
 	glDrawElements(GL_TRIANGLES, triangleCount * 3, GL_UNSIGNED_SHORT, indexList);
 
@@ -753,14 +751,11 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s
 
 	if (MultiTextureExtension)
 	{
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-		glDisableClientState ( GL_TEXTURE_COORD_ARRAY );
-
 		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
 		glDisableClientState ( GL_TEXTURE_COORD_ARRAY );
+		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 	}
-	else
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY );
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
 
 	glDisableClientState(GL_NORMAL_ARRAY );
 }
@@ -816,20 +811,22 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
 
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-	glDisableClientState(GL_NORMAL_ARRAY );
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 
-	extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
 	extGlClientActiveTextureARB(GL_TEXTURE2_ARB);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 
 
 //! draws an indexed triangle fan
 void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex* vertices, s32 vertexCount,
-										  const u16* indexList, s32 triangleCount)
+					  const u16* indexList, s32 triangleCount)
 {
 	if (!checkPrimitiveCount(triangleCount))
 		return;
@@ -838,7 +835,8 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex* vertices, s32 vertex
 
 	setRenderStates3DMode();
 
-	extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
+	if (MultiTextureExtension)
+		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -876,7 +874,7 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex* vertices, s32 vertex
 
 //! draws an indexed triangle fan
 void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-										  s32 vertexCount, const u16* indexList, s32 triangleCount)
+					  s32 vertexCount, const u16* indexList, s32 triangleCount)
 {
 	if (!checkPrimitiveCount(triangleCount))
 		return;
@@ -906,19 +904,16 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 	glNormalPointer(GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].Normal);
 	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex2TCoords),  &vertices[0].Pos);
 
-	// texture coordiantes
+	// texture coordinates
 	if (MultiTextureExtension)
 	{
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
-
 		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
 		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords2);
+		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 	}
-	else
-		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
+	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
+	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
 
 	glDrawElements(GL_TRIANGLE_FAN, triangleCount+2, GL_UNSIGNED_SHORT, indexList);
 
@@ -929,16 +924,13 @@ void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 
 	if (MultiTextureExtension)
 	{
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-		glDisableClientState ( GL_TEXTURE_COORD_ARRAY );
-
 		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glDisableClientState ( GL_TEXTURE_COORD_ARRAY );
+		glDisableClientState ( GL_TEXTURE_COORD_ARRAY);
+		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 	}
-	else
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY );
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glDisableClientState(GL_NORMAL_ARRAY );
+	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 
@@ -1067,11 +1059,12 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
 	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
 
+	const core::dimension2d<s32>& ss = texture->getOriginalSize();
 	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = (((f32)sourcePos.X)+0.5f) / texture->getOriginalSize().Width ;
-	tcoords.UpperLeftCorner.Y = (((f32)sourcePos.Y)+0.5f) / texture->getOriginalSize().Height;
-	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / texture->getOriginalSize().Width;
-	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / texture->getOriginalSize().Height;
+	tcoords.UpperLeftCorner.X = (((f32)sourcePos.X)+0.5f) / ss.Width ;
+	tcoords.UpperLeftCorner.Y = (((f32)sourcePos.Y)+0.5f) / ss.Height;
+	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / ss.Width;
+	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / ss.Height;
 
 	core::rect<float> npos;
 	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X+xPlus+0.5f) * xFact;
@@ -1108,9 +1101,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 	core::rect<s32> srcRect=sourceRect;
 
 	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-	const core::dimension2d<s32> targetSurfaceSize=currentRendertargetSize;
+	const core::dimension2d<s32>& targetSurfaceSize=currentRendertargetSize;
 
-	const core::dimension2d<s32> ss = texture->getOriginalSize();
+	const core::dimension2d<s32>& ss = texture->getOriginalSize();
 	float ssw=1.0f/ss.Width;
 	float ssh=1.0f/ss.Height;
 
@@ -1350,13 +1343,11 @@ void COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 }
 
 
+
 //! returns a device dependent texture from a software surface (IImage)
-//! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 video::ITexture* COpenGLDriver::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
-
-	return new COpenGLTexture(surface, generateMipLevels, name);
+	return new COpenGLTexture(surface, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS), name);
 }
 
 
@@ -1368,7 +1359,7 @@ void COpenGLDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	for (int i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
+	for (s32 i = MATERIAL_MAX_TEXTURES-1; i>=0; --i)
 		setTexture(i, Material.Textures[i]);
 }
 
@@ -1500,48 +1491,27 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 	}
 
-	// texture filter
+	// Texture filter
+	// Has to be checked always because it depends on the textures
+	// Filtering has to be set for each texture layer
 
-	if (resetAllRenderStates ||
-		lastmaterial.BilinearFilter != material.BilinearFilter ||
-		lastmaterial.TrilinearFilter != material.TrilinearFilter ||
-		lastmaterial.AnisotropicFilter != material.AnisotropicFilter )
+	s32 i=1;
+	if (MultiTextureExtension)
+		i=MATERIAL_MAX_TEXTURES;
+	for (--i; i>=0; --i)
 	{
 		if (MultiTextureExtension)
-		{
-			extGlActiveTextureARB(GL_TEXTURE1_ARB);
-
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-				(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
-
-			if (material.Texture2 && material.Texture2->hasMipMaps())
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
-					Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
-			else
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-					(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
-
-			if (AnisotropyExtension)
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-					material.AnisotropicFilter ? MaxAnisotropy : 1.0f );
-
-			extGlActiveTextureARB(GL_TEXTURE0_ARB);
-		}
+			extGlActiveTextureARB(GL_TEXTURE0_ARB + i);
 
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 			(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
 
-		
-		if (material.Texture1 && material.Texture1->hasMipMaps())
-		{
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		if (material.Textures[i] && material.Textures[i]->hasMipMaps())
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
 				Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
-		}
 		else
-		{
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 				(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
-		}
 
 		if (AnisotropyExtension)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
@@ -1593,7 +1563,12 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 	// zwrite
 	if (resetAllRenderStates || lastmaterial.ZWriteEnable != material.ZWriteEnable)
-		glDepthMask(material.ZWriteEnable ? GL_TRUE : GL_FALSE);
+	{
+		if (material.ZWriteEnable)
+			glDepthMask(GL_TRUE);
+		else
+			glDepthMask(GL_FALSE);
+	}
 
 	// back face culling
 
@@ -1655,6 +1630,7 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 
 			extGlActiveTextureARB(GL_TEXTURE0_ARB);
 		}
+		glEnable(GL_TEXTURE_2D);
 
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);

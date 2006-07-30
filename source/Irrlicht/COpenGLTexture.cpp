@@ -15,7 +15,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 //! constructor
@@ -27,17 +27,13 @@ ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0)
 	setDebugName("COpenGLTexture");
 	#endif
 
-	#ifdef DISABLE_MIPMAPPING
-	HasMipMaps = false;
-	#endif
-
 	getImageData(image);
 
 	if (ImageData)
 	{
 		glGenTextures(1, &TextureName);
 		copyTexture();
-	}		
+	}
 }
 
 
@@ -137,7 +133,7 @@ void COpenGLTexture::getImageData(IImage* image)
 }
 
 
-//! test if an error occurred, prints the problem, and returns 
+//! test if an error occurred, prints the problem, and returns
 //! true if an error happened
 inline bool COpenGLTexture::testError()
 {
@@ -163,7 +159,7 @@ inline bool COpenGLTexture::testError()
 
 	return true;
 	#endif
-	return false;	
+	return false;
 }
 
 
@@ -204,22 +200,26 @@ void COpenGLTexture::copyTexture()
 			break;
 	}
 
+	#ifndef DISABLE_MIPMAPPING
 	if (HasMipMaps)
 	{
-		#ifndef DISABLE_MIPMAPPING
+		// automatically generate and update mipmaps
 		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
+		// enable bilinear mipmap filter
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		#else
-		os::Printer::log("Did not create OpenGL texture mip maps.", ELL_ERROR);
-		#endif
-	}	
+	}
 	else
+	#else
+		HasMipMaps=false;
+		os::Printer::log("Did not create OpenGL texture mip maps.", ELL_ERROR);
+	#endif
 	{
+		// enable bilinear filter without mipmaps
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, ImageSize.Width, 
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, ImageSize.Width,
 		ImageSize.Height, 0, format, type, ImageData);
 
 	if (testError())
@@ -227,7 +227,8 @@ void COpenGLTexture::copyTexture()
 }
 
 
-//! returns the size of a texture which would be the optimize size for rendering it
+
+//! returns the size of a texture which would be the optimal size for rendering it
 inline s32 COpenGLTexture::getTextureSizeFromSurfaceSize(s32 size)
 {
 	s32 ts = 0x01;
@@ -253,6 +254,7 @@ void COpenGLTexture::unlock()
 }
 
 
+
 //! Returns original size of the texture.
 const core::dimension2d<s32>& COpenGLTexture::getOriginalSize()
 {
@@ -260,11 +262,13 @@ const core::dimension2d<s32>& COpenGLTexture::getOriginalSize()
 }
 
 
+
 //! Returns (=size) of the texture.
 const core::dimension2d<s32>& COpenGLTexture::getSize()
 {
 	return ImageSize;
 }
+
 
 
 //! returns driver type of texture (=the driver, who created the texture)
@@ -298,6 +302,7 @@ GLuint COpenGLTexture::getOpenGLTextureName()
 }
 
 
+
 //! Returns whether this texture has mipmaps
 //! return true if texture has mipmaps
 bool COpenGLTexture::hasMipMaps()
@@ -306,7 +311,8 @@ bool COpenGLTexture::hasMipMaps()
 }
 
 
-//! Regenerates the mip map levels of the texture. Useful after locking and 
+
+//! Regenerates the mip map levels of the texture. Useful after locking and
 //! modifying the texture
 //! MipMap updates are automatically performed by OpenGL.
 void COpenGLTexture::regenerateMipMapLevels()
