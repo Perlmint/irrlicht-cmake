@@ -140,6 +140,10 @@ namespace scene
 		 *      Only static meshes are currently supported by this importer. </TD>
 		 *  </TR>
 		 *  <TR> 
+		 *    <TD>Bliz Basic B3D (.b3d)</TD>
+		 *    <TD>Loader for blitz basic files, developed by Mark Sibly, also supports animations.</TD>
+		 *  </TR>
+		 *  <TR> 
 		 *    <TD>Cartography shop 4 (.csm)</TD>
 		 *    <TD>Cartography Shop is a modeling program for creating architecture and calculating 
 		 *      lighting. Irrlicht can directly import .csm files thanks to the IrrCSM library 
