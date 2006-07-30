@@ -79,8 +79,9 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 		s32 nicnt = frame->Meshes[m].NormalIndices.size();
 
 		// validate indices in mesh
+		s32 i;
 
-		for (s32 i=0; i<icnt; ++i)
+		for (i=0; i<icnt; ++i)
 		{
 			if (frame->Meshes[m].Indices[i] < 0)
 			{
@@ -101,7 +102,7 @@ bool CXFileReader::validateMesh(SXFrame* frame)
 
 		// validate normal indices
 
-		for (s32 i=0; i<nicnt; ++i)
+		for (i=0; i<nicnt; ++i)
 		{
 			if (frame->Meshes[m].NormalIndices[i] < 0)
 			{
@@ -603,7 +604,9 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 
 	// read vertex indices
 
-	for (s32 i=0; i<nWeights; ++i)
+	s32 i;
+
+	for (i=0; i<nWeights; ++i)
 		weights.Weights[i].VertexIndex = readInt();
 
 	// read vertex weights
@@ -623,7 +626,8 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 			return false;
 		}
 	}
-	for (s32 i=0; i<nWeights; ++i)
+
+	for (i=0; i<nWeights; ++i)
 		weights.Weights[i].Weight = readFloat();
 
 	// sort weights
@@ -633,7 +637,7 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 
 	// read matrix offset
 
-	for (u32 i=0; i<4; ++i)
+	for (i=0; i<4; ++i)
 		for (u32 j=0; j<4; ++j)
 			weights.MatrixOffset(j,i) = readFloat();
 

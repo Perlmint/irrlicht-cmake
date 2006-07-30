@@ -43,8 +43,9 @@ IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32
 	++tileCount.Width;
 
 	// create vertices
+	s32 x;
 
-	for (s32 x=0; x<tileCount.Width; ++x)
+	for (x=0; x<tileCount.Width; ++x)
 	{
 		for (s32 y=0; y<tileCount.Height; ++y)
 		{
@@ -62,7 +63,7 @@ IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32
 
 	// create indices
 
-	for (s32 x=0; x<tileCount.Width-1; ++x)
+	for (x=0; x<tileCount.Width-1; ++x)
 	{
 		for (s32 y=0; y<tileCount.Height-1; ++y)
 		{
@@ -154,7 +155,9 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 			SMeshBuffer* buffer = new SMeshBuffer();
 
 			// add vertices of vertex block
-			for (s32 y=0; y<blockSize.Height; ++y)
+			s32 y;
+
+			for (y=0; y<blockSize.Height; ++y)
 			{
 				for (s32 x=0; x<blockSize.Width; ++x)
 				{
@@ -171,7 +174,7 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 			}
 
 			// add indices of vertex block
-			for (s32 y=0; y<blockSize.Height-1; ++y)
+			for (y=0; y<blockSize.Height-1; ++y)
 			{
 				for (s32 x=0; x<blockSize.Width-1; ++x)
 				{

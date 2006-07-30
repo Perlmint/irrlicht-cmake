@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IRRLICHT_EXPORTS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "include" /I "zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IRRLICHT_EXPORTS" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "../../include" /I "zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IRRLICHT_EXPORTS" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IRRLICHT_EXPORTS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "include" /I "zlib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IRRLICHT_EXPORTS" /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "../../include" /I "zlib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IRRLICHT_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -97,35 +97,35 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\include\EDriverTypes.h
+SOURCE=..\..\include\EDriverTypes.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGPUProgrammingServices.h
+SOURCE=..\..\include\IGPUProgrammingServices.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\ITexture.h
+SOURCE=..\..\include\ITexture.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IVideoDriver.h
+SOURCE=..\..\include\IVideoDriver.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\S3DVertex.h
+SOURCE=..\..\include\S3DVertex.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\SColor.h
+SOURCE=..\..\include\SColor.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\SLight.h
+SOURCE=..\..\include\SLight.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\SMaterial.h
+SOURCE=..\..\include\SMaterial.h
 # End Source File
 # End Group
 # Begin Group "core"
@@ -133,63 +133,67 @@ SOURCE=.\include\SMaterial.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\include\aabbox3d.h
+SOURCE=..\..\include\aabbox3d.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\dimension2d.h
+SOURCE=..\..\include\dimension2d.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\heapsort.h
+SOURCE=..\..\include\heapsort.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\irrArray.h
+SOURCE=..\..\include\irrAllocator.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\irrList.h
+SOURCE=..\..\include\irrArray.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\irrmath.h
+SOURCE=..\..\include\irrList.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\irrstring.h
+SOURCE=..\..\include\irrmath.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\line2d.h
+SOURCE=..\..\include\irrstring.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\line3d.h
+SOURCE=..\..\include\line2d.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\matrix4.h
+SOURCE=..\..\include\line3d.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\plane3d.h
+SOURCE=..\..\include\matrix4.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\position2d.h
+SOURCE=..\..\include\plane3d.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\rect.h
+SOURCE=..\..\include\position2d.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\vector2d.h
+SOURCE=..\..\include\rect.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\vector3d.h
+SOURCE=..\..\include\vector2d.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\vector3d.h
 # End Source File
 # End Group
 # Begin Group "io"
@@ -197,15 +201,15 @@ SOURCE=.\include\vector3d.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\include\IFileList.h
+SOURCE=..\..\include\IFileList.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IFileSystem.h
+SOURCE=..\..\include\IFileSystem.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IReadFile.H
+SOURCE=..\..\include\IReadFile.H
 # End Source File
 # End Group
 # Begin Group "scene"
@@ -213,59 +217,59 @@ SOURCE=.\include\IReadFile.H
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\include\IAnimatedMesh.h
+SOURCE=..\..\include\IAnimatedMesh.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IAnimatedMeshSceneNode.h
+SOURCE=..\..\include\IAnimatedMeshSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IBillboardSceneNode.h
+SOURCE=..\..\include\IBillboardSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\ICameraSceneNode.h
+SOURCE=..\..\include\ICameraSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\ILightSceneNode.h
+SOURCE=..\..\include\ILightSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IMesh.h
+SOURCE=..\..\include\IMesh.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IMeshBuffer.h
+SOURCE=..\..\include\IMeshBuffer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IQ3LevelMesh.h
+SOURCE=..\..\include\IQ3LevelMesh.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\ISceneManager.h
+SOURCE=..\..\include\ISceneManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\ISceneNode.h
+SOURCE=..\..\include\ISceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\ISceneNodeAnimator.h
+SOURCE=..\..\include\ISceneNodeAnimator.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\SMesh.h
+SOURCE=..\..\include\SMesh.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\SMeshBuffer.h
+SOURCE=..\..\include\SMeshBuffer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\SMeshBufferLightMap.h
+SOURCE=..\..\include\SMeshBufferLightMap.h
 # End Source File
 # End Group
 # Begin Group "gui"
@@ -273,88 +277,84 @@ SOURCE=.\include\SMeshBufferLightMap.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\include\ICursorControl.h
+SOURCE=..\..\include\ICursorControl.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIButton.h
+SOURCE=..\..\include\IGUIButton.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUICheckbox.h
+SOURCE=..\..\include\IGUICheckbox.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIElement.h
+SOURCE=..\..\include\IGUIElement.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIEnvironment.h
+SOURCE=..\..\include\IGUIEnvironment.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIFileOpenDialog.h
+SOURCE=..\..\include\IGUIFileOpenDialog.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIFont.h
+SOURCE=..\..\include\IGUIFont.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIImage.h
+SOURCE=..\..\include\IGUIImage.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIListBox.h
+SOURCE=..\..\include\IGUIListBox.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIMeshViewer.h
+SOURCE=..\..\include\IGUIMeshViewer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIScrollBar.h
+SOURCE=..\..\include\IGUIScrollBar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUISkin.h
+SOURCE=..\..\include\IGUISkin.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IGUIWindow.h
+SOURCE=..\..\include\IGUIWindow.h
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\include\IEventReceiver.h
+SOURCE=..\..\include\IEventReceiver.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\IrrCompileConfig.h
+SOURCE=..\..\include\Irrlicht.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\Irrlicht.h
+SOURCE=..\..\include\IrrlichtDevice.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IrrlichtDevice.h
+SOURCE=..\..\include\irrTypes.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\irrTypes.h
+SOURCE=..\..\include\IUnknown.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\IUnknown.h
+SOURCE=..\..\include\Keycodes.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\Keycodes.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\SIrrCreationParameters.h
+SOURCE=..\..\include\SIrrCreationParameters.h
 # End Source File
 # End Group
 # Begin Group "gui_impl"
@@ -610,6 +610,10 @@ SOURCE=.\CZBuffer.cpp
 # Begin Source File
 
 SOURCE=.\CZBuffer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ITriangleRenderer.h
 # End Source File
 # Begin Source File
 
@@ -873,6 +877,10 @@ SOURCE=.\CD3D9Texture.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\CSoftware2MaterialRenderer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CSoftwareDriver2.cpp
 # End Source File
 # Begin Source File
@@ -889,15 +897,43 @@ SOURCE=.\CSoftwareTexture2.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CTRGouraud2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRGouraudAlpha2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRGouraudAlphaNoZ2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureDetailMap2.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CTRTextureGouraud2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CTRTextureGouraudAlpha2.cpp
+SOURCE=.\CTRTextureGouraudAdd2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureGouraudAddNoZ2.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\CTRTextureGouraudNoZ2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureGouraudVertexAlpha2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureLightMap2_Add.cpp
 # End Source File
 # Begin Source File
 
@@ -914,6 +950,10 @@ SOURCE=.\CTRTextureLightMap2_M2.cpp
 # Begin Source File
 
 SOURCE=.\CTRTextureLightMap2_M4.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureWire2.cpp
 # End Source File
 # Begin Source File
 
@@ -963,6 +1003,14 @@ SOURCE=.\C3DSMeshFileLoader.cpp
 # Begin Source File
 
 SOURCE=.\C3DSMeshFileLoader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CAnimatedMeshB3d.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CAnimatedMeshB3d.h
 # End Source File
 # Begin Source File
 
@@ -1038,11 +1086,35 @@ SOURCE=.\CCSMLoader.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CCubeSceneNode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CCubeSceneNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CDefaultMeshFormatLoader.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\CDefaultMeshFormatLoader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDefaultSceneNodeAnimatorFactory.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDefaultSceneNodeAnimatorFactory.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDefaultSceneNodeFactory.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDefaultSceneNodeFactory.h
 # End Source File
 # Begin Source File
 
@@ -1142,6 +1214,14 @@ SOURCE=.\CMY3DStuff.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\COBJMeshFileLoader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\COBJMeshFileLoader.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\COCTLoader.cpp
 # End Source File
 # Begin Source File
@@ -1163,6 +1243,14 @@ SOURCE=.\COctTreeTriangleSelector.cpp
 # Begin Source File
 
 SOURCE=.\COctTreeTriangleSelector.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\COgreMeshFileLoader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\COgreMeshFileLoader.h
 # End Source File
 # Begin Source File
 
@@ -1302,11 +1390,11 @@ SOURCE=.\CSkyBoxSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CStaticMeshOBJ.cpp
+SOURCE=.\CSphereSceneNode.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CStaticMeshOBJ.h
+SOURCE=.\CSphereSceneNode.h
 # End Source File
 # Begin Source File
 
@@ -1323,14 +1411,6 @@ SOURCE=.\CTerrainTriangleSelector.cpp
 # Begin Source File
 
 SOURCE=.\CTerrainTriangleSelector.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CTestSceneNode.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CTestSceneNode.h
 # End Source File
 # Begin Source File
 
@@ -1390,12 +1470,28 @@ SOURCE=.\CXMeshFileLoader.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\dmfsupport.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\OctTree.h
 # End Source File
 # End Group
 # Begin Group "io_impl"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CAttributeImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CAttributes.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CAttributes.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\CFileList.cpp
@@ -1430,6 +1526,14 @@ SOURCE=.\CMemoryReadFile.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CPakReader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CPakReader.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CReadFile.cpp
 # End Source File
 # Begin Source File
@@ -1451,6 +1555,10 @@ SOURCE=.\CXMLReader.cpp
 # Begin Source File
 
 SOURCE=.\CXMLReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CXMLReaderImpl.h
 # End Source File
 # Begin Source File
 
@@ -1967,14 +2075,6 @@ SOURCE=.\COSOperator.cpp
 # Begin Source File
 
 SOURCE=.\COSOperator.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CStringParameters.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CStringParameters.h
 # End Source File
 # Begin Source File
 

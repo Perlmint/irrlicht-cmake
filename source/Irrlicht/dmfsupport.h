@@ -745,7 +745,10 @@ bool GetDMFWaterPlains(StringList RawFile/**<StringList representing a DMF file.
 		if(wat1[0]==String("water") && wat[2]==String("0"))
 		{
 			StringList userinfo=SubdivideString(wat[7],",");
-			for (int j=0; j<(int)userinfo.size(); j++)
+
+			int j;
+
+			for (j=0; j<(int)userinfo.size(); j++)
 			{
 				switch(j)
 				{
@@ -771,16 +774,17 @@ bool GetDMFWaterPlains(StringList RawFile/**<StringList representing a DMF file.
                                
                                break;
 				}
-			}                         
-                wat_planes[wat_id].waterID=wat_id;
-                wat_planes[wat_id].numFaces=fac;
-                wat_planes[wat_id].firstFace=face_cnt;
-                wat_planes[wat_id].tileNum=tilenum;
-                wat_planes[wat_id].waveHeight=waveheight;
-                wat_planes[wat_id].waveSpeed=wavespeed;
-                wat_planes[wat_id].waveLength=wavelength;
+			}         
+			
+            wat_planes[wat_id].waterID=wat_id;
+            wat_planes[wat_id].numFaces=fac;
+            wat_planes[wat_id].firstFace=face_cnt;
+            wat_planes[wat_id].tileNum=tilenum;
+            wat_planes[wat_id].waveHeight=waveheight;
+            wat_planes[wat_id].waveSpeed=wavespeed;
+            wat_planes[wat_id].waveLength=wavelength;
 
-			for(int j=0;j<fac;j++)
+			for(j=0;j<fac;j++)
 			{
                      temp=SubdivideString(RawFile[offs+j],";");
                      

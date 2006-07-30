@@ -663,20 +663,12 @@ void CXAnimationPlayer::modifySkin()
 
 			av[vt].Pos = core::vector3df(0,0,0);
 
-			/*if (weight.weightCount == 0)
-			{
-				av[vt].Pos = ov[vt].Pos;
-			}
-			else*/
-			for (s32 w=0; w<weight.weightCount; ++w)
+			s32 w;
+
+			for (w=0; w<weight.weightCount; ++w)
 			{
 				Joints[weight.joint[w]].CombinedAnimationMatrix.transformVect(
 					orig, vtmp);
-
-				/*core::matrix4 mat;
-				mat = Joints[weight.joint[w]].GlobalMatrix;
-				mat *= Joints[weight.joint[w]].MatrixOffset;
-				mat.transformVect(orig, vtmp);*/
 
 				vtmp *= weight.weight[w];
 				av[vt].Pos += vtmp;
@@ -686,7 +678,7 @@ void CXAnimationPlayer::modifySkin()
 			orig = ov[ vt ].Normal + ov[ vt ].Pos;
 			av[ vt ].Normal = core::vector3df( 0, 0, 0 );
 
-			for( s32 w = 0; w < weight.weightCount; ++w )
+			for( w = 0; w < weight.weightCount; ++w )
 			{
 			        vtmp = orig;
 				Joints[ weight.joint[ w ] ].CombinedAnimationMatrix.transformVect( vtmp );
@@ -697,29 +689,6 @@ void CXAnimationPlayer::modifySkin()
 			// yin nadie: normals modified
 		}
 	}
-
-	// transform vertices
-	/*core::vector3df vtmp;
-	for (s32 k=0; k<(s32)Joints.size(); ++k)
-	{
-
-		for (s32 w=0; w<(s32)Joints[k].Weights.size(); ++w)
-		{
-			SWeightData& wd = Joints[k].Weights[w];
-			video::S3DVertex* nv = (video::S3DVertex*)AnimatedMesh->getMeshBuffer(wd.buffer)->getVertices();
-			video::S3DVertex* ov = (video::S3DVertex*)OriginalMesh.getMeshBuffer(	wd.buffer)->getVertices();
-
-			core::matrix4 m = Joints[k].XFrame->GlobalMatrix;
-			m *= Joints[k].MatrixOffset;
-
-			m.transformVect(ov[wd.vertex].Pos, vtmp);
-
-			vtmp *= wd.weight;
-			nv[wd.vertex].Pos += vtmp;
-			
-		}
-	}*/
-
 }
 
 

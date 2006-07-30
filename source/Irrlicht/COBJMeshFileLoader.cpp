@@ -746,16 +746,21 @@ bool COBJMeshFileLoader::retrieveVertexIndices(c8* pVertexData, s32* pIdx, const
 
 void COBJMeshFileLoader::cleanUp()
 {
-	for (u32 i = 0; i < materials.size(); ++i )
+	u32 i;
+
+	for (i = 0; i < materials.size(); ++i )
 	{
 		materials[i]->pMeshbuffer->drop();
 		delete materials[i];
 	}
+
 	materials.clear();
-	for (u32 i = 0; i < groups.size(); ++i )
+
+	for (i = 0; i < groups.size(); ++i )
 	{
 		delete groups[i];
 	}
+
 	groups.clear();
 }
 

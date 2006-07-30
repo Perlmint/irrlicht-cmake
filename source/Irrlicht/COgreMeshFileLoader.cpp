@@ -378,12 +378,17 @@ scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32
 			break;
 		}
 	}
+
 	mb->Indices.set_used(indices.size());
-	for (u32 i=0; i<indices.size(); ++i)
+
+	u32 i;
+
+	for (i=0; i<indices.size(); ++i)
 		mb->Indices[i]=indices[i];
 
 	mb->Vertices.set_used(geom.NumVertex);
-	for (u32 i=0; i<geom.Elements.size(); ++i)
+
+	for (i=0; i<geom.Elements.size(); ++i)
 	{
 		if (geom.Elements[i].Semantic==1) //Pos
 		{
@@ -402,6 +407,7 @@ scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32
 				}
 			}
 		}
+
 		if (geom.Elements[i].Semantic==4) //Normal
 		{
 			for (u32 j=0; j<geom.Buffers.size(); ++j)
@@ -418,6 +424,7 @@ scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32
 				}
 			}
 		}
+
 		if (geom.Elements[i].Semantic==7) //TexCoord
 		{
 			for (u32 j=0; j<geom.Buffers.size(); ++j)

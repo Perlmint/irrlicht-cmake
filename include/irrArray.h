@@ -453,10 +453,11 @@ public:
 	{
 		_IRR_DEBUG_BREAK_IF(index>=used || count<1 || index+count>used) // access violation
 
-		for (u32 i=index; i<index+count; ++i)
+		u32 i;
+		for (i=index; i<index+count; ++i)
 			allocator.destruct(&data[i]);
 
-		for (u32 i=index+count; i<used; ++i)
+		for (i=index+count; i<used; ++i)
 		{
 			if (i > index+count)
 				allocator.destruct(&data[i-count]);

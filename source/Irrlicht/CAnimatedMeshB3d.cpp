@@ -641,23 +641,25 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 	f32 scale[3];
 	f32 rotation[4];
 
-	for (s32 n=0;n<=2;n++)
+	s32 n;
+
+	for (n=0; n<=2; n++)
 		file->read(&position[n], sizeof(f32));
 
-	for (s32 n=0;n<=2;n++)
+	for (n=0; n<=2; n++)
 		file->read(&scale[n], sizeof(f32));
 
-	for (s32 n=0;n<=3;n++)
+	for (n=0; n<=3; n++)
 		file->read(&rotation[n], sizeof(f32));
 
 	#ifdef __BIG_ENDIAN__ //Never been tested
-		for (s32 n=0;n<=2;n++)
+		for (n=0; n<=2; n++)
 			position[n] = OSReadSwapInt32(&position[n],0);
 
-		for (s32 n=0;n<=2;n++)
+		for (n=0; n<=2; n++)
 			scale[n] = OSReadSwapInt32(&scale[n],0);
 
-		for (s32 n=0;n<=4;n++)
+		for (n=0; n<=4; n++)
 			rotation[n] = OSReadSwapInt32(&rotation[n],0);
 	#endif
 
@@ -1183,7 +1185,9 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 		Vertices_Moved[k]=false;
 	}
 
-	for (s32 i=0; i<(s32)Nodes.size(); ++i)
+	s32 i;
+
+	for (i=0; i<(s32)Nodes.size(); ++i)
 	{
 		SB3dNode *Node=Nodes[i];
 		for (s32 j=0; j<(s32)Node->Bones.size(); ++j)
@@ -1198,7 +1202,7 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 		}
 	}
 
-	for (s32 i=0; i<(s32)Nodes.size(); ++i)
+	for (i=0; i<(s32)Nodes.size(); ++i)
 	{
 		SB3dNode *Node=Nodes[i];
 
@@ -1207,7 +1211,7 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 		Node->Animatedrotation=Node->rotation;
 	}
 
-	for (s32 i=0; i<(s32)Nodes.size(); i++)
+	for (i=0; i<(s32)Nodes.size(); i++)
 	{
 		SB3dNode *Node=Nodes[i];
 
@@ -1335,7 +1339,7 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 	}
 
 
-	for (s32 i=0; i<(s32)BaseNodes.size(); ++i)
+	for (i=0; i<(s32)BaseNodes.size(); ++i)
 	{
 		animateNode(frame,startFrame, endFrame,BaseNodes[i],0);//Mesh might have more than one base so BaseNode should be an array
 	}

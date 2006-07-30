@@ -69,8 +69,9 @@ void CSphereSceneNode::setSizeAndPolys()
 	for (int p1=0; p1<PolyCount-1; ++p1)
 	{
 		level = p1 * PolyCount;
+		int p2;
 
-		for (int p2 = 0; p2 < PolyCount - 1; ++p2)
+		for (p2 = 0; p2 < PolyCount - 1; ++p2)
 		{
             Indices[i] = level + p2 + PolyCount;
             Indices[++i] = level + p2;
@@ -88,7 +89,7 @@ void CSphereSceneNode::setSizeAndPolys()
         Indices[++i] = level + PolyCount;
         ++i;
 		
-		for (int p2 = 1; p2 <= PolyCount - 1; ++p2)
+		for (p2 = 1; p2 <= PolyCount - 1; ++p2)
 		{
             Indices[i] = level + p2 - 1 + PolyCount;
             Indices[++i] = level + p2;

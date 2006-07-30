@@ -96,11 +96,12 @@ public:
 
 		if (enumerationLiterals)
 		{
-			for (s32 i=0; enumerationLiterals[i]; ++i)
+			s32 i;
+			for (i=0; enumerationLiterals[i]; ++i)
 				++literalCount;
 
 			EnumLiterals.reallocate(literalCount);
-			for (s32 i=0; enumerationLiterals[i]; ++i)
+			for (i=0; enumerationLiterals[i]; ++i)
 				EnumLiterals.push_back(enumerationLiterals[i]);
 		}
 

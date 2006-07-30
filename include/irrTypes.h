@@ -105,7 +105,7 @@ Compiler version defines: VC6.0 : 1200, VC7.0 : 1300, VC7.1 : 1310, VC8.0 : 1400
 
 
 #if defined(_DEBUG) && defined(IRRLICHT_EXPORTS) && defined(_MSC_VER) && \
-	!defined(_IRR_DONT_DO_MEMORY_DEBUGGING_HERE)
+	(_MSC_VER > 1299) && !defined(_IRR_DONT_DO_MEMORY_DEBUGGING_HERE)
 	
 	#define CRTDBG_MAP_ALLOC
 	#define _CRTDBG_MAP_ALLOC

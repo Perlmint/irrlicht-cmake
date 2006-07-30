@@ -17,21 +17,21 @@
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_WINDOWS_
-#ifndef __GNUC__
-#include <stdlib.h>
-#define bswap_16(X) _byteswap_ushort(X)
-#define bswap_32(X) _byteswap_ulong(X)
-#else // didn't know where to find byte swap in mingw
-#define bswap_16(X) (((u8)(X) << 8) | (((u16)(X)) >> 8))
-#define bswap_32(X) ( ((X)<<24) | (((u16)(X)) >> 24) | (((X) &0x0000ff00) << 8) | (((X) & 0x00ff0000) >> 8))
-#endif
+	#if defined(__GNUC__) || (defined(_MSC_VER) && (_MSC_VER < 1299))
+		#define bswap_16(X) (((u8)(X) << 8) | (((u16)(X)) >> 8))
+		#define bswap_32(X) ( ((X)<<24) | (((u16)(X)) >> 24) | (((X) &0x0000ff00) << 8) | (((X) & 0x00ff0000) >> 8))
+	#else
+		#include <stdlib.h>
+		#define bswap_16(X) _byteswap_ushort(X)
+		#define bswap_32(X) _byteswap_ulong(X)
+	#endif
 #else
-#ifdef MACOSX
-#define bswap_16(X) OSReadSwapInt16(&X,0)
-#define bswap_32(X) OSReadSwapInt32(&X,0)
-#else
-#include "byteswap.h"
-#endif
+	#ifdef MACOSX
+		#define bswap_16(X) OSReadSwapInt16(&X,0)
+		#define bswap_32(X) OSReadSwapInt32(&X,0)
+	#else
+		#include "byteswap.h"
+	#endif
 #endif
 
 namespace irr

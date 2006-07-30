@@ -1030,8 +1030,10 @@ IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 {
 	IImage* image = 0;
 
+	u32 i;
+
 	// try to load file based on file extension
-	for (u32 i=0; i<SurfaceLoader.size(); ++i)
+	for (i=0; i<SurfaceLoader.size(); ++i)
 	{
 		if (SurfaceLoader[i]->isALoadableFileExtension(file->getFileName()))
 		{
@@ -1044,7 +1046,7 @@ IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 	}
 
 	// try to load file based on what is in it
-	for (u32 i=0; i<SurfaceLoader.size(); ++i)
+	for (i=0; i<SurfaceLoader.size(); ++i)
 	{
 		// dito
 		file->seek(0);

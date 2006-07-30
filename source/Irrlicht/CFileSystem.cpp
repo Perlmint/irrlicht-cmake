@@ -179,11 +179,13 @@ IFileList* CFileSystem::createFileList()
 //! determines if a file exists and would be able to be opened.
 bool CFileSystem::existFile(const c8* filename)
 {
-	for (u32 i=0; i<ZipFileSystems.size(); ++i)
+	u32 i;
+
+	for (i=0; i<ZipFileSystems.size(); ++i)
 		if (ZipFileSystems[i]->findFile(filename)!=-1)
 			return true;
 
-	for (u32 i=0; i<PakFileSystems.size(); ++i)
+	for (i=0; i<PakFileSystems.size(); ++i)
 		if (PakFileSystems[i]->findFile(filename)!=-1)
 			return true;
 

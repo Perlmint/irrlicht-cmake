@@ -109,9 +109,9 @@ void CAnimatedMeshSceneNode::OnPreRender()
 
 		ISceneNode::OnPreRender();
 
-		for (s32 i=0; i<(s32)JointChildSceneNodes.size(); ++i)
-			if (JointChildSceneNodes[i])
-				JointChildSceneNodes[i]->OnPreRender();
+		for (s32 j=0; j<(s32)JointChildSceneNodes.size(); ++j)
+			if (JointChildSceneNodes[j])
+				JointChildSceneNodes[j]->OnPreRender();
 	}
 }
 
