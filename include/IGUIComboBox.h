@@ -11,7 +11,7 @@ namespace irr
 {
 namespace gui
 {
-	//! Single line edit box for editing simple text.
+	//! Combobox widget
 	class IGUIComboBox : public IGUIElement
 	{
 	public:

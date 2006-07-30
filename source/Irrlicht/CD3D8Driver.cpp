@@ -41,8 +41,8 @@ CD3D8Driver::CD3D8Driver(const core::dimension2d<s32>& screenSize, HWND window,
 
 	printVersion();
 
-	CurrentTexture[0] = 0;
-	CurrentTexture[1] = 0;
+	for (int i=0; i<4; ++i)
+		CurrentTexture[i] = 0;
 
 	// create sphere map matrix
 
@@ -71,11 +71,9 @@ CD3D8Driver::~CD3D8Driver()
 {
 	deleteMaterialRenders();
 
-	if (CurrentTexture[0])
-		CurrentTexture[0]->drop();
-
-	if (CurrentTexture[1])
-		CurrentTexture[1]->drop();
+	for (int i=0; i<4; ++i)
+		if (CurrentTexture[i])
+			CurrentTexture[i]->drop();
 
 	// drop d3d8
 
@@ -424,10 +422,11 @@ bool CD3D8Driver::reset()
 	ResetRenderStates = true;
 	LastVertexType = (E_VERTEX_TYPE)-1;
 
-	if (CurrentTexture[0]) CurrentTexture[0]->drop();
-	CurrentTexture[0] = 0;
-	if (CurrentTexture[1]) CurrentTexture[1]->drop();
-	CurrentTexture[1] = 0;
+	for (int i=0; i<4; ++i)
+	{
+		if (CurrentTexture[i]) CurrentTexture[i]->drop();
+			CurrentTexture[i] = 0;
+	}
 
 	setVertexShader(EVT_STANDARD);
 	setRenderStates3DMode();
@@ -580,6 +579,8 @@ void CD3D8Driver::setMaterial(const SMaterial& material)
 
 	setTexture(0, Material.Texture1);
 	setTexture(1, Material.Texture2);
+	setTexture(2, Material.Texture1);
+	setTexture(3, Material.Texture1);
 }
 
 
@@ -1439,6 +1440,8 @@ void CD3D8Driver::setRenderStatesStencilShadowMode(bool zfail)
 
 		setTexture(0,0);
 		setTexture(1,0);
+		setTexture(2,0);
+		setTexture(3,0);
 
 		pID3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		pID3DDevice->SetTextureStageState(1,  D3DTSS_ALPHAOP, D3DTOP_DISABLE);

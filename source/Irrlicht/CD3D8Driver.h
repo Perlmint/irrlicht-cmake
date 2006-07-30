@@ -275,7 +275,7 @@ namespace video
 		bool ResetRenderStates; // bool to make all renderstates be reseted if set.
 		bool Transformation3DChanged;
 		bool StencilBuffer;
-		ITexture* CurrentTexture[2];
+		ITexture* CurrentTexture[4];
 
 		HINSTANCE D3DLibrary;
 		IDirect3D8* pID3D;

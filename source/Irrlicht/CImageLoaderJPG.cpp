@@ -197,7 +197,7 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
 
 
     }
-    catch(int e)
+    catch(int)
     {
         // Release JPEG decompression object
         // This is an important step since it will release a good deal of memory.

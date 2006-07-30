@@ -1936,6 +1936,8 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	// disable textures
 	setTexture(0,0);
 	setTexture(1,0);
+	setTexture(2,0);
+	setTexture(3,0);
 
 	// store attributes
 	glPushAttrib( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT | GL_POLYGON_BIT | GL_STENCIL_BUFFER_BIT );

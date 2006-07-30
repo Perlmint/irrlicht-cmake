@@ -1063,6 +1063,12 @@
 					RelativePath=".\C3DSMeshFileLoader.h">
 				</File>
 				<File
+					RelativePath=".\CAnimatedMeshB3d.cpp">
+				</File>
+				<File
+					RelativePath=".\CAnimatedMeshB3d.h">
+				</File>
+				<File
 					RelativePath=".\CAnimatedMeshMD2.cpp">
 				</File>
 				<File
@@ -1160,52 +1166,6 @@
 				</File>
 				<File
 					RelativePath=".\dmfsupport.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="animators"
-				Filter="">
-				<File
-					RelativePath="CSceneNodeAnimatorCollisionResponse.cpp">
-				</File>
-				<File
-					RelativePath="CSceneNodeAnimatorCollisionResponse.h">
-				</File>
-				<File
-					RelativePath="CSceneNodeAnimatorDelete.cpp">
-				</File>
-				<File
-					RelativePath="CSceneNodeAnimatorDelete.h">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorFlyCircle.cpp">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorFlyCircle.h">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorFlyStraight.cpp">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorFlyStraight.h">
-				</File>
-				<File
-					RelativePath="CSceneNodeAnimatorFollowSpline.cpp">
-				</File>
-				<File
-					RelativePath="CSceneNodeAnimatorFollowSpline.h">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorRotation.cpp">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorRotation.h">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorTexture.cpp">
-				</File>
-				<File
-					RelativePath=".\CSceneNodeAnimatorTexture.h">
 				</File>
 			</Filter>
 			<Filter
@@ -1347,6 +1307,52 @@
 				<File
 					RelativePath="CParticleSystemSceneNode.h">
 				</File>
+				<Filter
+					Name="animators"
+					Filter="">
+					<File
+						RelativePath="CSceneNodeAnimatorCollisionResponse.cpp">
+					</File>
+					<File
+						RelativePath="CSceneNodeAnimatorCollisionResponse.h">
+					</File>
+					<File
+						RelativePath="CSceneNodeAnimatorDelete.cpp">
+					</File>
+					<File
+						RelativePath="CSceneNodeAnimatorDelete.h">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorFlyCircle.cpp">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorFlyCircle.h">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorFlyStraight.cpp">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorFlyStraight.h">
+					</File>
+					<File
+						RelativePath="CSceneNodeAnimatorFollowSpline.cpp">
+					</File>
+					<File
+						RelativePath="CSceneNodeAnimatorFollowSpline.h">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorRotation.cpp">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorRotation.h">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorTexture.cpp">
+					</File>
+					<File
+						RelativePath=".\CSceneNodeAnimatorTexture.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="collision"
@@ -1863,7 +1869,10 @@
 			Name="doc"
 			Filter="">
 			<File
-				RelativePath=".\changes.txt">
+				RelativePath="..\..\changes.txt">
+			</File>
+			<File
+				RelativePath="..\..\readme.txt">
 			</File>
 		</Filter>
 	</Files>
