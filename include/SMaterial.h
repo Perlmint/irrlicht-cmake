@@ -79,7 +79,7 @@ namespace video
 		//! A transparent material. Only the first texture is used.
 		//! The new color is calculated by simply adding the source color and
 		//! the dest color. This means if for example a billboard using a texture with
-		//! black background and a red circle on it is drawed with this material, the
+		//! black background and a red circle on it is drawn with this material, the
 		//! result is that only the red circle will be drawn a little bit transparent,
 		//! and everything which was black is 100% transparent and not visible.
 		//! This material type is useful for e.g. particle effects.

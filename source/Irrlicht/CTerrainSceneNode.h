@@ -238,19 +238,19 @@ namespace scene
 				BoundingBox = core::aabbox3df( 99999.9f, 99999.9f, 99999.9f, -99999.9f, -99999.9f, -99999.9f);
 			}
 
-			s32				Size;
+			s32		Size;
 			core::vector3df	Position;
 			core::vector3df	Rotation;
 			core::vector3df RotationPivot;
 			core::vector3df	Scale;
 			core::vector3df Center;
-			s32				PatchSize;
-			s32				CalcPatchSize;
-			s32				PatchCount;
-			s32				MaxLOD;
+			s32		PatchSize;
+			s32		CalcPatchSize;
+			s32		PatchCount;
+			s32		MaxLOD;
 			core::aabbox3df	BoundingBox;
-			f64*			LODDistanceThreshold;
-			SPatch*			Patches;
+			f64*		LODDistanceThreshold;
+			SPatch*		Patches;
 		};
 
 		virtual void preRenderLODCalculations();

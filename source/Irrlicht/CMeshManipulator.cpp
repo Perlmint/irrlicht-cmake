@@ -13,7 +13,7 @@
 
 namespace irr
 {
-namespace scene 
+namespace scene
 {
 
 //! Recalculates the normals in vertex array.
@@ -362,7 +362,7 @@ void CMeshManipulator::recalculateBoundingBox(scene::IMeshBuffer* buffer) const
 	void* v = buffer->getVertices();
 	s32 vtxcnt = buffer->getVertexCount();
 	core::aabbox3df box;
-	
+
 	switch(buffer->getVertexType())
 	{
 	case video::EVT_STANDARD:
@@ -408,7 +408,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 	SMesh* clone = new SMesh();
 
 	s32 meshBufferCount = mesh->getMeshBufferCount();
-	
+
 	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		s32 vtxCnt = mesh->getMeshBuffer(b)->getVertexCount();
@@ -422,7 +422,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 				SMeshBuffer* buffer = new SMeshBuffer();
 				buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
-				video::S3DVertex* v = 
+				video::S3DVertex* v =
 					(video::S3DVertex*)mesh->getMeshBuffer(b)->getVertices();
 
 				s32 i;
@@ -442,7 +442,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 				SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
 				buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
-				video::S3DVertex2TCoords* v = 
+				video::S3DVertex2TCoords* v =
 					(video::S3DVertex2TCoords*)mesh->getMeshBuffer(b)->getVertices();
 
 				s32 i;
@@ -462,7 +462,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 				SMeshBufferTangents* buffer = new SMeshBufferTangents();
 				buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
-				video::S3DVertexTangents* v = 
+				video::S3DVertexTangents* v =
 					(video::S3DVertexTangents*)mesh->getMeshBuffer(b)->getVertices();
 
 				s32 i;
@@ -489,7 +489,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 //! Creates a planar texture mapping on the mesh
 //! \param mesh: Mesh on which the operation is performed.
 //! \param resolution: resolution of the planar mapping. This is the value
-//! specifying which is the releation between world space and 
+//! specifying which is the releation between world space and
 //! texture coordinate space.
 void CMeshManipulator::makePlanarTextureMapping(scene::IMesh* mesh, f32 resolution=0.01f) const
 {
@@ -538,7 +538,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 	SMesh* clone = new SMesh();
 
 	s32 meshBufferCount = mesh->getMeshBufferCount();
-	
+
 	for (s32 b=0; b<meshBufferCount; ++b)
 	{
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
@@ -551,7 +551,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 				SMeshBuffer* buffer = new SMeshBuffer();
 				buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
-				video::S3DVertex* v = 
+				video::S3DVertex* v =
 					(video::S3DVertex*)mesh->getMeshBuffer(b)->getVertices();
 
 				for (s32 i=0; i<idxCnt; i += 3)
@@ -574,7 +574,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 				SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
 				buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
-				video::S3DVertex2TCoords* v = 
+				video::S3DVertex2TCoords* v =
 					(video::S3DVertex2TCoords*)mesh->getMeshBuffer(b)->getVertices();
 
 				for (s32 i=0; i<idxCnt; i += 3)
@@ -596,7 +596,7 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 				SMeshBufferTangents* buffer = new SMeshBufferTangents();
 				buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
-				video::S3DVertexTangents* v = 
+				video::S3DVertexTangents* v =
 					(video::S3DVertexTangents*)mesh->getMeshBuffer(b)->getVertices();
 
 				for (s32 i=0; i<idxCnt; i += 3)
@@ -636,7 +636,7 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 	SMesh* clone = new SMesh();
 	s32 meshBufferCount = mesh->getMeshBufferCount();
 	s32 b;
-		
+
 	for (b=0; b<meshBufferCount; ++b)
 	{
 		s32 idxCnt = mesh->getMeshBuffer(b)->getIndexCount();
@@ -646,16 +646,15 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 		buffer->Material = mesh->getMeshBuffer(b)->getMaterial();
 
 		// copy vertices
-		s32 i;
 
 		switch(mesh->getMeshBuffer(b)->getVertexType())
 		{
 		case video::EVT_STANDARD:
 			{
-				video::S3DVertex* v = 
+				video::S3DVertex* v =
 					(video::S3DVertex*)mesh->getMeshBuffer(b)->getVertices();
 
-				for (i=0; i<idxCnt; ++i)
+				for (s32 i=0; i<idxCnt; ++i)
 					buffer->Vertices.push_back(
 						video::S3DVertexTangents(
 							v[idx[i]].Pos, v[idx[i]].TCoords, v[idx[i]].Color));
@@ -663,20 +662,20 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 			break;
 		case video::EVT_2TCOORDS:
 			{
-				video::S3DVertex2TCoords* v = 
+				video::S3DVertex2TCoords* v =
 					(video::S3DVertex2TCoords*)mesh->getMeshBuffer(b)->getVertices();
 
-				for (i=0; i<idxCnt; ++i)
+				for (s32 i=0; i<idxCnt; ++i)
 					buffer->Vertices.push_back(video::S3DVertexTangents(
 						v[idx[i]].Pos, v[idx[i]].TCoords, v[idx[i]].Color));
 			}
 			break;
 		case video::EVT_TANGENTS:
 			{
-				video::S3DVertexTangents* v = 
+				video::S3DVertexTangents* v =
 					(video::S3DVertexTangents*)mesh->getMeshBuffer(b)->getVertices();
 
-				for (i=0; i<idxCnt; ++i)
+				for (s32 i=0; i<idxCnt; ++i)
 					buffer->Vertices.push_back(v[idx[i]]);
 			}
 			break;
@@ -685,10 +684,10 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 		// create new indices
 
 		buffer->Indices.set_used(idxCnt);
-		for (i=0; i<idxCnt; ++i)
+		for (s32 i=0; i<idxCnt; ++i)
 			buffer->Indices[i] = i;
 
-		// add new buffer 
+		// add new buffer
 		clone->addMeshBuffer(buffer);
 		buffer->drop();
 	}
@@ -698,46 +697,46 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 	// now calculate tangents
 	for (b=0; b<meshBufferCount; ++b)
 	{
-		int idxCnt = clone->getMeshBuffer(b)->getIndexCount();
+		s32 idxCnt = clone->getMeshBuffer(b)->getIndexCount();
 
 		u16* idx = clone->getMeshBuffer(b)->getIndices();
-		video::S3DVertexTangents* v = 
+		video::S3DVertexTangents* v =
 			(video::S3DVertexTangents*)clone->getMeshBuffer(b)->getVertices();
 
-        for (int i=0; i<idxCnt; i+=3)
+		for (s32 i=0; i<idxCnt; i+=3)
 		{
-				calculateTangents(
-					v[idx[i+0]].Normal,
-					v[idx[i+0]].Tangent,
-					v[idx[i+0]].Binormal,
-					v[idx[i+0]].Pos, 
-					v[idx[i+1]].Pos,
-					v[idx[i+2]].Pos,
-					v[idx[i+0]].TCoords,
-					v[idx[i+1]].TCoords, 
-					v[idx[i+2]].TCoords);
+			calculateTangents(
+				v[idx[i+0]].Normal,
+				v[idx[i+0]].Tangent,
+				v[idx[i+0]].Binormal,
+				v[idx[i+0]].Pos,
+				v[idx[i+1]].Pos,
+				v[idx[i+2]].Pos,
+				v[idx[i+0]].TCoords,
+				v[idx[i+1]].TCoords,
+				v[idx[i+2]].TCoords);
 
-				calculateTangents(
-					v[idx[i+1]].Normal,
-					v[idx[i+1]].Tangent,
-					v[idx[i+1]].Binormal,
-					v[idx[i+1]].Pos, 
-					v[idx[i+2]].Pos,
-					v[idx[i+0]].Pos,
-					v[idx[i+1]].TCoords,
-					v[idx[i+2]].TCoords, 
-					v[idx[i+0]].TCoords);
+			calculateTangents(
+				v[idx[i+1]].Normal,
+				v[idx[i+1]].Tangent,
+				v[idx[i+1]].Binormal,
+				v[idx[i+1]].Pos,
+				v[idx[i+2]].Pos,
+				v[idx[i+0]].Pos,
+				v[idx[i+1]].TCoords,
+				v[idx[i+2]].TCoords,
+				v[idx[i+0]].TCoords);
 
-				calculateTangents(
-					v[idx[i+2]].Normal,
-					v[idx[i+2]].Tangent,
-					v[idx[i+2]].Binormal,
-					v[idx[i+2]].Pos, 
-					v[idx[i+0]].Pos,
-					v[idx[i+1]].Pos,
-					v[idx[i+2]].TCoords,
-					v[idx[i+0]].TCoords, 
-					v[idx[i+1]].TCoords);
+			calculateTangents(
+				v[idx[i+2]].Normal,
+				v[idx[i+2]].Tangent,
+				v[idx[i+2]].Binormal,
+				v[idx[i+2]].Pos,
+				v[idx[i+0]].Pos,
+				v[idx[i+1]].Pos,
+				v[idx[i+2]].TCoords,
+				v[idx[i+0]].TCoords,
+				v[idx[i+1]].TCoords);
 		}
 	}
 
@@ -747,8 +746,8 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 
 void CMeshManipulator::calculateTangents(
 	core::vector3df& normal,
-	core::vector3df& tangent, 
-	core::vector3df& binormal, 
+	core::vector3df& tangent,
+	core::vector3df& binormal,
 	core::vector3df& vt1, core::vector3df& vt2, core::vector3df& vt3, // vertices
 	core::vector2df& tc1, core::vector2df& tc2, core::vector2df& tc3) // texture coords
 {
@@ -763,7 +762,7 @@ void CMeshManipulator::calculateTangents(
 	normal = v2.crossProduct(v1);
 	normal.normalize();
 
-	// binormal 
+	// binormal
 
 	f32 deltaX1 = tc1.X - tc2.X;
 	f32 deltaX2 = tc3.X - tc1.X;

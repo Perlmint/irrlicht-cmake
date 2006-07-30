@@ -122,11 +122,11 @@ public:
 	of the original texture. Use ITexture::getSize() if you want to know 
 	the real size it has now stored in the system.
 	\return Returns the original size of the texture. */
-	virtual const core::dimension2d<s32> getOriginalSize() = 0;
+	virtual const core::dimension2d<s32>& getOriginalSize() = 0;
 
 	//! Returns dimension (=size) of the texture.
 	/** \return Returns the size of the texture. */
-	virtual const core::dimension2d<s32> getSize() = 0;
+	virtual const core::dimension2d<s32>& getSize() = 0;
 
 	//! Returns driver type of texture. 
 	/** This is the driver, which created the texture.

@@ -10,7 +10,6 @@
 
 #include "CMY3DMeshFileLoader.h"
 
-#include "SMeshBufferLightMap.h"
 #include "SAnimatedMesh.h"
 #include "SMeshBuffer.h"
 #include "IAttributes.h"

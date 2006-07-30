@@ -1534,12 +1534,12 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		
 		if (material.Texture1 && material.Texture1->hasMipMaps())
 		{
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
-				Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_NEAREST_MIPMAP_LINEAR: GL_NEAREST_MIPMAP_NEAREST );
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+				Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
 		}
 		else
 		{
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 				(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
 		}
 

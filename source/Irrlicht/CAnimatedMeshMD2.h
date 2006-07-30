@@ -100,7 +100,7 @@ namespace scene
 		//! returns max element
 		inline s32 max(s32 a, s32 b);
 
-		//! returns max element
+		//! returns min element
 		inline s32 min(s32 a, s32 b);
 
 		//! updates the interpolation buffer

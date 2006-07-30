@@ -454,14 +454,14 @@ void CD3D8Texture::unlock()
 
 
 //! Returns original size of the texture.
-const core::dimension2d<s32> CD3D8Texture::getOriginalSize()
+const core::dimension2d<s32>& CD3D8Texture::getOriginalSize()
 {
 	return ImageSize;
 }
 
 
 //! Returns (=size) of the texture.
-const core::dimension2d<s32> CD3D8Texture::getSize()
+const core::dimension2d<s32>& CD3D8Texture::getSize()
 {
 	return TextureSize;
 }

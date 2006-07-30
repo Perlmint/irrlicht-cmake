@@ -81,14 +81,14 @@ void CSoftwareTexture2::unlock()
 
 
 //! Returns original size of the texture.
-const core::dimension2d<s32> CSoftwareTexture2::getOriginalSize()
+const core::dimension2d<s32>& CSoftwareTexture2::getOriginalSize()
 {
 	return OrigSize;
 }
 
 
 //! Returns (=size) of the texture.
-const core::dimension2d<s32> CSoftwareTexture2::getSize()
+const core::dimension2d<s32>& CSoftwareTexture2::getSize()
 {
 	return Image->getDimension();
 }

@@ -13,7 +13,7 @@ namespace irr
 namespace core
 {
 
-//! Quaternion class
+//! Quaternion class.
 class quaternion
 {
 	public:

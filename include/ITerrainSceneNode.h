@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 // The code for the TerrainSceneNode is based on the terrain renderer by Soconne and
-// the GeoMipMapSceneNode developed by Spinz.  They made their code available for Irrlicht 
+// the GeoMipMapSceneNode developed by Spintz.  They made their code available for Irrlicht 
 // and allowed it to be  distributed under this licence. I only modified some parts.
 // A lot of thanks go to them. 
 

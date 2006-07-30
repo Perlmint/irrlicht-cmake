@@ -33,10 +33,10 @@ public:
 	virtual void unlock();
 
 	//! Returns original size of the texture.
-	virtual const core::dimension2d<s32> getOriginalSize();
+	virtual const core::dimension2d<s32>& getOriginalSize();
 
 	//! Returns (=size) of the texture.
-	virtual const core::dimension2d<s32> getSize();
+	virtual const core::dimension2d<s32>& getSize();
 
 	//! returns unoptimized surface
 	virtual CImage* getImage();

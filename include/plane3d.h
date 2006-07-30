@@ -96,8 +96,8 @@ class plane3d
 			const vector3d<T>& linePoint2) const
 		{
 			vector3d<T> vect = linePoint2 - linePoint1;
-			f32 t2 = (f32)Normal.dotProduct(vect);
-			return -((Normal.dotProduct(linePoint1) + D) / t2);
+			T t2 = (f32)Normal.dotProduct(vect);
+			return (f32)-((Normal.dotProduct(linePoint1) + D) / t2);
 		}
 
 		//! Returns an intersection with a 3d line, limited between two 3d points.

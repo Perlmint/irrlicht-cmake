@@ -19,7 +19,7 @@ namespace scene
 	//! Name of the parameter for changing the texture path of the built-in csm loader.
 	/** Use it like this:
 	 \code
-	 SceneManager->getParameters()->setParameter(
+	 SceneManager->getParameters()->setAttribute(
 	    scene::CSM_TEXTURE_PATH, "path/to/your/textures");
 	\endcode
 	**/ 
@@ -28,7 +28,7 @@ namespace scene
 	//! Name of the parameter for changing the texture path of the built-in lmts loader.
 	/** Use it like this:
 	 \code
-	 SceneManager->getParameters()->setParameter(
+	 SceneManager->getParameters()->setAttribute(
 	   scene::LMTS_TEXTURE_PATH, "path/to/your/textures");
 	\endcode
 	**/ 
@@ -37,7 +37,7 @@ namespace scene
 	//! Name of the parameter for changing the texture path of the built-in my3d loader.
 	/** Use it like this:
 	 \code
-	 SceneManager->getParameters()->setParameter(
+	 SceneManager->getParameters()->setAttribute(
 	   scene::MY3D_TEXTURE_PATH, "path/to/your/textures");
 	\endcode
 	**/ 
@@ -51,7 +51,7 @@ namespace scene
 	dummy mesh and create instances of all meshes and lights and cameras in the collada
 	file by itself. Example:
 	\code
-	 SceneManager->getParameters()->setParameter(
+	 SceneManager->getParameters()->setAttribute(
 	   scene::COLLADA_CREATE_SCENE_INSTANCES, true);
 	\endcode
 	*/
@@ -60,7 +60,7 @@ namespace scene
 	//! Name of the parameter for changing the texture path of the built-in DMF loader.
 	/** Use it like this:
 	 \code
-	 SceneManager->getStringParameters()->setParameter(
+	 SceneManager->getStringParameters()->setAttribute(
 	   scene::DMF_TEXTURE_PATH, "path/to/your/textures");
 	\endcode
 	**/ 
@@ -70,12 +70,12 @@ namespace scene
 	/** Use it like this:
 	 \code
 	 //this way you won't use this setting
-	 SceneManager->getParameters()->setParameter(
+	 SceneManager->getParameters()->setAttribute(
 	   scene::DMF_USE_MATERIALS_DIRS, false); 
 	 \endcode
 	 \code
      //this way you'll use this setting
-     SceneManager->getParameters()->setParameter(
+     SceneManager->getParameters()->setAttribute(
 	   scene::DMF_USE_MATERIALS_DIRS, true); 
 	\endcode
 	**/ 
@@ -85,7 +85,7 @@ namespace scene
 	/** Use it like this:
 	 \code
 	 //this way you'll set alpha ref to 0.1
-     SceneManager->getParameters()->setParameter(
+     SceneManager->getParameters()->setAttribute(
 	   scene::DMF_ALPHA_CHANNEL_REF, 0.1); 
 	\endcode
 	**/ 
@@ -95,7 +95,7 @@ namespace scene
 	/** Use it like this:
 	 \code
 	 //this way you'll choose to flip alpha textures
-     SceneManager->()->setParameter(
+     SceneManager->()->setAttribute(
 	   scene::DMF_FLIP_ALPHA_TEXTURES, true); 
 	\endcode
 	**/ 

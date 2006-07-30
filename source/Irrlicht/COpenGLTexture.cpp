@@ -254,14 +254,14 @@ void COpenGLTexture::unlock()
 
 
 //! Returns original size of the texture.
-const core::dimension2d<s32> COpenGLTexture::getOriginalSize()
+const core::dimension2d<s32>& COpenGLTexture::getOriginalSize()
 {
 	return OriginalSize;
 }
 
 
 //! Returns (=size) of the texture.
-const core::dimension2d<s32> COpenGLTexture::getSize()
+const core::dimension2d<s32>& COpenGLTexture::getSize()
 {
 	return ImageSize;
 }

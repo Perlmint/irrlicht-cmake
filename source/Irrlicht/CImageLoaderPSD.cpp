@@ -137,7 +137,7 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 	bool res = false;
 
 	if (compressionType == 0)
-		res = readRawImageData(file);	// RAW image data
+		res = readRawImageData(file); // RAW image data
 	else
 		res = readRLEImageData(file); // RLE compressed data
 
@@ -196,12 +196,12 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 {
 	/*	If the compression code is 1, the image data
 		starts with the byte counts for all the scan lines in the channel
-		(LayerBottom LayerTop), with each count stored as a two–
+		(LayerBottom LayerTop), with each count stored as a two
 		byte value. The RLE compressed data follows, with each scan line
 		compressed separately. The RLE compression is the same compres-sion
 		algorithm used by the Macintosh ROM routine PackBits, and
 		the TIFF standard.
-		If the Layer’s Size, and therefore the data, is odd, a pad byte will
+		If the Layer's Size, and therefore the data, is odd, a pad byte will
 		be inserted at the end of the row.
 	*/
 

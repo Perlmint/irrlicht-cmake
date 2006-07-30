@@ -57,7 +57,10 @@ namespace irr
 
 		//! The mouse wheel was moved. Use Wheel value in event data to find out 
 		//! in what direction and how fast.
-		EMIE_MOUSE_WHEEL
+		EMIE_MOUSE_WHEEL,
+
+		//! No real event. Just for convenience to get number of events
+		EMIE_COUNT
 	};
 
 	namespace gui

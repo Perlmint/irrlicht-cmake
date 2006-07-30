@@ -150,7 +150,7 @@ namespace video
 		virtual void setAmbientLight(const SColorf& color);
 
 		//! Draws a shadow volume into the stencil buffer. To draw a stencil shadow, do
-		//! this: Frist, draw all geometry. Then use this method, to draw the shadow
+		//! this: First, draw all geometry. Then use this method, to draw the shadow
 		//! volume. Then, use IVideoDriver::drawStencilShadow() to visualize the shadow.
 		virtual void drawStencilShadowVolume(const core::vector3df* triangles, s32 count, bool zfail);
 

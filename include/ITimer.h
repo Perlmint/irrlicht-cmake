@@ -59,9 +59,9 @@ public:
 	virtual bool isStopped() = 0;
 
 	//! Advances the virtual time
-	/** Makes the virtual timer update the time value based on the real time. This is
-	called automaticly when calling IrrlichtDevice::run(), but you can call it manually
-	if you don't use this method. */
+	/** Makes the virtual timer update the time value based on the real
+	time. This is called automatically when calling IrrlichtDevice::run(),
+	but you can call it manually if you don't use this method. */
 	virtual void tick() = 0;
 };
 

@@ -29,7 +29,7 @@ namespace video
 		c8 signature [4];	// Always equal to 8BPS.
 		u16 version;		// Always equal to 1
 		c8 reserved [6];	// Must be zero
-		u16 channels;	// Number of any channels inc. alphas
+		u16 channels;		// Number of any channels inc. alphas
 		u32 height;		// Rows Height of image in pixel
 		u32 width;		// Colums Width of image in pixel
 		u16 depth;		// Bits/channel
@@ -75,14 +75,18 @@ private:
 
 	inline u32 convert2le (u32 value)
 	{
+		#ifndef __BIG_ENDIAN__
 		value = (value >> 16) | (value << 16);
 		value = ((value >> 8) & 0xFF00FF) | ((value << 8) & 0xFF00FF00);
+		#endif
 		return value;
 	}
 
 	inline u16 convert2le (u16 value)
 	{
+		#ifndef __BIG_ENDIAN__
 		value = (value >> 8) | (value << 8);
+		#endif
 		return value;
 	}
 

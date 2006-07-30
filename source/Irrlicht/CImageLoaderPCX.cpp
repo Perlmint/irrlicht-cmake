@@ -62,6 +62,18 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	SPCXHeader header;
 
 	file->read(&header, sizeof(header));
+	#ifdef __BIG_ENDIAN__
+		XMin = OSReadSwapInt16(&XMin,0);
+		YMin = OSReadSwapInt16(&YMin,0);
+		XMax = OSReadSwapInt16(&XMax,0);
+		YMax = OSReadSwapInt16(&YMax,0);
+		HorizDPI = OSReadSwapInt16(&HorizDPI,0);
+		VertDPI = OSReadSwapInt16(&VertDPI,0);
+		BytesPerLine = OSReadSwapInt16(&BytesPerLine,0);
+		PaletteType = OSReadSwapInt16(&PaletteType,0);
+		HScrSize = OSReadSwapInt16(&HScrSize,0);
+		VScrSize = OSReadSwapInt16(&VScrSize,0);
+	#endif
 
 	s32 pitch = 0;
 

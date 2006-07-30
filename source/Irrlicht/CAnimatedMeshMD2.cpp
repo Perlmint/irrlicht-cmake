@@ -39,7 +39,7 @@ namespace scene
 		s32 numSkins;
 		s32 numVertices;
 		s32 numTexcoords;
-		s32 numTriangles;	
+		s32 numTriangles;
 		s32 numGlCommands;
 		s32 numFrames;
 		s32 offsetSkins;
@@ -539,7 +539,7 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 
 	// create Memory for indices and frames
 
-	Indices.reallocate(header.numTriangles);
+	TriangleCount = header.numTriangles;
 	FrameList = new core::array<video::S3DVertex>[header.numFrames];
 	FrameCount = header.numFrames;
 
@@ -560,7 +560,7 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	}
 
 #ifdef __BIG_ENDIAN__
-	for (int i=0;i<header.numTexcoords;i++)
+	for (i=0; i<header.numTexcoords; ++i)
 	{
 		textureCoords[i].s = OSReadSwapInt16(&textureCoords[i].s,0);
 		textureCoords[i].t = OSReadSwapInt16(&textureCoords[i].t,0);
@@ -579,7 +579,7 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	}
 
 #ifdef __BIG_ENDIAN__
-	for (int i=0;i<header.numTriangles;i++)
+	for (i=0; i<header.numTriangles; ++i)
 	{
 		triangles[i].vertexIndices[0] = OSReadSwapInt16(&triangles[i].vertexIndices[0],0);
 		triangles[i].vertexIndices[1] = OSReadSwapInt16(&triangles[i].vertexIndices[1],0);
@@ -667,7 +667,7 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 
 			BoxList.push_back(box);
 		}
-			
+
 	}
 
 	// put triangles into frame list
@@ -698,15 +698,13 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	// create indices
 
 	Indices.reallocate(header.numVertices);
-	s16 count = header.numTriangles*3;
+	s16 count = TriangleCount*3;
 	for (s16 n=0; n<count; n+=3)
 	{
 		Indices.push_back(n);
 		Indices.push_back(n+1);
 		Indices.push_back(n+2);
 	}
-
-	//calculateNormals();
 
 	// reallocate interpolate buffer
 	if (header.numFrames)
@@ -727,7 +725,6 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	delete [] vertices;
 	delete [] triangles;
 	delete [] textureCoords;
-	TriangleCount = Indices.size() / 3;
 
 	// return
 

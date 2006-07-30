@@ -276,7 +276,7 @@ bool C3DSMeshFileLoader::readColorChunk(io::IReadFile* file, ChunkData* chunk,
 
 bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* parent)
 {
-	u16 matSection;
+	u16 matSection=0;
 
 	while(parent->read < parent->header.length)
 	{
@@ -752,7 +752,7 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 	for (u32 i=0; i<MaterialGroups.size(); ++i)
 	{
 		SMeshBuffer* mb = 0;
-		video::SMaterial* mat;
+		video::SMaterial* mat=0;
 
 		// find mesh buffer for this group
 		for (u32 j=0; j<Materials.size(); ++j)

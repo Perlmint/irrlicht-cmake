@@ -31,12 +31,13 @@
 #endif
 
 
-#include <IMeshLoader.h>
-#include <SMesh.h>
-#include <IFileSystem.h>
-#include <IVideoDriver.h>
-#include <irrString.h>
-#include <ISceneManager.h>
+#include "IMeshLoader.h"
+#include "SMesh.h"
+#include "SMeshBufferLightMap.h"
+#include "IFileSystem.h"
+#include "IVideoDriver.h"
+#include "irrString.h"
+#include "ISceneManager.h"
 
 #include "CMY3DStuff.h"
 
@@ -68,20 +69,21 @@ private:
 
 	video::IVideoDriver* Driver;
 	io::IFileSystem* FileSystem;
-    ISceneManager *SceneManager;
+	ISceneManager *SceneManager;
 
 	video::SColor SceneBackgrColor;
 	video::SColor SceneAmbientColor;
 
-    struct SMyMaterialEntry
-	{	SMyMaterialEntry ()
+	struct SMyMaterialEntry
+	{
+		SMyMaterialEntry ()
             : Texture1FileName("null"), Texture2FileName("null"),
             Texture1(0), Texture2(0), MaterialType(video::EMT_SOLID) {;}
 		SMyMaterialHeader Header;
 		core::stringc Texture1FileName;
 		core::stringc Texture2FileName;
-        video::ITexture *Texture1;
-        video::ITexture *Texture2;
+		video::ITexture *Texture1;
+		video::ITexture *Texture2;
 		video::E_MATERIAL_TYPE MaterialType;
 	};
 
