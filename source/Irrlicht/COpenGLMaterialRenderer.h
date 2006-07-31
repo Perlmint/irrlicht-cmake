@@ -214,12 +214,11 @@ public:
 			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE);
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
 
 			f32 refValue = material.MaterialTypeParam;
-			if ( refValue == 0 )
+			if ( refValue == 0.0f )
 				refValue = 0.5f;
 
 			glAlphaFunc(GL_GREATER, refValue);
@@ -229,6 +228,7 @@ public:
 	virtual void OnUnsetMaterial()
 	{
 		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_BLEND);
 	}
 
 	//! Returns if the material is transparent.

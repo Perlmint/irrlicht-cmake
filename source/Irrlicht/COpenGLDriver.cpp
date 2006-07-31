@@ -623,11 +623,6 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 	switch(state)
 	{
 	case ETS_VIEW:
-		// OpenGL only has a model matrix, view and world is not existent. so lets fake these two.
-		createGLMatrix(glmat, Matrices[ETS_VIEW] * Matrices[ETS_WORLD]);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glmat);
-		break;
 	case ETS_WORLD:
 		// OpenGL only has a model matrix, view and world is not existent. so lets fake these two.
 		createGLMatrix(glmat, Matrices[ETS_VIEW] * Matrices[ETS_WORLD]);
@@ -635,15 +630,11 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 		glLoadMatrixf(glmat);
 		break;
 	case ETS_PROJECTION:
-		{
-			createGLMatrix(glmat, mat);
-
-			// flip z to compensate OpenGLs right-hand coordinate system
-			glmat[12] *= -1.0f;
-
-			glMatrixMode(GL_PROJECTION);
-			glLoadMatrixf(glmat);
-		}
+		createGLMatrix(glmat, mat);
+		// flip z to compensate OpenGLs right-hand coordinate system
+		glmat[12] *= -1.0f;
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glmat);
 		break;
 	default:
 		break;

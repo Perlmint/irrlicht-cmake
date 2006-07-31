@@ -886,8 +886,8 @@ namespace core
 	inline matrix4 matrix4::getTransposed() const
 	{
 		matrix4 t;
-		for (s32 r=0; r<4; ++r)
-			for (s32 c=0; c<4; ++c)
+		for (s32 c=0; c<4; ++c)
+			for (s32 r=0; r<4; ++r)
 				t(r,c) = (*this)(c,r);
 		return t;
 	}

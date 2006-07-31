@@ -39,6 +39,7 @@
 #include "CBillboardSceneNode.h"
 #include "CMeshSceneNode.h"
 #include "CSkyBoxSceneNode.h"
+#include "CSkyDomeSceneNode.h"
 #include "CParticleSystemSceneNode.h"
 #include "CDummyTransformationSceneNode.h"
 #include "CWaterSurfaceSceneNode.h"
@@ -481,6 +482,23 @@ ISceneNode* CSceneManager::addSkyBoxSceneNode(video::ITexture* top, video::IText
 
 	ISceneNode* node = new CSkyBoxSceneNode(top, bottom, left, right, 
 			front, back, parent, this, id);
+
+	node->drop();
+	return node;
+}
+
+
+//! Adds a skydome scene node. A skydome is a large (half-) sphere with a
+//! panoramic texture on it and is drawn around the camera position.
+ISceneNode* CSceneManager::addSkyDomeSceneNode(video::ITexture* texture,
+	u32 horiRes, u32 vertRes, f64 texturePercentage,
+	f64 spherePercentage, ISceneNode* parent, s32 id)
+{
+	if (!parent)
+		parent = this;
+
+	ISceneNode* node = new CSkyDomeSceneNode(texture, horiRes, vertRes,
+		texturePercentage, spherePercentage, parent, this, id);
 
 	node->drop();
 	return node;

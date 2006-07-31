@@ -15,16 +15,13 @@ namespace scene
 
 //! constructor
 CSphereSceneNode::CSphereSceneNode(f32 Radius, s32 polyCount, ISceneNode* parent, ISceneManager* mgr, s32 id,
-			const core::vector3df& position, const core::vector3df& rotation,	const core::vector3df& scale)
-: ISceneNode(parent, mgr, id, position, rotation, scale), Radius(Radius), 
+			const core::vector3df& position, const core::vector3df& rotation, const core::vector3df& scale)
+: ISceneNode(parent, mgr, id, position, rotation, scale), Radius(Radius),
 	PolyCount(polyCount), Vertices(0), Indices(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CSphereSceneNode");
 	#endif
-
-	Material.Wireframe = false;
-	Material.Lighting = false;
 
 	setSizeAndPolys();
 }
@@ -44,7 +41,7 @@ void CSphereSceneNode::setSizeAndPolys()
 	// thanks to Alfaz93 who made his code available for Irrlicht on which
 	// this one is based!
 
-	// we are creating the sphere mesh here. 
+	// we are creating the sphere mesh here.
 
 	if (PolyCount < 2)
 		PolyCount = 2;
@@ -73,28 +70,28 @@ void CSphereSceneNode::setSizeAndPolys()
 
 		for (p2 = 0; p2 < PolyCount - 1; ++p2)
 		{
-            Indices[i] = level + p2 + PolyCount;
-            Indices[++i] = level + p2;
-            Indices[++i] = level + p2 + 1;
-            ++i;
+			Indices[i] = level + p2 + PolyCount;
+			Indices[++i] = level + p2;
+			Indices[++i] = level + p2 + 1;
+			++i;
 		}
-		
-        Indices[i] = level + PolyCount - 1 + PolyCount;
-        Indices[++i] = level + PolyCount - 1;
-        Indices[++i] = level;
-        ++i;        
-        
-        Indices[i] = level + PolyCount - 1 + PolyCount;
-        Indices[++i] = level;
-        Indices[++i] = level + PolyCount;
-        ++i;
-		
+
+		Indices[i] = level + PolyCount - 1 + PolyCount;
+		Indices[++i] = level + PolyCount - 1;
+		Indices[++i] = level;
+		++i;
+
+		Indices[i] = level + PolyCount - 1 + PolyCount;
+		Indices[++i] = level;
+		Indices[++i] = level + PolyCount;
+		++i;
+
 		for (p2 = 1; p2 <= PolyCount - 1; ++p2)
 		{
-            Indices[i] = level + p2 - 1 + PolyCount;
-            Indices[++i] = level + p2;
-            Indices[++i] = level + p2 + PolyCount;
-            ++i;
+			Indices[i] = level + p2 - 1 + PolyCount;
+			Indices[++i] = level + p2;
+			Indices[++i] = level + p2 + PolyCount;
+			++i;
 		}
 	}
 
@@ -102,43 +99,43 @@ void CSphereSceneNode::setSizeAndPolys()
 	int PolyCountSq1 = PolyCountSq + 1;
 	int PolyCountSqM1 = (PolyCount - 1) * PolyCount;
 
-    for (int p2 = 0; p2 < PolyCount - 1; ++p2)
-    {
-        // create triangles which are at the top of the sphere
+	for (int p2 = 0; p2 < PolyCount - 1; ++p2)
+	{
+		// create triangles which are at the top of the sphere
 
-        Indices[i] = PolyCountSq;
-        Indices[++i] = p2 + 1;
-        Indices[++i] = p2;
-        ++i;
-        
-        // create triangles which are at the bottom of the sphere
+		Indices[i] = PolyCountSq;
+		Indices[++i] = p2 + 1;
+		Indices[++i] = p2;
+		++i;
 
-        Indices[i] = PolyCountSqM1 + p2;
-        Indices[++i] = PolyCountSqM1 + p2 + 1;
-        Indices[++i] = PolyCountSq1;
-        ++i;
-    }
+		// create triangles which are at the bottom of the sphere
+
+		Indices[i] = PolyCountSqM1 + p2;
+		Indices[++i] = PolyCountSqM1 + p2 + 1;
+		Indices[++i] = PolyCountSq1;
+		++i;
+	}
 
 	// create a triangle which is at the top of the sphere
 
-    Indices[i] = PolyCountSq;
-    Indices[++i] = 0;
-    Indices[++i] = PolyCount - 1;
-    ++i;
-    
+	Indices[i] = PolyCountSq;
+	Indices[++i] = 0;
+	Indices[++i] = PolyCount - 1;
+	++i;
+
 	// create a triangle which is at the bottom of the sphere
 
-    Indices[i] = PolyCountSqM1 + PolyCount - 1;
-    Indices[++i] = PolyCountSqM1;
-    Indices[++i] = PolyCountSq1;
-    
+	Indices[i] = PolyCountSqM1 + PolyCount - 1;
+	Indices[++i] = PolyCountSqM1;
+	Indices[++i] = PolyCountSq1;
+
 	// calculate the angle which separates all points in a circle
 
 	float Angle = 2 * core::PI / (f32)PolyCount;
 	float sinay;
 	float cosay;
 	float sinaxz;
-	float cosaxz;		
+	float cosaxz;
 
 	i = 0;
 	float axz;
@@ -166,21 +163,21 @@ void CSphereSceneNode::setSizeAndPolys()
 			core::vector3df normal(pos);
 			normal.normalize();
 
-			Vertices[i] = video::S3DVertex(pos.X, pos.Y, pos.Z, 
-										   normal.X, normal.Y, normal.Z,
-										   clr, 1, 1);
+			Vertices[i] = video::S3DVertex(pos.X, pos.Y, pos.Z,
+						normal.X, normal.Y, normal.Z,
+						clr, 1, 1);
 
 			++i;
 		}
 	}
-	
+
 	// the vertex at the top of the sphere
 	Vertices[i] = video::S3DVertex(0, Radius, 0, 1,1,1, clr, 1, 1);
 
-    // the vertex at the bottom of the sphere
-    ++i;    
+	// the vertex at the bottom of the sphere
+	++i;
 	Vertices[i] = video::S3DVertex(0, -Radius, 0,-1,-1,-1, clr, 1, 1);
-	
+
 	// recalculate bounding box
 
 	Box.reset(Vertices[0].Pos);
