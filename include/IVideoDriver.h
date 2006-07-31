@@ -158,7 +158,7 @@ namespace video
 		virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat) = 0;
 
 		//! Returns the transformation set by setTransform
-		virtual core::matrix4 getTransform(E_TRANSFORMATION_STATE state) = 0;
+		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state) = 0;
 
 		//! Sets a material.
 		/** All 3d drawing functions draw geometry now

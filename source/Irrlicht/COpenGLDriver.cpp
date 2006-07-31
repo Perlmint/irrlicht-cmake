@@ -605,7 +605,7 @@ bool COpenGLDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 
 
 //! Returns the transformation set by setTransform
-core::matrix4 COpenGLDriver::getTransform(E_TRANSFORMATION_STATE state)
+const core::matrix4& COpenGLDriver::getTransform(E_TRANSFORMATION_STATE state)
 {
 	return Matrices[state];
 }
@@ -2289,14 +2289,14 @@ bool COpenGLDriver::hasMultiTextureExtension()
 }
 
 //! Sets a vertex shader constant.
-void COpenGLDriver::setVertexShaderConstant(f32* data, s32 startRegister, s32 constantAmount)
+void COpenGLDriver::setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
 	for (int i=0; i<constantAmount; ++i)
 		extGlProgramLocalParameter4fvARB(GL_VERTEX_PROGRAM_ARB, startRegister+i, &data[i*4]);
 }
 
 //! Sets a pixel shader constant.
-void COpenGLDriver::setPixelShaderConstant(f32* data, s32 startRegister, s32 constantAmount)
+void COpenGLDriver::setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
 	for (int i=0; i<constantAmount; ++i)
 		extGlProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, startRegister+i, &data[i*4]);

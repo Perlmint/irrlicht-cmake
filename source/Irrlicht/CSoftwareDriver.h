@@ -95,7 +95,7 @@ namespace video
 		virtual E_DRIVER_TYPE getDriverType();
 
 		//! Returns the transformation set by setTransform
-		virtual core::matrix4 getTransform(E_TRANSFORMATION_STATE state);
+		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state);
 
 		//! Creates a render target texture.
 		virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);

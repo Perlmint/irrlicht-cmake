@@ -1401,7 +1401,7 @@ E_DRIVER_TYPE CSoftwareDriver2::getDriverType()
 }
 
 //! Returns the transformation set by setTransform
-core::matrix4 CSoftwareDriver2::getTransform(E_TRANSFORMATION_STATE state)
+const core::matrix4& CSoftwareDriver2::getTransform(E_TRANSFORMATION_STATE state)
 {
 	return TransformationMatrix[state];
 }

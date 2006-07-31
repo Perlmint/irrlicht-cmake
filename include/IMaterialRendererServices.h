@@ -47,8 +47,7 @@ public:
 	//! 	float time = (float)os::Timer::getTime()/100000.0f;
 	//! 	services->setVertexShaderConstant("fTime", &time, 1);
 	//! 
-	//! 	core::matrix4 worldViewProj;
-	//! 	worldViewProj = driver->getTransform(video::ETS_PROJECTION);			
+	//! 	core::matrix4 worldViewProj(driver->getTransform(video::ETS_PROJECTION));
 	//! 	worldViewProj *= driver->getTransform(video::ETS_VIEW);
 	//! 	worldViewProj *= driver->getTransform(video::ETS_WORLD);
 	//! 	services->setVertexShaderConstant("mWorldViewProj", worldViewProj.M, 16);
@@ -65,7 +64,7 @@ public:
 	//! \param data: Data to be set in the constants
 	//! \param startRegister: First register to be set
 	//! \param constantAmount: Amount of registers to be set. One register consists of 4 floats.
-	virtual void setVertexShaderConstant(f32* data, s32 startRegister, s32 constantAmount=1) = 0;
+	virtual void setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1) = 0;
 
 	//! Sets a constant for the pixel shader based on a name. This can be used if you used
 	//! a high level shader language like GLSL or HLSL to create a shader. See 
@@ -81,7 +80,7 @@ public:
 	//! \param data: Data to be set in the constants
 	//! \param startRegister: First register to be set.
 	//! \param constantAmount: Amount of registers to be set. One register consists of 4 floats.
-	virtual void setPixelShaderConstant(f32* data, s32 startRegister, s32 constantAmount=1) = 0;
+	virtual void setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1) = 0;
 
 	//! Returns a pointer to the IVideoDriver interface
 	virtual IVideoDriver* getVideoDriver() = 0;

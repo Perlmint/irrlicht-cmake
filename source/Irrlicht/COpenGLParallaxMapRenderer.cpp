@@ -298,7 +298,7 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	video::IVideoDriver* driver = services->getVideoDriver();
 
 	// set transposed world matrix
-	core::matrix4 tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
+	const core::matrix4& tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
 	services->setVertexShaderConstant(&tWorld.M[0], 0, 4);
 
 	// The  viewpoint is at (0., 0., 0.) in eye space.
@@ -307,17 +307,16 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	// object space location of the camera.
 
 	f32 floats[4] = {0.0f,0.0f,0.0f,1.0f};
-	core::matrix4 minv = driver->getTransform(video::ETS_VIEW);
+	core::matrix4 minv(driver->getTransform(video::ETS_VIEW));
 	minv.makeInverse();
 	minv.multiplyWith1x4Matrix(floats);
 	services->setVertexShaderConstant(floats, 16, 1);
 
 	// set transposed worldViewProj matrix
-	core::matrix4 worldViewProj;
-	worldViewProj = driver->getTransform(video::ETS_PROJECTION);
+	core::matrix4 worldViewProj(driver->getTransform(video::ETS_PROJECTION));
 	worldViewProj *= driver->getTransform(video::ETS_VIEW);
 	worldViewProj *= driver->getTransform(video::ETS_WORLD);
-	core::matrix4 tr = worldViewProj.getTransposed();
+	core::matrix4 tr(worldViewProj.getTransposed());
 	services->setVertexShaderConstant(&tr.M[0], 8, 4);
 
 	// here we've got to fetch the fixed function lights from the driver
@@ -340,10 +339,10 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 		light.DiffuseColor.a = 1.0f/(light.Radius*light.Radius); // set attenuation
 
 		services->setVertexShaderConstant(
-			reinterpret_cast<f32*>(&light.Position), 12+(i*2), 1);
+			reinterpret_cast<const f32*>(&light.Position), 12+(i*2), 1);
 
 		services->setVertexShaderConstant(
-			reinterpret_cast<f32*>(&light.DiffuseColor), 13+(i*2), 1);
+			reinterpret_cast<const f32*>(&light.DiffuseColor), 13+(i*2), 1);
 	}
 
 	// set scale factor

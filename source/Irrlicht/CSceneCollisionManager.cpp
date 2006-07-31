@@ -72,13 +72,13 @@ ISceneNode* CSceneCollisionManager::getSceneNodeFromRayBB(core::line3d<f32> ray,
 
 //! recursive method for going through all scene nodes
 void CSceneCollisionManager::getPickedNodeBB(ISceneNode* root,
-									   const core::vector3df& linemiddle, 
-									   const core::vector3df& linevect,
-									   const core::vector3df& pos, 
-									   f32 halflength, s32 bits,
-									   bool bNoDebugObjects,
-									   f32& outbestdistance,
-									   ISceneNode*& outbestnode)
+					   const core::vector3df& linemiddle,
+					   const core::vector3df& linevect,
+					   const core::vector3df& pos,
+					   f32 halflength, s32 bits,
+					   bool bNoDebugObjects,
+					   f32& outbestdistance,
+					   ISceneNode*& outbestnode)
 {
 	const core::list<ISceneNode*>& children = root->getChildren();
 	core::vector3df edges[8];
@@ -93,7 +93,7 @@ void CSceneCollisionManager::getPickedNodeBB(ISceneNode* root,
 			(bNoDebugObjects ? !current->isDebugObject() : true) &&
 			(bits==0 || (bits != 0 && (current->getID() & bits))))
 		{
-			core::aabbox3df box = current->getTransformedBoundingBox();
+			const core::aabbox3df& box = current->getTransformedBoundingBox();
 
 			if (box.intersectsWithLine(linemiddle, linevect, halflength))
 			{

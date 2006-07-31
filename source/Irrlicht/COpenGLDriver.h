@@ -187,7 +187,7 @@ namespace video
 		virtual E_DRIVER_TYPE getDriverType();
 
 		//! Returns the transformation set by setTransform
-		virtual core::matrix4 getTransform(E_TRANSFORMATION_STATE state);
+		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state);
 		
 		// public access to the (loaded) extensions. 
 		void extGlActiveTextureARB(GLenum texture);
@@ -226,10 +226,10 @@ namespace video
 			bool resetAllRenderstates);
 
 		//! Sets a vertex shader constant.
-		virtual void setVertexShaderConstant(f32* data, s32 startRegister, s32 constantAmount=1);
+		virtual void setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1);
 
 		//! Sets a pixel shader constant.
-		virtual void setPixelShaderConstant(f32* data, s32 startRegister, s32 constantAmount=1);
+		virtual void setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1);
 
 		//! Sets a constant for the vertex shader based on a name. 
 		virtual bool setVertexShaderConstant(const c8* name, const f32* floats, int count);

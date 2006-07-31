@@ -260,7 +260,7 @@ bool COpenGLSLMaterialRenderer::setVertexShaderConstant(const c8* name, const f3
 }
 
 
-void COpenGLSLMaterialRenderer::setVertexShaderConstant(f32* data, s32 startRegister, s32 constantAmount)
+void COpenGLSLMaterialRenderer::setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
     os::Printer::log("Cannot set constant, please use high level shader call instead.");
 }
@@ -308,7 +308,7 @@ bool COpenGLSLMaterialRenderer::setPixelShaderConstant(const c8* name, const f32
     return true;
 }
 
-void COpenGLSLMaterialRenderer::setPixelShaderConstant(f32* data, s32 startRegister, s32 constantAmount)
+void COpenGLSLMaterialRenderer::setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
     os::Printer::log("Cannot set constant, use high level shader call.");
 }

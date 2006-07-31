@@ -1898,20 +1898,20 @@ E_DRIVER_TYPE CD3D8Driver::getDriverType()
 }
 
 //! Returns the transformation set by setTransform
-core::matrix4 CD3D8Driver::getTransform(E_TRANSFORMATION_STATE state)
+const core::matrix4& CD3D8Driver::getTransform(E_TRANSFORMATION_STATE state)
 {
 	return Matrices[state];
 }
 
 //! Sets a vertex shader constant.
-void CD3D8Driver::setVertexShaderConstant(f32* data, s32 startRegister, s32 constantAmount)
+void CD3D8Driver::setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
 	if (data)
 		pID3DDevice->SetVertexShaderConstant(startRegister, data, constantAmount);
 }
 
 //! Sets a pixel shader constant.
-void CD3D8Driver::setPixelShaderConstant(f32* data, s32 startRegister, s32 constantAmount)
+void CD3D8Driver::setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
 	if (data)
 		pID3DDevice->SetPixelShaderConstant(startRegister, data, constantAmount);

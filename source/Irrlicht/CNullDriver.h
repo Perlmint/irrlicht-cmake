@@ -248,7 +248,7 @@ namespace video
 		virtual E_DRIVER_TYPE getDriverType();
 
 		//! Returns the transformation set by setTransform
-		virtual core::matrix4 getTransform(E_TRANSFORMATION_STATE state);
+		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state);
 
 		//! Returns pointer to the IGPUProgrammingServices interface.
 		virtual IGPUProgrammingServices* getGPUProgrammingServices();
@@ -426,7 +426,8 @@ namespace video
 
 		core::rect<s32> ViewPort;
 		core::dimension2d<s32> ScreenSize;
-	
+		core::matrix4 TransformationMatrix;
+
 		CFPSCounter FPSCounter;
 
 		u32 PrimitivesDrawn;

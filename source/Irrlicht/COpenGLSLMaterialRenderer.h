@@ -79,12 +79,12 @@ public:
 	virtual bool isTransparent();
 
 	// implementations for the render services
-	virtual	void setBasicRenderStates(const	SMaterial& material, const SMaterial& lastMaterial,	bool resetAllRenderstates);
-	virtual	bool setVertexShaderConstant(const c8* name, const f32*	floats,	int	count);
-	virtual	void setVertexShaderConstant(f32* data,	s32	startRegister, s32 constantAmount=1);
-	virtual	bool setPixelShaderConstant(const c8* name,	const f32* floats, int count);
-	virtual	void setPixelShaderConstant(f32* data, s32 startRegister, s32 constantAmount=1);
-	virtual	IVideoDriver* getVideoDriver();
+	virtual void setBasicRenderStates(const SMaterial& material, const SMaterial& lastMaterial, bool resetAllRenderstates);
+	virtual bool setVertexShaderConstant(const c8* name, const f32* floats, int count);
+	virtual void setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1);
+	virtual bool setPixelShaderConstant(const c8* name, const f32* floats, int count);
+	virtual void setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1);
+	virtual IVideoDriver* getVideoDriver();
 
 protected:
 

@@ -238,25 +238,24 @@ namespace video
 		video::IVideoDriver* driver = services->getVideoDriver();
 
 		// set transposed world matrix
-		core::matrix4 tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
+		const core::matrix4& tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
 		services->setVertexShaderConstant(&tWorld.M[0], 0, 4);
 
 		// set eye position
 
-		// The  viewpoint is at (0., 0., 0.) in eye space. 
-		// Turning this into a vector [0 0 0 1] and multiply it by 
+		// The viewpoint is at (0., 0., 0.) in eye space.
+		// Turning this into a vector [0 0 0 1] and multiply it by
 		// the inverse of the view matrix, the resulting vector is the
 		// object space location of the camera.
 
 		f32 floats[4] = {0,0,0,1};
-		core::matrix4 minv = driver->getTransform(video::ETS_VIEW);
+		core::matrix4 minv(driver->getTransform(video::ETS_VIEW));
 		minv.makeInverse();
 		minv.multiplyWith1x4Matrix(floats);
 		services->setVertexShaderConstant(floats, 4, 1);
 
 		// set transposed worldViewProj matrix
-		core::matrix4 worldViewProj;
-		worldViewProj = driver->getTransform(video::ETS_PROJECTION);			
+		core::matrix4 worldViewProj(driver->getTransform(video::ETS_PROJECTION));
 		worldViewProj *= driver->getTransform(video::ETS_VIEW);
 		worldViewProj *= driver->getTransform(video::ETS_WORLD);
 		core::matrix4 tr = worldViewProj.getTransposed();
@@ -281,8 +280,8 @@ namespace video
 
 			light.DiffuseColor.a = 1.0f/(light.Radius*light.Radius); // set attenuation
 
-			services->setVertexShaderConstant(reinterpret_cast<f32*>(&light.Position), 12+(i*2), 1);
-			services->setVertexShaderConstant(reinterpret_cast<f32*>(&light.DiffuseColor), 13+(i*2), 1);
+			services->setVertexShaderConstant(reinterpret_cast<const f32*>(&light.Position), 12+(i*2), 1);
+			services->setVertexShaderConstant(reinterpret_cast<const f32*>(&light.DiffuseColor), 13+(i*2), 1);
 		}
 
 		// this is not really necessary in d3d9 (used a def instruction), but to be sure:

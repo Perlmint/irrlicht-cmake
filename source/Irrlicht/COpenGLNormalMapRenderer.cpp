@@ -252,15 +252,14 @@ void COpenGLNormalMapRenderer::OnSetConstants(IMaterialRendererServices* service
 	video::IVideoDriver* driver = services->getVideoDriver();
 
 	// set transposed world matrix
-	core::matrix4 tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
+	const core::matrix4& tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
 	services->setVertexShaderConstant(&tWorld.M[0], 0, 4);
 
 	// set transposed worldViewProj matrix
-	core::matrix4 worldViewProj;
-	worldViewProj = driver->getTransform(video::ETS_PROJECTION);			
+	core::matrix4 worldViewProj(driver->getTransform(video::ETS_PROJECTION));
 	worldViewProj *= driver->getTransform(video::ETS_VIEW);
 	worldViewProj *= driver->getTransform(video::ETS_WORLD);
-	core::matrix4 tr = worldViewProj.getTransposed();
+	core::matrix4 tr(worldViewProj.getTransposed());
 	services->setVertexShaderConstant(&tr.M[0], 8, 4);
 
 	// here we've got to fetch the fixed function lights from the driver
@@ -283,13 +282,11 @@ void COpenGLNormalMapRenderer::OnSetConstants(IMaterialRendererServices* service
 		light.DiffuseColor.a = 1.0f/(light.Radius*light.Radius); // set attenuation
 
 		services->setVertexShaderConstant(
-			reinterpret_cast<f32*>(&light.Position), 12+(i*2), 1);
+			reinterpret_cast<const f32*>(&light.Position), 12+(i*2), 1);
 
 		services->setVertexShaderConstant(
-			reinterpret_cast<f32*>(&light.DiffuseColor), 13+(i*2), 1);
+			reinterpret_cast<const f32*>(&light.DiffuseColor), 13+(i*2), 1);
 	}
-
-
 }
 
 

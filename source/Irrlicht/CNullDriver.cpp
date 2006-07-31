@@ -173,9 +173,9 @@ void CNullDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 
 
 //! Returns the transformation set by setTransform
-core::matrix4 CNullDriver::getTransform(E_TRANSFORMATION_STATE state)
+const core::matrix4& CNullDriver::getTransform(E_TRANSFORMATION_STATE state)
 {
-	return core::matrix4();
+	return TransformationMatrix;
 }
 
 
