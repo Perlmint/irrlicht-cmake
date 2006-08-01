@@ -69,6 +69,7 @@
 #include "IGUITabControl.h"
 #include "IGUIWindow.h"
 #include "IGUIToolbar.h"
+#include "IImage.h"
 #include "ILightSceneNode.h"
 #include "ILogger.h"
 #include "IMesh.h"

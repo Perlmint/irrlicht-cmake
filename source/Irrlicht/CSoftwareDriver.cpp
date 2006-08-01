@@ -749,6 +749,13 @@ void CSoftwareDriver::clearZBuffer()
 }
 
 
+//! Returns an image created from the last rendered frame.
+IImage* CSoftwareDriver::createScreenShot()
+{
+	return new CImage(BackBuffer->getColorFormat(), BackBuffer);
+}
+
+
 //! creates a video driver
 IVideoDriver* createSoftwareDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
 {

@@ -7,6 +7,7 @@
 #include "os.h"
 #include "S3DVertex.h"
 #include "CD3D8Texture.h"
+#include "CImage.h"
 #include <stdio.h>
 
 #include "IrrCompileConfig.h"
@@ -1972,6 +1973,81 @@ void CD3D8Driver::clearZBuffer()
 	if (FAILED(hr))
 		os::Printer::log("CD3D8Driver clearZBuffer() failed.", ELL_WARNING);
 }
+
+//! Returns an image created from the last rendered frame.
+IImage* CD3D8Driver::createScreenShot()
+{
+	HRESULT hr;
+
+	// query the screen dimensions of the current adapter
+	D3DDISPLAYMODE displayMode;
+	pID3DDevice->GetDisplayMode(&displayMode);
+
+	// create the image surface to store the front buffer image [always A8R8G8B8]
+	LPDIRECT3DSURFACE8 lpSurface;
+	if (FAILED(hr = pID3DDevice->CreateImageSurface(displayMode.Width, displayMode.Height, D3DFMT_A8R8G8B8, &lpSurface)))
+		return 0;
+ 
+	// read the front buffer into the image surface
+	if (FAILED(hr = pID3DDevice->GetFrontBuffer(lpSurface)))
+	{
+		lpSurface->Release();
+		return 0;
+	}
+
+	RECT clientRect;
+	{
+		POINT clientPoint;
+		clientPoint.x = 0;
+		clientPoint.y = 0;
+
+		ClientToScreen( (HWND)getExposedVideoData().D3D8.HWnd, &clientPoint );
+
+		clientRect.left   = clientPoint.x;
+		clientRect.top    = clientPoint.y;
+		clientRect.right  = clientRect.left + ScreenSize.Width;
+		clientRect.bottom = clientRect.top  + ScreenSize.Height;
+	}
+
+	// lock our area of the surface
+	D3DLOCKED_RECT lockedRect;
+	if (FAILED(lpSurface->LockRect(&lockedRect, &clientRect, D3DLOCK_READONLY)))
+	{
+		lpSurface->Release();
+		return 0;
+	}
+
+	// this could throw, but we aren't going to worry about that case very much
+	IImage* newImage = new CImage(ECF_A8R8G8B8, ScreenSize);
+
+	// d3d pads the image, so we need to copy the correct number of bytes
+	u32* pPixels = (u32*)newImage->lock();
+	if (pPixels)
+	{
+		u8 * sP = (u8 *)lockedRect.pBits;
+		u32* dP = (u32*)pPixels;
+
+		for (s32 y = 0; y < ScreenSize.Height; ++y)
+		{
+			memcpy(dP, sP, ScreenSize.Width * 4);
+
+			sP += lockedRect.Pitch;
+			dP += ScreenSize.Width;
+		}
+
+		newImage->unlock();
+	}
+
+	// we can unlock and release the surface
+	lpSurface->UnlockRect();
+ 
+	// release the image surface
+	lpSurface->Release();
+
+	// return status of save operation to caller
+	return newImage;
+}
+
 
 
 // returns the current size of the screen or rendertarget

@@ -266,6 +266,9 @@ namespace video
 		//! Clears the ZBuffer. 
 		virtual void clearZBuffer();
 
+		//! Returns an image created from the last rendered frame.
+		virtual IImage* createScreenShot();
+
 	private:
 
 		//! inits the parts of the open gl driver used on all platforms

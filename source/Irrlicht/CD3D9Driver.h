@@ -196,6 +196,9 @@ namespace video
 		//! Clears the ZBuffer. 
 		virtual void clearZBuffer();
 
+		//! Returns an image created from the last rendered frame.
+		virtual IImage* createScreenShot();
+
 	private:
 
 		// enumeration for rendering modes such as 2d and 3d for minizing the switching of renderStates.

@@ -13,6 +13,7 @@
 #include "COpenGLSLMaterialRenderer.h"
 #include "COpenGLNormalMapRenderer.h"
 #include "COpenGLParallaxMapRenderer.h"
+#include "CImage.h"
 #include "os.h"
 #include <stdlib.h>
 #include <string.h>
@@ -2455,7 +2456,30 @@ void COpenGLDriver::clearZBuffer()
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
+//! Returns an image created from the last rendered frame.
+IImage* COpenGLDriver::createScreenShot()
+{
+	IImage* newImage = new CImage(ECF_A8R8G8B8, ScreenSize);
 
+	GLvoid* pPixels = newImage->lock();
+	if (!pPixels)
+	{
+		newImage->drop();
+		return 0;
+	}
+
+	glReadPixels(0, 0, ScreenSize.Width, ScreenSize.Height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pPixels);
+
+	newImage->unlock();
+
+	if (glGetError() != 0)
+	{
+		newImage->drop();
+		return 0;
+	}
+
+	return newImage;
+}
 
 // returns the current size of the screen or rendertarget
 core::dimension2d<s32> COpenGLDriver::getCurrentRenderTargetSize()

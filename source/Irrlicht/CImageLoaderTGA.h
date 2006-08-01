@@ -40,6 +40,12 @@ namespace video
 	    u8 ImageDescriptor;
     } PACK_STRUCT;
 
+	struct STGAFooter
+	{
+		u32 ExtensionOffset;
+		u32 DeveloperOffset;
+		c8  Signature[18];
+	} PACK_STRUCT;
 
 // Default alignment
 #ifdef _MSC_VER

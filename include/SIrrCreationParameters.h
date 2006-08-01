@@ -14,7 +14,7 @@ namespace irr
 		//! Constructs a SIrrlichtCreationParameters structure with default values.
 		SIrrlichtCreationParameters()
 		{
-			DriverType = video::EDT_SOFTWARE;
+			DriverType = video::EDT_SOFTWARE2;
 			WindowSize = core::dimension2d<s32>(800, 600);
 			Bits = 16;
 			Fullscreen = false;
@@ -55,8 +55,8 @@ namespace irr
 		bool Vsync;
 
 		//! Specifies if the device should use fullscreen anti aliasing
-		/** Makes sharp/pixellated edges softer, but requires more performance. Also, 2D 
-		elements might look blurier with this switched on. The resulting rendering quality 
+		/** Makes sharp/pixelated edges softer, but requires more performance. Also, 2D 
+		elements might look blurred with this switched on. The resulting rendering quality 
 		also depends on the hardware and driver you are using, your program might look
 		different on different hardware with this. So if you are writing a 
 		game/application with antiAlias switched on, it would be a good idea to make it

@@ -9,6 +9,7 @@
 #include "os.h"
 #include "CImage.h"
 #include "CAttributes.h"
+#include "IWriteFile.h"
 
 namespace irr
 {
@@ -32,6 +33,29 @@ IImageLoader* createImageLoaderPCX();
 
 //! creates a loader which is able to load png images
 IImageLoader* createImageLoaderPNG();
+
+
+//! creates a loader which is able to load bmp images
+IImageWriter* createImageWriterBMP();
+
+//! creates a loader which is able to load jpg images
+IImageWriter* createImageWriterJPG();
+
+//! creates a loader which is able to load tga images
+IImageWriter* createImageWriterTGA();
+
+//! creates a loader which is able to load psd images
+IImageWriter* createImageWriterPSD();
+
+//! creates a loader which is able to load pcx images
+IImageWriter* createImageWriterPCX();
+
+//! creates a loader which is able to load png images
+IImageWriter* createImageWriterPNG();
+
+//! creates a loader which is able to load ppm images
+IImageWriter* createImageWriterPPM();
+
 
 
 //! Array holding the built in material type names
@@ -91,6 +115,14 @@ CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<s32>& scre
 	SurfaceLoader.push_back(video::createImageLoaderPCX());
 	SurfaceLoader.push_back(video::createImageLoaderPNG());
 
+	SurfaceWriter.push_back(video::createImageWriterBMP());
+	SurfaceWriter.push_back(video::createImageWriterJPG());
+	SurfaceWriter.push_back(video::createImageWriterTGA());
+	SurfaceWriter.push_back(video::createImageWriterPSD());
+	SurfaceWriter.push_back(video::createImageWriterPCX());
+	SurfaceWriter.push_back(video::createImageWriterPNG());
+	SurfaceWriter.push_back(video::createImageWriterPPM());
+
 	// set ExposedData to 0
 	memset(&ExposedData, 0, sizeof(ExposedData));
 }
@@ -111,8 +143,14 @@ CNullDriver::~CNullDriver()
 
 	// delete surface loader
 
-	for (u32 i=0; i<SurfaceLoader.size(); ++i)
+	u32 i;
+	for (i=0; i<SurfaceLoader.size(); ++i)
 		SurfaceLoader[i]->drop();
+
+	// delete surface writer
+
+	for (i=0; i<SurfaceWriter.size(); ++i)
+		SurfaceWriter[i]->drop();
 
 	deleteMaterialRenders();
 }
@@ -126,6 +164,17 @@ void CNullDriver::addExternalImageLoader(IImageLoader* loader)
 
 	loader->grab();
 	SurfaceLoader.push_back(loader);
+}
+
+
+//! Adds an external surface writer to the engine.
+void CNullDriver::addExternalImageWriter(IImageWriter* writer)
+{
+	if (!writer)
+		return;
+
+	writer->grab();
+	SurfaceWriter.push_back(writer);
 }
 
 
@@ -1062,6 +1111,30 @@ IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 	return 0; // failed to load
 }
 
+
+
+//! Writes the provided image to disk file
+bool CNullDriver::writeImageToFile(IImage* image, const char* filename)
+{
+	for (u32 i=0; i<SurfaceWriter.size(); ++i)
+	{
+		if (SurfaceWriter[i]->isAWriteableFileExtension(filename))
+		{
+			io::IWriteFile* file = FileSystem->createAndWriteFile(filename);
+			if (file)
+			{
+				bool written = SurfaceWriter[i]->writeImage(file, image);
+				file->drop();
+				if (written)
+					return true;
+			}
+		}
+	}
+	return false; // failed to write
+}
+
+
+
 //! Creates a software image from a byte array.
 IImage* CNullDriver::createImageFromData(ECOLOR_FORMAT format,
 										const core::dimension2d<s32>& size, void *data,
@@ -1546,6 +1619,12 @@ ITexture* CNullDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 //! Clears the ZBuffer.
 void CNullDriver::clearZBuffer()
 {
+}
+
+//! Returns an image created from the last rendered frame.
+IImage* CNullDriver::createScreenShot()
+{
+	return 0;
 }
 
 // prints renderer version

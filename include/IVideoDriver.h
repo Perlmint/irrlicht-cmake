@@ -15,6 +15,7 @@
 #include "SMaterial.h"
 #include "SLight.h"
 #include "IImageLoader.h"
+#include "IImageWriter.h"
 #include "triangle3d.h"
 #include "SExposedVideoData.h"
 #include "IMaterialRenderer.h"
@@ -626,6 +627,15 @@ namespace video
 		\param loader: Pointer to the external loader created. */
 		virtual void addExternalImageLoader(IImageLoader* loader) = 0;
 
+		//! Adds an external image writer to the engine.
+		/** This is useful if
+		the Irrlicht Engine should be able to write textures of currently
+		unsupported file formats (e.g .gif). The IImageWriter only needs
+		to be implemented for writing this file format. A pointer to
+		the implementation can be passed to the engine using this method.
+		\param writer: Pointer to the external writer created. */
+		virtual void addExternalImageWriter(IImageWriter* writer) = 0;
+
 		//! Returns the maximum amount of primitives
 		/** (mostly vertices) which
 		the device is able to render with one drawIndexedTriangleList
@@ -668,6 +678,14 @@ namespace video
 		If you no longer need the image, you should call IImage::drop().
 		See IUnknown::drop() for more information. */
 		virtual IImage* createImageFromFile(io::IReadFile* file) = 0;
+
+		//! Writes the provided image to disk file
+		/** Requires that there is a suitable image writer
+		registered for writing the image to disk
+		\param image: Image to write to disk
+		\param filename: name of the file to write
+		\return Returns true on success */
+		virtual bool writeImageToFile(IImage* image, const char* filename) = 0;
 
 		//! Creates a software image from a byte array.
 		/** No hardware texture will
@@ -766,6 +784,9 @@ namespace video
 		But if you have to render some special things, you can clear the zbuffer
 		during the rendering process with this method another time. */
 		virtual void clearZBuffer() = 0;
+
+		//! Returns an image created from the last rendered frame.
+		virtual IImage* createScreenShot() = 0;
 	};
 
 } // end namespace video

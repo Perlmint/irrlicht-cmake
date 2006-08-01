@@ -101,6 +101,16 @@ bool CDemo::OnEvent(SEvent event)
 		shoot();
 	}
 	else
+	if (event.EventType == EET_KEY_INPUT_EVENT &&
+		event.KeyInput.Key == KEY_F9 &&
+		event.KeyInput.PressedDown == false)
+	{
+		video::IImage* image = device->getVideoDriver()->createScreenShot();
+		if (image)
+			device->getVideoDriver()->writeImageToFile(image, "screenshot.bmp");
+		image->drop();
+	}
+	else
 #ifdef _DEBUG
 	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT &&
 		event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)

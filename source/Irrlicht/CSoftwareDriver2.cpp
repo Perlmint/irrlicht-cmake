@@ -1425,6 +1425,13 @@ void CSoftwareDriver2::clearZBuffer()
 }
 
 
+//! Returns an image created from the last rendered frame.
+IImage* CSoftwareDriver2::createScreenShot()
+{
+	return new CImage(BackBuffer->getColorFormat(), BackBuffer);
+}
+
+
 //! returns a device dependent texture from a software surface (IImage)
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 ITexture* CSoftwareDriver2::createDeviceDependentTexture(IImage* surface, const char* name)

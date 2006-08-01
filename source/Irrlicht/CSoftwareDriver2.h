@@ -123,6 +123,9 @@ namespace video
 		//! Clears the ZBuffer. 
 		virtual void clearZBuffer();
 
+		//! Returns an image created from the last rendered frame.
+		virtual IImage* createScreenShot();
+
 	protected:
 
 		//! sets a render target

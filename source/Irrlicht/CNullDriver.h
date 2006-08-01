@@ -11,6 +11,7 @@
 #include "irrArray.h"
 #include "irrString.h"
 #include "IImageLoader.h"
+#include "IImageWriter.h"
 #include "IMeshBuffer.h"
 #include "CFPSCounter.h"
 #include "S3DVertex.h"
@@ -161,6 +162,9 @@ namespace video
 
 		//! Adds an external image loader to the engine.
 		virtual void addExternalImageLoader(IImageLoader* loader);
+
+		//! Adds an external image writer to the engine.
+		virtual void addExternalImageWriter(IImageWriter* writer);
 
 		//! Draws a shadow volume into the stencil buffer. To draw a stencil shadow, do
 		//! this: Frist, draw all geometry. Then use this method, to draw the shadow
@@ -328,6 +332,12 @@ namespace video
 		//! Clears the ZBuffer. 
 		virtual void clearZBuffer();
 
+		//! Returns an image created from the last rendered frame.
+		virtual IImage* createScreenShot();
+
+		//! Writes the provided image to disk file
+		virtual bool writeImageToFile(IImage* image, const char* filename);
+
 		//! Sets the name of a material renderer. 
 		virtual void setMaterialRendererName(s32 idx, const char* name);
 
@@ -419,6 +429,7 @@ namespace video
 
 		core::array<SSurface> Textures;
 		core::array<video::IImageLoader*> SurfaceLoader;
+		core::array<video::IImageWriter*> SurfaceWriter;
 		core::array<SLight> Lights;
 		core::array<SMaterialRenderer> MaterialRenderers;
 

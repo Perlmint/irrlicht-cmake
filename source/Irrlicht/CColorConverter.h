@@ -64,6 +64,34 @@ public:
 	//! copies X8R8G8B8 32 bit data, and flips and 
 	//! mirrors the image during the process.
 	static void convert32BitTo32BitFlipMirror(const s32* in, s32* out, s32 width, s32 height, s32 pitch);
+
+
+	//! functions for converting one image format to another efficiently
+	//! and hopefully correctly.
+	//!
+	//! \param sP pointer to source pixel data
+	//! \param sN number of source pixels to copy
+	//! \param dP pointer to destination data buffer. must be big enough
+	//! to hold sN pixels in the output format.
+	static void convert_A1R5G5B5toR8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_A1R5G5B5toA8R8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_A1R5G5B5toA1R5G5B5(const void* sP, s32 sN, void* dP);
+	static void convert_A1R5G5B5toR5G6B5(const void* sP, s32 sN, void* dP);
+
+	static void convert_A8R8G8B8toR8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_A8R8G8B8toA8R8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_A8R8G8B8toA1R5G5B5(const void* sP, s32 sN, void* dP);
+	static void convert_A8R8G8B8toR5G6B5(const void* sP, s32 sN, void* dP);
+
+	static void convert_R8G8B8toR8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_R8G8B8toA8R8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_R8G8B8toA1R5G5B5(const void* sP, s32 sN, void* dP);
+	static void convert_R8G8B8toR5G6B5(const void* sP, s32 sN, void* dP);
+
+	static void convert_R5G6B5toR5G6B5(const void* sP, s32 sN, void* dP);
+	static void convert_R5G6B5toR8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_R5G6B5toA8R8G8B8(const void* sP, s32 sN, void* dP);
+	static void convert_R5G6B5toA1R5G5B5(const void* sP, s32 sN, void* dP);
 };
 
 
