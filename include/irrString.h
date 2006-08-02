@@ -52,7 +52,7 @@ public:
 	string(double number)
 	: array(0), allocated(0), used(0)
 	{
-		c8 tmpbuf[32];
+		c8 tmpbuf[255];
 		sprintf(tmpbuf,"%0.6f",number);
 		*this = tmpbuf;
 	}

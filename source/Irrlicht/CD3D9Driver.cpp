@@ -194,7 +194,7 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 
 	// print device information
 	D3DADAPTER_IDENTIFIER9 dai;
-	if (!FAILED(pID3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &dai)))
+	if (!FAILED(pID3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &dai)))
 	{
 		char tmp[512];
 

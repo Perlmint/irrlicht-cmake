@@ -111,19 +111,6 @@ bool CDemo::OnEvent(SEvent event)
 		image->drop();
 	}
 	else
-#ifdef _DEBUG
-	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT &&
-		event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
-	{
-		char tmp[255];
-		core::vector3df pos = device->getSceneManager()->getActiveCamera()->getAbsolutePosition();
-		sprintf(tmp, "points.push_back(core::vector3df(%ff, %ff, %ff)); // %d\n", pos.X, pos.Y, pos.Z,
-			sceneStartTime - device->getTimer()->getTime());
-		//OutputDebugString(tmp);
-		return true;
-	}
-	else
-#endif
 	if (device->getSceneManager()->getActiveCamera())
 	{
 		device->getSceneManager()->getActiveCamera()->OnEvent(event);
