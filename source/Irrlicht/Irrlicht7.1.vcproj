@@ -840,10 +840,10 @@
 					RelativePath="CImage.h">
 				</File>
 				<File
-					RelativePath="CImageLoaderBmp.cpp">
+					RelativePath="CImageLoaderBMP.cpp">
 				</File>
 				<File
-					RelativePath="CImageLoaderBmp.h">
+					RelativePath="CImageLoaderBMP.h">
 				</File>
 				<File
 					RelativePath="CImageLoaderJPG.cpp">

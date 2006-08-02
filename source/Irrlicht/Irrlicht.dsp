@@ -761,11 +761,11 @@ SOURCE=.\CImage.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CImageLoaderBmp.cpp
+SOURCE=.\CImageLoaderBMP.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CImageLoaderBmp.h
+SOURCE=.\CImageLoaderBMP.h
 # End Source File
 # Begin Source File
 

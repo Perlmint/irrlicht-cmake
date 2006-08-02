@@ -1540,7 +1540,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit152]
-FileName=CImageLoaderBmp.cpp
+FileName=CImageLoaderBMP.cpp
 Folder=video_impl/Null
 Compile=1
 CompileCpp=1
@@ -1550,7 +1550,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit153]
-FileName=CImageLoaderBmp.h
+FileName=CImageLoaderBMP.h
 Folder=video_impl/Null
 Compile=1
 CompileCpp=1

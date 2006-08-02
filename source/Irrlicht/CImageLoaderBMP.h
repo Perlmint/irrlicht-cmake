@@ -72,15 +72,15 @@ namespace video
 /*!
 	Surface Loader fow Windows bitmaps
 */
-class CImageLoaderBmp : public IImageLoader
+class CImageLoaderBMP : public IImageLoader
 {
 public:
 
 	//! constructor
-	CImageLoaderBmp();
+	CImageLoaderBMP();
 
 	//! destructor
-	virtual ~CImageLoaderBmp();
+	virtual ~CImageLoaderBMP();
 
 	//! returns true if the file maybe is able to be loaded by this class
 	//! based on the file extension (e.g. ".tga")

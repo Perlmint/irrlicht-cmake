@@ -2,7 +2,7 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include "CImageLoaderBmp.h"
+#include "CImageLoaderBMP.h"
 #include <string.h>
 #include "SColor.h"
 #include "CColorConverter.h"
@@ -16,18 +16,18 @@ namespace video
 
 
 //! constructor
-CImageLoaderBmp::CImageLoaderBmp()
+CImageLoaderBMP::CImageLoaderBMP()
 : BmpData(0), PaletteData(0)
 {
 	#ifdef _DEBUG
-	setDebugName("CImageLoaderBmp");
+	setDebugName("CImageLoaderBMP");
 	#endif
 }
 
 
 
 //! destructor
-CImageLoaderBmp::~CImageLoaderBmp()
+CImageLoaderBMP::~CImageLoaderBMP()
 {
 	if (PaletteData)
 		delete [] PaletteData;
@@ -40,7 +40,7 @@ CImageLoaderBmp::~CImageLoaderBmp()
 
 //! returns true if the file maybe is able to be loaded by this class
 //! based on the file extension (e.g. ".tga")
-bool CImageLoaderBmp::isALoadableFileExtension(const c8* fileName)
+bool CImageLoaderBMP::isALoadableFileExtension(const c8* fileName)
 {
 	return strstr(fileName, ".bmp") != 0;
 }
@@ -48,7 +48,7 @@ bool CImageLoaderBmp::isALoadableFileExtension(const c8* fileName)
 
 
 //! returns true if the file maybe is able to be loaded by this class
-bool CImageLoaderBmp::isALoadableFileFormat(irr::io::IReadFile* file)
+bool CImageLoaderBMP::isALoadableFileFormat(irr::io::IReadFile* file)
 {
 	u16 headerID;
 	file->read(&headerID, sizeof(u16));
@@ -59,7 +59,7 @@ bool CImageLoaderBmp::isALoadableFileFormat(irr::io::IReadFile* file)
 }
 
 
-void CImageLoaderBmp::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
+void CImageLoaderBMP::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
 {
 	c8* p = BmpData;
 	c8* newBmp = new c8[(width+pitch)*height];
@@ -125,7 +125,7 @@ void CImageLoaderBmp::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 }
 
 
-void CImageLoaderBmp::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
+void CImageLoaderBMP::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
 {
 	s32 lineWidth = (width+1)/2+pitch;
 	c8* p = BmpData;
@@ -227,7 +227,7 @@ void CImageLoaderBmp::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 
 
 //! creates a surface from the file
-IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
+IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 {
 	SBMPHeader header;
 
@@ -366,9 +366,9 @@ IImage* CImageLoaderBmp::loadImage(irr::io::IReadFile* file)
 
 
 //! creates a loader which is able to load windows bitmaps
-IImageLoader* createImageLoaderBmp()
+IImageLoader* createImageLoaderBMP()
 {
-	return new CImageLoaderBmp;
+	return new CImageLoaderBMP;
 }
 
 
