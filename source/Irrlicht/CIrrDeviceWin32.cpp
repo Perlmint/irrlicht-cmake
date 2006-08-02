@@ -25,11 +25,11 @@ namespace irr
 	{
 		IVideoDriver* createDirectX8Driver(const core::dimension2d<s32>& screenSize, HWND window, 
 			u32 bits, bool fullscreen, bool stencilbuffer, io::IFileSystem* io, 
-			bool pureSoftware, bool vsync, bool antiAlias);
+			bool pureSoftware, bool highPrecisionFPU, bool vsync, bool antiAlias);
 
 		IVideoDriver* createDirectX9Driver(const core::dimension2d<s32>& screenSize, HWND window, 
 			u32 bits, bool fullscreen, bool stencilbuffer, io::IFileSystem* io,
-			bool pureSoftware, bool vsync, bool antiAlias);
+			bool pureSoftware, bool highPrecisionFPU, bool vsync, bool antiAlias);
 
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, 
 			bool fullscreen, bool stencilBuffer, io::IFileSystem* io,
@@ -74,7 +74,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	#ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL 0x020A
 	#endif
-	#ifndef WHEEL_DELTA                     
+	#ifndef WHEEL_DELTA
 	#define WHEEL_DELTA 120
 	#endif
 
@@ -266,6 +266,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 				 u32 bits, bool fullscreen, 
 				 bool stencilbuffer, bool vsync, 
 				 bool antiAlias,
+				 bool highPrecisionFPU,
 				 IEventReceiver* receiver,
 				 HWND externalWindow,
 				 const char* version)
@@ -371,7 +372,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 
 	// create driver
 
-	createDriver(driverType, windowSize, bits, fullscreen, stencilbuffer, vsync, antiAlias);
+	createDriver(driverType, windowSize, bits, fullscreen, stencilbuffer, vsync, antiAlias, highPrecisionFPU);
 
 	createGUIAndScene();
 
@@ -415,14 +416,15 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 				   bool fullscreen,
 				   bool stencilbuffer,
 				   bool vsync,
-				   bool antiAlias)
+				   bool antiAlias,
+				   bool highPrecisionFPU)
 {
 	switch(driverType)
 	{
 	case video::EDT_DIRECT3D8:
 		#ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
 		VideoDriver = video::createDirectX8Driver(windowSize, HWnd, bits, fullscreen, 
-			stencilbuffer, FileSystem, false, vsync, antiAlias);
+			stencilbuffer, FileSystem, false, highPrecisionFPU, vsync, antiAlias);
 		if (!VideoDriver)
 		{
 			os::Printer::log("Could not create DIRECT3D8 Driver.", ELL_ERROR);
@@ -436,7 +438,7 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 	case video::EDT_DIRECT3D9:
 		#ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
 		VideoDriver = video::createDirectX9Driver(windowSize, HWnd, bits, fullscreen, 
-			stencilbuffer, FileSystem, false, vsync, antiAlias);
+			stencilbuffer, FileSystem, false, highPrecisionFPU, vsync, antiAlias);
 		if (!VideoDriver)
 		{
 			os::Printer::log("Could not create DIRECT3D9 Driver.", ELL_ERROR);
@@ -883,6 +885,7 @@ IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(
 		parameters.Stencilbuffer,
 		parameters.Vsync,
 		parameters.AntiAlias,
+		parameters.HighPrecisionFPU,
 		parameters.EventReceiver,
 		reinterpret_cast<HWND>(parameters.WindowId),
 		parameters.SDK_version_do_not_use);

@@ -21,6 +21,7 @@ namespace irr
 			Stencilbuffer = false;
 			Vsync = false;
 			AntiAlias = false;
+			HighPrecisionFPU = false;
 			EventReceiver = 0;
 			WindowId = 0;
 			SDK_version_do_not_use = IRRLICHT_SDK_VERSION;
@@ -64,6 +65,14 @@ namespace irr
 		This is only supported in D3D9 and D3D8. In D3D9, both sample types are supported,
 		D3DMULTISAMPLE_X_SAMPLES and D3DMULTISAMPLE_NONMASKABLE. Default value: false */
 		bool AntiAlias;
+
+		//! Specifies if the device should use high precision FPU setting
+		/** This is only relevant for DirectX Devices, which switch to low FPU precision
+		by default for performance reasons. However, this may lead to problems with the
+		other computations of the application. In this case setting this flag to true
+		should help - on the expense of performance loss, though.
+		Default value: false */
+		bool HighPrecisionFPU;
 
 		//! A user created event receiver.
 		IEventReceiver* EventReceiver;

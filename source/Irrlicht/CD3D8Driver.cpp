@@ -149,7 +149,7 @@ void CD3D8Driver::createMaterialRenderers()
 //! initialises the Direct3D API
 bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd,
 				u32 bits, bool fullScreen, bool pureSoftware,
-				bool vsync, bool antiAlias)
+				bool highPrecisionFPU, bool vsync, bool antiAlias)
 {
 	HRESULT hr;
 	D3DLibrary = LoadLibrary( "d3d8.dll" );
@@ -276,28 +276,29 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 
 	// create device
 
+	DWORD fpuPrecision = highPrecisionFPU ? D3DCREATE_FPU_PRESERVE : 0;
 	if (pureSoftware)
 	{
-		hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, D3DDEVTYPE_REF,	hwnd,
-									D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
+		hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hwnd,
+				fpuPrecision | D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
 
 		if (FAILED(hr))
 			os::Printer::log("Was not able to create Direct3D8 software device.", ELL_ERROR);
 	}
 	else
 	{
-		hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, devtype,	hwnd,
-									D3DCREATE_HARDWARE_VERTEXPROCESSING, &present, &pID3DDevice);
+		hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd,
+				fpuPrecision | D3DCREATE_HARDWARE_VERTEXPROCESSING, &present, &pID3DDevice);
 
 		if(FAILED(hr))
 		{
-			hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, devtype,	hwnd,
-										D3DCREATE_MIXED_VERTEXPROCESSING , &present, &pID3DDevice);
+			hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd,
+					fpuPrecision | D3DCREATE_MIXED_VERTEXPROCESSING , &present, &pID3DDevice);
 
 			if(FAILED(hr))
 			{
-				hr = pID3D->CreateDevice(	D3DADAPTER_DEFAULT, devtype, hwnd,
-											D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
+				hr = pID3D->CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd,
+						fpuPrecision | D3DCREATE_SOFTWARE_VERTEXPROCESSING, &present, &pID3DDevice);
 
 				if (FAILED(hr))
 					os::Printer::log("Was not able to create Direct3D8 device.", ELL_ERROR);
@@ -337,7 +338,7 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	// set exposed data
 	ExposedData.D3D8.D3D8 = pID3D;
 	ExposedData.D3D8.D3DDev8 = pID3DDevice;
-	ExposedData.D3D8.HWnd =  reinterpret_cast<s32>(hwnd);
+	ExposedData.D3D8.HWnd = reinterpret_cast<s32>(hwnd);
 
 	ResetRenderStates = true;
 
@@ -1987,7 +1988,7 @@ IImage* CD3D8Driver::createScreenShot()
 	LPDIRECT3DSURFACE8 lpSurface;
 	if (FAILED(hr = pID3DDevice->CreateImageSurface(displayMode.Width, displayMode.Height, D3DFMT_A8R8G8B8, &lpSurface)))
 		return 0;
- 
+
 	// read the front buffer into the image surface
 	if (FAILED(hr = pID3DDevice->GetFrontBuffer(lpSurface)))
 	{
@@ -2040,7 +2041,7 @@ IImage* CD3D8Driver::createScreenShot()
 
 	// we can unlock and release the surface
 	lpSurface->UnlockRect();
- 
+
 	// release the image surface
 	lpSurface->Release();
 
@@ -2078,16 +2079,16 @@ namespace video
 #ifdef _IRR_WINDOWS_
 //! creates a video driver
 IVideoDriver* createDirectX8Driver(const core::dimension2d<s32>& screenSize, HWND window,
-								   u32 bits, bool fullscreen, bool stencilbuffer,
-								   io::IFileSystem* io, bool pureSoftware, bool vsync,
-								   bool antiAlias)
+				   u32 bits, bool fullscreen, bool stencilbuffer,
+				   io::IFileSystem* io, bool pureSoftware, bool highPrecisionFPU,
+				   bool vsync, bool antiAlias)
 {
 	#ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
 	CD3D8Driver* dx8 =  new CD3D8Driver(screenSize, window, fullscreen,
 		                                stencilbuffer, io, pureSoftware);
 
 	if (!dx8->initDriver(screenSize, window, bits, fullscreen,
-		                 pureSoftware, vsync, antiAlias))
+		                 pureSoftware, highPrecisionFPU, vsync, antiAlias))
 	{
 		dx8->drop();
 		dx8 = 0;

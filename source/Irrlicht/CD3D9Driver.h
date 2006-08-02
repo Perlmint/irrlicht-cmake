@@ -25,7 +25,7 @@ namespace video
 	public:
 
 		//! constructor
-		CD3D9Driver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen, 
+		CD3D9Driver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen,
 			bool stencibuffer, io::IFileSystem* io, bool pureSoftware=false);
 
 		//! destructor
@@ -48,7 +48,7 @@ namespace video
 
 		//! sets a render target
 		virtual bool setRenderTarget(video::ITexture* texture,
-			bool clearBackBuffer=false, bool clearZBuffer=false, 
+			bool clearBackBuffer=false, bool clearZBuffer=false,
 			SColor color=video::SColor(0,0,0,0));
 
 		//! sets a viewport
@@ -58,7 +58,7 @@ namespace video
 		virtual const core::rect<s32>& getViewPort() const;
 
 		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, 
+		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount,
 			const u16* indexList, s32 triangleCount);
 
 		//! draws an indexed triangle list
@@ -82,7 +82,7 @@ namespace video
 
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
-			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0, 
+			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
 			SColor color=SColor(255,255,255,255), bool useAlphaChannelOfTexture=false);
 
 		//! Draws a part of the texture into the rectangle.
@@ -91,7 +91,7 @@ namespace video
 			video::SColor* colors=0, bool useAlphaChannelOfTexture=false);
 
 		//! draw an 2d rectangle
-		virtual void draw2DRectangle(SColor color, const core::rect<s32>& pos, 
+		virtual void draw2DRectangle(SColor color, const core::rect<s32>& pos,
 			const core::rect<s32>* clip = 0);
 
 		//!Draws an 2d rectangle with a gradient.
@@ -99,9 +99,9 @@ namespace video
 			SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 			const core::rect<s32>* clip);
 
-		//! Draws a 2d line. 
+		//! Draws a 2d line.
 		virtual void draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end, 
+								const core::position2d<s32>& end,
 								SColor color=SColor(255,255,255,255));
 
 		//! Draws a 3d line.
@@ -109,9 +109,9 @@ namespace video
 			const core::vector3df& end, SColor color = SColor(255,255,255,255));
 
 		//! initialises the Direct3D API
-		bool initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd, 
-						u32 bits, bool fullScreen, bool pureSoftware, bool vsync,
-						bool antiAlias);
+		bool initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd,
+				u32 bits, bool fullScreen, bool pureSoftware,
+				bool highPrecisionFPU, bool vsync, bool antiAlias);
 
 		//! \return Returns the name of the video driver. Example: In case of the DIRECT3D8
 		//! driver, it would return "Direct3D8.1".
@@ -138,9 +138,9 @@ namespace video
 
 		//! Fills the stencil shadow with color. After the shadow volume has been drawn
 		//! into the stencil buffer using IVideoDriver::drawStencilShadowVolume(), use this
-		//! to draw the color of the shadow. 
-		virtual void drawStencilShadow(bool clearStencilBuffer=false, 
-			video::SColor leftUpEdge = video::SColor(0,0,0,0), 
+		//! to draw the color of the shadow.
+		virtual void drawStencilShadow(bool clearStencilBuffer=false,
+			video::SColor leftUpEdge = video::SColor(0,0,0,0),
 			video::SColor rightUpEdge = video::SColor(0,0,0,0),
 			video::SColor leftDownEdge = video::SColor(0,0,0,0),
 			video::SColor rightDownEdge = video::SColor(0,0,0,0));
@@ -154,7 +154,7 @@ namespace video
 		virtual void setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled);
 
 		//! Sets the fog mode.
-		virtual void setFog(SColor color, bool linearFog, f32 start, 
+		virtual void setFog(SColor color, bool linearFog, f32 start,
 			f32 end, f32 density, bool pixelFog, bool rangeFog);
 
 		//! Only used by the internal engine. Used to notify the driver that
@@ -177,7 +177,7 @@ namespace video
 		//! Sets a pixel shader constant.
 		virtual void setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1);
 
-		//! Sets a constant for the vertex shader based on a name. 
+		//! Sets a constant for the vertex shader based on a name.
 		virtual bool setVertexShaderConstant(const c8* name, const f32* floats, int count);
 
 		//! Sets a constant for the pixel shader based on a name.
@@ -193,7 +193,7 @@ namespace video
 		//! Creates a render target texture.
 		virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
 
-		//! Clears the ZBuffer. 
+		//! Clears the ZBuffer.
 		virtual void clearZBuffer();
 
 		//! Returns an image created from the last rendered frame.
@@ -240,24 +240,24 @@ namespace video
 		// returns the current size of the screen or rendertarget
 		core::dimension2d<s32> getCurrentRenderTargetSize();
 
-		//! Adds a new material renderer to the VideoDriver, using pixel and/or 
+		//! Adds a new material renderer to the VideoDriver, using pixel and/or
 		//! vertex shaders to render geometry.
 		s32 addShaderMaterial(const c8* vertexShaderProgram, const c8* pixelShaderProgram,
-			IShaderConstantSetCallBack* callback, 
+			IShaderConstantSetCallBack* callback,
 			E_MATERIAL_TYPE baseMaterial, s32 userData);
 
-		//! Adds a new material renderer to the VideoDriver, based on a high level shading 
-		//! language. 
+		//! Adds a new material renderer to the VideoDriver, based on a high level shading
+		//! language.
 		virtual s32 addHighLevelShaderMaterial(
 			const c8* vertexShaderProgram,
 			const c8* vertexShaderEntryPointName = "main",
 			E_VERTEX_SHADER_TYPE vsCompileTarget = EVST_VS_1_1,
-			const c8* pixelShaderProgram = 0, 
+			const c8* pixelShaderProgram = 0,
 			const c8* pixelShaderEntryPointName = "main",
 			E_PIXEL_SHADER_TYPE psCompileTarget = EPST_PS_1_1,
 			IShaderConstantSetCallBack* callback = 0,
 			E_MATERIAL_TYPE baseMaterial = video::EMT_SOLID,
-			s32 userData=0);   
+			s32 userData=0);
 
 		void createMaterialRenderers();
 
@@ -295,7 +295,7 @@ namespace video
 		D3DCAPS9 Caps;
 
 		E_VERTEX_TYPE LastVertexType;
-		
+
 		f32 MaxLightDistance;
 		s32 LastSetLight;
 		bool DeviceLost;

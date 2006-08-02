@@ -27,7 +27,7 @@ namespace irr
 		CIrrDeviceWin32(video::E_DRIVER_TYPE deviceType, 
 			const core::dimension2d<s32> windowSize, u32 bits,
 			bool fullscreen, bool stencilbuffer, bool vsync, 
-			bool antiAlias,
+			bool antiAlias, bool highPrecisionFPU,
 			IEventReceiver* receiver,
 			HWND window,
 			const char* version);
@@ -172,7 +172,7 @@ namespace irr
 		//! create the driver
 		void createDriver(video::E_DRIVER_TYPE driverType,
 			const core::dimension2d<s32>& windowSize, u32 bits, bool fullscreen,
-			bool stencilbuffer, bool vsync, bool antiAlias);
+			bool stencilbuffer, bool vsync, bool antiAlias, bool highPrecisionFPU);
 
 		//! switchs to fullscreen
 		bool switchToFullScreen(s32 width, s32 height, s32 bits);
