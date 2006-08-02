@@ -104,24 +104,26 @@ int main()
 	this node fly around our first test scene node.
 	*/
 	scene::ISceneNode* n = smgr->addCubeSceneNode();
-	n->setMaterialTexture(0, driver->getTexture("../../media/t351sml.jpg"));
 
-	scene::ISceneNodeAnimator* anim = smgr->createFlyCircleAnimator(
-		core::vector3df(0,0,30), 20.0f);
-	n->addAnimator(anim);
-	anim->drop();
-
+	if (n)
+	{
+		n->setMaterialTexture(0, driver->getTexture("../../media/t351sml.jpg"));
+		scene::ISceneNodeAnimator* anim =
+			smgr->createFlyCircleAnimator(core::vector3df(0,0,30), 20.0f);
+		n->addAnimator(anim);
+		anim->drop();
+	}
 
 	/*
 	The last scene node we add to show possibilities of scene node animators is 
 	a md2 model, which uses a 'fly straight' animator to run between to points.
 	*/
-	scene::IAnimatedMeshSceneNode* anms = smgr->addAnimatedMeshSceneNode(
-		smgr->getMesh("../../media/sydney.md2"));
+	scene::IAnimatedMeshSceneNode* anms = smgr->addAnimatedMeshSceneNode(smgr->getMesh("../../media/sydney.md2"));
 
-	if (n)
+	if (anms)
 	{
-		anim = smgr->createFlyStraightAnimator(core::vector3df(100,0,60), 
+		scene::ISceneNodeAnimator* anim =
+			smgr->createFlyStraightAnimator(core::vector3df(100,0,60), 
 			core::vector3df(-100,0,60), 2500, true);
 		anms->addAnimator(anim);
 		anim->drop();
