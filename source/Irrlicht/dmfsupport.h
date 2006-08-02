@@ -35,7 +35,7 @@ struct dmfHeader
 	char dmfName[128]; //!<Scene name
 	SColor dmfAmbient; //!<Ambient color
 	f32 dmfShadow;     //!<Shadow intensity
-    u32 numObjects;    //!<Number of objects in this scene
+	u32 numObjects;    //!<Number of objects in this scene
 	u32 numMaterials;  //!<Number of materials in this scene
 	u32 numVertices;   //!<Total number of vertices faces*(vertices for each face)
 	u32 numFaces;      //!<Total number of faces

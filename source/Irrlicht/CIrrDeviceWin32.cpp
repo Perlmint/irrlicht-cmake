@@ -521,7 +521,7 @@ void CIrrDeviceWin32::resizeIfNecessary()
 
 	char tmp[255];
 
-	if (r.right <= 1 || r.bottom <= 1)
+	if (r.right < 2 || r.bottom < 2)
 	{
 		sprintf(tmp, "Ignoring resize operation to (%d %d)", r.right, r.bottom);
 		os::Printer::log(tmp);
@@ -765,7 +765,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 				out.append("Server " );
 			if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
 				out.append("Advanced Server ");
-         }
+         	}
 
 		// Display version, service pack (if any), and build number.
 		

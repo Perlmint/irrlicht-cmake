@@ -66,9 +66,9 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 		Mesh->drop();
 	Mesh = new SMesh();
 
-	core::array< core::vector3df > vertexBuffer;
-	core::array< core::vector2d<f32> > textureCoordBuffer;
-	core::array< core::vector3df > normalsBuffer;
+	core::array<core::vector3df> vertexBuffer;
+	core::array<core::vector2df> textureCoordBuffer;
+	core::array<core::vector3df> normalsBuffer;
 	SObjGroup * pCurrGroup = 0;
 	SObjMtl * pCurrMtl = new SObjMtl();
 	pCurrMtl->name="";
