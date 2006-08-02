@@ -2461,7 +2461,7 @@ IImage* COpenGLDriver::createScreenShot()
 {
 	IImage* newImage = new CImage(ECF_A8R8G8B8, ScreenSize);
 
-	GLvoid* pPixels = newImage->lock();
+	u32* pPixels = (u32*)newImage->lock();
 	if (!pPixels)
 	{
 		newImage->drop();
@@ -2469,6 +2469,22 @@ IImage* COpenGLDriver::createScreenShot()
 	}
 
 	glReadPixels(0, 0, ScreenSize.Width, ScreenSize.Height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pPixels);
+
+	// opengl images are inverted, so we have to fix that here.
+	s32 y0 = 0, y1 = ScreenSize.Height - 1;
+	for (; y0 < y1; ++y0, --y1)
+	{
+		u32* topRow = &pPixels[y0 * ScreenSize.Width];
+		u32* botRow = &pPixels[y1 * ScreenSize.Width];
+
+		s32 x;
+		for(x = 0; x < ScreenSize.Width; ++x)
+		{
+			u32 pixel = topRow[x];
+			topRow[x] = botRow[x];
+			botRow[x] = pixel;
+		}
+	}
 
 	newImage->unlock();
 
