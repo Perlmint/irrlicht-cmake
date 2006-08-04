@@ -40,8 +40,8 @@
             ask the user for the rendering driver, create the Irrlicht Device:</p>
           <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
             <tr> 
-              <td><pre>#include <irrlicht.h>
-#include <iostream>
+              <td><pre>#include &lt;irrlicht.h>
+#include &lt;iostream>
 
 using namespace irr;
 
@@ -101,7 +101,8 @@ int main()
             to gray. </p>
           <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
             <tr> 
-              <td><pre>// add white light
+              <td><pre>
+	// add white light
 	scene::ILightSceneNode* light = smgr->addLightSceneNode(0,
 		core::vector3df(-15,5,-105), video::SColorf(1.0f, 1.0f, 1.0f));
 
@@ -114,7 +115,8 @@ int main()
             rotate to make the scene more interesting.</p>
           <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
             <tr> 
-              <td><pre>// add fps camera
+              <td><pre>
+	// add fps camera
 	scene::ICameraSceneNode* fpsCamera = smgr->addCameraSceneNodeFPS();
 	fpsCamera->setPosition(core::vector3df(-50,50,-150));
 
@@ -129,7 +131,7 @@ int main()
 		core::vector3df(0.3f, 0.3f,0));
 
 	test->setPosition(core::vector3df(-100,0,-100));
-	test->setMaterialFlag(video::EMF_LIGHTING, false); // enable dynamic lighting
+	test->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
 	test->addAnimator(anim);
 	anim->drop();
 

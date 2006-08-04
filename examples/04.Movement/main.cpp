@@ -85,13 +85,15 @@ int main()
 
 	/*
 	Create the node for moving it with the 'W' and 'S' key. We create a
-	'test node', which is a cube built in into the engine for testing 
-	purposes. We place the node a (0,0,30) and we	assign a texture to it
-	to let it look a little bit more interesting.
+	sphere node, which is a built in geometry primitive. We place the node
+	at (0,0,30) and assign a texture to it to let it look a little bit more
+	interesting. Because we have no dynamic lights in this scene we disable
+	lighting for each model (otherwise the models would be black).
 	*/
-	node = smgr->addCubeSceneNode();
+	node = smgr->addSphereSceneNode();
 	node->setPosition(core::vector3df(0,0,30));
 	node->setMaterialTexture(0, driver->getTexture("../../media/wall.bmp"));
+	node->setMaterialFlag(video::EMF_LIGHTING, false);
 
 
 	/* 
@@ -100,14 +102,15 @@ int main()
 	mesh scene nodes, billboards, lights and even camera scene nodes. Scene node
 	animators are not only able to modify the position of a scene node, they can
 	also animate the textures of an object for example.
-	We create a test scene node again an attach a 'fly circle' scene node to it, letting
-	this node fly around our first test scene node.
+	We create a cube scene node and attach a 'fly circle' scene node to it, letting
+	this node fly around our sphere scene node.
 	*/
 	scene::ISceneNode* n = smgr->addCubeSceneNode();
 
 	if (n)
 	{
 		n->setMaterialTexture(0, driver->getTexture("../../media/t351sml.jpg"));
+		n->setMaterialFlag(video::EMF_LIGHTING, false);
 		scene::ISceneNodeAnimator* anim =
 			smgr->createFlyCircleAnimator(core::vector3df(0,0,30), 20.0f);
 		n->addAnimator(anim);
@@ -129,8 +132,7 @@ int main()
 		anim->drop();
 
 		/*
-		To make to model look better, we disable lighting (we have created no lights,
-		and so the model would be black), set the frames between which the animation
+		To make to model look right we set the frames between which the animation
 		should loop, rotate the model around 180 degrees, and adjust the animation speed
 		and the texture.
 		To set the right animation (frames and speed), we would also be able to just

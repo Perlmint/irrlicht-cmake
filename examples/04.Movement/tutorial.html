@@ -93,12 +93,15 @@
         </tr>
       </table>
       <p> Create the node for moving it with the 'W' and 'S' key. We create a 
-        'test node', which is a cube built in into the engine for testing purposes. 
-        We place the node a (0,0,30) and we assign a texture to it to let it look 
+        sphere node, which is a built in geometric primitive scene node.
+        We place the node at (0,0,30) and assign a texture to it to let it look 
         a little bit more interesting.</p>
       <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
         <tr> 
-          <td><pre>node = smgr-&gt;addCubeSceneNode();<br>node-&gt;setPosition(core::vector3df(0,0,30));<br>node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));</pre></td>
+          <td><pre>node = smgr-&gt;addSphereSceneNode();
+node-&gt;setPosition(core::vector3df(0,0,30));
+node-&gt;setMaterialFlag(video::EMF_LIGHTING, false);
+node-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/wall.bmp&quot;));</pre></td>
         </tr>
       </table>
       <p>Now we create another node, moving using a scene node animator. Scene 
@@ -112,10 +115,11 @@
         fly around our first test scene node.</p>
       <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
         <tr> 
-          <td>
-<pre>scene::ISceneNode* n = smgr-&gt;addCubeSceneNode();<br>n-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/t351sml.jpg&quot;));</pre>
-            <pre>scene::ISceneNodeAnimator* anim = 
-     smgr-&gt;createFlyCircleAnimator(core::vector3df(0,0,30), 20.0f);
+          <td><pre>scene::ISceneNode* n = smgr-&gt;addCubeSceneNode();
+n-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/t351sml.jpg&quot;));
+n-&gt;setMaterialFlag(video::EMF_LIGHTING, false);
+scene::ISceneNodeAnimator* anim = 
+	smgr-&gt;createFlyCircleAnimator(core::vector3df(0,0,30), 20.0f);
 n-&gt;addAnimator(anim);
 anim-&gt;drop();</pre></td>
         </tr>
@@ -131,11 +135,9 @@ if (n)<br>	{<br>		anim = smgr-&gt;createFlyStraightAnimator(core::vector3df(100,
             </td>
         </tr>
       </table>
-      <p>To make to model look better, we disable lighting (we have created no 
-        lights, and so the model would be black), set the frames between which 
+      <p>To make to model look right we set the frames between which 
         the animation should loop, rotate the model around 180 degrees, and adjust 
-        the animation speed<br>
-        and the texture.<br>
+        the animation speed and the texture.<br>
         To set the right animation (frames and speed), we would also be able to 
         just call &quot;anms-&gt;setMD2Animation(scene::EMAT_RUN)&quot; for the 
         'run' animation instead of &quot;setFrameLoop&quot; and &quot;setAnimationSpeed&quot;, 
@@ -144,7 +146,7 @@ if (n)<br>	{<br>		anim = smgr-&gt;createFlyStraightAnimator(core::vector3df(100,
       <table width="95%" border="0" cellspacing="2" cellpadding="0" bgcolor="#CCCCCC" align="center">
         <tr> 
           <td> <pre>   anms-&gt;setMaterialFlag(video::EMF_LIGHTING, false);<br>   anms-&gt;setFrameLoop(320, 360);
-   anms-&gt;setAnimationSpeed(30);<br>   anms-&gt;setRotation(core::vector3df(0,180.0f,0));<br>   anms-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/sydney.BMP&quot;));<br>}<br></pre></td>
+   anms-&gt;setAnimationSpeed(30);<br>   anms-&gt;setRotation(core::vector3df(0,180.0f,0));<br>   anms-&gt;setMaterialTexture(0, driver-&gt;getTexture(&quot;../../media/sydney.bmp&quot;));<br>}<br></pre></td>
         </tr>
       </table>
       <p>To be able to look at and move around in this scene, we create a first 

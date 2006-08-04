@@ -218,6 +218,51 @@ public:
 				}
 				break;
 
+			case EGET_COMBO_BOX_CHANGED:
+
+				// control anti-aliasing/filtering
+				if (id == 108)
+				{
+					s32 pos = ((IGUIComboBox*)event.GUIEvent.Caller)->getSelected();
+					switch (pos)
+					{
+						case 0:
+						if (Model)
+						{
+							Model->setMaterialFlag(video::EMF_BILINEAR_FILTER, false);
+							Model->setMaterialFlag(video::EMF_TRILINEAR_FILTER, false);
+							Model->setMaterialFlag(video::EMF_ANISOTROPIC_FILTER, false);
+						}
+						break;
+						case 1:
+						if (Model)
+						{
+							Model->setMaterialFlag(video::EMF_BILINEAR_FILTER, true);
+							Model->setMaterialFlag(video::EMF_TRILINEAR_FILTER, false);
+						}
+						break;
+						case 2:
+						if (Model)
+						{
+							Model->setMaterialFlag(video::EMF_BILINEAR_FILTER, false);
+							Model->setMaterialFlag(video::EMF_TRILINEAR_FILTER, true);
+						}
+						break;
+						case 3:
+						if (Model)
+						{
+							Model->setMaterialFlag(video::EMF_ANISOTROPIC_FILTER, true);
+						}
+						case 4:
+						if (Model)
+						{
+							Model->setMaterialFlag(video::EMF_ANISOTROPIC_FILTER, false);
+						}
+						break;
+					}
+				}
+				break;
+
 			case EGET_BUTTON_CLICKED:
 
 				switch(id)
@@ -427,13 +472,12 @@ int main()
 
 	// create a combobox with some senseless texts
 
-	gui::IGUIComboBox* box = env->addComboBox(core::rect<s32>(100,5,200,25), bar);
+	gui::IGUIComboBox* box = env->addComboBox(core::rect<s32>(100,5,200,25), bar, 108);
+	box->addItem(L"No filtering");
 	box->addItem(L"Bilinear");
 	box->addItem(L"Trilinear");
 	box->addItem(L"Anisotropic");
 	box->addItem(L"Isotropic");
-	box->addItem(L"Psychedelic");
-	box->addItem(L"No filtering");
 
 	/*
 		To make the editor look a little bit better, we disable transparent

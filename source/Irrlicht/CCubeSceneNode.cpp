@@ -29,9 +29,6 @@ CCubeSceneNode::CCubeSceneNode(f32 size, ISceneNode* parent, ISceneManager* mgr,
 	for (i=0; i<36; ++i)
 		Indices[i] = u[i];
 
-	Material.Wireframe = false;
-	Material.Lighting = false;
-
 	setSize();
 }
 

@@ -168,6 +168,7 @@ int main()
 	anim->drop();
 
 	scene::ISceneNode* cube = smgr->addCubeSceneNode(25);
+	cube->setMaterialFlag(video::EMF_LIGHTING, false);
 	
 	cube->setMaterialTexture(0, driver->getTexture("../../media/rockwall.bmp"));
 

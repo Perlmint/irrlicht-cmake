@@ -165,31 +165,29 @@ void CSphereSceneNode::setSizeAndPolys()
 
 			Vertices[i] = video::S3DVertex(pos.X, pos.Y, pos.Z,
 						normal.X, normal.Y, normal.Z,
-						clr, 1, 1);
+						clr, 
+						asin(normal.X)/core::PI*2 + 0.5f,
+						acos(normal.Y)/core::PI*2 + 0.5f);
 
 			++i;
 		}
 	}
 
 	// the vertex at the top of the sphere
-	Vertices[i] = video::S3DVertex(0, Radius, 0, 1,1,1, clr, 1, 1);
+	Vertices[i] = video::S3DVertex(0.0f,Radius,0.0f, 1.0f,1.0f,1.0f, clr, 0.5f, 0.5f);
 
 	// the vertex at the bottom of the sphere
 	++i;
-	Vertices[i] = video::S3DVertex(0, -Radius, 0,-1,-1,-1, clr, 1, 1);
+	Vertices[i] = video::S3DVertex(0.0f,-Radius,0.0f, -1.0f,-1.0f,-1.0f, clr, 0.5f, 0.5f);
 
 	// recalculate bounding box
 
-	Box.reset(Vertices[0].Pos);
-	for (s32 u = 0; u < VertexCount; ++u)
-	{
-		Box.addInternalPoint(Vertices[u].Pos);
-
-		Vertices[u].TCoords.X = asin(Vertices[u].Normal.X)/core::PI*2 + 0.5f;
-		Vertices[u].TCoords.Y = acos(Vertices[u].Normal.Y)/core::PI*2 + 0.5f;
-	}
-
-	// recalculate texture and normal
+	Box.reset(Vertices[i].Pos);
+	Box.addInternalPoint(Vertices[i-1].Pos);
+	Box.addInternalPoint(Radius,0.0f,0.0f);
+	Box.addInternalPoint(-Radius,0.0f,0.0f);
+	Box.addInternalPoint(0.0f,0.0f,Radius);
+	Box.addInternalPoint(0.0f,0.0f,-Radius);
 }
 
 
@@ -204,6 +202,13 @@ void CSphereSceneNode::render()
 		driver->setMaterial(Material);
 		driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 		driver->drawIndexedTriangleList(Vertices, VertexCount, Indices, IndexCount/3);
+		if (DebugDataVisible)
+		{
+			video::SMaterial m;
+			m.Lighting = false;
+			driver->setMaterial(m);
+			driver->draw3DBox(Box, video::SColor(255,255,255,255));
+		}
 	}
 }
 

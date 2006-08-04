@@ -106,7 +106,7 @@ int main()
 		core::vector3df(0.3f, 0.3f,0));
 
 	test->setPosition(core::vector3df(-100,0,-100));
-	test->setMaterialFlag(video::EMF_LIGHTING, false); // enable dynamic lighting
+	test->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
 	test->addAnimator(anim);
 	anim->drop();
 
