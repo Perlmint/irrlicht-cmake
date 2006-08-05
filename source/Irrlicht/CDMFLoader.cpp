@@ -20,7 +20,6 @@
 #include "SMeshBufferLightMap.h"
 #include "irrString.h"
 #include "irrMath.h"
-#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include "dmfsupport.h"
@@ -31,7 +30,7 @@ namespace scene
 {
 
 /** Constructor*/
-CDMFLoader::CDMFLoader(video::IVideoDriver* driver,scene::ISceneManager* smgr)
+CDMFLoader::CDMFLoader(video::IVideoDriver* driver, ISceneManager* smgr)
 : Driver(driver) , SceneMgr(smgr)
 {
 	#ifdef _DEBUG
@@ -72,7 +71,7 @@ void CDMFLoader::GetFaceNormal(f32 a[3], //First point
 	out[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
 	out[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
 
-	f32 dist = (f32)sqrt((out[0] * out[0]) + (out[1] * out[1]) + (out[2] * out[2]));
+	f32 dist = (f32)sqrtf((out[0] * out[0]) + (out[1] * out[1]) + (out[2] * out[2]));
 
 	if (dist == 0.0f) 
 		dist = 0.001f;
@@ -87,7 +86,7 @@ void CDMFLoader::GetFaceNormal(f32 a[3], //First point
  \return Pointer to the created mesh. Returns 0 if loading failed.
  If you no longer need the mesh, you should call IAnimatedMesh::drop().
  See IUnknown::drop() for more information.*/
-IAnimatedMesh* CDMFLoader::createMesh(irr::io::IReadFile* file) 
+IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file) 
 {
 	SMesh * Mesh = new SMesh();
 
@@ -96,11 +95,10 @@ IAnimatedMesh* CDMFLoader::createMesh(irr::io::IReadFile* file)
 	if (!file) 
 		return false;
 
-    StringList dmfRawFile;
-    
     //Load stringlist
-    dmfRawFile.LoadFromFile(file);
-    if (dmfRawFile.size()<1) 
+    StringList dmfRawFile(file);
+    
+    if (dmfRawFile.size()==0) 
 		return false;
     
     //begin logging with
@@ -167,7 +165,7 @@ IAnimatedMesh* CDMFLoader::createMesh(irr::io::IReadFile* file)
        for (i=0; i<header.numMaterials; i++)
 	   {
 			//create a new SMeshBufferLightMap for each material
-			scene::SMeshBufferLightMap* buffer = new scene::SMeshBufferLightMap();
+			SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
 			buffer->Material.MaterialType = video::EMT_LIGHTMAP_LIGHTING  ;
 			buffer->Material.Wireframe = false;
 			buffer->Material.Lighting = true;
@@ -197,28 +195,26 @@ IAnimatedMesh* CDMFLoader::createMesh(irr::io::IReadFile* file)
 		for (v = 0; v < faces[i].numVerts; v++)
 		{
 			dmfVert * vv = &verts[faces[i].firstVert + v];
-			video::S3DVertex2TCoords vert = video::S3DVertex2TCoords();
-			vert.Pos.set(vv->pos[0], vv->pos[1], vv->pos[2]);
-			vert.Color = irr::video::SColor(0,255,255,255);
-			vert.Normal.set(normal[0], normal[1], normal[2]);
-            if ( materiali[faces[i].materialID].textureBlend==4 && 
+			video::S3DVertex2TCoords vert(vv->pos[0], vv->pos[1], vv->pos[2],
+				normal[0], normal[1], normal[2], video::SColor(0,255,255,255), 0.0f, 0.0f);
+			if ( materiali[faces[i].materialID].textureBlend==4 && 
 				 SceneMgr->getParameters()->getAttributeAsBool(DMF_FLIP_ALPHA_TEXTURES))
-            {
-				vert.TCoords.set(vv->tc[0],-vv->tc[1] );
+			{
+				vert.TCoords.set(vv->tc[0],-vv->tc[1]);
 				vert.TCoords2.set(vv->lc[0],vv->lc[1]);
-            }
-            else
+			}
+			else
 			{
 				vert.TCoords.set(vv->tc[0], vv->tc[1]);
 				vert.TCoords2.set(vv->lc[0], vv->lc[1]);
-            }
+			}
 			meshBuffer->Vertices.push_back(vert);
 		}
 
-       // Now add the indices
+		// Now add the indices
 		// This weird loop turns convex polygons into triangle strips.
-		// I do it this way instead of a simple fan because it usually looks 
-		// a lot better in wireframe, for example.
+		// I do it this way instead of a simple fan because it usually
+		// looks  a lot better in wireframe, for example.
 		u32 h = faces[i].numVerts - 1, l = 0, c; // High, Low, Center
 		for (v = 0; v < faces[i].numVerts - 2; v++)
 		{
@@ -291,7 +287,7 @@ IAnimatedMesh* CDMFLoader::createMesh(irr::io::IReadFile* file)
 			red.append((char*)&colour[6]);
 			red.append((char*)&colour[7]);
 
-			SColor color = SColor(axtoi(alpha.c_str()),
+			SColor color(axtoi(alpha.c_str()),
 				axtoi(red.c_str()),axtoi(green.c_str()),
 				axtoi(blue.c_str()));
 

@@ -20,13 +20,12 @@
 #ifndef __DMF_SUPPORT_H_INCLUDED__
 #define __DMF_SUPPORT_H_INCLUDED__
 
-#include <irrlicht.h>
 #include <stdlib.h>
 
 using namespace irr;
 using namespace video;
 
-/** A structure rapresenting some DeleD infos. 
+/** A structure representing some DeleD infos. 
  This structure contains data about DeleD level file like: version, ambient colour, number of objects etc...*/
 struct dmfHeader 
 { 
@@ -85,7 +84,7 @@ struct dmfLight
 	f32 pos[3];//!<Position of this light.
 	SColorf diffuseColor;//!<Diffuse color.
 	SColorf specularColor;//!<Specular color.
-    f32 radius;//!<Maximun radius of light.
+	f32 radius;//!<Maximum radius of light.
 };
 		
 /** A structure rapresenting a single water plane.
@@ -98,54 +97,18 @@ struct dmfWaterPlain
 	core::dimension2d<s32> tileNum;//!<number of tiles of this water plain.
 	f32 waveHeight;//!<height of waves.
 	f32 waveSpeed;//!<waves speed.
-	f32 waveLength;//!<waves lenght.			
+	f32 waveLength;//!<waves length.			
 };
 
 
-/** A function to convert a 2byte hexstring to a int.
-This function converts an hex string of 2 bytes (i.e. FF) to its int value (i.e. 255).
-\return An int rapresenting the hex input value.*/
+/** A function to convert a hexstring to a int.
+This function converts an hex string (i.e. FF) to its int value (i.e. 255).
+\return An int representing the hex input value.*/
 int axtoi(const char *hexStg)
 {
-  int n = 0;         // position in string
-  int m = 0;         // position in digit[] to shift
-  int count;         // loop index
   int intValue = 0;  // integer value of hex string
-  int digit[5];      // hold values to convert
 
-  while (n < 2) 
-  {
-     if (hexStg[n]=='\0')
-        break;
-
-     if (hexStg[n] > 0x29 && hexStg[n] < 0x40 ) //if 0 to 9
-        digit[n] = hexStg[n] & 0x0f;            //convert to int
-     else 
-	 if (hexStg[n] >='a' && hexStg[n] <= 'f') //if a to f
-        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
-     else 
-     if (hexStg[n] >='A' && hexStg[n] <= 'F') //if A to F
-        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
-     else 
-		 break;
-
-    n++;
-  }
-
-  count = n;
-  m = n - 1;
-  n = 0;
-
-  while(n < count)
-  {
-     // digit[n] is value of hex digit at position n
-     // (m << 2) is the number of positions to shift
-     // OR the bits into return value
-     intValue = intValue | (digit[n] << (m << 2));
-     m--;   // adjust the position to set
-     n++;   // next digit to process
-  }
-
+  sscanf(hexStg, "%x", &intValue);
   return (intValue);
 }
 
@@ -225,21 +188,6 @@ public:
 
 		delete [] buf;
     }
-        
-	
-	//GetText returns a String containing all the text included in
-    //the StringList
-    /** Returns all strings contained in the StringList as a single string.
-    \return A single String containing all items.*/
-    String GetText()
-	{
-        String str;
-        for(int i=0; i<(int)size(); ++i)
-            str += (*this)[i];
-
-        return str;
-    }   
-
 };
 
   //This function subdivides a string in a list of strings
@@ -281,24 +229,22 @@ StringList SubdivideString(String str, String divider)
 /**This function extract a dmfHeader from a DMF file.
 You must give in input a StringList representing a DMF file loaded with LoadFromFile.
 \return true if function succeed or false on fail.*/
-bool GetDMFHeader (StringList RawFile,
-                   dmfHeader & header)
+bool GetDMFHeader (StringList RawFile, dmfHeader & header)
 {
-          StringList temp=SubdivideString(RawFile[0],String(";")); //file info
+	StringList temp=SubdivideString(RawFile[0],String(";")); //file info
 
-	      if ( temp[0] != String("DeleD Map File") )
-			  return false; //not a deled file
+	if ( temp[0] != String("DeleD Map File") )
+		return false; //not a deled file
 
-	      temp.clear();
-          temp = SubdivideString(RawFile[1],String(" "));//get version
-	      StringList temp1=SubdivideString(temp[1],String(";"));
+	temp.clear();
+	temp = SubdivideString(RawFile[1],String(" "));//get version
+	StringList temp1=SubdivideString(temp[1],String(";"));
 
-          if (atof(temp1[0].c_str()) < 0.91) 
-			  return false;//not correct version
+	if (atof(temp1[0].c_str()) < 0.91) 
+		return false;//not correct version
 
-          header.dmfVersion = (float)atof(temp1[0].c_str());//save version
-          temp.clear(); 
-          temp1.clear();
+	header.dmfVersion = (float)atof(temp1[0].c_str());//save version
+	temp.clear(); 
           temp = SubdivideString(RawFile[2],String(";"));//get name,ambient color and shadow opacity
           sprintf(header.dmfName,"%s",temp[0].c_str());//save name
 
@@ -338,10 +284,10 @@ bool GetDMFHeader (StringList RawFile,
           offs++;
 
           s32 fac;
-		  int i;
+	  int i;
 
           for(i=0; i < (int)header.numObjects; i++)
-		  {
+	  {
              StringList wat=SubdivideString(RawFile[offs],String(";"));
              StringList wat1=SubdivideString(wat[0],String("_"));
 
@@ -374,19 +320,20 @@ bool GetDMFHeader (StringList RawFile,
           s32 lit = atoi(RawFile[offs].c_str());
 
           for (i=0; i<lit; i++)
-		  {
+	{
              offs++;
              temp=SubdivideString(RawFile[offs],String(";"));
 
-             if(atoi(temp[0].c_str())==1){
+             if(atoi(temp[0].c_str())==1)
+		{
                 temp1=SubdivideString(temp[18],String("_"));
 
              if(temp1[0]==String("dynamic")) 
 				 header.numLights++;
-          }
+		}
              temp.clear();
              temp1.clear();
-      }
+	}
              
    return true; //everything is OK so loading is correct
 }

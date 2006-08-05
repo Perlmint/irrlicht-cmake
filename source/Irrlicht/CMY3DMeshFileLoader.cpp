@@ -725,7 +725,7 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
           
 			// vertex A
 
-            VertexA.Pos.X = Vertex[Face[f].C].Coord.X;
+			VertexA.Pos.X = Vertex[Face[f].C].Coord.X;
 			VertexA.Pos.Y = Vertex[Face[f].C].Coord.Y;
 			VertexA.Pos.Z = Vertex[Face[f].C].Coord.Z; 
 

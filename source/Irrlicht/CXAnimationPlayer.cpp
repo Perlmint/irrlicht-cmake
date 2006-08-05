@@ -609,7 +609,7 @@ void CXAnimationPlayer::modifySkin()
 #endif
 			
 			video::S3DVertex* nv = (video::S3DVertex*)AnimatedMesh->getMeshBuffer(wd.buffer)->getVertices();
-            nv[wd.vertex].Pos.set(0,0,0);
+			nv[wd.vertex].Pos.set(0,0,0);
 		}
 	}
 
@@ -654,17 +654,16 @@ void CXAnimationPlayer::modifySkin()
 	{
 		video::S3DVertex* av = (video::S3DVertex*)AnimatedMesh->getMeshBuffer(mb)->getVertices();
 		video::S3DVertex* ov = (video::S3DVertex*)OriginalMesh.getMeshBuffer(mb)->getVertices();
-		s32 c = AnimatedMesh->getMeshBuffer(mb)->getVertexCount();
+		const s32 c = AnimatedMesh->getMeshBuffer(mb)->getVertexCount();
 		for (s32 vt=0; vt<c; ++vt)
 		{
 			core::vector3df vtmp;
 			core::vector3df orig = ov[vt].Pos;
-			SVertexWeight& weight = Weights[mb].pointer()[vt];
+			const SVertexWeight& weight = Weights[mb].pointer()[vt];
 
-			av[vt].Pos = core::vector3df(0,0,0);
+			av[vt].Pos.set(0.0f,0.0f,0.0f);
 
 			s32 w;
-
 			for (w=0; w<weight.weightCount; ++w)
 			{
 				Joints[weight.joint[w]].CombinedAnimationMatrix.transformVect(
@@ -675,21 +674,22 @@ void CXAnimationPlayer::modifySkin()
 			}
 
 			// yin nadie: let's modify the normals
-			orig = ov[ vt ].Normal + ov[ vt ].Pos;
-			av[ vt ].Normal = core::vector3df( 0, 0, 0 );
+			orig += ov[vt].Normal;
+			av[vt].Normal.set(0.0f,0.0f,0.0f);
 
 			for( w = 0; w < weight.weightCount; ++w )
 			{
-			        vtmp = orig;
-				Joints[ weight.joint[ w ] ].CombinedAnimationMatrix.transformVect( vtmp );
-				vtmp *= weight.weight[ w ];
-				av[ vt ].Normal += vtmp;
+				Joints[weight.joint[w]].CombinedAnimationMatrix.transformVect( orig, vtmp );
+				vtmp *= weight.weight[w];
+				av[vt].Normal += vtmp;
 			}
-			av[ vt ].Normal = ( av[ vt ].Normal - av[ vt ].Pos ).normalize();
+			av[vt].Normal -= av[ vt ].Pos;
+			av[vt].Normal.normalize();
 			// yin nadie: normals modified
 		}
 	}
 }
+
 
 
 //! prepares animation data which was read in from the .x file

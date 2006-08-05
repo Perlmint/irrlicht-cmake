@@ -272,7 +272,7 @@ void CLMTSMeshFileLoader::constructMesh()
 
 				currentVertex.Pos.X = v->X;
 				currentVertex.Pos.Y = v->Y;
-				currentVertex.Pos.Z =  v->Z;
+				currentVertex.Pos.Z = v->Z;
 				currentVertex.TCoords.X = v->U1;
 				currentVertex.TCoords.Y = v->V1;
 				currentVertex.TCoords2.X = v->U2;

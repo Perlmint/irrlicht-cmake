@@ -42,7 +42,6 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	mat.Lighting = false;
 	mat.ZBuffer = false;
 	mat.ZWriteEnable = false;
-	mat.BilinearFilter = true;
 
 	/* Hey, I am no artist, but look at that
 	   cool ASCII art I made! ;)
@@ -74,7 +73,6 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 		core::dimension2d<s32> dim = tex->getSize();
 		onepixel = 1.0f / (dim.Width * 1.5f);
 	}
-
 
 	f32 l = 10.0f;
 	f32 t = 1.0f - onepixel;
@@ -244,8 +242,6 @@ s32 CSkyBoxSceneNode::getMaterialCount()
 {
 	return 6;
 }
-
-
 
 
 } // end namespace scene

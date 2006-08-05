@@ -33,6 +33,10 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 			f64 texturePercentage, f64 spherePercentage, ISceneNode* parent, ISceneManager* mgr, s32 id)
 			: ISceneNode(parent, mgr, id)
 {
+	#ifdef _DEBUG
+	setDebugName("CSkyDomeSceneNode");
+	#endif
+
 	f64 radius = 1000.0; /* Adjust this to get more or less perspective distorsion. */
 	f64 azimuth, azimuth_step;
 	f64 elevation, elevation_step;
@@ -45,6 +49,8 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 	Material.ZBuffer = false;
 	Material.ZWriteEnable = false;
 	Material.Texture1 = sky;
+	Box.MaxEdge.set(0,0,0);
+	Box.MinEdge.set(0,0,0);
 
 	azimuth_step = 2.*core::PI64/(f64)horiRes;
 	if (spherePercentage<0.)
@@ -138,9 +144,10 @@ const core::aabbox3d<f32>& CSkyDomeSceneNode::getBoundingBox() const
 void CSkyDomeSceneNode::OnPreRender()
 {
 	if (IsVisible)
+	{
 		SceneManager->registerNodeForRendering(this, ESNRP_SKY_BOX);
-
-	ISceneNode::OnPreRender();
+		ISceneNode::OnPreRender();
+	}
 }
 
 
