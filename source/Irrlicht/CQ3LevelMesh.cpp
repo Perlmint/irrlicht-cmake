@@ -26,6 +26,8 @@ CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver)
 	IUnknown::setDebugName("CQ3LevelMesh");
 	#endif	
 
+	Mesh = new SMesh();
+
 	if (Driver)
 		Driver->grab();
 
@@ -72,6 +74,9 @@ CQ3LevelMesh::~CQ3LevelMesh()
 
 	if (FileSystem)
 		FileSystem->drop();
+
+	if (Mesh)
+		Mesh->drop();
 }
 
 
@@ -148,7 +153,7 @@ s32 CQ3LevelMesh::getFrameCount()
 //! returns the animated mesh based on a detail level. 0 is the lowest, 255 the highest detail. Note, that some Meshes will ignore the detail level.
 IMesh* CQ3LevelMesh::getMesh(s32 frameInMs, s32 detailLevel, s32 startFrameLoop, s32 endFrameLoop)
 {
-	return &Mesh;
+	return Mesh;
 }
 
 
@@ -337,7 +342,7 @@ void CQ3LevelMesh::constructMesh()
 		buffer->Material.Lighting = false;
 		buffer->Material.BilinearFilter = true;
 
-		Mesh.addMeshBuffer(buffer);
+		Mesh->addMeshBuffer(buffer);
 
 		buffer->drop();
 	}
@@ -354,7 +359,7 @@ void CQ3LevelMesh::constructMesh()
 
 		// there are lightmapsids and textureid with -1
 		s32 meshBufferIndex = ((Faces[i].lightmapID+1) * (NumTextures+1)) + (Faces[i].textureID+1);
-		SMeshBufferLightMap* meshBuffer = ((SMeshBufferLightMap*)Mesh.getMeshBuffer(meshBufferIndex));
+		SMeshBufferLightMap* meshBuffer = ((SMeshBufferLightMap*)Mesh->getMeshBuffer(meshBufferIndex));
 
 		switch(Faces[i].type)
 		{
@@ -418,10 +423,10 @@ void CQ3LevelMesh::constructMesh()
 
 	// create bounding box
 
-	for (u32 j=0; j<Mesh.MeshBuffers.size(); ++j)
-		((SMeshBufferLightMap*)Mesh.MeshBuffers[j])->recalculateBoundingBox();
+	for (u32 j=0; j<Mesh->MeshBuffers.size(); ++j)
+		((SMeshBufferLightMap*)Mesh->MeshBuffers[j])->recalculateBoundingBox();
 
-	Mesh.recalculateBoundingBox();
+	Mesh->recalculateBoundingBox();
 }
 
 // helper method for creating curved surfaces, sent in by Dean P. Macri.
@@ -690,7 +695,7 @@ void CQ3LevelMesh::loadTextures()
 	for (s32 l=0; l<NumLightMaps+1; ++l)
 		for (t=0; t<NumTextures+1; ++t)
 		{
-			SMeshBufferLightMap* b = (SMeshBufferLightMap*)Mesh.getMeshBuffer(l*(NumTextures+1) + t);
+			SMeshBufferLightMap* b = (SMeshBufferLightMap*)Mesh->getMeshBuffer(l*(NumTextures+1) + t);
 			b->Material.Texture2 = lig[l];
 			b->Material.Texture1 = tex[t];
 
@@ -701,15 +706,15 @@ void CQ3LevelMesh::loadTextures()
 	// delete all buffers without geometry in it.
 
 	s32 i = 0;
-	while(i < (s32)Mesh.MeshBuffers.size())
+	while(i < (s32)Mesh->MeshBuffers.size())
 	{
-		if (Mesh.MeshBuffers[i]->getVertexCount() == 0 ||
-			Mesh.MeshBuffers[i]->getIndexCount() == 0 ||
-			Mesh.MeshBuffers[i]->getMaterial().Texture1 == 0)
+		if (Mesh->MeshBuffers[i]->getVertexCount() == 0 ||
+			Mesh->MeshBuffers[i]->getIndexCount() == 0 ||
+			Mesh->MeshBuffers[i]->getMaterial().Texture1 == 0)
 		{
 			// Meshbuffer löschen
-			Mesh.MeshBuffers[i]->drop();
-			Mesh.MeshBuffers.erase(i);		
+			Mesh->MeshBuffers[i]->drop();
+			Mesh->MeshBuffers.erase(i);		
 		}
 		else
 			++i;
@@ -721,7 +726,7 @@ void CQ3LevelMesh::loadTextures()
 //! \return A bounding box of this mesh is returned.
 const core::aabbox3d<f32>& CQ3LevelMesh::getBoundingBox() const
 {
-	return Mesh.getBoundingBox();
+	return Mesh->getBoundingBox();
 }
 
 

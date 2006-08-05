@@ -248,7 +248,7 @@ namespace scene
 		tBSPBrush* Brushes;
 		s32 NumBrushes;
 
-		scene::SMesh Mesh;
+		scene::SMesh* Mesh;
 		video::IVideoDriver* Driver;
 		core::stringc LevelName;
 		io::IFileSystem* FileSystem; // needs because there are no file extenstions stored in .bsp files.
