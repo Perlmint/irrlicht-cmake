@@ -9,20 +9,19 @@ void main(void)
 {
 	gl_Position = mWorldViewProj * gl_Vertex;
 	
-	vec4 normal = vec4(gl_Normal, 0.0f);
+	vec4 normal = vec4(gl_Normal, 0.0);
 	normal = mInvWorld * normal;
 	normal = normalize(normal);
 	
 	vec4 worldpos = gl_Vertex * mTransWorld;
 	
-	vec4 lightVector = worldpos - vec4(mLightPos,1.0f);
+	vec4 lightVector = worldpos - vec4(mLightPos,1.0);
 	lightVector = normalize(lightVector);
 	
-	vec4 tmp = dot(-lightVector, normal);
-	tmp = lit(tmp.x, tmp.y, 1.0);
+	float tmp2 = dot(-lightVector, normal);
 	
-	tmp = mLightColor * tmp.y;
-	gl_FrontColor = gl_BackColor = vec4(tmp.x, tmp.y, tmp.z, 0.0f);
+	vec4 tmp = mLightColor * tmp2;
+	gl_FrontColor = gl_BackColor = vec4(tmp.x, tmp.y, tmp.z, 0.0);
 	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 }
