@@ -31,9 +31,10 @@ namespace video
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias)
 : CNullDriver(io, screenSize), HDc(0), HRc(0), Window(window),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
+	Transformation3DChanged(true), LastSetLight(-1),
+	MultiTextureExtension(false), MaxTextureUnits(1),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
+	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
 	ARBShadingLanguage100Extension(false),
@@ -131,6 +132,8 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
 		break;
 	}
 
+	genericDriverInit(screenSize);
+
 	// set vsync
 	if (wglSwapIntervalEXT)
 		wglSwapIntervalEXT(vsync ? 1 : 0);
@@ -139,8 +142,6 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
 	ExposedData.OpenGLWin32.HDc = reinterpret_cast<s32>(HDc);
 	ExposedData.OpenGLWin32.HRc = reinterpret_cast<s32>(HRc);
 	ExposedData.OpenGLWin32.HWnd = reinterpret_cast<s32>(Window);
-
-	genericDriverInit(screenSize);
 
 	return true;
 }
@@ -206,21 +207,30 @@ COpenGLDriver::~COpenGLDriver()
 // -----------------------------------------------------------------------
 #ifdef LINUX
 //! Linux constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias)
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias, bool vsync)
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
 	MaxTextureUnits(1), XWindow(window), XDisplay(display),
+#ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
+	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
+	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
+	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
+#endif
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false),
 	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
-	CurrentRendertargetSize(0,0)
+	CurrentRendertargetSize(0,0), glxSwapIntervalSGI(0)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
 	ExposedData.OpenGLLinux.Window = XWindow;
 	genericDriverInit(screenSize);
+
+	// set vsync
+//	if (glxSwapIntervalSGI)
+		glxSwapIntervalSGI(vsync ? 1 : 0);
 }
 
 //! linux destructor
@@ -228,19 +238,6 @@ COpenGLDriver::~COpenGLDriver()
 {
 	deleteAllTextures();
 }
-
-// extensions
-#ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
-PFNGLACTIVETEXTUREARBPROC pGlActiveTextureARB = 0;
-PFNGLCLIENTACTIVETEXTUREARBPROC pGlClientActiveTextureARB = 0;
-//PFNGLACTIVETEXTUREPROC pGlActiveTextureARB = 0;
-//PFNGLCLIENTACTIVETEXTUREPROC pGlClientActiveTextureARB = 0;
-PFNGLGENPROGRAMSARBPROC pGlGenProgramsARB = 0;
-PFNGLBINDPROGRAMARBPROC pGlBindProgramARB = 0;
-PFNGLPROGRAMSTRINGARBPROC pGlProgramStringARB = 0;
-PFNGLDELETEPROGRAMSNVPROC pGlDeleteProgramsARB = 0;
-PFNGLPROGRAMLOCALPARAMETER4FVARBPROC pGlProgramLocalParameter4fvARB = 0;
-#endif // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 
 #endif // LINUX
 
@@ -349,6 +346,7 @@ void COpenGLDriver::loadExtensions()
 		os::Printer::log("OpenGL driver version is not 1.2 or better.", ELL_WARNING);
 
 	const GLubyte* t = glGetString(GL_EXTENSIONS);
+	os::Printer::log((const char*)t, ELL_INFORMATION);
 	#ifdef GLU_VERSION_1_3
 	MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
 	ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
@@ -398,11 +396,6 @@ void COpenGLDriver::loadExtensions()
 
 		pGlActiveTextureARB   = (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
 		pGlClientActiveTextureARB= (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
-		if (!pGlActiveTextureARB || !pGlClientActiveTextureARB)
-		{
-			MultiTextureExtension = false;
-			os::Printer::log("Failed to load OpenGL's multitexture extension, proceeding without.", ELL_WARNING);
-		}
 
 		// get fragment and vertex program function pointers
 		pGlGenProgramsARB = (PFNGLGENPROGRAMSARBPROC) wglGetProcAddress("glGenProgramsARB");
@@ -418,17 +411,18 @@ void COpenGLDriver::loadExtensions()
 		pGlLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) wglGetProcAddress("glLinkProgramARB");
 		pGlUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) wglGetProcAddress("glUseProgramObjectARB");
 		pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) wglGetProcAddress("glDeleteObjectARB");
-		pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)	wglGetProcAddress("glGetObjectParameterivARB");
-		pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)  wglGetProcAddress("glGetUniformLocationARB");
+		pGlGetInfoLogARB = (PFNGLGETINFOLOGARBPROC) wglGetProcAddress("glGetInfoLogARB");
+		pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC) wglGetProcAddress("glGetObjectParameterivARB");
+		pGlGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC) wglGetProcAddress("glGetUniformLocationARB");
 		pGlUniform4fvARB = (PFNGLUNIFORM4FVARBPROC) wglGetProcAddress("glUniform4fvARB");
-		pGlUniform1ivARB = (PFNGLUNIFORM1IVARBPROC)	wglGetProcAddress("glUniform1ivARB");
-		pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC)	wglGetProcAddress("glUniform1fvARB");
-		pGlUniform2fvARB = (PFNGLUNIFORM2FVARBPROC)	wglGetProcAddress("glUniform2fvARB");
-		pGlUniform3fvARB = (PFNGLUNIFORM3FVARBPROC)	wglGetProcAddress("glUniform3fvARB");
-		pGlUniformMatrix2fvARB = (PFNGLUNIFORMMATRIX2FVARBPROC)	wglGetProcAddress("glUniformMatrix2fvARB");
-		pGlUniformMatrix3fvARB = (PFNGLUNIFORMMATRIX3FVARBPROC)	wglGetProcAddress("glUniformMatrix3fvARB");
-		pGlUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC)	wglGetProcAddress("glUniformMatrix4fvARB");
-		pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC)	wglGetProcAddress("glGetActiveUniformARB");
+		pGlUniform1ivARB = (PFNGLUNIFORM1IVARBPROC) wglGetProcAddress("glUniform1ivARB");
+		pGlUniform1fvARB = (PFNGLUNIFORM1FVARBPROC) wglGetProcAddress("glUniform1fvARB");
+		pGlUniform2fvARB = (PFNGLUNIFORM2FVARBPROC) wglGetProcAddress("glUniform2fvARB");
+		pGlUniform3fvARB = (PFNGLUNIFORM3FVARBPROC) wglGetProcAddress("glUniform3fvARB");
+		pGlUniformMatrix2fvARB = (PFNGLUNIFORMMATRIX2FVARBPROC) wglGetProcAddress("glUniformMatrix2fvARB");
+		pGlUniformMatrix3fvARB = (PFNGLUNIFORMMATRIX3FVARBPROC) wglGetProcAddress("glUniformMatrix3fvARB");
+		pGlUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC) wglGetProcAddress("glUniformMatrix4fvARB");
+		pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC) wglGetProcAddress("glGetActiveUniformARB");
 
 		// get vsync extension
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
@@ -459,7 +453,7 @@ void COpenGLDriver::loadExtensions()
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramStringARB"));
 
 			pGlDeleteProgramsARB = (PFNGLDELETEPROGRAMSNVPROC)
-			IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteProgramsARB"));
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteProgramsARB"));
 
 			pGlProgramLocalParameter4fvARB = (PFNGLPROGRAMLOCALPARAMETER4FVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glProgramLocalParameter4fvARB"));
@@ -487,6 +481,9 @@ void COpenGLDriver::loadExtensions()
 
 			pGlDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteObjectARB"));
+
+			pGlGetInfoLogARB = (PFNGLGETINFOLOGARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetInfoLogARB"));
 
 			pGlGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetObjectParameterivARB"));
@@ -524,8 +521,8 @@ void COpenGLDriver::loadExtensions()
 			pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetActiveUniformARB"));
 
-			//ARBVertexProgramExtension = false;
-			//ARBFragmentProgramExtension = false;
+			// get vsync extension
+			glxSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC)IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI"));
 
 			#else // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 
@@ -543,14 +540,19 @@ void COpenGLDriver::loadExtensions()
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
 	}
 
-	if (MaxTextureUnits < 2)
+	if (!pGlActiveTextureARB || !pGlClientActiveTextureARB)
+	{
+		MultiTextureExtension = false;
+		os::Printer::log("Failed to load OpenGL's multitexture extension, proceeding without.", ELL_WARNING);
+	}
+	else if (MaxTextureUnits < 2)
 	{
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);
 	}
+
 	if (MultiTextureExtension)
 		os::Printer::log("Multittexturing active.");
-
 }
 
 
@@ -2163,6 +2165,16 @@ void COpenGLDriver::extGlDeleteObjectARB(GLhandleARB object)
 #endif
 }
 
+void COpenGLDriver::extGlGetInfoLogARB(GLhandleARB object, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog)
+{
+#ifdef MACOSX
+	glGetInfoLogARB(object, maxLength, length, infoLog);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlGetInfoLogARB)
+		pGlGetInfoLogARB(object, maxLength, length, infoLog);
+#endif
+}
+
 void COpenGLDriver::extGlGetObjectParameterivARB(GLhandleARB object, GLenum type, int *param)
 {
 #ifdef MACOSX
@@ -2547,7 +2559,7 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 #ifdef MACOSX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 	CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer,
-	io::IFileSystem* io, bool antiAlias)
+	io::IFileSystem* io, bool vsync, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
@@ -2564,11 +2576,11 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 #ifdef LINUX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 		Window window, Display* display, bool fullscreen,
-		bool stencilBuffer, io::IFileSystem* io, bool antiAlias)
+		bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
-		window, display, io, antiAlias);
+		window, display, io, antiAlias, vsync);
 #else
 	return 0;
 #endif //  _IRR_COMPILE_WITH_OPENGL_

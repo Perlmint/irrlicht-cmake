@@ -179,6 +179,15 @@ bool COpenGLSLMaterialRenderer::createShader(GLenum shaderType, const char* shad
 	if (!status)
 	{
 		os::Printer::log("GLSL shader failed to compile");
+		// check error message and log it
+		int maxLength, length;
+		Driver->extGlGetObjectParameterivARB(shaderHandle,
+				 GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
+		GLcharARB *pInfoLog = new GLcharARB[maxLength];
+		Driver->extGlGetInfoLogARB(shaderHandle, maxLength, &length, pInfoLog);
+		os::Printer::log((const c8*)pInfoLog);
+		delete [] pInfoLog;
+
 		return false;
 	}
 
@@ -198,6 +207,15 @@ bool COpenGLSLMaterialRenderer::linkProgram()
 	if (!status)
 	{
 		os::Printer::log("GLSL shader program failed to link");
+		// check error message and log it
+		int maxLength, length;
+		Driver->extGlGetObjectParameterivARB(Program,
+				 GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
+		GLcharARB *pInfoLog = new GLcharARB[maxLength];
+		Driver->extGlGetInfoLogARB(Program, maxLength, &length, pInfoLog);
+		os::Printer::log((const c8*)pInfoLog);
+		delete [] pInfoLog;
+
 		return false;
 	}
 	

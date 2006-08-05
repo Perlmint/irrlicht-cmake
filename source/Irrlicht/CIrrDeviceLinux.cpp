@@ -25,7 +25,7 @@ namespace irr
 	{
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 			Window window, Display* display, bool fullscreen,
-			bool stencilBuffer, io::IFileSystem* io, bool antiAlias);
+			bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
 	}
 
 
@@ -42,7 +42,7 @@ const char* wmDeleteWindow = "WM_DELETE_WINDOW";
 CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	const core::dimension2d<s32>& windowSize,
 	u32 bits, bool fullscreen,
-	bool sbuffer, bool antiAlias,
+	bool sbuffer, bool vsync, bool antiAlias,
 	IEventReceiver* receiver,
 	const char* version)
  : CIrrDeviceStub(version, receiver), close(false), DriverType(driverType),
@@ -86,7 +86,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 
 	// create driver
 
-	createDriver(driverType, windowSize, bits);
+	createDriver(driverType, windowSize, bits, vsync, antiAlias);
 
 	if (!VideoDriver)
 		return;
@@ -441,7 +441,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 //! create the driver
 void CIrrDeviceLinux::createDriver(video::E_DRIVER_TYPE driverType,
 				   const core::dimension2d<s32>& windowSize,
-				   u32 bits)
+				   u32 bits, bool vsync, bool antiAlias)
 {
 	switch(driverType)
 	{
@@ -457,7 +457,7 @@ void CIrrDeviceLinux::createDriver(video::E_DRIVER_TYPE driverType,
 	case video::EDT_OPENGL:
 	#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
-			VideoDriver = video::createOpenGLDriver(windowSize, window, display, Fullscreen, StencilBuffer, FileSystem, false);
+			VideoDriver = video::createOpenGLDriver(windowSize, window, display, Fullscreen, StencilBuffer, FileSystem, vsync, antiAlias);
 	#else
 		os::Printer::log("No OpenGL support compiled in.", ELL_WARNING);
 	#endif
@@ -971,12 +971,13 @@ void CIrrDeviceLinux::createKeyMap()
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationParameters& param)
 {
 	CIrrDeviceLinux* dev = new CIrrDeviceLinux(
-		param.DriverType, 
-		param.WindowSize, 
+		param.DriverType,
+		param.WindowSize,
 		param.Bits,
-		param.Fullscreen, 
-		param.Stencilbuffer, 
-		param.AntiAlias, 
+		param.Fullscreen,
+		param.Stencilbuffer,
+		param.Vsync,
+		param.AntiAlias,
 		param.EventReceiver,
 		param.SDK_version_do_not_use);
 	

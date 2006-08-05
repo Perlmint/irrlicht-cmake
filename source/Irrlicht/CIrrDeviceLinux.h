@@ -36,7 +36,7 @@ namespace irr
 		//! constructor
 		CIrrDeviceLinux(video::E_DRIVER_TYPE deviceType, 
 			const core::dimension2d<s32>& windowSize, u32 bits,
-			bool fullscreen, bool stencilbuffer, bool antiAlias, IEventReceiver* receiver,
+			bool fullscreen, bool stencilbuffer, bool vsync, bool antiAlias, IEventReceiver* receiver,
 			const char* version);
 
 		//! destructor
@@ -61,7 +61,8 @@ namespace irr
 
 		//! create the driver
 		void createDriver(video::E_DRIVER_TYPE driverType,
-			const core::dimension2d<s32>& windowSize, u32 bits);
+			const core::dimension2d<s32>& windowSize, u32 bits,
+			bool vsync, bool antiAlias);
 
 		bool createWindow(const core::dimension2d<s32>& windowSize, u32 bits);
 

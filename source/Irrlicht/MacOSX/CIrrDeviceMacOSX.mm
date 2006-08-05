@@ -25,7 +25,7 @@ namespace irr
 {
 	namespace video
 	{
-		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias);
+		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, CIrrDeviceMacOSX *device, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
 	}
 } // end namespace irr
 
@@ -270,7 +270,7 @@ void	CIrrDeviceMacOSX::createDriver(video::E_DRIVER_TYPE driverType,const core::
 
 		case video::EDT_OPENGL:
 		#ifdef _IRR_COMPILE_WITH_OPENGL_
-			VideoDriver = video::createOpenGLDriver(windowSize, this, fullscreen, stencilbuffer, FileSystem, antiAlias);
+			VideoDriver = video::createOpenGLDriver(windowSize, this, fullscreen, stencilbuffer, FileSystem, false, antiAlias);
 		#endif
 			break;
 

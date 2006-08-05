@@ -32,7 +32,7 @@
 #endif
 
 #ifdef MACOSX
-	#define GL_EXT_texture_env_combine	1
+	#define GL_EXT_texture_env_combine 1
 	#include "CIrrDeviceMacOSX.h"
 	#include <OpenGL/gl.h>
 	#include <OpenGL/glu.h>
@@ -44,7 +44,7 @@ namespace irr
 namespace video
 {
 	class COpenGLTexture;
-	
+
 	class COpenGLDriver : public CNullDriver, public IMaterialRendererServices
 	{
 	public:
@@ -61,12 +61,12 @@ namespace video
 
 		#ifdef LINUX
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias);
-		#endif		
+			bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool vsync, bool antiAlias);
+		#endif
 
 		#ifdef MACOSX
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, CIrrDeviceMacOSX *device,io::IFileSystem* io, bool antiAlias);
+			bool stencilBuffer, CIrrDeviceMacOSX *device,io::IFileSystem* io, bool vsync, bool antiAlias);
 		#endif
 
 		//! destructor
@@ -114,7 +114,7 @@ namespace video
 
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
-			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0, 
+			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
 			SColor color=SColor(255,255,255,255), bool useAlphaChannelOfTexture=false);
 
 		//! Draws a part of the texture into the rectangle.
@@ -130,6 +130,16 @@ namespace video
 		virtual void draw2DRectangle(const core::rect<s32>& pos,
 			SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 			const core::rect<s32>* clip = 0);
+
+		//! Draws a 2d line.
+		virtual void draw2DLine(const core::position2d<s32>& start,
+					const core::position2d<s32>& end,
+					SColor color=SColor(255,255,255,255));
+
+		//! Draws a 3d line.
+		virtual void draw3DLine(const core::vector3df& start,
+					const core::vector3df& end,
+					SColor color = SColor(255,255,255,255));
 
 		//! \return Returns the name of the video driver. Example: In case of the Direct3D8
 		//! driver, it would return "Direct3D8.1".
@@ -156,40 +166,31 @@ namespace video
 
 		//! Fills the stencil shadow with color. After the shadow volume has been drawn
 		//! into the stencil buffer using IVideoDriver::drawStencilShadowVolume(), use this
-		//! to draw the color of the shadow. 
-		virtual void drawStencilShadow(bool clearStencilBuffer=false, 
-			video::SColor leftUpEdge = video::SColor(0,0,0,0), 
+		//! to draw the color of the shadow.
+		virtual void drawStencilShadow(bool clearStencilBuffer=false,
+			video::SColor leftUpEdge = video::SColor(0,0,0,0),
 			video::SColor rightUpEdge = video::SColor(0,0,0,0),
 			video::SColor leftDownEdge = video::SColor(0,0,0,0),
 			video::SColor rightDownEdge = video::SColor(0,0,0,0));
 
-		//! Draws a 3d line.
-		virtual void draw3DLine(const core::vector3df& start,
-			const core::vector3df& end, SColor color = SColor(255,255,255,255));
-
-		//! sets a viewport //added by klems@sdi-syndrom.de
+		//! sets a viewport
 		virtual void setViewPort(const core::rect<s32>& area);
 
 		//! Sets the fog mode.
-		virtual void setFog(SColor color, bool linearFog, f32 start, 
+		virtual void setFog(SColor color, bool linearFog, f32 start,
 			f32 end, f32 density, bool pixelFog, bool rangeFog);
 
 		//! Only used by the internal engine. Used to notify the driver that
 		//! the window was resized.
 		virtual void OnResize(const core::dimension2d<s32>& size);
 
-		//! Draws a 2d line. 
-		virtual void draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end, 
-								SColor color=SColor(255,255,255,255));
-
 		//! Returns type of video driver
 		virtual E_DRIVER_TYPE getDriverType();
 
 		//! Returns the transformation set by setTransform
 		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state);
-		
-		// public access to the (loaded) extensions. 
+
+		// public access to the (loaded) extensions.
 		void extGlActiveTextureARB(GLenum texture);
 		void extGlClientActiveTextureARB(GLenum texture);
 		void extGlGenProgramsARB(GLsizei n, GLuint *programs);
@@ -197,19 +198,20 @@ namespace video
 		void extGlProgramStringARB(GLenum target, GLenum format, GLsizei len, const GLvoid *string);
 		void extGlDeleteProgramsARB(GLsizei n, const GLuint *programs);
 		void extGlProgramLocalParameter4fvARB(GLenum, GLuint, const GLfloat *);
-		
-		GLhandleARB extGlCreateShaderObjectARB(GLenum shaderType); 
-		void extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings); 
-		void extGlCompileShaderARB(GLhandleARB shader); 
-		GLhandleARB extGlCreateProgramObjectARB(void); 
-		void extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader); 
-		void extGlLinkProgramARB(GLhandleARB program); 
-		void extGlUseProgramObjectARB(GLhandleARB prog); 
-		void extGlDeleteObjectARB(GLhandleARB object); 
-		void extGlGetObjectParameterivARB(GLhandleARB object, GLenum type, int *param); 
-		GLint extGlGetUniformLocationARB(GLhandleARB program, const char *name); 
-		void extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v); 
-		
+
+		GLhandleARB extGlCreateShaderObjectARB(GLenum shaderType);
+		void extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings);
+		void extGlCompileShaderARB(GLhandleARB shader);
+		GLhandleARB extGlCreateProgramObjectARB(void);
+		void extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader);
+		void extGlLinkProgramARB(GLhandleARB program);
+		void extGlUseProgramObjectARB(GLhandleARB prog);
+		void extGlDeleteObjectARB(GLhandleARB object);
+		void extGlGetInfoLogARB(GLhandleARB object, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog);
+		void extGlGetObjectParameterivARB(GLhandleARB object, GLenum type, int *param);
+		GLint extGlGetUniformLocationARB(GLhandleARB program, const char *name);
+		void extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v);
+
 		void extGlUniform1ivARB (GLint loc, GLsizei count, const GLint *v);
 		void extGlUniform1fvARB (GLint loc, GLsizei count, const GLfloat *v);
 		void extGlUniform2fvARB (GLint loc, GLsizei count, const GLfloat *v);
@@ -231,7 +233,7 @@ namespace video
 		//! Sets a pixel shader constant.
 		virtual void setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount=1);
 
-		//! Sets a constant for the vertex shader based on a name. 
+		//! Sets a constant for the vertex shader based on a name.
 		virtual bool setVertexShaderConstant(const c8* name, const f32* floats, int count);
 
 		//! Sets a constant for the pixel shader based on a name.
@@ -240,30 +242,30 @@ namespace video
 		//! sets the current Texture
 		void setTexture(s32 stage, video::ITexture* texture);
 
-		//! Adds a new material renderer to the VideoDriver, usingextGLGetObjectParameterivARB(shaderHandle, GL_OBJECT_COMPILE_STATUS_ARB, &status) pixel and/or 
+		//! Adds a new material renderer to the VideoDriver, usingextGLGetObjectParameterivARB(shaderHandle, GL_OBJECT_COMPILE_STATUS_ARB, &status) pixel and/or
 		//! vertex shaders to render geometry.
 		s32 addShaderMaterial(const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 			IShaderConstantSetCallBack* callback, E_MATERIAL_TYPE baseMaterial, s32 userData);
-		
+
 		//! Adds a new material renderer to the VideoDriver, using GLSL to render geometry.
 		s32 addHighLevelShaderMaterial(const c8* vertexShaderProgram, const c8* vertexShaderEntryPointName,
 			E_VERTEX_SHADER_TYPE vsCompileTarget, const c8* pixelShaderProgram, const c8* pixelShaderEntryPointName,
 			E_PIXEL_SHADER_TYPE psCompileTarget, IShaderConstantSetCallBack* callback, E_MATERIAL_TYPE baseMaterial,
 			s32 userData);
-			
+
 		//! Returns pointer to the IGPUProgrammingServices interface.
 		IGPUProgrammingServices* getGPUProgrammingServices();
 
 		//! Returns a pointer to the IVideoDriver interface. (Implementation for
 		//! IMaterialRendererServices)
 		virtual IVideoDriver* getVideoDriver();
-				
-		ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
-		
-		bool setRenderTarget(video::ITexture* texture, bool clearBackBuffer, 
-								 bool clearZBuffer, SColor color);
 
-		//! Clears the ZBuffer. 
+		ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
+
+		bool setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
+					bool clearZBuffer, SColor color);
+
+		//! Clears the ZBuffer.
 		virtual void clearZBuffer();
 
 		//! Returns an image created from the last rendered frame.
@@ -274,7 +276,6 @@ namespace video
 		//! inits the parts of the open gl driver used on all platforms
 		bool genericDriverInit(const core::dimension2d<s32>& screenSize);
 		//! returns a device dependent texture from a software surface (IImage)
-		//! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const char* name);
 
 		void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
@@ -320,12 +321,12 @@ namespace video
 		bool AntiAlias;
 		bool ARBVertexProgramExtension; //GL_ARB_vertex_program
 		bool ARBFragmentProgramExtension; //GL_ARB_fragment_program
-		bool ARBShadingLanguage100Extension; 
+		bool ARBShadingLanguage100Extension;
 		bool AnisotropyExtension;
-		
+
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;
-		s32 LastSetLight;	
+		s32 LastSetLight;
 		f32 MaxAnisotropy;
 		f32 AnisotropyToUse;
 
@@ -338,29 +339,32 @@ namespace video
 		#else
 
 		#ifdef _IRR_WINDOWS_
-			PFNGLACTIVETEXTUREARBPROC pGlActiveTextureARB;
-			PFNGLCLIENTACTIVETEXTUREARBPROC	pGlClientActiveTextureARB;
 
 			typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
 			PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
 
+		#endif
+#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+			PFNGLACTIVETEXTUREARBPROC pGlActiveTextureARB;
+			PFNGLCLIENTACTIVETEXTUREARBPROC	pGlClientActiveTextureARB;
 			PFNGLGENPROGRAMSARBPROC pGlGenProgramsARB;
 			PFNGLBINDPROGRAMARBPROC pGlBindProgramARB;
 			PFNGLPROGRAMSTRINGARBPROC pGlProgramStringARB;
 			PFNGLDELETEPROGRAMSNVPROC pGlDeleteProgramsARB;
 			PFNGLPROGRAMLOCALPARAMETER4FVARBPROC pGlProgramLocalParameter4fvARB;
-		#endif
-			PFNGLCREATESHADEROBJECTARBPROC pGlCreateShaderObjectARB; 
-			PFNGLSHADERSOURCEARBPROC pGlShaderSourceARB; 
-			PFNGLCOMPILESHADERARBPROC pGlCompileShaderARB; 
-			PFNGLCREATEPROGRAMOBJECTARBPROC pGlCreateProgramObjectARB; 
-			PFNGLATTACHOBJECTARBPROC pGlAttachObjectARB; 
-			PFNGLLINKPROGRAMARBPROC pGlLinkProgramARB; 
-			PFNGLUSEPROGRAMOBJECTARBPROC pGlUseProgramObjectARB; 
-			PFNGLDELETEOBJECTARBPROC pGlDeleteObjectARB; 
-			PFNGLGETOBJECTPARAMETERIVARBPROC pGlGetObjectParameterivARB; 
-			PFNGLGETUNIFORMLOCATIONARBPROC pGlGetUniformLocationARB; 
-			PFNGLUNIFORM4FVARBPROC pGlUniform4fvARB; 
+#endif
+			PFNGLCREATESHADEROBJECTARBPROC pGlCreateShaderObjectARB;
+			PFNGLSHADERSOURCEARBPROC pGlShaderSourceARB;
+			PFNGLCOMPILESHADERARBPROC pGlCompileShaderARB;
+			PFNGLCREATEPROGRAMOBJECTARBPROC pGlCreateProgramObjectARB;
+			PFNGLATTACHOBJECTARBPROC pGlAttachObjectARB;
+			PFNGLLINKPROGRAMARBPROC pGlLinkProgramARB;
+			PFNGLUSEPROGRAMOBJECTARBPROC pGlUseProgramObjectARB;
+			PFNGLDELETEOBJECTARBPROC pGlDeleteObjectARB;
+			PFNGLGETINFOLOGARBPROC pGlGetInfoLogARB;
+			PFNGLGETOBJECTPARAMETERIVARBPROC pGlGetObjectParameterivARB;
+			PFNGLGETUNIFORMLOCATIONARBPROC pGlGetUniformLocationARB;
+			PFNGLUNIFORM4FVARBPROC pGlUniform4fvARB;
 			PFNGLUNIFORM1IVARBPROC pGlUniform1ivARB;
 			PFNGLUNIFORM1FVARBPROC pGlUniform1fvARB;
 			PFNGLUNIFORM2FVARBPROC pGlUniform2fvARB;
@@ -369,8 +373,11 @@ namespace video
 			PFNGLUNIFORMMATRIX3FVARBPROC pGlUniformMatrix3fvARB;
 			PFNGLUNIFORMMATRIX4FVARBPROC pGlUniformMatrix4fvARB;
 			PFNGLGETACTIVEUNIFORMARBPROC pGlGetActiveUniformARB;
+		#ifdef LINUX
+			PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
+		#endif
 
-		#ifdef _IRR_WINDOWS_		
+		#ifdef _IRR_WINDOWS_
 		HDC HDc; // Private GDI Device Context
 		HWND Window;
 		HGLRC HRc; // Permanent Rendering Context
