@@ -101,6 +101,7 @@ namespace scene
 	class ITextSceneNode;
 	class ISceneNodeFactory;
 	class ISceneNodeAnimatorFactory;
+	class ISceneUserDataSerializer;
 
 	//!	The Scene Manager manages scene nodes, mesh recources, cameras and all the other stuff.
 	/** All Scene nodes can be created only here. There is a always growing list of scene
@@ -1051,23 +1052,38 @@ namespace scene
 
 		//! Saves the current scene into a file.
 		/** Scene nodes with the option isDebugObject set to true are not being saved.
-		\param filename: Name of the file .
+		\param filename: Name of the file.
+		\param userDataSerializer: If you want to save some user data for every scene node into the
+		file, implement the ISceneUserDataSerializer interface and provide it as parameter here.
+		Otherwise, simply specify 0 as this parameter.
 		\return Returns true if successful. */
-		virtual bool saveScene(const c8* filename) = 0;
+		virtual bool saveScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer=0) = 0;
 
 		//! Saves the current scene into a file.
 		/** Scene nodes with the option isDebugObject set to true are not being saved.
+		\param file: File where the scene is saved into.
+		\param userDataSerializer: If you want to save some user data for every scene node into the
+		file, implement the ISceneUserDataSerializer interface and provide it as parameter here.
+		Otherwise, simply specify 0 as this parameter.
 		\return Returns true if successful. */
-		virtual bool saveScene(io::IWriteFile* file) = 0;
+		virtual bool saveScene(io::IWriteFile* file, ISceneUserDataSerializer* userDataSerializer=0) = 0;
 
 		//! Loads a scene. Note that the current scene is not cleared before.
-		//! \param filename: Name of the file .
-		//! \return Returns true if successful.
-		virtual bool loadScene(const c8* filename) = 0;
+		/** \param filename: Name of the file.
+		\param userDataSerializer: If you want to load user data possibily saved in that file for
+		some scene nodes in the file, implement the ISceneUserDataSerializer interface and provide it as parameter here.
+		Otherwise, simply specify 0 as this parameter.
+		\return Returns true if successful. */
+		virtual bool loadScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer=0) = 0;
 
 		//! Loads a scene. Note that the current scene is not cleared before.
-		//! \return Returns true if successful.
-		virtual bool loadScene(io::IReadFile* file) = 0;
+		/** \param file: File where the scene is going to be saved into.
+		\param userDataSerializer: If you want to load user data possibily saved in that file for
+		some scene nodes in the file, implement the ISceneUserDataSerializer interface and provide it as parameter here.
+		Otherwise, simply specify 0 as this parameter.
+		\return Returns true if successful.	*/
+		virtual bool loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer=0) = 0;	
+
 	};
 
 

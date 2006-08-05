@@ -9,6 +9,7 @@
 #include "CMeshCache.h"
 #include "IWriteFile.h"
 #include "IXMLWriter.h"
+#include "ISceneUserDataSerializer.h"
 
 #include "os.h"
 #include <wchar.h>
@@ -1242,20 +1243,20 @@ ISceneNodeAnimatorFactory* CSceneManager::getSceneNodeAnimatorFactory(s32 index)
 
 //! Saves the current scene into a file.
 //! \param filename: Name of the file .
-bool CSceneManager::saveScene(const c8* filename)
+bool CSceneManager::saveScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer)
 {
 	io::IWriteFile* file = FileSystem->createAndWriteFile(filename);
 	if (!file)
 		return false;
 
-	bool ret = saveScene(file);
+	bool ret = saveScene(file, userDataSerializer);
 	file->drop();
 	return ret;
 }
 
 
 //! Saves the current scene into a file.
-bool CSceneManager::saveScene(io::IWriteFile* file)
+bool CSceneManager::saveScene(io::IWriteFile* file, ISceneUserDataSerializer* userDataSerializer)
 {
 	if (!file)
 		return false;
@@ -1265,7 +1266,7 @@ bool CSceneManager::saveScene(io::IWriteFile* file)
 		return false;
 
 	writer->writeXMLHeader();
-	writeSceneNode(writer, this);
+    writeSceneNode(writer, this, userDataSerializer);
 	writer->drop();
 
 	return true;
@@ -1274,13 +1275,13 @@ bool CSceneManager::saveScene(io::IWriteFile* file)
 
 //! Loads a scene. Note that the current scene is not cleared before.
 //! \param filename: Name of the file .
-bool CSceneManager::loadScene(const c8* filename)
+bool CSceneManager::loadScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer)
 {
 	io::IReadFile* read = FileSystem->createAndOpenFile(filename);
 	if (!read)
 		return false;
 
-	bool ret = loadScene(read);
+	bool ret = loadScene(read, userDataSerializer);
 	read->drop();
 
 	return ret;
@@ -1288,7 +1289,7 @@ bool CSceneManager::loadScene(const c8* filename)
 
 
 //! Loads a scene. Note that the current scene is not cleared before.
-bool CSceneManager::loadScene(io::IReadFile* file)
+bool CSceneManager::loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer)
 {
 	if (!file)
 		return false;
@@ -1299,7 +1300,7 @@ bool CSceneManager::loadScene(io::IReadFile* file)
 
 	while(reader->read())
 	{
-		readSceneNode(reader, 0);
+		readSceneNode(reader, 0, userDataSerializer);
 	}
 
 	reader->drop();
@@ -1309,7 +1310,7 @@ bool CSceneManager::loadScene(io::IReadFile* file)
 
 
 //! reads a scene node
-void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent)
+void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent, ISceneUserDataSerializer* userDataSerializer)
 {
 	if (!reader)
 		return;
@@ -1334,7 +1335,7 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent)
 			node = this; // root
 	}
 
-	// read attributes
+    // read attributes
 
 	while(reader->read())
 	{
@@ -1368,10 +1369,13 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent)
 			if (!wcscmp(L"animators", reader->getNodeName()))
 				readAnimators(reader, node);
 			else
+			if (!wcscmp(L"userData", reader->getNodeName()))
+				readUserData(reader, node, userDataSerializer);
+			else
 			if (!wcscmp(IRR_XML_FORMAT_NODE, reader->getNodeName()) ||
 				!wcscmp(IRR_XML_FORMAT_SCENE, reader->getNodeName()))
 			{
-				readSceneNode(reader, node);
+				readSceneNode(reader, node, userDataSerializer);
 			}
 			else
 			{
@@ -1471,8 +1475,41 @@ void CSceneManager::readAnimators(io::IXMLReader* reader, ISceneNode* node)
 }
 
 
+//! reads user data of a node
+void CSceneManager::readUserData(io::IXMLReader* reader, ISceneNode* node, ISceneUserDataSerializer* userDataSerializer)
+{
+	while(reader->read())
+	{
+		const wchar_t* name = reader->getNodeName();
+
+		switch(reader->getNodeType())
+		{
+		case io::EXN_ELEMENT_END:
+			if (!wcscmp(L"userData", name))
+				return;
+			break;
+		case io::EXN_ELEMENT:
+			if (!wcscmp(L"attributes", name))
+			{
+				// read user data from attribute list
+				io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
+				attr->read(reader);
+
+				if (node && userDataSerializer)
+				{
+					userDataSerializer->OnReadUserData(node, attr);
+				}
+
+				attr->drop();
+			}
+			break;
+		}
+	}
+}	
+
+
 //! writes a scene node
-void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node)
+void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node, ISceneUserDataSerializer* userDataSerializer)
 {
 	if (!writer || !node || node->isDebugObject())
 		return;
@@ -1516,10 +1553,10 @@ void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node)
 
 		for (int i=0; i<(int)node->getMaterialCount(); ++i)
 		{
-			io::IAttributes* tmpAttr = 
+			io::IAttributes* attr = 
 				getVideoDriver()->createAttributesFromMaterial(node->getMaterial(i));
-			tmpAttr->write(writer);
-			tmpAttr->drop();
+			attr->write(writer);
+			attr->drop();
 		}
 
 		writer->writeClosingTag(materialElement);
@@ -1549,12 +1586,34 @@ void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node)
 		writer->writeLineBreak();
 	}
 
+	// write possible user data
+
+	if ( userDataSerializer )
+	{
+		io::IAttributes* userData = userDataSerializer->createUserData(node);
+		if (userData)
+		{
+			const wchar_t* userDataElement = L"userData";
+
+			writer->writeLineBreak();
+			writer->writeElement(userDataElement);
+			writer->writeLineBreak();
+
+			userData->write(writer);
+
+			writer->writeClosingTag(userDataElement);
+			writer->writeLineBreak();
+			writer->writeLineBreak();
+
+			userData->drop();
+		}
+	}
+
 	// write children
 
-	const core::list<ISceneNode*>& list = node->getChildren();
-	core::list<ISceneNode*>::Iterator it = list.begin();
-	for (; it != list.end(); ++it)
-		writeSceneNode(writer, (*it));
+	core::list<ISceneNode*>::Iterator it = node->getChildren().begin();
+	for (; it != node->getChildren().end(); ++it)
+		writeSceneNode(writer, (*it), userDataSerializer);
 
 	attr->drop();
 

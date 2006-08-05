@@ -364,17 +364,18 @@ namespace scene
 
 		//! Saves the current scene into a file.
 		//! \param filename: Name of the file .
-		virtual bool saveScene(const c8* filename);
+		virtual bool saveScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer=0);
 
 		//! Saves the current scene into a file.
-		virtual bool saveScene(io::IWriteFile* file);
+		virtual bool saveScene(io::IWriteFile* file, ISceneUserDataSerializer* userDataSerializer=0);
 
 		//! Loads a scene. Note that the current scene is not cleared before.
 		//! \param filename: Name of the file .
-		virtual bool loadScene(const c8* filename);
+		virtual bool loadScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer=0);
 
 		//! Loads a scene. Note that the current scene is not cleared before.
-		virtual bool loadScene(io::IReadFile* file);	
+		virtual bool loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer=0);	
+
 
 	private:		
 
@@ -388,16 +389,19 @@ namespace scene
 		void clearDeletionList();
 
 		//! writes a scene node
-		void writeSceneNode(io::IXMLWriter* writer, ISceneNode* node);
+		void writeSceneNode(io::IXMLWriter* writer, ISceneNode* node, ISceneUserDataSerializer* userDataSerializer);
 
 		//! reads a scene node
-		void readSceneNode(io::IXMLReader* reader, ISceneNode* parent);
+		void readSceneNode(io::IXMLReader* reader, ISceneNode* parent, ISceneUserDataSerializer* userDataSerializer);
 
 		//! read materials
 		void readMaterials(io::IXMLReader* reader, ISceneNode* node);
 
 		//! reads animators of a node
 		void readAnimators(io::IXMLReader* reader, ISceneNode* node);
+
+		//! reads user data of a node
+		void readUserData(io::IXMLReader* reader, ISceneNode* node, ISceneUserDataSerializer* userDataSerializer);
 		
 		struct DefaultNodeEntry
 		{
