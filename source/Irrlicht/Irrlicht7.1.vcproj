@@ -884,6 +884,52 @@
 				<File
 					RelativePath="IImagePresenter.h">
 				</File>
+				<Filter
+					Name="Writer"
+					Filter="">
+					<File
+						RelativePath=".\CImageWriterBMP.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterBMP.h">
+					</File>
+					<File
+						RelativePath=".\CImageWriterJPG.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterJPG.h">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPCX.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPCX.h">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPNG.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPNG.h">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPPM.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPPM.h">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPSD.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterPSD.h">
+					</File>
+					<File
+						RelativePath=".\CImageWriterTGA.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageWriterTGA.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Direct3D9"
@@ -1248,6 +1294,12 @@
 				</File>
 				<File
 					RelativePath=".\CSkyBoxSceneNode.h">
+				</File>
+				<File
+					RelativePath=".\CSkyDomeSceneNode.cpp">
+				</File>
+				<File
+					RelativePath=".\CSkyDomeSceneNode.h">
 				</File>
 				<File
 					RelativePath=".\CSphereSceneNode.cpp">

@@ -74,8 +74,12 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 		elevation = core::PI64/2.;
 		for (u32 j = 0; j <= vertRes; ++j)
 		{
-			vtx.Pos.set(radius*cos(elevation)*sin(azimuth),radius*sin(elevation)+50,radius*cos(elevation)*cos(azimuth));
-			vtx.TCoords.set((f32)k/(f32)horiRes, (f32)j/(f32)vertRes*texturePercentage);
+			vtx.Pos.set((f32) (radius*cos(elevation)*sin(azimuth)),
+						(f32) (radius*sin(elevation)+50.0f),
+						(f32) (radius*cos(elevation)*cos(azimuth)));
+
+			vtx.TCoords.set((f32)k/(f32)horiRes, (f32)j/(f32)vertRes*(f32)texturePercentage);
+
 			Vertices[c++] = vtx;
 			elevation -= elevation_step;
 		}
