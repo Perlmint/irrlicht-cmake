@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomSceneNode", "CustomSceneNode.vcproj", "{832A634E-7236-47DC-80C1-EDEF1012CC71}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpecialFx", "SpecialFX.vcproj", "{92C265D1-5821-4A09-AD6B-7E1D9E3D4D6C}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -9,10 +9,10 @@ Global
 		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{832A634E-7236-47DC-80C1-EDEF1012CC71}.Debug.ActiveCfg = Debug|Win32
-		{832A634E-7236-47DC-80C1-EDEF1012CC71}.Debug.Build.0 = Debug|Win32
-		{832A634E-7236-47DC-80C1-EDEF1012CC71}.Release.ActiveCfg = Release|Win32
-		{832A634E-7236-47DC-80C1-EDEF1012CC71}.Release.Build.0 = Release|Win32
+		{92C265D1-5821-4A09-AD6B-7E1D9E3D4D6C}.Debug.ActiveCfg = Debug|Win32
+		{92C265D1-5821-4A09-AD6B-7E1D9E3D4D6C}.Debug.Build.0 = Debug|Win32
+		{92C265D1-5821-4A09-AD6B-7E1D9E3D4D6C}.Release.ActiveCfg = Release|Win32
+		{92C265D1-5821-4A09-AD6B-7E1D9E3D4D6C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
