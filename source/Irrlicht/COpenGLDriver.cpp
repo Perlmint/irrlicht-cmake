@@ -229,7 +229,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	genericDriverInit(screenSize);
 
 	// set vsync
-//	if (glxSwapIntervalSGI)
+	if (glxSwapIntervalSGI)
 		glxSwapIntervalSGI(vsync ? 1 : 0);
 }
 
@@ -346,7 +346,6 @@ void COpenGLDriver::loadExtensions()
 		os::Printer::log("OpenGL driver version is not 1.2 or better.", ELL_WARNING);
 
 	const GLubyte* t = glGetString(GL_EXTENSIONS);
-	os::Printer::log((const char*)t, ELL_INFORMATION);
 	#ifdef GLU_VERSION_1_3
 	MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
 	ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
