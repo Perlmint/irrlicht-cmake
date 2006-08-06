@@ -10,7 +10,7 @@
 #ifdef _DEBUG
 #pragma comment (lib, "..\\debug\\irrlicht.lib")
 #else
-#pragma comment (lib, "..\\release\\irrlicht.lib")
+#pragma comment (lib, "..\\..\\lib\\Win32-visualstudio\\irrlicht.lib")
 #endif
 #pragma managed
 

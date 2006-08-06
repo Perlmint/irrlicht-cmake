@@ -289,6 +289,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 		ISceneNode node = device.SceneManager.AddCubeSceneNode(15,
 			null, -1, new Vector3D(30,-15,0));
 		node.SetMaterialTexture(0, texWall);
+		node.SetMaterialFlag(Irrlicht.Video.MaterialFlag.LIGHTING, false);
 
 		// add an animator to the cube to make it rotate
 
@@ -451,6 +452,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 		ISceneNode cube = device.SceneManager.AddCubeSceneNode(25, null, -1, new Vector3D());
 		cube.SetMaterialTexture(0, device.VideoDriver.GetTexture("../../media/rockwall.bmp"));
+		cube.SetMaterialFlag(Irrlicht.Video.MaterialFlag.LIGHTING, false);
 
 		// draw everything
 
@@ -548,6 +550,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 		ISceneNode node = device.SceneManager.AddCubeSceneNode(50, null, -1, new Vector3D(0,0,0));
 		node.SetMaterialTexture(0, device.VideoDriver.GetTexture("../../media/wall.bmp"));
 		node.SetMaterialType((MaterialType)newMaterialType1);
+		node.SetMaterialFlag(Irrlicht.Video.MaterialFlag.LIGHTING, false);
 
 		//device.SceneManager.AddTextSceneNode( device.GUIEnvironment.BuiltInFont, 
 		//	"PS & VS & EMT_SOLID", new Color(255,255,255,255), node, new Vector3D(0,0,0), -1);
@@ -561,6 +564,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 		node = device.SceneManager.AddCubeSceneNode(50, null, -1, new Vector3D(0,-10,50));
 		node.SetMaterialTexture(0, device.VideoDriver.GetTexture("../../media/wall.bmp"));
 		node.SetMaterialType((MaterialType)newMaterialType2);
+		node.SetMaterialFlag(Irrlicht.Video.MaterialFlag.LIGHTING, false);
 
 		//device.SceneManager.AddTextSceneNode( device.GUIEnvironment.BuiltInFont, 
 		//	"PS & VS & EMT_TRANSPARENT", new Color(255,255,255,255), node, new Vector3D(0,0,0), -1);
@@ -574,6 +578,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 		node = device.SceneManager.AddCubeSceneNode(50, null, -1, new Vector3D(0,50,25));
 		node.SetMaterialTexture(0, device.VideoDriver.GetTexture("../../media/wall.bmp"));
+		node.SetMaterialFlag(Irrlicht.Video.MaterialFlag.LIGHTING, false);
 
 		//device.SceneManager.AddTextSceneNode( device.GUIEnvironment.BuiltInFont, 
 		//	"NO SHADER", new Color(255,255,255,255), node, new Vector3D(0,0,0), -1);
