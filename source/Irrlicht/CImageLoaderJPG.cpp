@@ -77,15 +77,20 @@ void CImageLoaderJPG::term_source (j_decompress_ptr cinfo)
 {
 	// DO NOTHING
 }
-#endif
 
 
 void CImageLoaderJPG::error_exit (j_common_ptr cinfo)
 {
-    // raise error
-    throw 1;
-}
+    // unfortunatley we need to use a goto rather than throwing an exception
+    // as gcc crashes under linux crashes when using throw from within
+    // extern c code
 
+    // cinfo->err really points to a irr_error_mgr struct
+    irr_jpeg_error_mgr *myerr = (irr_jpeg_error_mgr*) cinfo->err;
+
+    longjmp(myerr->setjmp_buffer, 1);
+}
+#endif
 
 //! returns true if the file maybe is able to be loaded by this class
 bool CImageLoaderJPG::isALoadableFileFormat(irr::io::IReadFile* file)
@@ -120,103 +125,103 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
 	struct jpeg_decompress_struct cinfo;
 
 	// allocate and initialize JPEG decompression object
-	struct jpeg_error_mgr jerr;
+	struct irr_jpeg_error_mgr jerr;
 
 
     u16 rowspan;
     unsigned width, height, rowsRead;
     u8 *output, **rowPtr=0;
 
-    try
+    //We have to set up the error handler first, in case the initialization
+    //step fails.  (Unlikely, but it could happen if you are out of memory.)
+    //This routine fills in the contents of struct jerr, and returns jerr's
+    //address which we place into the link field in cinfo.
+
+    cinfo.err = jpeg_std_error(&jerr.pub);
+    cinfo.err->error_exit = error_exit;
+
+    // compatibility fudge:
+    // we need to use setjmp/longjmp for error handling as gcc-linux
+    // crashes when throwing within external c code
+    if (setjmp(jerr.setjmp_buffer))
     {
+        // If we get here, the JPEG code has signaled an error.
+        // We need to clean up the JPEG object and return.
 
-        //We have to set up the error handler first, in case the initialization
-        //step fails.  (Unlikely, but it could happen if you are out of memory.)
-        //This routine fills in the contents of struct jerr, and returns jerr's
-        //address which we place into the link field in cinfo.
-
-        cinfo.err = jpeg_std_error(&jerr);
-        cinfo.err->error_exit = error_exit;
-        // Now we can initialize the JPEG decompression object.
-        jpeg_create_decompress(&cinfo);
-
-        // specify data source
-        jpeg_source_mgr jsrc;
-
-        // Set up data pointer
-        jsrc.bytes_in_buffer = file->getSize();
-        jsrc.next_input_byte = (JOCTET*)input;
-        cinfo.src = &jsrc;
-
-        jsrc.init_source = init_source;
-        jsrc.fill_input_buffer = fill_input_buffer;
-        jsrc.skip_input_data = skip_input_data;
-        jsrc.resync_to_restart = jpeg_resync_to_restart;
-        jsrc.term_source = term_source;
-
-        // Decodes JPG input from whatever source
-        // Does everything AFTER jpeg_create_decompress
-        // and BEFORE jpeg_destroy_decompress
-        // Caller is responsible for arranging these + setting up cinfo
-
-        // read file parameters with jpeg_read_header()
-        (void) jpeg_read_header(&cinfo, TRUE);
-
-        cinfo.out_color_space=JCS_RGB;
-        cinfo.out_color_components=3;
-        cinfo.do_fancy_upsampling=FALSE;
-
-        // Start decompressor
-        (void) jpeg_start_decompress(&cinfo);
-
-        // Get image data
-        rowspan = cinfo.image_width * cinfo.out_color_components;
-        width = cinfo.image_width;
-        height = cinfo.image_height;
-
-        // Allocate memory for buffer
-        output = new u8[rowspan * height];
-
-        // Here we use the library's state variable cinfo.output_scanline as the
-        // loop counter, so that we don't have to keep track ourselves.
-        // Create array of row pointers for lib
-        rowPtr = new u8 * [height];
-
-        for( unsigned i = 0; i < height; i++ )
-            rowPtr[i] = &output[ i * rowspan ];
-
-        rowsRead = 0;
-
-        while( cinfo.output_scanline < cinfo.output_height )
-            rowsRead += jpeg_read_scanlines( &cinfo, &rowPtr[rowsRead], cinfo.output_height - rowsRead );
-
-        delete [] rowPtr;
-        // Finish decompression
-
-        (void) jpeg_finish_decompress(&cinfo);
-
-
-    }
-    catch(int)
-    {
-        // Release JPEG decompression object
-        // This is an important step since it will release a good deal of memory.
         jpeg_destroy_decompress(&cinfo);
 
-        // if the image data was created, delete it.
+        // if the image data was created, we delete it.
         if (rowPtr)
             delete [] rowPtr;
 
-        // report the error
-
+        // display the error message.
         c8 temp1[JMSG_LENGTH_MAX];
         c8 temp2[256];
         format_message ((jpeg_common_struct*)&cinfo, temp1);
         sprintf(temp2,"JPEG FATAL ERROR: %s",temp1);
-	    os::Printer::log(temp2, ELL_ERROR);
+        os::Printer::log(temp2, ELL_ERROR);
 
+        // return null pointer
         return 0;
     }
+
+    // Now we can initialize the JPEG decompression object.
+    jpeg_create_decompress(&cinfo);
+
+    // specify data source
+    jpeg_source_mgr jsrc;
+
+    // Set up data pointer
+    jsrc.bytes_in_buffer = file->getSize();
+    jsrc.next_input_byte = (JOCTET*)input;
+    cinfo.src = &jsrc;
+
+    jsrc.init_source = init_source;
+    jsrc.fill_input_buffer = fill_input_buffer;
+    jsrc.skip_input_data = skip_input_data;
+    jsrc.resync_to_restart = jpeg_resync_to_restart;
+    jsrc.term_source = term_source;
+
+    // Decodes JPG input from whatever source
+    // Does everything AFTER jpeg_create_decompress
+    // and BEFORE jpeg_destroy_decompress
+    // Caller is responsible for arranging these + setting up cinfo
+
+    // read file parameters with jpeg_read_header()
+    (void) jpeg_read_header(&cinfo, TRUE);
+
+    cinfo.out_color_space=JCS_RGB;
+    cinfo.out_color_components=3;
+    cinfo.do_fancy_upsampling=FALSE;
+
+    // Start decompressor
+    (void) jpeg_start_decompress(&cinfo);
+
+    // Get image data
+    rowspan = cinfo.image_width * cinfo.out_color_components;
+    width = cinfo.image_width;
+    height = cinfo.image_height;
+
+    // Allocate memory for buffer
+    output = new u8[rowspan * height];
+
+    // Here we use the library's state variable cinfo.output_scanline as the
+    // loop counter, so that we don't have to keep track ourselves.
+    // Create array of row pointers for lib
+    rowPtr = new u8 * [height];
+
+    for( unsigned i = 0; i < height; i++ )
+        rowPtr[i] = &output[ i * rowspan ];
+
+    rowsRead = 0;
+
+    while( cinfo.output_scanline < cinfo.output_height )
+        rowsRead += jpeg_read_scanlines( &cinfo, &rowPtr[rowsRead], cinfo.output_height - rowsRead );
+
+    delete [] rowPtr;
+    // Finish decompression
+
+    (void) jpeg_finish_decompress(&cinfo);
 
     // Release JPEG decompression object
     // This is an important step since it will release a good deal of memory.
