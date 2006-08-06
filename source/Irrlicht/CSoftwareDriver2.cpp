@@ -1285,7 +1285,7 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 	if (!pos.isValid())
 		return;
 
-	const core::dimension2d<s32>& renderTargetSize ( ViewPort.getSize() );
+	const core::dimension2d<s32> renderTargetSize ( ViewPort.getSize() );
 
 	s32 xPlus = -(renderTargetSize.Width>>1);
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);

@@ -735,6 +735,66 @@ SOURCE=.\CD3D8Texture.h
 # Begin Group "Null"
 
 # PROP Default_Filter ""
+# Begin Group "ImageWriter"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CImageWriterBMP.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterBMP.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterJPG.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterJPG.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPCX.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPCX.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPNG.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPNG.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPPM.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPPM.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPSD.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterPSD.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterTGA.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CImageWriterTGA.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\CColorConverter.cpp
@@ -1387,6 +1447,14 @@ SOURCE=.\CSkyBoxSceneNode.cpp
 # Begin Source File
 
 SOURCE=.\CSkyBoxSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CSkyDomeSceneNode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CSkyDomeSceneNode.h
 # End Source File
 # Begin Source File
 
