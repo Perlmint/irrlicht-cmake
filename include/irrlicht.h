@@ -130,7 +130,7 @@
 #include "irrTypes.h"
 
 //! Irrlicht SDK Version
-#define IRRLICHT_SDK_VERSION "1.1alpha"
+#define IRRLICHT_SDK_VERSION "1.1"
 
 /*! \mainpage Irrlicht Engine 1.1 API documentation
  *
