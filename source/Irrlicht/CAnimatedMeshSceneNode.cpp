@@ -62,10 +62,19 @@ CAnimatedMeshSceneNode::~CAnimatedMeshSceneNode()
 
 
 
-//! sets the current frame. from now on the animation is played from this frame.
+//! Sets the current frame. From now on the animation is played from this frame.
 void CAnimatedMeshSceneNode::setCurrentFrame(s32 frame)
 {
+	// if you pass an out of range value, we just clamp it
+	if (frame < StartFrame)
+		frame = StartFrame;
+	else if (EndFrame < frame)
+		frame = EndFrame;
+
+	BeginFrameTime = BeginFrameTime =
+		os::Timer::getTime() - (s32)((frame - StartFrame) / (FramesPerSecond / 1000.f));
 }
+
 
 
 //! frame
@@ -305,7 +314,7 @@ bool CAnimatedMeshSceneNode::setFrameLoop(s32 begin, s32 end)
 
 	s32 frameCount = Mesh->getFrameCount();
 
-	if (!(begin <= end && begin < frameCount && end < frameCount))
+	if (!(begin <= end && 0 < begin && end <= frameCount))
 		return false;
 
 	StartFrame = begin;
