@@ -2,10 +2,11 @@ Changes in version 1.1 (??? 2006)
 
 - Added support for making screenshots in all video drivers and a general
   possibility to save any IImage to several file formats.
-  Currently OpenGL produces flipped images (left as is for performance reasons)
-  and some image writers are not yet implemented. As a testcase screenshots
+  Some image writers are not yet implemented. As a testcase screenshots
   are now available in the demo by pressing F9.
   This code was contributed by Travis Vitek.
+
+- Changed EAMTS_OCT to EAMT_OCT.
 
 - Improved .3ds and .obj file importers.
 

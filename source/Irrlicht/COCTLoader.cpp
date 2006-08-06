@@ -364,7 +364,7 @@ IAnimatedMesh* COCTLoader::createMesh(irr::io::IReadFile* file)
 
 	// Set up an animated mesh to hold the mesh
 	SAnimatedMesh* AMesh = new SAnimatedMesh();
-	AMesh->Type = EAMTS_OCT;
+	AMesh->Type = EAMT_OCT;
 	AMesh->addMesh(Mesh);
 	AMesh->recalculateBoundingBox();
 	Mesh->drop();

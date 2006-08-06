@@ -1391,7 +1391,7 @@ void CAnimatedMeshB3d::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalu
 //! Returns the type of the animated mesh.
 E_ANIMATED_MESH_TYPE CAnimatedMeshB3d::getMeshType() const
 {
-	return EAMTS_B3D;
+	return EAMT_B3D;
 }
 
 
