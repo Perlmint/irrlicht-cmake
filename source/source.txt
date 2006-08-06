@@ -1,7 +1,6 @@
 Source code of the Irrlicht Engine
 
-The complete source of the Irrlicht Engine can be found when decompressing
-the .zip file included in this directory. 
+The complete source of the Irrlicht Engine can be found in this directory. 
 Please note that YOU DO NOT NEED THIS SOURCE to develop 3d applications with
 the Irrlicht Engine. Instead, please use the .dll in the \bin directory, the 
 .lib in the \lib directory and the header files in the \include directory.
@@ -19,8 +18,8 @@ The source of the engine is only included because of the following reasons:
 	
 HOW TO COMPILE THE ENGINE WITH LINUX
 
-If you wish to compile the engine in linux yourself, unzip the source source.zip
-file in the \source directory. Run a 'make' in the now existing new subfolder 'Irrlicht'.
+If you wish to compile the engine in linux yourself,
+run a 'make' in the folder 'Irrlicht'.
 After this, you should be able to make all example applications in \examples.
 Then just start an X Server and run them, from the directory where they are.
 

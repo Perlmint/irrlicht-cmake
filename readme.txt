@@ -165,7 +165,7 @@ The Irrlicht Engine SDK version 1.1
   You will find forums, bugtrackers, patches, tutorials, and other stuff
   which will help you out.
   
-  If want to contact the author of the engine, please send an email to
+  If want to contact the team of the engine, please send an email to
   Nikolaus Gebhardt:
 
   irrlicht@users.sourceforge.net
@@ -174,6 +174,8 @@ The Irrlicht Engine SDK version 1.1
   by other people. Especially: (There are probably more people, sorry if I forgot one.
   See http://irrlicht.sourceforge.net/author.html for more informations)
 
+  Christian Stehno  Contribution Coordinator/Developer
+  Gareth Davidson - Bitplane; Developer/ Forum admin
   Thomas Alten	  wrote the apfelbaum software rasterizer
   Etienne Petitjean wrote the MacPort of the engine
   Greg Roelofs 	Created the zlib and libpng

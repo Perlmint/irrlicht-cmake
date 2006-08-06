@@ -17,9 +17,10 @@ namespace scene
 {
 	class ISceneNode;
 
-//! Interface to be imlpemented by the user, to make it possible to read 
-//! and write user data when 
-/** To be used with ISceneManager::loadScene() and ISceneManager::saveScene() */
+//! Interface to read and write user data to and from .irr files.
+/** This interface is to be imlpemented by the user, to make it possible to read 
+and write user data when reading or writing .irr files via ISceneManager.
+To be used with ISceneManager::loadScene() and ISceneManager::saveScene() */
 class ISceneUserDataSerializer
 {
 public:
