@@ -441,13 +441,13 @@ namespace video
 		virtual void draw3DBox(const core::aabbox3d<f32> box,
 			SColor color = SColor(255,255,255,255)) = 0;
 
-		//! Simply draws an 2d image, without any special effects
+		//! Simply draws a 2d image without any special effects
 		/** \param texture: Pointer to texture to use.
 		\param destPos: upper left 2d destination position where the image will be drawn. */
 		virtual void draw2DImage(video::ITexture* texture,
 			const core::position2d<s32>& destPos) = 0;
 
-		//! Draws an 2d image, using a color
+		//! Draws a 2d image using a color
 		/** (if color is other than
 		Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		\param texture: Texture to be drawn.
@@ -455,7 +455,7 @@ namespace video
 		\param sourceRect: Source rectangle in the image.
 		\param clipRect: Pointer to rectangle on the screen where the image is clipped to.
 		This pointer can be NULL. Then the image is not clipped.
-		\param color: Color with wich the image is colored. If the color equals
+		\param color: Color with which the image is colored. If the color equals
 		Color(255,255,255,255), the color is ignored. Note that the alpha component
 		is used: If alpha is other than 255, the image will be transparent.
 		\param useAlphaChannelOfTexture: If true, the alpha channel of the texture is
@@ -469,7 +469,7 @@ namespace video
 		\param texture: the texture to draw from
 		\param destRect: the rectangle to draw into
 		\param sourceRect: the rectangle denoting a part of the texture
-		\param clipRect: cipps the destination rectangle (may be 0)
+		\param clipRect: clips the destination rectangle (may be 0)
 		\param colors: array of 4 colors denoting the color values of the corners of the destRect
 		\param useAlphaChannelOfTexture: true if alpha channel will be blended. */
 		virtual void draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect,
@@ -509,7 +509,7 @@ namespace video
 					const core::position2d<s32>& end,
 					SColor color=SColor(255,255,255,255)) = 0;
 
-		//! Draws a non filled concyclic reqular 2d polyon.
+		//! Draws a non filled concyclic regular 2d polyon.
 		/** This method can be used to draw
 		circles, but also triangles, tetragons, pentagons, hexagons, heptagons, octagons,
 		enneagons, decagons, hendecagons, dodecagon, triskaidecagons, etc. I think you'll

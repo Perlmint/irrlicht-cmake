@@ -578,15 +578,14 @@ void CNullDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 	const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect,
 	video::SColor* colors, bool useAlphaChannelOfTexture)
 {
-
 }
 
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CNullDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
-							 const core::rect<s32>& sourceRect,
-							 const core::rect<s32>* clipRect, SColor color,
-							 bool useAlphaChannelOfTexture)
+				 const core::rect<s32>& sourceRect,
+				 const core::rect<s32>* clipRect, SColor color,
+				 bool useAlphaChannelOfTexture)
 {
 }
 
@@ -595,7 +594,9 @@ void CNullDriver::draw2DImage(video::ITexture* texture, const core::position2d<s
 //! draw an 2d rectangle
 void CNullDriver::draw2DRectangle(SColor color, const core::rect<s32>& pos, const core::rect<s32>* clip)
 {
+	draw2DRectangle(pos, color, color, color, color, clip);
 }
+
 
 
 //!Draws an 2d rectangle with a gradient.
@@ -606,15 +607,16 @@ void CNullDriver::draw2DRectangle(const core::rect<s32>& pos,
 }
 
 
+
 //! Draws a 2d line.
 void CNullDriver::draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end,
-								SColor color)
+				const core::position2d<s32>& end, SColor color)
 {
 }
 
 
-//! Draws a non filled concyclic reqular 2d polyon.
+
+//! Draws a non filled concyclic regular 2d polyon.
 void CNullDriver::draw2DPolygon(core::position2d<s32> center,
 	f32 radius, video::SColor color, s32 count)
 {

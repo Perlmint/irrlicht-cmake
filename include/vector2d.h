@@ -68,8 +68,7 @@ public:
 	//! point in 2 dimensional space.
 	f64 getDistanceFrom(const vector2d<T>& other) const
 	{
-		f64 vx = X - other.X; f64 vy = Y - other.Y;
-		return sqrt(vx*vx + vy*vy);
+		return vector2d<T>(X - other.X, Y - other.Y).getLength();
 	}
 
 	//! rotates the point around a center by an amount of degrees.
@@ -133,7 +132,7 @@ public:
 		else if (X == 0.0) 
 			return Y < 0.0 ? 90.0 : 270.0;
 
-		f64 tmp = Y / sqrt(X*X + Y*Y);
+		f64 tmp = Y / getLength();
 		tmp = atan(sqrt(1 - tmp*tmp) / tmp) * GRAD_PI;
 
 		if (X>0.0 && Y>0.0)

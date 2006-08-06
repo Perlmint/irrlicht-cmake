@@ -168,6 +168,12 @@ namespace core
 				(UpperLeftCorner.Y + LowerRightCorner.Y) / 2);
 		}
 
+		//! Returns the dimensions of the rectangle
+		dimension2d<T> getSize() const
+		{
+			return dimension2d<T>(getWidth(), getHeight());
+		}
+
 		position2d<T> UpperLeftCorner;
 		position2d<T> LowerRightCorner;
 	};

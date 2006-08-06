@@ -1324,8 +1324,6 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 
 							f32 t=(1.0f/(fd1+fd2))*fd1;
 
-							//slerp(LastKey.rotation,Key.rotation,Node->Animatedrotation,t);
-
 							Node->Animatedrotation.slerp(LastKey.rotation,Key.rotation,t);
 						}
 					}

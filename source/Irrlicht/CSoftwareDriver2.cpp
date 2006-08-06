@@ -1209,8 +1209,8 @@ void CSoftwareDriver2::draw2DImage(video::ITexture* texture, const core::positio
 
 //! Draws a 2d line. 
 void CSoftwareDriver2::draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end, 
-								SColor color)
+					const core::position2d<s32>& end,
+					SColor color)
 {
 	((CImage*)BackBuffer)->drawLine(start, end, color );
 }
@@ -1220,9 +1220,9 @@ void CSoftwareDriver2::draw2DLine(const core::position2d<s32>& start,
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CSoftwareDriver2::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
-								 const core::rect<s32>& sourceRect, 
-								 const core::rect<s32>* clipRect, SColor color, 
-								 bool useAlphaChannelOfTexture)
+					 const core::rect<s32>& sourceRect, 
+					 const core::rect<s32>* clipRect, SColor color, 
+					 bool useAlphaChannelOfTexture)
 {
 	if (texture)
 	{
@@ -1267,47 +1267,6 @@ void CSoftwareDriver2::draw2DRectangle(SColor color, const core::rect<s32>& pos,
 	}
 }
 
-//! Draws a 3d line.
-void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
-	const core::vector3df& end, SColor color)
-{
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &CurrentOut[0].Pos.x, start );
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &CurrentOut[1].Pos.x, end );
-
-	u32 g;
-	u32 vOut;
-
-	// don't lite
-	CurrentOut[0].Color.setA8R8G8B8 ( color.color );
-	CurrentOut[1].Color.setA8R8G8B8 ( color.color );
-
-
-	// vertices count per line
-	vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 2 );
-	if ( vOut >= 2 )
-	{
-		ITriangleRenderer2 * line;
-		line = TriangleRenderer [ ETR_TEXTURE_GOURAUD_WIRE ];
-		line->setRenderTarget(RenderTargetSurface, ViewPort);
-
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
-
-		// don't lite
-		for ( g = 0; g != vOut; ++g )
-		{
-			CurrentOut[g].Color.setA8R8G8B8 ( color.color );
-		}
-
-		for ( g = 0; g <= vOut - 2; ++g )
-		{
-			// rasterize
-			line->drawLine ( CurrentOut, CurrentOut + g + 1 );
-		}
-	}
-}
-
-
 
 
 //!Draws an 2d rectangle with a gradient.
@@ -1326,7 +1285,7 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 	if (!pos.isValid())
 		return;
 
-	core::dimension2d<s32> renderTargetSize ( ViewPort.getWidth(),ViewPort.getHeight () );
+	const core::dimension2d<s32>& renderTargetSize ( ViewPort.getSize() );
 
 	s32 xPlus = -(renderTargetSize.Width>>1);
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
@@ -1378,8 +1337,50 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 			render->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
 		}
 	}
-
 }
+
+
+
+//! Draws a 3d line.
+void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
+	const core::vector3df& end, SColor color)
+{
+	TransformationMatrix [ ETS_CURRENT].transformVect ( &CurrentOut[0].Pos.x, start );
+	TransformationMatrix [ ETS_CURRENT].transformVect ( &CurrentOut[1].Pos.x, end );
+
+	u32 g;
+	u32 vOut;
+
+	// don't lite
+	CurrentOut[0].Color.setA8R8G8B8 ( color.color );
+	CurrentOut[1].Color.setA8R8G8B8 ( color.color );
+
+
+	// vertices count per line
+	vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 2 );
+	if ( vOut >= 2 )
+	{
+		ITriangleRenderer2 * line;
+		line = TriangleRenderer [ ETR_TEXTURE_GOURAUD_WIRE ];
+		line->setRenderTarget(RenderTargetSurface, ViewPort);
+
+		// to DC Space, project homogenous vertex
+		ndc_2_dc_and_project ( CurrentOut, vOut );
+
+		// don't lite
+		for ( g = 0; g != vOut; ++g )
+		{
+			CurrentOut[g].Color.setA8R8G8B8 ( color.color );
+		}
+
+		for ( g = 0; g <= vOut - 2; ++g )
+		{
+			// rasterize
+			line->drawLine ( CurrentOut, CurrentOut + g + 1 );
+		}
+	}
+}
+
 
 
 //! \return Returns the name of the video driver. Example: In case of the DirectX8

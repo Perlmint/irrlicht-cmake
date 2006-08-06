@@ -950,15 +950,13 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	if (!texture)
 		return;
 
-	if (sourceRect.UpperLeftCorner.X >= sourceRect.LowerRightCorner.X ||
-		sourceRect.UpperLeftCorner.Y >= sourceRect.LowerRightCorner.Y)
+	if (!sourceRect.isValid())
 		return;
 
 	core::position2d<s32> targetPos = pos;
 	core::position2d<s32> sourcePos = sourceRect.UpperLeftCorner;
-	core::dimension2d<s32> sourceSize(sourceRect.getWidth(), sourceRect.getHeight());
-	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-	const core::dimension2d<s32> targetSurfaceSize = currentRendertargetSize;
+	core::dimension2d<s32> sourceSize(sourceRect.getSize());
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
 
 	if (clipRect)
 	{
@@ -1009,9 +1007,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 		targetPos.X = 0;
 	}
 
-	if (targetPos.X + sourceSize.Width > targetSurfaceSize.Width)
+	if (targetPos.X + sourceSize.Width > renderTargetSize.Width)
 	{
-		sourceSize.Width -= (targetPos.X + sourceSize.Width) - targetSurfaceSize.Width;
+		sourceSize.Width -= (targetPos.X + sourceSize.Width) - renderTargetSize.Width;
 		if (sourceSize.Width <= 0)
 			return;
 	}
@@ -1026,9 +1024,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 		targetPos.Y = 0;
 	}
 
-	if (targetPos.Y + sourceSize.Height > targetSurfaceSize.Height)
+	if (targetPos.Y + sourceSize.Height > renderTargetSize.Height)
 	{
-		sourceSize.Height -= (targetPos.Y + sourceSize.Height) - targetSurfaceSize.Height;
+		sourceSize.Height -= (targetPos.Y + sourceSize.Height) - renderTargetSize.Height;
 		if (sourceSize.Height <= 0)
 			return;
 	}
@@ -1036,21 +1034,11 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	// ok, we've clipped everything.
 	// now draw it.
 
-	setTexture(0, texture);
-	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+	s32 xPlus = -(renderTargetSize.Width>>1);
+	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(false, true, true);
-	else
-		setRenderStates2DMode(false, true, false);
-
-	core::rect<s32> poss(targetPos, sourceSize);
-
-	s32 xPlus = -(currentRendertargetSize.Width>>1);
-	f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
-
-	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
-	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
+	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
+	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	const core::dimension2d<s32>& ss = texture->getOriginalSize();
 	core::rect<f32> tcoords;
@@ -1059,11 +1047,21 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / ss.Width;
 	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / ss.Height;
 
+	core::rect<s32> poss(targetPos, sourceSize);
+
 	core::rect<float> npos;
 	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X+xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
 	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X+xPlus+0.5f) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
+
+	setTexture(0, texture);
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+
+	if (useAlphaChannelOfTexture)
+		setRenderStates2DMode(false, true, true);
+	else
+		setRenderStates2DMode(false, true, false);
 
 	glBegin(GL_QUADS);
 
@@ -1083,6 +1081,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 }
 
 
+
 void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect,
 		const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect,
 		video::SColor* colors, bool useAlphaChannelOfTexture)
@@ -1091,26 +1090,23 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 		return;
 
 	core::rect<s32> trgRect=destRect;
-	core::rect<s32> srcRect=sourceRect;
 
-	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-	const core::dimension2d<s32>& targetSurfaceSize=currentRendertargetSize;
-
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
 	const core::dimension2d<s32>& ss = texture->getOriginalSize();
 	float ssw=1.0f/ss.Width;
 	float ssh=1.0f/ss.Height;
 
 	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = (((f32)srcRect.UpperLeftCorner.X)+0.5f) * ssw;
-	tcoords.UpperLeftCorner.Y = (((f32)srcRect.UpperLeftCorner.Y)+0.5f) * ssh;
-	tcoords.LowerRightCorner.X = (((f32)srcRect.UpperLeftCorner.X +0.5f + (f32)srcRect.getWidth())) * ssw;
-	tcoords.LowerRightCorner.Y = (((f32)srcRect.UpperLeftCorner.Y +0.5f + (f32)srcRect.getHeight())) * ssh;
+	tcoords.UpperLeftCorner.X = (((f32)sourceRect.UpperLeftCorner.X)+0.5f) * ssw;
+	tcoords.UpperLeftCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y)+0.5f) * ssh;
+	tcoords.LowerRightCorner.X = (((f32)sourceRect.UpperLeftCorner.X +0.5f + (f32)sourceRect.getWidth())) * ssw;
+	tcoords.LowerRightCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y +0.5f + (f32)sourceRect.getHeight())) * ssh;
 
-	s32 xPlus = -(currentRendertargetSize.Width>>1);
-	f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
+	s32 xPlus = -(renderTargetSize.Width>>1);
+	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
-	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
-	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
+	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
+	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	core::rect<float> npos;
 	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact;
@@ -1160,40 +1156,6 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 }
 
 
-//! Draws a 2d line.
-void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
-				const core::position2d<s32>& end,
-				SColor color)
-{
-	// thanks to Vash TheStampede who sent in his implementation
-
-	setRenderStates2DMode(color.getAlpha() < 255, false, false);
-	setTexture(0,0);
-
-	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-	const s32 xPlus = -(currentRendertargetSize.Width>>1);
-	const f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
-
-	const s32 yPlus =
-	currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
-	const f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
-
-	core::position2d<f32> npos_start;
-	npos_start.X  = (f32)(start.X + xPlus) * xFact;
-	npos_start.Y  = (f32)(yPlus - start.Y) * yFact;
-
-	core::position2d<f32> npos_end;
-	npos_end.X  = (f32)(end.X + xPlus) * xFact;
-	npos_end.Y  = (f32)(yPlus - end.Y) * yFact;
-
-	glBegin(GL_LINES);
-	glColor4ub(color.getRed(), color.getGreen(),
-	color.getBlue(),
-	color.getAlpha());
-	glVertex2f(npos_start.X, npos_start.Y);
-	glVertex2f(npos_end.X,   npos_end.Y);
-	glEnd();
-}
 
 //! draw an 2d rectangle
 void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& position,
@@ -1210,12 +1172,12 @@ void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& positio
 	if (!pos.isValid())
 		return;
 
-	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-	s32 xPlus = -(currentRendertargetSize.Width>>1);
-	f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
+	s32 xPlus = -(renderTargetSize.Width>>1);
+	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
-	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
-	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
+	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
+	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	glRectf((f32)(pos.UpperLeftCorner.X+xPlus) * xFact,
@@ -1231,13 +1193,6 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 			SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 			const core::rect<s32>* clip)
 {
-	setRenderStates2DMode(colorLeftUp.getAlpha() < 255 ||
-		colorRightUp.getAlpha() < 255 ||
-		colorLeftDown.getAlpha() < 255 ||
-		colorRightDown.getAlpha() < 255, false, false);
-
-	setTexture(0,0);
-
 	core::rect<s32> pos = position;
 
 	if (clip)
@@ -1246,18 +1201,25 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 	if (!pos.isValid())
 		return;
 
-	core::dimension2d<s32> currentRendertargetSize = getCurrentRenderTargetSize();
-	s32 xPlus = -(currentRendertargetSize.Width>>1);
-	f32 xFact = 1.0f / (currentRendertargetSize.Width>>1);
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
+	s32 xPlus = -(renderTargetSize.Width>>1);
+	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
-	s32 yPlus = currentRendertargetSize.Height-(currentRendertargetSize.Height>>1);
-	f32 yFact = 1.0f / (currentRendertargetSize.Height>>1);
+	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
+	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	core::rect<float> npos;
 	npos.UpperLeftCorner.X = (f32)(pos.UpperLeftCorner.X+xPlus) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact;
 	npos.LowerRightCorner.X = (f32)(pos.LowerRightCorner.X+xPlus) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-pos.LowerRightCorner.Y) * yFact;
+
+	setRenderStates2DMode(colorLeftUp.getAlpha() < 255 ||
+		colorRightUp.getAlpha() < 255 ||
+		colorLeftDown.getAlpha() < 255 ||
+		colorRightDown.getAlpha() < 255, false, false);
+
+	setTexture(0,0);
 
 	glBegin(GL_QUADS);
 	glColor4ub(colorLeftUp.getRed(), colorLeftUp.getGreen(),
@@ -1276,6 +1238,43 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 		colorLeftDown.getBlue(), colorLeftDown.getAlpha());
 	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
 
+	glEnd();
+}
+
+
+
+//! Draws a 2d line.
+void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
+				const core::position2d<s32>& end,
+				SColor color)
+{
+	// thanks to Vash TheStampede who sent in his implementation
+
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
+	const s32 xPlus = -(renderTargetSize.Width>>1);
+	const f32 xFact = 1.0f / (renderTargetSize.Width>>1);
+
+	const s32 yPlus =
+	renderTargetSize.Height-(renderTargetSize.Height>>1);
+	const f32 yFact = 1.0f / (renderTargetSize.Height>>1);
+
+	core::position2d<f32> npos_start;
+	npos_start.X  = (f32)(start.X + xPlus) * xFact;
+	npos_start.Y  = (f32)(yPlus - start.Y) * yFact;
+
+	core::position2d<f32> npos_end;
+	npos_end.X  = (f32)(end.X + xPlus) * xFact;
+	npos_end.Y  = (f32)(yPlus - end.Y) * yFact;
+
+	setRenderStates2DMode(color.getAlpha() < 255, false, false);
+	setTexture(0,0);
+
+	glBegin(GL_LINES);
+	glColor4ub(color.getRed(), color.getGreen(),
+	color.getBlue(),
+	color.getAlpha());
+	glVertex2f(npos_start.X, npos_start.Y);
+	glVertex2f(npos_end.X,   npos_end.Y);
 	glEnd();
 }
 

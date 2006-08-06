@@ -288,12 +288,12 @@ namespace core
 
 	inline void matrix4::setRotationDegrees( const vector3df& rotation )
 	{
-		setRotationRadians( rotation * (f32)core::GRAD_PI2 );
+		setRotationRadians( rotation * core::DEGTORAD );
 	}
 
 	inline void matrix4::setInverseRotationDegrees( const vector3df& rotation )
 	{
-		setInverseRotationRadians( rotation * (f32)core::GRAD_PI2 );
+		setInverseRotationRadians( rotation * core::DEGTORAD );
 	}
 
 	inline void matrix4::setRotationRadians( const vector3df& rotation )
@@ -353,9 +353,9 @@ namespace core
 		// fix values that get below zero 
 		// before it would set (!) values to 360 
 		// that where above 360: 
-		if (X < 0.00) X += 360.00; 
-		if (Y < 0.00) Y += 360.00; 
-		if (Z < 0.00) Z += 360.00; 
+		if (X < 0.0) X += 360.0; 
+		if (Y < 0.0) Y += 360.0; 
+		if (Z < 0.0) Z += 360.0; 
 
 		return vector3df((f32)X,(f32)Y,(f32)Z);
 	}
@@ -388,8 +388,7 @@ namespace core
 
 	inline void matrix4::makeIdentity()
 	{
-		for (s32 i=0; i<16; ++i)
-			M[i] = 0.0f;
+		memset(M, 0, 16*sizeof(f32));
 		M[0] = M[5] = M[10] = M[15] = 1.0f;
 	}
 

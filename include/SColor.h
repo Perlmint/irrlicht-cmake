@@ -164,39 +164,39 @@ namespace video
 		//! 0 means no blue, 255 means full blue.
 		inline s32 getBlue() const { return color & 0xff; }
 
-		//! Sets the alpha comonent of the Color. The alpha component
+		//! Sets the alpha component of the Color. The alpha component
 		//! defines how transparent a color should be.
 		//! \param a: Has to be a value between 0 and 255.
 		//! 0 means not transparent (opaque), 255 means fully transparent.
-		inline void setAlpha(s32 a) { color = ((a & 0xff)<<24) | (((color>>16)& 0xff)<<16) | ((color>>8 & 0xff)<<8) | (color & 0xff); }
+		inline void setAlpha(s32 a) { color = ((a & 0xff)<<24) | (color & 0x00ffffff); }
 
-		//! Sets the red comonent of the Color.
+		//! Sets the red component of the Color.
 		//! \param r: Has to be a value between 0 and 255.
 		//! 0 means no red (=black), 255 means full red.
-		inline void setRed(s32 r) { color = (((color>>24) & 0xff)<<24) | ((r & 0xff)<<16) | ((color>>8 & 0xff)<<8) | (color & 0xff); }
+		inline void setRed(s32 r) { color = ((r & 0xff)<<16) | (color & 0xff00ffff); }
 
-		//! Sets the green comonent of the Color.
+		//! Sets the green component of the Color.
 		//! \param g: Has to be a value between 0 and 255.
 		//! 0 means no green (=black), 255 means full green.
-		inline void setGreen(s32 g) { color = (((color>>24) & 0xff)<<24) | (((color>>16)& 0xff)<<16) | ((g & 0xff)<<8) | (color & 0xff); }
+		inline void setGreen(s32 g) { color = ((g & 0xff)<<8) | (color & 0xffff00ff); }
 
-		//! Sets the blue comonent of the Color.
+		//! Sets the blue component of the Color.
 		//! \param b: Has to be a value between 0 and 255.
 		//! 0 means no blue (=black), 255 means full blue.
-		inline void setBlue(s32 b) { color = (((color>>24) & 0xff)<<24) | (((color>>16)& 0xff)<<16) | ((color>>8 & 0xff)<<8) | (b & 0xff); }
+		inline void setBlue(s32 b) { color = (b & 0xff) | (color & 0xffffff00); }
 
 		//! Calculates a 16 bit A1R5G5B5 value of this color.
 		//! \return Returns the 16 bit A1R5G5B5 value of this color.
-		inline s16 toA1R5G5B5() const { return RGBA16(color>>16, color>>8, color, color>>24); };
+		inline s16 toA1R5G5B5() const { return A8R8G8B8toA1R5G5B5(color); };
 
 		//! Converts color to OpenGL color format.
 		//! \return Returns the 32 bit openGL color value.
 		inline s32 toOpenGLColor() const
 		{
-			return (((color>>24) & 0xff)<<24) |
-					((color & 0xff)<<16) |
-					((color>>8 & 0xff)<<8) |
-					((color>>16) & 0xff);
+			return ((color & 0xff000000) |
+				((color & 0xff) <<16) |
+				(color & 0xff00) |
+				((color & 0xff0000) >>16));
 		};
 
 		//! Sets all four components of the color at once.
@@ -206,13 +206,13 @@ namespace video
 		//! The alpha component defines how transparent a color should be.
 		//! Has to be a value between 0 and 255.
 		//! 0 means not transparent (opaque), 255 means fully transparent.
-		//! \param r: Sets the red comonent of the Color.
+		//! \param r: Sets the red component of the Color.
 		//! Has to be a value between 0 and 255.
 		//! 0 means no red (=black), 255 means full red.
-		//! \param g: Sets the green comonent of the Color.
+		//! \param g: Sets the green component of the Color.
 		//! Has to be a value between 0 and 255.
 		//! 0 means no green (=black), 255 means full green.
-		//! \param b: Sets the blue comonent of the Color.
+		//! \param b: Sets the blue component of the Color.
 		//! Has to be a value between 0 and 255.
 		//! 0 means no blue (=black), 255 means full blue.
 		inline void set(s32 a, s32 r, s32 g, s32 b) { color = (((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff)); }

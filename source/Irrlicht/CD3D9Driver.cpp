@@ -851,46 +851,6 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 }
 
 
-//! Draws a 2d line.
-void CD3D9Driver::draw2DLine(const core::position2d<s32>& start,
-						const core::position2d<s32>& end,
-						SColor color)
-{
-	// thanks to Vash TheStampede who sent in his implementation
-
-	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
-	const s32 xPlus = -(renderTargetSize.Width>>1);
-	const f32 xFact = 1.0f / (renderTargetSize.Width>>1);
-
-	const s32 yPlus =
-	renderTargetSize.Height-(renderTargetSize.Height>>1);
-	const f32 yFact = 1.0f / (renderTargetSize.Height>>1);
-
-	S3DVertex vtx[2];
-	vtx[0] = S3DVertex((f32)(start.X + xPlus) * xFact,
-						(f32)(yPlus - start.Y) * yFact,
-						0.0f, // z
-						0.0f, 0.0f, 0.0f, // normal
-						color,
-						0.0f, 0.0f); // texture
-
-	vtx[1] = S3DVertex((f32)(end.X+xPlus) * xFact,
-						(f32)(yPlus- end.Y) * yFact,
-						0.0f,
-						0.0f, 0.0f, 0.0f,
-						color,
-						0.0f, 0.0f);
-
-	setRenderStates2DMode(color.getAlpha() < 255, false, false);
-	setTexture(0,0);
-
-	setVertexShader(EVT_STANDARD);
-
-	pID3DDevice->DrawPrimitiveUP(D3DPT_LINELIST,
-								1,
-								&vtx[0],
-								sizeof(S3DVertex) );
-}
 
 void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect,
 		const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect,
@@ -899,25 +859,17 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 	if(!texture)
 		return;
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(false, true, true);
-	else
-		setRenderStates2DMode(false, true, false);
+	core::rect<s32> trgRect(destRect);
 
-	setTexture(0, texture);
-
-	core::rect<s32> trgRect=destRect;
-	core::rect<s32> srcRect=sourceRect;
-
-	const core::dimension2d<s32> ss = texture->getOriginalSize();
-	float ssw=1.0f/ss.Width;
-	float ssh=1.0f/ss.Height;
+	const core::dimension2d<s32>& ss = texture->getOriginalSize();
+	f32 ssw=1.0f/ss.Width;
+	f32 ssh=1.0f/ss.Height;
 
 	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = (((f32)srcRect.UpperLeftCorner.X)+0.5f) * ssw ;
-	tcoords.UpperLeftCorner.Y = (((f32)srcRect.UpperLeftCorner.Y)+0.5f) * ssh;
-	tcoords.LowerRightCorner.X = (((f32)srcRect.UpperLeftCorner.X +0.5f + (f32)srcRect.getWidth())) * ssw;
-	tcoords.LowerRightCorner.Y = (((f32)srcRect.UpperLeftCorner.Y +0.5f + (f32)srcRect.getHeight())) * ssh;
+	tcoords.UpperLeftCorner.X = (((f32)sourceRect.UpperLeftCorner.X)+0.5f) * ssw ;
+	tcoords.UpperLeftCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y)+0.5f) * ssh;
+	tcoords.LowerRightCorner.X = (((f32)sourceRect.UpperLeftCorner.X +0.5f + (f32)sourceRect.getWidth())) * ssw;
+	tcoords.LowerRightCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y +0.5f + (f32)sourceRect.getHeight())) * ssh;
 
 	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
 
@@ -927,7 +879,7 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
-	core::rect<float> npos;
+	core::rect<f32> npos;
 	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact;
 	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact;
@@ -951,6 +903,13 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 
 	s16 indices[6] = {0,1,2,0,2,3};
 
+	if (useAlphaChannelOfTexture)
+		setRenderStates2DMode(false, true, true);
+	else
+		setRenderStates2DMode(false, true, false);
+
+	setTexture(0, texture);
+
 	setVertexShader(EVT_STANDARD);
 
 	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
@@ -958,7 +917,7 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 
 }
 
-//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
+//! draws a 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
 				 const core::rect<s32>& sourceRect,
 				 const core::rect<s32>* clipRect, SColor color,
@@ -967,25 +926,20 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 	if (!texture)
 		return;
 
-	if (texture)
+	if (texture->getDriverType() != EDT_DIRECT3D9)
 	{
-		if (texture->getDriverType() != EDT_DIRECT3D9)
-		{
-			os::Printer::log("Fatal Error: Tried to copy from a surface not owned by this driver.", ELL_ERROR);
-			return;
-		}
+		os::Printer::log("Fatal Error: Tried to copy from a surface not owned by this driver.", ELL_ERROR);
+		return;
 	}
 
-	if (sourceRect.UpperLeftCorner.X >= sourceRect.LowerRightCorner.X ||
-		sourceRect.UpperLeftCorner.Y >= sourceRect.LowerRightCorner.Y)
+	if (!sourceRect.isValid())
 		return;
 
 	core::position2d<s32> targetPos = pos;
 	core::position2d<s32> sourcePos = sourceRect.UpperLeftCorner;
-	core::dimension2d<s32> sourceSize(sourceRect.getWidth(), sourceRect.getHeight());
+	core::dimension2d<s32> sourceSize(sourceRect.getSize());
 
 	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
-	const core::dimension2d<s32> targetSurfaceSize = renderTargetSize;
 
 	if (clipRect)
 	{
@@ -1036,9 +990,9 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 		targetPos.X = 0;
 	}
 
-	if (targetPos.X + sourceSize.Width > targetSurfaceSize.Width)
+	if (targetPos.X + sourceSize.Width > renderTargetSize.Width)
 	{
-		sourceSize.Width -= (targetPos.X + sourceSize.Width) - targetSurfaceSize.Width;
+		sourceSize.Width -= (targetPos.X + sourceSize.Width) - renderTargetSize.Width;
 		if (sourceSize.Width <= 0)
 			return;
 	}
@@ -1053,9 +1007,9 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 		targetPos.Y = 0;
 	}
 
-	if (targetPos.Y + sourceSize.Height > targetSurfaceSize.Height)
+	if (targetPos.Y + sourceSize.Height > renderTargetSize.Height)
 	{
-		sourceSize.Height -= (targetPos.Y + sourceSize.Height) - targetSurfaceSize.Height;
+		sourceSize.Height -= (targetPos.Y + sourceSize.Height) - renderTargetSize.Height;
 		if (sourceSize.Height <= 0)
 			return;
 	}
@@ -1063,27 +1017,20 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 	// ok, we've clipped everything.
 	// now draw it.
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(false, true, true);
-	else
-		setRenderStates2DMode(false, true, false);
-
-	setTexture(0, texture);
-
-	core::rect<s32> poss(targetPos, sourceSize);
-
 	f32 xPlus = - renderTargetSize.Width / 2.f;
 	f32 xFact = 1.0f / (renderTargetSize.Width / 2.f);
 
 	f32 yPlus = renderTargetSize.Height-(renderTargetSize.Height / 2.f);
 	f32 yFact = 1.0f / (renderTargetSize.Height / 2.f);
 
-	const core::dimension2d<s32> sourceSurfaceSize = texture->getOriginalSize();
+	const core::dimension2d<s32>& sourceSurfaceSize = texture->getOriginalSize();
 	core::rect<f32> tcoords;
 	tcoords.UpperLeftCorner.X = (((f32)sourcePos.X)+0.5f) / texture->getOriginalSize().Width ;
 	tcoords.UpperLeftCorner.Y = (((f32)sourcePos.Y)+0.5f) / texture->getOriginalSize().Height;
 	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / texture->getOriginalSize().Width;
 	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / texture->getOriginalSize().Height;
+
+	core::rect<s32> poss(targetPos, sourceSize);
 
 	S3DVertex vtx[4];
 	vtx[0] = S3DVertex((f32)(poss.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-poss.UpperLeftCorner.Y ) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
@@ -1093,6 +1040,13 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 
 	s16 indices[6] = {0,1,2,0,2,3};
 
+	if (useAlphaChannelOfTexture)
+		setRenderStates2DMode(false, true, true);
+	else
+		setRenderStates2DMode(false, true, false);
+
+	setTexture(0, texture);
+
 	setVertexShader(EVT_STANDARD);
 
 	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
@@ -1101,50 +1055,12 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 
 
 
-//! draw an 2d rectangle
-void CD3D9Driver::draw2DRectangle(SColor color, const core::rect<s32>& position,
-									 const core::rect<s32>* clip)
-{
-	core::rect<s32> pos = position;
-
-	if (clip)
-		pos.clipAgainst(*clip);
-
-	if (!pos.isValid())
-		return;
-
-	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
-
-	s32 xPlus = -(renderTargetSize.Width>>1);
-	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
-
-	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
-	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
-
-	S3DVertex vtx[4];
-	vtx[0] = S3DVertex((f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, color, 0.0f, 0.0f);
-	vtx[1] = S3DVertex((f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- pos.UpperLeftCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, 0.0f, 1.0f);
-	vtx[2] = S3DVertex((f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, 1.0f, 0.0f);
-	vtx[3] = S3DVertex((f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, 1.0f, 1.0f);
-
-	s16 indices[6] = {0,1,2,0,2,3};
-
-	setRenderStates2DMode(color.getAlpha() < 255, false, false);
-	setTexture(0,0);
-
-	setVertexShader(EVT_STANDARD);
-
-	pID3DDevice->DrawIndexedPrimitiveUP(	D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
-											D3DFMT_INDEX16, &vtx[0], sizeof(S3DVertex));
-}
-
-
-//!Draws an 2d rectangle with a gradient.
+//!Draws a 2d rectangle with a gradient.
 void CD3D9Driver::draw2DRectangle(const core::rect<s32>& position,
 	SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 	const core::rect<s32>* clip)
 {
-	core::rect<s32> pos = position;
+	core::rect<s32> pos(position);
 
 	if (clip)
 		pos.clipAgainst(*clip);
@@ -1152,10 +1068,7 @@ void CD3D9Driver::draw2DRectangle(const core::rect<s32>& position,
 	if (!pos.isValid())
 		return;
 
-	if (!pos.isValid())
-		return;
-
-	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
 
 	s32 xPlus = -(renderTargetSize.Width>>1);
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
@@ -1186,6 +1099,47 @@ void CD3D9Driver::draw2DRectangle(const core::rect<s32>& position,
 
 }
 
+
+
+//! Draws a 2d line.
+void CD3D9Driver::draw2DLine(const core::position2d<s32>& start,
+				const core::position2d<s32>& end,
+				SColor color)
+{
+	// thanks to Vash TheStampede who sent in his implementation
+
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
+	const s32 xPlus = -(renderTargetSize.Width>>1);
+	const f32 xFact = 1.0f / (renderTargetSize.Width>>1);
+
+	const s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
+	const f32 yFact = 1.0f / (renderTargetSize.Height>>1);
+
+	S3DVertex vtx[2];
+	vtx[0] = S3DVertex((f32)(start.X + xPlus) * xFact,
+						(f32)(yPlus - start.Y) * yFact,
+						0.0f, // z
+						0.0f, 0.0f, 0.0f, // normal
+						color,
+						0.0f, 0.0f); // texture
+
+	vtx[1] = S3DVertex((f32)(end.X+xPlus) * xFact,
+						(f32)(yPlus- end.Y) * yFact,
+						0.0f,
+						0.0f, 0.0f, 0.0f,
+						color,
+						0.0f, 0.0f);
+
+	setRenderStates2DMode(color.getAlpha() < 255, false, false);
+	setTexture(0,0);
+
+	setVertexShader(EVT_STANDARD);
+
+	pID3DDevice->DrawPrimitiveUP(D3DPT_LINELIST,
+							1,
+							&vtx[0],
+							sizeof(S3DVertex) );
+}
 
 //! sets right vertex shader
 void CD3D9Driver::setVertexShader(E_VERTEX_TYPE newType)

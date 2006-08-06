@@ -274,8 +274,6 @@ namespace scene
 
 		void animateNode(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
 
-		void slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
-
 		f32 totalTime;
 		bool HasAnimation;
 		s32 lastCalculatedFrame;

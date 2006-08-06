@@ -291,29 +291,29 @@ inline void quaternion::set(f32 x, f32 y, f32 z, f32 w)
 //! sets new quaternion based on euler angles
 inline void quaternion::set(f32 x, f32 y, f32 z)
 {
-	f32 angle;
+	f64 angle;
 
-	angle = x * 0.5f;
-	f32 sr = (f32)sin(angle);
-	f32 cr = (f32)cos(angle);
+	angle = x * 0.5;
+	f64 sr = (f32)sin(angle);
+	f64 cr = (f32)cos(angle);
 
-	angle = y * 0.5f;
-	f32 sp = (f32)sin(angle);
-	f32 cp = (f32)cos(angle);
+	angle = y * 0.5;
+	f64 sp = (f32)sin(angle);
+	f64 cp = (f32)cos(angle);
 
-	angle = z * 0.5f;
-	f32 sy = (f32)sin(angle);
-	f32 cy = (f32)cos(angle);
+	angle = z * 0.5;
+	f64 sy = (f32)sin(angle);
+	f64 cy = (f32)cos(angle);
 
-	f32 cpcy = cp * cy;
-	f32 spcy = sp * cy;
-	f32 cpsy = cp * sy;
-	f32 spsy = sp * sy;
+	f64 cpcy = cp * cy;
+	f64 spcy = sp * cy;
+	f64 cpsy = cp * sy;
+	f64 spsy = sp * sy;
 
-	X = sr * cpcy - cr * spsy;
-	Y = cr * spcy + sr * cpsy;
-	Z = cr * cpsy - sr * spcy;
-	W = cr * cpcy + sr * spsy;
+	X = (f32)(sr * cpcy - cr * spsy);
+	Y = (f32)(cr * spcy + sr * cpsy);
+	Z = (f32)(cr * cpsy - sr * spcy);
+	W = (f32)(cr * cpcy + sr * spsy);
 
 	normalize();
 }

@@ -305,8 +305,7 @@ void CSoftwareDriver::setViewPort(const core::rect<s32>& area)
 	core::rect<s32> rendert(0,0,RenderTargetSize.Width,RenderTargetSize.Height);
 	ViewPort.clipAgainst(rendert);
 
-	ViewPortSize.Width = ViewPort.getWidth();
-	ViewPortSize.Height = ViewPort.getHeight();
+	ViewPortSize = ViewPort.getSize();
 	Render2DTranslation.X = (ViewPortSize.Width / 2) + ViewPort.UpperLeftCorner.X;
 	Render2DTranslation.Y = ViewPort.UpperLeftCorner.Y + ViewPortSize.Height - (ViewPortSize.Height / 2);// + ViewPort.UpperLeftCorner.Y;
 
@@ -654,9 +653,9 @@ void CSoftwareDriver::draw2DLine(const core::position2d<s32>& start,
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
-								 const core::rect<s32>& sourceRect, 
-								 const core::rect<s32>* clipRect, SColor color, 
-								 bool useAlphaChannelOfTexture)
+					 const core::rect<s32>& sourceRect, 
+					 const core::rect<s32>* clipRect, SColor color, 
+					 bool useAlphaChannelOfTexture)
 {
 	if (texture)
 	{
@@ -677,9 +676,9 @@ void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position
 
 
 
-//! draw an 2d rectangle
+//! draw a 2d rectangle
 void CSoftwareDriver::draw2DRectangle(SColor color, const core::rect<s32>& pos,
-									 const core::rect<s32>* clip)
+					 const core::rect<s32>* clip)
 {
 	if (clip)
 	{
@@ -687,7 +686,7 @@ void CSoftwareDriver::draw2DRectangle(SColor color, const core::rect<s32>& pos,
 
 		p.clipAgainst(*clip);
 
-		if(!p.isValid())  
+		if(!p.isValid())
 			return;
 
 		((CImage*)RenderTargetSurface)->drawRectangle(p, color);

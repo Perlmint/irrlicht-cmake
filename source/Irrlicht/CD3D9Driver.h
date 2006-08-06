@@ -90,10 +90,6 @@ namespace video
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
 			video::SColor* colors=0, bool useAlphaChannelOfTexture=false);
 
-		//! draw an 2d rectangle
-		virtual void draw2DRectangle(SColor color, const core::rect<s32>& pos,
-			const core::rect<s32>* clip = 0);
-
 		//!Draws an 2d rectangle with a gradient.
 		void draw2DRectangle(const core::rect<s32>& pos,
 			SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
