@@ -45,6 +45,7 @@ namespace _14.WindowsForm
 						   cam.AddAnimator(anim);
 						   ISceneNode cube = device.SceneManager.AddTestSceneNode(25, null, -1, new Vector3D());
 						   cube.SetMaterialTexture(0, device.VideoDriver.GetTexture("../../../media/rockwall.bmp"));
+						   cube.SetMaterialFlag(MaterialFlag.LIGHTING, false);
 						   // draw everything
 						   // Note, using device.WindowActive will not work on a control, since we don't
 						   // really activate controls..

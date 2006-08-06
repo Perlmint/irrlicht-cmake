@@ -53,7 +53,7 @@ Module Module1
         Dim cam As ICameraSceneNode = device.SceneManager.AddCameraSceneNodeFPS(Nothing, 100, 100, -1)
         cam.Position = New Vector3D(20, 0, -50)
 
-        Dim node As ISceneNode = device.SceneManager.AddTestSceneNode(15, Nothing, -1, New Vector3D(30, -15, 0))
+        Dim node As ISceneNode = device.SceneManager.AddCubeSceneNode(15, Nothing, -1, New Vector3D(30, -15, 0))
         node.SetMaterialTexture(0, texWall)
 
         node = device.SceneManager.AddAnimatedMeshSceneNode(mesh, Nothing, -1)

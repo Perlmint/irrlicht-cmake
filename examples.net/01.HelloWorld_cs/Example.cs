@@ -66,7 +66,7 @@ namespace _01.HelloWorld
 			cam.Position = new Vector3D(20,0,-50);
 
 
-			ISceneNode node = device.SceneManager.AddTestSceneNode(15,
+			ISceneNode node = device.SceneManager.AddCubeSceneNode(15,
 				null, -1, new Vector3D(30,-15,0));
 			node.SetMaterialTexture(0, texWall);
 

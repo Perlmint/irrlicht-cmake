@@ -132,8 +132,9 @@ namespace _04.Movement
 			 'test node', which is a cube built in into the engine for testing purposes.
 			 We place the node a (0,0,30) and we assign a texture to it to let it look a
 			 little bit more interesting.*/
-			node = smgr.AddTestSceneNode(10, null, 0, new Vector3D(0, 0, 30), new Vector3D(), new Vector3D(1, 1, 1));
+			node = smgr.AddCubeSceneNode(10, null, 0, new Vector3D(0, 0, 30), new Vector3D(), new Vector3D(1, 1, 1));
 			node.SetMaterialTexture(0, driver.GetTexture(path + "wall.bmp"));
+			node.SetMaterialFlag(MaterialFlag.LIGHTING, false);
 			/* Now we create another node, moving using a scene node animator. Scene
 			   node animators modify scene nodes and can be attached to any scene node
 			   like mesh scene nodes, billboards, lights and even camera scene nodes.
