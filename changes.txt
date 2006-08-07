@@ -1,4 +1,4 @@
-Changes in version 1.1 (??? 2006)
+Changes in version 1.1 (06 Aug 2006)
 
 - Added support for making screenshots in all video drivers and a general
   possibility to save any IImage to several file formats.
