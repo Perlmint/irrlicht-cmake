@@ -219,70 +219,86 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	if (glXQueryExtension(display,&major,&minor) &&
 		glXQueryVersion(display, &major, &minor))
 	{
-		// no double buffer, 4 bits per color, 16 bit zbuffer
-		int visualAttrNoDoubleBuffer[] =
-		  {
-		    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-		    GLX_RED_SIZE, 4,
-		    GLX_GREEN_SIZE, 4,
-		    GLX_BLUE_SIZE, 4,
-		    GLX_ALPHA_SIZE, 4,
-		    GLX_DEPTH_SIZE, 16,
-		    None
-		  };
-
-		// doublebuffer, 4 bits per color, 16bit zbuffer
-		int visualAttrDoubleBuffer[] =
-		  {
-		    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-		    GLX_DOUBLEBUFFER, True,
-		    GLX_RED_SIZE, 4,
-		    GLX_GREEN_SIZE, 4,
-		    GLX_BLUE_SIZE, 4,
-		    GLX_ALPHA_SIZE, 4,
-		    GLX_DEPTH_SIZE, 16,
-		    None
-		  };
-
-		// stencilbuffer, 4 bits per color, 16bit zbuffer
-		int visualAttrDoubleStencilBuffer[] =
+		if (major==1 && minor>2)
 		{
-		    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-		    GLX_DOUBLEBUFFER, True,
-		    GLX_RED_SIZE, 4,
-		    GLX_GREEN_SIZE, 4,
-		    GLX_BLUE_SIZE, 4,
-		    GLX_ALPHA_SIZE, 4,
-		    GLX_DEPTH_SIZE, 16,
-		    GLX_STENCIL_SIZE, 1,
-		    None
-		};
-
-		GLXFBConfig *configList=0;
-		int nitems=0;
-		if (StencilBuffer)
-			configList=glXChooseFBConfig(display, screennr, visualAttrDoubleStencilBuffer,&nitems);
-		if (!configList)
-		{
-			if (StencilBuffer)
+			// attribute array for the draw buffer
+			int visualAttrBuffer[] =
 			{
-				os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-				StencilBuffer = false;
-			}
-
-			configList=glXChooseFBConfig(display, screennr, visualAttrDoubleBuffer,&nitems);
+			    GLX_RENDER_TYPE, GLX_RGBA_BIT,
+			    GLX_RED_SIZE, 4,
+			    GLX_GREEN_SIZE, 4,
+			    GLX_BLUE_SIZE, 4,
+			    GLX_ALPHA_SIZE, 4,
+			    GLX_DEPTH_SIZE, 16,
+			    GLX_DOUBLEBUFFER, True,
+			    GLX_STENCIL_SIZE, 1,
+			    None
+			};
+	
+			GLXFBConfig *configList=0;
+			int nitems=0;
+			if (StencilBuffer)
+				configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
 			if (!configList)
 			{
-				os::Printer::log("No doublebuffering available.", ELL_WARNING);
-				configList=glXChooseFBConfig(display, screennr, visualAttrNoDoubleBuffer,&nitems);
+				if (StencilBuffer)
+				{
+					os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
+					StencilBuffer = false;
+				}
+				visualAttrBuffer[15]=0;
+	
+				configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+				if (!configList)
+				{
+					os::Printer::log("No doublebuffering available.", ELL_WARNING);
+					visualAttrBuffer[13]=False;
+					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+				}
+			}
+			if (configList)
+			{
+				glxFBConfig=configList[0];
+				XFree(configList);
+				glxDrawable=true;
+				visual = glXGetVisualFromFBConfig(display,glxFBConfig);
 			}
 		}
-		if (configList)
+		else
 		{
-			glxFBConfig=configList[0];
-			XFree(configList);
-			glxDrawable=true;
-			visual = glXGetVisualFromFBConfig(display,glxFBConfig);
+			// attribute array for the draw buffer
+			int visualAttrBuffer[] =
+			{
+			    GLX_RGBA, True,
+			    GLX_RED_SIZE, 4,
+			    GLX_GREEN_SIZE, 4,
+			    GLX_BLUE_SIZE, 4,
+			    GLX_ALPHA_SIZE, 4,
+			    GLX_DEPTH_SIZE, 16,
+			    GLX_DOUBLEBUFFER, True,
+			    GLX_STENCIL_SIZE, 1,
+			    None
+			};
+	
+			if (StencilBuffer)
+				visual=glXChooseVisual(display, screennr, visualAttrBuffer);
+			if (!visual)
+			{
+				if (StencilBuffer)
+				{
+					os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
+					StencilBuffer = false;
+				}
+				visualAttrBuffer[15]=0;
+	
+				visual=glXChooseVisual(display, screennr, visualAttrBuffer);
+				if (!visual)
+				{
+					os::Printer::log("No doublebuffering available.", ELL_WARNING);
+					visualAttrBuffer[13]=False;
+					visual=glXChooseVisual(display, screennr, visualAttrBuffer);
+				}
+			}
 		}
 	}
 	else
@@ -391,7 +407,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	{
 		// glXCreateWindow not yet supported by hardware accelerated X11 under Linux
 //		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);
-		if (true/* glxWin */)
+		if (true /*glxWin*/)
 		{
 			// create glx context
 			Context = glXCreateNewContext(display, glxFBConfig, GLX_RGBA_TYPE, NULL, True);
@@ -412,6 +428,22 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		else
 		{
 			os::Printer::log("Could not create GLX window.", ELL_WARNING);
+		}
+	}
+	else
+	{
+		Context = glXCreateContext(display, visual, NULL, True);
+		if (Context)
+		{
+			if (!glXMakeCurrent(display, window, Context))
+			{
+				os::Printer::log("Could not make context current.", ELL_WARNING);
+				glXDestroyContext(display, Context);
+			}
+		}
+		else
+		{
+			os::Printer::log("Could not create GLX rendering context.", ELL_WARNING);
 		}
 	}
 #endif // _IRR_COMPILE_WITH_OPENGL_
