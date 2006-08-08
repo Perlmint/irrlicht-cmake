@@ -10,6 +10,7 @@
 #include "IImagePresenter.h"
 #include "irrArray.h"
 #include "irrString.h"
+#include "IAttributes.h"
 #include "IImageLoader.h"
 #include "IImageWriter.h"
 #include "IMeshBuffer.h"

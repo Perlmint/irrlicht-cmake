@@ -9,7 +9,7 @@ CppCompiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_WINDOWS -D_MBCS -D_USRDLL -DIR
 Includes=..\..\include;zlib
 Linker=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglu32 -lopengl32_@@_
 Libs=
-UnitCount=496
+UnitCount=494
 Folders=doc,gui_impl,include,include/core,include/gui,include/io,include/scene,include/video,io_impl,other_impl,other_impl/extern,other_impl/extern/jpeglib,other_impl/extern/libpng,other_impl/extern/zlib,scene_impl,video_impl,video_impl/DirectX8,video_impl/DirectX9,video_impl/Null,video_impl/OpenGL,video_impl/Software,video_impl/Software2
 ObjFiles=
 PrivateResource=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001100001000000
+CompilerSettings=0000000001010000000100
 
 [Unit1]
 FileName=..\..\include\EDriverTypes.h
@@ -4846,26 +4846,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit481]
-FileName=CImageLoaderMisc.h
-CompileCpp=1
-Folder=video_impl/Null
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit482]
-FileName=CImageLoaderMisc.cpp
-CompileCpp=1
-Folder=video_impl/Null
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit483]
 FileName=CImageWriterTGA.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4875,7 +4855,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit484]
+[Unit482]
 FileName=CImageWriterBMP.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4885,7 +4865,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit485]
+[Unit483]
 FileName=CImageWriterBMP.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4895,7 +4875,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit486]
+[Unit484]
 FileName=CImageWriterJPG.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4905,7 +4885,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit487]
+[Unit485]
 FileName=CImageWriterJPG.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4915,7 +4895,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit488]
+[Unit486]
 FileName=CImageWriterPCX.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4925,7 +4905,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit489]
+[Unit487]
 FileName=CImageWriterPCX.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4935,7 +4915,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit490]
+[Unit488]
 FileName=CImageWriterPNG.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4945,7 +4925,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit491]
+[Unit489]
 FileName=CImageWriterPNG.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4955,7 +4935,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit492]
+[Unit490]
 FileName=CImageWriterPPM.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4965,7 +4945,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit493]
+[Unit491]
 FileName=CImageWriterPPM.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4975,7 +4955,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit494]
+[Unit492]
 FileName=CImageWriterPSD.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4985,7 +4965,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit495]
+[Unit493]
 FileName=CImageWriterPSD.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4995,7 +4975,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit496]
+[Unit494]
 FileName=CImageWriterTGA.cpp
 CompileCpp=1
 Folder=video_impl/Null

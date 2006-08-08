@@ -128,9 +128,7 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
 	struct irr_jpeg_error_mgr jerr;
 
 
-    u16 rowspan;
-    unsigned width, height, rowsRead;
-    u8 *output, **rowPtr=0;
+    u8 **rowPtr=0;
 
     //We have to set up the error handler first, in case the initialization
     //step fails.  (Unlikely, but it could happen if you are out of memory.)
@@ -198,22 +196,22 @@ IImage* CImageLoaderJPG::loadImage(irr::io::IReadFile* file)
     (void) jpeg_start_decompress(&cinfo);
 
     // Get image data
-    rowspan = cinfo.image_width * cinfo.out_color_components;
-    width = cinfo.image_width;
-    height = cinfo.image_height;
+    u16 rowspan = cinfo.image_width * cinfo.out_color_components;
+    u32 width = cinfo.image_width;
+    u32 height = cinfo.image_height;
 
     // Allocate memory for buffer
-    output = new u8[rowspan * height];
+    u8* output = new u8[rowspan * height];
 
     // Here we use the library's state variable cinfo.output_scanline as the
     // loop counter, so that we don't have to keep track ourselves.
     // Create array of row pointers for lib
     rowPtr = new u8 * [height];
 
-    for( unsigned i = 0; i < height; i++ )
+    for( u32 i = 0; i < height; i++ )
         rowPtr[i] = &output[ i * rowspan ];
 
-    rowsRead = 0;
+    u32 rowsRead = 0;
 
     while( cinfo.output_scanline < cinfo.output_height )
         rowsRead += jpeg_read_scanlines( &cinfo, &rowPtr[rowsRead], cinfo.output_height - rowsRead );
