@@ -45,7 +45,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	bool sbuffer, bool vsync, bool antiAlias,
 	IEventReceiver* receiver,
 	const char* version)
- : CIrrDeviceStub(version, receiver), close(false), DriverType(driverType),
+ : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), DriverType(driverType),
 	Fullscreen(fullscreen), StencilBuffer(sbuffer), SoftwareImage(0)
 {
 	#ifdef _DEBUG
@@ -381,6 +381,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		XSetWMProtocols(display, window, &wmDelete, 1);
 		XMapRaised(display, window);
 	}
+	WindowActive=true;
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
@@ -484,7 +485,7 @@ bool CIrrDeviceLinux::run()
 	{
 		irr::SEvent irrevent;
 
-		while (XPending(display) > 0 && !close)
+		while (XPending(display) > 0 && !Close)
 		{
 			XNextEvent(display, &event);
 
@@ -501,6 +502,14 @@ bool CIrrDeviceLinux::run()
 					if (VideoDriver)
 						VideoDriver->OnResize(core::dimension2d<s32>(Width, Height));
 				}
+				break;
+
+			case MapNotify:
+				WindowActive=true;
+				break;
+
+			case UnmapNotify:
+				WindowActive=false;
 				break;
 
 			case MotionNotify:
@@ -585,7 +594,7 @@ bool CIrrDeviceLinux::run()
 					*wmDeleteWindow)
 				{
 					os::Printer::log("Quit message received.", ELL_INFORMATION);
-					close = true;
+					Close = true;
 				}
 				break;
 
@@ -596,7 +605,7 @@ bool CIrrDeviceLinux::run()
 		} // end while
 	}
 
-	return !close;
+	return !Close;
 }
 
 
@@ -757,7 +766,7 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 //! notifies the device that it should close itself
 void CIrrDeviceLinux::closeDevice()
 {
-	close = true;
+	Close = true;
 }
 
 
@@ -765,7 +774,7 @@ void CIrrDeviceLinux::closeDevice()
 //! returns if window is active. if not, nothing need to be drawn
 bool CIrrDeviceLinux::isWindowActive()
 {
-	return true; // TODO
+	return WindowActive;
 }
 
 

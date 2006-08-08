@@ -228,7 +228,8 @@ namespace irr
 
 		int x,y;
 		unsigned int Width, Height, Depth;
-		bool close;
+		bool Close;
+		bool WindowActive;
 
 		struct SKeyMap
 		{
