@@ -33,7 +33,7 @@ namespace core
 			f32& operator()(s32 row, s32 col) { return M[col * 4 + row]; }
 
 			//! Simple operator for directly accessing every element of the matrix.
-			const f32& operator()(s32 row, s32 col) const {  return M[col * 4 + row]; }
+			const f32& operator()(s32 row, s32 col) const { return M[col * 4 + row]; }
 
 			//! Sets this matrix equal to the other matrix.
 			inline matrix4& operator=(const matrix4 &other);
@@ -50,7 +50,7 @@ namespace core
 			//! Multiply by another matrix.
 			matrix4 operator*(const matrix4& other) const;
 
-			//! Set matrix to identity. 
+			//! Set matrix to identity.
 			inline void makeIdentity();
 
 			//! Returns true if the matrix is the identity matrix
@@ -63,42 +63,42 @@ namespace core
 			vector3df getTranslation() const;
 
 			//! Set the inverse translation of the current matrix. Will erase any previous values.
-			void setInverseTranslation( const vector3df& translation );	
+			void setInverseTranslation( const vector3df& translation );
 
 			//! Make a rotation matrix from Euler angles. The 4th row and column are unmodified.
-			inline void setRotationRadians( const vector3df& rotation );			
+			inline void setRotationRadians( const vector3df& rotation );
 
 			//! Make a rotation matrix from Euler angles. The 4th row and column are unmodified.
-			void setRotationDegrees( const vector3df& rotation );			
+			void setRotationDegrees( const vector3df& rotation );
 
 			//! Returns the rotation, as set by setRotation(). This code was orginally written by by Chev.
-			core::vector3df getRotationDegrees() const;			
+			core::vector3df getRotationDegrees() const;
 
 			//! Make an inverted rotation matrix from Euler angles. The 4th row and column are unmodified.
-			inline void setInverseRotationRadians( const vector3df& rotation );	
+			inline void setInverseRotationRadians( const vector3df& rotation );
 
 			//! Make an inverted rotation matrix from Euler angles. The 4th row and column are unmodified.
-			void setInverseRotationDegrees( const vector3df& rotation );	
+			void setInverseRotationDegrees( const vector3df& rotation );
 
 			//! Set Scale
 			void setScale( const vector3df& scale );
-			
+
 			//! Get Scale
 			core::vector3df getScale() const;
 
 			//! Translate a vector by the inverse of the translation part of this matrix.
-			void inverseTranslateVect( vector3df& vect ) const;			
+			void inverseTranslateVect( vector3df& vect ) const;
 
 			//! Rotate a vector by the inverse of the rotation part of this matrix.
-			void inverseRotateVect( vector3df& vect ) const;				
+			void inverseRotateVect( vector3df& vect ) const;
 
 			//! Rotate a vector by the rotation part of this matrix.
-			void rotateVect( vector3df& vect ) const;				
+			void rotateVect( vector3df& vect ) const;
 
 			//! Transforms the vector by this matrix
 			void transformVect( vector3df& vect) const;
 
-			//! Transforms input vector by this matrix and stores result in output vector 
+			//! Transforms input vector by this matrix and stores result in output vector
 			void transformVect( const vector3df& in, vector3df& out) const;
 
 			//! An alternate transform vector method, writing into an array of 4 floats
@@ -162,14 +162,14 @@ namespace core
 			//! Builds a matrix that flattens geometry into a plane.
 			//! \param light: light source
 			//! \param plane: plane into which the geometry if flattened into
-			//! \param point: value between 0 and 1, describing the light source. 
+			//! \param point: value between 0 and 1, describing the light source.
 			//! If this is 1, it is a point light, if it is 0, it is a directional light.
 			void buildShadowMatrix(const core::vector3df& light, core::plane3df plane, f32 point=1.0f);
 
-			//! Builds a matrix which transforms a normalized Device Corrdinate to Device Coordinates. 
+			//! Builds a matrix which transforms a normalized Device Corrdinate to Device Coordinates.
 			/** Used to scale <-1,-1><1,1> to viewport, for example from von <-1,-1> <1,1> to the viewport <0,0><0,640> */
 			void buildNDCToDCMatrix( const core::rect<s32>& area, f32 zScale);
-			
+
 			//! creates a new matrix as interpolated matrix from to other ones.
 			//! \param b: other matrix to interpolate with
 			//! \param time: Must be a value between 0 and 1.
@@ -199,22 +199,22 @@ namespace core
 		newMatrix[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
 		newMatrix[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
 		newMatrix[3] = m1[3]*m2[0] + m1[7]*m2[1] + m1[11]*m2[2] + m1[15]*m2[3];
-		
+
 		newMatrix[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7];
 		newMatrix[5] = m1[1]*m2[4] + m1[5]*m2[5] + m1[9]*m2[6] + m1[13]*m2[7];
 		newMatrix[6] = m1[2]*m2[4] + m1[6]*m2[5] + m1[10]*m2[6] + m1[14]*m2[7];
 		newMatrix[7] = m1[3]*m2[4] + m1[7]*m2[5] + m1[11]*m2[6] + m1[15]*m2[7];
-		
+
 		newMatrix[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11];
 		newMatrix[9] = m1[1]*m2[8] + m1[5]*m2[9] + m1[9]*m2[10] + m1[13]*m2[11];
 		newMatrix[10] = m1[2]*m2[8] + m1[6]*m2[9] + m1[10]*m2[10] + m1[14]*m2[11];
 		newMatrix[11] = m1[3]*m2[8] + m1[7]*m2[9] + m1[11]*m2[10] + m1[15]*m2[11];
-		
+
 		newMatrix[12] = m1[0]*m2[12] + m1[4]*m2[13] + m1[8]*m2[14] + m1[12]*m2[15];
 		newMatrix[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
 		newMatrix[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
 		newMatrix[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
-		
+
 		memcpy(M, newMatrix, 16*sizeof(f32));
 
 		return *this;
@@ -233,17 +233,17 @@ namespace core
 		m3[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
 		m3[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
 		m3[3] = m1[3]*m2[0] + m1[7]*m2[1] + m1[11]*m2[2] + m1[15]*m2[3];
-		
+
 		m3[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7];
 		m3[5] = m1[1]*m2[4] + m1[5]*m2[5] + m1[9]*m2[6] + m1[13]*m2[7];
 		m3[6] = m1[2]*m2[4] + m1[6]*m2[5] + m1[10]*m2[6] + m1[14]*m2[7];
 		m3[7] = m1[3]*m2[4] + m1[7]*m2[5] + m1[11]*m2[6] + m1[15]*m2[7];
-		
+
 		m3[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11];
 		m3[9] = m1[1]*m2[8] + m1[5]*m2[9] + m1[9]*m2[10] + m1[13]*m2[11];
 		m3[10] = m1[2]*m2[8] + m1[6]*m2[9] + m1[10]*m2[10] + m1[14]*m2[11];
 		m3[11] = m1[3]*m2[8] + m1[7]*m2[9] + m1[11]*m2[10] + m1[15]*m2[11];
-		
+
 		m3[12] = m1[0]*m2[12] + m1[4]*m2[13] + m1[8]*m2[14] + m1[12]*m2[15];
 		m3[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
 		m3[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
@@ -325,37 +325,37 @@ namespace core
 	//! in by Chev.
 	inline core::vector3df matrix4::getRotationDegrees() const
 	{
-		const matrix4 &mat = *this; 
+		const matrix4 &mat = *this;
 
-		f64 Y = -asin(mat(2,0)); 
-		f64 C = cos(Y); 
-		Y *= GRAD_PI; 
+		f64 Y = -asin(mat(2,0));
+		f64 C = cos(Y);
+		Y *= GRAD_PI;
 
-		f64 rotx, roty, X, Z; 
+		f64 rotx, roty, X, Z;
 
-		if (fabs(C)>0.0005f)  
-		{ 
-			rotx = mat(2,2) / C; 
-			roty = mat(2,1)  / C; 
-			X = atan2( roty, rotx ) * GRAD_PI; 
-			rotx = mat(0,0) / C; 
-			roty = mat(1,0) / C; 
-			Z = atan2( roty, rotx ) * GRAD_PI; 
-		} 
-		else 
-		{ 
-			X  = 0.0f; 
-			rotx = mat(1,1); 
-			roty = -mat(0,1); 
-			Z  = atan2( roty, rotx ) * (f32)GRAD_PI; 
-		} 
+		if (fabs(C)>0.0005f)
+		{
+			rotx = mat(2,2) / C;
+			roty = mat(2,1) / C;
+			X = atan2( roty, rotx ) * GRAD_PI;
+			rotx = mat(0,0) / C;
+			roty = mat(1,0) / C;
+			Z = atan2( roty, rotx ) * GRAD_PI;
+		}
+		else
+		{
+			X = 0.0f;
+			rotx = mat(1,1);
+			roty = -mat(0,1);
+			Z = atan2( roty, rotx ) * GRAD_PI;
+		}
 
-		// fix values that get below zero 
-		// before it would set (!) values to 360 
-		// that where above 360: 
-		if (X < 0.0) X += 360.0; 
-		if (Y < 0.0) Y += 360.0; 
-		if (Z < 0.0) Z += 360.0; 
+		// fix values that get below zero
+		// before it would set (!) values to 360
+		// that where above 360:
+		if (X < 0.0) X += 360.0;
+		if (Y < 0.0) Y += 360.0;
+		if (Z < 0.0) Z += 360.0;
 
 		return vector3df((f32)X,(f32)Y,(f32)Z);
 	}
@@ -400,7 +400,7 @@ namespace core
 			if (j != i)
 			{
 				if ((*this)(i,j) < -0.0000001f ||
-					(*this)(i,j) >  0.0000001f)
+					(*this)(i,j) > 0.0000001f)
 					return false;
 			}
 			else
@@ -418,7 +418,7 @@ namespace core
 		vector3df tmp = vect;
 		vect.X = tmp.X*M[0] + tmp.Y*M[4] + tmp.Z*M[8];
 		vect.Y = tmp.X*M[1] + tmp.Y*M[5] + tmp.Z*M[9];
-		vect.Z = tmp.X*M[2] + tmp.Y*M[6] + tmp.Z*M[10]; 
+		vect.Z = tmp.X*M[2] + tmp.Y*M[6] + tmp.Z*M[10];
 	}
 
 	inline void matrix4::inverseRotateVect( vector3df& vect ) const
@@ -468,7 +468,7 @@ namespace core
 	inline void matrix4::transformPlane( const core::plane3d<f32> &in, core::plane3d<f32> &out) const
 	{
 		out = in;
-        transformPlane( out );
+		transformPlane( out );
 	}
 
 	//! Transforms a axis aligned bounding box
@@ -534,7 +534,7 @@ namespace core
 
 	inline bool matrix4::getInverse(matrix4& out) const
 	{
-		/// Calculates the inverse of this Matrix 
+		/// Calculates the inverse of this Matrix
 		/// The inverse is calculated using Cramers rule.
 		/// If no inverse exists then 'false' is returned.
 
@@ -543,7 +543,7 @@ namespace core
 		f32 d = (m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1)) * (m(2, 2) * m(3, 3) - m(3, 2) * m(2, 3))	- (m(0, 0) * m(2, 1) - m(2, 0) * m(0, 1)) * (m(1, 2) * m(3, 3) - m(3, 2) * m(1, 3))
 				+ (m(0, 0) * m(3, 1) - m(3, 0) * m(0, 1)) * (m(1, 2) * m(2, 3) - m(2, 2) * m(1, 3))	+ (m(1, 0) * m(2, 1) - m(2, 0) * m(1, 1)) * (m(0, 2) * m(3, 3) - m(3, 2) * m(0, 3))
 				- (m(1, 0) * m(3, 1) - m(3, 0) * m(1, 1)) * (m(0, 2) * m(2, 3) - m(2, 2) * m(0, 3))	+ (m(2, 0) * m(3, 1) - m(3, 0) * m(2, 1)) * (m(0, 2) * m(1, 3) - m(1, 2) * m(0, 3));
-		
+
 		if (d == 0.f)
 			return false;
 
@@ -588,7 +588,6 @@ namespace core
 	inline matrix4& matrix4::operator=(const matrix4 &other)
 	{
 		memcpy(M, other.M, 16*sizeof(f32));
-
 		return *this;
 	}
 
@@ -799,9 +798,10 @@ namespace core
 	}
 
 	//! Builds a left-handed look-at matrix.
-	inline void matrix4::buildCameraLookAtMatrixLH(	const vector3df& position,
-													const vector3df& target,
-													const vector3df& upVector)
+	inline void matrix4::buildCameraLookAtMatrixLH(
+				const vector3df& position,
+				const vector3df& target,
+				const vector3df& upVector)
 	{
 		vector3df zaxis = target - position;
 		zaxis.normalize();
@@ -835,9 +835,10 @@ namespace core
 
 
 	//! Builds a right-handed look-at matrix.
-	inline void matrix4::buildCameraLookAtMatrixRH(	const vector3df& position,
-													const vector3df& target,
-													const vector3df& upVector)
+	inline void matrix4::buildCameraLookAtMatrixRH(
+				const vector3df& position,
+				const vector3df& target,
+				const vector3df& upVector)
 	{
 		vector3df zaxis = position - target;
 		zaxis.normalize();
@@ -920,5 +921,5 @@ namespace core
 } // end namespace core
 } // end namespace irr
 
-#endif 
+#endif
 

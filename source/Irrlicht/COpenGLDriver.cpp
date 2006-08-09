@@ -539,12 +539,15 @@ void COpenGLDriver::loadExtensions()
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
 	}
 
+#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (!pGlActiveTextureARB || !pGlClientActiveTextureARB)
 	{
 		MultiTextureExtension = false;
 		os::Printer::log("Failed to load OpenGL's multitexture extension, proceeding without.", ELL_WARNING);
 	}
-	else if (MaxTextureUnits < 2)
+	else
+#endif
+	if (MaxTextureUnits < 2)
 	{
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);

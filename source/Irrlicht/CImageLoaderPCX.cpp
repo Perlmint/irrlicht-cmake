@@ -63,16 +63,16 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 
 	file->read(&header, sizeof(header));
 	#ifdef __BIG_ENDIAN__
-		XMin = OSReadSwapInt16(&XMin,0);
-		YMin = OSReadSwapInt16(&YMin,0);
-		XMax = OSReadSwapInt16(&XMax,0);
-		YMax = OSReadSwapInt16(&YMax,0);
-		HorizDPI = OSReadSwapInt16(&HorizDPI,0);
-		VertDPI = OSReadSwapInt16(&VertDPI,0);
-		BytesPerLine = OSReadSwapInt16(&BytesPerLine,0);
-		PaletteType = OSReadSwapInt16(&PaletteType,0);
-		HScrSize = OSReadSwapInt16(&HScrSize,0);
-		VScrSize = OSReadSwapInt16(&VScrSize,0);
+		header.XMin = OSReadSwapInt16(&header.XMin, 0);
+		header.YMin = OSReadSwapInt16(&header.YMin, 0);
+		header.XMax = OSReadSwapInt16(&header.XMax, 0);
+		header.YMax = OSReadSwapInt16(&header.YMax, 0);
+		header.HorizDPI = OSReadSwapInt16(&header.HorizDPI, 0);
+		header.VertDPI = OSReadSwapInt16(&header.VertDPI, 0);
+		header.BytesPerLine = OSReadSwapInt16(&header.BytesPerLine, 0);
+		header.PaletteType = OSReadSwapInt16(&header.PaletteType, 0);
+		header.HScrSize = OSReadSwapInt16(&header.HScrSize, 0);
+		header.VScrSize = OSReadSwapInt16(&header.VScrSize, 0);
 	#endif
 
 	s32 pitch = 0;
@@ -167,7 +167,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	if (pitch < 0)
 		pitch = -pitch;
 
-	switch(header.BitsPerPixel)
+	switch(header.BitsPerPixel) // TODO: Other formats
 	{
 	case 8:
 		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(width, height));
