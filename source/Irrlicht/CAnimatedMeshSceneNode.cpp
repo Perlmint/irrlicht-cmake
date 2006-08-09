@@ -175,22 +175,6 @@ void CAnimatedMeshSceneNode::OnPostRender(u32 timeMs)
 
 		// update absolute position
 		updateAbsolutePosition();
-
-		// update all dummy transformation nodes
-		if (!JointChildSceneNodes.empty() && Mesh && 
-			(Mesh->getMeshType() == EAMT_MS3D || Mesh->getMeshType() == EAMT_X))
-		{
-			IAnimatedMeshMS3D* amm = (IAnimatedMeshMS3D*)Mesh;
-			core::matrix4* mat;
-
-			for (s32 i=0; i<(s32)JointChildSceneNodes.size(); ++i)
-				if (JointChildSceneNodes[i])
-				{
-					mat = amm->getMatrixOfJoint(i, frameNr);
-					if (mat)
-						JointChildSceneNodes[i]->getRelativeTransformationMatrix() = *mat;
-				}
-		}
 		
 		core::list<ISceneNode*>::Iterator it = Children.begin();
 		for (; it != Children.end(); ++it)
@@ -221,6 +205,22 @@ void CAnimatedMeshSceneNode::render()
 	if (m)
 	{
 		Box = m->getBoundingBox();
+
+		// update all dummy transformation nodes
+		if (!JointChildSceneNodes.empty() && Mesh && 
+			(Mesh->getMeshType() == EAMT_MS3D || Mesh->getMeshType() == EAMT_X))
+		{
+			IAnimatedMeshMS3D* amm = (IAnimatedMeshMS3D*)Mesh;
+			core::matrix4* mat;
+
+			for (s32 i=0; i<(s32)JointChildSceneNodes.size(); ++i)
+				if (JointChildSceneNodes[i])
+				{
+					mat = amm->getMatrixOfJoint(i, frame);
+					if (mat)
+						JointChildSceneNodes[i]->getRelativeTransformationMatrix() = *mat;
+				}
+		}
 
 		// for debug purposes only:
 		if (DebugDataVisible && PassCount==1)
