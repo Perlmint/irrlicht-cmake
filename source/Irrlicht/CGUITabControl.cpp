@@ -106,7 +106,7 @@ CGUITabControl::~CGUITabControl()
 
 
 //! Adds a tab
-IGUITab* CGUITabControl::addTab(wchar_t* caption, s32 id)
+IGUITab* CGUITabControl::addTab(const wchar_t* caption, s32 id)
 {
 	IGUISkin* skin = Environment->getSkin();
 	if (!skin)

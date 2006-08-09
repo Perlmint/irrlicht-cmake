@@ -37,10 +37,14 @@ CXFileReader::CXFileReader(io::IReadFile* file)
 	}
 
 #ifdef _XREADER_DEBUG
-	validateMesh(&RootFrame);
+	for( unsigned int i = 0; i < RootFrames.size(); i++ )
+		validateMesh(&RootFrames[i]);
 #endif
 
-	computeGlobalFrameMatrices(RootFrame, 0);
+	for( unsigned int i = 0; i < RootFrames.size(); i++ )
+	{
+		computeGlobalFrameMatrices(RootFrames[i], 0 );
+	}
 }
 
 
@@ -145,6 +149,7 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 	Buffer = new c8[Size];
 
 	//! read all into memory
+	file->seek(0); // apparently sometimes files have been read already, so reset it
 	if (file->read(Buffer, Size) != Size)
 	{
 		os::Printer::log("Could not read from x file.", ELL_WARNING);
@@ -204,12 +209,77 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 //! Parses the file
 bool CXFileReader::parseFile()
 {
+	u32 u32Idx;
 	while(parseDataObject())
 	{
 		// loop
 	}
-
+	// loop through hiearchy and combine frames that have no mesh
+	// and no name into its parent
+	
+	m_bFrameRemoved = false;
+	for( u32Idx = 0; u32Idx < RootFrames.size(); u32Idx++ )
+	{
+		optimizeFrames( &RootFrames[ u32Idx ], 0 );
+	}
+	while( m_bFrameRemoved )
+	{
+		m_bFrameRemoved = false;
+		for( u32Idx = 0; u32Idx < RootFrames.size(); u32Idx++ )
+		{
+			optimizeFrames( &RootFrames[ u32Idx ], 0 );
+		}
+	}
 	return true;
+}
+
+//! loop through hiearchy and combine frames that have no mesh or name into parent frame
+void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
+{
+	if( pgParent )
+	{
+		if( (0 == pgParent->Meshes.size()) &&
+			(0 == strlen( pgFrame->Name.c_str() )) &&
+			strlen( pgParent->Name.c_str() ) )
+		{
+			// combine this frame with parent
+			// add child frames to parent
+			pgParent->LocalMatrix = pgParent->LocalMatrix * pgFrame->LocalMatrix;
+			for( u32 c=0; c<pgFrame->ChildFrames.size(); ++c )
+			{
+				// add child frames to parent
+				for (u32 c=0; c<pgFrame->ChildFrames.size(); ++c)
+				{
+					pgParent->ChildFrames.push_back(pgFrame->ChildFrames[c]);
+				}
+			}
+			// add meshes to parent
+			for( u32 c=0; c<pgFrame->Meshes.size(); ++c )
+			{
+				// add meshes frames to parent
+				pgParent->Meshes.push_back( pgFrame->Meshes[c] );
+			}
+
+			// remove child fames in our list
+			pgFrame->ChildFrames.clear();
+			// remove meshes
+			pgFrame->Meshes.clear();
+
+			// find ourselve and remove from parent frame
+			for( u32 c=0; c< pgParent->ChildFrames.size(); ++c )
+			{
+				if( &pgParent->ChildFrames[c] == pgFrame )
+				{
+					//found ourself
+					pgParent->ChildFrames.erase( c, 1 );
+					m_bFrameRemoved = true;
+					return;
+				}
+			}
+		}
+	}
+	for (u32 c=0; c<pgFrame->ChildFrames.size(); ++c)
+		optimizeFrames( &pgFrame->ChildFrames[c], pgFrame );
 }
 
 
@@ -227,12 +297,16 @@ bool CXFileReader::parseDataObject()
 		return parseDataObjectTemplate();
 	else
 	if (objectName == "Frame")
-		return parseDataObjectFrame(RootFrame);
+	{
+		RootFrames.push_back(SXFrame());
+		m_pgCurFrame = &RootFrames[ RootFrames.size() - 1 ];
+		return parseDataObjectFrame( * m_pgCurFrame );
+	}
 	else
 	if (objectName == "Mesh")
 	{
-		RootFrame.Meshes.push_back(SXMesh());
-		return parseDataObjectMesh(RootFrame.Meshes[RootFrame.Meshes.size()-1]);
+		m_pgCurFrame->Meshes.push_back(SXMesh());
+		return parseDataObjectMesh(m_pgCurFrame->Meshes[m_pgCurFrame->Meshes.size()-1]);
 	}
 	else
 	if (objectName == "AnimationSet")
@@ -544,7 +618,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 		{
 			if (!parseDataObjectMeshMaterialList(mesh.MaterialList,
 				mesh.Indices.size(), mesh.IndexCountPerFace))
-                return false;
+					return false;
 		}
 		else
 		if (objectName == "VertexDuplicationIndices")
@@ -1328,6 +1402,7 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 	}
 
 	s32 nCoords;
+	u32 count;
 	nCoords = readInt();
 	if (binary)
 	{
@@ -1336,7 +1411,7 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 			os::Printer::log("Binary X: MeshTextureCoords: Expecting float list", ELL_WARNING);
 			return false;
 		}
-		readBinDWord();
+		count = readBinDWord();
 	}
 	textureCoords.set_used(nCoords);
 
@@ -1640,9 +1715,9 @@ CXFileReader::SXAnimationSet& CXFileReader::getAnimationSet(s32 i)
 }
 
 //! returns the root frame of the mesh
-CXFileReader::SXFrame& CXFileReader::getRootFrame()
+core::array<CXFileReader::SXFrame> & CXFileReader::getRootFrames()
 {
-	return RootFrame;
+	return RootFrames;
 }
 
 

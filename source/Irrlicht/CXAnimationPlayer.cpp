@@ -102,47 +102,59 @@ E_ANIMATED_MESH_TYPE CXAnimationPlayer::getMeshType() const
 
 void CXAnimationPlayer::createAnimationData()
 {
+	int i, iCnt;
 	// get joints from x-file
-	createJointData(Reader->getRootFrame(), -1);
-
-	createMeshData();
-
-	if (IsAnimatedSkinnedMesh && AnimatedMesh)
+	core::array<CXFileReader::SXFrame>& pgRootFrames = Reader->getRootFrames();
+	iCnt = pgRootFrames.size();
+	for( i = 0; i < iCnt; i++ )
 	{
-		animateSkeleton();
-		modifySkin();	
-		updateBoundingBoxFromAnimation();
-		DebugSkeletonCrossSize = AnimatedMesh->getBoundingBox().getExtent().X / 20.0f;
+		createJointData(pgRootFrames[i], -1);
+
+		createMeshData();
+
+		if (IsAnimatedSkinnedMesh && AnimatedMesh)
+		{
+			animateSkeleton();
+			modifySkin();	
+			updateBoundingBoxFromAnimation();
+			DebugSkeletonCrossSize = AnimatedMesh->getBoundingBox().getExtent().X / 20.0f;
+		}
+		else
+			DebugSkeletonCrossSize = OriginalMesh.getBoundingBox().getExtent().X / 20.0f;
 	}
-	else
-		DebugSkeletonCrossSize = OriginalMesh.getBoundingBox().getExtent().X / 20.0f;
 }
 
 
 void CXAnimationPlayer::createMeshData()
 {
-	// create mesh
-	addFrameToMesh(Reader->getRootFrame());
+	int i, iCnt;
+	core::array<CXFileReader::SXFrame>& pgRootFrames = Reader->getRootFrames();
+	iCnt = pgRootFrames.size();
+	for( i = 0; i < iCnt; i++ )
+	{
+		// create mesh
+		addFrameToMesh(pgRootFrames[i]);
 
-	// recalculate box
-	OriginalMesh.recalculateBoundingBox();
+		// recalculate box
+		OriginalMesh.recalculateBoundingBox();
 
-	// store box (fix by jox, thnx)
-	Box = OriginalMesh.getBoundingBox();
+		// store box (fix by jox, thnx)
+		Box = OriginalMesh.getBoundingBox();
 
-	// sort weights in joints
-	for (u32 j=0; j<Joints.size(); ++j)
-		Joints[j].Weights.sort();
+		// sort weights in joints
+		for (s32 j=0; j<(s32)Joints.size(); ++j)
+			Joints[j].Weights.sort();
 
-	// copy mesh
-	AnimatedMesh = Manipulator->createMeshCopy(&OriginalMesh);
+		// copy mesh
+		AnimatedMesh = Manipulator->createMeshCopy(&OriginalMesh);
 
-	// create and link animation data
-	prepareAnimationData();
+		// create and link animation data
+		prepareAnimationData();
 
-	// first animation
-	animateSkeleton();
-	modifySkin();
+		// first animation
+		animateSkeleton();
+		modifySkin();
+	}
 }
 
 
@@ -293,7 +305,7 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 				// if this vertex does not have a weight, create a virtual new 
 				// joint and attach it to this one
 				if (!isWeighted)
-					addVirtualWeight(meshbuffernr, nidx, frame);
+					addVirtualWeight(meshbuffernr, nidx, mesh, frame);
 
 			} // end for all faces
 
@@ -329,7 +341,7 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 }
 
 
-void CXAnimationPlayer::addVirtualWeight(s32 meshbuffernr, s32 vtxidx, 
+void CXAnimationPlayer::addVirtualWeight(s32 meshbuffernr, s32 vtxidx, CXFileReader::SXMesh& mesh,
 					const CXFileReader::SXFrame& frame)
 {
 	// find original joint of vertex
@@ -581,7 +593,7 @@ void CXAnimationPlayer::animateSkeleton()
 		if (!Joints[ji].WasAnimatedThisFrame)
 			Joints[ji].LocalAnimatedMatrix = Joints[ji].LocalMatrix;
 
-        Joints[ji].AnimatedMatrix = Joints[ji].LocalAnimatedMatrix;
+		  Joints[ji].AnimatedMatrix = Joints[ji].LocalAnimatedMatrix;
 
 		if (Joints[ji].Parent != -1)
 			Joints[ji].AnimatedMatrix = Joints[Joints[ji].Parent].AnimatedMatrix * Joints[ji].AnimatedMatrix;
@@ -695,7 +707,7 @@ void CXAnimationPlayer::modifySkin()
 //! prepares animation data which was read in from the .x file
 void CXAnimationPlayer::prepareAnimationData()
 {
-    s32 animationSetCount = Reader->getAnimationSetCount();
+	s32 animationSetCount = Reader->getAnimationSetCount();
 	for (s32 i=0; i<animationSetCount; ++i)
 	{
 		AnimationSets.push_back(SXAnimationSet());

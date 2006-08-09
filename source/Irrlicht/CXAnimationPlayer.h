@@ -158,7 +158,7 @@ namespace scene
 
 		void updateBoundingBoxFromAnimation();
 
-		void addVirtualWeight(s32 meshbuffernr, s32 vtxidx,
+		void addVirtualWeight(s32 meshbuffernr, s32 vtxidx, CXFileReader::SXMesh& mesh,
 			const CXFileReader::SXFrame& frame);
 
 		video::IVideoDriver* Driver;

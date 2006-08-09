@@ -43,8 +43,9 @@ public:
 	//! returns a specific animation set
 	SXAnimationSet& getAnimationSet(s32 i);
 
-	//! returns the root frame of the mesh
-	SXFrame& getRootFrame();
+	//! returns array of root frames
+   core::array<CXFileReader::SXFrame> & getRootFrames();
+
 
 
 	struct SXMaterial
@@ -133,6 +134,13 @@ public:
 
 	struct SXFrame
 	{
+      SXFrame()
+      {
+         iLevel = 0;
+         pParent = 0;
+      }
+      int iLevel;
+      SXFrame * pParent;
 		core::stringc Name;
 		core::matrix4 LocalMatrix;
 		core::matrix4 GlobalMatrix;
@@ -278,7 +286,7 @@ private:
 	void readUntilEndOfLine();
 
 	void computeGlobalFrameMatrices(SXFrame& frame, const SXFrame* const parent);
-
+	void optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent );
 	bool validateMesh(SXFrame* frame);
 
 	s32 MajorVersion;
@@ -292,9 +300,11 @@ private:
 	c8* P;
 	c8* End;
 
-	SXFrame RootFrame;
+   SXFrame * m_pgCurFrame;
+   core::array<SXFrame>RootFrames;
 	core::array<SXAnimationSet> AnimationSets;
 	core::array<SXTemplateMaterial> TemplateMaterials; 
+   bool m_bFrameRemoved;
 };
 
 } // end namespace scene
