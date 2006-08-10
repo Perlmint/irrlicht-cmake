@@ -60,7 +60,7 @@ namespace irr
 		//! create the driver
 		void createDriver(video::E_DRIVER_TYPE driverType,
 			const core::dimension2d<s32>& windowSize, u32 bits, bool fullscreen,
-			bool stencilbuffer, bool antiAlias);
+			bool stencilbuffer, bool vsync, bool antiAlias);
 
 		//! Implementation of the macos x cursor control
 		class CCursorControl : public gui::ICursorControl

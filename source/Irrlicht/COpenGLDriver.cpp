@@ -181,7 +181,7 @@ COpenGLDriver::~COpenGLDriver()
 // -----------------------------------------------------------------------
 #ifdef MACOSX
 //! Windows constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io, bool antiAlias)
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io, bool vsync, bool antiAlias)
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
@@ -2564,7 +2564,7 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
-		device, io, antiAlias);
+		device, io, vsync, antiAlias);
 #else
 	return 0;
 #endif //  _IRR_COMPILE_WITH_OPENGL_
