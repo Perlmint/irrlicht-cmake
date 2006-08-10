@@ -247,7 +247,7 @@ namespace video
 		//! default constructor, creates a solid material with standard colors
 		SMaterial()
 		: MaterialType(EMT_SOLID), AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
-			EmissiveColor(0,0,0,0), SpecularColor(0,0,0,0),
+			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f),
 			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
@@ -277,8 +277,7 @@ namespace video
 		SColor SpecularColor;
 
 		//! Value affecting the size of specular highlights. A value of 20 is common.
-		/** If set to 0, no specular highlights are being used. Currently, specular highlights
-		are only implemented in the D3D9 and D3D8 driver.
+		/** If set to 0, no specular highlights are being used.
 		To activate, simply set the shininess of a material to a value other than 0:
 		Using scene nodes:
 		\code
