@@ -6,6 +6,7 @@
 #define __IRR_MATH_H_INCLUDED__
 
 #include "irrTypes.h"
+#include <math.h>
 
 namespace irr
 {

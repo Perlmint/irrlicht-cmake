@@ -349,7 +349,7 @@ namespace video
 		\param triangleCount: amount of Triangles.
 		\param vType: Vertex type, e.g. EVT_STANDARD for S3DVertex.
 		\param pType: Primitive type, e.g. EPT_TRIANGLE_FAN for a triangle fan. */
-		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+		virtual void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType) = 0;
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because the

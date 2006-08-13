@@ -181,8 +181,6 @@ namespace scene
 		setRotation( TerrainData.Rotation );
 
 		// Pre-allocate memory for indices
-		RenderBuffer.Indices.reallocate( TerrainData.PatchCount * TerrainData.PatchCount *
-			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 
@@ -208,7 +206,7 @@ namespace scene
 		// get file size
 		s32 fileSize = file->getSize();
 		s32 bytesPerPixel = bitsPerPixel / 8;
-		s32 heightMapSize = (s32)sqrt( (f32)( fileSize / bytesPerPixel ) );
+		s32 heightMapSize = (s32)sqrt( (f64)( fileSize / bytesPerPixel ) );
 
 		// Get the dimension of the heightmap data
 		TerrainData.Size = heightMapSize;
@@ -259,6 +257,7 @@ namespace scene
 
 		// Read the heightmap to get the vertex data
 		// Apply positions changes, scaling changes
+		f32 tdSize = (f32)TerrainData.Size;
 		for( s32 x = 0; x < TerrainData.Size; ++x )
 		{
 			for( s32 z = 0; z < TerrainData.Size; ++z )
@@ -274,11 +273,8 @@ namespace scene
 
 				vertex.Pos.Z = (f32)z;
 
-				vertex.TCoords.X = x / (f32)TerrainData.Size;
-				vertex.TCoords.Y = z / (f32)TerrainData.Size;
-
-				vertex.TCoords2.X = x / (f32)TerrainData.Size;
-				vertex.TCoords2.Y = z / (f32)TerrainData.Size;
+				vertex.TCoords.X = vertex.TCoords2.X = x / tdSize;
+				vertex.TCoords.Y = vertex.TCoords2.Y = z / tdSize;
 
 				pMeshBuffer->Vertices.push_back( vertex );
 			}
@@ -319,8 +315,6 @@ namespace scene
 		setRotation( TerrainData.Rotation );
 
 		// Pre-allocate memory for indices
-		RenderBuffer.Indices.reallocate( TerrainData.PatchCount * TerrainData.PatchCount *
-			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 
@@ -542,7 +536,7 @@ namespace scene
 			(video::S3DVertex2TCoords*)RenderBuffer.getVertices(),
 			RenderBuffer.getVertexCount(),
 			RenderBuffer.getIndices(),
-			IndicesToRender / 3
+			IndicesToRender / 4
 		);
 	}
 

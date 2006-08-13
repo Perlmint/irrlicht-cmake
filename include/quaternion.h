@@ -7,6 +7,7 @@
 
 #include "irrTypes.h"
 #include "matrix4.h"
+#include "vector3d.h"
 
 namespace irr
 {

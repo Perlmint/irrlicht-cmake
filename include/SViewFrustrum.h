@@ -168,8 +168,8 @@ namespace scene
 	}
 
 
-	//! This constructor creates a view frustrum based on a projection and/or
-	//! view matrix.
+	//! This constructor creates a view frustrum based on a projection
+	//! and/or view matrix.
 	inline SViewFrustrum::SViewFrustrum(const core::matrix4& mat)
 	{
 		#define sw(a,b)		(mat((b),(a)))
@@ -214,7 +214,7 @@ namespace scene
 
 		for (s32 i=0; i<6; ++i)
 		{
-			f32 len = (f32)(1.0f / planes[i].Normal.getLength());
+			f32 len = (f32)(1.0 / planes[i].Normal.getLength());
 			planes[i].Normal *= len;
 			planes[i].D *= len;
 		}
@@ -223,8 +223,6 @@ namespace scene
 
 		recalculateBoundingBox();
 	}
-
-
 
 } // end namespace scene
 } // end namespace irr

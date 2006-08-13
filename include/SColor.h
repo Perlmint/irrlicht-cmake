@@ -227,7 +227,7 @@ namespace video
 		//! \return Returns true if the colors are different, and false if they are the same.
 		inline bool operator!=(const SColor& other) const { return other.color != color; }
 
-		//! Interpolates the color with a f32 value to an other color
+		//! Interpolates the color with a f32 value to another color
 		//! \param other: Other color
 		//! \param d: value between 0.0f and 1.0f
 		//! \return Returns interpolated color.
