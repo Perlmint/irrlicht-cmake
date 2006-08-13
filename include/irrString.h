@@ -577,6 +577,35 @@ public:
 		return -1;
 	}
 
+	//! finds another string in this string
+	//! \param str: Another string
+	//! \return Returns positions where the string has been found, 
+	//! or -1 if not found.
+	template <class B>
+	s32 find(B* str)
+	{
+		if (str && *str)
+		{
+			int len = 0;
+
+			while (str[len])
+				++len;
+			
+			for (int i=0; i<(int)(used-len); ++i)
+			{
+				int j=0;
+
+				while(str[j] && array[i+j] == str[j])
+					++j;
+
+				if (!str[j])
+					return i;
+			}
+		}
+
+		return -1;
+	}
+
 
 	//! Returns a substring
 	//! \param begin: Start of substring.
