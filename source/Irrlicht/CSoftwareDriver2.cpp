@@ -891,8 +891,15 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 				break;
 		}
 	}
-	primitiveCount = ( primitiveCount << 1 ) + primitiveCount;
-	for ( s32 i = 0; i!= primitiveCount; i += 3 )
+	s32 pitch = 1;
+	switch (pType)
+	{
+		case scene::EPT_TRIANGLES:
+			primitiveCount = ( primitiveCount << 1 ) + primitiveCount;
+			pitch=3;
+			break;
+	}
+	for ( s32 i = 0; i!= primitiveCount; i+=pitch )
 	{
 		switch (vType)
 		{

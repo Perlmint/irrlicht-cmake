@@ -73,21 +73,21 @@ namespace video
 		virtual void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an indexed triangle list
-		inline virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! draws an indexed triangle list
-		inline virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws an indexed triangle list.
-		inline virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
+		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws an indexed triangle fan.
-		inline virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
+		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws an indexed triangle list.
-		inline virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
+		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws a 3d line.
