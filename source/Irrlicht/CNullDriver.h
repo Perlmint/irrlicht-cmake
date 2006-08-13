@@ -69,22 +69,25 @@ namespace video
 		//! gets the area of the current viewport
 		virtual const core::rect<s32>& getViewPort() const;
 
-		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+		//! draws a vertex primitive list
+		virtual void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+		inline virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+
+		//! draws an indexed triangle list
+		inline virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws an indexed triangle list.
-		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
+		inline virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws an indexed triangle fan.
-		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
+		inline virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws an indexed triangle list.
-		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
+		inline virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
 
 		//! Draws a 3d line.

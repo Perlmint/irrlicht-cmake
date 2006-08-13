@@ -9,6 +9,7 @@
 #include "CNullDriver.h"
 #include "SViewFrustrum.h"
 #include "CImage.h"
+#include "IMeshBuffer.h"
 
 namespace irr
 {
@@ -45,25 +46,8 @@ namespace video
 		//! clears the zbuffer
 		virtual bool beginScene(bool backBuffer, bool zBuffer, SColor color);
 
-		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount,
-			const u16* indexList, s32 triangleCount);
-
-		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
-
-		//! Draws an indexed triangle list.
-		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
-
-		//! Draws an indexed triangle fan.
-		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
-
-		//! Draws an indexed triangle fan.
-		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
+		//! draws a vertex primitive list
+		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an 2d image
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);

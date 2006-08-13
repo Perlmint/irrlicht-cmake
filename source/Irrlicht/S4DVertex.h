@@ -8,7 +8,6 @@
 
 #include "SoftwareDriver2_compile_config.h"
 #include "SoftwareDriver2_helper.h"
-#include "S3DVertex.h"
 
 namespace irr
 {
@@ -206,10 +205,10 @@ struct sVec4
 struct s4DVertex
 {
 	sVec4 Pos;
-	sVec4 Color;				
+	sVec4 Color;
 
-	sVec2 Tex0;	
-	sVec2 Tex1;	
+	sVec2 Tex0;
+	sVec2 Tex1;
 
 	// f = a * t + b * ( 1 - t )
 	void interpolate(const s4DVertex& b, const s4DVertex& a, const f32 t)
@@ -247,7 +246,7 @@ struct sScanConvertData
 	f32 z[2];			// z coordinate
 	f32 slopeZ[2];		// z slope along edges
 
-#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT	
+#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 	f32 w[2];			// w coordinate
 	f32 slopeW[2];		// w slope along edges
 #endif
@@ -270,11 +269,11 @@ struct sScanLineData
 	f32 x[2];			// x start, x end of scanline
 	f32 z[2];			// z start, z end of scanline
 
-#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT	
+#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 	f32 w[2];			// w start, w end of scanline
 #endif
 
-	sVec4 c[2];						// color start, color end of scanline
+	sVec4 c[2];		// color start, color end of scanline
 	sVec2 t0[2];		// texture start, texture end of scanline
 	sVec2 t1[2];		// texture start, texture end of scanline
 };
@@ -284,7 +283,7 @@ struct sScanLineData
 	load a color value
 */
 inline void getSample_plain (	tFixPoint &r, tFixPoint &g, tFixPoint &b, 
-								const sVec4 &v
+							const sVec4 &v
 							)
 {
 	r = f32_to_fixPoint ( v.y );
@@ -296,7 +295,7 @@ inline void getSample_plain (	tFixPoint &r, tFixPoint &g, tFixPoint &b,
 	load a color value
 */
 inline void getSample_color (	tFixPoint &a, tFixPoint &r, tFixPoint &g, tFixPoint &b, 
-								const sVec4 &v
+							const sVec4 &v
 							)
 {
 	a = f32_to_fixPoint ( v.x );
@@ -309,7 +308,7 @@ inline void getSample_color (	tFixPoint &a, tFixPoint &r, tFixPoint &g, tFixPoin
 	load a color value
 */
 inline void getSample_color (	tFixPoint &r, tFixPoint &g, tFixPoint &b, 
-								const sVec4 &v
+							const sVec4 &v
 							)
 {
 	r = f32_to_fixPoint ( v.y * (f32) COLOR_MAX );

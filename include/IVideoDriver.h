@@ -16,6 +16,7 @@
 #include "SLight.h"
 #include "IImageLoader.h"
 #include "IImageWriter.h"
+#include "IMeshBuffer.h"
 #include "triangle3d.h"
 #include "SExposedVideoData.h"
 #include "IMaterialRenderer.h"
@@ -336,6 +337,19 @@ namespace video
 		//! Gets the area of the current viewport.
 		/** \return Returns rectangle of the current vieport. */
 		virtual const core::rect<s32>& getViewPort() const = 0;
+
+		//! draws a vertex primitive list
+		/** Note that there may be at maximum 65536 vertices, because the
+		index list is an array of 16 bit values each with a maximum value
+		of 65536. If there are more than 65536 vertices in the list,
+		results of this operation are not defined.
+		\param vertices: Pointer to array of vertices.
+		\param vertexCount: Amount of vertices in the array.
+		\param indexList: Pointer to array of indizes.
+		\param triangleCount: amount of Triangles.
+		\param vType: Vertex type, e.g. EVT_STANDARD for S3DVertex.
+		\param pType: Primitive type, e.g. EPT_TRIANGLE_FAN for a triangle fan. */
+		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because the

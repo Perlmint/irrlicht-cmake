@@ -7,6 +7,7 @@
 
 #include "ITriangleSelector.h"
 #include "IMesh.h"
+#include "irrArray.h"
 
 namespace irr
 {

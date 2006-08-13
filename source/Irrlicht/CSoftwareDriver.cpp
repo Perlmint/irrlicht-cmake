@@ -17,7 +17,7 @@ namespace video
 //! constructor
 CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
 : CNullDriver(io, windowSize), CurrentTriangleRenderer(0), Texture(0),
-	 ZBuffer(0), RenderTargetTexture(0), RenderTargetSurface(0)
+	ZBuffer(0), RenderTargetTexture(0), RenderTargetSurface(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CSoftwareDriver");
@@ -27,7 +27,7 @@ CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool 
 
 	BackBuffer = new CImage(ECF_A1R5G5B5, windowSize);
 	BackBuffer->fill(SColor(0));
-	
+
 	// get presenter
 
 	Presenter = presenter;
@@ -124,7 +124,7 @@ void CSoftwareDriver::selectRightTriangleRenderer()
 						Material.MaterialType == EMT_TRANSPARENT_ALPHA_CHANNEL ||
 						Material.MaterialType == EMT_TRANSPARENT_VERTEX_ALPHA)
 				{
-					// simply draw all transparent stuff with the same renderer. at 
+					// simply draw all transparent stuff with the same renderer. at
 					// least it is transparent then.
 					renderer = ETR_TEXTURE_GOURAUD_ADD;
 				}
@@ -135,7 +135,7 @@ void CSoftwareDriver::selectRightTriangleRenderer()
 				{
 					renderer = ETR_TEXTURE_GOURAUD;
 				}
-             }
+			}
 		}
 	}
 	else
@@ -232,8 +232,8 @@ bool CSoftwareDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 
 
 //! sets a render target
-bool CSoftwareDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer, 
-								 bool clearZBuffer, SColor color)
+bool CSoftwareDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
+								bool clearZBuffer, SColor color)
 {
 	if (texture && texture->getDriverType() != EDT_SOFTWARE)
 	{
@@ -314,27 +314,40 @@ void CSoftwareDriver::setViewPort(const core::rect<s32>& area)
 }
 
 
-//! draws an indexed triangle list
-void CSoftwareDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount,
-											 const u16* indexList, s32 triangleCount)
+//! draws a vertex primitive list
+void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
-	drawClippedIndexedTriangleListT(vertices, vertexCount, indexList, triangleCount);
-}
+	const u16* indexPointer=0;
+	core::array<irr::u16> newBuffer;
+	switch (pType)
+	{
+		case scene::EPT_TRIANGLE_FAN:
+			// TODO: don't convert fan to list
+			newBuffer.reallocate(primitiveCount*3);
+			for( s32 t=0; t<primitiveCount; ++t )
+			{
+				newBuffer.push_back(indexList[0]);
+				newBuffer.push_back(indexList[t+1]);
+				newBuffer.push_back(indexList[t+2]);
+			}
 
-
-//! Draws an indexed triangle list.
-void CSoftwareDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	drawClippedIndexedTriangleListT(vertices, vertexCount, indexList, triangleCount);
-}
-
-
-//! draws an indexed triangle list
-void CSoftwareDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount,
-											 const u16* indexList, s32 triangleCount)
-{
-	drawClippedIndexedTriangleListT(vertices, vertexCount, indexList, triangleCount);
+			indexPointer=newBuffer.pointer();
+			break;
+		case scene::EPT_TRIANGLES:
+			indexPointer=indexList;
+	}
+	switch (vType)
+	{
+		case EVT_STANDARD:
+			drawClippedIndexedTriangleListT((S3DVertex*)vertices, vertexCount, indexList, primitiveCount);
+			break;
+		case EVT_2TCOORDS:
+			drawClippedIndexedTriangleListT((S3DVertex2TCoords*)vertices, vertexCount, indexList, primitiveCount);
+			break;
+		case EVT_TANGENTS:
+			drawClippedIndexedTriangleListT((S3DVertexTangents*)vertices, vertexCount, indexList, primitiveCount);
+			break;
+	}
 }
 
 
@@ -362,12 +375,12 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 	scene::SViewFrustrum frustrum(mat);
 
 	// copy and transform clipping planes ignoring far plane
-	core::plane3df planes[5]; // ordered by near, left, right, bottom, top 
+	core::plane3df planes[5]; // ordered by near, left, right, bottom, top
 	for (int p=0; p<5; ++p)
 		worldinv.transformPlane(frustrum.planes[p+1], planes[p]);
 
 	core::EIntersectionRelation3D inout[3]; // is point in front or back of plane?
-	
+
 	// temporary buffer for vertices to be clipped by all planes
 	core::array<VERTEXTYPE> tClpBuf;
 	int t;
@@ -399,13 +412,13 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 			if (!outside)
 			{
 				// add all vertices to new buffer, this triangle needs no clipping.
-				// so simply don't change this part of the temporary triangle buffer				
-				continue;				
+				// so simply don't change this part of the temporary triangle buffer
+				continue;
 			}
 
 			if (!inside)
 			{
-				// all vertices are outside, don't add this triangle, so erase this 
+				// all vertices are outside, don't add this triangle, so erase this
 				// triangle from the tClpBuf
 				tClpBuf.erase(v,3);
 				v -= 3;
@@ -417,24 +430,24 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 			// The following lines represent my try to implement some real clipping.
 			// There is a bug somewhere, and after some time I've given up.
 			// So now it is commented out, resulting that triangles which would need clipping
-			// are simply taken out (in the next two lines). 
-			tClpBuf.erase(v,3);
-			v -= 3;
+			// are simply taken out (in the next two lines).
+//			tClpBuf.erase(v,3);
+//			v -= 3;
 
 			/*
 			// my idea is the following:
 			// current vertex to next vertex relation:
 			// out - out : add nothing
 			// out -  in : add middle point
-			// in -  out : add first and middle point			
+			// in -  out : add first and middle point
 			// in -   in : add both
 
-			
+
 			// now based on the number of intersections, create new vertices
 			// into tClpBuf (at the front for not letting them be clipped again)
 
 			int added = 0;
-			int prev = v+2;			
+			int prev = v+2;
 			for (int index=v; index<v+3; ++index)
 			{
 				if (inout[prev] == core::ISREL3D_BACK)
@@ -445,12 +458,12 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 						VERTEXTYPE& vt2 = tClpBuf[index];
 
 						f32 fact = planes[p].getKnownIntersectionWithLine(vt1.Pos, vt2.Pos);
-                        VERTEXTYPE nvt;
+						VERTEXTYPE nvt;
 						nvt.Pos = vt1.Pos.getInterpolated(vt2.Pos, fact);
 						nvt.Color = vt1.Color.getInterpolated(vt2.Color, fact);
 						nvt.TCoords = vt1.TCoords.getInterpolated(vt2.TCoords, fact);
 
-						tClpBuf.push_front(nvt); ++index; ++prev; ++v; 
+						tClpBuf.push_front(nvt); ++index; ++prev; ++v;
 						++added;
 					}
 				}
@@ -459,9 +472,9 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 					if (inout[index] != core::ISREL3D_BACK)
 					{
 						VERTEXTYPE vt1 = tClpBuf[index];
-						VERTEXTYPE vt2 = tClpBuf[prev];		
-						tClpBuf.push_front(vt1); ++index; ++prev; ++v; 
-						tClpBuf.push_front(vt2); ++index; ++prev; ++v; 
+						VERTEXTYPE vt2 = tClpBuf[prev];
+						tClpBuf.push_front(vt1); ++index; ++prev; ++v;
+						tClpBuf.push_front(vt2); ++index; ++prev; ++v;
 						added+= 2;
 					}
 					else
@@ -471,13 +484,13 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 						VERTEXTYPE vt2 = tClpBuf[prev];
 
 						f32 fact = planes[p].getKnownIntersectionWithLine(vt1.Pos, vt2.Pos);
-                        VERTEXTYPE nvt;
+						VERTEXTYPE nvt;
 						nvt.Pos = vt1.Pos.getInterpolated(vt2.Pos, fact);
 						nvt.Color = vt1.Color.getInterpolated(vt2.Color, fact);
 						nvt.TCoords = vt1.TCoords.getInterpolated(vt2.TCoords, fact);
 
-						tClpBuf.push_front(vt2); ++index; ++prev; ++v; 
-						tClpBuf.push_front(nvt); ++index; ++prev; ++v; 						
+						tClpBuf.push_front(vt2); ++index; ++prev; ++v;
+						tClpBuf.push_front(nvt); ++index; ++prev; ++v;
 						added += 2;
 					}
 				}
@@ -489,7 +502,7 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 			tClpBuf.erase(v,3);
 			v -= 3;
 			*/
-			
+
 
 		} // end for all clip planes
 
@@ -499,7 +512,7 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 		for (t=0; t<(int)tClpBuf.size(); ++t)
 		{
 			clippedIndices.push_back(clippedVertices.size());
-			clippedVertices.push_back(tClpBuf[t]);			
+			clippedVertices.push_back(tClpBuf[t]);
 		}
 		tClpBuf.clear();
 
@@ -573,48 +586,10 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 }
 
 
-//! draws an indexed triangle fan
-void CSoftwareDriver::drawIndexedTriangleFan(const S3DVertex* vertices, 
-											s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	// TODO: don't convert fan to list
-
-	core::array<irr::u16> newBuffer;
-
-	for( s32 t=0; t<triangleCount; t++ )
-	{
-		newBuffer.push_back(indexList[0]);
-		newBuffer.push_back(indexList[t+1]);
-		newBuffer.push_back(indexList[t+2]);
-	}
-
-	drawIndexedTriangleList( vertices, vertexCount, newBuffer.pointer(), triangleCount );
-}
-
-
-
-//! draws an indexed triangle fan
-void CSoftwareDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	// TODO: don't convert fan to list
-
-	core::array<irr::u16> newBuffer;
-
-	for( s32 t=0; t<triangleCount; t++ )
-	{
-		newBuffer.push_back(indexList[0]);
-		newBuffer.push_back(indexList[t+1]);
-		newBuffer.push_back(indexList[t+2]);
-	}
-
-	drawIndexedTriangleList( vertices, vertexCount, newBuffer.pointer(), triangleCount );
-}
-
 
 //! clips a triangle against the viewing frustrum
 void CSoftwareDriver::clipTriangle(f32* transformedPos)
 {
-	
 }
 
 
@@ -640,9 +615,9 @@ void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position
 }
 
 
-//! Draws a 2d line. 
+//! Draws a 2d line.
 void CSoftwareDriver::draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end, 
+								const core::position2d<s32>& end,
 								SColor color)
 {
 	((CImage*)RenderTargetSurface)->drawLine(start, end, color );
@@ -653,9 +628,9 @@ void CSoftwareDriver::draw2DLine(const core::position2d<s32>& start,
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
-					 const core::rect<s32>& sourceRect, 
-					 const core::rect<s32>* clipRect, SColor color, 
-					 bool useAlphaChannelOfTexture)
+					const core::rect<s32>& sourceRect,
+					const core::rect<s32>* clipRect, SColor color,
+					bool useAlphaChannelOfTexture)
 {
 	if (texture)
 	{
@@ -678,7 +653,7 @@ void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position
 
 //! draw a 2d rectangle
 void CSoftwareDriver::draw2DRectangle(SColor color, const core::rect<s32>& pos,
-					 const core::rect<s32>* clip)
+					const core::rect<s32>* clip)
 {
 	if (clip)
 	{
@@ -736,11 +711,11 @@ ITexture* CSoftwareDriver::createRenderTargetTexture(core::dimension2d<s32> size
 	CImage* img = new CImage(video::ECF_A1R5G5B5, size);
 	ITexture* tex = new CSoftwareTexture(img, 0);
 	img->drop();
-	return tex;	
+	return tex;
 }
 
 
-//! Clears the ZBuffer. 
+//! Clears the ZBuffer.
 void CSoftwareDriver::clearZBuffer()
 {
 	if (ZBuffer)

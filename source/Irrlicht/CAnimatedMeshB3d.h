@@ -163,6 +163,15 @@ namespace scene
 				return video::EVT_2TCOORDS;
 			}
 
+			virtual void setPrimitiveType(scene::E_PRIMITIVE_TYPE)
+			{
+			}
+
+			virtual scene::E_PRIMITIVE_TYPE getPrimitiveType() const
+			{
+				return scene::EPT_TRIANGLES;
+			}
+
 			video::SMaterial Material;
 			core::array<video::S3DVertex2TCoords> Vertices;
 			// s32 B3dVerticesStart; //to link back the the count of the whole object

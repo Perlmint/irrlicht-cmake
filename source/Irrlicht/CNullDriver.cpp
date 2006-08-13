@@ -466,48 +466,59 @@ const core::rect<s32>& CNullDriver::getViewPort() const
 
 
 
-//! draws an indexed triangle list
-void CNullDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
+//! draws a vertex primitive list
+void CNullDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
-	PrimitivesDrawn += triangleCount;
+	PrimitivesDrawn += primitiveCount;
 }
 
 
 
 //! draws an indexed triangle list
-void CNullDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
+inline void CNullDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
 {
-	PrimitivesDrawn += triangleCount;
+	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_STANDARD, scene::EPT_TRIANGLES);
+}
+
+
+
+//! draws an indexed triangle list
+inline void CNullDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
+{
+	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_2TCOORDS, scene::EPT_TRIANGLES);
 }
 
 
 //! Draws an indexed triangle list.
-void CNullDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
+inline void CNullDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
 	s32 vertexCount, const u16* indexList, s32 triangleCount)
 {
-	PrimitivesDrawn += triangleCount;
+	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_TANGENTS, scene::EPT_TRIANGLES);
 }
 
-
-//! Draws an indexed triangle list.
-void CNullDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	PrimitivesDrawn += triangleCount;
-}
 
 
 //! Draws an indexed triangle fan.
-void CNullDriver::drawIndexedTriangleFan(const S3DVertex* vertices,
+inline void CNullDriver::drawIndexedTriangleFan(const S3DVertex* vertices,
 	s32 vertexCount, const u16* indexList, s32 triangleCount)
 {
-	PrimitivesDrawn += triangleCount;
+	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_STANDARD, scene::EPT_TRIANGLE_FAN);
 }
+
+
+
+//! Draws an indexed triangle fan.
+inline void CNullDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
+	s32 vertexCount, const u16* indexList, s32 triangleCount)
+{
+	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_2TCOORDS, scene::EPT_TRIANGLE_FAN);
+}
+
 
 
 //! Draws a 3d line.
 void CNullDriver::draw3DLine(const core::vector3df& start,
-							const core::vector3df& end, SColor color)
+				const core::vector3df& end, SColor color)
 {
 	core::vector3df vect = start.crossProduct(end);
 	vect.normalize();
@@ -1013,7 +1024,7 @@ void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 //! call.
 s32 CNullDriver::getMaximalPrimitiveCount()
 {
-	return 65535;
+	return (1<<31)-1;
 }
 
 
@@ -1166,23 +1177,41 @@ void CNullDriver::drawMeshBuffer(scene::IMeshBuffer* mb)
 	if (!mb)
 		return;
 
-	switch(mb->getVertexType())
+	s32 primitiveCount=0;
+	switch (mb->getPrimitiveType())
 	{
-	case video::EVT_STANDARD:
-		drawIndexedTriangleList((video::S3DVertex*)mb->getVertices(),
-			mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/ 3);
-		break;
-
-	case video::EVT_2TCOORDS:
-		drawIndexedTriangleList((video::S3DVertex2TCoords*)mb->getVertices(),
-			mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/ 3);
-		break;
-
-	case video::EVT_TANGENTS:
-		drawIndexedTriangleList((video::S3DVertexTangents*)mb->getVertices(),
-			mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/ 3);
-		break;
+		case scene::EPT_POINTS:
+			primitiveCount=mb->getIndexCount();
+			break;
+		case scene::EPT_LINE_STRIP:
+			primitiveCount=mb->getIndexCount()-1;
+			break;
+		case scene::EPT_LINE_LOOP:
+			primitiveCount=mb->getIndexCount();
+			break;
+		case scene::EPT_LINES:
+			primitiveCount=mb->getIndexCount()/2;
+			break;
+		case scene::EPT_TRIANGLE_STRIP:
+			primitiveCount=mb->getIndexCount()-2;
+			break;
+		case scene::EPT_TRIANGLE_FAN:
+			primitiveCount=mb->getIndexCount()-2;
+			break;
+		case scene::EPT_TRIANGLES:
+			primitiveCount=mb->getIndexCount()/3;
+			break;
+		case scene::EPT_QUAD_STRIP:
+			primitiveCount=mb->getIndexCount()/2-1;
+			break;
+		case scene::EPT_QUADS:
+			primitiveCount=mb->getIndexCount()/4;
+			break;
+		case scene::EPT_POLYGON:
+			primitiveCount=mb->getIndexCount();
+			break;
 	}
+	drawVertexPrimitiveList(mb->getVertices(), mb->getVertexCount(), mb->getIndices(), primitiveCount, mb->getVertexType(), mb->getPrimitiveType());
 }
 
 

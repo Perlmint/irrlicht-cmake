@@ -346,6 +346,7 @@ void COpenGLDriver::loadExtensions()
 		os::Printer::log("OpenGL driver version is not 1.2 or better.", ELL_WARNING);
 
 	const GLubyte* t = glGetString(GL_EXTENSIONS);
+//	os::Printer::log((const c8*)t, ELL_INFORMATION);
 	#ifdef GLU_VERSION_1_3
 	MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
 	ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
@@ -648,13 +649,54 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 
 
 
-//! draws an indexed triangle list
-void COpenGLDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
+//! draws a vertex primitive list
+void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
-	if (!checkPrimitiveCount(vertexCount) || !vertexCount)
+	if (!primitiveCount || !vertexCount)
 		return;
 
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
+	if (!checkPrimitiveCount(primitiveCount))
+		return;
+
+	CNullDriver::drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount, vType, pType);
+
+	// convert colors to gl color format.
+	ColorBuffer.set_used(vertexCount);
+	switch (vType)
+	{
+		case EVT_STANDARD:
+		{
+			const S3DVertex* p = (const S3DVertex*)vertices;
+			for (s32 i=0; i<vertexCount; ++i)
+			{
+				ColorBuffer[i] = p->Color.toOpenGLColor();
+				++p;
+			}
+		}
+		break;
+		case EVT_2TCOORDS:
+		{
+			const S3DVertex2TCoords* p = (const S3DVertex2TCoords*)vertices;
+			for (s32 i=0; i<vertexCount; ++i)
+			{
+				ColorBuffer[i] = p->Color.toOpenGLColor();
+				++p;
+			}
+		}
+		break;
+		case EVT_TANGENTS:
+		{
+			const S3DVertexTangents* p = (const S3DVertexTangents*)vertices;
+			for (s32 i=0; i<vertexCount; ++i)
+			{
+				ColorBuffer[i] = p->Color.toOpenGLColor();
+				++p;
+			}
+		}
+		break;
+	}
+
+	// draw everything
 
 	setRenderStates3DMode();
 
@@ -663,270 +705,104 @@ void COpenGLDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 verte
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-	glEnableClientState(GL_NORMAL_ARRAY );
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
 
-	// convert colors to gl color format.
-
-	const S3DVertex* p = vertices;
-	ColorBuffer.set_used(vertexCount);
-	for (s32 i=0; i<vertexCount; ++i)
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, &ColorBuffer[0]);
+	switch (vType)
 	{
-		ColorBuffer[i] = p->Color.toOpenGLColor();
-		++p;
+		case EVT_STANDARD:
+			glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex), &((S3DVertex*)vertices)[0].Pos);
+			glNormalPointer(GL_FLOAT, sizeof(S3DVertex), &((S3DVertex*)vertices)[0].Normal);
+			glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex), &((S3DVertex*)vertices)[0].TCoords);
+			break;
+		case EVT_2TCOORDS:
+			glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex2TCoords), &((S3DVertex2TCoords*)vertices)[0].Pos);
+			glNormalPointer(GL_FLOAT, sizeof(S3DVertex2TCoords), &((S3DVertex2TCoords*)vertices)[0].Normal);
+			// texture coordinates
+			if (MultiTextureExtension)
+			{
+				extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
+				glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
+				glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &((S3DVertex2TCoords*)vertices)[0].TCoords2);
+				extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
+			}
+			glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &((S3DVertex2TCoords*)vertices)[0].TCoords);
+			break;
+		case EVT_TANGENTS:
+			glVertexPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &((S3DVertexTangents*)vertices)[0].Pos);
+			glNormalPointer(GL_FLOAT, sizeof(S3DVertexTangents), &((S3DVertexTangents*)vertices)[0].Normal);
+			// texture coordinates
+			if (MultiTextureExtension)
+			{
+				extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
+				glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
+				glTexCoordPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &((S3DVertexTangents*)vertices)[0].Tangent);
+
+				extGlClientActiveTextureARB(GL_TEXTURE2_ARB);
+				glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
+				glTexCoordPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &((S3DVertexTangents*)vertices)[0].Binormal);
+
+				extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
+			}
+			glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertexTangents), &((S3DVertexTangents*)vertices)[0].TCoords);
+			break;
 	}
 
-	// draw everything
-
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(video::SColor), &ColorBuffer[0]);
-	glNormalPointer(GL_FLOAT, sizeof(S3DVertex), &vertices[0].Normal);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex), &vertices[0].TCoords);
-	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex),  &vertices[0].Pos);
-
-	glDrawElements(GL_TRIANGLES, triangleCount * 3, GL_UNSIGNED_SHORT, indexList);
+	switch (pType)
+	{
+		case scene::EPT_POINTS:
+			glDrawElements(GL_POINTS, primitiveCount, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_LINE_STRIP:
+			glDrawElements(GL_LINE_STRIP, primitiveCount+1, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_LINE_LOOP:
+			glDrawElements(GL_LINE_LOOP, primitiveCount, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_LINES:
+			glDrawElements(GL_LINES, primitiveCount*2, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_TRIANGLE_STRIP:
+			glDrawElements(GL_TRIANGLE_STRIP, primitiveCount+2, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_TRIANGLE_FAN:
+			glDrawElements(GL_TRIANGLE_FAN, primitiveCount+2, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_TRIANGLES:
+			glDrawElements(GL_TRIANGLES, primitiveCount*3, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_QUAD_STRIP:
+			glDrawElements(GL_QUAD_STRIP, primitiveCount*2+2, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_QUADS:
+			glDrawElements(GL_QUADS, primitiveCount*4, GL_UNSIGNED_SHORT, indexList);
+			break;
+		case scene::EPT_POLYGON:
+			glDrawElements(GL_POLYGON, primitiveCount, GL_UNSIGNED_SHORT, indexList);
+			break;
+	}
 
 	glFlush();
 
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-	glDisableClientState(GL_NORMAL_ARRAY );
-}
-
-
-
-//! draws an indexed triangle list
-void COpenGLDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount,
-										   const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
-
-	setRenderStates3DMode();
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-	glEnableClientState(GL_NORMAL_ARRAY );
-
-	// convert colors to gl color format.
-
-	const S3DVertex2TCoords* p = vertices;
-	ColorBuffer.set_used(vertexCount);
-	for (s32 i=0; i<vertexCount; ++i)
-	{
-		ColorBuffer[i] = p->Color.toOpenGLColor();
-		++p;
-	}
-
-	// draw everything
-
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(video::SColor), &ColorBuffer[0]);
-	glNormalPointer(GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].Normal);
-	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex2TCoords),  &vertices[0].Pos);
-
-	// texture coordinates
-	if (MultiTextureExtension)
-	{
-		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords2);
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-	}
-	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
-
-	glDrawElements(GL_TRIANGLES, triangleCount * 3, GL_UNSIGNED_SHORT, indexList);
-
-	glFlush();
-
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	if (MultiTextureExtension)
-	{
-		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glDisableClientState ( GL_TEXTURE_COORD_ARRAY );
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-	}
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-
-	glDisableClientState(GL_NORMAL_ARRAY );
-}
-
-
-//! Draws an indexed triangle list.
-void COpenGLDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
-
-	setRenderStates3DMode();
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-	glEnableClientState(GL_NORMAL_ARRAY );
-
-	// convert colors to gl color format.
-
-	const S3DVertexTangents* p = vertices;
-	ColorBuffer.set_used(vertexCount);
-	for (s32 i=0; i<vertexCount; ++i)
-	{
-		ColorBuffer[i] = p->Color.toOpenGLColor();
-		++p;
-	}
-
-	// draw everything
-
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(video::SColor), &ColorBuffer[0]);
-	glNormalPointer(GL_FLOAT, sizeof(S3DVertexTangents), &vertices[0].Normal);
-	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertexTangents),  &vertices[0].Pos);
-
-	extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertexTangents), &vertices[0].TCoords);
-
-	extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &vertices[0].Tangent);
-
-	extGlClientActiveTextureARB(GL_TEXTURE2_ARB);
-	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(3, GL_FLOAT, sizeof(S3DVertexTangents), &vertices[0].Binormal);
-
-	glDrawElements(GL_TRIANGLES, triangleCount * 3, GL_UNSIGNED_SHORT, indexList);
-
-	glFlush();
-
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-
-	extGlClientActiveTextureARB(GL_TEXTURE2_ARB);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-}
-
-
-
-//! draws an indexed triangle fan
-void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex* vertices, s32 vertexCount,
-					  const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleFan(vertices, vertexCount, indexList, triangleCount);
-
-	setRenderStates3DMode();
-
-	if (MultiTextureExtension)
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-	glEnableClientState(GL_NORMAL_ARRAY );
-
-	// convert colors to gl color format.
-
-	const S3DVertex* p = vertices;
-	ColorBuffer.set_used(vertexCount);
-	for (s32 i=0; i<vertexCount; ++i)
-	{
-		ColorBuffer[i] = p->Color.toOpenGLColor();
-		++p;
-	}
-
-	// draw everything
-
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(video::SColor), &ColorBuffer[0]);
-	glNormalPointer(GL_FLOAT, sizeof(S3DVertex), &vertices[0].Normal);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex), &vertices[0].TCoords);
-	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex),  &vertices[0].Pos);
-
-	glDrawElements(GL_TRIANGLE_FAN, triangleCount+2, GL_UNSIGNED_SHORT, indexList);
-
-	glFlush();
-
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-	glDisableClientState(GL_NORMAL_ARRAY );
-}
-
-
-
-//! draws an indexed triangle fan
-void COpenGLDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-					  s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleFan(vertices, vertexCount, indexList, triangleCount);
-
-	setRenderStates3DMode();
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-	glEnableClientState(GL_NORMAL_ARRAY );
-
-	// convert colors to gl color format.
-
-	const S3DVertex2TCoords* p = vertices;
-	ColorBuffer.set_used(vertexCount);
-	for (s32 i=0; i<vertexCount; ++i)
-	{
-		ColorBuffer[i] = p->Color.toOpenGLColor();
-		++p;
-	}
-
-	// draw everything
-
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(video::SColor), &ColorBuffer[0]);
-	glNormalPointer(GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].Normal);
-	glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex2TCoords),  &vertices[0].Pos);
-
-	// texture coordinates
 	if (MultiTextureExtension)
 	{
-		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-		glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords2);
-		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
-	}
-	glEnableClientState ( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, sizeof(S3DVertex2TCoords), &vertices[0].TCoords);
-
-	glDrawElements(GL_TRIANGLE_FAN, triangleCount+2, GL_UNSIGNED_SHORT, indexList);
-
-	glFlush();
-
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	if (MultiTextureExtension)
-	{
-		extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glDisableClientState ( GL_TEXTURE_COORD_ARRAY);
+		if (vType==EVT_TANGENTS)
+		{
+			extGlClientActiveTextureARB(GL_TEXTURE2_ARB);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
+		if (vType!=EVT_STANDARD && MultiTextureExtension)
+		{
+			extGlClientActiveTextureARB(GL_TEXTURE1_ARB);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
 		extGlClientActiveTextureARB(GL_TEXTURE0_ARB);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 
@@ -1288,9 +1164,9 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
 	switch (feature)
 	{
-	case EVDF_BILINEAR_FILTER:
-		return true;
 	case EVDF_RENDER_TO_TARGET:
+		return true;
+	case EVDF_BILINEAR_FILTER:
 		return true;
 	case EVDF_MIP_MAP:
 		return true;
@@ -1466,24 +1342,25 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		color[3] = Material.DiffuseColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
 
-		color[0] = Material.SpecularColor.getRed() * inv;
-		color[1] = Material.SpecularColor.getGreen() * inv;
-		color[2] = Material.SpecularColor.getBlue() * inv;
-		color[3] = Material.SpecularColor.getAlpha() * inv;
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
+		// disable Specular colors if no shininess is set
+		if (Material.Shininess == 0.0f)
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
+		else
+		{
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material.Shininess);
+			color[0] = Material.SpecularColor.getRed() * inv;
+			color[1] = Material.SpecularColor.getGreen() * inv;
+			color[2] = Material.SpecularColor.getBlue() * inv;
+			color[3] = Material.SpecularColor.getAlpha() * inv;
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
+		}
 
 		color[0] = Material.EmissiveColor.getRed() * inv;
 		color[1] = Material.EmissiveColor.getGreen() * inv;
 		color[2] = Material.EmissiveColor.getBlue() * inv;
 		color[3] = Material.EmissiveColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color);
-
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material.Shininess);
-		// disable Specular colors if no shininess is set
-		if (Material.Shininess != 0.0f)
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-		else
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 	}
 
 	// Texture filter
@@ -1541,8 +1418,8 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		else
 		{
 			// disable specular colors
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 			glDisable(GL_LIGHTING);
+			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 		}
 	}
 

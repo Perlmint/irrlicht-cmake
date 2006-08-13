@@ -390,6 +390,19 @@ video::E_VERTEX_TYPE CAnimatedMeshMD2::getVertexType() const
 
 
 
+void CAnimatedMeshMD2::setPrimitiveType(scene::E_PRIMITIVE_TYPE)
+{
+}
+
+
+
+scene::E_PRIMITIVE_TYPE CAnimatedMeshMD2::getPrimitiveType() const
+{
+	return scene::EPT_TRIANGLES;
+}
+
+
+
 //! returns amount of vertices
 s32 CAnimatedMeshMD2::getVertexCount() const
 {

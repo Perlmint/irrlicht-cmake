@@ -41,11 +41,11 @@ namespace scene
 		//! returns pointer to a mesh buffer
 		virtual IMeshBuffer* getMeshBuffer(s32 nr);
 
-		 //! returns the material of this meshbuffer
-        virtual const video::SMaterial& getMaterial() const;
+		//! returns the material of this meshbuffer
+		virtual const video::SMaterial& getMaterial() const;
 
-		 //! returns the material of this meshbuffer
-        virtual video::SMaterial& getMaterial();
+		//! returns the material of this meshbuffer
+		virtual video::SMaterial& getMaterial();
 
 		//! returns pointer to vertices
 		virtual const void* getVertices() const; 
@@ -55,6 +55,10 @@ namespace scene
 
 		//! returns which type of vertex data is stored.
 		virtual video::E_VERTEX_TYPE getVertexType() const;
+
+		virtual void setPrimitiveType(scene::E_PRIMITIVE_TYPE);
+
+		virtual scene::E_PRIMITIVE_TYPE getPrimitiveType() const;
 
 		//! returns amount of vertices
 		virtual s32 getVertexCount() const;

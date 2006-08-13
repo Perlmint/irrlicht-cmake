@@ -6,6 +6,7 @@
 #define __C_VIDEO_DIRECTX_9_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
+#include "IMeshBuffer.h"
 
 #ifdef _IRR_WINDOWS_
 #define WIN32_LEAN_AND_MEAN
@@ -57,25 +58,8 @@ namespace video
 		//! gets the area of the current viewport
 		virtual const core::rect<s32>& getViewPort() const;
 
-		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount,
-			const u16* indexList, s32 triangleCount);
-
-		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount,
-			const u16* indexList, s32 triangleCount);
-
-		//! Draws an indexed triangle list.
-		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
-
-		//! Draws an indexed triangle fan.
-		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
-
-		//! Draws an indexed triangle fan.
-		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
+		//! draws a vertex primitive list
+		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an 2d image
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);

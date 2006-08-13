@@ -189,9 +189,10 @@ namespace video
 		//! \return Returns the 16 bit A1R5G5B5 value of this color.
 		inline s16 toA1R5G5B5() const { return A8R8G8B8toA1R5G5B5(color); };
 
-		//! Converts color to OpenGL color format.
+		//! Converts color to OpenGL color format,
+		//! from ARGB to ABGR which is interpreted by OpenGL as RGBA.
 		//! \return Returns the 32 bit openGL color value.
-		inline s32 toOpenGLColor() const
+		inline u32 toOpenGLColor() const
 		{
 			return ((color & 0xff000000) |
 				((color & 0xff) <<16) |

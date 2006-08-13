@@ -855,38 +855,77 @@ inline void CSoftwareDriver2::apply_tex_coords ( s4DVertex *dest, const S3DVerte
 
 }
 
-//! draws an indexed triangle list
-void CSoftwareDriver2::drawIndexedTriangleList(	const S3DVertex* vertices, s32 vertexCount,
-												const u16* indexList, s32 triangleCount
-											)
+//! draws a vertex primitive list
+void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
-	if (!checkPrimitiveCount(triangleCount))
+	if (!checkPrimitiveCount(primitiveCount))
 		return;
 
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
+	CNullDriver::drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount, vType, pType);
 
 	if ( 0 == CurrentTriangleRenderer )
 		return;
 
 #ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.Primitive += triangleCount;
+	Stat.Primitive += primitiveCount;
 #endif
 	// triangle face
 	const S3DVertex * face[3];
+	const S3DVertex2TCoords * face2[3];
+	const S3DVertexTangents * faceT[3];
 
-	s32 i;
-	u32 g;
-
-	triangleCount = ( triangleCount << 1 ) + triangleCount;
-	for ( i = 0; i!= triangleCount; i += 3 )
+	if (pType == scene::EPT_TRIANGLE_FAN)
 	{
-		// select face
-		face[0] = &vertices [ indexList [ i + 0 ] ];
-		face[1] = &vertices [ indexList [ i + 1 ] ];
-		face[2] = &vertices [ indexList [ i + 2 ] ];
+		// select root vertex
+		switch (vType)
+		{
+			case EVT_STANDARD:
+				face[0] = &((S3DVertex*)vertices)[ indexList [0] ];
+				break;
+			case EVT_2TCOORDS:
+				face2[0] = &((S3DVertex2TCoords*)vertices)[ indexList [0] ];
+				break;
+			case EVT_TANGENTS:
+				// select face
+				faceT[0] = &((S3DVertexTangents*)vertices)[ indexList [0] ];
+				break;
+		}
+	}
+	primitiveCount = ( primitiveCount << 1 ) + primitiveCount;
+	for ( s32 i = 0; i!= primitiveCount; i += 3 )
+	{
+		switch (vType)
+		{
+			case EVT_STANDARD:
+				// select face
+				if (pType != scene::EPT_TRIANGLE_FAN)
+					face[0] = &((S3DVertex*)vertices)[ indexList [ i + 0 ] ];
+				face[1] = &((S3DVertex*)vertices)[ indexList [ i + 1 ] ];
+				face[2] = &((S3DVertex*)vertices)[ indexList [ i + 2 ] ];
 
-		transform_and_lighting ( CurrentOut, face );
-		apply_tex_coords ( CurrentOut, face );
+				transform_and_lighting ( CurrentOut, face );
+				apply_tex_coords ( CurrentOut, face );
+				break;
+			case EVT_2TCOORDS:
+				// select face
+				if (pType != scene::EPT_TRIANGLE_FAN)
+					face2[0] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 0 ] ];
+				face2[1] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 1 ] ];
+				face2[2] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 2 ] ];
+
+				transform_and_lighting ( CurrentOut, (const S3DVertex**) face2 );
+				apply_tex_coords ( CurrentOut, face2 );
+				break;
+			case EVT_TANGENTS:
+				// select face
+				if (pType != scene::EPT_TRIANGLE_FAN)
+					faceT[0] = &((S3DVertexTangents*)vertices)[ indexList [ i + 0 ] ];
+				faceT[1] = &((S3DVertexTangents*)vertices)[ indexList [ i + 1 ] ];
+				faceT[2] = &((S3DVertexTangents*)vertices)[ indexList [ i + 2 ] ];
+
+				transform_and_lighting ( CurrentOut, (const S3DVertex**) faceT );
+				apply_tex_coords ( CurrentOut, (const S3DVertex2TCoords**) faceT );
+		}
 
 		// vertices count per triangle
 		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
@@ -912,278 +951,12 @@ void CSoftwareDriver2::drawIndexedTriangleList(	const S3DVertex* vertices, s32 v
 		}
 
 		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
+		for ( u32 g = 0; g <= vOut - 3; ++g )
 		{
 			// rasterize
 #ifdef SOFTWARE_DRIVER_2_STATISTIC
 			Stat.DrawTriangle += 1;
 #endif
-			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
-		}
-	}
-}
-
-//! draws an indexed triangle list
-void CSoftwareDriver2::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount,
-											 const u16* indexList, s32 triangleCount)
-{
-
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
-
-	if ( 0 == CurrentTriangleRenderer )
-		return;
-
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.Primitive += triangleCount;
-#endif
-
-	// triangle face
-	const S3DVertex2TCoords * face[3];
-
-
-	s32 i;
-	u32 g;
-
-	triangleCount = ( triangleCount << 1 ) + triangleCount;
-
-
-	for ( i = 0; i!= triangleCount; i += 3 )
-	{
-		// select face
-		face[0] = &vertices [ indexList [ i + 0 ] ];
-		face[1] = &vertices [ indexList [ i + 1 ] ];
-		face[2] = &vertices [ indexList [ i + 2 ] ];
-
-		transform_and_lighting ( CurrentOut,  (const S3DVertex**) face );
-		apply_tex_coords ( CurrentOut, face );
-
-		// vertices count per triangle
-		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-		Stat.clip ( vOut, 6 );
-#endif
-		if ( vOut < 3 )
-		{
-			continue;
-		}
-
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
-
-		// check 2d backface culling
-		if ( Material.org.BackfaceCulling )
-		{
-			if ( backface ( CurrentOut ) < 0.f )
-			{
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-				Stat.Backface += 1;
-#endif
-				continue;
-			}
-				
-		}
-
-		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
-		{
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-			Stat.DrawTriangle += 1;
-#endif
-			// rasterize
-			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
-		}
-	}
-
-}
-
-
-//! Draws an indexed triangle list.
-void CSoftwareDriver2::drawIndexedTriangleList(const S3DVertexTangents* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
-
-	if ( 0 == CurrentTriangleRenderer )
-		return;
-
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.Primitive += triangleCount;
-#endif
-
-	// triangle face
-	const S3DVertexTangents * face[3];
-
-	s32 i;
-	u32 g;
-
-	triangleCount = ( triangleCount << 1 ) + triangleCount;
-
-
-	for ( i = 0; i!= triangleCount; i += 3 )
-	{
-		// select face
-		face[0] = &vertices [ indexList [ i + 0 ] ];
-		face[1] = &vertices [ indexList [ i + 1 ] ];
-		face[2] = &vertices [ indexList [ i + 2 ] ];
-
-		transform_and_lighting ( CurrentOut, (const S3DVertex**) face );
-		apply_tex_coords ( CurrentOut, (const S3DVertex2TCoords**) face );
-
-		// vertices count per triangle
-		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-		Stat.clip ( vOut, 6 );
-#endif
-		if ( vOut < 3 )
-		{
-			continue;
-		}
-
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
-
-		// check 2d backface culling
-		if ( Material.org.BackfaceCulling )
-		{
-			if ( backface ( CurrentOut ) < 0.f )
-			{
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-				Stat.Backface += 1;
-#endif
-				continue;
-			}
-				
-		}
-
-		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
-		{
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-			Stat.DrawTriangle += 1;
-#endif
-			// rasterize
-			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
-		}
-	}
-
-}
-
-
-
-
-//! draws an indexed triangle fan
-void CSoftwareDriver2::drawIndexedTriangleFan(const S3DVertex* vertices, 
-											s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleFan(vertices, vertexCount, indexList, triangleCount);
-
-	if ( 0 == CurrentTriangleRenderer )
-		return;
-
-	// triangle face
-	const S3DVertex * face[3];
-
-	s32 i;
-	u32 g;
-
-	// select face
-	face[0] = &vertices [ indexList [ 0 ] ];
-
-	for ( i = 0; i!= triangleCount; i += 1 )
-	{
-		// select face
-		face[1] = &vertices [ indexList [ i + 1 ] ];
-		face[2] = &vertices [ indexList [ i + 2 ] ];
-
-		transform_and_lighting ( CurrentOut, face );
-		apply_tex_coords ( CurrentOut, face );
-
-		// vertices count per triangle
-		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
-		if ( vOut < 3 )
-			continue;
-
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
-
-		// check 2d backface culling
-		if ( Material.org.BackfaceCulling )
-		{
-			if ( backface ( CurrentOut ) < 0.f )
-				continue;
-		}
-
-		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
-		{
-			// rasterize
-			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
-		}
-	}
-}
-
-
-
-//! draws an indexed triangle fan
-void CSoftwareDriver2::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleFan(vertices, vertexCount, indexList, triangleCount);
-
-	if ( 0 == CurrentTriangleRenderer )
-		return;
-
-
-
-	// triangle face
-	const S3DVertex2TCoords * face[3];
-
-	s32 i;
-	u32 g;
-
-	// select face
-	face[0] = &vertices [ indexList [ 0 ] ];
-
-	for ( i = 0; i!= triangleCount; i += 1 )
-	{
-		// select face
-		face[1] = &vertices [ indexList [ i + 1 ] ];
-		face[2] = &vertices [ indexList [ i + 2 ] ];
-
-		transform_and_lighting ( CurrentOut, (const S3DVertex**) face );
-		apply_tex_coords ( CurrentOut, (const S3DVertex2TCoords**) face );
-
-		// vertices count per triangle
-		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
-		if ( vOut < 3 )
-			continue;
-
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
-
-		// check 2d backface culling
-		if ( Material.org.BackfaceCulling )
-		{
-			if ( backface ( CurrentOut ) < 0.f )
-				continue;
-		}
-
-		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
-		{
-			// rasterize
 			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
 		}
 	}

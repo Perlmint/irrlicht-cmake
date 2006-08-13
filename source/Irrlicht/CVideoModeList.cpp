@@ -82,7 +82,7 @@ void CVideoModeList::addMode(const core::dimension2d<s32>& size, s32 depth)
 	m.depth = depth;
 	m.size = size;
 
-	for (s32 i=0; i<(s32)VideoModes.size(); ++i)
+	for (u32 i=0; i<VideoModes.size(); ++i)
 	{
 		if (VideoModes[i] == m)
 			return;

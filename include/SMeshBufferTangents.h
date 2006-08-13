@@ -16,7 +16,7 @@ namespace scene
 	struct SMeshBufferTangents : public IMeshBuffer
 	{
 		//! constructor
-		SMeshBufferTangents()
+		SMeshBufferTangents() : primitiveType(EPT_TRIANGLES)
 		{
 			#ifdef _DEBUG
 			setDebugName("SMeshBufferTangents");
@@ -26,14 +26,14 @@ namespace scene
 		//! destructor
 		~SMeshBufferTangents() {}; 
 
-        //! returns the material of this meshbuffer
-        virtual const video::SMaterial& getMaterial() const
+		//! returns the material of this meshbuffer
+		virtual const video::SMaterial& getMaterial() const
 		{
 			return Material;
 		}
 
 		//! returns the material of this meshbuffer
-        virtual video::SMaterial& getMaterial()
+		virtual video::SMaterial& getMaterial()
 		{
 			return Material;
 		}
@@ -105,10 +105,23 @@ namespace scene
 			return video::EVT_TANGENTS;
 		}
 
-		video::SMaterial Material;						//! material for this meshBuffer.
-		core::array<video::S3DVertexTangents> Vertices;		//! Array of vertices
-		core::array<u16> Indices;	//! Array of the Indices.
+		//! sets type of primitive data which is stored.
+		virtual void setPrimitiveType(E_PRIMITIVE_TYPE pType)
+		{
+			primitiveType=pType;
+		}
+
+		//! returns which type of primitive data is stored.
+		virtual E_PRIMITIVE_TYPE getPrimitiveType() const
+		{
+			return primitiveType;
+		}
+
+		video::SMaterial Material; //! material for this meshBuffer.
+		core::array<video::S3DVertexTangents> Vertices; //! Array of vertices
+		core::array<u16> Indices; //! Array of the Indices.
 		core::aabbox3d<f32> BoundingBox;
+		E_PRIMITIVE_TYPE primitiveType;
 	};
 
 } // end namespace scene

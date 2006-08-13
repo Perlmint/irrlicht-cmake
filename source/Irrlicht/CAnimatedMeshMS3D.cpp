@@ -665,16 +665,21 @@ core::aabbox3d<f32>& CAnimatedMeshMS3D::SMS3DMeshBuffer::getBoundingBox()
 	return *BoundingBox; 
 } 
 
-//! returns which type of vertex data is stored. 
-video::E_VERTEX_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexType() const 
-{ 
-	return video::EVT_STANDARD; 
-} 
+//! returns which type of vertex data is stored.
+video::E_VERTEX_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexType() const
+{
+	return video::EVT_STANDARD;
+}
 
+void CAnimatedMeshMS3D::SMS3DMeshBuffer::setPrimitiveType(scene::E_PRIMITIVE_TYPE)
+{
+}
 
-
-
-
+//! returns which type of vertex data is stored.
+scene::E_PRIMITIVE_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getPrimitiveType() const
+{
+	return scene::EPT_TRIANGLES;
+}
 
 } // end namespace scene
 } // end namespace irr

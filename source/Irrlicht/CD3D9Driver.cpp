@@ -514,9 +514,9 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return Caps.PixelShaderVersion >= D3DPS_VERSION(3,0);
 	case EVDF_HLSL:
 		return Caps.VertexShaderVersion >= D3DVS_VERSION(1,1);
+	default:
+		return false;
 	};
-
-	return false;
 }
 
 
@@ -728,114 +728,61 @@ const core::rect<s32>& CD3D9Driver::getViewPort() const
 }
 
 
-//! draws an indexed triangle list
-void CD3D9Driver::drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount,
-											 const u16* indexList, s32 triangleCount)
+//! draws a vertex primitive list
+void CD3D9Driver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
-	if (!checkPrimitiveCount(triangleCount))
+	if (!checkPrimitiveCount(primitiveCount))
 		return;
 
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
+	CNullDriver::drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount, vType, pType);
 
-	if (!vertexCount || !triangleCount)
+	if (!vertexCount || !primitiveCount)
 		return;
 
-	setVertexShader(EVT_STANDARD);
+	setVertexShader(vType);
 
-	if (setRenderStates3DMode())
+	size_t stride=0;
+	switch (vType)
 	{
-		pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, vertexCount,
-			triangleCount, indexList, D3DFMT_INDEX16, vertices,	sizeof(S3DVertex));
+		case EVT_STANDARD:
+			stride=sizeof(S3DVertex);
+			break;
+		case EVT_2TCOORDS:
+			stride=sizeof(S3DVertex2TCoords);
+			break;
+		case EVT_TANGENTS:
+			stride=sizeof(S3DVertexTangents);
+			break;
 	}
-}
-
-
-
-//! draws an indexed triangle list
-void CD3D9Driver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices,
-											 s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
-
-	if (!vertexCount || !triangleCount)
-		return;
-
-	setVertexShader(EVT_2TCOORDS);
-
 	if (setRenderStates3DMode())
 	{
-		pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, vertexCount,
-			triangleCount, indexList, D3DFMT_INDEX16, vertices,	sizeof(S3DVertex2TCoords));
-	}
-}
-
-//! Draws an indexed triangle list.
-void CD3D9Driver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleList(vertices, vertexCount, indexList, triangleCount);
-
-	if (!vertexCount || !triangleCount)
-		return;
-
-	setVertexShader(EVT_TANGENTS);
-
-	if (setRenderStates3DMode())
-	{
-		pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, vertexCount,
-			triangleCount, indexList, D3DFMT_INDEX16, vertices,	sizeof(S3DVertexTangents));
-	}
-}
-
-
-
-//! Draws an indexed triangle list.
-void CD3D9Driver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleFan(vertices, vertexCount, indexList, triangleCount);
-
-	if (!vertexCount || !triangleCount)
-		return;
-
-	setVertexShader(EVT_2TCOORDS);
-
-	if (setRenderStates3DMode())
-	{
-		pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLEFAN, 0, vertexCount,
-			triangleCount, indexList, D3DFMT_INDEX16, vertices, sizeof(S3DVertex2TCoords));
-	}
-}
-
-
-
-//! Draws an indexed triangle fan.
-void CD3D9Driver::drawIndexedTriangleFan(const S3DVertex* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
-{
-	if (!checkPrimitiveCount(triangleCount))
-		return;
-
-	CNullDriver::drawIndexedTriangleFan(vertices, vertexCount, indexList, triangleCount);
-
-	if (!vertexCount || !triangleCount)
-		return;
-
-	setVertexShader(EVT_STANDARD);
-
-	if (setRenderStates3DMode())
-	{
-		pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLEFAN, 0, vertexCount,
-			triangleCount, indexList, D3DFMT_INDEX16, vertices, sizeof(S3DVertex));
+		switch (pType)
+		{
+			case scene::EPT_POINTS:
+				pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_POINTLIST, 0, vertexCount,
+					primitiveCount, indexList, D3DFMT_INDEX16, vertices, stride);
+				break;
+			case scene::EPT_LINES:
+				pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_LINELIST, 0, vertexCount,
+					primitiveCount, indexList, D3DFMT_INDEX16, vertices, stride);
+				break;
+			case scene::EPT_LINE_STRIP:
+				pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_LINESTRIP, 0, vertexCount,
+					primitiveCount, indexList, D3DFMT_INDEX16, vertices, stride);
+				break;
+			case scene::EPT_TRIANGLES:
+				pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, vertexCount,
+					primitiveCount, indexList, D3DFMT_INDEX16, vertices, stride);
+				break;
+			case scene::EPT_TRIANGLE_FAN:
+				pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLEFAN, 0, vertexCount,
+					primitiveCount, indexList, D3DFMT_INDEX16, vertices, stride);
+				break;
+			case scene::EPT_TRIANGLE_STRIP:
+				pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLESTRIP, 0, vertexCount,
+					primitiveCount, indexList, D3DFMT_INDEX16, vertices, stride);
+				break;
+		}
 	}
 }
 
@@ -1094,7 +1041,7 @@ void CD3D9Driver::draw2DRectangle(const core::rect<s32>& position,
 
 	setVertexShader(EVT_STANDARD);
 
-	pID3DDevice->DrawIndexedPrimitiveUP(	D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
+	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
 											D3DFMT_INDEX16, &vtx[0], sizeof(S3DVertex));
 
 }

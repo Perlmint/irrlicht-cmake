@@ -50,7 +50,7 @@ namespace scene
 	private:
 
 		core::aabbox3d<f32> Box;
-		u16 Indices[6];
+		u16 Indices[4];
 		video::S3DVertex Vertices[4*6];
 		video::SMaterial Material[6];
 	};

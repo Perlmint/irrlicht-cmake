@@ -193,6 +193,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		// find fitting mode
 
 		bool videoListEmpty = VideoModeList.getVideoModeCount() == 0;
+		s32 defaultDepth=DefaultDepth(display,screennr);
 
 		for (s32 i = 0; i<modeCount; ++i)
 		{
@@ -201,7 +202,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				bestMode = i;
 				if (videoListEmpty)
 					VideoModeList.addMode(core::dimension2d<s32>(
-						modes[i]->hdisplay, modes[i]->vdisplay), 0);
+						modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
 			}
 		}
 	}
@@ -325,6 +326,10 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	if (!visual)
 	{
 		os::Printer::log("Fatal error, could not get visual.", ELL_ERROR);
+		#ifdef _IRR_LINUX_X11_VIDMODE_
+		if (Fullscreen)
+			XFree(modes);
+		#endif
 		XCloseDisplay(display);
 		display=0;
 		return false;

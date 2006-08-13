@@ -16,7 +16,7 @@ namespace scene
 	struct SMeshBufferLightMap : public IMeshBuffer
 	{
 		//! constructor
-		SMeshBufferLightMap()
+		SMeshBufferLightMap() : primitiveType(EPT_TRIANGLES)
 		{
 			#ifdef _DEBUG
 			setDebugName("SMeshBufferLightMap");
@@ -26,15 +26,15 @@ namespace scene
 		//! destructor
 		~SMeshBufferLightMap() {}; 
 
-        //! returns the material of this meshbuffer
-        virtual const video::SMaterial& getMaterial() const
+		//! returns the material of this meshbuffer
+		virtual const video::SMaterial& getMaterial() const
 		{
 			return Material;
 		}
 
 
 		//! returns the material of this meshbuffer
-        video::SMaterial& getMaterial()
+		video::SMaterial& getMaterial()
 		{
 			return Material;
 		}
@@ -106,11 +106,23 @@ namespace scene
 			return video::EVT_2TCOORDS;
 		}
 
+		//! sets type of primitive data which is stored.
+		virtual void setPrimitiveType(E_PRIMITIVE_TYPE pType)
+		{
+			primitiveType=pType;
+		}
 
-		video::SMaterial Material;						//! material for this meshBuffer.
-		core::array<video::S3DVertex2TCoords> Vertices;		//! Array of vertices
-		core::array<u16> Indices;	//! Array of the Indices.
+		//! returns which type of primitive data is stored.
+		virtual E_PRIMITIVE_TYPE getPrimitiveType() const
+		{
+			return primitiveType;
+		}
+
+		video::SMaterial Material; //! material for this meshBuffer.
+		core::array<video::S3DVertex2TCoords> Vertices; //! Array of vertices
+		core::array<u16> Indices; //! Array of the Indices.
 		core::aabbox3d<f32> BoundingBox;
+		E_PRIMITIVE_TYPE primitiveType;
 	};
 
 } // end namespace scene
