@@ -582,7 +582,7 @@ public:
 	//! \return Returns positions where the string has been found, 
 	//! or -1 if not found.
 	template <class B>
-	s32 find(B* str)
+	s32 find(B* str) const
 	{
 		if (str && *str)
 		{
