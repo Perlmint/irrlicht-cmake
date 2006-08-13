@@ -26,8 +26,6 @@ inline void recalculateNormalsT_Flat(VTXTYPE* v, int vtxcnt,
 	for (int i=0; i<idxcnt; i+=3)
 	{
 		core::plane3d<f32> p(v[idx[i+0]].Pos, v[idx[i+1]].Pos, v[idx[i+2]].Pos);
-		p.Normal.normalize();
-
 		v[idx[i+0]].Normal = p.Normal;
 		v[idx[i+1]].Normal = p.Normal;
 		v[idx[i+2]].Normal = p.Normal;
@@ -48,8 +46,6 @@ inline void recalculateNormalsT_Smooth(VTXTYPE* v, int vtxcnt,
 	for ( i=0; i<idxcnt; i+=3)
 	{
 		core::plane3d<f32> p(v[idx[i+0]].Pos, v[idx[i+1]].Pos, v[idx[i+2]].Pos);
-		//p.Normal.normalize();
-
 		v[idx[i+0]].Normal += p.Normal;
 		v[idx[i+1]].Normal += p.Normal;
 		v[idx[i+2]].Normal += p.Normal;
@@ -74,8 +70,6 @@ inline void makePlanarMappingT(VERTEXTYPE *v,
 	for (int i=0; i<idxcnt; i+=3)
 	{
 		core::plane3d<f32> p(v[idx[i+0]].Pos, v[idx[i+1]].Pos, v[idx[i+2]].Pos);
-		p.Normal.normalize();
-
 		p.Normal.X = (f32)(fabs(p.Normal.X));
 		p.Normal.Y = (f32)(fabs(p.Normal.Y));
 		p.Normal.Z = (f32)(fabs(p.Normal.Z));

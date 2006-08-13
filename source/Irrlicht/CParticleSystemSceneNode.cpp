@@ -229,7 +229,6 @@ void CParticleSystemSceneNode::render()
 		mat.setTranslation(AbsoluteTransformation.getTranslation());
 	driver->setTransform(video::ETS_WORLD, mat);
 		
-
 	driver->setMaterial(Material);
 
 	driver->drawIndexedTriangleList(Vertices.pointer(), Particles.size()*4,
@@ -290,12 +289,11 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 	// run affectors
 	core::list<IParticleAffector*>::Iterator ait;
 	ait = AffectorList.begin();
-		while (ait != AffectorList.end())
-		{
-			(*ait)->affect(now, Particles.pointer(), Particles.size());
-			++ait;
-		}
-
+	while (ait != AffectorList.end())
+	{
+		(*ait)->affect(now, Particles.pointer(), Particles.size());
+		++ait;
+	}
 
 	if (ParticlesAreGlobal)
 		Box.reset(AbsoluteTransformation.getTranslation());

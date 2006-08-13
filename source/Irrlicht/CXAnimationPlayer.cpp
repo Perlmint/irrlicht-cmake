@@ -321,7 +321,6 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 		{
 			core::plane3d<f32> p(vertex[buf->Indices[u+0]].Pos,
 				vertex[buf->Indices[u+1]].Pos, vertex[buf->Indices[u+2]].Pos);
-			p.Normal.normalize();
 			vertex[buf->Indices[u+0]].Normal = p.Normal;
 			vertex[buf->Indices[u+1]].Normal = p.Normal;
 			vertex[buf->Indices[u+2]].Normal = p.Normal;
@@ -496,13 +495,10 @@ const core::array<core::vector3df>* CXAnimationPlayer::getDrawableSkeleton(s32 f
 //! animates the skeleton based on the animation data
 void CXAnimationPlayer::animateSkeleton()
 {
-	s32 i;
-
 	if (!AnimationSets.empty())
 	{
-
 		// reset joints
-		for (s32 jii=0; jii<(s32)Joints.size(); ++jii)
+		for (u32 jii=0; jii<Joints.size(); ++jii)
 		{
 			Joints[jii].LocalAnimatedMatrix.makeIdentity();
 			Joints[jii].WasAnimatedThisFrame = false;
@@ -511,7 +507,7 @@ void CXAnimationPlayer::animateSkeleton()
 		SXAnimationSet& currentSet = AnimationSets[CurrentAnimationSet];
 
 		// go through all animation tracks
-		for (i=0; i<(s32)currentSet.Animations.size(); ++i)
+		for (u32 i=0; i<currentSet.Animations.size(); ++i)
 		{
 			SJoint& joint = Joints[currentSet.Animations[i].jointNr];
 
@@ -520,6 +516,7 @@ void CXAnimationPlayer::animateSkeleton()
 			s32 idx2 = -1;
 
 			for (s32 t=0; t<(s32)currentSet.Animations[i].Times.size()-1; ++t)
+			{
 				if (currentSet.Animations[i].Times[t] <= CurrentAnimationTime &&
 					currentSet.Animations[i].Times[t+1] >= CurrentAnimationTime)
 				{
@@ -527,8 +524,9 @@ void CXAnimationPlayer::animateSkeleton()
 					idx2 = (t+1) % currentSet.Animations[i].Times.size();
 					break;
 				}
+			}
 
-			if (idx1 == -1 || idx2 == -1)
+			if (idx1 == -1)
 				continue;
 
 			// calculate interpolation factor
@@ -586,14 +584,13 @@ void CXAnimationPlayer::animateSkeleton()
 		}
 	}
 
-
 	// update all joints
 	for (s32 ji=0; ji<(s32)Joints.size(); ++ji)
 	{
 		if (!Joints[ji].WasAnimatedThisFrame)
 			Joints[ji].LocalAnimatedMatrix = Joints[ji].LocalMatrix;
 
-		  Joints[ji].AnimatedMatrix = Joints[ji].LocalAnimatedMatrix;
+		Joints[ji].AnimatedMatrix = Joints[ji].LocalAnimatedMatrix;
 
 		if (Joints[ji].Parent != -1)
 			Joints[ji].AnimatedMatrix = Joints[Joints[ji].Parent].AnimatedMatrix * Joints[ji].AnimatedMatrix;

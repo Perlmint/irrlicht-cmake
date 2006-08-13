@@ -318,7 +318,7 @@ void CSoftwareDriver::setViewPort(const core::rect<s32>& area)
 void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
 	const u16* indexPointer=0;
-	core::array<irr::u16> newBuffer;
+	core::array<u16> newBuffer;
 	switch (pType)
 	{
 		case scene::EPT_TRIANGLE_FAN:
@@ -339,13 +339,13 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCo
 	switch (vType)
 	{
 		case EVT_STANDARD:
-			drawClippedIndexedTriangleListT((S3DVertex*)vertices, vertexCount, indexList, primitiveCount);
+			drawClippedIndexedTriangleListT((S3DVertex*)vertices, vertexCount, indexPointer, primitiveCount);
 			break;
 		case EVT_2TCOORDS:
-			drawClippedIndexedTriangleListT((S3DVertex2TCoords*)vertices, vertexCount, indexList, primitiveCount);
+			drawClippedIndexedTriangleListT((S3DVertex2TCoords*)vertices, vertexCount, indexPointer, primitiveCount);
 			break;
 		case EVT_TANGENTS:
-			drawClippedIndexedTriangleListT((S3DVertexTangents*)vertices, vertexCount, indexList, primitiveCount);
+			drawClippedIndexedTriangleListT((S3DVertexTangents*)vertices, vertexCount, indexPointer, primitiveCount);
 			break;
 	}
 }
@@ -431,8 +431,10 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 			// There is a bug somewhere, and after some time I've given up.
 			// So now it is commented out, resulting that triangles which would need clipping
 			// are simply taken out (in the next two lines).
-//			tClpBuf.erase(v,3);
-//			v -= 3;
+#ifndef __SOFTWARE_CLIPPING_PROBLEM__
+			tClpBuf.erase(v,3);
+			v -= 3;
+#endif
 
 			/*
 			// my idea is the following:
@@ -529,8 +531,8 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 
 	// draw triangles
 
-	CNullDriver::drawIndexedTriangleList(clippedVertices.pointer(), clippedVertices.size(),
-		clippedIndices.pointer(), clippedIndices.size()/3);
+	CNullDriver::drawVertexPrimitiveList(clippedVertices.pointer(), clippedVertices.size(),
+		clippedIndices.pointer(), clippedIndices.size()/3, EVT_STANDARD, scene::EPT_TRIANGLES);
 
 	if (TransformedPoints.size() < clippedVertices.size())
 		TransformedPoints.set_used(clippedVertices.size());

@@ -83,24 +83,21 @@ void CBillboardSceneNode::render()
 	view.normalize();
 
 	core::vector3df horizontal = up.crossProduct(view);
-	horizontal.normalize();
-
 	if ( horizontal.getLength() == 0 )
 	{
 		horizontal.set(up.Y,up.X,up.Z);
-		horizontal.normalize();
 	}
+	horizontal.normalize();
+	horizontal *= 0.5f * Size.Width;
 
 	core::vector3df vertical = horizontal.crossProduct(view);
+	vertical.normalize();
+	vertical *= 0.5f * Size.Height;
 
 	view *= -1.0f;
 
 	for (s32 i=0; i<4; ++i)
 		vertices[i].Normal = view;
-
-	horizontal *= 0.5f * Size.Width;
-	vertical.normalize();
-	vertical *= 0.5f * Size.Height;
 
 	vertices[0].Pos = pos + horizontal + vertical;
 	vertices[1].Pos = pos + horizontal - vertical;

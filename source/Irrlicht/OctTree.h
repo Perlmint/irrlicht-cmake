@@ -70,7 +70,7 @@ public:
 			SIndexChunk& tic = (*indexChunks)[i];
 
 			for (u32 t=0; t<meshes[i].Indices.size(); ++t)
-				tic.Indices.push_back(meshes[i].Indices[t]);			
+				tic.Indices.push_back(meshes[i].Indices[t]);
 		}
 
 		// create tree
@@ -78,7 +78,7 @@ public:
 		Root = new OctTreeNode(nodeCount, 0, meshes, indexChunks, minimalPolysPerNode);
 	}
 
-	//! returns all ids of polygons partially or full enclosed 
+	//! returns all ids of polygons partially or fully enclosed 
 	//! by this bounding box.
 	void calculatePolys(const core::aabbox3d<f32>& box)
 	{
@@ -88,7 +88,7 @@ public:
 		Root->getPolys(box, IndexData);
 	}
 
-	//! returns all ids of polygons partially or full enclosed 
+	//! returns all ids of polygons partially or fully enclosed 
 	//! by a view frustrum.
 	void calculatePolys(const scene::SViewFrustrum& frustrum)
 	{
@@ -127,7 +127,6 @@ public:
 	}
 
 private:
-
 
 	// private inner class
 	class OctTreeNode
@@ -355,7 +354,6 @@ private:
 		OctTreeNode* Children[8];
 		s32 depth;
 	};
-
 
 	OctTreeNode* Root;
 	SIndexData* IndexData;
