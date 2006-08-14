@@ -6,7 +6,7 @@
 #define __C_TEST_SCENE_NODE_H_INCLUDED__
 
 #include "ISceneNode.h"
-#include "S3DVertex.h"
+#include "SMeshBuffer.h"
 
 namespace irr
 {
@@ -56,10 +56,7 @@ namespace scene
 
 		void setSize();
 
-		core::aabbox3d<f32> Box;
-		u16 Indices[36];
-		video::S3DVertex Vertices[12];
-		video::SMaterial Material;
+		SMeshBuffer Buffer;
 		f32 Size;
 	};
 

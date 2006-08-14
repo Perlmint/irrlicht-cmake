@@ -45,12 +45,12 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 	video::S3DVertex vtx;
 
 	AutomaticCullingEnabled = false;
-	Material.Lighting = false;
-	Material.ZBuffer = false;
-	Material.ZWriteEnable = false;
-	Material.Texture1 = sky;
-	Box.MaxEdge.set(0,0,0);
-	Box.MinEdge.set(0,0,0);
+	Buffer.Material.Lighting = false;
+	Buffer.Material.ZBuffer = false;
+	Buffer.Material.ZWriteEnable = false;
+	Buffer.Material.Texture1 = sky;
+	Buffer.BoundingBox.MaxEdge.set(0,0,0);
+	Buffer.BoundingBox.MinEdge.set(0,0,0);
 
 	azimuth_step = 2.*core::PI64/(f64)horiRes;
 	if (spherePercentage<0.)
@@ -59,11 +59,8 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 		spherePercentage=2.;
 	elevation_step = spherePercentage*core::PI64/2./(f64)vertRes;
 
-	NumOfVertices = (horiRes+1)*(vertRes+1);
-	NumOfFaces = (2*vertRes-1)*horiRes;
-
-	Vertices = new video::S3DVertex[NumOfVertices];
-	Indices = new u16[3*NumOfFaces];
+	Buffer.Vertices.set_used((horiRes+1)*(vertRes+1));
+	Buffer.Indices.set_used(3*(2*vertRes-1)*horiRes);
 
 	vtx.Color.set(255,255,255,255);
 	vtx.Normal.set(0.0f,0.0f,0.0f);
@@ -80,7 +77,7 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 
 			vtx.TCoords.set((f32)k/(f32)horiRes, (f32)j/(f32)vertRes*(f32)texturePercentage);
 
-			Vertices[c++] = vtx;
+			Buffer.Vertices[c++] = vtx;
 			elevation -= elevation_step;
 		}
 		azimuth += azimuth_step;
@@ -89,19 +86,19 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 	c = 0;
 	for (k = 0; k < horiRes; ++k)
 	{
-		Indices[c++] = vertRes+2+(vertRes+1)*k;
-		Indices[c++] = 1+(vertRes+1)*k;
-		Indices[c++] = 0+(vertRes+1)*k;
+		Buffer.Indices[c++] = vertRes+2+(vertRes+1)*k;
+		Buffer.Indices[c++] = 1+(vertRes+1)*k;
+		Buffer.Indices[c++] = 0+(vertRes+1)*k;
 
 		for (u32 j = 1; j < vertRes; ++j)
 		{
-			Indices[c++] = vertRes+2+(vertRes+1)*k+j;
-			Indices[c++] = 1+(vertRes+1)*k+j;
-			Indices[c++] = 0+(vertRes+1)*k+j;
+			Buffer.Indices[c++] = vertRes+2+(vertRes+1)*k+j;
+			Buffer.Indices[c++] = 1+(vertRes+1)*k+j;
+			Buffer.Indices[c++] = 0+(vertRes+1)*k+j;
 
-			Indices[c++] = vertRes+1+(vertRes+1)*k+j;
-			Indices[c++] = vertRes+2+(vertRes+1)*k+j;
-			Indices[c++] = 0+(vertRes+1)*k+j;
+			Buffer.Indices[c++] = vertRes+1+(vertRes+1)*k+j;
+			Buffer.Indices[c++] = vertRes+2+(vertRes+1)*k+j;
+			Buffer.Indices[c++] = 0+(vertRes+1)*k+j;
 		}
 	}
 }
@@ -110,10 +107,6 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 //! destructor
 CSkyDomeSceneNode::~CSkyDomeSceneNode()
 {
-	if (Vertices)
-		delete [] Vertices;
-	if (Indices)
-		delete [] Indices;
 }
 
 
@@ -128,20 +121,20 @@ void CSkyDomeSceneNode::render()
 
 	if ( !camera->isOrthogonal() )
 	{
-		core::matrix4 mat;
+		core::matrix4 mat(AbsoluteTransformation);
 		mat.setTranslation(camera->getAbsolutePosition());
 
 		driver->setTransform(video::ETS_WORLD, mat);
 
-		driver->setMaterial(Material);
-		driver->drawIndexedTriangleList(Vertices, NumOfVertices, Indices, NumOfFaces);
+		driver->setMaterial(Buffer.Material);
+		driver->drawMeshBuffer(&Buffer);
 	}
 }
 
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CSkyDomeSceneNode::getBoundingBox() const
 {
-	return Box;
+	return Buffer.BoundingBox;
 }
 
 
@@ -162,7 +155,7 @@ void CSkyDomeSceneNode::OnPreRender()
 //! to directly modify the material of a scene node.
 video::SMaterial& CSkyDomeSceneNode::getMaterial(s32 i)
 {
-	return Material;
+	return Buffer.Material;
 }
 
 

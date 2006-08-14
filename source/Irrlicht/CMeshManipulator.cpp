@@ -179,6 +179,8 @@ void CMeshManipulator::setVertexColorAlpha(scene::IMesh* mesh, s32 alpha) const
 	}
 }
 
+
+
 //! Sets the colors of all vertices to one color
 void CMeshManipulator::setVertexColors(IMesh* mesh, video::SColor color) const
 {
@@ -216,6 +218,7 @@ void CMeshManipulator::setVertexColors(IMesh* mesh, video::SColor color) const
 		}
 	}
 }
+
 
 
 //! Recalculates all normals of the mesh buffer.
@@ -350,6 +353,7 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 }
 
 
+
 //! Recalculates the bounding box for a meshbuffer
 void CMeshManipulator::recalculateBoundingBox(scene::IMeshBuffer* buffer) const
 {
@@ -480,6 +484,7 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 }
 
 
+
 //! Creates a planar texture mapping on the mesh
 //! \param mesh: Mesh on which the operation is performed.
 //! \param resolution: resolution of the planar mapping. This is the value
@@ -521,6 +526,7 @@ void CMeshManipulator::makePlanarTextureMapping(scene::IMesh* mesh, f32 resoluti
 		}
 	}
 }
+
 
 
 //! Creates a copy of the mesh, which will only consist of unique primitives
@@ -614,7 +620,6 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 
 	clone->BoundingBox = mesh->getBoundingBox();
 	return clone;
-
 }
 
 
@@ -738,6 +743,7 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh) const
 }
 
 
+
 void CMeshManipulator::calculateTangents(
 	core::vector3df& normal,
 	core::vector3df& tangent,
@@ -834,6 +840,7 @@ void CMeshManipulator::calculateTangents(
 }
 
 
+
 //! Returns amount of polygons in mesh.
 s32 CMeshManipulator::getPolyCount(scene::IMesh* mesh) const
 {
@@ -849,6 +856,7 @@ s32 CMeshManipulator::getPolyCount(scene::IMesh* mesh) const
 }
 
 
+
 //! Returns amount of polygons in mesh.
 s32 CMeshManipulator::getPolyCount(scene::IAnimatedMesh* mesh) const
 {
@@ -857,8 +865,6 @@ s32 CMeshManipulator::getPolyCount(scene::IAnimatedMesh* mesh) const
 
 	return 0;
 }
-
-
 
 
 } // end namespace scene

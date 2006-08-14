@@ -934,14 +934,13 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X+xPlus+0.5f) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
 
-	setTexture(0, texture);
-	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-
 	if (useAlphaChannelOfTexture)
 		setRenderStates2DMode(false, true, true);
 	else
 		setRenderStates2DMode(false, true, false);
 
+	setTexture(0, texture);
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
@@ -1149,9 +1148,7 @@ void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
 	setTexture(0,0);
 
 	glBegin(GL_LINES);
-	glColor4ub(color.getRed(), color.getGreen(),
-	color.getBlue(),
-	color.getAlpha());
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	glVertex2f(npos_start.X, npos_start.Y);
 	glVertex2f(npos_end.X,   npos_end.Y);
 	glEnd();

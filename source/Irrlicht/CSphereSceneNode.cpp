@@ -17,7 +17,7 @@ namespace scene
 CSphereSceneNode::CSphereSceneNode(f32 Radius, s32 polyCount, ISceneNode* parent, ISceneManager* mgr, s32 id,
 			const core::vector3df& position, const core::vector3df& rotation, const core::vector3df& scale)
 : ISceneNode(parent, mgr, id, position, rotation, scale), Radius(Radius),
-	PolyCount(polyCount), Vertices(0), Indices(0)
+	PolyCount(polyCount)
 {
 	#ifdef _DEBUG
 	setDebugName("CSphereSceneNode");
@@ -31,8 +31,6 @@ CSphereSceneNode::CSphereSceneNode(f32 Radius, s32 polyCount, ISceneNode* parent
 //! destructor
 CSphereSceneNode::~CSphereSceneNode()
 {
-	delete [] Vertices;
-	delete [] Indices;
 }
 
 
@@ -49,14 +47,8 @@ void CSphereSceneNode::setSizeAndPolys()
 	if (PolyCount > 181) // prevent u16 overflow
 		PolyCount = 181;
 
-	delete [] Vertices;
-	delete [] Indices;
-
-	VertexCount = (PolyCount * PolyCount) + 2;
-	Vertices = new video::S3DVertex[VertexCount];
-
-	IndexCount = (PolyCount * PolyCount) * 6;
-	Indices = new u16[IndexCount];
+	Buffer.Vertices.set_used((PolyCount * PolyCount) + 2);
+	Buffer.Indices.set_used((PolyCount * PolyCount) * 6);
 
 	video::SColor clr(100, 255,255,255);
 
@@ -70,27 +62,27 @@ void CSphereSceneNode::setSizeAndPolys()
 
 		for (p2 = 0; p2 < PolyCount - 1; ++p2)
 		{
-			Indices[i] = level + p2 + PolyCount;
-			Indices[++i] = level + p2;
-			Indices[++i] = level + p2 + 1;
+			Buffer.Indices[i] = level + p2 + PolyCount;
+			Buffer.Indices[++i] = level + p2;
+			Buffer.Indices[++i] = level + p2 + 1;
 			++i;
 		}
 
-		Indices[i] = level + PolyCount - 1 + PolyCount;
-		Indices[++i] = level + PolyCount - 1;
-		Indices[++i] = level;
+		Buffer.Indices[i] = level + PolyCount - 1 + PolyCount;
+		Buffer.Indices[++i] = level + PolyCount - 1;
+		Buffer.Indices[++i] = level;
 		++i;
 
-		Indices[i] = level + PolyCount - 1 + PolyCount;
-		Indices[++i] = level;
-		Indices[++i] = level + PolyCount;
+		Buffer.Indices[i] = level + PolyCount - 1 + PolyCount;
+		Buffer.Indices[++i] = level;
+		Buffer.Indices[++i] = level + PolyCount;
 		++i;
 
 		for (p2 = 1; p2 <= PolyCount - 1; ++p2)
 		{
-			Indices[i] = level + p2 - 1 + PolyCount;
-			Indices[++i] = level + p2;
-			Indices[++i] = level + p2 + PolyCount;
+			Buffer.Indices[i] = level + p2 - 1 + PolyCount;
+			Buffer.Indices[++i] = level + p2;
+			Buffer.Indices[++i] = level + p2 + PolyCount;
 			++i;
 		}
 	}
@@ -103,31 +95,31 @@ void CSphereSceneNode::setSizeAndPolys()
 	{
 		// create triangles which are at the top of the sphere
 
-		Indices[i] = PolyCountSq;
-		Indices[++i] = p2 + 1;
-		Indices[++i] = p2;
+		Buffer.Indices[i] = PolyCountSq;
+		Buffer.Indices[++i] = p2 + 1;
+		Buffer.Indices[++i] = p2;
 		++i;
 
 		// create triangles which are at the bottom of the sphere
 
-		Indices[i] = PolyCountSqM1 + p2;
-		Indices[++i] = PolyCountSqM1 + p2 + 1;
-		Indices[++i] = PolyCountSq1;
+		Buffer.Indices[i] = PolyCountSqM1 + p2;
+		Buffer.Indices[++i] = PolyCountSqM1 + p2 + 1;
+		Buffer.Indices[++i] = PolyCountSq1;
 		++i;
 	}
 
 	// create a triangle which is at the top of the sphere
 
-	Indices[i] = PolyCountSq;
-	Indices[++i] = 0;
-	Indices[++i] = PolyCount - 1;
+	Buffer.Indices[i] = PolyCountSq;
+	Buffer.Indices[++i] = 0;
+	Buffer.Indices[++i] = PolyCount - 1;
 	++i;
 
 	// create a triangle which is at the bottom of the sphere
 
-	Indices[i] = PolyCountSqM1 + PolyCount - 1;
-	Indices[++i] = PolyCountSqM1;
-	Indices[++i] = PolyCountSq1;
+	Buffer.Indices[i] = PolyCountSqM1 + PolyCount - 1;
+	Buffer.Indices[++i] = PolyCountSqM1;
+	Buffer.Indices[++i] = PolyCountSq1;
 
 	// calculate the angle which separates all points in a circle
 
@@ -163,31 +155,31 @@ void CSphereSceneNode::setSizeAndPolys()
 			core::vector3df normal(pos);
 			normal.normalize();
 
-			Vertices[i] = video::S3DVertex(pos.X, pos.Y, pos.Z,
+			Buffer.Vertices[i] = video::S3DVertex(pos.X, pos.Y, pos.Z,
 						normal.X, normal.Y, normal.Z,
 						clr, 
-						asin(normal.X)/core::PI*2 + 0.5f,
-						acos(normal.Y)/core::PI*2 + 0.5f);
+						(f32)(asin(normal.X)/core::PI*2) + 0.5f,
+						(f32)(acos(normal.Y)/core::PI*2) + 0.5f);
 
 			++i;
 		}
 	}
 
 	// the vertex at the top of the sphere
-	Vertices[i] = video::S3DVertex(0.0f,Radius,0.0f, 1.0f,1.0f,1.0f, clr, 0.5f, 0.5f);
+	Buffer.Vertices[i] = video::S3DVertex(0.0f,Radius,0.0f, 1.0f,1.0f,1.0f, clr, 0.5f, 0.5f);
 
 	// the vertex at the bottom of the sphere
 	++i;
-	Vertices[i] = video::S3DVertex(0.0f,-Radius,0.0f, -1.0f,-1.0f,-1.0f, clr, 0.5f, 0.5f);
+	Buffer.Vertices[i] = video::S3DVertex(0.0f,-Radius,0.0f, -1.0f,-1.0f,-1.0f, clr, 0.5f, 0.5f);
 
 	// recalculate bounding box
 
-	Box.reset(Vertices[i].Pos);
-	Box.addInternalPoint(Vertices[i-1].Pos);
-	Box.addInternalPoint(Radius,0.0f,0.0f);
-	Box.addInternalPoint(-Radius,0.0f,0.0f);
-	Box.addInternalPoint(0.0f,0.0f,Radius);
-	Box.addInternalPoint(0.0f,0.0f,-Radius);
+	Buffer.BoundingBox.reset(Buffer.Vertices[i].Pos);
+	Buffer.BoundingBox.addInternalPoint(Buffer.Vertices[i-1].Pos);
+	Buffer.BoundingBox.addInternalPoint(Radius,0.0f,0.0f);
+	Buffer.BoundingBox.addInternalPoint(-Radius,0.0f,0.0f);
+	Buffer.BoundingBox.addInternalPoint(0.0f,0.0f,Radius);
+	Buffer.BoundingBox.addInternalPoint(0.0f,0.0f,-Radius);
 }
 
 
@@ -197,17 +189,17 @@ void CSphereSceneNode::render()
 {
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
-	if (VertexCount && IndexCount)
+	if (Buffer.Vertices.size() && Buffer.Indices.size())
 	{
-		driver->setMaterial(Material);
+		driver->setMaterial(Buffer.Material);
 		driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
-		driver->drawIndexedTriangleList(Vertices, VertexCount, Indices, IndexCount/3);
+		driver->drawMeshBuffer(&Buffer);
 		if (DebugDataVisible)
 		{
 			video::SMaterial m;
 			m.Lighting = false;
 			driver->setMaterial(m);
-			driver->draw3DBox(Box, video::SColor(255,255,255,255));
+			driver->draw3DBox(Buffer.BoundingBox, video::SColor(255,255,255,255));
 		}
 	}
 }
@@ -217,7 +209,7 @@ void CSphereSceneNode::render()
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CSphereSceneNode::getBoundingBox() const
 {
-	return Box;
+	return Buffer.BoundingBox;
 }
 
 
@@ -237,7 +229,7 @@ void CSphereSceneNode::OnPreRender()
 //! to directly modify the material of a scene node.
 video::SMaterial& CSphereSceneNode::getMaterial(s32 i)
 {
-	return Material;
+	return Buffer.Material;
 }
 
 

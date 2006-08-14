@@ -71,8 +71,8 @@ namespace irr
 namespace scene
 {
 
-const wchar_t* IRR_XML_FORMAT_SCENE				= L"irr_scene";
-const wchar_t* IRR_XML_FORMAT_NODE				= L"node";
+const wchar_t* IRR_XML_FORMAT_SCENE		= L"irr_scene";
+const wchar_t* IRR_XML_FORMAT_NODE		= L"node";
 const wchar_t* IRR_XML_FORMAT_NODE_ATTR_TYPE	= L"type";
 
 //! constructor

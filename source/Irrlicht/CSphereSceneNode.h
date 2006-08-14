@@ -6,7 +6,7 @@
 #define __C_SHPERE_SCENE_NODE_H_INCLUDED__
 
 #include "ISceneNode.h"
-#include "S3DVertex.h"
+#include "SMeshBuffer.h"
 
 namespace irr
 {
@@ -56,15 +56,7 @@ namespace scene
 
 		void setSizeAndPolys();
 
-		core::aabbox3d<f32> Box;
-
-		u16* Indices;
-		s32 IndexCount;
-
-		video::S3DVertex* Vertices;
-		s32 VertexCount;
-
-		video::SMaterial Material;
+		SMeshBuffer Buffer;
 		f32 Radius;
 		s32 PolyCount;
 	};

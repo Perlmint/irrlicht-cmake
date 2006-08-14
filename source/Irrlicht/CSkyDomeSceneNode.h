@@ -7,7 +7,7 @@
 #define __C_SKY_DOME_SCENE_NODE_H_INCLUDED__
 
 #include "ISceneNode.h"
-#include "S3DVertex.h"
+#include "SMeshBuffer.h"
 
 namespace irr
 {
@@ -29,12 +29,7 @@ class CSkyDomeSceneNode : public ISceneNode
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_SKY_BOX; }
 
 	private:
-		core::aabbox3d<f32> Box;
-		u16 *Indices;
-		video::S3DVertex *Vertices;
-		video::SMaterial Material;
-		u16 NumOfVertices;
-		u16 NumOfFaces;
+		SMeshBuffer Buffer;
 };
 
 

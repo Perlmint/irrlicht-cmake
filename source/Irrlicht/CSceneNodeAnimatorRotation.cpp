@@ -31,8 +31,10 @@ void CSceneNodeAnimatorRotation::animateNode(ISceneNode* node, u32 timeMs)
 {
 	if (node) // thanks to warui for this fix
 	{ 
+		if ((timeMs-StartTime) != 0)
+			DiffTime=timeMs-StartTime;
 		core::vector3df NewRotation = node->getRotation(); 
-		NewRotation += Rotation* ((timeMs-StartTime)/10.0f); 
+		NewRotation += Rotation* (DiffTime/10.0f); 
 		node->setRotation(NewRotation); 
 		StartTime=timeMs; 
 	}

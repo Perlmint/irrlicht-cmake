@@ -522,7 +522,7 @@ void CNullDriver::draw3DLine(const core::vector3df& start,
 {
 	core::vector3df vect = start.crossProduct(end);
 	vect.normalize();
-	vect *= 1.0f;
+//	vect *= 1.0f; thickness
 
 	S3DVertex vtx[4];
 

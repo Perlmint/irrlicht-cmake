@@ -34,7 +34,7 @@ namespace video
 		u16	YMin;
 		u16	XMax;
 		u16	YMax;
-		u16 HorizDPI;
+		u16	HorizDPI;
 		u16	VertDPI;
 		u8	Palette[48];
 		u8	Reserved;

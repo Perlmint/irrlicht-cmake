@@ -8,7 +8,7 @@
 #include "IParticleSystemSceneNode.h"
 #include "irrArray.h"
 #include "irrList.h"
-#include "S3DVertex.h"
+#include "SMeshBuffer.h"
 
 namespace irr
 {
@@ -114,13 +114,10 @@ private:
 	core::list<IParticleAffector*> AffectorList;
 	IParticleEmitter* Emitter;
 	core::array<SParticle> Particles;
-	video::SMaterial Material;
-	core::aabbox3d<f32> Box;
 	u32 lastEmitTime;
 	core::dimension2d<f32> ParticleSize;
 
-	core::array<video::S3DVertex> Vertices; // 4 vertices per particle
-	core::array<u16> Indices; // 6 indices per particle
+	SMeshBuffer Buffer;
 
 	bool ParticlesAreGlobal;
 };

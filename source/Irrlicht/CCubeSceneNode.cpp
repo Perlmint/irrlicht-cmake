@@ -25,9 +25,9 @@ CCubeSceneNode::CCubeSceneNode(f32 size, ISceneNode* parent, ISceneManager* mgr,
 	u16 u[36] = {   0,2,1,   0,3,2,   1,5,4,   1,2,5,   4,6,7,   4,5,6, 
             7,3,0,   7,6,3,   9,5,2,   9,8,5,   0,11,10,   0,10,7};
 
-	s32 i; // new ISO for scoping problem with different compilers
-	for (i=0; i<36; ++i)
-		Indices[i] = u[i];
+	Buffer.Indices.set_used(36);
+	for (s32 i=0; i<36; ++i)
+		Buffer.Indices[i] = u[i];
 
 	setSize();
 }
@@ -49,26 +49,27 @@ void CCubeSceneNode::setSize()
 
 	video::SColor clr(255,255,255,255);
 
-	Vertices[0]  = video::S3DVertex(0,0,0, -1,-1,-1, clr, 0, 1); 
-	Vertices[1]  = video::S3DVertex(1,0,0,  1,-1,-1, clr, 1, 1); 
-	Vertices[2]  = video::S3DVertex(1,1,0,  1, 1,-1, clr, 1, 0); 
-	Vertices[3]  = video::S3DVertex(0,1,0, -1, 1,-1, clr, 0, 0); 
-	Vertices[4]  = video::S3DVertex(1,0,1,  1,-1, 1, clr, 0, 1); 
-	Vertices[5]  = video::S3DVertex(1,1,1,  1, 1, 1, clr, 0, 0); 
-	Vertices[6]  = video::S3DVertex(0,1,1, -1, 1, 1, clr, 1, 0); 
-	Vertices[7]  = video::S3DVertex(0,0,1, -1,-1, 1, clr, 1, 1); 
-	Vertices[8]  = video::S3DVertex(0,1,1, -1, 1, 1, clr, 0, 1); 
-	Vertices[9]  = video::S3DVertex(0,1,0, -1, 1,-1, clr, 1, 1); 
-	Vertices[10] = video::S3DVertex(1,0,1,  1,-1, 1, clr, 1, 0); 
-	Vertices[11] = video::S3DVertex(1,0,0,  1,-1,-1, clr, 0, 0); 
+	Buffer.Vertices.set_used(12);
+	Buffer.Vertices[0]  = video::S3DVertex(0,0,0, -1,-1,-1, clr, 0, 1); 
+	Buffer.Vertices[1]  = video::S3DVertex(1,0,0,  1,-1,-1, clr, 1, 1); 
+	Buffer.Vertices[2]  = video::S3DVertex(1,1,0,  1, 1,-1, clr, 1, 0); 
+	Buffer.Vertices[3]  = video::S3DVertex(0,1,0, -1, 1,-1, clr, 0, 0); 
+	Buffer.Vertices[4]  = video::S3DVertex(1,0,1,  1,-1, 1, clr, 0, 1); 
+	Buffer.Vertices[5]  = video::S3DVertex(1,1,1,  1, 1, 1, clr, 0, 0); 
+	Buffer.Vertices[6]  = video::S3DVertex(0,1,1, -1, 1, 1, clr, 1, 0); 
+	Buffer.Vertices[7]  = video::S3DVertex(0,0,1, -1,-1, 1, clr, 1, 1); 
+	Buffer.Vertices[8]  = video::S3DVertex(0,1,1, -1, 1, 1, clr, 0, 1); 
+	Buffer.Vertices[9]  = video::S3DVertex(0,1,0, -1, 1,-1, clr, 1, 1); 
+	Buffer.Vertices[10] = video::S3DVertex(1,0,1,  1,-1, 1, clr, 1, 0); 
+	Buffer.Vertices[11] = video::S3DVertex(1,0,0,  1,-1,-1, clr, 0, 0); 
 
-	Box.reset(0,0,0); 
+	Buffer.BoundingBox.reset(0,0,0); 
 
 	for (int i=0; i<12; ++i)
 	{
-		Vertices[i].Pos -= core::vector3df(0.5f, 0.5f, 0.5f);
-		Vertices[i].Pos *= Size;
-		Box.addInternalPoint(Vertices[i].Pos);
+		Buffer.Vertices[i].Pos -= core::vector3df(0.5f, 0.5f, 0.5f);
+		Buffer.Vertices[i].Pos *= Size;
+		Buffer.BoundingBox.addInternalPoint(Buffer.Vertices[i].Pos);
 	}
 }
 
@@ -92,11 +93,11 @@ void CCubeSceneNode::render()
 
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
-	driver->setMaterial(Material);
+	driver->setMaterial(Buffer.Material);
 
 	driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 	
-	driver->drawIndexedTriangleList(&Vertices[0], 12, &Indices[0], 12);
+	driver->drawMeshBuffer(&Buffer);
 }
 
 
@@ -104,7 +105,7 @@ void CCubeSceneNode::render()
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CCubeSceneNode::getBoundingBox() const
 {
-	return Box;
+	return Buffer.BoundingBox;
 }
 
 
@@ -125,7 +126,7 @@ void CCubeSceneNode::OnPreRender()
 //! to directly modify the material of a scene node.
 video::SMaterial& CCubeSceneNode::getMaterial(s32 i)
 {
-	return Material;
+	return Buffer.Material;
 }
 
 
