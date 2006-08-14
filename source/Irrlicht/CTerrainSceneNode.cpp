@@ -532,12 +532,10 @@ namespace scene
 		SceneManager->getVideoDriver()->setMaterial(Mesh.getMeshBuffer(0)->getMaterial());
 
 		// For use with geomorphing
-		SceneManager->getVideoDriver()->drawIndexedTriangleList(
-			(video::S3DVertex2TCoords*)RenderBuffer.getVertices(),
-			RenderBuffer.getVertexCount(),
-			RenderBuffer.getIndices(),
-			IndicesToRender / 4
-		);
+		SceneManager->getVideoDriver()->drawVertexPrimitiveList(
+			RenderBuffer.getVertices(), RenderBuffer.getVertexCount(),
+			RenderBuffer.getIndices(), IndicesToRender / 3,
+			video::EVT_2TCOORDS, EPT_TRIANGLES);
 	}
 
 	//! Return the bounding box of the entire terrain.

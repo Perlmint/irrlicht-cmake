@@ -82,7 +82,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 		return 0;
 
 	// return if this isn't a supported type
-	if( (header.BitsPerPixel < 8) || (header.BitsPerPixel > 24) )
+	if( (header.BitsPerPixel != 8) && (header.BitsPerPixel != 24) )
 	{
 		os::Printer::log("Unsupported bits per pixel in PCX file.",
 			file->getFileName(), irr::ELL_WARNING);
@@ -90,20 +90,13 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	}
 
 	// read palette
-	if( header.BitsPerPixel >= 8 )
+	if( header.BitsPerPixel == 8 )
 	{
+		// the palette indicator (usually a 0x0c is found infront of the actual palette data)
+		// is ignored because some exporters seem to forget to write it. This would result in
+		// no image loaded before, now only wrong colors will be set.
 		s32 pos = file->getPos();
-		u8 palIndicator;
-		file->seek( file->getSize()-256*3-1, false );
-
-		file->read( &palIndicator, 1 );
-
-		if( palIndicator != 12 )
-		{
-			os::Printer::log("Unsupported pal indicator in PCX file.",
-				file->getFileName(), irr::ELL_WARNING);
-			return 0;
-		}
+		file->seek( file->getSize()-256*3, false );
 
 		u8 *tempPalette = new u8[768];
 		PaletteData = new s32[256];
@@ -112,8 +105,8 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 		for( s32 i=0; i<256; i++ )
 		{
 			PaletteData[i] = (tempPalette[i*3+0] << 16) |
-							 (tempPalette[i*3+1] << 8) | 
-							 (tempPalette[i*3+2] );
+					 (tempPalette[i*3+1] << 8) | 
+					 (tempPalette[i*3+2] );
 		}
 
 		delete [] tempPalette;
@@ -126,8 +119,8 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 		for( s32 i=0; i<256; i++ )
 		{
 			PaletteData[i] = (header.Palette[i*3+0] << 16) |
-							 (header.Palette[i*3+1] << 8) | 
-							 (header.Palette[i*3+2]);
+					 (header.Palette[i*3+1] << 8) | 
+					 (header.Palette[i*3+2]);
 		}
 	}
 
@@ -152,12 +145,8 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 			cnt &= 0x3f;
 			file->read( &value, 1 );
 		}
-		while( cnt )
-		{
-			PCXData[offset] = value;
-			cnt--;
-			offset++;
-		}
+		memset(PCXData+offset, value, cnt);
+		offset += cnt;
 	}
 
 	// create image
@@ -195,7 +184,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 }
 
 
-//! creates a loader which is able to load tgas
+//! creates a loader which is able to load pcx images
 IImageLoader* createImageLoaderPCX()
 {
 	return new CImageLoaderPCX();
