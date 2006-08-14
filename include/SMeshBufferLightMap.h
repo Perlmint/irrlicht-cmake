@@ -106,23 +106,10 @@ namespace scene
 			return video::EVT_2TCOORDS;
 		}
 
-		//! sets type of primitive data which is stored.
-		virtual void setPrimitiveType(E_PRIMITIVE_TYPE pType)
-		{
-			primitiveType=pType;
-		}
-
-		//! returns which type of primitive data is stored.
-		virtual E_PRIMITIVE_TYPE getPrimitiveType() const
-		{
-			return primitiveType;
-		}
-
 		video::SMaterial Material; //! material for this meshBuffer.
 		core::array<video::S3DVertex2TCoords> Vertices; //! Array of vertices
 		core::array<u16> Indices; //! Array of the Indices.
 		core::aabbox3d<f32> BoundingBox;
-		E_PRIMITIVE_TYPE primitiveType;
 	};
 
 } // end namespace scene

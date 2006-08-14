@@ -68,12 +68,6 @@ enum E_PRIMITIVE_TYPE
 		//! returns which type of vertex data is stored.
 		virtual video::E_VERTEX_TYPE getVertexType() const = 0;
 
-		//! sets the type of primitive structure which is stored.
-		virtual void setPrimitiveType(E_PRIMITIVE_TYPE) = 0;
-
-		//! returns which type of primitive structure is stored.
-		virtual E_PRIMITIVE_TYPE getPrimitiveType() const = 0;
-
 		//! returns pointer to vertex data. The data is an array of vertices. Which vertex
 		//! type is used can be determined with getVertexType().
 		virtual const void* getVertices() const = 0; 

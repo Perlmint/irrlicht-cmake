@@ -56,10 +56,6 @@ namespace scene
 		//! returns which type of vertex data is stored.
 		virtual video::E_VERTEX_TYPE getVertexType() const;
 
-		virtual void setPrimitiveType(scene::E_PRIMITIVE_TYPE);
-
-		virtual scene::E_PRIMITIVE_TYPE getPrimitiveType() const;
-
 		//! returns amount of vertices
 		virtual s32 getVertexCount() const;
 

@@ -560,7 +560,7 @@ void CNullDriver::draw3DBox(const core::aabbox3d<f32> box, SColor color)
 	core::vector3df edges[8];
 	box.getEdges(edges);
 
-	// TODO: optimize into one big drawIndexePrimitive call.
+	// TODO: optimize into one big drawIndexPrimitive call.
 
 	draw3DLine(edges[5], edges[1], color);
 	draw3DLine(edges[1], edges[3], color);
@@ -1177,41 +1177,7 @@ void CNullDriver::drawMeshBuffer(scene::IMeshBuffer* mb)
 	if (!mb)
 		return;
 
-	s32 primitiveCount=0;
-	switch (mb->getPrimitiveType())
-	{
-		case scene::EPT_POINTS:
-			primitiveCount=mb->getIndexCount();
-			break;
-		case scene::EPT_LINE_STRIP:
-			primitiveCount=mb->getIndexCount()-1;
-			break;
-		case scene::EPT_LINE_LOOP:
-			primitiveCount=mb->getIndexCount();
-			break;
-		case scene::EPT_LINES:
-			primitiveCount=mb->getIndexCount()/2;
-			break;
-		case scene::EPT_TRIANGLE_STRIP:
-			primitiveCount=mb->getIndexCount()-2;
-			break;
-		case scene::EPT_TRIANGLE_FAN:
-			primitiveCount=mb->getIndexCount()-2;
-			break;
-		case scene::EPT_TRIANGLES:
-			primitiveCount=mb->getIndexCount()/3;
-			break;
-		case scene::EPT_QUAD_STRIP:
-			primitiveCount=mb->getIndexCount()/2-1;
-			break;
-		case scene::EPT_QUADS:
-			primitiveCount=mb->getIndexCount()/4;
-			break;
-		case scene::EPT_POLYGON:
-			primitiveCount=mb->getIndexCount();
-			break;
-	}
-	drawVertexPrimitiveList(mb->getVertices(), mb->getVertexCount(), mb->getIndices(), primitiveCount, mb->getVertexType(), mb->getPrimitiveType());
+	drawVertexPrimitiveList(mb->getVertices(), mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/3, mb->getVertexType(), scene::EPT_TRIANGLES);
 }
 
 

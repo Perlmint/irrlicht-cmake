@@ -671,16 +671,6 @@ video::E_VERTEX_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexType() const
 	return video::EVT_STANDARD;
 }
 
-void CAnimatedMeshMS3D::SMS3DMeshBuffer::setPrimitiveType(scene::E_PRIMITIVE_TYPE)
-{
-}
-
-//! returns which type of vertex data is stored.
-scene::E_PRIMITIVE_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getPrimitiveType() const
-{
-	return scene::EPT_TRIANGLES;
-}
-
 } // end namespace scene
 } // end namespace irr
 

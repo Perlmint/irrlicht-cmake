@@ -148,10 +148,6 @@ namespace scene
 			//! returns which type of vertex data is stored. 
 			virtual video::E_VERTEX_TYPE getVertexType() const;
 
-			virtual void setPrimitiveType(scene::E_PRIMITIVE_TYPE);
-
-			virtual scene::E_PRIMITIVE_TYPE getPrimitiveType() const;
-
 			video::SMaterial Material;                  //! material for this meshBuffer. 
 			core::array<video::S3DVertex> *Vertices;      //! Array of vertices 
 			core::array<u16> Indices;   //! Array of the Indices. 
