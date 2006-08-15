@@ -16,7 +16,7 @@ namespace scene
 	struct SMeshBufferLightMap : public IMeshBuffer
 	{
 		//! constructor
-		SMeshBufferLightMap() : primitiveType(EPT_TRIANGLES)
+		SMeshBufferLightMap()
 		{
 			#ifdef _DEBUG
 			setDebugName("SMeshBufferLightMap");

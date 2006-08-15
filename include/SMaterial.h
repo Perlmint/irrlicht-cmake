@@ -341,7 +341,7 @@ namespace video
 		//! material flag union.
 		/** This enables the user to access the
 		material flag using e.g: material.Wireframe = true or
-		material.flag[EMF_WIREFRAME] = true; */
+		material.Flags[EMF_WIREFRAME] = true; */
 		union
 		{
 			struct

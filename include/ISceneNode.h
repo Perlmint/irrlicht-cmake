@@ -311,9 +311,9 @@ namespace scene
 		//! This function is needed for inserting the node into the scene hirachy on a
 		//! optimal position for minimizing renderstate changes, but can also be used
 		//! to directly modify the material of a scene node.
-		//! \param i: Zero based index i. The maximal value for this may be getMaterialCount() - 1.
+		//! \param num: Zero based index. The maximal value is getMaterialCount() - 1.
 		//! \return Returns the material of that index.
-		virtual video::SMaterial& getMaterial(s32 i)
+		virtual video::SMaterial& getMaterial(s32 num)
 		{
 			return *((video::SMaterial*)0);
 		}
