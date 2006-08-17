@@ -1135,7 +1135,6 @@ void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
 	CurrentOut[0].Color.setA8R8G8B8 ( color.color );
 	CurrentOut[1].Color.setA8R8G8B8 ( color.color );
 
-
 	// vertices count per line
 	vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 2 );
 	if ( vOut >= 2 )

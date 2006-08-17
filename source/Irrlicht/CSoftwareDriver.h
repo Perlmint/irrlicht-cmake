@@ -49,6 +49,10 @@ namespace video
 		//! draws a vertex primitive list
 		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
+		//! Draws a 3d line.
+		virtual void draw3DLine(const core::vector3df& start,
+			const core::vector3df& end, SColor color = SColor(255,255,255,255));
+
 		//! draws an 2d image
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);
 

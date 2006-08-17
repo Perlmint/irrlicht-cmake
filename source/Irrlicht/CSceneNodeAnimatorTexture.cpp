@@ -12,7 +12,7 @@ namespace scene
 
 //! constructor
 CSceneNodeAnimatorTexture::CSceneNodeAnimatorTexture(const core::array<video::ITexture*>& textures, 
-													 s32 timePerFrame, bool loop, u32 now)
+						 s32 timePerFrame, bool loop, u32 now)
 : Loop(loop), StartTime(now), TimePerFrame(timePerFrame)
 {
 	#ifdef _DEBUG
@@ -37,6 +37,7 @@ CSceneNodeAnimatorTexture::~CSceneNodeAnimatorTexture()
 {
 	clearTextures();
 }
+
 
 
 void CSceneNodeAnimatorTexture::clearTextures()
@@ -118,6 +119,6 @@ void CSceneNodeAnimatorTexture::deserializeAttributes(io::IAttributes* in, io::S
 }
 
 
-
 } // end namespace scene
 } // end namespace irr
+

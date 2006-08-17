@@ -659,13 +659,13 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 			}
 			else
 	        {
-			    buffer->Material.Texture1 = NULL;
+			buffer->Material.Texture1 = NULL;
 		        buffer->Material.Texture2 = NULL;
 
-				buffer->Material.AmbientColor = video::SColor(255, 255, 255, 255);
-				buffer->Material.DiffuseColor =	video::SColor(255, 255, 255, 255);
-				buffer->Material.EmissiveColor = video::SColor(0, 0, 0, 0);
-				buffer->Material.SpecularColor = video::SColor(0, 0, 0, 0);
+			buffer->Material.AmbientColor = video::SColor(255, 255, 255, 255);
+			buffer->Material.DiffuseColor =	video::SColor(255, 255, 255, 255);
+			buffer->Material.EmissiveColor = video::SColor(0, 0, 0, 0);
+			buffer->Material.SpecularColor = video::SColor(0, 0, 0, 0);
 	        }
 
 			if (matEnt && matEnt->Header.Transparency!=0)            
@@ -681,7 +681,7 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 					buffer->Material.MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
 					buffer->Material.Lighting = false;
 					buffer->Material.BackfaceCulling = false;
-				}				
+				}
 	        }
 			else if (
 				!buffer->Material.Texture2 &&
@@ -691,38 +691,38 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 	        {
 		        buffer->Material.MaterialType = video::EMT_SOLID;
 				buffer->Material.Lighting  = true;
-			} 			
-     			
+			}
+
 			MeshBufferEntry.push_back(
-				SMyMeshBufferEntry(meshHeader.MatIndex, buffer));
+			SMyMeshBufferEntry(meshHeader.MatIndex, buffer));
 		}
-        
-		video::S3DVertex2TCoords  VertexA, VertexB, VertexC;
+
+		video::S3DVertex2TCoords VertexA, VertexB, VertexC;
 		video::SColor vert_color;
 		core::triangle3df face;
 
 		for (int f=0; f<facesNum; f++)
-        {
+		{
 			// vertices (A, B, C) color
 
-            if (matEnt && 
+			if (matEnt && 
 				(buffer->Material.MaterialType == video::EMT_TRANSPARENT_VERTEX_ALPHA ||
 				buffer->Material.MaterialType == video::EMT_TRANSPARENT_REFLECTION_2_LAYER))
-            {
-                video::SColor color(
-                    matEnt->Header.DiffuseColor.A, matEnt->Header.DiffuseColor.R,
-                    matEnt->Header.DiffuseColor.G, matEnt->Header.DiffuseColor.B);
+			{
+				video::SColor color(
+				matEnt->Header.DiffuseColor.A, matEnt->Header.DiffuseColor.R,
+				matEnt->Header.DiffuseColor.G, matEnt->Header.DiffuseColor.B);
 
-                vert_color = color.getInterpolated(video::SColor(0,0,0,0),
+				vert_color = color.getInterpolated(video::SColor(0,0,0,0),
 					1-matEnt->Header.Transparency);
-            }
-            else
-            {
-                vert_color = buffer->Material.DiffuseColor;
-            }
+			}
+			else
+			{
+				vert_color = buffer->Material.DiffuseColor;
+			}
 
 			VertexA.Color = VertexB.Color = VertexC.Color = vert_color;
-          
+
 			// vertex A
 
 			VertexA.Pos.X = Vertex[Face[f].C].Coord.X;
@@ -733,21 +733,21 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 			VertexA.Normal.Y = Vertex[Face[f].C].Normal.Y;
 			VertexA.Normal.Z = Vertex[Face[f].C].Normal.Z;
 
-            if (meshHeader.TChannelCnt>0)
-            {
-                VertexA.TCoords.X  = TVertex1[TFace1[f].C].TCoord.X;
-			    VertexA.TCoords.Y  = TVertex1[TFace1[f].C].TCoord.Y;
-            }
+			if (meshHeader.TChannelCnt>0)
+			{
+				VertexA.TCoords.X  = TVertex1[TFace1[f].C].TCoord.X;
+				VertexA.TCoords.Y  = TVertex1[TFace1[f].C].TCoord.Y;
+			}
 
-            if (meshHeader.TChannelCnt>1)
-            {
-                VertexA.TCoords2.X = TVertex2[TFace2[f].C].TCoord.X;
-			    VertexA.TCoords2.Y = TVertex2[TFace2[f].C].TCoord.Y; 
-            }
+			if (meshHeader.TChannelCnt>1)
+			{
+				VertexA.TCoords2.X = TVertex2[TFace2[f].C].TCoord.X;
+				VertexA.TCoords2.Y = TVertex2[TFace2[f].C].TCoord.Y; 
+			}
 
 			// vertex B
 
-            VertexB.Pos.X = Vertex[Face[f].B].Coord.X;
+			VertexB.Pos.X = Vertex[Face[f].B].Coord.X;
 			VertexB.Pos.Y = Vertex[Face[f].B].Coord.Y;
 			VertexB.Pos.Z = Vertex[Face[f].B].Coord.Z; 
 
@@ -755,21 +755,21 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 			VertexB.Normal.Y = Vertex[Face[f].B].Normal.Y;
 			VertexB.Normal.Z = Vertex[Face[f].B].Normal.Z;
 
-            if (meshHeader.TChannelCnt>0)
-            {
-                VertexB.TCoords.X  = TVertex1[TFace1[f].B].TCoord.X;
-			    VertexB.TCoords.Y  = TVertex1[TFace1[f].B].TCoord.Y;
-            }
+			if (meshHeader.TChannelCnt>0)
+			{
+				VertexB.TCoords.X  = TVertex1[TFace1[f].B].TCoord.X;
+				VertexB.TCoords.Y  = TVertex1[TFace1[f].B].TCoord.Y;
+			}
 
-            if (meshHeader.TChannelCnt>1)
-            {
-                VertexB.TCoords2.X = TVertex2[TFace2[f].B].TCoord.X;
-			    VertexB.TCoords2.Y = TVertex2[TFace2[f].B].TCoord.Y;
-            }
-            
+			if (meshHeader.TChannelCnt>1)
+			{
+				VertexB.TCoords2.X = TVertex2[TFace2[f].B].TCoord.X;
+				VertexB.TCoords2.Y = TVertex2[TFace2[f].B].TCoord.Y;
+			}
+
 			// vertex C
 
-            VertexC.Pos.X = Vertex[Face[f].A].Coord.X;
+			VertexC.Pos.X = Vertex[Face[f].A].Coord.X;
 			VertexC.Pos.Y = Vertex[Face[f].A].Coord.Y;
 			VertexC.Pos.Z = Vertex[Face[f].A].Coord.Z; 
 
@@ -777,32 +777,32 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 			VertexC.Normal.Y = Vertex[Face[f].A].Normal.Y;
 			VertexC.Normal.Z = Vertex[Face[f].A].Normal.Z;
 
-            if (meshHeader.TChannelCnt>0)
-            {
-                VertexC.TCoords.X  = TVertex1[TFace1[f].A].TCoord.X;
-			    VertexC.TCoords.Y  = TVertex1[TFace1[f].A].TCoord.Y;
-            }
-            if (meshHeader.TChannelCnt>1)
-            {
-                VertexC.TCoords2.X = TVertex2[TFace2[f].A].TCoord.X;
-			    VertexC.TCoords2.Y = TVertex2[TFace2[f].A].TCoord.Y;
-            }
+			if (meshHeader.TChannelCnt>0)
+			{
+				VertexC.TCoords.X  = TVertex1[TFace1[f].A].TCoord.X;
+				VertexC.TCoords.Y  = TVertex1[TFace1[f].A].TCoord.Y;
+			}
+			if (meshHeader.TChannelCnt>1)
+			{
+				VertexC.TCoords2.X = TVertex2[TFace2[f].A].TCoord.X;
+				VertexC.TCoords2.Y = TVertex2[TFace2[f].A].TCoord.Y;
+			}
 
 			// store 3d data in mesh buffer
 
 			buffer->Indices.push_back(buffer->Vertices.size());
-            buffer->Vertices.push_back(VertexA);
+			buffer->Vertices.push_back(VertexA);
 
 			buffer->Indices.push_back(buffer->Vertices.size());
-            buffer->Vertices.push_back(VertexB);
+			buffer->Vertices.push_back(VertexB);
 
-            buffer->Indices.push_back(buffer->Vertices.size());
-            buffer->Vertices.push_back(VertexC);			
+			buffer->Indices.push_back(buffer->Vertices.size());
+			buffer->Vertices.push_back(VertexC);
 
 			//*****************************************************************
 			//          !!!!!! W A R N I N G !!!!!!!
 			//*****************************************************************
-			// For materials with alpha channel we doublicate all faces.
+			// For materials with alpha channel we duplicate all faces.
 			// This has be done for proper lighting calculation of the back faces.
 			// So you must remember this while you creating your models !!!!!
 			//*****************************************************************
@@ -824,9 +824,8 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 				buffer->Indices.push_back(buffer->Vertices.size());
 				buffer->Vertices.push_back(VertexA);
 			}
-        }
-        
-        file->read(&id, sizeof(id));
+		}
+		file->read(&id, sizeof(id));
 	}
 
 	// creating mesh
@@ -854,20 +853,20 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
  
 	SAnimatedMesh* am = new SAnimatedMesh();
 	
-    // you have to add this type in IAnimatedMesh.h 
-    //am->Type = EAMT_MY3D; 
+	// you have to add this type in IAnimatedMesh.h 
+	//am->Type = EAMT_MY3D; 
 
 	am->addMesh(Mesh);
 	am->recalculateBoundingBox();
 
 	Mesh->drop();
-	Mesh = 0;   
+	Mesh = 0;
 
-    //msg="3D data successfully loaded from ";
-    //msg.append(file_name);
-    //os::Printer::log(msg.c_str(), ELL_INFORMATION);
+	//msg="3D data successfully loaded from ";
+	//msg.append(file_name);
+	//os::Printer::log(msg.c_str(), ELL_INFORMATION);
 
-    return am;  	
+	return am;
 }
 
 

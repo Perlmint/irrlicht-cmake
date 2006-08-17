@@ -15,7 +15,7 @@ namespace scene
 //! constructor
 CSceneNodeAnimatorCollisionResponse::CSceneNodeAnimatorCollisionResponse(
 		ISceneManager* scenemanager,
-		ITriangleSelector* world, ISceneNode* object, 
+		ITriangleSelector* world, ISceneNode* object,
 		const core::vector3df& ellipsoidRadius,
 		const core::vector3df& gravityPerSecond,
 		const core::vector3df& ellipsoidTranslation,
@@ -61,7 +61,7 @@ bool CSceneNodeAnimatorCollisionResponse::isFalling()
 
 
 //! Sets the radius of the ellipsoid with which collision detection and
-//! response is done. 
+//! response is done.
 void CSceneNodeAnimatorCollisionResponse::setEllipsoidRadius(
 	const core::vector3df& radius)
 {
@@ -147,8 +147,8 @@ void CSceneNodeAnimatorCollisionResponse::animateNode(ISceneNode* node, u32 time
 	core::vector3df vel = pos - LastPosition;
 	core::vector3df g = Gravity;// * (f32)diff;
 
-	if (Falling) 
-      g = Gravity * (f32)((timeMs - FallStartTime) * diff);
+	if (Falling)
+		g = Gravity * (f32)((timeMs - FallStartTime) * diff);
 
 	core::triangle3df triangle = RefTriangle;
 
@@ -193,7 +193,7 @@ void CSceneNodeAnimatorCollisionResponse::deserializeAttributes(io::IAttributes*
 {
 	Radius = in->getAttributeAsVector3d("Radius");
 	Gravity = in->getAttributeAsVector3d("Gravity");
-	Translation = in->getAttributeAsVector3d("Translation");	
+	Translation = in->getAttributeAsVector3d("Translation");
 }
 
 

@@ -24,11 +24,11 @@ enum E_PARTICLE_AFFECTOR_TYPE
 };
 
 //! Names for built in particle affectors
-const char* const ParticleAffectorTypeNames[] = 
+const char* const ParticleAffectorTypeNames[] =
 {
 	"None",
 	"FadeOut",
-	"Gravity",	
+	"Gravity",
 	0
 };
 
@@ -37,19 +37,28 @@ class IParticleAffector : public virtual IUnknown
 {
 public:
 
+	//! constructor
+	IParticleAffector() : Enabled(true) {}
+
 	//! Affects an array of particles.
 	//! \param now: Current time. (Same as ITimer::getTime() would return)
 	//! \param particlearray: Array of particles.
 	//! \param count: Amount of particles in array.
 	virtual void affect(u32 now, SParticle* particlearray, u32 count) = 0;
 
+	//! Sets whether or not the affector is currently enabled.
+	virtual void setEnabled(bool enabled) {Enabled = enabled;}
+
+	//! Gets whether or not the affector is currently enabled.
+	virtual bool getEnabled() const { return Enabled;}
+
 	//! Writes attributes of the object.
-	//! Implement this to expose the attributes of your scene node animator for 
+	//! Implement this to expose the attributes of your scene node animator for
 	//! scripting languages, editors, debuggers or xml serialization purposes.
 	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) {}
 
 	//! Reads attributes of the object.
-	//! Implement this to set the attributes of your scene node animator for 
+	//! Implement this to set the attributes of your scene node animator for
 	//! scripting languages, editors, debuggers or xml deserialization purposes.
 	//! \param startIndex: start index where to start reading attributes.
 	//! \return: returns last index of an attribute read by this affector
@@ -57,6 +66,9 @@ public:
 
 	//! Get emitter type
 	virtual E_PARTICLE_AFFECTOR_TYPE getType() = 0;
+
+protected:
+	bool Enabled;
 };
 
 } // end namespace scene

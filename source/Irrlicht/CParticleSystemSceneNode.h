@@ -59,7 +59,7 @@ public:
 
 	//! Creates a point particle emitter.
 	virtual IParticleEmitter* createPointEmitter(
-		core::vector3df direction = core::vector3df(0.0f,0.03f,0.0f), 
+		const core::vector3df& direction = core::vector3df(0.0f,0.03f,0.0f), 
 		u32 minParticlesPerSecond = 5,
 		u32 maxParticlePerSecond = 10,
 		video::SColor minStartColor = video::SColor(255,0,0,0),
@@ -69,8 +69,8 @@ public:
 
 	//! Creates a box particle emitter.
 	virtual IParticleEmitter* createBoxEmitter(
-		core::aabbox3d<f32> box = core::aabbox3d<f32>(-10,0,-10,5,30,10),
-		core::vector3df direction = core::vector3df(0.0f,0.03f,0.0f), 
+		const core::aabbox3df& box = core::aabbox3d<f32>(-10,0,-10,5,30,10),
+		const core::vector3df& direction = core::vector3df(0.0f,0.03f,0.0f), 
 		u32 minParticlesPerSecond = 5,
 		u32 maxParticlePerSecond = 10,
 		video::SColor minStartColor = video::SColor(255,0,0,0),
@@ -85,7 +85,7 @@ public:
 
 	//! Creates a gravity affector.
 	virtual IParticleAffector* createGravityAffector(
-		core::vector3df gravity = core::vector3df(0.0f,-0.03f,0.0f),
+		const core::vector3df& gravity = core::vector3df(0.0f,-0.03f,0.0f),
 		u32 timeForceLost = 1000);
 
 	//! Sets the size of all particles.
@@ -114,7 +114,7 @@ private:
 	core::list<IParticleAffector*> AffectorList;
 	IParticleEmitter* Emitter;
 	core::array<SParticle> Particles;
-	u32 lastEmitTime;
+	u32 LastEmitTime;
 	core::dimension2d<f32> ParticleSize;
 
 	SMeshBuffer Buffer;

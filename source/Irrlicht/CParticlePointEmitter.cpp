@@ -13,12 +13,12 @@ namespace scene
 
 //! constructor
 CParticlePointEmitter::CParticlePointEmitter(
-	core::vector3df direction, 	u32 minParticlesPerSecond,
-	u32 maxParticlePerSecond,	video::SColor minStartColor,
+	const core::vector3df& direction, u32 minParticlesPerSecond,
+	u32 maxParticlesPerSecond, video::SColor minStartColor,
 	video::SColor maxStartColor, u32 lifeTimeMin, u32 lifeTimeMax,
 	s32 maxAngleDegrees)
  : Direction(direction), MinParticlesPerSecond(minParticlesPerSecond),
-	MaxParticlesPerSecond(maxParticlePerSecond), 
+	MaxParticlesPerSecond(maxParticlesPerSecond), 
 	MinStartColor(minStartColor), MaxStartColor(maxStartColor),
 	MinLifeTime(lifeTimeMin), MaxLifeTime(lifeTimeMax), Time(0), Emitted(0),
 	MaxAngleDegrees(maxAngleDegrees)
@@ -49,6 +49,7 @@ s32 CParticlePointEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& out
 			core::vector3df tgt = Direction;
 			tgt.rotateXYBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df(0,0,0));
 			tgt.rotateYZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df(0,0,0));
+			tgt.rotateXZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df(0,0,0));
 			Particle.vector = tgt;
 		}
 

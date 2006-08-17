@@ -11,7 +11,7 @@ namespace scene
 
 
 //! constructor
-CSceneNodeAnimatorFlyStraight::CSceneNodeAnimatorFlyStraight(const core::vector3df& startPoint, 
+CSceneNodeAnimatorFlyStraight::CSceneNodeAnimatorFlyStraight(const core::vector3df& startPoint,
 							const core::vector3df& endPoint, u32 timeForWay,
 							bool loop, u32 now)
 : Start(startPoint), End(endPoint), StartTime(now), TimeForWay(timeForWay), Loop(loop)
@@ -56,7 +56,6 @@ void CSceneNodeAnimatorFlyStraight::animateNode(ISceneNode* node, u32 timeMs)
 		pos = End;
 	else
 		pos += Vector * (f32)fmod((f32)t, (f32)TimeForWay) * TimeFactor;
-
 	node->setPosition(pos);
 }
 
@@ -83,7 +82,6 @@ void CSceneNodeAnimatorFlyStraight::deserializeAttributes(io::IAttributes* in, i
 }
 
 
-
-
 } // end namespace scene
 } // end namespace irr
+

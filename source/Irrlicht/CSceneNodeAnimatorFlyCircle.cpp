@@ -47,6 +47,7 @@ void CSceneNodeAnimatorFlyCircle::serializeAttributes(io::IAttributes* out, io::
 	out->addFloat("Speed", Speed);
 }
 
+
 //! Reads attributes of the scene node animator.
 void CSceneNodeAnimatorFlyCircle::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
 {

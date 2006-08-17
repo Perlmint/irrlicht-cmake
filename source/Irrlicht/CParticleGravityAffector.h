@@ -19,7 +19,7 @@ class CParticleGravityAffector : public IParticleAffector
 public:
 
 	CParticleGravityAffector(
-		core::vector3df gravity = core::vector3df(0.0f,-0.03f,0.0f),
+		const core::vector3df& gravity = core::vector3df(0.0f,-0.03f,0.0f),
 		u32 timeForceLost = 1000);
 
 	//! Affects a particle.

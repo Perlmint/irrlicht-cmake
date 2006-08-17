@@ -20,9 +20,9 @@ public:
 
 	//! constructor
 	CParticlePointEmitter(
-		core::vector3df direction = core::vector3df(0.0f,0.03f,0.0f), 
+		const core::vector3df& direction = core::vector3df(0.0f,0.03f,0.0f),
 		u32 minParticlesPerSecond = 5,
-		u32 maxParticlePerSecond = 10,
+		u32 maxParticlesPerSecond = 10,
 		video::SColor minStartColor = video::SColor(255,0,0,0),
 		video::SColor maxStartColor = video::SColor(255,255,255,255),
 		u32 lifeTimeMin=2000,

@@ -56,8 +56,8 @@ namespace scene
 		};
 
 		void createShadowVolume(const core::vector3df& pos);
-		void createZPassVolume(s32 faceCount, s32& numEdges, const core::vector3df light, SShadowVolume* svp, bool caps);
-		void createZFailVolume(s32 faceCount, s32& numEdges, const core::vector3df light, SShadowVolume* svp);
+		void createZPassVolume(s32 faceCount, s32& numEdges, const core::vector3df& light, SShadowVolume* svp, bool caps);
+		void createZFailVolume(s32 faceCount, s32& numEdges, const core::vector3df& light, SShadowVolume* svp);
 		void addEdge(s32& numEdges, u16 v0, u16 v1);
 
 		//! Generates adjacency information based on mesh indices.
@@ -74,7 +74,7 @@ namespace scene
 		s32 IndexCountAllocated;
 		s32 VertexCountAllocated;
 		s32 IndexCount;
-		s32 VertexCount;	
+		s32 VertexCount;
 
 		core::array<SShadowVolume> ShadowVolumes; // a shadow volume for every light
 		s32 ShadowVolumesUsed;

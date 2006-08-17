@@ -1466,6 +1466,13 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		else
 			glDisable(GL_NORMALIZE);
 	}
+
+	// thickness
+	if (resetAllRenderStates || lastmaterial.Thickness != material.Thickness)
+	{
+		glPointSize(material.Thickness);
+		glLineWidth(material.Thickness);
+	}
 }
 
 
@@ -1689,8 +1696,8 @@ void COpenGLDriver::setViewPort(const core::rect<s32>& area)
 }
 
 //! Draws a shadow volume into the stencil buffer. To draw a stencil shadow, do
-//! this: Frist, draw all geometry. Then use this method, to draw the shadow
-//! volume. Then, use IVideoDriver::drawStencilShadow() to visualize the shadow.
+//! this: First, draw all geometry. Then use this method, to draw the shadow
+//! volume. Next use IVideoDriver::drawStencilShadow() to visualize the shadow.
 void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s32 count, bool zfail)
 {
 	if (!StencilBuffer || !count)
@@ -1704,17 +1711,17 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 		ResetRenderStates = true;
 	}
 
-	// store current OpenGL   state
+	// store current OpenGL state
 	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT |
-		GL_POLYGON_BIT   | GL_STENCIL_BUFFER_BIT   );
+		GL_POLYGON_BIT | GL_STENCIL_BUFFER_BIT);
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_FOG);
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_STENCIL_TEST);
-	glColorMask(GL_FALSE, GL_FALSE,   GL_FALSE, GL_FALSE ); // no color buffer drawing
-	glStencilFunc(GL_ALWAYS, 1,   0xFFFFFFFFL   );
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE ); // no color buffer drawing
+	glStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFFL);
 	glColorMask(0, 0, 0, 0);
 	glEnable(GL_CULL_FACE);
 
@@ -1736,7 +1743,7 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 		glCullFace(GL_FRONT);
 
 		glBegin(GL_TRIANGLES);
-		for( i=0; i<count; ++i)
+		for(i=0; i<count; ++i)
 			glVertex3f(triangles[i].X, triangles[i].Y, triangles[i].Z);
 
 		glEnd();
@@ -1806,7 +1813,7 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 
 	glLoadIdentity();
 
-	// draw A shadowing rectangle covering the entire screen
+	// draw a shadow rectangle covering the entire screen using stencil buffer
 
 	glBegin(GL_TRIANGLE_STRIP);
 

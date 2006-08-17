@@ -14,9 +14,8 @@ namespace scene
 
 //! constructor
 CParticleGravityAffector::CParticleGravityAffector(
-	core::vector3df gravity,
-		u32 timeForceLost)
-	: Gravity(gravity), TimeForceLost((f32)timeForceLost)
+	const core::vector3df& gravity, u32 timeForceLost)
+	: IParticleAffector(), Gravity(gravity), TimeForceLost((f32)timeForceLost)
 {
 }
 
@@ -24,13 +23,17 @@ CParticleGravityAffector::CParticleGravityAffector(
 //! Affects an array of particles.
 void CParticleGravityAffector::affect(u32 now, SParticle* particlearray, u32 count)
 {
+	if (!Enabled)
+		return;
 	f32 d;
 
 	for (u32 i=0; i<count; ++i)
 	{
 		d = (now - particlearray[i].startTime) / TimeForceLost;
-		if (d > 1.0f) d = 1.0f;
-		if (d < 0.0f) d = 0.0f;
+		if (d > 1.0f)
+			d = 1.0f;
+		if (d < 0.0f)
+			d = 0.0f;
 		d = 1.0f - d;
 
 		particlearray[i].vector = particlearray[i].startVector.getInterpolated(Gravity, d);

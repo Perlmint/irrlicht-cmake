@@ -589,6 +589,34 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 
 
 
+//! Draws a 3d line.
+void CSoftwareDriver::draw3DLine(const core::vector3df& start,
+				const core::vector3df& end, SColor color)
+{
+	core::vector3df vect = start.crossProduct(end);
+	vect.normalize();
+	vect *= Material.Thickness;
+
+	S3DVertex vtx[4];
+
+	vtx[0].Color = color;
+	vtx[1].Color = color;
+	vtx[2].Color = color;
+	vtx[3].Color = color;
+
+	vtx[0].Pos = start;
+	vtx[1].Pos = end;
+
+	vtx[2].Pos = start + vect;
+	vtx[3].Pos = end + vect;
+
+	u16 idx[12] = {0,1,2, 0,2,1, 0,1,3, 0,3,1};
+
+	drawIndexedTriangleList(vtx, 4, idx, 4);
+}
+
+
+
 //! clips a triangle against the viewing frustrum
 void CSoftwareDriver::clipTriangle(f32* transformedPos)
 {

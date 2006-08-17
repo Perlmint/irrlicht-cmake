@@ -21,11 +21,11 @@ namespace scene
 
 //! constructor
 CParticleSystemSceneNode::CParticleSystemSceneNode(bool createDefaultEmitter,
-	ISceneNode* parent, ISceneManager* mgr, s32 id, 
+	ISceneNode* parent, ISceneManager* mgr, s32 id,
 	const core::vector3df& position, const core::vector3df& rotation,
 	const core::vector3df& scale)
 	: IParticleSystemSceneNode(parent, mgr, id, position, rotation, scale),
-	Emitter(0), ParticlesAreGlobal(true)
+	Emitter(0), ParticlesAreGlobal(true), LastEmitTime(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CParticleSystemSceneNode");
@@ -57,8 +57,6 @@ CParticleSystemSceneNode::~CParticleSystemSceneNode()
 //! Sets the particle emitter, which creates the particles.
 void CParticleSystemSceneNode::setEmitter(IParticleEmitter* emitter)
 {
-	lastEmitTime = os::Timer::getTime();
-
 	if (Emitter)
 		Emitter->drop();
 
@@ -109,7 +107,7 @@ s32 CParticleSystemSceneNode::getMaterialCount()
 
 //! Creates a point particle emitter.
 IParticleEmitter* CParticleSystemSceneNode::createPointEmitter(
-	core::vector3df direction, u32 minParticlesPerSecond,
+	const core::vector3df& direction, u32 minParticlesPerSecond,
 	u32 maxParticlePerSecond, video::SColor minStartColor,
 	video::SColor maxStartColor, u32 lifeTimeMin, u32 lifeTimeMax,
 	s32 maxAngleDegrees)
@@ -122,17 +120,16 @@ IParticleEmitter* CParticleSystemSceneNode::createPointEmitter(
 
 //! Creates a box particle emitter.
 IParticleEmitter* CParticleSystemSceneNode::createBoxEmitter(
-	core::aabbox3d<f32> box,	core::vector3df direction, 
+	const core::aabbox3df& box, const core::vector3df& direction,
 	u32 minParticlesPerSecond,	u32 maxParticlePerSecond,
 	video::SColor minStartColor,	video::SColor maxStartColor,
 	u32 lifeTimeMin, u32 lifeTimeMax,
 	s32 maxAngleDegrees)
 {
 	return new CParticleBoxEmitter(box, direction, minParticlesPerSecond,
-		maxParticlePerSecond, minStartColor, maxStartColor, 
+		maxParticlePerSecond, minStartColor, maxStartColor,
 		lifeTimeMin, lifeTimeMax, maxAngleDegrees);
 }
-
 
 
 
@@ -146,7 +143,7 @@ IParticleAffector* CParticleSystemSceneNode::createFadeOutParticleAffector(
 
 //! Creates a gravity affector.
 IParticleAffector* CParticleSystemSceneNode::createGravityAffector(
-		core::vector3df gravity, u32 timeForceLost)
+		const core::vector3df& gravity, u32 timeForceLost)
 {
 	return new CParticleGravityAffector(gravity, timeForceLost);
 }
@@ -155,15 +152,12 @@ IParticleAffector* CParticleSystemSceneNode::createGravityAffector(
 //! pre render event
 void CParticleSystemSceneNode::OnPreRender()
 {
-	if (IsVisible)
-	{
-		doParticleSystem(os::Timer::getTime());
+	doParticleSystem(os::Timer::getTime());
 
-		if (Particles.size() != 0)
-		{
-			SceneManager->registerNodeForRendering(this);
-			ISceneNode::OnPreRender();
-		}
+	if (IsVisible && (Particles.size() != 0))
+	{
+		SceneManager->registerNodeForRendering(this);
+		ISceneNode::OnPreRender();
 	}
 }
 
@@ -179,20 +173,16 @@ void CParticleSystemSceneNode::render()
 		return;
 
 	// calculate vectors for letting particles look to camera
-	core::vector3df campos = camera->getAbsolutePosition();
-	core::vector3df target = camera->getTarget();
-	core::vector3df up = camera->getUpVector();
-	core::vector3df view = target - campos;
+	core::vector3df view(camera->getTarget() - camera->getAbsolutePosition());
 	view.normalize();
 
-	core::vector3df horizontal = up.crossProduct(view);
+	core::vector3df horizontal = camera->getUpVector().crossProduct(view);
 	horizontal.normalize();
+	horizontal *= 0.5f * ParticleSize.Width;
 
 	core::vector3df vertical = horizontal.crossProduct(view);
 	vertical.normalize();
-
-	horizontal *= 0.5f * ParticleSize.Width;
-	vertical *= 0.5f * ParticleSize.Height;	
+	vertical *= 0.5f * ParticleSize.Height;
 
 	view *= -1.0f;
 
@@ -200,11 +190,10 @@ void CParticleSystemSceneNode::render()
 	reallocateBuffers();
 
 	// create particle vertex data
+	s32 idx = 0;
 	for (u32 i=0; i<Particles.size(); ++i)
 	{
 		const SParticle& particle = Particles[i];
-
-		s32 idx = i*4;
 
 		Buffer.Vertices[0+idx].Pos = particle.pos + horizontal + vertical;
 		Buffer.Vertices[0+idx].Color = particle.color;
@@ -221,14 +210,16 @@ void CParticleSystemSceneNode::render()
 		Buffer.Vertices[3+idx].Pos = particle.pos - horizontal + vertical;
 		Buffer.Vertices[3+idx].Color = particle.color;
 		Buffer.Vertices[3+idx].Normal = view;
+
+		idx +=4;
 	}
 
-	// render all 
+	// render all
 	core::matrix4 mat;
 	if (!ParticlesAreGlobal)
 		mat.setTranslation(AbsoluteTransformation.getTranslation());
 	driver->setTransform(video::ETS_WORLD, mat);
-		
+
 	driver->setMaterial(Buffer.Material);
 
 	driver->drawVertexPrimitiveList(Buffer.getVertices(), Particles.size()*4,
@@ -257,13 +248,19 @@ const core::aabbox3d<f32>& CParticleSystemSceneNode::getBoundingBox() const
 
 void CParticleSystemSceneNode::doParticleSystem(u32 time)
 {
-	u32 now = os::Timer::getTime();
-	u32 timediff = now - lastEmitTime;
-	lastEmitTime = now;
+	if (LastEmitTime==0)
+	{
+		LastEmitTime = time;
+		return;
+	}
+
+	u32 now = time;
+	u32 timediff = time - LastEmitTime;
+	LastEmitTime = time;
 
 	// run emitter
-	
-	if (Emitter)
+
+	if (Emitter && IsVisible)
 	{
 		SParticle* array = 0;
 		s32 newParticles = Emitter->emitt(now, timediff, array);
@@ -276,7 +273,7 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 			Particles.set_used(j+newParticles);
 			for (s32 i=0; i<newParticles; ++i)
 			{
-				AbsoluteTransformation.rotateVect(array[i].startVector); 
+				AbsoluteTransformation.rotateVect(array[i].startVector);
 
 				if (ParticlesAreGlobal)
 					AbsoluteTransformation.transformVect(array[i].pos);
@@ -334,8 +331,8 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 }
 
 
-//! Sets if the particles should be global. If it is, the particles are affected by 
-//! the movement of the particle system scene node too, otherwise they completely 
+//! Sets if the particles should be global. If it is, the particles are affected by
+//! the movement of the particle system scene node too, otherwise they completely
 //! ignore it. Default is true.
 void CParticleSystemSceneNode::setParticlesAreGlobal(bool global)
 {
@@ -354,7 +351,7 @@ void CParticleSystemSceneNode::setParticleSize(const core::dimension2d<f32> &siz
 void CParticleSystemSceneNode::reallocateBuffers()
 {
 	if (Particles.size() * 4 > (u32)Buffer.getVertexCount() ||
-        Particles.size() * 6 > (u32)Buffer.getIndexCount())
+			Particles.size() * 6 > (u32)Buffer.getIndexCount())
 	{
 		s32 oldSize = Buffer.getVertexCount();
 		Buffer.Vertices.set_used(Particles.size() * 4);
@@ -374,7 +371,7 @@ void CParticleSystemSceneNode::reallocateBuffers()
 		s32 oldIdxSize = Buffer.getIndexCount();
 		s32 oldvertices = oldSize;
 		Buffer.Indices.set_used(Particles.size() * 6);
-		
+
 		for (i=oldIdxSize; i<Buffer.Indices.size(); i+=6)
 		{
 			Buffer.Indices[0+i] = 0+oldvertices;
@@ -407,7 +404,7 @@ void CParticleSystemSceneNode::serializeAttributes(io::IAttributes* out, io::SAt
 	out->addEnum("Emitter", (s32)type, ParticleEmitterTypeNames);
 
 	if (Emitter)
-		Emitter->serializeAttributes(out, options);	
+		Emitter->serializeAttributes(out, options);
 
 	// write affectors
 
@@ -481,15 +478,15 @@ void CParticleSystemSceneNode::deserializeAttributes(io::IAttributes* in, io::SA
 		if (!name || strcmp("Affector", name))
 			return;
 
-		E_PARTICLE_AFFECTOR_TYPE atype = 
+		E_PARTICLE_AFFECTOR_TYPE atype =
 			(E_PARTICLE_AFFECTOR_TYPE)in->getAttributeAsEnumeration(idx, ParticleAffectorTypeNames);
 
 		IParticleAffector* aff = 0;
-		
+
 		switch(atype)
 		{
 		case EPAT_FADE_OUT:
-			aff = createFadeOutParticleAffector();			
+			aff = createFadeOutParticleAffector();
 			break;
 		case EPAT_GRAVITY:
 			aff = createGravityAffector();

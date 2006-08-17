@@ -77,15 +77,15 @@ bool CGUIFont::loadTexture(video::ITexture* texture)
 	Texture = texture;
 	Texture->grab();
 
-	s32 lowerRightPostions = 0;
+	s32 lowerRightPositions = 0;
 
 	switch(texture->getColorFormat())
 	{
 	case video::ECF_A1R5G5B5:
-		readPositions16bit(texture, lowerRightPostions);
+		readPositions16bit(texture, lowerRightPositions);
 		break;
 	case video::ECF_A8R8G8B8:
-		readPositions32bit(texture, lowerRightPostions);
+		readPositions32bit(texture, lowerRightPositions);
 		break;
 	default:
 		os::Printer::log("Unsupported font texture color format.", ELL_ERROR);
@@ -95,12 +95,12 @@ bool CGUIFont::loadTexture(video::ITexture* texture)
 	if (Positions.size() > 127)
 		WrongCharacter = 127;
 
-	return (!Positions.empty() && lowerRightPostions);
+	return (!Positions.empty() && lowerRightPositions);
 }
 
 
 
-void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPostions)
+void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPositions)
 {
 	s32 pitch = texture->getPitch();
 	core::dimension2d<s32> size = texture->getOriginalSize();
@@ -146,16 +146,16 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosti
 			else
 			if (*p == colorLowerRight)
 			{
-				if (Positions.size()<=(u32)lowerRightPostions)
+				if (Positions.size()<=(u32)lowerRightPositions)
 				{
 					texture->unlock();
-					lowerRightPostions = 0;
+					lowerRightPositions = 0;
 					return;
 				}
 
 				*p = colorBackGroundWithAlphaFalse;
-				Positions[lowerRightPostions].LowerRightCorner = pos;
-				++lowerRightPostions;
+				Positions[lowerRightPositions].LowerRightCorner = pos;
+				++lowerRightPositions;
 			}
 			else
 			if (*p == colorBackGround)
@@ -175,15 +175,15 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosti
 	texture->unlock();
 
 	// output warnings
-	if (!lowerRightPostions || !Positions.size())
+	if (!lowerRightPositions || !Positions.size())
 		os::Printer::log("The amount of upper corner pixels or lower corner pixels is == 0, font file may be corrupted.", ELL_ERROR);
 	else
-	if (lowerRightPostions != (s32)Positions.size())
+	if (lowerRightPositions != (s32)Positions.size())
 		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
 }
 
 
-void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPostions)
+void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPositions)
 {
 	s32 pitch = texture->getPitch();
 	core::dimension2d<s32> size = texture->getOriginalSize();
@@ -224,16 +224,16 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosti
 			else
 			if (*p == colorLowerRight)
 			{
-				if (Positions.size()<=(u32)lowerRightPostions)
+				if (Positions.size()<=(u32)lowerRightPositions)
 				{
 					texture->unlock();
-					lowerRightPostions = 0;
+					lowerRightPositions = 0;
 					return;
 				}
 
 				*p = colorBackGroundWithAlphaFalse;
-				Positions[lowerRightPostions].LowerRightCorner = pos;
-				++lowerRightPostions;
+				Positions[lowerRightPositions].LowerRightCorner = pos;
+				++lowerRightPositions;
 			}
 			else
 			if (*p == colorBackGround)
@@ -253,10 +253,10 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosti
 	texture->unlock();
 
 	// output warnings
-	if (!lowerRightPostions || !Positions.size())
+	if (!lowerRightPositions || !Positions.size())
 		os::Printer::log("The amount of upper corner pixels or lower corner pixels is == 0, font file may be corrupted.", ELL_ERROR);
 	else
-	if (lowerRightPostions != (s32)Positions.size())
+	if (lowerRightPositions != (s32)Positions.size())
 		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
 }
 

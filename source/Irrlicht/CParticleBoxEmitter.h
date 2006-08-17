@@ -21,10 +21,10 @@ public:
 
 	//! constructor
 	CParticleBoxEmitter(
-		core::aabbox3d<f32> box,
-		core::vector3df direction = core::vector3df(0.0f,0.03f,0.0f), 
+		const core::aabbox3df& box,
+		const core::vector3df& direction = core::vector3df(0.0f,0.03f,0.0f), 
 		u32 minParticlesPerSecond = 20,
-		u32 maxParticlePerSecond = 40,
+		u32 maxParticlesPerSecond = 40,
 		video::SColor minStartColor = video::SColor(255,0,0,0),
 		video::SColor maxStartColor = video::SColor(255,255,255,255),
 		u32 lifeTimeMin=2000,
@@ -47,7 +47,7 @@ public:
 private:
 
 	core::array<SParticle> Particles;
-	core::aabbox3d<f32> Box;
+	core::aabbox3df Box;
 	core::vector3df Direction;
 	s32 MinParticlesPerSecond, MaxParticlesPerSecond;
 	video::SColor MinStartColor, MaxStartColor;

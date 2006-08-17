@@ -14,18 +14,17 @@ namespace scene
 
 //! constructor
 CParticleBoxEmitter::CParticleBoxEmitter(
-	core::aabbox3d<f32> box,
-	core::vector3df direction, 	u32 minParticlesPerSecond,
-	u32 maxParticlePerSecond,	video::SColor minStartColor,
+	const core::aabbox3df& box,
+	const core::vector3df& direction, u32 minParticlesPerSecond,
+	u32 maxParticlesPerSecond,	video::SColor minStartColor,
 	video::SColor maxStartColor, u32 lifeTimeMin, u32 lifeTimeMax,
 	s32 maxAngleDegrees)
  : Box(box), Direction(direction), MinParticlesPerSecond(minParticlesPerSecond),
-	MaxParticlesPerSecond(maxParticlePerSecond), 
+	MaxParticlesPerSecond(maxParticlesPerSecond), 
 	MinStartColor(minStartColor), MaxStartColor(maxStartColor),
 	MinLifeTime(lifeTimeMin), MaxLifeTime(lifeTimeMax), Time(0), Emitted(0),
 	MaxAngleDegrees(maxAngleDegrees)
 {
-
 }
 
 
@@ -46,16 +45,16 @@ s32 CParticleBoxEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& outAr
 		s32 amount = (s32)((Time / everyWhatMillisecond) + 0.5f);
 		Time = 0;
 		SParticle p;
-		core::vector3df extend = Box.getExtent();
+		const core::vector3df& extent = Box.getExtent();
 
 		if (amount > (s32)MaxParticlesPerSecond*2)
 			amount = MaxParticlesPerSecond * 2;
 
 		for (s32 i=0; i<amount; ++i)
 		{
-			p.pos.X = Box.MinEdge.X + fmodf((f32)os::Randomizer::rand(), extend.X);
-			p.pos.Y = Box.MinEdge.Y + fmodf((f32)os::Randomizer::rand(), extend.Y);
-			p.pos.Z = Box.MinEdge.Z + fmodf((f32)os::Randomizer::rand(), extend.Z);
+			p.pos.X = Box.MinEdge.X + fmodf((f32)os::Randomizer::rand(), extent.X);
+			p.pos.Y = Box.MinEdge.Y + fmodf((f32)os::Randomizer::rand(), extent.Y);
+			p.pos.Z = Box.MinEdge.Z + fmodf((f32)os::Randomizer::rand(), extent.Z);
 
 			p.startTime = now;
 			p.vector = Direction;
@@ -65,6 +64,7 @@ s32 CParticleBoxEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& outAr
 				core::vector3df tgt = Direction;
 				tgt.rotateXYBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df(0,0,0));
 				tgt.rotateYZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df(0,0,0));
+				tgt.rotateXZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df(0,0,0));
 				p.vector = tgt;
 			}
 
@@ -95,7 +95,8 @@ s32 CParticleBoxEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& outAr
 void CParticleBoxEmitter::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
 {
 	core::vector3df b = Box.getExtent();
-	out->addVector3d("Box", core::vector3df(b.X/2, b.Y/2, b.Z/2));
+	b *= 0.5f;
+	out->addVector3d("Box", b);
 	out->addVector3d("Direction", Direction);
 	out->addInt("MinParticlesPerSecond", MinParticlesPerSecond);
 	out->addInt("MaxParticlesPerSecond", MaxParticlesPerSecond);

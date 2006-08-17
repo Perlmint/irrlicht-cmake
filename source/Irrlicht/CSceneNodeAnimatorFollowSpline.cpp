@@ -44,25 +44,25 @@ void CSceneNodeAnimatorFollowSpline::animateNode(ISceneNode* node, u32 timeMs)
 	f32 dt = ( (timeMs-StartTime) * Speed );
 	s32 idx = static_cast< s32 >( 0.001f * dt ) % Points.size();
 	f32 u = 0.001f * fmodf( dt, 1000.0f );
-    
+
 	p0 = Points[ clamp( idx - 1, Points.size() ) ];
 	p1 = Points[ clamp( idx, Points.size() ) ];
 	p2 = Points[ clamp( idx + 1, Points.size() ) ];
 	p3 = Points[ clamp( idx + 2, Points.size() ) ];
 
-    // hermite polynomials
-    f32 h1 = 2.0f * u * u * u - 3.0f * u * u + 1.0f;
-    f32 h2 = -2.0f * u * u * u + 3.0f * u * u;
-    f32 h3 = u * u * u - 2.0f * u * u + u;
-    f32 h4 = u * u * u - u * u;
+	// hermite polynomials
+	f32 h1 = 2.0f * u * u * u - 3.0f * u * u + 1.0f;
+	f32 h2 = -2.0f * u * u * u + 3.0f * u * u;
+	f32 h3 = u * u * u - 2.0f * u * u + u;
+	f32 h4 = u * u * u - u * u;
 
-    // tangents
+	// tangents
 	t1 = ( p2 - p0 ) * Tightness;
 	t2 = ( p3 - p1 ) * Tightness;
 
-    // interpolated point
+	// interpolated point
 	p = p1 * h1 + p2 * h2 + t1 * h3 + t2 * h4;
-		
+
 	node->setPosition(p);
 }
 
@@ -113,7 +113,7 @@ void CSceneNodeAnimatorFollowSpline::deserializeAttributes(io::IAttributes* in, 
 	}
 
 	// remove last point if double entry from editor
-	if ( options && (options->Flags & io::EARWF_FOR_EDITOR) && 
+	if ( options && (options->Flags & io::EARWF_FOR_EDITOR) &&
 		Points.size() > 2 && Points.getLast() == core::vector3df(0,0,0))
 	{
 		Points.erase(Points.size()-1);
@@ -122,7 +122,6 @@ void CSceneNodeAnimatorFollowSpline::deserializeAttributes(io::IAttributes* in, 
 			Points.erase(Points.size()-1);
 	}
 }
-
 
 
 } // end namespace scene

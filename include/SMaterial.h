@@ -248,7 +248,7 @@ namespace video
 		SMaterial()
 		: MaterialType(EMT_SOLID), AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
 			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
-			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f),
+			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f), Thickness(1.0f),
 			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
@@ -315,6 +315,9 @@ namespace video
 		//! Second free parameter dependend on the material type.
 		/** Mostly ignored. */
 		f32 MaterialTypeParam2;
+
+		//! Thickness of non-3dimensional elements such as lines and points.
+		f32 Thickness;
 
 		//! Texture layer union.
 		union

@@ -41,8 +41,6 @@ void CSceneNodeAnimatorDelete::animateNode(ISceneNode* node, u32 timeMs)
 }
 
 
-
-
-
 } // end namespace scene
 } // end namespace irr
+
