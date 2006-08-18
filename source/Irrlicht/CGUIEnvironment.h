@@ -156,7 +156,7 @@ private:
 
 	void updateHoveredElement(core::position2d<s32> mousePos);
 
-	void loadBuidInFont();
+	void loadBuiltInFont();
 
 	core::array<SFont> Fonts;
 	video::IVideoDriver* Driver;

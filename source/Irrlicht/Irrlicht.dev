@@ -620,7 +620,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit60]
-FileName=BuildInFont.h
+FileName=BuiltInFont.h
 Folder=gui_impl
 Compile=1
 CompileCpp=1

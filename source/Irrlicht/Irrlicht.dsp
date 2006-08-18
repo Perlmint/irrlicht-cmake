@@ -362,7 +362,7 @@ SOURCE=..\..\include\SIrrCreationParameters.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\BuildInFont.h
+SOURCE=.\BuiltInFont.h
 # End Source File
 # Begin Source File
 

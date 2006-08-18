@@ -28,7 +28,7 @@
 
 #include "CGUISkin.h"
 
-#include "BuildInFont.h"
+#include "BuiltInFont.h"
 #include "os.h"
 
 namespace irr
@@ -56,7 +56,7 @@ CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* drive
 	IGUIEnvironment::setDebugName("CGUIEnvironment");
 	#endif
 
-	loadBuidInFont();
+	loadBuiltInFont();
 
 	IGUISkin* skin = createSkin(EGST_WINDOWS_METALLIC);
 	setSkin(skin);
@@ -93,15 +93,10 @@ CGUIEnvironment::~CGUIEnvironment()
 
 
 
-void CGUIEnvironment::loadBuidInFont()
+void CGUIEnvironment::loadBuiltInFont()
 {
 	const c8* filename = "#DefaultFont";
-
-#ifdef __BIG_ENDIAN__
-	for (int i=0;i<sizeof(BuildInFontData)/sizeof(s32);i++) BuildInFontData[i] = OSReadSwapInt32(&BuildInFontData[i],0);
-#endif
-
-	io::IReadFile* file = io::createMemoryReadFile(BuildInFontData, BuildInFontDataSize, filename, false);
+	io::IReadFile* file = io::createMemoryReadFile(BuiltInFontData, BuiltInFontDataSize, filename, false);
 
 	CGUIFont* font = new CGUIFont(Driver);
 	if (!font->load(file))
@@ -659,8 +654,9 @@ IGUIFont* CGUIEnvironment::getBuiltInFont()
 	if (Fonts.empty())
 		return 0;
 
-	return  Fonts[0].Font;
+	return Fonts[0].Font;
 }
+
 
 
 //! Returns the root gui element. 
@@ -677,6 +673,7 @@ IGUIEnvironment* createGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* 
 {
 	return new CGUIEnvironment(fs, Driver, op);
 }
+
 
 } // end namespace gui
 } // end namespace irr

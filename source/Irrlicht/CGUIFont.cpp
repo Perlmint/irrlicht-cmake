@@ -102,8 +102,7 @@ bool CGUIFont::loadTexture(video::ITexture* texture)
 
 void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPositions)
 {
-	s32 pitch = texture->getPitch();
-	core::dimension2d<s32> size = texture->getOriginalSize();
+	const core::dimension2d<s32>& size = texture->getOriginalSize();
 
 	s32* p = (s32*)texture->lock();
 	if (!p)
@@ -115,27 +114,16 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 	s32 colorTopLeft = *p;
 	s32 colorLowerRight = *(p+1);
 	s32 colorBackGround = *(p+2);
-#ifdef __BIG_ENDIAN__
-	s32 colorBackGroundWithAlphaFalse = (0x00) | (~(0xFF) & colorBackGround);
-	s32 colorFont = (0xFF) | (~(0xFF) & 0xFFFFFF00);
-#else
-	s32 colorBackGroundWithAlphaFalse = (0x00<<24) | (~(0xFF<<24) & colorBackGround);
-	s32 colorFont = (0xFF<<24) | (~(0xFF<<24) & 0x00FFFFFF);
-#endif
+	s32 colorBackGroundWithAlphaFalse = 0x00FFFFFF & colorBackGround;
+	s32 colorFont = 0xFFFFFFFF;
 
 	*(p+1) = colorBackGround;
-	*(p+2) = colorBackGround;
 
 	// start parsing
 
 	core::position2d<s32> pos(0,0);
-
-	c8* row = (c8*)((void*)p);
-
 	for (pos.Y=0; pos.Y<size.Height; ++pos.Y)
 	{
-		p = (s32*)((void*)row);
-
 		for (pos.X=0; pos.X<size.Width; ++pos.X)
 		{
 			if (*p == colorTopLeft)
@@ -162,12 +150,8 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 				*p = colorBackGroundWithAlphaFalse;
 			else
 				*p = colorFont;
-
-
 			++p;
 		}
-
-		row += pitch;
 	}
 
 	// Positions parsed.
@@ -183,9 +167,9 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 }
 
 
+
 void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPositions)
 {
-	s32 pitch = texture->getPitch();
 	core::dimension2d<s32> size = texture->getOriginalSize();
 
 	s16* p = (s16*)texture->lock();
@@ -198,22 +182,16 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 	s16 colorTopLeft = *p;
 	s16 colorLowerRight = *(p+1);
 	s16 colorBackGround = *(p+2);
-	s16 colorBackGroundWithAlphaFalse = (0x0<<15) | (~(0x1<<15) & colorBackGround);
-	s16 colorFont = (0x1<<15) | (~(0x1<<15) & video::RGB16(255,255,255));
+	s16 colorBackGroundWithAlphaFalse = 0x7FFF & colorBackGround;
+	s16 colorFont = 0xFFFF;
 
 	*(p+1) = colorBackGround;
-	*(p+2) = colorBackGround;
 
 	// start parsing
 
 	core::position2d<s32> pos(0,0);
-
-	c8* row = (c8*)((void*)p);
-
 	for (pos.Y=0; pos.Y<size.Height; ++pos.Y)
 	{
-		p = (s16*)((void*)row);
-
 		for (pos.X=0; pos.X<size.Width; ++pos.X)
 		{
 			if (*p == colorTopLeft)
@@ -240,12 +218,8 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 				*p = colorBackGroundWithAlphaFalse;
 			else
 				*p = colorFont;
-
-
 			++p;
 		}
-
-		row += pitch;
 	}
 
 	// Positions parsed.
@@ -261,6 +235,7 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 }
 
 
+
 //! returns the dimension of a text
 core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 {
@@ -271,7 +246,7 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 	for(const wchar_t* p = text; *p; ++p)
 	{
 		n = (*p) - 32;
-		if ( n > Positions.size())
+		if (n > Positions.size())
 			n = WrongCharacter;
 
 		dim.Width += Positions[n].getWidth();
@@ -279,6 +254,7 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 
 	return dim;
 }
+
 
 
 inline s32 CGUIFont::getWidthFromCharacter(wchar_t c)

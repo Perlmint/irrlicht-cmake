@@ -708,7 +708,7 @@
 			Name="gui impl"
 			>
 			<File
-				RelativePath=".\BuildInFont.h"
+				RelativePath=".\BuiltInFont.h"
 				>
 			</File>
 			<File

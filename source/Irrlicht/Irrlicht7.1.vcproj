@@ -530,7 +530,7 @@
 			Name="gui impl"
 			Filter="">
 			<File
-				RelativePath=".\BuildInFont.h">
+				RelativePath=".\BuiltInFont.h">
 			</File>
 			<File
 				RelativePath=".\CGUIButton.cpp">
