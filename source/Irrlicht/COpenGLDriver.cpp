@@ -32,7 +32,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 : CNullDriver(io, screenSize), HDc(0), HRc(0), Window(window),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1),
-	MultiTextureExtension(false), MaxTextureUnits(1),
+	MultiTextureExtension(false), MaxTextureUnits(1), MaxLights(1),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
@@ -185,7 +185,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false),
+	MaxTextureUnits(1), MaxLights(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false),
 	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
 	CurrentRendertargetSize(0,0), _device(device)
 {
@@ -211,7 +211,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), XWindow(window), XDisplay(display),
+	MaxTextureUnits(1), MaxLights(1), XWindow(window), XDisplay(display),
 #ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
@@ -537,6 +537,7 @@ void COpenGLDriver::loadExtensions()
 		// load common extensions
 
 		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &MaxTextureUnits);
+		glGetIntegerv(GL_MAX_LIGHTS, &MaxLights);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
 	}
 
@@ -1594,7 +1595,7 @@ void COpenGLDriver::deleteAllDynamicLights()
 void COpenGLDriver::addDynamicLight(const SLight& light)
 {
 	++LastSetLight;
-	if (!(LastSetLight < GL_MAX_LIGHTS))
+	if (!(LastSetLight < MaxLights))
 		return;
 
 	setTransform(ETS_WORLD, core::matrix4());
@@ -1665,7 +1666,7 @@ void COpenGLDriver::addDynamicLight(const SLight& light)
 //! returns the maximal amount of dynamic lights the device can handle
 s32 COpenGLDriver::getMaximalDynamicLightAmount()
 {
-	return GL_MAX_LIGHTS;
+	return MaxLights;
 }
 
 

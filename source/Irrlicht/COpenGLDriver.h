@@ -315,6 +315,7 @@ namespace video
 		f32 AnisotropyToUse;
 
 		GLint MaxTextureUnits;
+		GLint MaxLights;
 
 		core::dimension2d<s32> CurrentRendertargetSize;
 
