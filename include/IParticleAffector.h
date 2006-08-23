@@ -5,9 +5,8 @@
 #ifndef __I_PARTICLE_AFFECTOR_H_INCLUDED__
 #define __I_PARTICLE_AFFECTOR_H_INCLUDED__
 
-#include "IUnknown.h"
-#include "SParticle.h"
 #include "IAttributeExchangingObject.h"
+#include "SParticle.h"
 
 namespace irr
 {
@@ -33,7 +32,7 @@ const char* const ParticleAffectorTypeNames[] =
 };
 
 //! A particle affector modifies particles.
-class IParticleAffector : public virtual IUnknown
+class IParticleAffector : public virtual io::IAttributeExchangingObject
 {
 public:
 

@@ -15,7 +15,7 @@ namespace irr
 namespace io
 {
 
-	const s16 ZIP_FILE_ENCRYPTED =			0x0001; // set if the file is encrypted
+	const s16 ZIP_FILE_ENCRYPTED =		0x0001; // set if the file is encrypted
 	const s16 ZIP_INFO_IN_DATA_DESCRITOR =	0x0008; // the fields crc-32, compressed size
 														// and uncompressed size are set to zero in the local
 														// header

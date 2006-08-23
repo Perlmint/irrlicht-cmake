@@ -12,6 +12,9 @@
 
 #include "IAnimatedMeshB3d.h"
 #include "IReadFile.h"
+#include "CEmptySceneNode.h"
+#include "CAnimatedMeshSceneNode.h"
+//#include "IAnimatedMeshSceneNode.h"
 #include "S3DVertex.h"
 #include "irrString.h"
 #include "matrix4.h"
@@ -80,10 +83,25 @@ namespace scene
 		//! Gets a joint number from its name
 		virtual s32 getJointNumber(const c8* name) const;
 
+		virtual core::matrix4* getLocalMatrixOfJoint(s32 jointNumber);
+
 		virtual core::matrix4* getMatrixOfJointUnanimated(s32 jointNumber);
 
-		virtual void AddMatrixToJoint(s32 jointNumber, core::matrix4* matrix);
-	private:
+		virtual void setJointAnimation(s32 jointNumber, bool On);
+
+		//!Sets Interpolation Mode
+		//!0- Constant
+		//!1- Linear (default)
+		virtual void SetInterpolationMode(s32 mode);
+
+		//!Want should happen on when animating
+		//!0-Nothing
+		//!1-Update nodes only
+		//!2-Update skin only
+		//!3-Update both nodes and skin (default)
+		virtual void SetAnimateMode(s32 mode);
+
+private:
 
 		struct SB3DMeshBuffer : public IMeshBuffer
 		{
@@ -165,7 +183,6 @@ namespace scene
 
 			video::SMaterial Material;
 			core::array<video::S3DVertex2TCoords> Vertices;
-			// s32 B3dVerticesStart; //to link back the the count of the whole object
 			core::array<u16> Indices;
 			core::aabbox3d<f32> BoundingBox;
 		};
@@ -215,7 +232,7 @@ namespace scene
 			core::matrix4 GlobalMatrix;
 			core::matrix4 GlobalInversedMatrix;
 
-			core::matrix4 *AddMatrix;
+			bool Animate; //Move this nodes local matrix when animating?
 
 			core::array<SB3dKey> Keys;
 
@@ -223,12 +240,11 @@ namespace scene
 
 			core::array<SB3dNode*> Nodes;
 
-			//SB3DMeshBuffer *Buffer; //May be 0 if unused
 		};
 
 		core::array<SB3dNode*> Nodes;
 
-		core::array<SB3dNode*> BaseNodes;
+		core::array<SB3dNode*> RootNodes;
 
 		struct SB3dTexture
 		{
@@ -272,11 +288,34 @@ namespace scene
 
 		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
 
-		void animateNode(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
+
+		void CAnimatedMeshB3d::resetSkin();
+
+		void CalculateGlobalMatrixes(SB3dNode *Node,SB3dNode *ParentNode);
+
+		void animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
+
+		void getNodeAnimation(f32 frame,SB3dNode *Node,core::vector3df &position, core::vector3df &scale, core::quaternion &rotation);
+
+		void animateNodes(f32 frame,f32 startFrame, f32 endFrame);
+
+		void slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
 
 		f32 totalTime;
 		bool HasAnimation;
 		s32 lastCalculatedFrame;
+
+		//0- Constant
+		//1- Linear
+		s32 InterpolationMode;
+
+		//0-None
+		//1-Update nodes only
+		//2-Update skin only
+		//3-Update both nodes and skin
+		s32 AnimateMode;
+
+		bool NormalsInFile;
 
 		core::stringc readString(io::IReadFile* file);
 		core::stringc stripPathString(core::stringc oldstring, bool keepPath);
@@ -293,13 +332,27 @@ namespace scene
 
 		core::array<s32> AnimatedVertices_VertexID;
 
-		//core::array<s16> Indices;
-
 		core::array<SB3DMeshBuffer*> AnimatedVertices_MeshBuffer;
 
 		core::array<SB3DMeshBuffer*> Buffers;
 
 		video::IVideoDriver* Driver;
+
+
+		//This stuff is WIP...
+
+
+	virtual void CreateAnimationSkelton_Helper(ISceneManager* SceneManager ,core::array<ISceneNode*> &JointChildSceneNodes, CAnimatedMeshSceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
+
+	public:
+
+		virtual void StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
+		virtual void RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
+
+		virtual void StoreAnimationSkelton(core::array<core::matrix4> &Matrixs);
+		virtual void RecoverAnimationSkelton(core::array<core::matrix4> &Matrixs);
+
+		virtual void CreateAnimationSkelton(ISceneManager* SceneManager, core::array<ISceneNode*> &JointChildSceneNodes, CAnimatedMeshSceneNode *AnimatedMeshSceneNode);
 
 	};
 

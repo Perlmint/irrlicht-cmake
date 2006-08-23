@@ -17,46 +17,38 @@ namespace video
 {
 
 //!  Surface Loader fow PNG files
-class CImageLoaderPng : public IImageLoader 
-{ 
-public: 
+class CImageLoaderPng : public IImageLoader
+{
+public:
 
-   //! constructor 
-   CImageLoaderPng(); 
+   //! constructor
+   CImageLoaderPng();
 
-   //! destructor 
-   virtual ~CImageLoaderPng(); 
+   //! destructor
+   virtual ~CImageLoaderPng();
 
-   //! returns true if the file maybe is able to be loaded by this class 
-   //! based on the file extension (e.g. ".png") 
-   virtual bool isALoadableFileExtension(const c8* fileName); 
+   //! returns true if the file maybe is able to be loaded by this class
+   //! based on the file extension (e.g. ".png")
+   virtual bool isALoadableFileExtension(const c8* fileName);
 
-   //! returns true if the file maybe is able to be loaded by this class 
-   virtual bool isALoadableFileFormat(irr::io::IReadFile* file); 
+   //! returns true if the file maybe is able to be loaded by this class
+   virtual bool isALoadableFileFormat(irr::io::IReadFile* file);
 
-   //! creates a surface from the file 
-   virtual IImage* loadImage(irr::io::IReadFile* file); 
+   //! creates a surface from the file
+   virtual IImage* loadImage(irr::io::IReadFile* file);
 
-private: 
-     
-	//helper function.  reads in a row of pixels from the image 
-	const unsigned char* ReadRow(void *row_ptr); 
-
-	//some variables 
-	unsigned int width;
-	unsigned int height; 
-	int bitdepth;
-	int colortype;
-	int interlace;
-	int compression;
-	int filter;
-
-	// semi global buffer for reading in row data 
-	unsigned char g_png_load_buffer[0x8000]; // 32768
-}; 
+private:
+	//some variables
+	u32 Width;
+	u32 Height;
+	s32 BitDepth;
+	s32 ColorType;
+	video::IImage* Image;
+	png_bytep *RowPointers; //Used to point to image rows
+};
 
 
-} // end namespace video 
-} // end namespace irr 
+} // end namespace video
+} // end namespace irr
 
-#endif 
+#endif

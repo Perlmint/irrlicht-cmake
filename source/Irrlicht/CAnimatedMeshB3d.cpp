@@ -7,7 +7,6 @@
 #include "CAnimatedMeshB3d.h"
 #include "os.h"
 #include "IVideoDriver.h"
-#include <string.h>
 
 
 namespace irr
@@ -31,7 +30,6 @@ CAnimatedMeshB3d::CAnimatedMeshB3d(video::IVideoDriver* driver)
 	if (Driver)
 		Driver->grab();
 
-	//lastCalculatedFrame = -1;
 }
 
 
@@ -106,7 +104,6 @@ void CAnimatedMeshB3d::readFloats(io::IReadFile* file, f32* vec, u32 count)
 
 bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize)
 {
-	//os::Printer::log("B3d TEXS Chunk"); //for debuging
 
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
@@ -166,7 +163,6 @@ bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize)
 {
-	//os::Printer::log("B3d BRUS Chunk"); //for debuging
 
 	s32 n_texs;
 
@@ -180,8 +176,6 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 	{
 		// This is what blitz basic calls a brush, like a Irrlicht Material
 		core::stringc MaterialName=readString(file); //Not used but we still need the read it
-
-		//cout << MaterialName.c_str() <<endl;//for debuging
 
 		SB3dMaterial B3dMaterial;
 
@@ -233,8 +227,14 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 		//the other textures are skipped, irrlicht I think can only have 2 Textures per Material
 
+		if (B3dMaterial.Textures[1]!=0 && B3dMaterial.Textures[0]==0) //It could happen
+		{
+			B3dMaterial.Textures[0]=B3dMaterial.Textures[1];
+			B3dMaterial.Textures[1]=0;
+		}
+
 		//Hacky code to convert blitz fx to irrlicht...
-		if (B3dMaterial.Textures[1])
+		if (B3dMaterial.Textures[1]) //Two textures
 			{
 				if (B3dMaterial.alpha==1)
 				{
@@ -256,11 +256,18 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 					B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
 				}
 			}
-		else if (B3dMaterial.Textures[0])
+		else if (B3dMaterial.Textures[0]) //one texture
 			{
 				if (B3dMaterial.Textures[0]->Flags &2) //Alpha mapped
 				{
 					B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+				}
+				else if (B3dMaterial.Textures[0]->Flags &4) //Masked
+				{
+					//Not working like blitz basic, because Irrlicht is using alpha to mask, not colour like blitz basic
+
+					B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+
 				}
 				else if (B3dMaterial.alpha==1)
 				{
@@ -272,10 +279,8 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 					//B3dMaterial.Material->MaterialTypeParam=B3dMaterial.alpha;
 					B3dMaterial.Material->MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
 				}
-				//Material->MaterialType =
-				//EMT_TRANSPARENT_ALPHA_CHANNEL
 			}
-		else
+		else //No texture
 		{
 			if (B3dMaterial.alpha==1)
 			{
@@ -292,7 +297,8 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		if (B3dMaterial.fx &1) //full-bright
 		{
 			//B3dMaterial.Material->AmbientColor = video::SColorf(1, 1, 1, 1).toSColor ();
-			B3dMaterial.Material->AmbientColor = video::SColorf(1, 1, 1, 1).toSColor ();	//Blitz Basic Ambient colour is 127,127,127
+			B3dMaterial.Material->AmbientColor = video::SColorf(1, 1, 1, 1).toSColor ();
+			//B3dMaterial.Material->EmissiveColor = video::SColorf(1, 1, 1, 0).toSColor ();//Would be too bright and brighter than blitz basic
 			B3dMaterial.Material->Lighting = false;
 		}
 		else
@@ -308,9 +314,9 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 
 		B3dMaterial.Material->DiffuseColor = video::SColorf(B3dMaterial.red, B3dMaterial.green, B3dMaterial.blue, B3dMaterial.alpha).toSColor ();
-		//B3dMaterial.Material->EmissiveColor = video::SColorf(0, 0, 0, 0).toSColor ();
+		B3dMaterial.Material->EmissiveColor = video::SColorf(0.5, 0.5, 0.5, 0).toSColor ();//Thoughts, I'm no sure what I should set it to?
 		//B3dMaterial.Material->SpecularColor = video::SColorf(0, 0, 0, 0).toSColor (); //?
-		//B3dMaterial.Material->Shininess = B3dMaterial.shininess;
+		B3dMaterial.Material->Shininess = B3dMaterial.shininess;
 
 		Materials.push_back(B3dMaterial);
 	}
@@ -324,7 +330,6 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode)
 {
-	//os::Printer::log("B3d MESH Chunk"); //for debuging
 
 	s32 Vertices_Start=Vertices.size(); //B3Ds have Vertex ID's local within the mesh I don't want this
 
@@ -336,9 +341,10 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 		brush_id = OSReadSwapInt32(&brush_id,0);
 	#endif
 
+	NormalsInFile=false;
+
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
-		//cout << "reading chunks in mesh" << endl;
 
 		++B3dStackSize;
 
@@ -384,27 +390,36 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 			if(ReadChunkTRIS(file, B3dStack, B3dStackSize,InNode ,MeshBuffer, Vertices_Start)==false)
 				return false;
 
-			if (MeshBuffer->Material.Lighting != false)
-			{
-				//I don't have a pointer to MeshManipulator here
-				//MeshManipulator->recalculateNormals(MeshBuffer); //Any time you would not want this? Other than loading speed loss
-
-				//MeshBuffer->Material.NormalizeNormals=true;
-			}
-
 			MeshBuffer->recalculateBoundingBox();
 
+			if (NormalsInFile==false && MeshBuffer->Material.Lighting != false) //No point wasting time of lightmapped levels
+			{
+					s32 i;
+
+					for ( i=0; i<(s32)MeshBuffer->Indices.size(); i+=3)
+					{
+						core::plane3d<f32> p(	MeshBuffer->Vertices[MeshBuffer->Indices[i+0]].Pos,
+												MeshBuffer->Vertices[MeshBuffer->Indices[i+1]].Pos,
+												MeshBuffer->Vertices[MeshBuffer->Indices[i+2]].Pos);
+
+						MeshBuffer->Vertices[MeshBuffer->Indices[i+0]].Normal += p.Normal;
+						MeshBuffer->Vertices[MeshBuffer->Indices[i+1]].Normal += p.Normal;
+						MeshBuffer->Vertices[MeshBuffer->Indices[i+2]].Normal += p.Normal;
+					}
+
+					for ( i = 0; i<(s32)MeshBuffer->Vertices.size(); ++i )
+					{
+						MeshBuffer->Vertices[i].Normal.normalize ();
+					}
+			}
+
 			Buffers.push_back(MeshBuffer);
+
 		}
 
 		if (read==false)
 		{
-			os::Printer::log("Mesh Unknown chunk - skipping");
-			//cout << "Unknown chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
-			//unknown chunk
-
-			//file->seek(B3dStack[B3dStackSize].remaining_length-8,true);
-
+			os::Printer::log("Unknown chunk found in mesh - skipping");
 
 			file->seek( (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length) , false);
 
@@ -430,10 +445,9 @@ VRTS:
   float tex_coords[tex_coord_sets][tex_coord_set_size]	;tex coords
   }
 */
+
 bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer,s32 Vertices_Start)
 {
-	//os::Printer::log("B3d VRTS Chunk"); //for debuging
-	//cout << "B3d VRTS Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
 	s32 flags, tex_coord_sets, tex_coord_set_size;
 
@@ -453,19 +467,11 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		return false;
 	}
 
-	//cout << "tex_coord_sets:" << tex_coord_sets << endl;
-	//cout << "tex_coord_set_size:" << tex_coord_set_size << endl;
-
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
-		f32 x,y,z;
-		f32 nx=0;
-		f32 ny=0;
-		f32 nz=0;
-		f32 red=1;
-		f32 green=1;
-		f32 blue=1;
-		f32 alpha=1;
+		f32 x=0.0f, y=0.0f ,z=0.0f;
+		f32 nx=0.0f, ny=0.0f, nz=0.0f;
+		f32 red=1.0f, green=1.0f, blue=1.0f, alpha=1.0f;
 		f32 tex_coords[3][4];
 
 		file->read(&x, sizeof(x));
@@ -474,6 +480,7 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 		if (flags&1)
 		{
+			NormalsInFile=true;
 			file->read(&nx, sizeof(nx));
 			file->read(&ny, sizeof(ny));
 			file->read(&nz, sizeof(nz));
@@ -516,8 +523,7 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 					tex_coords[i][j] = OSReadSwapInt32(&tex_coords[i][j],0);
 		#endif
 
-		f32 tu=0;
-		f32 tv=0;
+		f32 tu=0.0f, tv=0.0f;
 
 		if (tex_coord_sets>=1 && tex_coord_set_size>=2)
 		{
@@ -525,8 +531,7 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			tv=tex_coords[0][1];
 		}
 
-		f32 tu2=0;
-		f32 tv2=0;
+		f32 tu2=0.0f, tv2=0.0f;
 
 		if (tex_coord_sets>=2 && tex_coord_set_size>=2)
 		{
@@ -534,18 +539,23 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			tv2=tex_coords[1][1];
 		}
 
+		//Create Vertex...
 		video::S3DVertex2TCoords *Vertex=new video::S3DVertex2TCoords
 					(x, y, z, video::SColorf(red, green, blue, alpha).toSColor(), tu, tv, tu2, tv2);
 
-		Vertex->Normal=core::vector3df(nx, ny, nz);
+		Vertex->Normal=core::vector3df(nx, ny, nz);//should this be effected by the Node's Global Matrix (eg rotation)?
 
+		//Transform the Vertex position by nested node...
 		core::matrix4 VertexMatrix;
 		VertexMatrix.setTranslation(Vertex->Pos);
 
-		VertexMatrix=InNode->GlobalMatrix*VertexMatrix;
 		Vertices_GlobalMatrix.push_back(VertexMatrix);
 
+		VertexMatrix=InNode->GlobalMatrix*VertexMatrix;
+
 		Vertex->Pos=VertexMatrix.getTranslation();
+
+		//Add it...
 		Vertices.push_back(Vertex);
 
 		Vertices_Moved.push_back(false);
@@ -563,9 +573,6 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer,s32 Vertices_Start)
 {
-
-	//os::Printer::log("B3d TRIS Chunk"); //for debuging
-	//cout << "B3d TRIS Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
 	s32 triangle_brush_id; //irrlicht can't have different brushes for each triangle (I'm using a workaround)
 
@@ -611,8 +618,9 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 				AnimatedVertices_VertexID[ vertex_id[i] ]=MeshBuffer->Vertices.size()-1;
 				AnimatedVertices_MeshBuffer[ vertex_id[i] ]=MeshBuffer;
 
-				//Apply Material
+				//Apply Material...
 				irr::video::S3DVertex2TCoords *Vertex=&MeshBuffer->Vertices[MeshBuffer->Vertices.size()-1];
+
 
 				Vertex->Color.setAlpha( (s32)(B3dMaterial->alpha*255.0) );
 
@@ -634,8 +642,6 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode)
 {
 	core::stringc NodeName=readString(file);
-	//cout << "NODE name:" << NodeName.c_str() <<endl; //for debuging
-	//os::Printer::log(NodeName.c_str());
 
 	f32 position[3];
 	f32 scale[3];
@@ -667,7 +673,7 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	Node->Name=NodeName;
 
-	Node->AddMatrix=0;
+	Node->Animate=true;
 
 	Node->position=core::vector3df(position[0],position[1],position[2]);
 
@@ -688,7 +694,7 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 	if (InNode==0)
 	{
 		Node->GlobalMatrix=Node->LocalMatrix;
-		BaseNodes.push_back(Node);
+		RootNodes.push_back(Node);
 	}
 	else
 	{
@@ -706,8 +712,6 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
 	{
-		//cout << "reading chunks in node" << endl;
-
 		++B3dStackSize;
 
 		if (B3dStackSize>255) //stacks should not get this big, should they?
@@ -767,11 +771,7 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 		if (read==false)
 		{
-			os::Printer::log("Node Unknown chunk - skipping");
-			//cout << "Unknown chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
-			//unknown chunk
-
-			//datalength+=B3dStack[B3dStackSize].remaining_length;		//jump to end of chunk
+			os::Printer::log("Unknown chunk found in node - skipping");
 
 			file->seek( (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length) , false);
 
@@ -788,8 +788,6 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode)
 {
-	//os::Printer::log("B3d BONE Chunk"); //for debuging
-	//cout << "B3d BONE Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
 	if (B3dStack[B3dStackSize].length>8)
 	{
@@ -817,8 +815,6 @@ bool CAnimatedMeshB3d::ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode)
 {
-	//os::Printer::log("B3d KEYS Chunk"); //for debuging
-	//cout << "B3d KEYS Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
 	s32 flags;
 	file->read(&flags, sizeof(flags));
@@ -870,8 +866,6 @@ bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode)
 {
-	//os::Printer::log("B3d ANIM Chunk"); //for debuging
-	//cout << "B3d ANIM Chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
 
 	file->read(&AnimFlags, sizeof(s32));
 	file->read(&AnimFrames, sizeof(s32));
@@ -896,7 +890,6 @@ bool CAnimatedMeshB3d::ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 {
-	//os::Printer::log("loading b3d...");
 
 	if (!file)
 		return false;
@@ -905,9 +898,12 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 	HasAnimation=0;
 	lastCalculatedFrame=-1;
 
-	AnimFlags=0;
+	AnimFlags=0; //Unused for now
 	AnimFrames=1; //how many frames in anim
 	AnimFPS=0.0f;
+
+	InterpolationMode=1; //Set linear interpolation animation
+	AnimateMode=3; //Update both the nodes and the skin in animation
 
 	B3dChunkHeader header;
 
@@ -925,7 +921,6 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 
 	//header Chunk size here
 
-	//Get file version
 
 	B3dChunk B3dStack[255];		//should have used an irrlicht array, can someone change it
 
@@ -940,8 +935,9 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 
 	B3dStack[B3dStackSize].length=header.size+8;
 
-	u32 FileVersion;
+	//Get file version...
 
+	u32 FileVersion;
 	file->read(&FileVersion, sizeof(FileVersion));
 	#ifdef __BIG_ENDIAN__
 		FileVersion = OSReadSwapInt32(&FileVersion,0);
@@ -995,9 +991,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 
 		if (read==false)
 		{
-			os::Printer::log("Base Unknown chunk - skipping");
-			//cout << "Unknown chunk size:" << B3dStack[B3dStackSize].remaining_length << endl;
-			//unknown chunk
+			os::Printer::log("Unknown chunk found in mesh base - skipping");
 
 			file->seek( (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length) , false);
 
@@ -1005,13 +999,20 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 		}
 	}
 
-	//os::Printer::log("");
 
-	if (!Vertices.empty())
+	//Get BoundingBox...
+	if (Buffers.empty())
 		BoundingBox.reset(0,0,0);
+	else
+	{
+		BoundingBox.reset(Buffers[0]->BoundingBox.MaxEdge);
+		for (s32 i=0; i<(s32)Buffers.size(); ++i)
+		{
+			BoundingBox.addInternalPoint(Buffers[i]->BoundingBox.MaxEdge);
+			BoundingBox.addInternalPoint(Buffers[i]->BoundingBox.MinEdge);
+		}
+	}
 
-	for (s32 i=0; i<(s32)Vertices.size(); ++i)
-		BoundingBox.addInternalPoint(Vertices[i]->Pos);
 
 	return true;
 }
@@ -1042,11 +1043,16 @@ core::matrix4* CAnimatedMeshB3d::getMatrixOfJoint(s32 jointNumber, s32 frame)
 	if (!HasAnimation || jointNumber < 0 || jointNumber >= (s32)Nodes.size())
 		return 0;
 
-	animate(frame,0,0);
-
 	return &Nodes[jointNumber]->GlobalAnimatedMatrix;
 }
 
+core::matrix4* CAnimatedMeshB3d::getLocalMatrixOfJoint(s32 jointNumber)
+{
+	if (!HasAnimation || jointNumber < 0 || jointNumber >= (s32)Nodes.size())
+		return 0;
+
+	return &Nodes[jointNumber]->LocalMatrix;
+}
 
 
 core::matrix4* CAnimatedMeshB3d::getMatrixOfJointUnanimated(s32 jointNumber)
@@ -1057,24 +1063,20 @@ core::matrix4* CAnimatedMeshB3d::getMatrixOfJointUnanimated(s32 jointNumber)
 	return &Nodes[jointNumber]->GlobalMatrix;
 }
 
-
-
-void CAnimatedMeshB3d::AddMatrixToJoint(s32 jointNumber, core::matrix4* matrix)//Does not work yet, causes crashes
-{
-	if (!HasAnimation || jointNumber < 0 || jointNumber >= (s32)Nodes.size())
-		return;
-
-	Nodes[jointNumber]->AddMatrix=matrix;
-}
-
-
-
 //! Gets joint count.
 s32 CAnimatedMeshB3d::getJointCount() const
 {
 	return Nodes.size();
 }
 
+
+//! Gets the name of a joint.
+void CAnimatedMeshB3d::setJointAnimation(s32 jointNumber, bool On)
+{
+	if (jointNumber < 0 || jointNumber >= (s32)Nodes.size())
+		return;
+	Nodes[jointNumber]->Animate=On;
+}
 
 
 //! Gets the name of a joint.
@@ -1098,74 +1100,249 @@ s32 CAnimatedMeshB3d::getJointNumber(const c8* name) const
 }
 
 
-
-void CAnimatedMeshB3d::animateNode(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode)
+void CAnimatedMeshB3d::CalculateGlobalMatrixes(SB3dNode *Node,SB3dNode *ParentNode)
 {
-	// Get animated matrix...
+	if (Node==0 && ParentNode!=0)//bit of protection from endless loops
+		return;
 
-	core::matrix4 positionMatrix;
-	positionMatrix.setTranslation(InNode->Animatedposition);
-
-	core::matrix4 scaleMatrix;
-	scaleMatrix.setScale(InNode->Animatedscale);
-
-	core::matrix4 rotationMatrix;
-	rotationMatrix=InNode->Animatedrotation.getMatrix();
-
-	InNode->LocalAnimatedMatrix=positionMatrix * rotationMatrix * scaleMatrix;
-
-	if (InNode->AddMatrix!=0)
-		InNode->LocalAnimatedMatrix*= (*InNode->AddMatrix);
+	if (Node==0)
+	{
+		for (s32 i=0; i<(s32)RootNodes.size(); ++i)
+			CalculateGlobalMatrixes(RootNodes[i],0);
+		return;
+	}
 
 	if (ParentNode==0)
-	{
-		InNode->GlobalAnimatedMatrix=InNode->LocalAnimatedMatrix;
-	}
+		Node->GlobalAnimatedMatrix=Node->LocalAnimatedMatrix;
 	else
+		Node->GlobalAnimatedMatrix=ParentNode->GlobalAnimatedMatrix * Node->LocalAnimatedMatrix;
+
+	for (s32 j=0; j<(s32)Node->Nodes.size(); ++j)
+		CalculateGlobalMatrixes(Node->Nodes[j],Node);
+}
+
+
+
+void CAnimatedMeshB3d::animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *Node,SB3dNode *ParentNode)
+{
+	// Get animated matrix...
+	if (ParentNode==0)
+		Node->GlobalAnimatedMatrix=Node->LocalAnimatedMatrix;
+	else
+		Node->GlobalAnimatedMatrix=ParentNode->GlobalAnimatedMatrix * Node->LocalAnimatedMatrix;
+
+	core::matrix4 VerticesMatrixMove= Node->GlobalAnimatedMatrix * Node->GlobalInversedMatrix ;
+
+	for (s32 i=0; i<(s32)Node->Bones.size(); ++i)
 	{
-		InNode->GlobalAnimatedMatrix=ParentNode->GlobalAnimatedMatrix * InNode->LocalAnimatedMatrix;
+		u16 VertexID = AnimatedVertices_VertexID[ Node->Bones[i].vertex_id ];
 
-		//Driver->draw3DLine  (  ParentNode->GlobalAnimatedMatrix.getTranslation(), InNode->GlobalAnimatedMatrix.getTranslation(),  video::SColor(255, 255, 255, 255) ) ;
-	}
-
-	core::matrix4 VerticesMatrixMove= InNode->GlobalAnimatedMatrix * InNode->GlobalInversedMatrix ;
-
-	for (s32 i=0; i<(s32)InNode->Bones.size(); ++i)
-	{
-		u16 VertexID = AnimatedVertices_VertexID[ InNode->Bones[i].vertex_id ];
-
-		SB3DMeshBuffer *MeshBuffer=AnimatedVertices_MeshBuffer[ InNode->Bones[i].vertex_id ];
+		SB3DMeshBuffer *MeshBuffer=AnimatedVertices_MeshBuffer[ Node->Bones[i].vertex_id ];
 
 		video::S3DVertex2TCoords *Vertex=&MeshBuffer->Vertices[VertexID];
 
 		core::matrix4 VertexMatrixMove=VerticesMatrixMove;
 
-		VertexMatrixMove*=Vertices_GlobalMatrix[ InNode->Bones[i].vertex_id ];
+		VertexMatrixMove*=Vertices_GlobalMatrix[ Node->Bones[i].vertex_id ];
 
 		core::vector3df GlobalAnimatedVertexVector=VertexMatrixMove.getTranslation();
 
-		if (Vertices_Moved[InNode->Bones[i].vertex_id]==false)
+		if (Vertices_Moved[Node->Bones[i].vertex_id]==false)
 		{
-			Vertices_Moved[InNode->Bones[i].vertex_id]=true;
+			Vertices_Moved[Node->Bones[i].vertex_id]=true;
 
-			Vertex->Pos.X=GlobalAnimatedVertexVector.X*InNode->Bones[i].weight;
-			Vertex->Pos.Y=GlobalAnimatedVertexVector.Y*InNode->Bones[i].weight;
-			Vertex->Pos.Z=GlobalAnimatedVertexVector.Z*InNode->Bones[i].weight;
+			Vertex->Pos.X=GlobalAnimatedVertexVector.X*Node->Bones[i].weight;
+			Vertex->Pos.Y=GlobalAnimatedVertexVector.Y*Node->Bones[i].weight;
+			Vertex->Pos.Z=GlobalAnimatedVertexVector.Z*Node->Bones[i].weight;
 		}
 		else
 		{
-			Vertex->Pos.X=Vertex->Pos.X+ GlobalAnimatedVertexVector.X*InNode->Bones[i].weight;
-			Vertex->Pos.Y=Vertex->Pos.Y+ GlobalAnimatedVertexVector.Y*InNode->Bones[i].weight;
-			Vertex->Pos.Z=Vertex->Pos.Z+ GlobalAnimatedVertexVector.Z*InNode->Bones[i].weight;
+			Vertex->Pos.X=Vertex->Pos.X+ GlobalAnimatedVertexVector.X*Node->Bones[i].weight;
+			Vertex->Pos.Y=Vertex->Pos.Y+ GlobalAnimatedVertexVector.Y*Node->Bones[i].weight;
+			Vertex->Pos.Z=Vertex->Pos.Z+ GlobalAnimatedVertexVector.Z*Node->Bones[i].weight;
 		}
 	}
 
-	for (s32 j=0; j<(s32)InNode->Nodes.size(); ++j)
+	for (s32 j=0; j<(s32)Node->Nodes.size(); ++j)
+		animateSkin(frame,startFrame, endFrame,Node->Nodes[j],Node);
+
+}
+
+
+void CAnimatedMeshB3d::resetSkin()
+{
+	s32 i;
+
+	for (i=0; i<(s32)Vertices_Moved.size(); ++i)
+		Vertices_Moved[i]=false;
+
+
+	for (i=0; i<(s32)Nodes.size(); ++i)
 	{
-		animateNode(frame,startFrame, endFrame,InNode->Nodes[j],InNode);
+		SB3dNode *Node=Nodes[i];
+		for (s32 j=0; j<(s32)Node->Bones.size(); ++j)
+		{
+			u16 VertexID = AnimatedVertices_VertexID[ Node->Bones[j].vertex_id ];
+			SB3DMeshBuffer *MeshBuffer=AnimatedVertices_MeshBuffer[ Node->Bones[j].vertex_id ];
+			video::S3DVertex2TCoords *Vertex=&MeshBuffer->Vertices[VertexID];
+			Vertex->Pos=Vertices[Node->Bones[j].vertex_id]->Pos;
+		}
+	}
+
+}
+
+
+
+
+void CAnimatedMeshB3d::getNodeAnimation(f32 frame,SB3dNode *Node,core::vector3df &position, core::vector3df &scale, core::quaternion &rotation)
+{
+
+			bool foundPosition=false;
+			bool foundScale=false;
+			bool foundRotation=false;
+
+			s32 LastPositionKeyID=-1;
+			s32 LastScaleKeyID=-1;
+			s32 LastRotationKeyID=-1;
+
+			for (s32 j=0; j<(s32)Node->Keys.size(); j++) //Finding the right key could use a speed boast
+			{
+				SB3dKey Key=Node->Keys[j];
+
+				if (foundPosition==false && Key.flags&1)
+					if (Key.frame>=frame)
+				{
+					foundPosition=true;
+
+					if (LastPositionKeyID==-1)
+					{
+						position=Key.position;
+					}
+					else
+					{
+						if (InterpolationMode==0)
+						{
+							//Constant interpolate...
+							position=Node->Keys[LastPositionKeyID].position;
+						}
+						else if (InterpolationMode==1)
+						{
+							//Linear interpolate...
+							SB3dKey LastKey=Node->Keys[LastPositionKeyID];
+							f32 fd1=frame-LastKey.frame;
+							f32 fd2=Key.frame-frame;
+							position.X=(((Key.position.X-LastKey.position.X)/(fd1+fd2))*fd1)+LastKey.position.X;
+							position.Y=(((Key.position.Y-LastKey.position.Y)/(fd1+fd2))*fd1)+LastKey.position.Y;
+							position.Z=(((Key.position.Z-LastKey.position.Z)/(fd1+fd2))*fd1)+LastKey.position.Z;
+						}
+
+
+					}
+				}
+			else
+				LastPositionKeyID=j;
+
+		if (foundScale==false && Key.flags&2)
+			if (Key.frame>=frame)
+			{
+				foundScale=true;
+
+				if (LastScaleKeyID==-1)
+				{
+					scale=Key.scale;
+				}
+				else
+				{
+					if (InterpolationMode==0)
+					{
+						//Constant interpolate...
+						scale=Node->Keys[LastScaleKeyID].scale;
+					}
+					else if (InterpolationMode==1)
+					{
+						//Linear interpolate...
+						SB3dKey LastKey=Node->Keys[LastScaleKeyID];
+						f32 fd1=frame-LastKey.frame;
+						f32 fd2=Key.frame-frame;
+						scale.X=(((Key.scale.X-LastKey.scale.X)/(fd1+fd2))*fd1)+LastKey.scale.X;
+						scale.Y=(((Key.scale.Y-LastKey.scale.Y)/(fd1+fd2))*fd1)+LastKey.scale.Y;
+						scale.Z=(((Key.scale.Z-LastKey.scale.Z)/(fd1+fd2))*fd1)+LastKey.scale.Z;
+					}
+				}
+			}
+			else
+				LastScaleKeyID=j;
+
+		if (foundRotation==false && Key.flags&4)
+			if (Key.frame>=frame)
+			{
+				foundRotation=true;
+
+				if (LastRotationKeyID==-1)
+				{
+					rotation=Key.rotation;
+				}
+				else
+				{
+					if (InterpolationMode==0)
+					{
+						//Constant interpolate...
+						rotation=Node->Keys[LastRotationKeyID].rotation;
+					}
+					else if (InterpolationMode==1)
+					{
+						//Linear interpolate...
+						SB3dKey LastKey=Node->Keys[LastRotationKeyID];
+						f32 fd1=frame-LastKey.frame;
+						f32 fd2=Key.frame-frame;
+						f32 t=(1.0f/(fd1+fd2))*fd1;
+						rotation.slerp(LastKey.rotation,Key.rotation,t);
+					}
+				}
+			}
+			else
+				LastRotationKeyID=j;
+
 	}
 }
 
+
+
+void CAnimatedMeshB3d::animateNodes(f32 frame,f32 startFrame, f32 endFrame)
+{
+
+	for (s32 i=0; i<(s32)Nodes.size(); i++)
+	{
+		SB3dNode *Node=Nodes[i];
+
+		if (Node->Animate)
+		{
+
+			//Get keyframe...
+
+			core::vector3df position=Node->position;
+			core::vector3df scale=Node->scale;
+			core::quaternion rotation=Node->rotation;
+
+			getNodeAnimation(frame, Node, position, scale, rotation);
+
+			Node->Animatedposition=position;
+			Node->Animatedscale=scale;
+			Node->Animatedrotation=rotation;
+
+
+			//Calculate Matrix...
+			core::matrix4 positionMatrix;
+			positionMatrix.setTranslation(Node->Animatedposition);
+			core::matrix4 scaleMatrix;
+			scaleMatrix.setScale(Node->Animatedscale);
+			core::matrix4 rotationMatrix;
+			rotationMatrix=Node->Animatedrotation.getMatrix();
+			Node->LocalAnimatedMatrix=positionMatrix * rotationMatrix * scaleMatrix;
+
+		}
+	}
+}
 
 
 void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop)// Why cannot this be "animate(f32 frame)", it would make so much nicer animations
@@ -1180,169 +1357,17 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 	f32 startFrame= (f32)startFrameLoop;
 	f32 endFrame= (f32)endFrameLoop;
 
-	for (s32 k=0; k<(s32)Vertices_Moved.size(); ++k)
-	{
-		Vertices_Moved[k]=false;
-	}
+	if (AnimateMode&2) //Update skin
+		resetSkin();
 
-	s32 i;
+	if (AnimateMode&1) //Update Nodes
+		animateNodes(frame, startFrame, endFrame);
 
-	for (i=0; i<(s32)Nodes.size(); ++i)
-	{
-		SB3dNode *Node=Nodes[i];
-		for (s32 j=0; j<(s32)Node->Bones.size(); ++j)
+	if (AnimateMode&2) //Update skin
+		for (s32 i=0; i<(s32)RootNodes.size(); ++i)
 		{
-			u16 VertexID = AnimatedVertices_VertexID[ Node->Bones[j].vertex_id ];
-
-			SB3DMeshBuffer *MeshBuffer=AnimatedVertices_MeshBuffer[ Node->Bones[j].vertex_id ];
-
-			video::S3DVertex2TCoords *Vertex=&MeshBuffer->Vertices[VertexID];
-
-			Vertex->Pos=Vertices[Node->Bones[j].vertex_id]->Pos;
+			animateSkin(frame,startFrame, endFrame,RootNodes[i],0);
 		}
-	}
-
-	for (i=0; i<(s32)Nodes.size(); ++i)
-	{
-		SB3dNode *Node=Nodes[i];
-
-		Node->Animatedposition=Node->position;
-		Node->Animatedscale=Node->scale;
-		Node->Animatedrotation=Node->rotation;
-	}
-
-	for (i=0; i<(s32)Nodes.size(); i++)
-	{
-		SB3dNode *Node=Nodes[i];
-
-		bool foundPosition=false;
-		bool foundScale=false;
-		bool foundRotation=false;
-
-		s32 LastPositionKeyID=-1;
-		s32 LastScaleKeyID=-1;
-		s32 LastRotationKeyID=-1;
-
-		for (s32 j=0; j<(s32)Node->Keys.size(); j++)
-		{
-			SB3dKey Key=Node->Keys[j];
-
-			if (foundPosition==false)
-			{
-				if (Key.flags&1)
-				{
-					if (Key.frame>=frame)
-					{
-						foundPosition=true;
-
-						if (LastPositionKeyID==-1)
-						{
-							Node->Animatedposition=Key.position;
-						}
-						else
-						{
-							//interpolate
-
-							SB3dKey LastKey=Node->Keys[LastPositionKeyID];
-
-							f32 fd1=frame-LastKey.frame;
-
-							f32 fd2=Key.frame-frame;
-
-							Node->Animatedposition.X=(((Key.position.X-LastKey.position.X)/(fd1+fd2))*fd1)+LastKey.position.X;
-							Node->Animatedposition.Y=(((Key.position.Y-LastKey.position.Y)/(fd1+fd2))*fd1)+LastKey.position.Y;
-							Node->Animatedposition.Z=(((Key.position.Z-LastKey.position.Z)/(fd1+fd2))*fd1)+LastKey.position.Z;
-
-						}
-					}
-					else
-					{
-							LastPositionKeyID=j;
-					}
-				}
-			}
-
-			if (foundScale==false)
-			{
-				if (Key.flags&2)
-				{
-					if (Key.frame>=frame)
-					{
-						foundScale=true;
-
-						if (LastScaleKeyID==-1)
-						{
-							Node->Animatedscale=Key.scale;
-						}
-						else
-						{
-							//interpolate
-
-							SB3dKey LastKey=Node->Keys[LastScaleKeyID];
-
-							f32 fd1=frame-LastKey.frame;
-
-							f32 fd2=Key.frame-frame;
-
-							Node->Animatedscale.X=(((Key.scale.X-LastKey.scale.X)/(fd1+fd2))*fd1)+LastKey.scale.X;
-							Node->Animatedscale.Y=(((Key.scale.Y-LastKey.scale.Y)/(fd1+fd2))*fd1)+LastKey.scale.Y;
-							Node->Animatedscale.Z=(((Key.scale.Z-LastKey.scale.Z)/(fd1+fd2))*fd1)+LastKey.scale.Z;
-
-						}
-					}
-					else
-					{
-						LastScaleKeyID=j;
-
-					}
-				}
-			}
-
-			if (foundRotation==false)
-			{
-				if (Key.flags&4)
-				{
-					if (Key.frame>=frame)
-					{
-						foundRotation=true;
-						//cout << "fgfg" << endl;
-
-						if (LastRotationKeyID==-1)
-						{
-							Node->Animatedrotation=Key.rotation;
-						}
-						else
-						{
-							//cout << "trying R" << endl;
-
-							SB3dKey LastKey=Node->Keys[LastRotationKeyID];
-
-
-							f32 fd1=frame-LastKey.frame;
-
-							f32 fd2=Key.frame-frame;
-
-							f32 t=(1.0f/(fd1+fd2))*fd1;
-
-							Node->Animatedrotation.slerp(LastKey.rotation,Key.rotation,t);
-						}
-					}
-					else
-					{
-						LastRotationKeyID=j;
-					}
-				}
-			}
-		}
-	}
-
-
-	for (i=0; i<(s32)BaseNodes.size(); ++i)
-	{
-		animateNode(frame,startFrame, endFrame,BaseNodes[i],0);//Mesh might have more than one base so BaseNode should be an array
-	}
-
-
 }
 
 
@@ -1382,7 +1407,7 @@ core::aabbox3d<f32>& CAnimatedMeshB3d::getBoundingBox()
 //! sets a flag of all contained materials to a new value
 void CAnimatedMeshB3d::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 {
-	for (s32 i=0; i<(int)Buffers.size(); ++i)
+	for (s32 i=0; i<(s32)Buffers.size(); ++i)
 		Buffers[i]->Material.Flags[flag] = newvalue;
 }
 
@@ -1394,6 +1419,128 @@ E_ANIMATED_MESH_TYPE CAnimatedMeshB3d::getMeshType() const
 	return EAMT_B3D;
 }
 
+
+
+//!Sets Interpolation Mode
+//!0- Constant
+//!1- Linear (default)
+void CAnimatedMeshB3d::SetInterpolationMode(s32 mode)
+{
+	InterpolationMode=mode;
+}
+
+
+
+//!Want should happen on when animating
+//!0-Nothing
+//!1-Update nodes only
+//!2-Update skin only
+//!3-Update both nodes and skin (default)
+void CAnimatedMeshB3d::SetAnimateMode(s32 mode)
+{
+	AnimateMode=mode;
+}
+
+
+
+void CAnimatedMeshB3d::StoreAnimationSkelton(core::array<core::matrix4> &Matrixs)
+{
+	for (s32 i=0;i<(s32)Nodes.size();++i)
+		Matrixs[i]=Nodes[i]->LocalAnimatedMatrix;
+}
+
+
+
+void CAnimatedMeshB3d::RecoverAnimationSkelton(core::array<core::matrix4> &Matrixs)
+{
+	for (s32 i=0;i<(s32)Nodes.size();++i)
+		Nodes[i]->LocalAnimatedMatrix=Matrixs[i];
+	lastCalculatedFrame=-1;
+}
+
+
+void CAnimatedMeshB3d::StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes)
+{
+	//Note: This function works because of the way the b3d fomat nests nodes, other mesh loaders may need a different function
+	for (s32 i=0;i<(s32)Nodes.size();++i)
+	{
+		ISceneNode* node=JointChildSceneNodes[i];
+		SB3dNode *B3dNode=Nodes[i];
+
+		node->setPosition( B3dNode->LocalAnimatedMatrix.getTranslation() );
+		node->setRotation( B3dNode->LocalAnimatedMatrix.getRotationDegrees() );
+		//node->setScale( B3dNode->LocalAnimatedMatrix.getScale() );
+
+		node->updateAbsolutePosition();//works because of nests nodes
+
+	}
+}
+
+
+
+void CAnimatedMeshB3d::RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes)
+{
+	for (s32 i=0;i<(s32)Nodes.size();++i)
+	{
+		ISceneNode* node=JointChildSceneNodes[i];
+		SB3dNode *B3dNode=Nodes[i];
+		//B3dNode->LocalAnimatedMatrix=node->getRelativeTransformation();
+		B3dNode->LocalAnimatedMatrix.setTranslation( node->getPosition() );
+		B3dNode->LocalAnimatedMatrix.setRotationDegrees( node->getRotation() );
+		//B3dNode->LocalAnimatedMatrix.setScale( node->getScale() );
+	}
+	//CalculateGlobalMatrixes(0,0);
+	lastCalculatedFrame=-1;
+
+}
+
+
+
+void CAnimatedMeshB3d::CreateAnimationSkelton(ISceneManager* SceneManager,core::array<ISceneNode*> &JointChildSceneNodes, CAnimatedMeshSceneNode *AnimatedMeshSceneNode)
+{
+	//Note: This function works because of the way the b3d fomat nests nodes, other mesh loaders may need a different function
+	CreateAnimationSkelton_Helper(SceneManager,JointChildSceneNodes,AnimatedMeshSceneNode,0,0,0);
+}
+
+
+
+void CAnimatedMeshB3d::CreateAnimationSkelton_Helper(ISceneManager* SceneManager, core::array<ISceneNode*> &JointChildSceneNodes, CAnimatedMeshSceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode,SB3dNode *B3dNode)
+{
+	//Note: This function works because of the way the b3d fomat nests nodes, other mesh loaders may need a different function
+
+	if (!ParentNode)
+	{
+		for (s32 i=0;i<(s32)RootNodes.size();++i)
+		{
+			B3dNode=RootNodes[i];
+
+			ISceneNode* node=new CEmptySceneNode(0,SceneManager,0);//Is this ok?, no other node seems to fit my needs
+
+			node->setParent(AnimatedMeshSceneNode);
+
+			//node->drop(); //Should I call this??
+
+			JointChildSceneNodes.push_back(node);
+
+			for (s32 j=0;j<(s32)B3dNode->Nodes.size();++j)
+				CreateAnimationSkelton_Helper(SceneManager, JointChildSceneNodes,AnimatedMeshSceneNode,node,B3dNode,B3dNode->Nodes[j]);
+		}
+	}
+	else
+	{
+		ISceneNode* node=new CEmptySceneNode(0,SceneManager,0);
+
+		node->setParent(ParentNode);
+
+		//node->drop(); //Should I call this??
+
+		JointChildSceneNodes.push_back(node);
+
+		for (s32 j=0;j<(s32)B3dNode->Nodes.size();++j)
+			CreateAnimationSkelton_Helper(SceneManager, JointChildSceneNodes,AnimatedMeshSceneNode,node,B3dNode,B3dNode->Nodes[j]);
+	}
+
+}
 
 
 } // end namespace scene

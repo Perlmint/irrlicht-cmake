@@ -563,7 +563,7 @@ namespace scene
 		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
 		{
 			out->addString	("Name", Name.c_str());
-			out->addInt		("Id", ID );
+			out->addInt	("Id", ID );
 			out->addVector3d("Position", RelativeTranslation );
 			out->addVector3d("Rotation", RelativeRotation );
 			out->addVector3d("Scale", RelativeScale );

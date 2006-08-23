@@ -297,7 +297,7 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	}
 
 	if (!StencilBuffer)
-		present.AutoDepthStencilFormat = D3DFMT_D16;
+		present.AutoDepthStencilFormat = D3DFMT_D24X8;
 
 
 	// create device

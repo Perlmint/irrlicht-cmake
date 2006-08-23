@@ -11,7 +11,6 @@
 #include <string.h>
 #include <ctype.h>
 
-
 namespace irr
 {
 namespace scene
@@ -235,6 +234,7 @@ bool COgreMeshFileLoader::readGeometry(io::IReadFile* file, ChunkData& parent, O
 
 bool COgreMeshFileLoader::readVertexDeclaration(io::IReadFile* file, ChunkData& parent, OgreGeometry& geometry)
 {
+	NumUV = 0;
 	while(parent.read < parent.header.length)
 	{
 		ChunkData data;
@@ -248,6 +248,10 @@ bool COgreMeshFileLoader::readVertexDeclaration(io::IReadFile* file, ChunkData& 
 			readShort(file, data, elem.Source);
 			readShort(file, data, elem.Type);
 			readShort(file, data, elem.Semantic);
+			if (elem.Semantic == 7) //Tex coords
+			{
+				++NumUV;
+			}
 			readShort(file, data, elem.Offset);
 			elem.Offset /= sizeof(f32);
 			readShort(file, data, elem.Index);
@@ -355,39 +359,44 @@ bool COgreMeshFileLoader::readSubMesh(io::IReadFile* file, ChunkData& parent, Og
 }
 
 
-scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32>& indices, const OgreGeometry& geom, const core::stringc& material)
+
+void COgreMeshFileLoader::composeMeshBufferMaterial(scene::IMeshBuffer* mb, const core::stringc& materialName)
 {
-	scene::SMeshBuffer *mb=new scene::SMeshBuffer();
+	video::SMaterial& material=mb->getMaterial();
 	for (u32 k=0; k<Materials.size(); ++k)
 	{
-		if ((material==Materials[k].Name)&&(Materials[k].Techniques.size())&&(Materials[k].Techniques[0].Passes.size()))
+		if ((materialName==Materials[k].Name)&&(Materials[k].Techniques.size())&&(Materials[k].Techniques[0].Passes.size()))
 		{
-			mb->Material=Materials[k].Techniques[0].Passes[0].Material;
+			material=Materials[k].Techniques[0].Passes[0].Material;
 			if (Materials[k].Techniques[0].Passes[0].Texture.Filename.size())
 			{
-				mb->Material.Texture1=Driver->getTexture(Materials[k].Techniques[0].Passes[0].Texture.Filename.c_str());
-				if (!mb->Material.Texture1)
+				material.Texture1=Driver->getTexture(Materials[k].Techniques[0].Passes[0].Texture.Filename.c_str());
+				if (!material.Texture1)
 				{
 					// retry with relative path
 					core::stringc relative = CurrentlyLoadingFromPath;
 					relative += '/';
 					relative += Materials[k].Techniques[0].Passes[0].Texture.Filename;
-					mb->Material.Texture1 = Driver->getTexture(relative.c_str());
+					material.Texture1 = Driver->getTexture(relative.c_str());
 				}
 			}
 			break;
 		}
 	}
+}
 
-	mb->Indices.set_used(indices.size());
+
+
+scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32>& indices, const OgreGeometry& geom)
+{
+	scene::SMeshBuffer *mb=new scene::SMeshBuffer();
 
 	u32 i;
-
+	mb->Indices.set_used(indices.size());
 	for (i=0; i<indices.size(); ++i)
 		mb->Indices[i]=indices[i];
 
 	mb->Vertices.set_used(geom.NumVertex);
-
 	for (i=0; i<geom.Elements.size(); ++i)
 	{
 		if (geom.Elements[i].Semantic==1) //Pos
@@ -446,20 +455,111 @@ scene::SMeshBuffer* COgreMeshFileLoader::composeMeshBuffer(const core::array<s32
 }
 
 
+
+scene::SMeshBufferLightMap* COgreMeshFileLoader::composeMeshBufferLightMap(const core::array<s32>& indices, const OgreGeometry& geom)
+{
+	scene::SMeshBufferLightMap *mb=new scene::SMeshBufferLightMap();
+
+	u32 i;
+	mb->Indices.set_used(indices.size());
+	for (i=0; i<indices.size(); ++i)
+		mb->Indices[i]=indices[i];
+
+	mb->Vertices.set_used(geom.NumVertex);
+	for (u32 i=0; i<geom.Elements.size(); ++i)
+	{
+		if (geom.Elements[i].Semantic==1) //Pos
+		{
+			for (u32 j=0; j<geom.Buffers.size(); ++j)
+			{
+				if (geom.Elements[i].Index==geom.Buffers[j].BindIndex)
+				{
+					u32 eSize=geom.Buffers[j].VertexSize;
+					u32 ePos=geom.Elements[i].Offset;
+					for (s32 k=0; k<geom.NumVertex; ++k)
+					{
+						mb->Vertices[k].Color=mb->Material.DiffuseColor;
+						mb->Vertices[k].Pos.set(geom.Buffers[j].Data[ePos],geom.Buffers[j].Data[ePos+1],geom.Buffers[j].Data[ePos+2]);
+						ePos += eSize;
+					}
+				}
+			}
+		}
+
+		if (geom.Elements[i].Semantic==4) //Normal
+		{
+			for (u32 j=0; j<geom.Buffers.size(); ++j)
+			{
+				if (geom.Elements[i].Index==geom.Buffers[j].BindIndex)
+				{
+					u32 eSize=geom.Buffers[j].VertexSize;
+					u32 ePos=geom.Elements[i].Offset;
+					for (s32 k=0; k<geom.NumVertex; ++k)
+					{
+						mb->Vertices[k].Normal.set(geom.Buffers[j].Data[ePos],geom.Buffers[j].Data[ePos+1],geom.Buffers[j].Data[ePos+2]);
+						ePos += eSize;
+					}
+				}
+			}
+		}
+
+		if (geom.Elements[i].Semantic==7) //TexCoord
+		{
+			for (u32 j=0; j<geom.Buffers.size(); ++j)
+			{
+				if (geom.Elements[i].Index==geom.Buffers[j].BindIndex)
+				{
+					u32 eSize=geom.Buffers[j].VertexSize;
+					u32 ePos=geom.Elements[i].Offset;
+					for (s32 k=0; k<geom.NumVertex; ++k)
+					{
+						mb->Vertices[k].TCoords.set( geom.Buffers[j].Data[ePos]  ,geom.Buffers[j].Data[ePos+1]);
+						mb->Vertices[k].TCoords2.set(geom.Buffers[j].Data[ePos+2],geom.Buffers[j].Data[ePos+3]);
+						
+						ePos += eSize;
+					}
+				}
+			}
+		}
+	}
+	return mb;
+}
+
+
+
 void COgreMeshFileLoader::composeObject(void)
 {
 	for (u32 i=0; i<Meshes.size(); ++i)
 	{
 		for (u32 j=0; j<Meshes[i].SubMeshes.size(); ++j)
 		{
-			SMeshBuffer* mb;
+			IMeshBuffer* mb;
 			if (Meshes[i].SubMeshes[j].SharedVertices)
-				mb = composeMeshBuffer(Meshes[i].SubMeshes[j].Indices, Meshes[i].Geometry, Meshes[i].SubMeshes[j].Material);
+			{
+				if (NumUV < 2)
+				{
+					mb = composeMeshBuffer(Meshes[i].SubMeshes[j].Indices, Meshes[i].Geometry);
+				}
+				else
+				{
+					mb = composeMeshBufferLightMap(Meshes[i].SubMeshes[j].Indices, Meshes[i].Geometry);
+				}
+			}
 			else
-				mb = composeMeshBuffer(Meshes[i].SubMeshes[j].Indices, Meshes[i].SubMeshes[j].Geometry, Meshes[i].SubMeshes[j].Material);
+			{
+				if (NumUV < 2)
+				{
+					mb = composeMeshBuffer(Meshes[i].SubMeshes[j].Indices, Meshes[i].SubMeshes[j].Geometry);
+				}
+				else
+				{
+					mb = composeMeshBufferLightMap(Meshes[i].SubMeshes[j].Indices, Meshes[i].SubMeshes[j].Geometry);
+				}
+			}
 
 			if (mb != 0)
 			{
+				composeMeshBufferMaterial(mb, Meshes[i].SubMeshes[j].Material);
 				Mesh->addMeshBuffer(mb);
 				mb->drop();
 			}
@@ -495,7 +595,10 @@ void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& t
 	while (isspace(c) && (file->getPos() < file->getSize()))
 	{
 		if (noNewLine && c=='\n')
+		{
+			file->seek(-1, true);
 			return;
+		}
 		file->read(&c, sizeof(c8));
 	}
 	do
@@ -519,7 +622,10 @@ void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& t
 		file->read(&c, sizeof(c8));
 	}
 	while ((!isspace(c)) && (file->getPos() < file->getSize()));
+	if (c == '\n' && noNewLine);
+		file->seek(-1, true);
 }
+
 
 
 bool COgreMeshFileLoader::readColor(io::IReadFile* file, video::SColor& col)
@@ -535,8 +641,11 @@ bool COgreMeshFileLoader::readColor(io::IReadFile* file, video::SColor& col)
 		col_f.g=core::fast_atof(token.c_str());
 		getMaterialToken(file, token);
 		col_f.b=core::fast_atof(token.c_str());
-		getMaterialToken(file, token);
-		col_f.a=core::fast_atof(token.c_str());
+		getMaterialToken(file, token, true);
+		if (token.size())
+			col_f.a=core::fast_atof(token.c_str());
+		else
+			col_f.a=1.0f;
 		if ((col_f.r==0.0f)&&(col_f.g==0.0f)&&(col_f.b==0.0f))
 			col.set(255,255,255,255);
 		else
@@ -579,7 +688,7 @@ void COgreMeshFileLoader::readPass(io::IReadFile* file, OgreTechnique& technique
 			if (token=="add")
 				pass.Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
 			else if (token=="modulate")
-				pass.Material.MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+				pass.Material.MaterialType=video::EMT_SOLID;
 			else if (token=="alpha_blend")
 				pass.Material.MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL;
 			else if (token=="colour_blend")
@@ -680,6 +789,20 @@ void COgreMeshFileLoader::readPass(io::IReadFile* file, OgreTechnique& technique
 				}
 				else if (token=="texture_alias")
 					getMaterialToken(file, pass.Texture.Alias);
+				else if (token=="colour_op")
+				{ // TODO: Choose correct values
+					getMaterialToken(file, token);
+					if (token=="add")
+						pass.Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
+					else if (token=="modulate")
+						pass.Material.MaterialType=video::EMT_SOLID;
+					else if (token=="alpha_blend")
+						pass.Material.MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+					else if (token=="colour_blend")
+						pass.Material.MaterialType=video::EMT_TRANSPARENT_VERTEX_ALPHA;
+					else
+						getMaterialToken(file, token);
+				}
 				getMaterialToken(file, token);
 			}
 		}
@@ -692,6 +815,7 @@ void COgreMeshFileLoader::readPass(io::IReadFile* file, OgreTechnique& technique
 			--inBlocks;
 	}
 }
+
 
 
 void COgreMeshFileLoader::readTechnique(io::IReadFile* file, OgreMaterial& mat)
@@ -718,6 +842,7 @@ void COgreMeshFileLoader::readTechnique(io::IReadFile* file, OgreMaterial& mat)
 		getMaterialToken(file, token);
 	}
 }
+
 
 
 void COgreMeshFileLoader::loadMaterials(io::IReadFile* meshFile)
@@ -772,6 +897,7 @@ void COgreMeshFileLoader::loadMaterials(io::IReadFile* meshFile)
 
 	file->drop();
 }
+
 
 
 void COgreMeshFileLoader::readChunkData(io::IReadFile* file, ChunkData& data)

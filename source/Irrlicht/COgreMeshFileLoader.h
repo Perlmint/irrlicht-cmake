@@ -12,6 +12,7 @@
 #include "irrString.h"
 #include "SMesh.h"
 #include "SMeshBuffer.h"
+#include "SMeshBufferLightMap.h"
 #include "IMeshManipulator.h"
 #include "matrix4.h"
 
@@ -225,7 +226,9 @@ private:
 	void readFloat(io::IReadFile* file, ChunkData& data, f32& out);
 	void readVector(io::IReadFile* file, ChunkData& data, core::vector3df& out);
 
-	scene::SMeshBuffer* composeMeshBuffer(const core::array<s32>& indices, const OgreGeometry& geom, const core::stringc& material);
+	void composeMeshBufferMaterial(scene::IMeshBuffer* mb, const core::stringc& materialName);
+	scene::SMeshBuffer* composeMeshBuffer(const core::array<s32>& indices, const OgreGeometry& geom);
+	scene::SMeshBufferLightMap* composeMeshBufferLightMap(const core::array<s32>& indices, const OgreGeometry& geom);
 	void composeObject(void);
 	bool readColor(io::IReadFile* meshFile, video::SColor& col);
 	void getMaterialToken(io::IReadFile* file, core::stringc& token, bool noNewLine=false);
@@ -248,6 +251,7 @@ private:
 
 	SMesh* Mesh;
 	IMeshManipulator* Manipulator;
+	u32 NumUV;
 };
 
 } // end namespace scene

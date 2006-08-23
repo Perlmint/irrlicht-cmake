@@ -59,7 +59,7 @@ enum E_TEXTURE_CREATION_FLAG
 	ETCF_CREATE_MIP_MAPS = 0x00000010,
 
 	//! This flag is never used, it only forces the compiler to 
-    //! compile these enumeration values to 32 bit.
+	//! compile these enumeration values to 32 bit.
 	ETCF_FORCE_32_BIT_DO_NOT_USE = 0x7fffffff
 };
 
