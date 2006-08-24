@@ -25,7 +25,7 @@ const u16 C3DS_MESHVERSION = 0x3D3E;
 
 // sub chunks of C3DS_EDIT3DS
 const u16 C3DS_EDIT_MATERIAL = 0xAFFF;
-const u16 C3DS_EDIT_OBJECT	= 0x4000;
+const u16 C3DS_EDIT_OBJECT   = 0x4000;
 
 // sub chunks of C3DS_EDIT_MATERIAL
 const u16 C3DS_MATNAME       = 0xA000; 
@@ -38,7 +38,7 @@ const u16 C3DS_TRANSPARENCY  = 0xA050;
 const u16 C3DS_TWO_SIDE      = 0xA081;
 const u16 C3DS_WIRE          = 0xA085;
 const u16 C3DS_SHADING       = 0xA100;
-const u16 C3DS_MATMAP        = 0xA200;
+const u16 C3DS_MATTEXMAP     = 0xA200;
 const u16 C3DS_MATSPECMAP    = 0xA204;
 const u16 C3DS_MATOPACMAP    = 0xA210;
 const u16 C3DS_MATREFLMAP    = 0xA220;
@@ -55,12 +55,20 @@ const u16 C3DS_OBJTRIMESH    = 0x4100;
 
 // subs of C3DS_OBJTRIMESH
 const u16 C3DS_TRIVERT       = 0x4110;
+const u16 C3DS_POINTFLAGARRAY= 0x4111;
 const u16 C3DS_TRIFACE       = 0x4120;
 const u16 C3DS_TRIFACEMAT    = 0x4130;
 const u16 C3DS_TRIUV         = 0x4140;
 const u16 C3DS_TRISMOOTH     = 0x4150;
 const u16 C3DS_TRIMATRIX     = 0x4160;
 const u16 C3DS_MESHCOLOR     = 0x4165;
+const u16 C3DS_DIRECT_LIGHT  = 0x4600;
+const u16 C3DS_DL_INNER_RANGE= 0x4659;
+const u16 C3DS_DL_OUTER_RANGE= 0x465A;
+const u16 C3DS_DL_MULTIPLIER = 0x465B;
+const u16 C3DS_CAMERA        = 0x4700;
+const u16 C3DS_CAM_SEE_CONE  = 0x4710;
+const u16 C3DS_CAM_RANGES    = 0x4720;
 
 // subs of C3DS_KEYF3DS
 const u16 C3DS_KF_HDR        = 0xB00A;
@@ -350,16 +358,18 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 				data.read += data.header.length - data.read;
 			}
 			break;
-		case C3DS_MATMAP:
+		case C3DS_MATTEXMAP:
 		case C3DS_MATSPECMAP:
 		case C3DS_MATOPACMAP:
 		case C3DS_MATREFLMAP:
 		case C3DS_MATBUMPMAP:
 			{
-				f32 percentage=0;
 				matSection=data.header.id;
+#if 0 // Should contain a percentage chunk, but does not work with the meshes
+				f32 percentage=0;
 				if (matSection!=C3DS_MATREFLMAP)
 					readPercentageChunk(file, &data, percentage);
+#endif
 			}
 			break;
 		case C3DS_MATMAPFILE:
@@ -367,23 +377,16 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 				// read texture file name
 				c8* c = new c8[data.header.length - data.read];
 				file->read(c, data.header.length - data.read);
-				switch (matSection) {
-					case C3DS_MATMAP:
-						CurrentMaterial.Filename[0] = c;
-						break;
-					case C3DS_MATSPECMAP:
-						CurrentMaterial.Filename[1] = c;
-						break;
-					case C3DS_MATOPACMAP:
-						CurrentMaterial.Filename[2] = c;
-						break;
-					case C3DS_MATREFLMAP:
-						CurrentMaterial.Filename[3] = c;
-						break;
-					case C3DS_MATBUMPMAP:
-						CurrentMaterial.Filename[4] = c;
-						break;
-				}
+				if (matSection == C3DS_MATTEXMAP)
+					CurrentMaterial.Filename[0] = c;
+				else if (matSection == C3DS_MATSPECMAP)
+					CurrentMaterial.Filename[1] = c;
+				else if (matSection == C3DS_MATOPACMAP)
+					CurrentMaterial.Filename[2] = c;
+				else if (matSection == C3DS_MATREFLMAP)
+					CurrentMaterial.Filename[3] = c;
+				else if (matSection == C3DS_MATBUMPMAP)
+					CurrentMaterial.Filename[4] = c;
 				data.read += data.header.length - data.read;
 				delete [] c;
 			}
@@ -540,7 +543,7 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 			{
 				u32 flags;
 				file->read(&flags, 4);
-				data.read += data.header.length - data.read;
+				data.read += 4;
 			}
 			break;
 		case C3DS_NODE_ID:
@@ -555,7 +558,7 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 				file->read(&pivot.X, sizeof(f32));
 				file->read(&pivot.Y, sizeof(f32));
 				file->read(&pivot.Z, sizeof(f32));
-				data.read += data.header.length - data.read;
+				data.read += 12;
 			}
 			break;
 		case C3DS_BOUNDBOX:
@@ -571,7 +574,7 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 				file->read(&bboxCenter.Z, sizeof(f32));
 				bbox.addInternalPoint(bboxCenter);
 				bboxCenter=bbox.getCenter();
-				data.read += data.header.length - 24;
+				data.read += 24;
 			}
 			break;
 		case C3DS_POS_TRACK_TAG:
@@ -613,10 +616,7 @@ bool C3DSMeshFileLoader::readChunk(io::IReadFile* file, ChunkData* parent)
 				file->seek(data.header.length - data.read - 2, true);
 				data.read += data.header.length - data.read;
 				if (version != 0x03)
-				{
-					os::Printer::log("Cannot load 3ds files of version other than 3.", ELL_ERROR);
-//					return false;
-				}
+					os::Printer::log("3ds file version is other than 3.", ELL_ERROR);
 			}
 			break;
 		case C3DS_EDIT_MATERIAL:
@@ -671,12 +671,24 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 		switch(data.header.id)
 		{
 		case C3DS_OBJTRIMESH:
-		{
 			readObjectChunk(file, &data);
-		} break;
+			break;
 
 		case C3DS_TRIVERT: 
 			readVertices(file, data);
+			break;
+
+		case C3DS_POINTFLAGARRAY:
+			{
+				u16 numVertex, flags;
+				file->read(&numVertex, sizeof(u16));
+#ifdef __BIG_ENDIAN__
+				numVertex= OSReadSwapInt16(&numVertex,0);
+#endif
+				for (u16 i=0; i<numVertex; ++i)
+					file->read(&flags, sizeof(u16));
+				data.read += (numVertex+1)*sizeof(u16);
+			}
 			break;
 
 		case C3DS_TRIFACE: 
@@ -707,7 +719,22 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 				data.read += 12*sizeof(f32);
 			}
 			break;
+		case C3DS_MESHCOLOR:
+			{
+				u8 flag;
+				file->read(&flag, sizeof(u8));
+				++data.read;
+			}
+			break;
 		case C3DS_TRISMOOTH: // TODO
+			{
+				u32 flags;
+				for (u16 i=0; i<CountFaces; ++i)
+					file->read(&flags, sizeof(u32));
+				data.read += CountFaces*sizeof(u32);
+			}
+			break;
+
 		default:
 			// ignore chunk
 			file->seek(data.header.length - data.read, true);
