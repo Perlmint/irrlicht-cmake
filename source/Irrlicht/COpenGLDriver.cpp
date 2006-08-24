@@ -578,16 +578,16 @@ void COpenGLDriver::loadExtensions()
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glPointParameterfvARB"));
 
 			// get stencil extension
-			pGlStencilFuncSeparate = (PFNGLSTENCILFUNCSEPARATE)
+			pGlStencilFuncSeparate = (PFNGLSTENCILFUNCSEPARATEPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilFuncSeparate"));
-			pGlStencilOpSeparate = (PFNGLSTENCILOPSEPARATE)
+			pGlStencilOpSeparate = (PFNGLSTENCILOPSEPARATEPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilOpSeparate"));
-			pGlStencilFuncSeparateATI = (PFNGLSTENCILFUNCSEPARATEATI)
+			pGlStencilFuncSeparateATI = (PFNGLSTENCILFUNCSEPARATEATIPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilFuncSeparateATI"));
-			pGlStencilOpSeparateATI = (PFNGLSTENCILOPSEPARATEATI)
+			pGlStencilOpSeparateATI = (PFNGLSTENCILOPSEPARATEATIPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilOpSeparateATI"));
 
-			pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2D)
+			pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompressedTexImage2D"));
 
 			// get vsync extension
