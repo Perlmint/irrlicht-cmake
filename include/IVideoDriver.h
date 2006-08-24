@@ -55,6 +55,9 @@ namespace video
 		//! Can the driver handle mip maps?
 		EVDF_MIP_MAP,
 
+		//! Can the driver update mip maps automatically?
+		EVDF_MIP_MAP_AUTO_UPDATE,
+
 		//! Are stencilbuffers switched on and does the device support stencil buffers?
 		EVDF_STENCIL_BUFFER,
 

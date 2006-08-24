@@ -30,21 +30,26 @@ namespace video
 //! Windows constructor and init code
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias)
 : CNullDriver(io, screenSize), HDc(0), HRc(0), Window(window),
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	Transformation3DChanged(true), LastSetLight(-1),
-	MultiTextureExtension(false), MaxTextureUnits(1), MaxLights(1),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
+	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
+	MultiTextureExtension(false), AnisotropyExtension(false),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
+	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
+	GenerateMipmapExtension(false), TextureCompressionExtension(false),
+	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
+	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
 	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
-	ARBShadingLanguage100Extension(false),
-	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
-	CurrentRendertargetSize(0,0), pGlCreateShaderObjectARB(0), pGlShaderSourceARB(0),
+	pGlCreateShaderObjectARB(0), pGlShaderSourceARB(0),
 	pGlCompileShaderARB(0), pGlCreateProgramObjectARB(0), pGlAttachObjectARB(0),
 	pGlLinkProgramARB(0), pGlUseProgramObjectARB(0), pGlDeleteObjectARB(0),
 	pGlGetObjectParameterivARB(0), pGlGetUniformLocationARB(0), pGlUniform4fvARB(0),
 	pGlUniform1ivARB(0), pGlUniform1fvARB(0), pGlUniform2fvARB(0), pGlUniform3fvARB(0), pGlUniformMatrix2fvARB(0),
-	pGlUniformMatrix3fvARB(0), pGlUniformMatrix4fvARB(0), pGlGetActiveUniformARB(0),
+	pGlUniformMatrix3fvARB(0), pGlUniformMatrix4fvARB(0), pGlGetActiveUniformARB(0), pGlPointParameterfARB(0), pGlPointParameterfvARB(0),
+	pGlStencilFuncSeparate(0), pGlStencilOpSeparate(0),
+	pGlStencilFuncSeparateATI(0), pGlStencilOpSeparateATI(0),
+	pGlCompressedTexImage2D(0),
 	wglSwapIntervalEXT(0)
 {
 	#ifdef _DEBUG
@@ -183,10 +188,14 @@ COpenGLDriver::~COpenGLDriver()
 //! Windows constructor and init code
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, CIrrDeviceMacOSX *device, io::IFileSystem* io, bool vsync, bool antiAlias)
 : CNullDriver(io, screenSize),
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), MaxLights(1), ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false), ARBShadingLanguage100Extension(false),
-	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
+	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
+	MultiTextureExtension(false), AnisotropyExtension(false),
+	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
+	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
+	GenerateMipmapExtension(false), TextureCompressionExtension(false),
+	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
+	MaxTextureUnits(1), MaxLights(1),
 	CurrentRendertargetSize(0,0), _device(device)
 {
 	#ifdef _DEBUG
@@ -209,18 +218,22 @@ COpenGLDriver::~COpenGLDriver()
 //! Linux constructor and init code
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias, bool vsync)
 : CNullDriver(io, screenSize),
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	Transformation3DChanged(true), LastSetLight(-1), MultiTextureExtension(false),
-	MaxTextureUnits(1), MaxLights(1), XWindow(window), XDisplay(display),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
+	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
+	MultiTextureExtension(false), AnisotropyExtension(false),
+	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
+	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
+	GenerateMipmapExtension(false), TextureCompressionExtension(false),
+	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
+	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
 #ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
+	pGlCompressedTexImage2D(0),
 #endif
-	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
-	ARBShadingLanguage100Extension(false),
-	RenderTargetTexture(0), MaxAnisotropy(1), AnisotropyExtension(false),
-	CurrentRendertargetSize(0,0), glxSwapIntervalSGI(0)
+	glxSwapIntervalSGI(0),
+	XWindow(window), XDisplay(display)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
@@ -240,7 +253,6 @@ COpenGLDriver::~COpenGLDriver()
 }
 
 #endif // LINUX
-
 
 
 
@@ -274,8 +286,11 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
 	glClearDepth(1.0f);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 	glDepthFunc(GL_LEQUAL);
 	glFrontFace( GL_CW );
+	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
 
 	// create material renderers
 	createMaterialRenderers();
@@ -348,44 +363,67 @@ void COpenGLDriver::loadExtensions()
 	const GLubyte* t = glGetString(GL_EXTENSIONS);
 //	os::Printer::log((const c8*)t, ELL_INFORMATION);
 	#ifdef GLU_VERSION_1_3
-	MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
-	ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
-	ARBFragmentProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_fragment_program", t);
-	ARBShadingLanguage100Extension = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", t);
-	AnisotropyExtension = gluCheckExtension((const GLubyte*)"GL_EXT_texture_filter_anisotropic", t);
-	#else
-	s32 len = (s32)strlen((const char*)t);
-	c8 *str = new c8[len+1];
-	c8* p = str;
+	const GLubyte* gluVersion = gluGetString(GLU_VERSION);
 
-	for (s32 i=0; i<len; ++i)
+	if (gluVersion[0]>1 || gluVersion[3]>2)
 	{
-		str[i] = (char)t[i];
-
-		if (str[i] == ' ')
-		{
-			str[i] = 0;
-			if (strstr(p, "GL_ARB_multitexture"))
-				MultiTextureExtension = true;
-			else
-			if (strstr(p, "GL_ARB_vertex_program"))
-				ARBVertexProgramExtension = true;
-			else
-			if (strstr(p, "GL_ARB_fragment_program"))
-				ARBFragmentProgramExtension = true;
-			else
-			if (strstr(p, "GL_ARB_shading_language_100"))
-				ARBShadingLanguage100Extension = true;
-			else
-			if (strstr(p, "GL_EXT_texture_filter_anisotropic"))
-				AnisotropyExtension = true;
-
-			p = p + strlen(p) + 1;
-		}
+		MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
+		ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
+		ARBFragmentProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_fragment_program", t);
+		ARBShadingLanguage100Extension = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", t);
+		AnisotropyExtension = gluCheckExtension((const GLubyte*)"GL_EXT_texture_filter_anisotropic", t);
+		SeparateStencilExtension = gluCheckExtension((const GLubyte*)"GL_ATI_separate_stencil", t);
+		SeparateStencilExtension = SeparateStencilExtension || gluCheckExtension((const GLubyte*)"GL_ARB_separate_stencil", t);
+		GenerateMipmapExtension = gluCheckExtension((const GLubyte*)"GL_SGIS_generate_mipmap", t);
+		TextureCompressionExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_compression", t);
 	}
-
-	delete [] str;
+	else
 	#endif
+	{
+		s32 len = (s32)strlen((const char*)t);
+		c8 *str = new c8[len+1];
+		c8* p = str;
+
+		for (s32 i=0; i<len; ++i)
+		{
+			str[i] = (char)t[i];
+
+			if (str[i] == ' ')
+			{
+				str[i] = 0;
+				if (strstr(p, "GL_ARB_multitexture"))
+					MultiTextureExtension = true;
+				else
+				if (strstr(p, "GL_ARB_vertex_program"))
+					ARBVertexProgramExtension = true;
+				else
+				if (strstr(p, "GL_ARB_fragment_program"))
+					ARBFragmentProgramExtension = true;
+				else
+				if (strstr(p, "GL_ARB_shading_language_100"))
+					ARBShadingLanguage100Extension = true;
+				else
+				if (strstr(p, "GL_EXT_texture_filter_anisotropic"))
+					AnisotropyExtension = true;
+				else
+				if (strstr(p, "GL_ATI_separate_stencil"))
+					SeparateStencilExtension = true;
+				else
+				if (strstr(p, "GL_ARB_separate_stencil"))
+					SeparateStencilExtension = true;
+				else
+				if (strstr(p, "GL_SGIS_generate_mipmap"))
+					GenerateMipmapExtension = true;
+				else
+				if (strstr(p, "GL_ARB_texture_compression"))
+					TextureCompressionExtension = true;
+
+				p = p + strlen(p) + 1;
+			}
+		}
+
+		delete [] str;
+	}
 
 	if (MultiTextureExtension)
 	{
@@ -394,8 +432,8 @@ void COpenGLDriver::loadExtensions()
 		// Windows
 		// get multitexturing function pointers
 
-		pGlActiveTextureARB   = (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
-		pGlClientActiveTextureARB= (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
+		pGlActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
+		pGlClientActiveTextureARB = (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
 
 		// get fragment and vertex program function pointers
 		pGlGenProgramsARB = (PFNGLGENPROGRAMSARBPROC) wglGetProcAddress("glGenProgramsARB");
@@ -423,6 +461,18 @@ void COpenGLDriver::loadExtensions()
 		pGlUniformMatrix3fvARB = (PFNGLUNIFORMMATRIX3FVARBPROC) wglGetProcAddress("glUniformMatrix3fvARB");
 		pGlUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC) wglGetProcAddress("glUniformMatrix4fvARB");
 		pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC) wglGetProcAddress("glGetActiveUniformARB");
+
+		// get point parameter extension
+		pGlPointParameterfARB = (PFNGLPOINTPARAMETERFARBPROC) wglGetProcAddress("glPointParameterfARB");
+		pGlPointParameterfvARB = (PFNGLPOINTPARAMETERFVARBPROC) wglGetProcAddress("glPointParameterfvARB");
+
+		// get stencil extension
+		pGlStencilFuncSeparate = (PFNGLSTENCILFUNCSEPARATEPROC) wglGetProcAddress("glStencilFuncSeparate");
+		pGlStencilOpSeparate = (PFNGLSTENCILOPSEPARATEPROC) wglGetProcAddress("glStencilOpSeparate");
+		pGlStencilFuncSeparateATI = (PFNGLSTENCILFUNCSEPARATEATIPROC) wglGetProcAddress("glStencilFuncSeparateATI");
+		pGlStencilOpSeparateATI = (PFNGLSTENCILOPSEPARATEATIPROC) wglGetProcAddress("glStencilOpSeparateATI");
+
+		pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC) wglGetProcAddress("glCompressedTexImage2D");
 
 		// get vsync extension
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
@@ -520,6 +570,25 @@ void COpenGLDriver::loadExtensions()
 
 			pGlGetActiveUniformARB = (PFNGLGETACTIVEUNIFORMARBPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGetActiveUniformARB"));
+
+			// get point parameter extension
+			pGlPointParameterfARB = (PFNGLPOINTPARAMETERFARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glPointParameterfARB"));
+			pGlPointParameterfvARB = (PFNGLPOINTPARAMETERFVARBPROC)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glPointParameterfvARB"));
+
+			// get stencil extension
+			pGlStencilFuncSeparate = (PFNGLSTENCILFUNCSEPARATE)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilFuncSeparate"));
+			pGlStencilOpSeparate = (PFNGLSTENCILOPSEPARATE)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilOpSeparate"));
+			pGlStencilFuncSeparateATI = (PFNGLSTENCILFUNCSEPARATEATI)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilFuncSeparateATI"));
+			pGlStencilOpSeparateATI = (PFNGLSTENCILOPSEPARATEATI)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glStencilOpSeparateATI"));
+
+			pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2D)
+				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompressedTexImage2D"));
 
 			// get vsync extension
 			glxSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC)IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI"));
@@ -706,8 +775,10 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
+	if (pType!=scene::EPT_POINTS)
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	if (pType!=scene::EPT_POINTS)
+		glEnableClientState(GL_NORMAL_ARRAY);
 
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, &ColorBuffer[0]);
 	switch (vType)
@@ -753,7 +824,7 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 	switch (pType)
 	{
 		case scene::EPT_POINTS:
-			glDrawElements(GL_POINTS, primitiveCount, GL_UNSIGNED_SHORT, indexList);
+			glDrawArrays(GL_POINTS, 0, primitiveCount);
 			break;
 		case scene::EPT_LINE_STRIP:
 			glDrawElements(GL_LINE_STRIP, primitiveCount+1, GL_UNSIGNED_SHORT, indexList);
@@ -936,9 +1007,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
 
 	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(false, true, true);
+		setRenderStates2DMode(color.getAlpha()<255, true, true);
 	else
-		setRenderStates2DMode(false, true, false);
+		setRenderStates2DMode(color.getAlpha()<255, true, false);
 
 	setTexture(0, texture);
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
@@ -995,20 +1066,20 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 
 	setTexture(0, texture);
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(false, true, true);
-	else
-		setRenderStates2DMode(false, true, false);
-
 	bool bTempColors=false;
 
 	if(colors==NULL)
 	{
 		colors=new SColor[4];
 		for(int i=0;i<4;i++)
-			colors[i]=SColor(0,255,255,255);
+			colors[i]=SColor(255,255,255,255);
 		bTempColors=true;
 	}
+
+	if (useAlphaChannelOfTexture)
+		setRenderStates2DMode(colors[0].getAlpha()<255 || colors[1].getAlpha()<255 || colors[2].getAlpha()<255 || colors[3].getAlpha()<255, true, true);
+	else
+		setRenderStates2DMode(colors[0].getAlpha()<255 || colors[1].getAlpha()<255 || colors[2].getAlpha()<255 || colors[3].getAlpha()<255, true, false);
 
 	glBegin(GL_QUADS);
 
@@ -1168,6 +1239,8 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return true;
 	case EVDF_MIP_MAP:
 		return true;
+	case EVDF_MIP_MAP_AUTO_UPDATE:
+		return GenerateMipmapExtension;
 	case EVDF_STENCIL_BUFFER:
 		return StencilBuffer;
 	case EVDF_ARB_VERTEX_PROGRAM_1:
@@ -1216,7 +1289,7 @@ void COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 //! returns a device dependent texture from a software surface (IImage)
 video::ITexture* COpenGLDriver::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	return new COpenGLTexture(surface, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS), name);
+	return new COpenGLTexture(surface, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS), name, this);
 }
 
 
@@ -1538,7 +1611,10 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 		{
 			if (alpha)
 			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_PRIMARY_COLOR_EXT);
 				glDisable(GL_ALPHA_TEST);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glEnable(GL_BLEND);
 			}
 			else
@@ -1554,6 +1630,8 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 	{
 		if (alpha)
 		{
+			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
+			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_PRIMARY_COLOR_EXT);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -1718,13 +1796,15 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_FOG);
-	glDepthMask(GL_FALSE);
+	glDepthMask(GL_FALSE); // no depth buffer writing
 	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_STENCIL_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE ); // no color buffer drawing
-	glStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFFL);
-	glColorMask(0, 0, 0, 0);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 0, 0);
 	glEnable(GL_CULL_FACE);
+
+	glEnable(GL_VERTEX_ARRAY);
+	glVertexPointer(3,GL_FLOAT,sizeof(core::vector3df),&triangles[0]);
 
 	if (!zfail)
 	{
@@ -1732,22 +1812,11 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 
 		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 		glCullFace(GL_BACK);
-		glBegin(GL_TRIANGLES);
-
-		s32 i;
-		for(i=0; i<count; ++i)
-			glVertex3f(triangles[i].X, triangles[i].Y, triangles[i].Z);
-
-		glEnd();
+		glDrawArrays(GL_TRIANGLES,0,count);
 
 		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 		glCullFace(GL_FRONT);
-
-		glBegin(GL_TRIANGLES);
-		for(i=0; i<count; ++i)
-			glVertex3f(triangles[i].X, triangles[i].Y, triangles[i].Z);
-
-		glEnd();
+		glDrawArrays(GL_TRIANGLES,0,count);
 	}
 	else
 	{
@@ -1755,26 +1824,14 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 
 		glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
 		glCullFace(GL_FRONT);
-
-		glBegin(GL_TRIANGLES);
-
-		s32 i;
-		for(i=0; i<count; ++i)
-			glVertex3f(triangles[i].X, triangles[i].Y, triangles[i].Z);
-
-		glEnd();
+		glDrawArrays(GL_TRIANGLES,0,count);
 
 		glStencilOp(GL_KEEP, GL_DECR, GL_KEEP);
 		glCullFace(GL_BACK);
-
-		glBegin(GL_TRIANGLES);
-
-		for(i=0; i<count; ++i)
-			glVertex3f(triangles[i].X, triangles[i].Y, triangles[i].Z);
-
-		glEnd();
+		glDrawArrays(GL_TRIANGLES,0,count);
 	}
 
+	glDisable(GL_VERTEX_ARRAY); //not stored on stack
 	glPopAttrib();
 }
 
@@ -1797,9 +1854,9 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glPushMatrix();
 
 	glDisable( GL_LIGHTING );
+	glDisable(GL_FOG);
 	glDepthMask(GL_FALSE);
 	glDepthFunc( GL_LEQUAL );
-	glEnable( GL_STENCIL_TEST );
 
 	glFrontFace( GL_CCW );
 	glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
@@ -1807,10 +1864,9 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glStencilFunc(GL_NOTEQUAL, 0, 0xFFFFFFFFL);
+	glEnable( GL_STENCIL_TEST );
+	glStencilFunc(GL_LESS, 0, 0xFFFFFFFFL);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	glDisable(GL_FOG);
 
 	glLoadIdentity();
 
@@ -1831,7 +1887,6 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glVertex3f( 10.1f,-10.1f,0.90f);
 
 	glEnd();
-	glFrontFace( GL_CW );
 
 	if (clearStencilBuffer)
 		glClear(GL_STENCIL_BUFFER_BIT);
@@ -1899,8 +1954,8 @@ void COpenGLDriver::extGlActiveTextureARB(GLenum texture)
 #ifdef MACOSX
 	if (MultiTextureExtension) glActiveTextureARB(texture);
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
-if (MultiTextureExtension && pGlActiveTextureARB)
-	pGlActiveTextureARB(texture);
+	if (MultiTextureExtension && pGlActiveTextureARB)
+		pGlActiveTextureARB(texture);
 #endif
 }
 
@@ -2167,6 +2222,61 @@ void COpenGLDriver::extGlGetActiveUniformARB (GLhandleARB program, GLuint index,
 #elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
 	if (pGlGetActiveUniformARB)
 		pGlGetActiveUniformARB(program, index, maxlength, length, size, type, name);
+#endif
+}
+
+void COpenGLDriver::extGlPointParameterfARB (GLint loc, GLfloat f)
+{
+#ifdef MACOSX
+	glPointParameterfARB(loc, f);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlPointParameterfARB)
+		pGlPointParameterfARB(loc, f);
+#endif
+}
+
+void COpenGLDriver::extGlPointParameterfvARB (GLint loc, const GLfloat *v)
+{
+#ifdef MACOSX
+	glPointParameterfvARB(loc, v);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlPointParameterfvARB)
+		pGlPointParameterfvARB(loc, v);
+#endif
+}
+
+void COpenGLDriver::extGlStencilFuncSeparate (GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask)
+{
+#ifdef MACOSX
+	glStencilFuncSeparate(frontfunc, backfunc, ref, mask);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlStencilFuncSeparate)
+		pGlStencilFuncSeparate(frontfunc, backfunc, ref, mask);
+	else if (pGlStencilFuncSeparateATI)
+		pGlStencilFuncSeparateATI(frontfunc, backfunc, ref, mask);
+#endif
+}
+
+void COpenGLDriver::extGlStencilOpSeparate (GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
+{
+#ifdef MACOSX
+	glStencilOpSeparate(face, fail, zfail, zpass);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlStencilOpSeparate)
+		pGlStencilOpSeparate(face, fail, zfail, zpass);
+	else if (pGlStencilOpSeparateATI)
+		pGlStencilOpSeparateATI(face, fail, zfail, zpass);
+#endif
+}
+
+void COpenGLDriver::extGlCompressedTexImage2D (GLenum target, GLint level, GLenum internalformat, GLsizei width,
+		GLsizei height, GLint border, GLsizei imageSize, const void* data)
+{
+#ifdef MACOSX
+	glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	if (pGlCompressedTexImage2D)
+		pGlCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 #endif
 }
 

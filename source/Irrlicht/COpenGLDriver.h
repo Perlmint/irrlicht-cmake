@@ -204,6 +204,13 @@ namespace video
 		void extGlUniformMatrix3fvARB (GLint loc, GLsizei count, GLboolean transpose, const GLfloat *v);
 		void extGlUniformMatrix4fvARB (GLint loc, GLsizei count, GLboolean transpose, const GLfloat *v);
 		void extGlGetActiveUniformARB (GLhandleARB program, GLuint index, GLsizei maxlength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name);
+		void extGlPointParameterfARB (GLint loc, GLfloat f);
+		void extGlPointParameterfvARB (GLint loc, const GLfloat *v);
+		void extGlStencilFuncSeparate (GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask);
+		void extGlStencilOpSeparate (GLenum face, GLenum fail, GLenum zfail, GLenum zpass);
+		void extGlCompressedTexImage2D(GLenum target, GLint level,
+			GLenum internalformat, GLsizei width, GLsizei height,
+			GLint border, GLsizei imageSize, const void* data);
 
 		bool hasMultiTextureExtension();
 
@@ -300,19 +307,21 @@ namespace video
 		E_RENDER_MODE CurrentRenderMode;
 		bool ResetRenderStates; // bool to make all renderstates be reseted if set.
 		bool Transformation3DChanged;
-		bool MultiTextureExtension;
 		bool StencilBuffer;
 		bool AntiAlias;
+		bool MultiTextureExtension;
+		bool AnisotropyExtension;
 		bool ARBVertexProgramExtension; //GL_ARB_vertex_program
 		bool ARBFragmentProgramExtension; //GL_ARB_fragment_program
 		bool ARBShadingLanguage100Extension;
-		bool AnisotropyExtension;
+		bool SeparateStencilExtension;
+		bool GenerateMipmapExtension;
+		bool TextureCompressionExtension;
 
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;
 		s32 LastSetLight;
 		f32 MaxAnisotropy;
-		f32 AnisotropyToUse;
 
 		GLint MaxTextureUnits;
 		GLint MaxLights;
@@ -358,6 +367,13 @@ namespace video
 			PFNGLUNIFORMMATRIX3FVARBPROC pGlUniformMatrix3fvARB;
 			PFNGLUNIFORMMATRIX4FVARBPROC pGlUniformMatrix4fvARB;
 			PFNGLGETACTIVEUNIFORMARBPROC pGlGetActiveUniformARB;
+			PFNGLPOINTPARAMETERFARBPROC  pGlPointParameterfARB;
+			PFNGLPOINTPARAMETERFVARBPROC pGlPointParameterfvARB;
+			PFNGLSTENCILFUNCSEPARATEPROC pGlStencilFuncSeparate;
+			PFNGLSTENCILOPSEPARATEPROC pGlStencilOpSeparate;
+			PFNGLSTENCILFUNCSEPARATEATIPROC pGlStencilFuncSeparateATI;
+			PFNGLSTENCILOPSEPARATEATIPROC pGlStencilOpSeparateATI;
+			PFNGLCOMPRESSEDTEXIMAGE2DPROC pGlCompressedTexImage2D;
 		#ifdef LINUX
 			PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 		#endif

@@ -7,6 +7,7 @@
 
 #include "ITexture.h"
 #include "IImage.h"
+#include "COpenGLDriver.h"
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
@@ -39,7 +40,7 @@ class COpenGLTexture : public ITexture
 public:
 
 	//! constructor
-	COpenGLTexture(IImage* surface, bool generateMipLevels, const char* name);
+	COpenGLTexture(IImage* surface, bool generateMipLevels, const char* name, COpenGLDriver* driver=0);
 
 	//! destructor
 	virtual ~COpenGLTexture();
@@ -95,9 +96,14 @@ private:
 	bool SurfaceHasSameSize; // true if Surface has the same dimension as texture.
 	c8* ImageData;
 	ECOLOR_FORMAT ColorFormat;
+	COpenGLDriver* Driver;
 
 	GLuint TextureName;
+	GLint InternalFormat;
+	GLenum PixelFormat;
+	GLenum PixelType;
 	bool HasMipMaps;
+	bool AutomaticMipmapUpdate;
 };
 
 

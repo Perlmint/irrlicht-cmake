@@ -19,9 +19,10 @@ namespace video
 {
 
 //! constructor
-COpenGLTexture::COpenGLTexture(IImage* image, bool generateMipLevels, const char* name)
-: ITexture(name), Pitch(0), ImageSize(0,0), HasMipMaps(generateMipLevels),
-ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0)
+COpenGLTexture::COpenGLTexture(IImage* image, bool generateMipLevels, const char* name, COpenGLDriver* driver)
+ : ITexture(name), Pitch(0), ImageSize(0,0), HasMipMaps(generateMipLevels),
+  Driver(driver), ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0),
+  InternalFormat(GL_RGBA), PixelFormat(GL_BGRA_EXT), PixelType(GL_UNSIGNED_BYTE)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLTexture");
@@ -170,30 +171,27 @@ void COpenGLTexture::copyTexture()
 	if (testError())
 		os::Printer::log("Could not bind Texture", ELL_ERROR);
 
-	GLint internalFormat=GL_RGBA;
-	GLenum format=GL_BGRA_EXT;
-	GLenum type=GL_UNSIGNED_BYTE;
 	switch (ColorFormat)
 	{
 		case ECF_A1R5G5B5:
-			internalFormat=GL_RGBA;
-			format=GL_BGRA_EXT;
-			type=GL_UNSIGNED_SHORT_1_5_5_5_REV;
+			InternalFormat=GL_RGBA;
+			PixelFormat=GL_BGRA_EXT;
+			PixelType=GL_UNSIGNED_SHORT_1_5_5_5_REV;
 			break;
 		case ECF_R5G6B5:
-			internalFormat=GL_RGB;
-			format=GL_RGB;
-			type=GL_UNSIGNED_SHORT_5_6_5;
+			InternalFormat=GL_RGB;
+			PixelFormat=GL_RGB;
+			PixelType=GL_UNSIGNED_SHORT_5_6_5;
 			break;
 		case ECF_R8G8B8:
-			internalFormat=GL_RGB8;
-			format=GL_RGB;
-			type=GL_UNSIGNED_BYTE;
+			InternalFormat=GL_RGB8;
+			PixelFormat=GL_RGB;
+			PixelType=GL_UNSIGNED_BYTE;
 			break;
 		case ECF_A8R8G8B8:
-			internalFormat=GL_RGBA;
-			format=GL_BGRA_EXT;
-			type=GL_UNSIGNED_INT_8_8_8_8_REV;
+			InternalFormat=GL_RGBA;
+			PixelFormat=GL_BGRA_EXT;
+			PixelType=GL_UNSIGNED_INT_8_8_8_8_REV;
 			break;
 		default:
 			os::Printer::log("Unsupported texture format", ELL_ERROR);
@@ -203,8 +201,17 @@ void COpenGLTexture::copyTexture()
 	#ifndef DISABLE_MIPMAPPING
 	if (HasMipMaps)
 	{
-		// automatically generate and update mipmaps
-		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
+		if (Driver && Driver->queryFeature(EVDF_MIP_MAP_AUTO_UPDATE))
+		{
+			// automatically generate and update mipmaps
+			glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
+			AutomaticMipmapUpdate=true;
+		}
+		else
+		{
+			AutomaticMipmapUpdate=false;
+			regenerateMipMapLevels();
+		}
 		// enable bilinear mipmap filter
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -219,8 +226,8 @@ void COpenGLTexture::copyTexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, ImageSize.Width,
-		ImageSize.Height, 0, format, type, ImageData);
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, ImageSize.Width,
+		ImageSize.Height, 0, PixelFormat, PixelType, ImageData);
 
 	if (testError())
 		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
@@ -317,6 +324,21 @@ bool COpenGLTexture::hasMipMaps()
 //! MipMap updates are automatically performed by OpenGL.
 void COpenGLTexture::regenerateMipMapLevels()
 {
+	if (AutomaticMipmapUpdate || !HasMipMaps)
+		return;
+	u32 width=ImageSize.Width>>1;
+	u32 height=ImageSize.Height>>1;
+	u32 i=1;
+	while (width>1 || height>1)
+	{
+		glTexImage2D(GL_TEXTURE_2D, i, InternalFormat, ImageSize.Width,
+			ImageSize.Height, 0, PixelFormat, PixelType, ImageData);
+		if (width>1)
+			width>>=1;
+		if (height>1)
+			height>>=1;
+		++i;
+	}
 }
 
 
