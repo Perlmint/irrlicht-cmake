@@ -139,7 +139,7 @@ namespace scene
 			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1);
 
 		//! Adds a skybox scene node. A skybox is a big cube with 6 textures on it and
-		//! is drawed around the camera position. 
+		//! is drawn around the camera position. 
 		virtual ISceneNode* addSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom,
 			video::ITexture* left, video::ITexture* right, video::ITexture* front,
 			video::ITexture* back, ISceneNode* parent = 0, s32 id=-1);
@@ -296,7 +296,7 @@ namespace scene
 		//! Returns a pointer to the mesh manipulator.
 		virtual IMeshManipulator* getMeshManipulator();
 		
-		//! Sets the color of stencil buffers shadows drawed by the scene manager.
+		//! Sets the color of stencil buffers shadows drawn by the scene manager.
 		virtual void setShadowColor(video::SColor color);
 
 		//! Returns the current color of shadows.

@@ -44,7 +44,7 @@ private:
 	s32 BitDepth;
 	s32 ColorType;
 	video::IImage* Image;
-	png_bytep *RowPointers; //Used to point to image rows
+	u8** RowPointers; //Used to point to image rows
 };
 
 

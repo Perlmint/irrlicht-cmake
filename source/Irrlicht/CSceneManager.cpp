@@ -473,7 +473,7 @@ IBillboardSceneNode* CSceneManager::addBillboardSceneNode(ISceneNode* parent,
 
 
 //! Adds a skybox scene node. A skybox is a big cube with 6 textures on it and
-//! is drawed around the camera position.
+//! is drawn around the camera position.
 ISceneNode* CSceneManager::addSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom,
 	video::ITexture* left, video::ITexture* right, video::ITexture* front,
 	video::ITexture* back, ISceneNode* parent, s32 id)
@@ -865,7 +865,7 @@ void CSceneManager::drawAll()
 }
 
 
-//! Sets the color of stencil buffers shadows drawed by the scene manager.
+//! Sets the color of stencil buffers shadows drawn by the scene manager.
 void CSceneManager::setShadowColor(video::SColor color)
 {
 	ShadowColor = color;
