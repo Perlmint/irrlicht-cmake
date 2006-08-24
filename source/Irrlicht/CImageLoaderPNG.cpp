@@ -197,7 +197,7 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 		Image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(Width, Height));
 	if (!Image)
 	{
-		os::Printer::log("LOAD PNG: Internal PNG create info struct failure\n", file->getFileName(), ELL_ERROR);
+		os::Printer::log("LOAD PNG: Internal PNG create image struct failure\n", file->getFileName(), ELL_ERROR);
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
 		return 0;
 	}
@@ -206,7 +206,7 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 	RowPointers = new png_bytep[Height];
 	if (!RowPointers)
 	{
-		os::Printer::log("LOAD PNG: Internal PNG create info struct failure\n", file->getFileName(), ELL_ERROR);
+		os::Printer::log("LOAD PNG: Internal PNG create row pointers failure\n", file->getFileName(), ELL_ERROR);
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
 		delete Image;
 		return 0;
@@ -220,10 +220,22 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 		data += Image->getPitch();
 	}
 
+	// for proper error handling
+	if (setjmp(png_jmpbuf(png_ptr)))
+	{
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		delete [] RowPointers;
+		Image->unlock();
+		delete [] Image;
+		return 0;
+	}
+
 	// Read data using the library function that handles all transformations including interlacing
 	png_read_image(png_ptr, RowPointers);
 
 	png_read_end(png_ptr, NULL);
+	delete [] RowPointers;
+	Image->unlock();
 	png_destroy_read_struct(&png_ptr,&info_ptr, 0); // Clean up memory
 
 	return Image;

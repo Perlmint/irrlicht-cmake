@@ -45,7 +45,7 @@ namespace io
 	private:
 
 		//! opens the file
-		void openFile(bool append);	
+		void openFile(bool append);
 
 		core::stringc Filename;
 		FILE* File;

@@ -19,6 +19,8 @@ public:
 
 	//! write image to file
 	virtual bool writeImage(io::IWriteFile *file, IImage *image);
+private:
+	u8** RowPointers; //Used to point to image rows
 };
 
 }; // namespace video
