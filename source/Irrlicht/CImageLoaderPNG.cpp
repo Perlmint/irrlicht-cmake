@@ -162,10 +162,12 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 
 	// Convert low bit colors to 8 bit colors
 	if (BitDepth < 8)
-		if (ColorType==PNG_COLOR_TYPE_GRAY)
+	{
+		if (ColorType==PNG_COLOR_TYPE_GRAY || ColorType==PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_1_2_4_to_8(png_ptr);
 		else
 			png_set_packing(png_ptr);
+	}
 
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
 		png_set_tRNS_to_alpha(png_ptr);
@@ -174,24 +176,28 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 	if (BitDepth == 16)
 		png_set_strip_16(png_ptr);
 
-	// Convert RGBA to BGRA
-	if (ColorType==PNG_COLOR_TYPE_PALETTE || ColorType==PNG_COLOR_TYPE_RGB || ColorType==PNG_COLOR_TYPE_RGB_ALPHA)
-		png_set_bgr(png_ptr);
-
 	// Convert gray color to true color
 	if (ColorType==PNG_COLOR_TYPE_GRAY || ColorType==PNG_COLOR_TYPE_GRAY_ALPHA)
 		png_set_gray_to_rgb(png_ptr);
 
 	// Update the changes
 	png_read_update_info(png_ptr, info_ptr);
+	png_get_IHDR(png_ptr, info_ptr,
+		(png_uint_32*)&Width, (png_uint_32*)&Height,
+		&BitDepth, &ColorType, NULL, NULL, NULL);
 
-	// Extract info
+	// Convert RGBA to BGRA
+	if (ColorType==PNG_COLOR_TYPE_RGB_ALPHA)
+		png_set_bgr(png_ptr);
+
+	// Update the changes
+	png_read_update_info(png_ptr, info_ptr);
 	png_get_IHDR(png_ptr, info_ptr,
 		(png_uint_32*)&Width, (png_uint_32*)&Height,
 		&BitDepth, &ColorType, NULL, NULL, NULL);
 
 	// Create the image structure to be filled by png data
-	if (ColorType==PNG_COLOR_TYPE_RGB_ALPHA || ColorType==PNG_COLOR_TYPE_GRAY_ALPHA)
+	if (ColorType==PNG_COLOR_TYPE_RGB_ALPHA)
 		Image = new CImage(ECF_A8R8G8B8, core::dimension2d<s32>(Width, Height));
 	else
 		Image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(Width, Height));
