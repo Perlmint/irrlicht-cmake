@@ -33,7 +33,7 @@ EXTRAOBJ =
 LINKOBJ = $(IRROBJ) $(IRRVIDEOOBJ) $(IRRSWRENDEROBJ) $(IRRIOOBJ) $(IRROTHEROBJ) $(IRRGUIOBJ) $(ZLIBOBJ) $(JPEGLIBOBJ) $(LIBPNGOBJ) $(EXTRAOBJ)
 
 LDFLAGS = -L/usr/X11R6/lib --no-export-all-symbols --add-stdcall-alias -lGLU -lGL -lXxf86vm
-CXXINCS = -I../../include -Izlib -Ijpeglib -Ilibpng
+CXXINCS = -I../../include -Izlib -Ijpeglib -Ilibpng -I/usr/X11R6/include
 STATIC_LIB = libIrrlicht.a
 SHARED_LIB = libIrrlicht.so
 CPPFLAGS = $(CXXINCS) -DIRRLICHT_EXPORTS=1
