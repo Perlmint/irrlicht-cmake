@@ -59,6 +59,7 @@ private:
 		core::stringc FullName;
 		s32 Size;
 		bool isDirectory;
+		bool operator<(const struct FileEntry& other) const {return Name<other.Name;}
 	};
 
 	core::stringc Path;

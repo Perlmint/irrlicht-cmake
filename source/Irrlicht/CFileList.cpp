@@ -11,13 +11,13 @@ namespace io
 {
 
 #if (defined(LINUX) || defined(MACOSX))
-#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys/types.h> 
-#include <sys/stat.h> 
+#include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #endif
 
@@ -62,58 +62,50 @@ CFileList::CFileList()
 	//entry.isDirectory = true;
 	//Files.push_back(entry);
 	#endif
-	
+
 	// --------------------------------------------
 	// Linux version
 	#if (defined(LINUX) || defined(MACOSX))
 
-	struct dirent **namelist; 
-	struct stat	buf; 
+	FileEntry entry;
 
-	FileEntry entry; 
-
-	// Add default parent - even when at /, this is available 
-	entry.Name = ".."; 
-	entry.Size = 0; 
-	entry.isDirectory = true; 
+	// Add default parent - even when at /, this is available
+	entry.Name = "..";
+	entry.Size = 0;
+	entry.isDirectory = true;
 	Files.push_back(entry);
 
-	Path = getcwd(NULL,0); 
+	Path = getcwd(NULL,0);
+	DIR* dirHandle=opendir(Path.c_str());
+	if (!dirHandle)
+		return;
 
-	s32	n =	scandir(".", &namelist,	0, alphasort); 
-
-	if (n >= 0) 
-	{ 
-		while(n--) 
-		{ 
-			if((strcmp(namelist[n]->d_name,	".")==0) || 
-			   (strcmp(namelist[n]->d_name, "..")==0)) 
-			{ 
-				// Only	add	entries	that aren't	.. or .	since they are already handled 
-				free(namelist[n]); 
-				continue; 
-			} 
-
-			entry.Name = namelist[n]->d_name; 
-
-			if (stat(namelist[n]->d_name, &buf)==0) 
-			{ 
-				entry.Size = buf.st_size; 
-				entry.isDirectory =	S_ISDIR(buf.st_mode); 
-			} 
-            else 
-			{ 
-				entry.Size = 0;	
-				entry.isDirectory =	namelist[n]->d_type	== DT_DIR; 
-			} 
-			
-			Files.push_back(entry);	
-			free(namelist[n]); 
-		} 
-
-		free(namelist);	
+	struct dirent *dirEntry;
+	while ((dirEntry=readdir(dirHandle)))
+	{
+		if((strcmp(dirEntry->d_name, ".")==0) ||
+		   (strcmp(dirEntry->d_name, "..")==0))
+			continue;
+		entry.Name = dirEntry->d_name;
+		entry.Size = 0;
+		entry.isDirectory = false;
+		struct stat buf;
+		if (stat(dirEntry->d_name, &buf)==0)
+		{
+			entry.Size = buf.st_size;
+			entry.isDirectory = S_ISDIR(buf.st_mode);
+		}
+		#if !defined(__sun__) && !defined(__CYGWIN__)
+		else
+		{
+			entry.isDirectory = dirEntry->d_type == DT_DIR;
+		}
+		#endif
+		Files.push_back(entry);
 	}
+	closedir(dirHandle);
 	#endif
+	Files.sort();
 }
 
 
