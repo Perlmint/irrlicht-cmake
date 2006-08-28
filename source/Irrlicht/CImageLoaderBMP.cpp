@@ -76,17 +76,17 @@ void CImageLoaderBMP::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 			switch(*p)
 			{
 			case 0: // end of line
-				++p; 
+				++p;
 				++line;
 				d = newBmp + (line*(width+pitch));
-				break; 
+				break;
 			case 1: // end of bmp
 				delete [] BmpData;
 				BmpData = newBmp;
-				return; 
+				return;
 			case 2:
 				++p; d +=(u8)*p;  // delta
-				++p; d += ((u8)*p)*(width+pitch); 
+				++p; d += ((u8)*p)*(width+pitch);
 				++p;
 				break;
 			default:
@@ -110,7 +110,7 @@ void CImageLoaderBMP::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 		}
 		else
 		{
-			s32 count = (u8)*p; ++p;			
+			s32 count = (u8)*p; ++p;
 			s32 color = (u8)*p; ++p;
 			for (s32 i=0; i<count; ++i)
 			{
@@ -144,18 +144,18 @@ void CImageLoaderBMP::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 			switch(*p)
 			{
 			case 0: // end of line
-				++p; 
+				++p;
 				++line;
 				d = newBmp + (line*lineWidth);
 				shift = 4;
-				break; 
+				break;
 			case 1: // end of bmp
 				delete [] BmpData;
 				BmpData = newBmp;
-				return; 
+				return;
 			case 2:
 				{
-					++p; 
+					++p;
 					s32 x = (u8)*p; ++p;
 					s32 y = (u8)*p; ++p;
 					d += x/2 + y*lineWidth;
@@ -199,7 +199,7 @@ void CImageLoaderBMP::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 		}
 		else
 		{
-			s32 count = (u8)*p; ++p;			
+			s32 count = (u8)*p; ++p;
 			s32 color1 = (u8)*p; color1 = color1 & 0x0f;
 			s32 color2 = (u8)*p; color2 = (color2 >> 4) & 0x0f;
 			++p;
@@ -300,7 +300,7 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 
 	s32 lineData = widthInBytes + ((4-(widthInBytes%4)))%4;
 	pitch = lineData - widthInBytes;
-	
+
 	BmpData = new c8[header.BitmapDataSize];
 	file->read(BmpData, header.BitmapDataSize);
 
@@ -318,40 +318,41 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 	// create surface
 
 	IImage* image = 0;
-
 	switch(header.BPP)
 	{
 	case 1:
 		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(header.Width, header.Height));
-		CColorConverter::convert1BitTo16BitFlipMirror(BmpData, (s16*)image->lock(), header.Width, header.Height, pitch);
-		image->unlock();
+		if (image)
+			CColorConverter::convert1BitTo16Bit(BmpData, (s16*)image->lock(), header.Width, header.Height, pitch, true);
 		break;
 	case 4:
 		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(header.Width, header.Height));
-		CColorConverter::convert4BitTo16BitFlipMirror(BmpData, (s16*)image->lock(), header.Width, header.Height, pitch, PaletteData);
-		image->unlock();
+		if (image)
+			CColorConverter::convert4BitTo16Bit(BmpData, (s16*)image->lock(), header.Width, header.Height, PaletteData, pitch, true);
 		break;
 	case 8:
 		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(header.Width, header.Height));
-		CColorConverter::convert8BitTo16BitFlipMirror(BmpData, (s16*)image->lock(), header.Width, header.Height, pitch, PaletteData);
-		image->unlock();
+		if (image)
+			CColorConverter::convert8BitTo16Bit(BmpData, (s16*)image->lock(), header.Width, header.Height, PaletteData, pitch, true);
 		break;
 	case 16:
 		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(header.Width, header.Height));
-		CColorConverter::convert16BitTo16BitFlipMirror((s16*)BmpData, (s16*)image->lock(), header.Width, header.Height, pitch);
-		image->unlock();
+		if (image)
+			CColorConverter::convert16BitTo16Bit((s16*)BmpData, (s16*)image->lock(), header.Width, header.Height, pitch, true);
 		break;
 	case 24:
 		image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(header.Width, header.Height));
-		CColorConverter::convert24BitTo24BitFlipMirrorColorShuffle(BmpData, (c8*)image->lock(), header.Width, header.Height, pitch);
-		image->unlock();
+		if (image)
+			CColorConverter::convert24BitTo24Bit(BmpData, (c8*)image->lock(), header.Width, header.Height, pitch, true, true);
 		break;
 	case 32: // thx to Reinhard Ostermeier
 		image = new CImage(ECF_A8R8G8B8, core::dimension2d<s32>(header.Width, header.Height));
-		CColorConverter::convert32BitTo32BitFlipMirror((s32*)BmpData, (s32*)image->lock(), header.Width, header.Height, pitch);
-		image->unlock();
+		if (image)
+			CColorConverter::convert32BitTo32Bit((s32*)BmpData, (s32*)image->lock(), header.Width, header.Height, pitch, true);
 		break;
 	};
+	if (image)
+		image->unlock();
 
 	// clean up
 
@@ -365,12 +366,12 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 }
 
 
+
 //! creates a loader which is able to load windows bitmaps
 IImageLoader* createImageLoaderBMP()
 {
 	return new CImageLoaderBMP;
 }
-
 
 
 } // end namespace video

@@ -75,8 +75,6 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 		header.VScrSize = OSReadSwapInt16(&header.VScrSize, 0);
 	#endif
 
-	s32 pitch = 0;
-
 	//! return if the header is wrong
 	if (header.Manufacturer != 0x0a && header.Encoding != 0x01)
 		return 0;
@@ -100,6 +98,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 
 		u8 *tempPalette = new u8[768];
 		PaletteData = new s32[256];
+		memset(PaletteData, 0, 256*sizeof(s32));
 		file->read( tempPalette, 768 );
 
 		for( s32 i=0; i<256; i++ )
@@ -116,6 +115,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	else if( header.BitsPerPixel == 4 )
 	{
 		PaletteData = new s32[16];
+		memset(PaletteData, 0, 16*sizeof(s32));
 		for( s32 i=0; i<256; i++ )
 		{
 			PaletteData[i] = (header.Palette[i*3+0] << 16) |
@@ -151,7 +151,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 
 	// create image
 	video::IImage* image = 0;
-	pitch = header.BytesPerLine - width * header.Planes * header.BitsPerPixel / 8;
+	s32 pitch = header.BytesPerLine - width * header.Planes * header.BitsPerPixel / 8;
 
 	if (pitch < 0)
 		pitch = -pitch;
@@ -160,15 +160,17 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	{
 	case 8:
 		image = new CImage(ECF_A1R5G5B5, core::dimension2d<s32>(width, height));
-		CColorConverter::convert8BitTo16Bit(PCXData, (s16*)image->lock(), width, height, pitch, PaletteData);
-		image->unlock();
+		if (image)
+			CColorConverter::convert8BitTo16Bit(PCXData, (s16*)image->lock(), width, height, PaletteData, pitch);
 		break;
 	case 24:
 		image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(width, height));
-		CColorConverter::convert24BitTo24BitFlipMirrorColorShuffle(PCXData, (c8*)image->lock(), width, height, pitch);
-		image->unlock();
+		if (image)
+			CColorConverter::convert24BitTo24Bit(PCXData, (c8*)image->lock(), width, height, pitch);
 		break;
 	};
+	if (image)
+		image->unlock();
 
 	// clean up
 

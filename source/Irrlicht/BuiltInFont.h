@@ -1056,7 +1056,7 @@ u8 BuiltInFontData[] =
 	0x0, 0x2, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0
 };
 
-	s32 BuiltInFontDataSize = 8310;
+	u32 BuiltInFontDataSize = sizeof(BuiltInFontData);
 } // end namespace gui
 } // end namespace irr
 

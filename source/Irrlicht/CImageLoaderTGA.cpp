@@ -112,7 +112,7 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 	header.ImageHeight = OSReadSwapInt16(&header.ImageHeight,0);
 #endif
 
-	// skip image identifikation field
+	// skip image identification field
 	if (header.IdLength)
 		file->seek(header.IdLength, true);
 
@@ -156,11 +156,9 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 
 			image = new CImage(ECF_A1R5G5B5,
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
-
-			CColorConverter::convert16BitTo16BitFlipMirror((s16*)data,
-				(s16*)image->lock(), header.ImageWidth,	header.ImageHeight, 0);				
-
-			image->unlock();
+			if (image)
+				CColorConverter::convert16BitTo16Bit((s16*)data,
+					(s16*)image->lock(), header.ImageWidth,	header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0);
 		}
 		break;
 	case 3:
@@ -169,11 +167,9 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 
 			image = new CImage(ECF_R8G8B8,
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
-
-			CColorConverter::convert24BitTo24BitFlipMirrorColorShuffle(
-				(c8*)data, (c8*)image->lock(), header.ImageWidth, header.ImageHeight, 0);
-
-			image->unlock();
+			if (image)
+				CColorConverter::convert24BitTo24Bit(
+					(c8*)data, (c8*)image->lock(), header.ImageWidth, header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0, true);
 		}
 		break;
 	case 4:
@@ -182,15 +178,14 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 
 			image = new CImage(ECF_A8R8G8B8,
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
-
-			CColorConverter::convert32BitTo32BitFlipMirror((s32*)data,
-				(s32*)image->lock(), header.ImageWidth, header.ImageHeight, 0);
-
-			image->unlock();
-		}		
+			if (image)
+				CColorConverter::convert32BitTo32Bit((s32*)data,
+					(s32*)image->lock(), header.ImageWidth, header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0);
+		}
 		break;
 	}
-
+	if (image)
+		image->unlock();
 	delete [] data;
 
 	return image;
