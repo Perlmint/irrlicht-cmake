@@ -8,11 +8,41 @@ Changes in version 1.2 (???? 2006)
 - Loaded COLLADA files which contained only one single mesh now behave like all the 
   other loaded meshes, and the #meshname workaround has been removed.
 
-- OGRE mesh loader bugfixes
+- File lists are now sorted.
+
+- TGA files are now always correctly flipped, all PNG color formats are now supported, including correct alpha handling.
+
+- Dynamically checking the OpenGL version now instead of at compile time to call the supported methods of the executing machine, not that one of the compile host. This should fix the extension check and the automatic mipmap update.
+
+- Fixed vertex alpha handling of 2D images with OpenGL.
+
+- 3ds mesh loader fix in texture loading, now loads some textures that were not loaded before, but might introduce problems with very recent files. OGRE mesh loader bugfixes and lightmap support. Several B3d mesh loader updates.
+
+- Default depth buffer under Windows now 24bit to avoid zbuffer fighting.
+
+- Fixed light count in OpenGL.
+
+- Particle emitters can now be enabled/disabled via a new method.
+
+- Sky dome is rotatable just like the sky box.
+
+- Rotation animator can be applied to several nodes now, before it only rotated the first one it was applied to.
+
+- Support for drawing other vertex primitive lists such as triangle strips.
+
+- Default specular color is white again, thus simply enabling shininess is enough to get speculars.
+
+- Some .x loader and animator improvements.
+
+- isActive now also work under Linux.
+
+- Fixed light count in OpenGL.
 
 -------------------------------------------
 
 Changes in version 1.1 (06 Aug 2006)
+
+- New example to show some features of the .irr format
 
 - Added support for making screenshots in all video drivers and a general
   possibility to save any IImage to several file formats.
