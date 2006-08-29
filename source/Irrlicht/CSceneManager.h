@@ -376,6 +376,17 @@ namespace scene
 		//! Loads a scene. Note that the current scene is not cleared before.
 		virtual bool loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer=0);	
 
+		//! Writes attributes of the scene node.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0);
+	
+		//! Reads attributes of the scene node.
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0);
+
+		//! Sets ambient color of the scene
+		virtual void setAmbientLight(video::SColorf ambientColor);
+
+		//! Returns ambient color of the scene
+		virtual video::SColorf getAmbientLight();
 
 	private:		
 
@@ -480,6 +491,7 @@ namespace scene
 		core::vector3df camTransPos; // Position of camera for transparent nodes.
 
 		video::SColor ShadowColor;
+		video::SColorf AmbientLight;
 
 		//! String parameters
 		io::CAttributes Parameters;

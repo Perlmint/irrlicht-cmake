@@ -81,7 +81,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 : ISceneNode(0, 0), Driver(driver), FileSystem(fs), ActiveCamera(0),
 	CursorControl(cursorControl), CollisionManager(0),
 	ShadowColor(150,0,0,0), MeshManipulator(0), CurrentRendertime(ESNRP_COUNT),
-	MeshCache(cache)
+	MeshCache(cache), AmbientLight(0,0,0,0)
 {
 	#ifdef _DEBUG
 	ISceneManager::setDebugName("CSceneManager ISceneManager");
@@ -790,6 +790,8 @@ void CSceneManager::drawAll()
 	if (!Driver)
 		return;
 
+	Driver->setAmbientLight(AmbientLight);
+
 	// calculate camera pos.
 	camTransPos.set(0,0,0);
 	if (ActiveCamera)
@@ -803,7 +805,7 @@ void CSceneManager::drawAll()
 	CurrentRendertime = ESNRP_LIGHT_AND_CAMERA;
 
 	Driver->deleteAllDynamicLights();
-
+	
 	u32 i; // new ISO for scoping problem in some compilers
 
 	for (i=0; i<LightAndCameraList.size(); ++i)
@@ -1306,13 +1308,24 @@ bool CSceneManager::loadScene(io::IReadFile* file, ISceneUserDataSerializer* use
         os::Printer::log("Scene is not a valid XML file", file->getFileName(), ELL_ERROR);
 		return false;
 	}
+	
+	// for mesh loading, set collada loading attributes
+
+	bool bOldColladaSingleMesh = getParameters()->getAttributeAsBool(COLLADA_CREATE_SCENE_INSTANCES);
+	getParameters()->setAttribute(COLLADA_CREATE_SCENE_INSTANCES, false);
+
+	// read file
 
 	while(reader->read())
 	{
 		readSceneNode(reader, 0, userDataSerializer);
 	}
 
-	os::Printer::log("Finished loading scene", file->getFileName(), ELL_INFORMATION);
+	// restore old collada parameters
+
+	getParameters()->setAttribute(COLLADA_CREATE_SCENE_INSTANCES, bOldColladaSingleMesh);
+
+	// finish up
 
 	reader->drop();
 	return true;
@@ -1654,6 +1667,45 @@ const c8* CSceneManager::getAnimatorTypeName(ESCENE_NODE_ANIMATOR_TYPE type)
 		name = SceneNodeAnimatorFactoryList[i]->getCreateableSceneNodeAnimatorTypeName(type);
 
 	return name;
+}
+//! Writes attributes of the scene node.
+void CSceneManager::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
+{
+	out->addString	("Name", Name.c_str());
+	out->addInt		("Id", ID );
+	out->addColorf	("AmbientLight", AmbientLight);
+}
+
+//! Reads attributes of the scene node.
+void CSceneManager::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
+{
+	Name =			in->getAttributeAsString("Name");
+	ID =			in->getAttributeAsInt("Id");
+	AmbientLight =	in->getAttributeAsColorf("AmbientLight");
+
+	RelativeTranslation.set(0,0,0);
+	RelativeRotation.set(0,0,0);
+	RelativeScale.set(1,1,1);
+	IsVisible = true;
+	AutomaticCullingEnabled = true;
+	DebugDataVisible = false;
+	IsDebugObject = false;
+
+	updateAbsolutePosition();
+}
+
+
+//! Sets ambient color of the scene
+void CSceneManager::setAmbientLight(video::SColorf ambientColor)
+{
+	AmbientLight = ambientColor;
+}
+
+
+//! Returns ambient color of the scene
+video::SColorf CSceneManager::getAmbientLight()
+{
+	return AmbientLight;
 }
 
 
