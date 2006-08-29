@@ -180,7 +180,7 @@ namespace scene
 CColladaFileLoader::CColladaFileLoader(video::IVideoDriver* driver, 
 		scene::ISceneManager* smgr, io::IFileSystem* fs)
 : Driver(driver), SceneManager(smgr), FileSystem(fs), DummyMesh(0),
-	CreateInstances(false)
+	CreateInstances(false), FirstLoadedMesh(0), LoadedMeshCount(0)
 {
 	
 }
@@ -191,6 +191,9 @@ CColladaFileLoader::~CColladaFileLoader()
 {
 	if (DummyMesh)
 		DummyMesh->drop();
+
+	if (FirstLoadedMesh)
+		FirstLoadedMesh->drop();
 }
 
 
@@ -243,6 +246,14 @@ IAnimatedMesh* CColladaFileLoader::createMesh(irr::io::IReadFile* file)
 		returnMesh = DummyMesh;
 	}
 
+	// add the first loaded mesh into the mesh cache too, if more than one
+	// meshes have been loaded from the file
+	if (LoadedMeshCount>1 && FirstLoadedMesh)
+	{
+		os::Printer::log("Added COLLADA mesh", FirstLoadedMeshName.c_str());	
+		SceneManager->getMeshCache()->addMesh(FirstLoadedMeshName.c_str(), FirstLoadedMesh);
+	}
+
 	// clean up temporary loaded data
 	clearData();
 
@@ -250,6 +261,11 @@ IAnimatedMesh* CColladaFileLoader::createMesh(irr::io::IReadFile* file)
 
 	DummyMesh->drop();
 	DummyMesh = 0;
+
+	if (FirstLoadedMesh)
+		FirstLoadedMesh->drop();
+	FirstLoadedMesh = 0;
+	LoadedMeshCount = 0;
 
 	return returnMesh;
 }
@@ -806,11 +822,21 @@ void CColladaFileLoader::readGeometry(io::IXMLReaderUTF8* reader)
 	filename += id;
 
 	// add to scene manager
-	SceneManager->getMeshCache()->addMesh(filename.c_str(), amesh);
-	amesh->drop();
-	mesh->drop();
+	if (LoadedMeshCount)
+	{
+		SceneManager->getMeshCache()->addMesh(filename.c_str(), amesh);
+		os::Printer::log("Added COLLADA mesh", filename.c_str());	
+	}
+	else
+	{
+		FirstLoadedMeshName = filename;
+		FirstLoadedMesh = amesh;
+		FirstLoadedMesh->grab();
+	}
 
-	os::Printer::log("Added COLLADA mesh", filename.c_str());	
+	++LoadedMeshCount;
+	mesh->drop();
+	amesh->drop();
 
 	// create geometry prefab
 	CGeometryPrefab* prefab = new CGeometryPrefab(id.c_str());
@@ -822,7 +848,7 @@ void CColladaFileLoader::readGeometry(io::IXMLReaderUTF8* reader)
 	{
 		DummyMesh = amesh;
 		DummyMesh->grab();
-	}
+	}	
 }
 
 

@@ -249,6 +249,10 @@ private:
 
 	scene::IAnimatedMesh* DummyMesh;
 	core::stringc CurrentlyLoadingMesh;
+	
+	scene::IAnimatedMesh* FirstLoadedMesh;
+	core::stringc FirstLoadedMeshName;
+	s32 LoadedMeshCount;
 
 	core::array<IColladaPrefab*> Prefabs;
 	core::array<SColladaParam> Parameters;
