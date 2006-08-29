@@ -1,3 +1,17 @@
+-------------------------------------------
+Changes in version 1.2 (???? 2006)
+
+- The scene manager now sets an ambient light color when calling ISceneManager::drawAll().
+  You can influence this by calling ISceneManager::setAmbientLight(). That light color
+  is also stored when saving .irr files via ISceneManager::saveScene().
+
+- Loaded COLLADA files which contained only one single mesh now behave like all the 
+  other loaded meshes, and the #meshname workaround has been removed.
+
+- OGRE mesh loader bugfixes
+
+-------------------------------------------
+
 Changes in version 1.1 (06 Aug 2006)
 
 - Added support for making screenshots in all video drivers and a general
