@@ -614,27 +614,29 @@ namespace core
 	//! Builds a right-handed perspective projection matrix based on a field of view
 	inline void matrix4::buildProjectionMatrixPerspectiveFovRH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
-		f32 h = (f32)(cos(fieldOfViewRadians/2.0) / sin(fieldOfViewRadians/2.0));
-		f32 w = h * aspectRatio;
+		f32 h = (f32)(1.0/tan(fieldOfViewRadians/2.0));
+		f32 w = h / aspectRatio;
 
-		(*this)(0,0) = 2.0f*zNear/w;
+		(*this)(0,0) = w;
 		(*this)(1,0) = 0.0f;
 		(*this)(2,0) = 0.0f;
 		(*this)(3,0) = 0.0f;
 
 		(*this)(0,1) = 0.0f;
-		(*this)(1,1) = 2.0f*zNear/h;
+		(*this)(1,1) = h;
 		(*this)(2,1) = 0.0f;
 		(*this)(3,1) = 0.0f;
 
 		(*this)(0,2) = 0.0f;
 		(*this)(1,2) = 0.0f;
-		(*this)(2,2) = zFar/(zFar-zNear);
+		(*this)(2,2) = zFar/(zNear-zFar); // DirectX version
+//		(*this)(2,2) = zFar+zNear/(zNear-zFar); // OpenGL version
 		(*this)(3,2) = -1.0f;
 
 		(*this)(0,3) = 0.0f;
 		(*this)(1,3) = 0.0f;
-		(*this)(2,3) = zNear*zFar/(zNear-zFar);
+		(*this)(2,3) = zNear*zFar/(zNear-zFar); // DirectX version
+//		(*this)(2,3) = 2.0f*zNear*zFar/(zNear-zFar); // OpenGL version
 		(*this)(3,3) = 0.0f;
 	}
 
@@ -643,16 +645,16 @@ namespace core
 	//! Builds a left-handed perspective projection matrix based on a field of view
 	inline void matrix4::buildProjectionMatrixPerspectiveFovLH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
-		f32 h = (f32)(cos(fieldOfViewRadians/2.0) / sin(fieldOfViewRadians/2.0));
-		f32 w = h * aspectRatio;
+		f32 h = (f32)(1.0/tan(fieldOfViewRadians/2.0));
+		f32 w = h / aspectRatio;
 
-		(*this)(0,0) = 2.0f*zNear/w;
+		(*this)(0,0) = w;
 		(*this)(1,0) = 0.0f;
 		(*this)(2,0) = 0.0f;
 		(*this)(3,0) = 0.0f;
 
 		(*this)(0,1) = 0.0f;
-		(*this)(1,1) = 2.0f*zNear/h;
+		(*this)(1,1) = h;
 		(*this)(2,1) = 0.0f;
 		(*this)(3,1) = 0.0f;
 
@@ -663,7 +665,7 @@ namespace core
 
 		(*this)(0,3) = 0.0f;
 		(*this)(1,3) = 0.0f;
-		(*this)(2,3) = zNear*zFar/(zNear-zFar);
+		(*this)(2,3) = -zNear*zFar/(zFar-zNear);
 		(*this)(3,3) = 0.0f;
 	}
 
@@ -684,7 +686,7 @@ namespace core
 
 		(*this)(0,2) = 0;
 		(*this)(1,2) = 0;
-		(*this)(2,2) = 1/(zNear-zFar);
+		(*this)(2,2) = 1/(zFar-zNear);
 		(*this)(3,2) = 0;
 
 		(*this)(0,3) = 0;
