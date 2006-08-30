@@ -187,12 +187,12 @@ void CSoftwareDriver::setTransform(E_TRANSFORMATION_STATE state, const core::mat
 
 
 //! sets the current Texture
-void CSoftwareDriver::setTexture(video::ITexture* texture)
+bool CSoftwareDriver::setTexture(video::ITexture* texture)
 {
 	if (texture && texture->getDriverType() != EDT_SOFTWARE)
 	{
 		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
-		return;
+		return false;
 	}
 
 	if (Texture)
@@ -204,6 +204,7 @@ void CSoftwareDriver::setTexture(video::ITexture* texture)
 		Texture->grab();
 
 	selectRightTriangleRenderer();
+	return true;
 }
 
 
@@ -623,36 +624,12 @@ void CSoftwareDriver::clipTriangle(f32* transformedPos)
 }
 
 
+
 //! creates the clipping planes from the matrix
 void CSoftwareDriver::createPlanes(core::matrix4& mat)
 {
 	Frustrum = scene::SViewFrustrum(mat);
 }
-
-//! draws an 2d image
-void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos)
-{
-	if (texture)
-	{
-		if (texture->getDriverType() != EDT_SOFTWARE)
-		{
-			os::Printer::log("Fatal Error: Tried to copy from a surface not owned by this driver.", ELL_ERROR);
-			return;
-		}
-
-		((CSoftwareTexture*)texture)->getImage()->copyTo(((CImage*)RenderTargetSurface), destPos);
-	}
-}
-
-
-//! Draws a 2d line.
-void CSoftwareDriver::draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end,
-								SColor color)
-{
-	((CImage*)RenderTargetSurface)->drawLine(start, end, color );
-}
-
 
 
 
@@ -677,6 +654,16 @@ void CSoftwareDriver::draw2DImage(video::ITexture* texture, const core::position
 			((CSoftwareTexture*)texture)->getImage()->copyTo(
 				((CImage*)RenderTargetSurface), destPos, sourceRect, clipRect);
 	}
+}
+
+
+
+//! Draws a 2d line.
+void CSoftwareDriver::draw2DLine(const core::position2d<s32>& start,
+								const core::position2d<s32>& end,
+								SColor color)
+{
+	((CImage*)RenderTargetSurface)->drawLine(start, end, color );
 }
 
 

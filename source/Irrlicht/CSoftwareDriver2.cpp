@@ -272,12 +272,12 @@ void CSoftwareDriver2::setTransform(E_TRANSFORMATION_STATE state, const core::ma
 
 
 //! sets the current Texture
-void CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
+bool CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
 {
 	if (texture && texture->getDriverType() != EDT_SOFTWARE2)
 	{
 		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
-		return;
+		return false;
 	}
 
 	if (Texture[stage])
@@ -288,7 +288,6 @@ void CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
 	if (Texture[stage])
 		Texture[stage]->grab();
 
-	// --------------------------
 	if ( Texture[stage] )
 	{
 		Texmap[stage].Texture = ((CSoftwareTexture2*)Texture[stage])->getTexture();
@@ -297,6 +296,7 @@ void CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
 	}
 
 	selectRightTriangleRenderer();
+	return true;
 }
 
 
@@ -310,10 +310,10 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 	Material.DiffuseColor.setA8R8G8B8 ( Material.org.DiffuseColor.color );
 	Material.EmissiveColor.setA8R8G8B8 ( Material.org.EmissiveColor.color );
 	Material.SpecularColor.setA8R8G8B8 ( Material.org.SpecularColor.color );
-
 	setTexture( 0, Material.org.Texture1 );
 	setTexture( 1, Material.org.Texture2 );
 }
+
 
 
 //! clears the zbuffer
@@ -971,33 +971,6 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 
 
 
-//! draws an 2d image
-void CSoftwareDriver2::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos)
-{
-	if (texture)
-	{
-		if (texture->getDriverType() != EDT_SOFTWARE2)
-		{
-			os::Printer::log("Fatal Error: Tried to copy from a surface not owned by this driver.", ELL_ERROR);
-			return;
-		}
-
-		((CSoftwareTexture2*)texture)->getImage()->copyTo(BackBuffer, destPos);
-	}
-}
-
-
-//! Draws a 2d line. 
-void CSoftwareDriver2::draw2DLine(const core::position2d<s32>& start,
-					const core::position2d<s32>& end,
-					SColor color)
-{
-	((CImage*)BackBuffer)->drawLine(start, end, color );
-}
-
-
-
-
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CSoftwareDriver2::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
 					 const core::rect<s32>& sourceRect, 
@@ -1019,6 +992,16 @@ void CSoftwareDriver2::draw2DImage(video::ITexture* texture, const core::positio
 			((CSoftwareTexture2*)texture)->getImage()->copyTo(
 				BackBuffer, destPos, sourceRect, clipRect);
 	}
+}
+
+
+
+//! Draws a 2d line. 
+void CSoftwareDriver2::draw2DLine(const core::position2d<s32>& start,
+					const core::position2d<s32>& end,
+					SColor color)
+{
+	((CImage*)BackBuffer)->drawLine(start, end, color );
 }
 
 

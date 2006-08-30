@@ -561,7 +561,12 @@ void CNullDriver::draw3DBox(const core::aabbox3d<f32> box, SColor color)
 //! draws an 2d image
 void CNullDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos)
 {
+	if (!texture)
+		return;
+
+	draw2DImage(texture,destPos, core::rect<s32>(core::position2d<s32>(0,0), texture->getOriginalSize()));
 }
+
 
 
 //! Draws a part of the texture into the rectangle.
@@ -570,6 +575,7 @@ void CNullDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 	video::SColor* colors, bool useAlphaChannelOfTexture)
 {
 }
+
 
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.

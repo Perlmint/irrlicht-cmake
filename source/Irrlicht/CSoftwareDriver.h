@@ -53,9 +53,6 @@ namespace video
 		virtual void draw3DLine(const core::vector3df& start,
 			const core::vector3df& end, SColor color = SColor(255,255,255,255));
 
-		//! draws an 2d image
-		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);
-
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0, 
@@ -106,7 +103,7 @@ namespace video
 		void setRenderTarget(video::CImage* image);
 
 		//! sets the current Texture
-		void setTexture(video::ITexture* texture);
+		bool setTexture(video::ITexture* texture);
 
 		video::CImage* BackBuffer;
 		video::IImagePresenter* Presenter;

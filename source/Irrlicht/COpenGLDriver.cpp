@@ -879,19 +879,6 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 
 
 
-//! draws an 2d image
-void COpenGLDriver::draw2DImage(video::ITexture* texture,
-				   const core::position2d<s32>& destPos)
-{
-	if (!texture)
-		return;
-
-	draw2DImage(texture, destPos, core::rect<s32>(core::position2d<s32>(0,0),
-		texture->getOriginalSize()));
-}
-
-
-
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
 				 const core::rect<s32>& sourceRect,
@@ -902,6 +889,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 		return;
 
 	if (!sourceRect.isValid())
+		return;
+
+	if (!setTexture(0, texture))
 		return;
 
 	core::position2d<s32> targetPos = pos;
@@ -1006,12 +996,8 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X+xPlus+0.5f) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(color.getAlpha()<255, true, true);
-	else
-		setRenderStates2DMode(color.getAlpha()<255, true, false);
+	setRenderStates2DMode(color.getAlpha()<255, true, useAlphaChannelOfTexture);
 
-	setTexture(0, texture);
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	glBegin(GL_QUADS);
 
@@ -1064,45 +1050,39 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact;
 
-	setTexture(0, texture);
-
-	bool bTempColors=false;
-
-	if(colors==NULL)
+	video::SColor temp[4] =
 	{
-		colors=new SColor[4];
-		for(int i=0;i<4;i++)
-			colors[i]=SColor(255,255,255,255);
-		bTempColors=true;
-	}
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0xFFFFFFFF
+	};
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(colors[0].getAlpha()<255 || colors[1].getAlpha()<255 || colors[2].getAlpha()<255 || colors[3].getAlpha()<255, true, true);
-	else
-		setRenderStates2DMode(colors[0].getAlpha()<255 || colors[1].getAlpha()<255 || colors[2].getAlpha()<255 || colors[3].getAlpha()<255, true, false);
+	video::SColor* useColor = colors ? colors : temp;
+
+	setRenderStates2DMode(useColor[0].getAlpha()<255 || useColor[1].getAlpha()<255 || useColor[2].getAlpha()<255 || useColor[3].getAlpha()<255, true, useAlphaChannelOfTexture);
+
+	setTexture(0, texture);
 
 	glBegin(GL_QUADS);
 
-	glColor4ub(colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue(), colors[0].getAlpha());
+	glColor4ub(useColor[0].getRed(), useColor[0].getGreen(), useColor[0].getBlue(), useColor[0].getAlpha());
 	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
 	glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
 
-	glColor4ub(colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue(), colors[3].getAlpha());
+	glColor4ub(useColor[3].getRed(), useColor[3].getGreen(), useColor[3].getBlue(), useColor[3].getAlpha());
 	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
 	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
 
-	glColor4ub(colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue(), colors[2].getAlpha());
+	glColor4ub(useColor[2].getRed(), useColor[2].getGreen(), useColor[2].getBlue(), useColor[2].getAlpha());
 	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
 	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
 
-	glColor4ub(colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue(), colors[1].getAlpha());
+	glColor4ub(useColor[1].getRed(), useColor[1].getGreen(), useColor[1].getBlue(), useColor[1].getAlpha());
 	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
 	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
 
 	glEnd();
-
-	if(bTempColors)
-		delete [] colors;
 }
 
 
@@ -1255,33 +1235,38 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 }
 
 
+
 //! sets the current Texture
-void COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
+bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 {
 	if (stage >= MATERIAL_MAX_TEXTURES)
-		return;
+		return false;
 
 	if (MultiTextureExtension)
 		extGlActiveTextureARB(GL_TEXTURE0_ARB + stage);
 	else
 		if (stage != 0)
-			return;
-
-	if (texture && texture->getDriverType() != EDT_OPENGL)
-	{
-		glDisable(GL_TEXTURE_2D);
-		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
-		return;
-	}
+			return false;
 
 	if (texture == 0)
+	{
 		glDisable(GL_TEXTURE_2D);
+		return false;
+	}
 	else
 	{
+		if (texture->getDriverType() != EDT_OPENGL)
+		{
+			glDisable(GL_TEXTURE_2D);
+			os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
+			return false;
+		}
+
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,
 			((COpenGLTexture*)texture)->getOpenGLTextureName());
 	}
+	return true;
 }
 
 
@@ -1548,6 +1533,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		glLineWidth(material.Thickness);
 	}
 }
+
 
 
 //! sets the needed renderstates
@@ -1859,6 +1845,7 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glDepthFunc( GL_LEQUAL );
 
 	glFrontFace( GL_CCW );
+	glShadeModel( GL_FLAT );
 	glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
 
 	glEnable(GL_BLEND);
@@ -1920,6 +1907,7 @@ void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start,
 }
 
 
+
 //! Draws a 3d line.
 void COpenGLDriver::draw3DLine(const core::vector3df& start,
 				const core::vector3df& end, SColor color)
@@ -1935,6 +1923,8 @@ void COpenGLDriver::draw3DLine(const core::vector3df& start,
 	glEnd();
 }
 
+
+
 //! Only used by the internal engine. Used to notify the driver that
 //! the window was resized.
 void COpenGLDriver::OnResize(const core::dimension2d<s32>& size)
@@ -1943,11 +1933,15 @@ void COpenGLDriver::OnResize(const core::dimension2d<s32>& size)
 	glViewport(0, 0, size.Width, size.Height);
 }
 
+
+
 //! Returns type of video driver
 E_DRIVER_TYPE COpenGLDriver::getDriverType()
 {
 	return EDT_OPENGL;
 }
+
+
 
 void COpenGLDriver::extGlActiveTextureARB(GLenum texture)
 {

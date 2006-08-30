@@ -543,17 +543,16 @@ void CD3D8Driver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 
 
 
-
 //! sets the current Texture
-void CD3D8Driver::setTexture(s32 stage, video::ITexture* texture)
+bool CD3D8Driver::setTexture(s32 stage, video::ITexture* texture)
 {
 	if (CurrentTexture[stage] == texture)
-		return;
+		return true;
 
 	if (texture && texture->getDriverType() != EDT_DIRECT3D8)
 	{
 		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
-		return;
+		return false;
 	}
 
 	if (CurrentTexture[stage])
@@ -568,6 +567,7 @@ void CD3D8Driver::setTexture(s32 stage, video::ITexture* texture)
 		pID3DDevice->SetTexture(stage, ((CD3D8Texture*)texture)->getDX8Texture());
 		texture->grab();
 	}
+	return true;
 }
 
 
@@ -814,17 +814,6 @@ void CD3D8Driver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount,
 
 
 
-//! draws an 2d image
-void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos)
-{
-	if (!texture)
-		return;
-
-	draw2DImage(texture,destPos, core::rect<s32>(core::position2d<s32>(0,0), texture->getOriginalSize()));
-}
-
-
-
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
 				 const core::rect<s32>& sourceRect,
@@ -834,19 +823,15 @@ void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 	if (!texture)
 		return;
 
-	if (texture->getDriverType() != EDT_DIRECT3D8)
-	{
-		os::Printer::log("Fatal Error: Tried to copy from a surface not owned by this driver.", ELL_ERROR);
-		return;
-	}
-
 	if (!sourceRect.isValid())
+		return;
+
+	if (!setTexture(0, texture))
 		return;
 
 	core::position2d<s32> targetPos = pos;
 	core::position2d<s32> sourcePos = sourceRect.UpperLeftCorner;
 	core::dimension2d<s32> sourceSize(sourceRect.getSize());
-
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
 
 	if (clipRect)
@@ -940,6 +925,8 @@ void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 
 	core::rect<s32> poss(targetPos, sourceSize);
 
+	setRenderStates2DMode(color.getAlpha()<255, true, useAlphaChannelOfTexture);
+
 	S3DVertex vtx[4];
 	vtx[0] = S3DVertex((f32)(poss.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-poss.UpperLeftCorner.Y ) * yFact , 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
 	vtx[1] = S3DVertex((f32)(poss.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- poss.UpperLeftCorner.Y) * yFact, 0.0f, 0.0f, 0.0f, 0.0f, color, tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
@@ -948,17 +935,10 @@ void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::position2d<s
 
 	s16 indices[6] = {0,1,2,0,2,3};
 
-	if (useAlphaChannelOfTexture)
-		setRenderStates2DMode(false, true, true);
-	else
-		setRenderStates2DMode(false, true, false);
-
-	setTexture(0, texture);
-
 	setVertexShader(EVT_STANDARD);
 
 	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
-										D3DFMT_INDEX16,&vtx[0],	sizeof(S3DVertex));
+			D3DFMT_INDEX16,&vtx[0],	sizeof(S3DVertex));
 }
 
 
@@ -995,37 +975,32 @@ void CD3D8Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
    npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact;
    npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact;
 
-   bool bTempColors=false;
-   if(colors==NULL)
-   {
-      colors=new SColor[4];
-      for(int i=0;i<4;i++)
-		colors[i]=SColor(255,255,255,255);
-      bTempColors=true;
-   }
+	video::SColor temp[4] =
+	{
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0xFFFFFFFF
+	};
 
-   S3DVertex vtx[4]; // clock wise
-   vtx[0] = S3DVertex(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, colors[0], tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
-   vtx[1] = S3DVertex(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, colors[3], tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
-   vtx[2] = S3DVertex(npos.LowerRightCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, colors[2], tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
-   vtx[3] = S3DVertex(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, colors[1], tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
+	video::SColor* useColor = colors ? colors : temp;
 
-   s16 indices[6] = {0,1,2,0,2,3};
+	S3DVertex vtx[4]; // clock wise
+	vtx[0] = S3DVertex(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, useColor[0], tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
+	vtx[1] = S3DVertex(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y , 0.0f, 0.0f, 0.0f, 0.0f, useColor[3], tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
+	vtx[2] = S3DVertex(npos.LowerRightCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, useColor[2], tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
+	vtx[3] = S3DVertex(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 0.0f, useColor[1], tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
 
-   if (useAlphaChannelOfTexture)
-      setRenderStates2DMode(false, true, true);
-   else
-      setRenderStates2DMode(false, true, false);
+	s16 indices[6] = {0,1,2,0,2,3};
 
-   setTexture(0, texture);
+	setRenderStates2DMode(useColor[0].getAlpha()<255 || useColor[1].getAlpha()<255 || useColor[2].getAlpha()<255 || useColor[3].getAlpha()<255, true, useAlphaChannelOfTexture);
 
-   setVertexShader(EVT_STANDARD);
+	setTexture(0, texture);
 
-   pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
-      D3DFMT_INDEX16,&vtx[0], sizeof(S3DVertex));
+	setVertexShader(EVT_STANDARD);
 
-   if (bTempColors)
-      delete [] colors;
+	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
+		D3DFMT_INDEX16,&vtx[0], sizeof(S3DVertex));
 }
 
 

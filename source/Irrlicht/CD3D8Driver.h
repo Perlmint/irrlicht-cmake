@@ -69,9 +69,6 @@ namespace video
 		//! draws a vertex primitive list
 		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
-		//! draws an 2d image
-		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);
-
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
@@ -216,7 +213,7 @@ namespace video
 		void setRenderStatesStencilShadowMode(bool zfail);
 
 		//! sets the current Texture
-		void setTexture(s32 stage, video::ITexture* texture);
+		bool setTexture(s32 stage, video::ITexture* texture);
 
 		//! resets the device
 		bool reset();

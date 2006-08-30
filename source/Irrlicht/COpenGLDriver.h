@@ -93,9 +93,6 @@ namespace video
 		//! \param material: Material to be used from now on.
 		virtual void setMaterial(const SMaterial& material);
 
-		//! draws an 2d image
-		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);
-
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
@@ -231,7 +228,8 @@ namespace video
 		virtual bool setPixelShaderConstant(const c8* name, const f32* floats, int count);
 
 		//! sets the current Texture
-		void setTexture(s32 stage, video::ITexture* texture);
+		//! Returns whether setting was a success or not.
+		bool setTexture(s32 stage, video::ITexture* texture);
 
 		//! Adds a new material renderer to the VideoDriver, usingextGLGetObjectParameterivARB(shaderHandle, GL_OBJECT_COMPILE_STATUS_ARB, &status) pixel and/or
 		//! vertex shaders to render geometry.

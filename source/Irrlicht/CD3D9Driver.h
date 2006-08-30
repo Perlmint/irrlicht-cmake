@@ -59,10 +59,7 @@ namespace video
 		virtual const core::rect<s32>& getViewPort() const;
 
 		//! draws a vertex primitive list
-		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
-
-		//! draws an 2d image
-		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);
+		virtual void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
@@ -75,14 +72,14 @@ namespace video
 			video::SColor* colors=0, bool useAlphaChannelOfTexture=false);
 
 		//!Draws an 2d rectangle with a gradient.
-		void draw2DRectangle(const core::rect<s32>& pos,
+		virtual void draw2DRectangle(const core::rect<s32>& pos,
 			SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 			const core::rect<s32>* clip);
 
 		//! Draws a 2d line.
 		virtual void draw2DLine(const core::position2d<s32>& start,
-								const core::position2d<s32>& end,
-								SColor color=SColor(255,255,255,255));
+					const core::position2d<s32>& end,
+					SColor color=SColor(255,255,255,255));
 
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
@@ -208,7 +205,7 @@ namespace video
 		void setRenderStatesStencilShadowMode(bool zfail);
 
 		//! sets the current Texture
-		void setTexture(s32 stage, video::ITexture* texture);
+		bool setTexture(s32 stage, video::ITexture* texture);
 
 		//! resets the device
 		bool reset();
