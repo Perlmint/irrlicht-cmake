@@ -731,15 +731,16 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 	CNullDriver::drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount, vType, pType);
 
 	// convert colors to gl color format.
+	vertexCount *= 4; //reused as color component count
 	ColorBuffer.set_used(vertexCount);
 	switch (vType)
 	{
 		case EVT_STANDARD:
 		{
 			const S3DVertex* p = (const S3DVertex*)vertices;
-			for (s32 i=0; i<vertexCount; ++i)
+			for (s32 i=0; i<vertexCount; i+=4)
 			{
-				ColorBuffer[i] = p->Color.toOpenGLColor();
+				p->Color.toOpenGLColor(&ColorBuffer[i]);
 				++p;
 			}
 		}
@@ -747,9 +748,9 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 		case EVT_2TCOORDS:
 		{
 			const S3DVertex2TCoords* p = (const S3DVertex2TCoords*)vertices;
-			for (s32 i=0; i<vertexCount; ++i)
+			for (s32 i=0; i<vertexCount; i+=4)
 			{
-				ColorBuffer[i] = p->Color.toOpenGLColor();
+				p->Color.toOpenGLColor(&ColorBuffer[i]);
 				++p;
 			}
 		}
@@ -757,9 +758,9 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 		case EVT_TANGENTS:
 		{
 			const S3DVertexTangents* p = (const S3DVertexTangents*)vertices;
-			for (s32 i=0; i<vertexCount; ++i)
+			for (s32 i=0; i<vertexCount; i+=4)
 			{
-				ColorBuffer[i] = p->Color.toOpenGLColor();
+				p->Color.toOpenGLColor(&ColorBuffer[i]);
 				++p;
 			}
 		}

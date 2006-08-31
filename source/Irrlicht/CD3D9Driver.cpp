@@ -216,26 +216,31 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 
 	ZeroMemory(&present, sizeof(present));
 
-	present.SwapEffect		= fullScreen ? D3DSWAPEFFECT_FLIP : D3DSWAPEFFECT_COPY;
-	present.Windowed		= fullScreen ? FALSE : TRUE;
-	present.BackBufferFormat	= d3ddm.Format;
+	present.BackBufferCount		= 1;
 	present.EnableAutoDepthStencil	= TRUE;
-	present.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
+	if (vsync)
+		present.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	else
+		present.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	if (fullScreen)
 	{
 		present.BackBufferWidth = screenSize.Width;
 		present.BackBufferHeight = screenSize.Height;
-		present.BackBufferFormat = D3DFMT_R5G6B5;
-		present.BackBufferCount = 0;
-		present.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
-		if (vsync)
-			present.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-
 		// request 32bit mode if user specified 32 bit, added by Thomas Stüfe
 		if (bits == 32 && !StencilBuffer)
 			present.BackBufferFormat = D3DFMT_A8R8G8B8;
+		else
+			present.BackBufferFormat = D3DFMT_R5G6B5;
+		present.SwapEffect	= D3DSWAPEFFECT_FLIP;
+		present.Windowed	= FALSE;
+		present.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	}
+	else
+	{
+		present.BackBufferFormat	= d3ddm.Format;
+		present.SwapEffect		= D3DSWAPEFFECT_COPY;
+		present.Windowed		= TRUE;
 	}
 
 	D3DDEVTYPE devtype = D3DDEVTYPE_HAL;
@@ -248,17 +253,17 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	{
 		DWORD qualityLevels = 0;
 
-		if (!FAILED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+		if (SUCCEEDED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
 		           devtype, present.BackBufferFormat, !fullScreen,
 		           D3DMULTISAMPLE_2_SAMPLES, &qualityLevels)))
 		{
 			// enable multi sampling
-			present.SwapEffect         = D3DSWAPEFFECT_DISCARD;
 			present.MultiSampleType    = D3DMULTISAMPLE_2_SAMPLES;
 			present.MultiSampleQuality = qualityLevels-1;
+			present.SwapEffect         = D3DSWAPEFFECT_DISCARD;
 		}
 		else
-		if (!FAILED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+		if (SUCCEEDED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
 					devtype, present.BackBufferFormat, !fullScreen,
 					D3DMULTISAMPLE_NONMASKABLE, &qualityLevels)))
 		{

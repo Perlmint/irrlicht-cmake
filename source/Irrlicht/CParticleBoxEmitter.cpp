@@ -5,7 +5,7 @@
 #include "CParticleBoxEmitter.h"
 #include "os.h"
 #include "IAttributes.h"
-#include <math.h>
+#include "irrMath.h"
 
 namespace irr
 {

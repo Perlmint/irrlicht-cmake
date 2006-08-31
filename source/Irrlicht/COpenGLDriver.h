@@ -292,7 +292,7 @@ namespace video
 
 		core::stringw Name;
 		core::matrix4 Matrices[ETS_COUNT];
-		core::array<u32> ColorBuffer;
+		core::array<u8> ColorBuffer;
 
 		// enumeration for rendering modes such as 2d and 3d for minizing the switching of renderStates.
 		enum E_RENDER_MODE

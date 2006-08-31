@@ -190,14 +190,15 @@ namespace video
 		inline s16 toA1R5G5B5() const { return A8R8G8B8toA1R5G5B5(color); };
 
 		//! Converts color to OpenGL color format,
-		//! from ARGB to ABGR which is interpreted by OpenGL as RGBA.
-		//! \return Returns the 32 bit openGL color value.
-		inline u32 toOpenGLColor() const
+		//! from ARGB to RGBA in 4 byte components for endian aware
+		//! passing to OpenGL
+		//! \param dest: address where the 4x8 bit OpenGL color is stored.
+		inline void toOpenGLColor(u8* dest) const
 		{
-			return ((color & 0xff000000) |
-				((color & 0xff) <<16) |
-				(color & 0xff00) |
-				((color & 0xff0000) >>16));
+			*dest =   (color >> 16) & 0xff;
+			*++dest = (color >>  8) & 0xff;
+			*++dest = (color      ) & 0xff;
+			*++dest = (color >> 24) & 0xff;
 		};
 
 		//! Sets all four components of the color at once.

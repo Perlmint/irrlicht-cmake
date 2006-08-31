@@ -34,12 +34,15 @@ EXTRAOBJ =
 LINKOBJ = $(IRROBJ) $(IRRVIDEOOBJ) $(IRRSWRENDEROBJ) $(IRRIOOBJ) $(IRROTHEROBJ) $(IRRGUIOBJ) $(ZLIBOBJ) $(JPEGLIBOBJ) $(LIBPNGOBJ) $(EXTRAOBJ)
 
 LDFLAGS = -L/usr/X11R6/lib --no-export-all-symbols --add-stdcall-alias -lGLU -lGL -lXxf86vm
+WIN32_LIBS = -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglu32 -lopengl32
 CXXINCS = -I../../include -Izlib -Ijpeglib -Ilibpng -I/usr/X11R6/include
 STATIC_LIB = libIrrlicht.a
 SHARED_LIB = libIrrlicht.so
+IRRLICHT_DLL = ../../bin/Win32-gcc/Irrlicht.dll
 CPPFLAGS = $(CXXINCS) -DIRRLICHT_EXPORTS=1
 CXXFLAGS = -g -Wall -Wno-reorder
 # -fexpensive-optimizations -O3
+CFLAGS = -fexpensive-optimizations -O3
 INSTALL_DIR = /usr/local/lib
 
 # All target, builds Irrlicht as static lib (libIrrlicht.a) and copies it into /lib/Linux
@@ -54,6 +57,11 @@ sharedlib: $(LINKOBJ)
 staticlib: $(LINKOBJ)
 	$(AR) rs $(STATIC_LIB) $^
 	cp libIrrlicht.a ../../lib/Linux/
+
+# Builds Irrlicht on Linux systems as dll (Irrlicht.dll) using a cross compiler
+# into ../../bin/Win32-gcc
+$(IRRLICHT_DLL): $(LINKOBJ)
+	$(CXX) -shared -o $(BIN) $^ $(WIN32_LIBS) -Wl,--out-implib,$(STATIC_LIB)
 
 # Installs Irrlicht if it was created as shared lib
 install:
@@ -70,5 +78,5 @@ install:
 clean:
 	$(RM) $(LINKOBJ) $(SHARED_LIB).$(VERSION) $(STATIC_LIB) $(LINKOBJ:.o=.d)
 
-.PHONY: sharedlib staticlib install clean
+.PHONY: all sharedlib staticlib install clean
 

@@ -8,6 +8,7 @@
 #include "ITriangleSelector.h"
 
 #include "os.h"
+#include "irrMath.h"
 #include <stdio.h>
 
 namespace irr
@@ -685,6 +686,41 @@ core::position2d<s32> CSceneCollisionManager::getScreenCoordinatesFrom3DPosition
 	pos2d.Y = ((s32)(dim.Height - (dim.Height * (transformedPos[1] * zDiv))));
 
 	return pos2d;
+}
+
+inline bool CSceneCollisionManager::getLowestRoot(f32 a, f32 b, f32 c, f32 maxR, f32* root)
+{
+	// check if solution exists
+	f32 determinant = b*b - 4.0f*a*c;
+
+	// if determinant is negative, no solution
+	if (determinant < 0.0f) return false;
+
+	// calculate two roots: (if det==0 then x1==x2
+	// but lets disregard that slight optimization)
+
+	f32 sqrtD = (f32)sqrt(determinant);
+	f32 r1 = (-b - sqrtD) / (2*a);
+	f32 r2 = (-b + sqrtD) / (2*a);
+
+	// sort so x1 <= x2
+	if (r1 > r2) { f32 tmp=r2; r2=r1; r1=tmp; }
+
+	// get lowest root
+	if (r1 > 0 && r1 < maxR)
+	{
+		*root = r1;
+		return true;
+	}
+
+	// its possible that we want x2, this can happen if x1 < 0
+	if (r2 > 0 && r2 < maxR)
+	{
+		*root = r2;
+		return true;
+	}
+
+	return false;
 }
 
 

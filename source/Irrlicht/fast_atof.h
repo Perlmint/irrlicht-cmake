@@ -6,7 +6,7 @@
 #define __FAST_A_TO_F_H_INCLUDED__
 
 #include <stdlib.h>
-#include <math.h>
+#include "irrMath.h"
 
 namespace irr
 {

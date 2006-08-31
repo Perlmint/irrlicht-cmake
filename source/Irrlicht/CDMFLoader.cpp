@@ -21,7 +21,6 @@
 #include "irrString.h"
 #include "irrMath.h"
 #include <string.h>
-#include <math.h>
 #include "dmfsupport.h"
 
 namespace irr
