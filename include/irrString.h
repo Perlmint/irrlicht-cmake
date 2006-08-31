@@ -139,7 +139,7 @@ public:
 	//! destructor
 	~string()
 	{
-		allocator.deallocate(array); // (delete [] array;
+		allocator.deallocate(array); // delete [] array;
 	}
 
 
@@ -171,10 +171,10 @@ public:
 		{
 			if (!array)
 			{
-				array = allocator.allocate((T)1); //new T[1];
+				array = allocator.allocate(1); //new T[1];
 				allocated = 1;
-				used = 1;
 			}
+			used = 1;
 			array[0] = 0x0;
 			return *this;
 		}
@@ -190,8 +190,8 @@ public:
 			++p;
 		}
 
-		// we'll take the old string for a while, because the new string could be
-		// a part of the current string.
+		// we'll take the old string for a while, because the new
+		// string could be a part of the current string.
 		T* oldArray = array;
 
 		allocated = used = len+1;

@@ -408,6 +408,7 @@ namespace video
 				SpecularColor != b.SpecularColor ||
 				Shininess != b.Shininess ||
 				MaterialTypeParam != b.MaterialTypeParam ||
+				MaterialTypeParam2 != b.MaterialTypeParam2 ||
 				Wireframe != b.Wireframe ||
 				PointCloud != b.PointCloud ||
 				GouraudShading != b.GouraudShading ||
