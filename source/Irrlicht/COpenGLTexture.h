@@ -12,22 +12,31 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#ifdef _IRR_WINDOWS_
+#ifdef WIN32
+	// include windows headers for HWND
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include <GL/gl.h>
 	#include <GL/glu.h>
-#else // _IRR_WINDOWS_
-	#ifdef MACOSX
-		#include <OpenGL/gl.h>
-		#include <OpenGL/glext.h>
-		#include <OpenGL/glu.h>
-	#else
-		#include <GL/gl.h>
-		#include <GL/glx.h>
-		#include <GL/glu.h>
-	#endif // MACOSX
-#endif // _IRR_WINDOWS_
+	#include "glext.h"
+	#pragma comment(lib, "OpenGL32.lib")
+	#pragma comment(lib, "GLu32.lib")
+#elif defined(MACOSX)
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
+	#include <OpenGL/glext.h>
+#else
+	#if defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+		#define GL_GLEXT_LEGACY 1
+	#endif
+	#include <GL/gl.h>
+	#if defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+		#include "glext.h"
+	#endif
+	#include <GL/glu.h>
+	#include <GL/glx.h>
+	#include <X11/Xlib.h>
+#endif
 
 namespace irr
 {
@@ -94,7 +103,7 @@ private:
 	core::dimension2d<s32> OriginalSize;
 	s32 Pitch;
 	bool SurfaceHasSameSize; // true if Surface has the same dimension as texture.
-	c8* ImageData;
+	u8* ImageData;
 	ECOLOR_FORMAT ColorFormat;
 	COpenGLDriver* Driver;
 

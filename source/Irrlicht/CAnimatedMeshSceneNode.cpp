@@ -335,12 +335,12 @@ void CAnimatedMeshSceneNode::setAnimationSpeed(s32 framesPerSecond)
 
 
 
-
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CAnimatedMeshSceneNode::getBoundingBox() const
 {
 	return Box;//Mesh ? Mesh->getBoundingBox() : Box;
 }
+
 
 
 //! returns the material based on the zero based index i. To get the amount

@@ -53,17 +53,17 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	#endif
 
 	// print version, distribution etc.
-	core::stringc linuxversion("Linux ");
-
 	// thx to LynxLuna for pointing me to the uname function
-	utsname LinuxInfo; 
+	struct utsname LinuxInfo; 
 	uname(&LinuxInfo);
 
-	linuxversion += LinuxInfo.sysname;
+	core::stringc linuxversion(LinuxInfo.sysname);
 	linuxversion += " ";
 	linuxversion += LinuxInfo.release;
 	linuxversion += " ";
 	linuxversion += LinuxInfo.version;
+	linuxversion += " ";
+	linuxversion += LinuxInfo.machine;
 
 	Operator = new COSOperator(linuxversion.c_str());
 	os::Printer::log(linuxversion.c_str(), ELL_INFORMATION);

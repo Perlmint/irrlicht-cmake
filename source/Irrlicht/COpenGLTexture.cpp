@@ -10,7 +10,6 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#include "glext.h"
 #include <cstring>
 
 namespace irr
@@ -85,24 +84,19 @@ void COpenGLTexture::getImageData(IImage* image)
 	}
 
 	Pitch = nImageSize.Width*bpp;
-	ImageData = new c8[Pitch * nImageSize.Height];
+	ImageData = new u8[Pitch * nImageSize.Height];
 
-	c8* source = (c8*)image->lock();
 	if (nImageSize == ImageSize)
 	{
+		void* source = image->lock();
 		if (image->getColorFormat()==ECF_R8G8B8)
-		{
-			u32* dest = (u32*)ImageData;
-			for (s32 i=0; i<3*ImageSize.Width*ImageSize.Height; i+=3)
-			{
-				*dest++=SColor(255,source[i],source[i+1],source[i+2]).color;
-			}
-		}
+			CColorConverter::convert_R8G8B8toA8R8G8B8(source,ImageSize.Width*ImageSize.Height,ImageData);
 		else
-			memcpy(ImageData,source,Pitch * nImageSize.Height);
+			memcpy(ImageData,source,Pitch*nImageSize.Height);
 	}
 	else
 	{
+		u8* source = (u8*)image->lock();
 		// scale texture
 
 		f32 sourceXStep = (f32)ImageSize.Width / (f32)nImageSize.Width;
@@ -199,19 +193,19 @@ void COpenGLTexture::copyTexture()
 	}
 
 	#ifndef DISABLE_MIPMAPPING
-	if (HasMipMaps)
+	if (HasMipMaps && Driver && Driver->queryFeature(EVDF_MIP_MAP_AUTO_UPDATE))
 	{
-		if (Driver && Driver->queryFeature(EVDF_MIP_MAP_AUTO_UPDATE))
-		{
-			// automatically generate and update mipmaps
-			glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
-			AutomaticMipmapUpdate=true;
-		}
-		else
-		{
-			AutomaticMipmapUpdate=false;
-			regenerateMipMapLevels();
-		}
+		// automatically generate and update mipmaps
+		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
+		AutomaticMipmapUpdate=true;
+	}
+	else
+	{
+		AutomaticMipmapUpdate=false;
+		regenerateMipMapLevels();
+	}
+	if (HasMipMaps) // might have changed in regenerateMipMapLevels
+	{
 		// enable bilinear mipmap filter
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -326,11 +320,24 @@ void COpenGLTexture::regenerateMipMapLevels()
 {
 	if (AutomaticMipmapUpdate || !HasMipMaps)
 		return;
+		HasMipMaps=false;
+	return;
+	if (gluBuild2DMipmaps(GL_TEXTURE_2D, InternalFormat,
+			ImageSize.Width, ImageSize.Height,
+			PixelFormat, PixelType, ImageData))
+		return;
+	else
+		HasMipMaps=false;
+	return;
+
+	// This code is wrong as it does not take into account the image scaling
+	// Therefore it is currently disabled
 	u32 width=ImageSize.Width>>1;
 	u32 height=ImageSize.Height>>1;
 	u32 i=1;
 	while (width>1 || height>1)
 	{
+		//TODO: Add image scaling
 		glTexImage2D(GL_TEXTURE_2D, i, InternalFormat, ImageSize.Width,
 			ImageSize.Height, 0, PixelFormat, PixelType, ImageData);
 		if (width>1)
