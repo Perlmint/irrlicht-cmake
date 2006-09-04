@@ -75,7 +75,22 @@ CFileList::CFileList()
 	entry.isDirectory = true;
 	Files.push_back(entry);
 
-	Path = getcwd(NULL,0);
+	// getting the CWD is rather complex as we do not know the size
+	// so try it until the call was successful
+	// Note that neither the first nor the second parameter may be 0 according to POSIX
+	u32 pathSize=256;
+	char *tmpPath = new char[pathSize];
+	while ((pathSize < (1<<16)) && !(getcwd(tmpPath,pathSize)))
+	{
+		delete [] tmpPath;
+		pathSize *= 2;
+		tmpPath = new char[pathSize];
+	}
+	if (!tmpPath)
+		return;
+	Path = tmpPath;
+	delete [] tmpPath;
+	// We use the POSIX compliant methods instead of scandir
 	DIR* dirHandle=opendir(Path.c_str());
 	if (!dirHandle)
 		return;
@@ -96,6 +111,7 @@ CFileList::CFileList()
 			entry.isDirectory = S_ISDIR(buf.st_mode);
 		}
 		#if !defined(__sun__) && !defined(__CYGWIN__)
+		// only available on some systems
 		else
 		{
 			entry.isDirectory = dirEntry->d_type == DT_DIR;
@@ -105,6 +121,7 @@ CFileList::CFileList()
 	}
 	closedir(dirHandle);
 	#endif
+	// sort the list on all platforms
 	Files.sort();
 }
 

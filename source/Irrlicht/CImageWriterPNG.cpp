@@ -96,43 +96,86 @@ bool CImageWriterPNG::writeImage(io::IWriteFile* file, IImage* image)
 
 	png_set_write_fn(png_ptr, file, user_write_data_fcn, NULL);
 
-os::Printer::log(core::stringc(image->getColorFormat()).c_str());
 	// Set info
 	png_set_IHDR(png_ptr, info_ptr,
 		image->getDimension().Width, image->getDimension().Height,
 		8, image->getColorFormat()==ECF_A8R8G8B8?PNG_COLOR_TYPE_RGB_ALPHA:PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
+	s32 lineWidth=0;
+	switch(image->getColorFormat())
+	{
+	case ECF_R8G8B8:
+	case ECF_R5G6B5:
+		lineWidth=3;
+		break;
+	case ECF_A8R8G8B8:
+	case ECF_A1R5G5B5:
+		lineWidth=4;
+		break;
+	}
+	lineWidth *= image->getDimension().Width;
+	u8* tmpImage = new u8[image->getDimension().Height*lineWidth];
+	if (!tmpImage)
+	{
+		os::Printer::log("LOAD PNG: Internal PNG create image failure\n", file->getFileName(), ELL_ERROR);
+		png_destroy_write_struct(&png_ptr, &info_ptr);
+		return false;
+	}
+
+	u8* data = (u8*)image->lock();
+	switch(image->getColorFormat())
+	{
+	case ECF_R8G8B8:
+		CColorConverter::convert_R8G8B8toR8G8B8(data,image->getDimension().Height*image->getDimension().Width,tmpImage);
+		break;
+	case ECF_A8R8G8B8:
+		CColorConverter::convert_A8R8G8B8toA8R8G8B8(data,image->getDimension().Height*image->getDimension().Width,tmpImage);
+		break;
+	case ECF_R5G6B5:
+		CColorConverter::convert_R5G6B5toR8G8B8(data,image->getDimension().Height*image->getDimension().Width,tmpImage);
+		break;
+	case ECF_A1R5G5B5:
+		CColorConverter::convert_A1R5G5B5toA8R8G8B8(data,image->getDimension().Height*image->getDimension().Width,tmpImage);
+		break;
+	}
+	image->unlock();
 	// Create array of pointers to rows in image data
 	RowPointers = new png_bytep[image->getDimension().Height];
 	if (!RowPointers)
 	{
 		os::Printer::log("LOAD PNG: Internal PNG create row pointers failure\n", file->getFileName(), ELL_ERROR);
 		png_destroy_write_struct(&png_ptr, &info_ptr);
+		delete [] tmpImage;
 		return false;
 	}
 
+	data=tmpImage;
 	// Fill array of pointers to rows in image data
-	unsigned char* data = (unsigned char*)image->lock();
-	for (u32 i=0; i<image->getDimension().Height; ++i)
+	for (s32 i=0; i<image->getDimension().Height; ++i)
 	{
 		RowPointers[i]=data;
-		data += image->getPitch();
+		data += lineWidth;
 	}
 	// for proper error handling
 	if (setjmp(png_jmpbuf(png_ptr)))
 	{
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		delete [] RowPointers;
-		image->unlock();
+		delete [] tmpImage;
 		return false;
 	}
 
 	png_set_rows(png_ptr, info_ptr, RowPointers);
 
-	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR, NULL);
+	if (image->getColorFormat()==ECF_A8R8G8B8 || image->getColorFormat()==ECF_A1R5G5B5)
+		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR, NULL);
+	else
+	{
+		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+	}
 
 	delete [] RowPointers;
-	image->unlock();
+	delete [] tmpImage;
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 	return true;
 #else
