@@ -622,7 +622,7 @@ void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& t
 		file->read(&c, sizeof(c8));
 	}
 	while ((!isspace(c)) && (file->getPos() < file->getSize()));
-	if (c == '\n' && noNewLine);
+	if (c == '\n' && noNewLine)
 		file->seek(-1, true);
 }
 

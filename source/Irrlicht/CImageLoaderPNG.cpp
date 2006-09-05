@@ -63,7 +63,7 @@ bool CImageLoaderPng::isALoadableFileExtension(const c8* fileName)
 #ifdef _IRR_COMPILE_WITH_LIBPNG_
 	// added fix for file extension check by jox
 	const c8* ext = strrchr(fileName, '.');
-	if (ext == 0);
+	if (ext == 0)
 		return false;
 	return (strcmp(ext, ".PNG") == 0) || (strcmp(ext, ".png") == 0);
 #else
