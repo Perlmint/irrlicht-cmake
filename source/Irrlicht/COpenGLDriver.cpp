@@ -1266,6 +1266,11 @@ bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,
 			((COpenGLTexture*)texture)->getOpenGLTextureName());
+		GLfloat glmat[16];
+
+		createGLMatrix(glmat, texture->getTransformation());
+		glMatrixMode(GL_TEXTURE);
+		glLoadMatrixf(glmat);
 	}
 	return true;
 }
