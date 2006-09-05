@@ -566,7 +566,8 @@ bool CD3D8Driver::setTexture(s32 stage, video::ITexture* texture)
 	{
 		pID3DDevice->SetTexture(stage, ((CD3D8Texture*)texture)->getDX8Texture());
 		texture->grab();
-		pID3DDevice->SetTransform(D3DTS_TEXTURE0+stage, (D3DMATRIX*)((void*)&texture->getTransformation()));
+		pID3DDevice->SetTextureStageState( stage, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
+		pID3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+stage), (D3DMATRIX*)((void*)&texture->getTransformation()));
 	}
 	return true;
 }
