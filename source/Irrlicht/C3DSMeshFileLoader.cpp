@@ -321,10 +321,13 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			{
 				float percentage;
 				readPercentageChunk(file, &data, percentage);
-				if (percentage>0.0f) {
+				if (percentage>0.0f)
+				{
 					CurrentMaterial.Material.MaterialTypeParam=percentage;
 					CurrentMaterial.Material.MaterialType=video::EMT_TRANSPARENT_VERTEX_ALPHA;
-				} else {
+				}
+				else
+				{
 					CurrentMaterial.Material.MaterialType=video::EMT_SOLID;
 				}
 			}
@@ -339,7 +342,8 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			{
 				s16 flags;
 				file->read(&flags, 2);
-				switch (flags) {
+				switch (flags)
+				{
 					case 0:
 						CurrentMaterial.Material.Wireframe=true;
 						break;
@@ -442,7 +446,8 @@ bool C3DSMeshFileLoader::readTrackChunk(io::IReadFile* file, ChunkData& data,
 	data.read += 20;
 
 	f32 angle=0.0f;
-	if (data.header.id== C3DS_ROT_TRACK_TAG) {
+	if (data.header.id== C3DS_ROT_TRACK_TAG)
+	{
 		// Angle
 		file->read(&angle, sizeof(f32));
 		data.read += sizeof(f32);
@@ -455,16 +460,20 @@ bool C3DSMeshFileLoader::readTrackChunk(io::IReadFile* file, ChunkData& data,
 	vec-=pivot;
 
 	// apply transformation to mesh buffer
-	if (mb) {
+	if (false)//mb)
+	{
 		video::S3DVertex *vertices=(video::S3DVertex*)mb->getVertices();
-		if (data.header.id==C3DS_POS_TRACK_TAG) {
+		if (data.header.id==C3DS_POS_TRACK_TAG)
+		{
 			for (s32 i=0; i<mb->getVertexCount(); ++i)
 				vertices[i].Pos+=vec;
-		} else
-		if (data.header.id==C3DS_ROT_TRACK_TAG) {
+		}
+		else if (data.header.id==C3DS_ROT_TRACK_TAG)
+		{
 			//TODO
-		} else
-		if (data.header.id==C3DS_SCL_TRACK_TAG) {
+		}
+		else if (data.header.id==C3DS_SCL_TRACK_TAG)
+		{
 			//TODO
 		}
 	}
@@ -484,7 +493,8 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 	readChunkData(file, data);
 	if (data.header.id != C3DS_KF_HDR)
 		return false;
-	else {
+	else
+	{
 		u16 flags;
 		file->read(&flags, 2);
 		c8* c = new c8[data.header.length - data.read-4];
@@ -525,8 +535,10 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 				file->read(c, data.header.length - data.read-6);
 
 				// search mesh buffer to apply these transformations to
-				for (u32 i=0; i<MeshBufferNames.size(); ++i) {
-					if (MeshBufferNames[i]==c) {
+				for (u32 i=0; i<MeshBufferNames.size(); ++i)
+				{
+					if (MeshBufferNames[i]==c)
+					{
 						mb=Mesh->getMeshBuffer(i);
 						break;
 					}
@@ -708,11 +720,13 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 			{
 				f32 mat[4][3];
 				file->read(&mat, 12*sizeof(f32));
-				for (int i=0; i<3; ++i) {
+				for (int i=0; i<3; ++i)
+				{
 					for (int j=0; j<3; ++j)
 						TransformationMatrix(i,j)=mat[i][j];
 				}
-				for (int j=0; j<3; ++j) {
+				for (int j=0; j<3; ++j)
+				{
 					TransformationMatrix(j,3)=mat[3][j];
 				}
 				TransformationMatrix=TransformationMatrix.getTransposed();
@@ -798,7 +812,8 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 			video::S3DVertex vtx;
 			core::vector3df vec;
 			vtx.Color=mat->DiffuseColor;
-			if (mat->MaterialType==video::EMT_TRANSPARENT_VERTEX_ALPHA) {
+			if (mat->MaterialType==video::EMT_TRANSPARENT_VERTEX_ALPHA)
+			{
 				vtx.Color.setAlpha((int)(255.0f*mat->MaterialTypeParam));
 			}
 			vtx.Normal.set(0,0,0);
@@ -889,7 +904,8 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 		{
 			m->Material.Texture1 = Driver->getTexture(Materials[i].Filename[0].c_str());
 			
-			if (!m->Material.Texture1) {
+			if (!m->Material.Texture1)
+			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[0], modelFilename);
 				if (fname.size())
@@ -905,17 +921,21 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 		{
 			m->Material.Texture1 = Driver->getTexture(Materials[i].Filename[2].c_str());
 			
-			if (!m->Material.Texture1) {
+			if (!m->Material.Texture1)
+			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[2], modelFilename);
 				if (fname.size())
 					m->Material.Texture1 = Driver->getTexture(fname.c_str());				
 			}
 
-			if (!m->Material.Texture1) {
+			if (!m->Material.Texture1)
+			{
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[2].c_str(), ELL_WARNING);
-			} else {
+			}
+			else
+			{
 				m->Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
 			}
 		}
@@ -926,19 +946,23 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 			m->Material.Texture1=0;
 			m->Material.Texture1 = Driver->getTexture(Materials[i].Filename[3].c_str());
 			
-			if (!m->Material.Texture1) {
+			if (!m->Material.Texture1)
+			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[3], modelFilename);
 				if (fname.size())
 					m->Material.Texture1 = Driver->getTexture(fname.c_str());				
 			}
 
-			if (!m->Material.Texture1) {
+			if (!m->Material.Texture1)
+			{
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[3].c_str(), ELL_WARNING);
 				m->Material.Texture1=m->Material.Texture2;
 				m->Material.Texture2=0;
-			} else {
+			}
+			else
+			{
 				m->Material.MaterialType=video::EMT_REFLECTION_2_LAYER;
 			}
 		}
@@ -947,7 +971,8 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 		{
 			m->Material.Texture2 = Driver->getTexture(Materials[i].Filename[4].c_str());
 			
-			if (!m->Material.Texture2) {
+			if (!m->Material.Texture2)
+			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[4], modelFilename);
 				if (fname.size())
@@ -957,7 +982,8 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 			if (!m->Material.Texture2)
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[4].c_str(), ELL_WARNING);
-			else {
+			else
+			{
 				Driver->makeNormalMapTexture(m->Material.Texture2, 9.0f);
 				m->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
 				m->Material.MaterialTypeParam=0.035f;
