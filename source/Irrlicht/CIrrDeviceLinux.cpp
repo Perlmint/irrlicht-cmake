@@ -45,8 +45,8 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	bool sbuffer, bool vsync, bool antiAlias,
 	IEventReceiver* receiver,
 	const char* version)
- : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), DriverType(driverType),
-	Fullscreen(fullscreen), StencilBuffer(sbuffer), SoftwareImage(0)
+ : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
+	DriverType(driverType), Fullscreen(fullscreen), StencilBuffer(sbuffer), SoftwareImage(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CIrrDeviceLinux");
@@ -109,16 +109,25 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 			if (!glXMakeCurrent(display, None, NULL))
 				os::Printer::log("Could not release glx context.", ELL_WARNING);
 			glXDestroyContext(display, Context);
-//			glXDestroyWindow(display, glxWin);
+			if (UseGLXWindow)
+				glXDestroyWindow(display, glxWin);
 			Context = 0;
 		}
 		#endif // #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 		#ifdef _IRR_LINUX_X11_VIDMODE_
-		if (Fullscreen)
+		if (UseXVidMode && Fullscreen)
 		{
 			XF86VidModeSwitchToMode(display, screennr, &oldVideoMode);
 			XF86VidModeSetViewPort(display, screennr, 0, 0);
+		}
+		#endif
+		#ifdef _IRR_LINUX_X11_RANDR_
+		if (UseXRandR && Fullscreen)
+		{
+			XRRScreenConfiguration *config=XRRGetScreenInfo(display,DefaultRootWindow(display));
+			XRRSetScreenConfig(display,config,DefaultRootWindow(display),oldRandrMode,oldRandrRotation,CurrentTime);
+			XRRFreeScreenConfigInfo(config);
 		}
 		#endif
 
@@ -128,6 +137,7 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		XCloseDisplay(display);
 	}
 }
+
 
 
 #ifdef _DEBUG
@@ -140,6 +150,8 @@ int IrrPrintXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 #endif
+
+
 
 bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						  u32 bits)
@@ -165,70 +177,91 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	if (Fullscreen)
 	{
-		#ifdef _IRR_LINUX_X11_VIDMODE_
 		s32 eventbase, errorbase;
-		if (!XF86VidModeQueryExtension(display, &eventbase, &errorbase))
+		s32 modeCount;
+		s32 bestMode = -1;
+		s32 defaultDepth=DefaultDepth(display,screennr);
+		bool videoListEmpty = VideoModeList.getVideoModeCount() == 0;
+
+		#ifdef _IRR_LINUX_X11_VIDMODE_
+		if (XF86VidModeQueryExtension(display, &eventbase, &errorbase))
+		{
+			// enumerate video modes
+			XF86VidModeModeInfo** modes;
+
+			XF86VidModeGetAllModeLines(display, screennr, &modeCount, &modes);
+
+			// save current video mode
+
+			oldVideoMode = *modes[0];
+
+			// find fitting mode
+
+			for (s32 i = 0; i<modeCount; ++i)
+			{
+				if (modes[i]->hdisplay == Width && modes[i]->vdisplay == Height)
+				{
+					bestMode = i;
+					if (videoListEmpty)
+						VideoModeList.addMode(core::dimension2d<s32>(
+							modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
+				}
+			}
+			if (bestMode != -1)
+			{
+				os::Printer::log("Starting fullscreen mode...", ELL_INFORMATION);
+				XF86VidModeSwitchToMode(display, screennr, modes[bestMode]);
+				XF86VidModeSetViewPort(display, screennr, 0, 0);
+				UseXVidMode=true;
+			}
+			else
+			{
+				os::Printer::log("Could not find specified video mode, running windowed.", ELL_WARNING);
+				Fullscreen = false;
+			}
+
+			XFree(modes);
+		}
+		else
+		#endif
+		#ifdef _IRR_LINUX_X11_RANDR_
+		if (XRRQueryExtension(display, &eventbase, &errorbase))
+		{
+			XRRScreenConfiguration *config=XRRGetScreenInfo(display,DefaultRootWindow(display));
+			oldRandrMode=XRRConfigCurrentConfiguration(config,&oldRandrRotation);
+			XRRScreenSize *modes=XRRConfigSizes(config,&modeCount);
+			for (s32 i = 0; i<modeCount; ++i)
+			{
+				if (modes[i].width == Width && modes[i].height == Height)
+				{
+					bestMode = i;
+					if (videoListEmpty)
+						VideoModeList.addMode(core::dimension2d<s32>(
+							modes[i].width, modes[i].height), defaultDepth);
+				}
+			}
+			if (bestMode != -1)
+			{
+				XRRSetScreenConfig(display,config,DefaultRootWindow(display),bestMode,oldRandrRotation,CurrentTime);
+				UseXRandR=true;
+			}
+			XRRFreeScreenConfigInfo(config);
+		}
+		else
 		#endif
 		{
 			os::Printer::log("VidMode extension must be installed to allow Irrlicht "
-			"to switch to fullscreen mode. Running in window mode instead.", ELL_WARNING);
+			"to switch to fullscreen mode. Running in windowed mode instead.", ELL_WARNING);
 			Fullscreen = false;
 		}
 	}
 
-	#ifdef _IRR_LINUX_X11_VIDMODE_
-	XF86VidModeModeInfo newVideoMode;
-	s32 bestMode = -1;
-	if (Fullscreen)
-	{
-		// enumerate video modes
-		s32 modeCount;
-		XF86VidModeModeInfo** modes;
-
-		XF86VidModeGetAllModeLines(display, screennr, &modeCount, &modes);
-
-		// save current video mode
-
-		newVideoMode = oldVideoMode = *modes[0];
-
-		// find fitting mode
-
-		bool videoListEmpty = VideoModeList.getVideoModeCount() == 0;
-		s32 defaultDepth=DefaultDepth(display,screennr);
-
-		for (s32 i = 0; i<modeCount; ++i)
-		{
-			if (modes[i]->hdisplay == Width && modes[i]->vdisplay == Height)
-			{
-				bestMode = i;
-				if (videoListEmpty)
-					VideoModeList.addMode(core::dimension2d<s32>(
-						modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
-			}
-		}
-		if (bestMode != -1)
-		{
-			os::Printer::log("Starting fullscreen mode...", ELL_INFORMATION);
-			XF86VidModeSwitchToMode(display, screennr, modes[bestMode]);
-			XF86VidModeSetViewPort(display, screennr, 0, 0);
-		}
-		else
-		{
-			os::Printer::log("Could not find specified video mode, running windowed.", ELL_WARNING);
-			Fullscreen = false;
-		}
-
-		XFree(modes);
-	}
-	#endif
-	
 	// get visual
 	XVisualInfo* visual = 0;
 	
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 	Context=0;
-	bool glxDrawable=false;
 	GLXFBConfig glxFBConfig;
 	s32 major, minor;
 	if (glXQueryExtension(display,&major,&minor) &&
@@ -275,7 +308,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 			{
 				glxFBConfig=configList[0];
 				XFree(configList);
-				glxDrawable=true;
+				UseGLXWindow=true;
 				visual = glXGetVisualFromFBConfig(display,glxFBConfig);
 			}
 		}
@@ -399,7 +432,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	// connect glx context to window
 
-	if (glxDrawable)
+	if (UseGLXWindow)
 	{
 		// glXCreateWindow not yet supported by hardware accelerated X11 under Linux
 //		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);

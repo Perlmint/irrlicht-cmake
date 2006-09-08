@@ -18,11 +18,16 @@
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 #include <GL/gl.h>
 #include <GL/glx.h>
+#ifndef __sun__
 #include <GL/glxext.h>
+#endif
 #endif
 #include <X11/Xlib.h>
 #ifdef _IRR_LINUX_X11_VIDMODE_
 #include <X11/extensions/xf86vmode.h>
+#endif
+#ifdef _IRR_LINUX_X11_RANDR_
+#include <X11/extensions/Xrandr.h>
 #endif
 #include <X11/keysym.h>
 
@@ -219,17 +224,24 @@ namespace irr
 		XSetWindowAttributes attributes;
 		bool Fullscreen;
 		bool StencilBuffer;
-		#ifdef _IRR_LINUX_X11_VIDMODE_
-		XF86VidModeModeInfo oldVideoMode;
-		#endif
 		XEvent event;
 		XImage* SoftwareImage;
 		video::E_DRIVER_TYPE DriverType;
 
-		int x,y;
-		unsigned int Width, Height, Depth;
+		s32 x,y;
+		u32 Width, Height, Depth;
 		bool Close;
 		bool WindowActive;
+		bool UseXVidMode;
+		bool UseXRandR;
+		bool UseGLXWindow;
+		#ifdef _IRR_LINUX_X11_VIDMODE_
+		XF86VidModeModeInfo oldVideoMode;
+		#endif
+		#ifdef _IRR_LINUX_X11_RANDR_
+		SizeID oldRandrMode;
+		Rotation oldRandrRotation;
+		#endif
 
 		struct SKeyMap
 		{
