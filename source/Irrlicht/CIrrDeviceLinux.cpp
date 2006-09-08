@@ -177,18 +177,19 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	}
 
 	#ifdef _IRR_LINUX_X11_VIDMODE_
-	XF86VidModeModeInfo** modes;
+	XF86VidModeModeInfo newVideoMode;
 	s32 bestMode = -1;
 	if (Fullscreen)
 	{
 		// enumerate video modes
 		s32 modeCount;
+		XF86VidModeModeInfo** modes;
 
 		XF86VidModeGetAllModeLines(display, screennr, &modeCount, &modes);
 
 		// save current video mode
 
-		oldVideoMode = *modes[0];
+		newVideoMode = oldVideoMode = *modes[0];
 
 		// find fitting mode
 
@@ -205,6 +206,19 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
 			}
 		}
+		if (bestMode != -1)
+		{
+			os::Printer::log("Starting fullscreen mode...", ELL_INFORMATION);
+			XF86VidModeSwitchToMode(display, screennr, modes[bestMode]);
+			XF86VidModeSetViewPort(display, screennr, 0, 0);
+		}
+		else
+		{
+			os::Printer::log("Could not find specified video mode, running windowed.", ELL_WARNING);
+			Fullscreen = false;
+		}
+
+		XFree(modes);
 	}
 	#endif
 	
@@ -326,17 +340,12 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	if (!visual)
 	{
 		os::Printer::log("Fatal error, could not get visual.", ELL_ERROR);
-		#ifdef _IRR_LINUX_X11_VIDMODE_
-		if (Fullscreen)
-			XFree(modes);
-		#endif
 		XCloseDisplay(display);
 		display=0;
 		return false;
 	}
 
 	// create color map
-
 	Colormap colormap;
 	colormap = XCreateColormap(display,
 			    RootWindow(display, visual->screen),
@@ -348,25 +357,14 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 			StructureNotifyMask | PointerMotionMask |
 			ButtonReleaseMask | KeyReleaseMask;
 
-#ifdef _IRR_LINUX_X11_VIDMODE_
-	// switch to fullscreen if extension is installed.
-
-	if (Fullscreen && bestMode != -1)
+	// create Window, either for Fullscreen or windowed mode
+	if (Fullscreen)
 	{
-		os::Printer::log("Starting fullscreen mode...", ELL_INFORMATION);
-		XF86VidModeSwitchToMode(display, screennr, modes[bestMode]);
-		XF86VidModeSetViewPort(display, screennr, 0, 0);
-
-		s32 displayW = modes[bestMode]->hdisplay;
-		s32 displayH = modes[bestMode]->vdisplay;
-
-		XFree(modes);
-
 		attributes.override_redirect = True;
 
 		window = XCreateWindow(display,
 				RootWindow(display, visual->screen),
-				0, 0, displayW, displayH, 0, visual->depth,
+				0, 0, Width, Height, 0, visual->depth,
 				InputOutput, visual->visual,
 				CWBorderPixel | CWColormap | CWEventMask |
 				CWOverrideRedirect, &attributes);
@@ -374,20 +372,13 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		XWarpPointer(display, None, window, 0, 0, 0, 0, 0, 0);
 		XMapRaised(display, window);
 		XGrabKeyboard(display, window, True, GrabModeAsync,
-		GrabModeAsync, CurrentTime);
+			GrabModeAsync, CurrentTime);
 		XGrabPointer(display, window, True, ButtonPressMask,
 			GrabModeAsync, GrabModeAsync, window, None, CurrentTime);
 	}
 	else
-#endif
 	{
 		// we want windowed mode
-		if (Fullscreen)
-		{
-			os::Printer::log("Could not find specified video mode, running windowed.", ELL_WARNING);
-			Fullscreen = false;
-		}
-
 		attributes.event_mask |= ExposureMask;
 
 		window = XCreateWindow(display,
@@ -663,6 +654,10 @@ void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 //! presents a surface in the client area
 void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32>* src )
 {
+	// this is only necessary for software drivers.
+	if (DriverType != video::EDT_SOFTWARE && DriverType != video::EDT_SOFTWARE2)
+		return;
+
 	// thx to Nadav, who send me some clues of how to display the image 
 	// to the X Server.
 
@@ -677,66 +672,50 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 	int destheight = SoftwareImage->height;
 	int srcwidth = image->getDimension().Width;
 	int srcheight = image->getDimension().Height;
+	// clip images
+	srcheight = srcheight < destheight ? srcheight : destheight;
 	
 	if ( image->getColorFormat() == video::ECF_A8R8G8B8 )
 	{
-		// display 32 bit image
+		// display 24/32 bit image
 		
 		s32* srcdata = (s32*)image->lock();
 		
-		if (Depth == 32)
+		if ((Depth == 32)||(Depth == 24))
 		{	
 			int destPitch = SoftwareImage->bytes_per_line / 4;
 			s32* destData = reinterpret_cast<s32*>(SoftwareImage->data);
 			
 			for (int y=0; y<srcheight; ++y)
-				for (int x=0; x<srcwidth; ++x)
-					if (x < destwidth && y < destheight)
-						destData[y*destPitch + x] = srcdata[y*srcwidth+x];
+			{
+				video::CColorConverter::convert_A8R8G8B8toA8R8G8B8(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
+				srcdata+=srcwidth;
+				destData+=destPitch;
+			}
 		}
 		else
 		if (Depth == 16)
 		{
-			// convert from A1R5G5B5 to R5G6B6
+			// convert to R5G6B6
 			
 			int destPitch = SoftwareImage->bytes_per_line / 2;
 			s16* destData = reinterpret_cast<s16*>(SoftwareImage->data);
 			
-			for (int x=0; x<srcwidth; ++x)
-				for (int y=0; y<srcheight; ++y)
-					if (x < destwidth && y < destheight)
-					{
-						s16 c = video::X8R8G8B8toA1R5G5B5(srcdata[y*srcwidth+x]);
-						destData[y*destPitch + x] = 
-							((c >> 10)&0x1F)<<11 |
-							((c >> 5)&0x1F) << 6 |
-							((c)&0x1F);
-					}
-		}
-		else
-		if (Depth == 24)
-		{
-			// convert from A1R5G5B5 to X8R8G8B8
-	
-			int destPitch = SoftwareImage->bytes_per_line / 4;
-			s32* destData = reinterpret_cast<s32*>(SoftwareImage->data);
-			
 			for (int y=0; y<srcheight; ++y)
-				for (int x=0; x<srcwidth; ++x)
-					if (x < destwidth && y < destheight)
-						destData[y*destPitch + x] = srcdata[y*srcwidth+x];
+			{
+				video::CColorConverter::convert_A8R8G8B8toR5G6B5(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
+				srcdata+=srcwidth;
+				destData+=destPitch;
+			}
 		}
 		else
-		{
 			os::Printer::log("Unsupported screen depth.");
-		}
 		
 		image->unlock();
 	}
 	else
 	{
-	
-		// display 16 bit image:
+		// display 16 bit image
 	
 		s16* srcdata = (s16*)image->lock();
 	
@@ -747,19 +726,15 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 			int destPitch = SoftwareImage->bytes_per_line / 2;
 			s16* destData = reinterpret_cast<s16*>(SoftwareImage->data);
 			
-			for (int x=0; x<srcwidth; ++x)
-				for (int y=0; y<srcheight; ++y)
-					if (x < destwidth && y < destheight)
-					{
-						s16 c = srcdata[y*srcwidth+x];
-						destData[y*destPitch + x] = 
-							((c >> 10)&0x1F)<<11 |
-							((c >> 5)&0x1F) << 6 |
-							((c)&0x1F);
-					}
+			for (int y=0; y<srcheight; ++y)
+			{
+				video::CColorConverter::convert_A1R5G5B5toR5G6B5(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
+				srcdata+=srcwidth;
+				destData+=destPitch;
+			}
 		}
 		else
-		if (Depth == 32)
+		if ((Depth == 32)||(Depth == 24))
 		{
 			// convert from A1R5G5B5 to X8R8G8B8
 				
@@ -767,29 +742,14 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 			s32* destData = reinterpret_cast<s32*>(SoftwareImage->data);
 			
 			for (int y=0; y<srcheight; ++y)
-				for (int x=0; x<srcwidth; ++x)
-					if (x < destwidth && y < destheight)
-						destData[y*destPitch + x] = 
-						video::A1R5G5B5toA8R8G8B8(srcdata[y*srcwidth+x]);	
+			{
+				video::CColorConverter::convert_A1R5G5B5toA8R8G8B8(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
+				srcdata+=srcwidth;
+				destData+=destPitch;
+			}
 		}
 		else
-		if (Depth == 24)
-		{
-			// convert from A1R5G5B5 to X8R8G8B8
-	
-			int destPitch = SoftwareImage->bytes_per_line / 4;
-			s32* destData = reinterpret_cast<s32*>(SoftwareImage->data);
-			
-			for (int y=0; y<srcheight; ++y)
-				for (int x=0; x<srcwidth; ++x)
-					if (x < destwidth && y < destheight)
-						destData[y*destPitch + x] = 
-						video::A1R5G5B5toA8R8G8B8(srcdata[y*srcwidth+x]);
-		}
-		else
-		{
 			os::Printer::log("Unsupported screen depth.");
-		}
 	
 		image->unlock();
 	}
