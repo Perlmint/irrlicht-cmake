@@ -323,9 +323,9 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 	SObjMtl* pCurrMaterial = 0;
 
 	c8* pBufPtr = pBuf;
-	while(pBufPtr && (pBufPtr-pBuf<=filesize))
+	while(pBufPtr && (pBufPtr-pBuf<filesize))
 	{
-		switch(pBufPtr[0])
+		switch(*pBufPtr)
 		{
 		case 'n':               // newmtl
 			{
@@ -613,27 +613,20 @@ c8* COBJMeshFileLoader::goNextWord(c8* buf, const c8* pBufEnd)
 
 c8* COBJMeshFileLoader::goNextLine(c8* buf, const c8* pBufEnd)
 {
-	// Have to use pointer to pointer in parameter or else string address won't be changed
-	s32 i=0;
 	// look for newline characters
-	while(buf[i])
+	while(*buf)
 	{
-		if ( &(buf[i]) == pBufEnd )
-		{
-			// end of buffer check
+		// end of buffer check
+		if ( buf == pBufEnd )
 			return 0;
-		}
-		if (buf[i]=='\n' || buf[i]=='\r')
-		{
-			// found it, so skip pass it
+		// found it, so leave
+		if (*buf=='\n' || *buf=='\r')
 			break;
-		}
-
-		++i;
+		++buf;
 	}
-	while (isspace(buf[++i])) ;
+	while (isspace((u8)*++buf)) /* skip */ ;
 
-	return &buf[i];
+	return buf;
 }
 
 
