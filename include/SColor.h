@@ -50,10 +50,15 @@ namespace video
 	//! Returns A8R8G8B8 Color from A1R5G5B5 color
 	inline u32 A1R5G5B5toA8R8G8B8(u16 color)
 	{
-		return (( color & 0x8000 ) << 16|
-			( color & 0x7C00 ) << 9 |
-			( color & 0x03E0 ) << 6 |
-			( color & 0x001F ) << 3);
+		if (color & 0x8000) // with alpha=1
+			return (0xFF000000 |
+				( color & 0x00007C00 ) << 9 |
+				( color & 0x000003E0 ) << 6 |
+				( color & 0x0000001F ) << 3);
+		else
+			return (( color & 0x00007C00 ) << 9 |
+				( color & 0x000003E0 ) << 6 |
+				( color & 0x0000001F ) << 3);
 	}
 
 

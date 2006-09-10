@@ -97,23 +97,29 @@ bool CImageWriterPNG::writeImage(io::IWriteFile* file, IImage* image)
 	png_set_write_fn(png_ptr, file, user_write_data_fcn, NULL);
 
 	// Set info
-	png_set_IHDR(png_ptr, info_ptr,
-		image->getDimension().Width, image->getDimension().Height,
-		8, image->getColorFormat()==ECF_A8R8G8B8?PNG_COLOR_TYPE_RGB_ALPHA:PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+	if ((image->getColorFormat()==ECF_A8R8G8B8) || (image->getColorFormat()==ECF_A1R5G5B5))
+		png_set_IHDR(png_ptr, info_ptr,
+			image->getDimension().Width, image->getDimension().Height,
+			8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
+			PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+	else
+		png_set_IHDR(png_ptr, info_ptr,
+			image->getDimension().Width, image->getDimension().Height,
+			8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+			PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
-	s32 lineWidth=0;
+	s32 lineWidth=image->getDimension().Width;
 	switch(image->getColorFormat())
 	{
 	case ECF_R8G8B8:
 	case ECF_R5G6B5:
-		lineWidth=3;
+		lineWidth*=3;
 		break;
 	case ECF_A8R8G8B8:
 	case ECF_A1R5G5B5:
-		lineWidth=4;
+		lineWidth*=4;
 		break;
 	}
-	lineWidth *= image->getDimension().Width;
 	u8* tmpImage = new u8[image->getDimension().Height*lineWidth];
 	if (!tmpImage)
 	{
@@ -168,7 +174,7 @@ bool CImageWriterPNG::writeImage(io::IWriteFile* file, IImage* image)
 	png_set_rows(png_ptr, info_ptr, RowPointers);
 
 	if (image->getColorFormat()==ECF_A8R8G8B8 || image->getColorFormat()==ECF_A1R5G5B5)
-		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR, NULL);
+		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR|PNG_TRANSFORM_INVERT_ALPHA, NULL);
 	else
 	{
 		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);

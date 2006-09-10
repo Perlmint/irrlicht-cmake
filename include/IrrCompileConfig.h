@@ -56,7 +56,7 @@ define. */
 #if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX)
 #define _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 #define _IRR_LINUX_X11_VIDMODE_
-#define _IRR_LINUX_X11_RANDR_
+//#define _IRR_LINUX_X11_RANDR_
 #endif
 
 

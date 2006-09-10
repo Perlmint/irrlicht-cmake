@@ -100,12 +100,15 @@ bool CImageWriterBMP::writeImage(io::IWriteFile* file, IImage* image)
 	u8* row_pointer = new u8[row_size];
 	memset(row_pointer, 0, row_size);
 
-	// convert the image to 24-bit RGB and flip it over
+	// convert the image to 24-bit BGR and flip it over
 	s32 y;
 	for (y = imageHeader.Height - 1; 0 <= y; --y)
 	{
-		// source, length [pixels], destination
-		CColorConverter_convertFORMATtoFORMAT(&scan_lines[y * row_stride], imageHeader.Width, row_pointer);
+		if (image->getColorFormat()==ECF_R8G8B8)
+			CColorConverter::convert24BitTo24Bit((const c8*)&scan_lines[y * row_stride], (c8*)row_pointer, imageHeader.Width, 1, 0, false, true);
+		else
+			// source, length [pixels], destination
+			CColorConverter_convertFORMATtoFORMAT(&scan_lines[y * row_stride], imageHeader.Width, row_pointer);
 		if (file->write(row_pointer, row_size) < row_size)
 			break;
 	}
