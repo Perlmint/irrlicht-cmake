@@ -24,8 +24,7 @@ namespace irr
 	namespace video
 	{
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-			Window window, Display* display, bool fullscreen,
-			bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
+			bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
 	}
 
 
@@ -434,16 +433,14 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	if (UseGLXWindow)
 	{
-		// glXCreateWindow not yet supported by hardware accelerated X11 under Linux
-//		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);
-		if (true /*glxWin*/)
+		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);
+		if (glxWin)
 		{
 			// create glx context
 			Context = glXCreateNewContext(display, glxFBConfig, GLX_RGBA_TYPE, NULL, True);
 			if (Context)
 			{
-				if (!glXMakeCurrent(display, window, Context))
-//				if (!glXMakeContextCurrent(display, glxWin, glxWin, Context))
+				if (!glXMakeContextCurrent(display, glxWin, glxWin, Context))
 				{
 					os::Printer::log("Could not make context current.", ELL_WARNING);
 					glXDestroyContext(display, Context);
@@ -519,7 +516,7 @@ void CIrrDeviceLinux::createDriver(video::E_DRIVER_TYPE driverType,
 	case video::EDT_OPENGL:
 	#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
-			VideoDriver = video::createOpenGLDriver(windowSize, window, display, Fullscreen, StencilBuffer, FileSystem, vsync, antiAlias);
+			VideoDriver = video::createOpenGLDriver(windowSize, Fullscreen, StencilBuffer, FileSystem, vsync, antiAlias);
 	#else
 		os::Printer::log("No OpenGL support compiled in.", ELL_WARNING);
 	#endif
@@ -559,7 +556,6 @@ bool CIrrDeviceLinux::run()
 				{
 					Width = event.xconfigure.width;
 					Height = event.xconfigure.height;
-					//os::Printer::log("TODO: resize should be disabled.", ELL_INFORMATION);
 					if (VideoDriver)
 						VideoDriver->OnResize(core::dimension2d<s32>(Width, Height));
 				}

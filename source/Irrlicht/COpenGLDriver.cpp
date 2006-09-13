@@ -216,7 +216,7 @@ COpenGLDriver::~COpenGLDriver()
 // -----------------------------------------------------------------------
 #ifdef LINUX
 //! Linux constructor and init code
-COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool antiAlias, bool vsync)
+COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias, bool vsync)
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
 	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
@@ -232,18 +232,23 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
 	pGlCompressedTexImage2D(0),
 #endif
-	glxSwapIntervalSGI(0),
-	XWindow(window), XDisplay(display)
+#ifdef GLX_SGI_swap_control
+	glxSwapIntervalSGI(0)
+#endif
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
+	XWindow = glXGetCurrentDrawable();
+	XDisplay = glXGetCurrentDisplay();
 	ExposedData.OpenGLLinux.Window = XWindow;
 	genericDriverInit(screenSize);
 
+#ifdef GLX_SGI_swap_control
 	// set vsync
-	if (glxSwapIntervalSGI)
-		glxSwapIntervalSGI(vsync ? 1 : 0);
+	if (vsync && glxSwapIntervalSGI)
+		glxSwapIntervalSGI(1);
+#endif
 }
 
 //! linux destructor
@@ -590,8 +595,10 @@ void COpenGLDriver::loadExtensions()
 			pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompressedTexImage2D"));
 
+#ifdef GLX_SGI_swap_control
 			// get vsync extension
 			glxSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC)IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI"));
+#endif
 
 			#else // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 
@@ -623,9 +630,6 @@ void COpenGLDriver::loadExtensions()
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);
 	}
-
-	if (MultiTextureExtension)
-		os::Printer::log("Multittexturing active.");
 }
 
 
@@ -2568,12 +2572,11 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 // -----------------------------------
 #ifdef LINUX
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-		Window window, Display* display, bool fullscreen,
-		bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
+		bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
-		window, display, io, antiAlias, vsync);
+		io, antiAlias, vsync);
 #else
 	return 0;
 #endif //  _IRR_COMPILE_WITH_OPENGL_

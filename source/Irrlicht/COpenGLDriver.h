@@ -62,7 +62,7 @@ namespace video
 
 		#ifdef LINUX
 		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, Window window, Display* display, io::IFileSystem* io, bool vsync, bool antiAlias);
+			bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
 		#endif
 
 		#ifdef MACOSX
@@ -372,7 +372,7 @@ namespace video
 			PFNGLSTENCILFUNCSEPARATEATIPROC pGlStencilFuncSeparateATI;
 			PFNGLSTENCILOPSEPARATEATIPROC pGlStencilOpSeparateATI;
 			PFNGLCOMPRESSEDTEXIMAGE2DPROC pGlCompressedTexImage2D;
-		#ifdef LINUX
+		#if defined(LINUX) && defined(GLX_SGI_swap_control)
 			PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 		#endif
 
@@ -383,8 +383,8 @@ namespace video
 		#endif
 
 		#ifdef LINUX
-			Window XWindow;
-			Display* XDisplay;
+		GLXDrawable XWindow;
+		Display* XDisplay;
 		#endif
 
 	#endif // MACOSX

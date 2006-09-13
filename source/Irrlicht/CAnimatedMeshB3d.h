@@ -289,7 +289,7 @@ private:
 		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
 
 
-		void CAnimatedMeshB3d::resetSkin();
+		void resetSkin();
 
 		void CalculateGlobalMatrixes(SB3dNode *Node,SB3dNode *ParentNode);
 

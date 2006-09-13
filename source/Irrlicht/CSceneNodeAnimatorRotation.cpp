@@ -11,7 +11,7 @@ namespace scene
 
 //! constructor
 CSceneNodeAnimatorRotation::CSceneNodeAnimatorRotation(u32 time, const core::vector3df& rotation)
-: Rotation(rotation), StartTime(time)
+: Rotation(rotation), StartTime(time), DiffTime(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CSceneNodeAnimatorRotation");
