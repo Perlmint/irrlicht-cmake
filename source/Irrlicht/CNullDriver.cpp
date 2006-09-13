@@ -770,15 +770,17 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor co
 		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 2;
 
-		s16 ref = (0x0<<15) | (~(0x1<<15) & color.toA1R5G5B5());
-		s16 blackalpha = (0x0<<15) | (~(0x1<<15) & 0);
+		// color with alpha enabled (color opaque)
+		s16 ref = (0x1<<15) | (0x7fff & color.toA1R5G5B5());
 
-		for (s32 x=0; x<pitch; ++x)
-			for (s32 y=0; y<dim.Height; ++y)
+		for (s32 y=0; y<dim.Height; ++y)
+		{
+			for (s32 x=0; x<pitch; ++x)
 			{
-				s16 c = (0x0<<15) | (~(0x1<<15) & p[y*pitch + x]);
-				p[y*pitch + x] = (c == ref) ? blackalpha : ((0x1<<15) | (~(0x1<<15) & c));
+				s16 c = (0x1<<15) | (0x7fff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
 			}
+		}
 
 		texture->unlock();
 	}
@@ -795,15 +797,17 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor co
 		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 4;
 
-		s32 ref = (0x0<<24) | (~(0xFF<<24) & color.color);
-		s32 blackalpha = (0x0<<24) | (~(0xFF<<24) & 0);
+		// color with alpha enabled (color opaque)
+		s32 ref = (0xff<<24) | (0x00ffffff & color.color);
 
-		for (s32 x=0; x<pitch; ++x)
-			for (s32 y=0; y<dim.Height; ++y)
+		for (s32 y=0; y<dim.Height; ++y)
+		{
+			for (s32 x=0; x<pitch; ++x)
 			{
-				s32 c = (0x0<<24) | (~(0xFF<<24) & p[y*pitch + x]);
-				p[y*pitch + x] = (c == ref) ? blackalpha : ((0xFF<<24) | (~(0xFF<<24) & c));
+				s32 c = (0xff<<24) | (0x00ffffff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
 			}
+		}
 
 		texture->unlock();
 	}
@@ -838,15 +842,16 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 2;
 
-		s16 ref = (0x0<<15) | (~(0x1<<15) & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
-		s16 blackalpha = (0x0<<15) | (~(0x1<<15) & 0);
+		s16 ref = (0x1<<15) | (0x7fff & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
 
-		for (s32 x=0; x<pitch; ++x)
-			for (s32 y=0; y<dim.Height; ++y)
+		for (s32 y=0; y<dim.Height; ++y)
+		{
+			for (s32 x=0; x<pitch; ++x)
 			{
-				s16 c = (0x0<<15) | (~(0x1<<15) & p[y*pitch + x]);
-				p[y*pitch + x] = (c == ref) ? blackalpha : ((0x1<<15) | (~(0x1<<15) & c));
+				s16 c = (0x1<<15) | (0x7fff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
 			}
+		}
 
 		texture->unlock();
 	}
@@ -863,29 +868,21 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 4;
 
-#ifdef __BIG_ENDIAN__
-		s32 ref = (0x0) | (~(0xFF) & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
-		s32 blackalpha = (0x0) | (~(0xFF) & 0);
-#else
-		s32 ref = (0x0<<24) | (~(0xFF<<24) & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
-		s32 blackalpha = (0x0<<24) | (~(0xFF<<24) & 0);
-#endif
+		s32 ref = (0xff<<24) | (0x00ffffff & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
 
-		for (s32 x=0; x<pitch; ++x)
-			for (s32 y=0; y<dim.Height; ++y)
+		for (s32 y=0; y<dim.Height; ++y)
+		{
+			for (s32 x=0; x<pitch; ++x)
 			{
-#ifdef __BIG_ENDIAN__
-				s32 c = (0x0) | (~(0xFF) & p[y*pitch + x]);
-				p[y*pitch + x] = (c == ref) ? blackalpha : ((0xFF) | (~(0xFF) & c));
-#else
-				s32 c = (0x0<<24) | (~(0xFF<<24) & p[y*pitch + x]);
-				p[y*pitch + x] = (c == ref) ? blackalpha : ((0xFF<<24) | (~(0xFF<<24) & c));
-#endif
+				s32 c = (0xff<<24) | (0x00ffffff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
 			}
+		}
 
 		texture->unlock();
 	}
 }
+
 
 
 //! Creates a normal map from a height map texture.
