@@ -16,29 +16,6 @@
 #include "IMeshManipulator.h"
 #include "matrix4.h"
 
-#include "IrrCompileConfig.h"
-#ifdef _IRR_WINDOWS_
-	#if defined(__GNUC__) || (defined(_MSC_VER) && (_MSC_VER < 1299))
-		#define bswap_16(X) (((u8)(X) << 8) | (((u16)(X)) >> 8))
-		#define bswap_32(X) ( ((X)<<24) | (((u16)(X)) >> 24) | (((X) &0x0000ff00) << 8) | (((X) & 0x00ff0000) >> 8))
-	#else
-		#include <stdlib.h>
-		#define bswap_16(X) _byteswap_ushort(X)
-		#define bswap_32(X) _byteswap_ulong(X)
-	#endif
-#else
-	#ifdef MACOSX
-		#define bswap_16(X) OSReadSwapInt16(&X,0)
-		#define bswap_32(X) OSReadSwapInt32(&X,0)
-	#elif defined(__FreeBSD__)
-		#include "sys/endian.h"
-		#define bswap_16(X) bswap16(X)
-		#define bswap_32(X) bswap32(X)
-	#else
-		#include "byteswap.h"
-	#endif
-#endif
-
 namespace irr
 {
 namespace scene

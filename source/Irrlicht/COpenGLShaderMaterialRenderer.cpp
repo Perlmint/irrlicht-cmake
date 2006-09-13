@@ -101,19 +101,23 @@ void COpenGLShaderMaterialRenderer::OnSetMaterial(video::SMaterial& material, co
 {
 	if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 	{
+#ifdef GL_ARB_vertex_program
 		if (VertexShader)
 		{
 			// set new vertex shader
 			Driver->extGlBindProgramARB(GL_VERTEX_PROGRAM_ARB, VertexShader);
 			glEnable(GL_VERTEX_PROGRAM_ARB);
 		}
+#endif
 
 		// set new pixel shader
+#ifdef GL_ARB_fragment_program
 		if (PixelShader)
 		{
 			Driver->extGlBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, PixelShader);
 			glEnable(GL_FRAGMENT_PROGRAM_ARB);
 		}
+#endif
 
 		if (BaseMaterial)
 			BaseMaterial->OnSetMaterial(material, material, true, services);
@@ -124,11 +128,15 @@ void COpenGLShaderMaterialRenderer::OnSetMaterial(video::SMaterial& material, co
 void COpenGLShaderMaterialRenderer::OnUnsetMaterial()
 {
 	// disable vertex shader
+#ifdef GL_ARB_vertex_program
 	if (VertexShader)
 		glDisable(GL_VERTEX_PROGRAM_ARB);
+#endif
 
+#ifdef GL_ARB_fragment_program
 	if (PixelShader)
 		glDisable(GL_FRAGMENT_PROGRAM_ARB);
+#endif
 
 	if (BaseMaterial)
 		BaseMaterial->OnUnsetMaterial();
@@ -146,6 +154,7 @@ bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 		return true;
 
 	Driver->extGlGenProgramsARB(1, &PixelShader);
+#ifdef GL_ARB_fragment_program
 	Driver->extGlBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, PixelShader);
 
 	// clear error buffer
@@ -154,7 +163,9 @@ bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 	// compile
 	Driver->extGlProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB,
 		strlen(pxsh), pxsh);
+#endif
 
+#ifdef GL_ARB_vertex_program
 	GLenum g = glGetError();
 	if (g != GL_NO_ERROR)
 	{
@@ -169,6 +180,9 @@ bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 
 		return false;
 	}
+#else
+	return false;
+#endif
 
 	return true;
 }
@@ -178,6 +192,7 @@ bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 	if (!vtxsh)
 		return true;
 
+#ifdef GL_ARB_vertex_program
 	Driver->extGlGenProgramsARB(1, &VertexShader);
 	Driver->extGlBindProgramARB(GL_VERTEX_PROGRAM_ARB, VertexShader);
 
@@ -202,6 +217,9 @@ bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 
 		return false;
 	}
+#else
+	return false;
+#endif
 
 	return true;
 }

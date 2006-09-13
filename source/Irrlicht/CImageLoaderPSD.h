@@ -71,24 +71,7 @@ private:
 
 	bool readRawImageData(irr::io::IReadFile* file);
 	bool readRLEImageData(irr::io::IReadFile* file);
-	c8 getShiftFromChannel(c8 channelNr); 
-
-	inline u32 convert2le (u32 value)
-	{
-		#ifndef __BIG_ENDIAN__
-		value = (value >> 16) | (value << 16);
-		value = ((value >> 8) & 0xFF00FF) | ((value << 8) & 0xFF00FF00);
-		#endif
-		return value;
-	}
-
-	inline u16 convert2le (u16 value)
-	{
-		#ifndef __BIG_ENDIAN__
-		value = (value >> 8) | (value << 8);
-		#endif
-		return value;
-	}
+	c8 getShiftFromChannel(c8 channelNr);
 
 	// member variables
 

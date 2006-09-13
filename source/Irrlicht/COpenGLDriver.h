@@ -13,31 +13,31 @@
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 #ifdef WIN32
-// include windows headers for HWND
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include "glext.h"
-#pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "GLu32.lib")
-#endif
-
-#ifdef LINUX
-#define GL_GLEXT_LEGACY 1
-#include <GL/gl.h>
-#include "glext.h"
-#include <GL/glu.h>
-#include <GL/glx.h>
-#include <X11/Xlib.h>
-#endif
-
-#ifdef MACOSX
+	// include windows headers for HWND
+	#define WIN32_LEAN_AND_MEAN
+	#include <windows.h>
+	#include <GL/gl.h>
+	#include <GL/glu.h>
+	#include "glext.h"
+	#pragma comment(lib, "OpenGL32.lib")
+	#pragma comment(lib, "GLu32.lib")
+#elif defined(MACOSX)
 	#define GL_EXT_texture_env_combine 1
 	#include "CIrrDeviceMacOSX.h"
 	#include <OpenGL/gl.h>
 	#include <OpenGL/glu.h>
 	#include <OpenGL/glext.h>
+#else
+	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
+		#define GL_GLEXT_LEGACY 1
+	#endif
+	#include <GL/gl.h>
+	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
+		#include "glext.h"
+	#endif
+	#include <GL/glu.h>
+	#include <GL/glx.h>
+	#include <X11/Xlib.h>
 #endif
 
 namespace irr
@@ -326,17 +326,7 @@ namespace video
 
 		core::dimension2d<s32> CurrentRendertargetSize;
 
-		#ifdef MACOSX
-		CIrrDeviceMacOSX *_device;
-		#else
-
-		#ifdef _IRR_WINDOWS_
-
-			typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
-			PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
-
-		#endif
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+		#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 			PFNGLACTIVETEXTUREARBPROC pGlActiveTextureARB;
 			PFNGLCLIENTACTIVETEXTUREARBPROC	pGlClientActiveTextureARB;
 			PFNGLGENPROGRAMSARBPROC pGlGenProgramsARB;
@@ -344,7 +334,6 @@ namespace video
 			PFNGLPROGRAMSTRINGARBPROC pGlProgramStringARB;
 			PFNGLDELETEPROGRAMSNVPROC pGlDeleteProgramsARB;
 			PFNGLPROGRAMLOCALPARAMETER4FVARBPROC pGlProgramLocalParameter4fvARB;
-#endif
 			PFNGLCREATESHADEROBJECTARBPROC pGlCreateShaderObjectARB;
 			PFNGLSHADERSOURCEARBPROC pGlShaderSourceARB;
 			PFNGLCOMPILESHADERARBPROC pGlCompileShaderARB;
@@ -372,22 +361,24 @@ namespace video
 			PFNGLSTENCILFUNCSEPARATEATIPROC pGlStencilFuncSeparateATI;
 			PFNGLSTENCILOPSEPARATEATIPROC pGlStencilOpSeparateATI;
 			PFNGLCOMPRESSEDTEXIMAGE2DPROC pGlCompressedTexImage2D;
-		#if defined(LINUX) && defined(GLX_SGI_swap_control)
+			#ifdef _IRR_WINDOWS_
+			typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
+			PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
+			#elif defined(LINUX) && defined(GLX_SGI_swap_control)
 			PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
+			#endif
 		#endif
 
 		#ifdef _IRR_WINDOWS_
-		HDC HDc; // Private GDI Device Context
-		HWND Window;
-		HGLRC HRc; // Permanent Rendering Context
-		#endif
-
-		#ifdef LINUX
+			HDC HDc; // Private GDI Device Context
+			HWND Window;
+			HGLRC HRc; // Permanent Rendering Context
+		#elif defined(LINUX)
 		GLXDrawable XWindow;
 		Display* XDisplay;
+		#elif defined(MACOSX)
+			CIrrDeviceMacOSX *_device;
 		#endif
-
-	#endif // MACOSX
 	};
 
 } // end namespace video

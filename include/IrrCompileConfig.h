@@ -22,6 +22,10 @@
 #define LINUX
 #endif
 
+#if defined(__sparc__) || defined(__sun__)
+#define __BIG_ENDIAN__
+#endif
+
 //! Define _IRR_COMPILE_WITH_DIRECT3D_8_ and _IRR_COMPILE_WITH_DIRECT3D_9_ to compile 
 //! the Irrlicht engine with Direct3D8 and/or DIRECT3D9.
 /** If you only want to use the software device or opengl this can be useful.
@@ -49,12 +53,16 @@ define. */
 #endif // ! _XBOX
 
 
-//! Define LINUX_OPENGL_USE_EXTENSIONS if the OpenGL renderer should use OpenGL extensions.
-/** For being able to do things like multi texturing. It is useful
- to comment out this define to disable opengl extensions in linux because
- on some linux versions, these extensions does not exist. */
-#if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX)
-#define _IRR_LINUX_OPENGL_USE_EXTENSIONS_
+//! Define _IRR_OPENGL_USE_EXTPOINTER_ if the OpenGL renderer should use OpenGL extensions via function pointers.
+/** On some systems there is no support for the dynamic extension of OpenGL
+ via function pointers such that this has to be undef'ed. */
+#if !defined(MACOSX) && !defined(__sun__)
+#define _IRR_OPENGL_USE_EXTPOINTER_
+#endif
+
+//! On some Linux systems the X11 vidmode extension is missing. Use this flag
+//! to remove it from compilation such that Irrlicht will run on those systems.
+#if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX) && !defined(__sun__)
 #define _IRR_LINUX_X11_VIDMODE_
 //#define _IRR_LINUX_X11_RANDR_
 #endif

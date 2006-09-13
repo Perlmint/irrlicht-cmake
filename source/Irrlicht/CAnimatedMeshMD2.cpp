@@ -66,8 +66,8 @@ namespace scene
 
 	struct SMD2Triangle
 	{
-		s16 vertexIndices[3];
-		s16 textureIndices[3];
+		u16 vertexIndices[3];
+		u16 textureIndices[3];
 	} PACK_STRUCT;
 
 	struct SMD2TextureCoordinate
@@ -512,23 +512,23 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	file->read(&header, sizeof(SMD2Header));
 
 #ifdef __BIG_ENDIAN__
-	header.magic = OSReadSwapInt32(&header.magic,0);
-	header.version = OSReadSwapInt32(&header.version,0);
-	header.skinWidth = OSReadSwapInt32(&header.skinWidth,0);
-	header.skinHeight = OSReadSwapInt32(&header.skinHeight,0);
-	header.frameSize = OSReadSwapInt32(&header.frameSize,0);
-	header.numSkins = OSReadSwapInt32(&header.numSkins,0);
-	header.numVertices = OSReadSwapInt32(&header.numVertices,0);
-	header.numTexcoords = OSReadSwapInt32(&header.numTexcoords,0);
-	header.numTriangles = OSReadSwapInt32(&header.numTriangles,0);
-	header.numGlCommands = OSReadSwapInt32(&header.numGlCommands,0);
-	header.numFrames = OSReadSwapInt32(&header.numFrames,0);
-	header.offsetSkins = OSReadSwapInt32(&header.offsetSkins,0);
-	header.offsetTexcoords = OSReadSwapInt32(&header.offsetTexcoords,0);
-	header.offsetTriangles = OSReadSwapInt32(&header.offsetTriangles,0);
-	header.offsetFrames = OSReadSwapInt32(&header.offsetFrames,0);
-	header.offsetGlCommands = OSReadSwapInt32(&header.offsetGlCommands,0);
-	header.offsetEnd = OSReadSwapInt32(&header.offsetEnd,0);
+	header.magic = os::Byteswap::byteswap(header.magic);
+	header.version = os::Byteswap::byteswap(header.version);
+	header.skinWidth = os::Byteswap::byteswap(header.skinWidth);
+	header.skinHeight = os::Byteswap::byteswap(header.skinHeight);
+	header.frameSize = os::Byteswap::byteswap(header.frameSize);
+	header.numSkins = os::Byteswap::byteswap(header.numSkins);
+	header.numVertices = os::Byteswap::byteswap(header.numVertices);
+	header.numTexcoords = os::Byteswap::byteswap(header.numTexcoords);
+	header.numTriangles = os::Byteswap::byteswap(header.numTriangles);
+	header.numGlCommands = os::Byteswap::byteswap(header.numGlCommands);
+	header.numFrames = os::Byteswap::byteswap(header.numFrames);
+	header.offsetSkins = os::Byteswap::byteswap(header.offsetSkins);
+	header.offsetTexcoords = os::Byteswap::byteswap(header.offsetTexcoords);
+	header.offsetTriangles = os::Byteswap::byteswap(header.offsetTriangles);
+	header.offsetFrames = os::Byteswap::byteswap(header.offsetFrames);
+	header.offsetGlCommands = os::Byteswap::byteswap(header.offsetGlCommands);
+	header.offsetEnd = os::Byteswap::byteswap(header.offsetEnd);
 #endif
 
 	if (header.magic != MD2_MAGIC_NUMBER || header.version != MD2_VERSION)
@@ -562,8 +562,8 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 #ifdef __BIG_ENDIAN__
 	for (i=0; i<header.numTexcoords; ++i)
 	{
-		textureCoords[i].s = OSReadSwapInt16(&textureCoords[i].s,0);
-		textureCoords[i].t = OSReadSwapInt16(&textureCoords[i].t,0);
+		textureCoords[i].s = os::Byteswap::byteswap(textureCoords[i].s);
+		textureCoords[i].t = os::Byteswap::byteswap(textureCoords[i].t);
 	}
 #endif
 
@@ -581,18 +581,18 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 #ifdef __BIG_ENDIAN__
 	for (i=0; i<header.numTriangles; ++i)
 	{
-		triangles[i].vertexIndices[0] = OSReadSwapInt16(&triangles[i].vertexIndices[0],0);
-		triangles[i].vertexIndices[1] = OSReadSwapInt16(&triangles[i].vertexIndices[1],0);
-		triangles[i].vertexIndices[2] = OSReadSwapInt16(&triangles[i].vertexIndices[2],0);
-		triangles[i].textureIndices[0] = OSReadSwapInt16(&triangles[i].textureIndices[0],0);
-		triangles[i].textureIndices[1] = OSReadSwapInt16(&triangles[i].textureIndices[1],0);
-		triangles[i].textureIndices[2] = OSReadSwapInt16(&triangles[i].textureIndices[2],0);
+		triangles[i].vertexIndices[0] = os::Byteswap::byteswap(triangles[i].vertexIndices[0]);
+		triangles[i].vertexIndices[1] = os::Byteswap::byteswap(triangles[i].vertexIndices[1]);
+		triangles[i].vertexIndices[2] = os::Byteswap::byteswap(triangles[i].vertexIndices[2]);
+		triangles[i].textureIndices[0] = os::Byteswap::byteswap(triangles[i].textureIndices[0]);
+		triangles[i].textureIndices[1] = os::Byteswap::byteswap(triangles[i].textureIndices[1]);
+		triangles[i].textureIndices[2] = os::Byteswap::byteswap(triangles[i].textureIndices[2]);
 	}
 #endif
 
 	// read Vertices
 
-	s8 buffer[MD2_MAX_VERTS*4+128];
+	u8 buffer[MD2_MAX_VERTS*4+128];
 	SMD2Frame* frame = (SMD2Frame*)buffer;
 
 	core::array< core::vector3df >* vertices = new core::array< core::vector3df >[header.numFrames];
@@ -604,16 +604,15 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	{
 		// read vertices
 
-		vertices[i].reallocate(header.numVertices);
 		file->read(frame, header.frameSize);
 
 #ifdef __BIG_ENDIAN__
-		*((long*)&frame->scale[0]) = OSReadSwapInt32(&frame->scale[0],0);
-		*((long*)&frame->scale[1]) = OSReadSwapInt32(&frame->scale[1],0);
-		*((long*)&frame->scale[2]) = OSReadSwapInt32(&frame->scale[2],0);
-		*((long*)&frame->translate[0]) = OSReadSwapInt32(&frame->translate[0],0);
-		*((long*)&frame->translate[1]) = OSReadSwapInt32(&frame->translate[1],0);
-		*((long*)&frame->translate[2]) = OSReadSwapInt32(&frame->translate[2],0);
+		frame->scale[0] = os::Byteswap::byteswap(frame->scale[0]);
+		frame->scale[1] = os::Byteswap::byteswap(frame->scale[1]);
+		frame->scale[2] = os::Byteswap::byteswap(frame->scale[2]);
+		frame->translate[0] = os::Byteswap::byteswap(frame->translate[0]);
+		frame->translate[1] = os::Byteswap::byteswap(frame->translate[1]);
+		frame->translate[2] = os::Byteswap::byteswap(frame->translate[2]);
 #endif
 		// store frame data
 
@@ -636,12 +635,13 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 
 		// add vertices
 
+		vertices[i].reallocate(header.numVertices);
 		for (s32 j=0; j<header.numVertices; ++j)
 		{
 			core::vector3df v;
-			v.X = (f32)frame->vertices[j].vertex[0] * frame->scale[0] + frame->translate[0];
-			v.Z = (f32)frame->vertices[j].vertex[1] * frame->scale[1] + frame->translate[1];
-			v.Y = (f32)frame->vertices[j].vertex[2] * frame->scale[2] + frame->translate[2];
+			v.X = frame->vertices[j].vertex[0] * frame->scale[0] + frame->translate[0];
+			v.Z = frame->vertices[j].vertex[1] * frame->scale[1] + frame->translate[1];
+			v.Y = frame->vertices[j].vertex[2] * frame->scale[2] + frame->translate[2];
 
 			vertices[i].push_back(v);
 
@@ -687,9 +687,9 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 			for (s32 n=0; n<3; ++n)
 			{
 				vtx.Pos = vert[triangles[t].vertexIndices[n]];
+				vtx.Normal = normals[f].pointer()[triangles[t].vertexIndices[n]];
 				vtx.TCoords.X = (textureCoords[triangles[t].textureIndices[n]].s + 0.5f) * dmaxs;
 				vtx.TCoords.Y = (textureCoords[triangles[t].textureIndices[n]].t + 0.5f) * dmaxt;
-				vtx.Normal = normals[f].pointer()[triangles[t].vertexIndices[n]];
 				FrameList[f].push_back(vtx);
 			}
 		}

@@ -63,16 +63,16 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 
 	file->read(&header, sizeof(header));
 	#ifdef __BIG_ENDIAN__
-		header.XMin = OSReadSwapInt16(&header.XMin, 0);
-		header.YMin = OSReadSwapInt16(&header.YMin, 0);
-		header.XMax = OSReadSwapInt16(&header.XMax, 0);
-		header.YMax = OSReadSwapInt16(&header.YMax, 0);
-		header.HorizDPI = OSReadSwapInt16(&header.HorizDPI, 0);
-		header.VertDPI = OSReadSwapInt16(&header.VertDPI, 0);
-		header.BytesPerLine = OSReadSwapInt16(&header.BytesPerLine, 0);
-		header.PaletteType = OSReadSwapInt16(&header.PaletteType, 0);
-		header.HScrSize = OSReadSwapInt16(&header.HScrSize, 0);
-		header.VScrSize = OSReadSwapInt16(&header.VScrSize, 0);
+		header.XMin = os::Byteswap::byteswap(header.XMin);
+		header.YMin = os::Byteswap::byteswap(header.YMin);
+		header.XMax = os::Byteswap::byteswap(header.XMax);
+		header.YMax = os::Byteswap::byteswap(header.YMax);
+		header.HorizDPI = os::Byteswap::byteswap(header.HorizDPI);
+		header.VertDPI = os::Byteswap::byteswap(header.VertDPI);
+		header.BytesPerLine = os::Byteswap::byteswap(header.BytesPerLine);
+		header.PaletteType = os::Byteswap::byteswap(header.PaletteType);
+		header.HScrSize = os::Byteswap::byteswap(header.HScrSize);
+		header.VScrSize = os::Byteswap::byteswap(header.VScrSize);
 	#endif
 
 	//! return if the header is wrong

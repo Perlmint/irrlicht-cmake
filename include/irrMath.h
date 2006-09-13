@@ -7,6 +7,14 @@
 
 #include "irrTypes.h"
 #include <math.h>
+#ifdef __sun__
+#define sqrtf(X) sqrt(X)
+#define sinf(X) sin(X)
+#define cosf(X) cos(X)
+#define ceilf(X) ceil(X)
+#define powf(X,Y) pow(X,Y)
+#define fmodf(X,Y) fmod(X,Y)
+#endif
 
 namespace irr
 {

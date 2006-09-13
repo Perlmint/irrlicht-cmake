@@ -7,12 +7,50 @@
 #include <stdio.h>
 #include "IrrCompileConfig.h"
 
+#ifdef _IRR_WINDOWS_
+	#if defined(__GNUC__) || (defined(_MSC_VER) && (_MSC_VER < 1299))
+		#define bswap_16(X) ((((X)&0xFF) << 8) | (((X)&=0xFF00) >> 8))
+		#define bswap_32(X) ( (((X)&0x000000FF)<<24) | (((X)&0xFF000000) >> 24) | (((X)&0x0000FF00) << 8) | (((X) &0x00FF0000) >> 8))
+	#else
+		#include <stdlib.h>
+		#define bswap_16(X) _byteswap_ushort(X)
+		#define bswap_32(X) _byteswap_ulong(X)
+	#endif
+#else
+	#ifdef MACOSX
+		#define bswap_16(X) OSReadSwapInt16(&X,0)
+		#define bswap_32(X) OSReadSwapInt32(&X,0)
+	#elif defined(__FreeBSD__)
+		#include <sys/endian.h>
+		#define bswap_16(X) bswap16(X)
+		#define bswap_32(X) bswap32(X)
+	#elif !defined(__sun__)
+		#include <byteswap.h>
+	#else
+		#define bswap_16(X) ((((X)&0xFF) << 8) | (((X)&=0xFF00) >> 8))
+		#define bswap_32(X) ( (((X)&0x000000FF)<<24) | (((X)&0xFF000000) >> 24) | (((X)&0x0000FF00) << 8) | (((X) &0x00FF0000) >> 8))
+	#endif
+#endif
+
+namespace irr
+{
+namespace os
+{
+	u16 Byteswap::byteswap(u16 num) {return bswap_16(num);}
+	s16 Byteswap::byteswap(s16 num) {return bswap_16(num);}
+	u32 Byteswap::byteswap(u32 num) {return bswap_32(num);}
+	s32 Byteswap::byteswap(s32 num) {return bswap_32(num);}
+	f32 Byteswap::byteswap(f32 num) {u32 tmp=bswap_32(*((u32*)&num)); return *((f32*)&tmp);}
+}
+}
+
 #if defined(_IRR_WINDOWS_) || defined(_XBOX)
 // ----------------------------------------------------------------
 // Windows specific functions
 // ----------------------------------------------------------------
 
 #ifdef _IRR_WINDOWS_
+#define WINDOWS_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 #ifdef _XBOX
@@ -42,7 +80,7 @@ namespace os
 		initVirtualTimer();
 	}
 
-    u32 Timer::getRealTime()
+	u32 Timer::getRealTime()
 	{
 		if (HighPerformanceTimerSupport)
 		{
@@ -82,7 +120,7 @@ namespace os
 	{
 		initVirtualTimer();
 	}
-	
+
 	u32 Timer::getRealTime()
 	{
 		static timeval tv;
@@ -152,11 +190,11 @@ namespace os
 
 	f32 Timer::VirtualTimerSpeed = 1.0f;
 	s32 Timer::VirtualTimerStopCounter = 0;
-	u32 Timer::LastVirtualTime = 0; 
+	u32 Timer::LastVirtualTime = 0;
 	u32 Timer::StartRealTime = 0;
 	u32 Timer::StaticTime = 0;
 
-    //! returns current virtual time
+	//! returns current virtual time
 	u32 Timer::getTime()
 	{
 		if (isStopped())

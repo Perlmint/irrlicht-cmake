@@ -4,6 +4,7 @@
 
 #include "CColorConverter.h"
 #include "SColor.h"
+#include "os.h"
 #include <string.h>
 
 namespace irr
@@ -126,18 +127,15 @@ void CColorConverter::convert16BitTo16Bit(const s16* in, s16* out, s32 width, s3
 	{
 		if (flip)
 			out -= width;
-		for (s32 x=0; x<width; ++x)
-		{
 #ifdef __BIG_ENDIAN__
-			*((c8*)(out+x)  ) = *((c8*)in+1);
-			*((c8*)(out+x)+1) = *((c8*)in  );
+		for (s32 x=0; x<width; ++x)
+			out[x]=os::Byteswap::byteswap(in[x]);
 #else
-			out[x] = *in;
+		memcpy(out, in, width*sizeof(s16));
 #endif
-			++in;
-		}
 		if (!flip)
 			out += width;
+		in += width;
 		in += linepad;
 	}
 }
@@ -158,20 +156,22 @@ void CColorConverter::convert24BitTo24Bit(const c8* in, c8* out, s32 width, s32 
 	{
 		if (flip)
 			out -= lineWidth;
-		for (s32 x=0; x<lineWidth; x+=3)
+		if (bgr)
 		{
-			if (bgr)
+			for (s32 x=0; x<lineWidth; x+=3)
 			{
-				out[x+0] = in[2];
-				out[x+1] = in[1];
-				out[x+2] = in[0];
+				out[x+0] = in[x+2];
+				out[x+1] = in[x+1];
+				out[x+2] = in[x+0];
 			}
-			else
-				memcpy(out+x,in,3);
-			in+=3;
+		}
+		else
+		{
+			memcpy(out,in,lineWidth);
 		}
 		if (!flip)
 			out += lineWidth;
+		in += lineWidth;
 		in += linepad;
 	}
 }
@@ -218,31 +218,21 @@ void CColorConverter::convert32BitTo32Bit(const s32* in, s32* out, s32 width, s3
 		return;
 
 	if (flip)
-		out += height * width;
+		out += width * height;
 
 	for (s32 y=0; y<height; ++y)
 	{
 		if (flip)
 			out -= width;
-		for (s32 x=0; x<width; ++x)
-		{
 #ifdef __BIG_ENDIAN__
-			{
-				c8* zi = (c8*)in;
-				c8* zo = (c8*)(out+x);
-
-				zo[0] = zi[3];
-				zo[1] = zi[2];
-				zo[2] = zi[1];
-				zo[3] = zi[0];
-			}
+		for (s32 x=0; x<width; ++x)
+			out[x]=os::Byteswap::byteswap(in[x]);
 #else
-			out[x] = *in;
+		memcpy(out, in, width*sizeof(s32));
 #endif
-			++in;
-		}
 		if (!flip)
 			out += width;
+		in += width;
 		in += linepad;
 	}
 }
@@ -344,15 +334,18 @@ void CColorConverter::convert_R8G8B8toR8G8B8(const void* sP, s32 sN, void* dP)
 
 void CColorConverter::convert_R8G8B8toA8R8G8B8(const void* sP, s32 sN, void* dP)
 {
-	u8 * sB = (u8 *)sP;
-	u32* dB = (u32*)dP;
+	u8* sB = (u8*)sP;
+	u8* dB = (u8*)dP;
 
 	for (s32 x = 0; x < sN; ++x)
 	{
-		dB[0] = (0xff000000) | (sB[0] << 16) | (sB[1] << 8) | sB[2];
+		dB[0] = 0xff;
+		dB[1] = sB[0];
+		dB[2] = sB[1];
+		dB[3] = sB[2];
 
 		sB += 3;
-		dB += 1;
+		dB += 4;
 	}
 }
 

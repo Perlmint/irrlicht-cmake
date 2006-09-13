@@ -26,11 +26,11 @@
 	#include <OpenGL/glu.h>
 	#include <OpenGL/glext.h>
 #else
-	#if defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 		#define GL_GLEXT_LEGACY 1
 	#endif
 	#include <GL/gl.h>
-	#if defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 		#include "glext.h"
 	#endif
 	#include <GL/glu.h>

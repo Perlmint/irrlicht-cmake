@@ -106,17 +106,17 @@ bool CZipReader::scanLocalHeader()
 	File->read(&entry.header, sizeof(SZIPFileHeader));
 
 #ifdef __BIG_ENDIAN__
-		entry.header.Sig = OSReadSwapInt32(&entry.header.Sig,0);
-		entry.header.VersionToExtract = OSReadSwapInt16(&entry.header.VersionToExtract,0);
-		entry.header.GeneralBitFlag = OSReadSwapInt16(&entry.header.GeneralBitFlag,0);
-		entry.header.CompressionMethod = OSReadSwapInt16(&entry.header.CompressionMethod,0);
-		entry.header.LastModFileTime = OSReadSwapInt16(&entry.header.LastModFileTime,0);
-		entry.header.LastModFileDate = OSReadSwapInt16(&entry.header.LastModFileDate,0);
-		entry.header.DataDescriptor.CRC32 = OSReadSwapInt32(&entry.header.DataDescriptor.CRC32,0);
-		entry.header.DataDescriptor.CompressedSize = OSReadSwapInt32(&entry.header.DataDescriptor.CompressedSize,0);
-		entry.header.DataDescriptor.UncompressedSize = OSReadSwapInt32(&entry.header.DataDescriptor.UncompressedSize,0);
-		entry.header.FilenameLength = OSReadSwapInt16(&entry.header.FilenameLength,0);
-		entry.header.ExtraFieldLength = OSReadSwapInt16(&entry.header.ExtraFieldLength,0);
+		entry.header.Sig = os::Byteswap::byteswap(entry.header.Sig);
+		entry.header.VersionToExtract = os::Byteswap::byteswap(entry.header.VersionToExtract);
+		entry.header.GeneralBitFlag = os::Byteswap::byteswap(entry.header.GeneralBitFlag);
+		entry.header.CompressionMethod = os::Byteswap::byteswap(entry.header.CompressionMethod);
+		entry.header.LastModFileTime = os::Byteswap::byteswap(entry.header.LastModFileTime);
+		entry.header.LastModFileDate = os::Byteswap::byteswap(entry.header.LastModFileDate);
+		entry.header.DataDescriptor.CRC32 = os::Byteswap::byteswap(entry.header.DataDescriptor.CRC32);
+		entry.header.DataDescriptor.CompressedSize = os::Byteswap::byteswap(entry.header.DataDescriptor.CompressedSize);
+		entry.header.DataDescriptor.UncompressedSize = os::Byteswap::byteswap(entry.header.DataDescriptor.UncompressedSize);
+		entry.header.FilenameLength = os::Byteswap::byteswap(entry.header.FilenameLength);
+		entry.header.ExtraFieldLength = os::Byteswap::byteswap(entry.header.ExtraFieldLength);
 #endif
 
 	if (entry.header.Sig != 0x04034b50)
@@ -141,9 +141,9 @@ bool CZipReader::scanLocalHeader()
 		// read data descriptor
 		File->read(&entry.header.DataDescriptor, sizeof(entry.header.DataDescriptor));
 #ifdef __BIG_ENDIAN__
-		entry.header.DataDescriptor.CRC32 = OSReadSwapInt32(&entry.header.DataDescriptor.CRC32,0);
-		entry.header.DataDescriptor.CompressedSize = OSReadSwapInt32(&entry.header.DataDescriptor.CompressedSize,0);
-		entry.header.DataDescriptor.UncompressedSize = OSReadSwapInt32(&entry.header.DataDescriptor.UncompressedSize,0);
+		entry.header.DataDescriptor.CRC32 = os::Byteswap::byteswap(entry.header.DataDescriptor.CRC32);
+		entry.header.DataDescriptor.CompressedSize = os::Byteswap::byteswap(entry.header.DataDescriptor.CompressedSize);
+		entry.header.DataDescriptor.UncompressedSize = os::Byteswap::byteswap(entry.header.DataDescriptor.UncompressedSize);
 #endif
 	}
 

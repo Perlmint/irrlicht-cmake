@@ -62,12 +62,14 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 
 	file->read(&header, sizeof(PsdHeader));
 
-	header.version = convert2le(header.version);
-	header.channels = convert2le(header.channels);
-	header.height = convert2le(header.height);
-	header.width = convert2le(header.width);
-	header.depth = convert2le(header.depth);
-	header.mode = convert2le(header.mode);
+#ifndef __BIG_ENDIAN__
+	header.version = os::Byteswap::byteswap(header.version);
+	header.channels = os::Byteswap::byteswap(header.channels);
+	header.height = os::Byteswap::byteswap(header.height);
+	header.width = os::Byteswap::byteswap(header.width);
+	header.depth = os::Byteswap::byteswap(header.depth);
+	header.mode = os::Byteswap::byteswap(header.mode);
+#endif
 
 	if (header.signature[0] != '8' ||
 		header.signature[1] != 'B' ||
@@ -90,8 +92,10 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 	// skip color mode data
 
 	u32 l;
-	file->read(&l, sizeof(s32));
-	l = convert2le(l);
+	file->read(&l, sizeof(u32));
+#ifndef __BIG_ENDIAN__
+	l = os::Byteswap::byteswap(l);
+#endif
 	if (!file->seek(l, true))
 	{
 		os::Printer::log("Error seeking file pos to image resources.\n", file->getFileName(), ELL_ERROR);
@@ -100,8 +104,10 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 
 	// skip image resources
 
-	file->read(&l, sizeof(s32));
-	l = convert2le(l);
+	file->read(&l, sizeof(u32));
+#ifndef __BIG_ENDIAN__
+	l = os::Byteswap::byteswap(l);
+#endif
 	if (!file->seek(l, true))
 	{
 		os::Printer::log("Error seeking file pos to layer and mask.\n", file->getFileName(), ELL_ERROR);
@@ -110,8 +116,10 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 
 	// skip layer & mask
 
-	file->read(&l, sizeof(s32));
-	l = convert2le(l);
+	file->read(&l, sizeof(u32));
+#ifndef __BIG_ENDIAN__
+	l = os::Byteswap::byteswap(l);
+#endif
 	if (!file->seek(l, true))
 	{
 		os::Printer::log("Error seeking file pos to image data section.\n", file->getFileName(), ELL_ERROR);
@@ -122,7 +130,9 @@ IImage* CImageLoaderPSD::loadImage(irr::io::IReadFile* file)
 
 	u16 compressionType;
 	file->read(&compressionType, sizeof(u16));
-	compressionType = convert2le(compressionType);
+#ifndef __BIG_ENDIAN__
+	compressionType = os::Byteswap::byteswap(compressionType);
+#endif
 
 	if (compressionType != 1 && compressionType != 0)
 	{
@@ -186,7 +196,7 @@ bool CImageLoaderPSD::readRawImageData(irr::io::IReadFile* file)
 		}
 
 	}
-		
+
 	delete [] tmpData;
 	return true;
 }
@@ -233,8 +243,8 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 	u8* tmpData = new u8[header.width * header.height];
 	u16 *rleCount= new u16 [header.height * header.channels];
 
-	s32 size=0;      
-      
+	s32 size=0;
+
 	for (u32 y=0; y<header.height * header.channels; ++y)
 	{
 		if (!file->read(&rleCount[y], sizeof(u16)))
@@ -245,11 +255,13 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 			return false;
 		}
 
-		rleCount[y] = convert2le (rleCount[y]);
+#ifndef __BIG_ENDIAN__
+		rleCount[y] = os::Byteswap::byteswap(rleCount[y]);
+#endif
 		size += rleCount[y];
 	}
 
-	s8 *buf = new s8[size];       
+	s8 *buf = new s8[size];
 	if (!file->read(buf, size))
 	{
 		delete [] rleCount;
@@ -259,39 +271,39 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 		return false;
 	}
 
-	u16 *rcount=rleCount; 
-	
+	u16 *rcount=rleCount;
+
 	s8 rh;
 	u16 bytesRead;
 	u8 *dest;
 	s8 *pBuf = buf;
 
-	// decompress packbit rle 
+	// decompress packbit rle
 
 	for (s32 channel=0; channel<header.channels; channel++)
 	{
-		for (u32 y=0; y<header.height; ++y, ++rcount) 
+		for (u32 y=0; y<header.height; ++y, ++rcount)
 		{
 			bytesRead=0;
 			dest = &tmpData[y*header.width];
-			
+
 			while (bytesRead < *rcount)
 			{
 				rh = *pBuf++;
 				++bytesRead;
-				
+
 				if (rh >= 0)
 				{
 					++rh;
 
 					while (rh--)
-					{ 
+					{
 						*dest = *pBuf++;
 						++bytesRead;
 						++dest;
-					} 
+					}
 				}
-				else 
+				else
 				if (rh > -128)
 				{
 					rh = -rh +1;
@@ -307,7 +319,7 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 				}
 			}
 		}
-		
+
 		s8 shift = getShiftFromChannel(channel);
 
 		if (shift != -1)
@@ -323,7 +335,7 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 				}
 		}
 	}
-       
+
 	delete [] rleCount;
 	delete [] buf;
 	delete [] tmpData;

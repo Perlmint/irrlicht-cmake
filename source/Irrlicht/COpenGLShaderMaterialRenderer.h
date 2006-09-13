@@ -13,17 +13,17 @@
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#endif
-
-#ifdef LINUX
+#elif defined(LINUX)
+#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 #define GL_GLEXT_LEGACY 1
+#endif
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glx.h>
+#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 #include "glext.h"
 #endif
-
-#ifdef MACOSX
+#include <GL/glu.h>
+#include <GL/glx.h>
+#elif defined(MACOSX)
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #include <OpenGL/glu.h>

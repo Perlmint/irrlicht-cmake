@@ -905,8 +905,8 @@ void COgreMeshFileLoader::readChunkData(io::IReadFile* file, ChunkData& data)
 	file->read(&data.header, sizeof(ChunkHeader));
 	if (SwapEndian)
 	{
-		data.header.id = bswap_16(data.header.id);
-		data.header.length = bswap_32(data.header.length);
+		data.header.id = os::Byteswap::byteswap(data.header.id);
+		data.header.length = os::Byteswap::byteswap(data.header.length);
 	}
 	data.read += sizeof(ChunkHeader);
 }
@@ -943,7 +943,7 @@ void COgreMeshFileLoader::readInt(io::IReadFile* file, ChunkData& data, s32& out
 	file->read(&out, sizeof(s32));
 	if (SwapEndian)
 	{
-		out = bswap_32(out);
+		out = os::Byteswap::byteswap(out);
 	}
 	data.read+=sizeof(s32);
 }
@@ -954,7 +954,7 @@ void COgreMeshFileLoader::readShort(io::IReadFile* file, ChunkData& data, u16& o
 	file->read(&out, sizeof(u16));
 	if (SwapEndian)
 	{
-		out = bswap_16(out);
+		out = os::Byteswap::byteswap(out);
 	}
 	data.read+=sizeof(u16);
 }
@@ -962,14 +962,11 @@ void COgreMeshFileLoader::readShort(io::IReadFile* file, ChunkData& data, u16& o
 
 void COgreMeshFileLoader::readFloat(io::IReadFile* file, ChunkData& data, f32& out)
 {
+	file->read(&out, sizeof(f32));
 	if (SwapEndian)
 	{
-		u32 tmp;
-		file->read(&tmp, sizeof(f32));
-		*((u32*)&out)=bswap_32(tmp);
+		out = os::Byteswap::byteswap(out);
 	}
-	else
-		file->read(&out, sizeof(f32));
 	data.read+=sizeof(f32);
 }
 

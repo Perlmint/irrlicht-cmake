@@ -96,7 +96,7 @@ void CAnimatedMeshB3d::readFloats(io::IReadFile* file, f32* vec, u32 count)
 	file->read(vec, count*sizeof(f32));
 	#ifdef __BIG_ENDIAN__
 	for (u32 n=0; n<count; ++n)
-		vec[n] = OSReadSwapInt32(vec,n*sizeof(f32));
+		vec[n] = os::Byteswap::byteswap(vec[n]);
 	#endif
 }
 
@@ -123,9 +123,9 @@ bool CAnimatedMeshB3d::ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		readFloats(file, &B3dTexture.Yscale, 1);
 		readFloats(file, &B3dTexture.Angle, 1);
 
-		#ifdef __BIG_ENDIAN__ //Never been tested
-			B3dTexture.Flags = OSReadSwapInt32(&B3dTexture.Flags,0);
-			B3dTexture.Blend = OSReadSwapInt32(&B3dTexture.Blend,0);
+		#ifdef __BIG_ENDIAN__
+			B3dTexture.Flags = os::Byteswap::byteswap(B3dTexture.Flags);
+			B3dTexture.Blend = os::Byteswap::byteswap(B3dTexture.Blend);
 		#endif
 
 		Textures.push_back(B3dTexture);
@@ -169,7 +169,7 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 	file->read(&n_texs, sizeof(s32));
 
 	#ifdef __BIG_ENDIAN__
-		n_texs = OSReadSwapInt32(&n_texs,0);
+		n_texs = os::Byteswap::byteswap(n_texs);
 	#endif
 
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
@@ -202,17 +202,17 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			//cout << "Material is using texture id:"<< texture_id[n] <<endl;//for debuging
 		}
 
-		#ifdef __BIG_ENDIAN__ //Never been tested
-			B3dMaterial.red = OSReadSwapInt32(&B3dMaterial.red,0);
-			B3dMaterial.green = OSReadSwapInt32(&B3dMaterial.green,0);
-			B3dMaterial.blue = OSReadSwapInt32(&B3dMaterial.blue,0);
-			B3dMaterial.alpha = OSReadSwapInt32(&B3dMaterial.alpha,0);
-			B3dMaterial.shininess = OSReadSwapInt32(&B3dMaterial.shininess,0);
-			B3dMaterial.blend = OSReadSwapInt32(&B3dMaterial.blend,0);
-			B3dMaterial.fx = OSReadSwapInt32(&B3dMaterial.fx,0);
+		#ifdef __BIG_ENDIAN__
+			B3dMaterial.red = os::Byteswap::byteswap(B3dMaterial.red);
+			B3dMaterial.green = os::Byteswap::byteswap(B3dMaterial.green);
+			B3dMaterial.blue = os::Byteswap::byteswap(B3dMaterial.blue);
+			B3dMaterial.alpha = os::Byteswap::byteswap(B3dMaterial.alpha);
+			B3dMaterial.shininess = os::Byteswap::byteswap(B3dMaterial.shininess);
+			B3dMaterial.blend = os::Byteswap::byteswap(B3dMaterial.blend);
+			B3dMaterial.fx = os::Byteswap::byteswap(B3dMaterial.fx);
 
 			for (s32 n=0;n<=(n_texs-1);n++)
-				texture_id[n] = OSReadSwapInt32(&texture_id[n],0);
+				texture_id[n] = os::Byteswap::byteswap(texture_id[n]);
 		#endif
 
 		if (texture_id[0]!=-1)
@@ -338,7 +338,7 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 	file->read(&brush_id, sizeof(brush_id));
 
 	#ifdef __BIG_ENDIAN__
-		brush_id = OSReadSwapInt32(&brush_id,0);
+		brush_id = os::Byteswap::byteswap(brush_id);
 	#endif
 
 	NormalsInFile=false;
@@ -358,7 +358,7 @@ bool CAnimatedMeshB3d::ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s1
 		file->read(&header, sizeof(header));
 
 		#ifdef __BIG_ENDIAN__
-			header.size = OSReadSwapInt32(&header.size,0);
+			header.size = os::Byteswap::byteswap(header.size);
 		#endif
 
 		B3dStack[B3dStackSize].name[0]=header.name[0];
@@ -456,9 +456,9 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 	file->read(&tex_coord_set_size, sizeof(tex_coord_set_size));
 
 	#ifdef __BIG_ENDIAN__
-		flags = OSReadSwapInt32(&flags,0);
-		tex_coord_sets = OSReadSwapInt32(&tex_coord_sets,0);
-		tex_coord_set_size = OSReadSwapInt32(&tex_coord_set_size,0);
+		flags = os::Byteswap::byteswap(flags);
+		tex_coord_sets = os::Byteswap::byteswap(tex_coord_sets);
+		tex_coord_set_size = os::Byteswap::byteswap(tex_coord_set_size);
 	#endif
 
 	if (tex_coord_sets>=3 || tex_coord_set_size>=4)//Something is wrong
@@ -498,29 +498,29 @@ bool CAnimatedMeshB3d::ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s1
 			for (s32 j=0;j<tex_coord_set_size;++j)
 				file->read(&tex_coords[i][j], sizeof(f32));
 
-		#ifdef __BIG_ENDIAN__ //Never been tested
-			x = OSReadSwapInt32(&x,0);
-			y = OSReadSwapInt32(&y,0);
-			z = OSReadSwapInt32(&z,0);
+		#ifdef __BIG_ENDIAN__
+			x = os::Byteswap::byteswap(x);
+			y = os::Byteswap::byteswap(y);
+			z = os::Byteswap::byteswap(z);
 
 			if (flags&1)
 			{
-				nx = OSReadSwapInt32(&nx,0);
-				ny = OSReadSwapInt32(&ny,0);
-				nz = OSReadSwapInt32(&nz,0);
+				nx = os::Byteswap::byteswap(nx);
+				ny = os::Byteswap::byteswap(ny);
+				nz = os::Byteswap::byteswap(nz);
 			}
 
 			if (flags&2)
 			{
-				red = OSReadSwapInt32(&red,0);
-				green = OSReadSwapInt32(&green,0);
-				blue = OSReadSwapInt32(&blue,0);
-				alpha = OSReadSwapInt32(&alpha,0);
+				red = os::Byteswap::byteswap(red);
+				green = os::Byteswap::byteswap(green);
+				blue = os::Byteswap::byteswap(blue);
+				alpha = os::Byteswap::byteswap(alpha);
 			}
 
 			for (s32 i=0;i<=tex_coord_sets-1;i++)
 				for (s32 j=0;j<=tex_coord_set_size-1;j++)
-					tex_coords[i][j] = OSReadSwapInt32(&tex_coords[i][j],0);
+					tex_coords[i][j] = os::Byteswap::byteswap(tex_coords[i][j]);
 		#endif
 
 		f32 tu=0.0f, tv=0.0f;
@@ -579,7 +579,7 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 	file->read(&triangle_brush_id, sizeof(triangle_brush_id));
 
 	#ifdef __BIG_ENDIAN__
-		triangle_brush_id = OSReadSwapInt32(&triangle_brush_id,0);
+		triangle_brush_id = os::Byteswap::byteswap(triangle_brush_id);
 	#endif
 
 	SB3dMaterial *B3dMaterial;
@@ -600,10 +600,10 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		file->read(&vertex_id[1], sizeof(s32));
 		file->read(&vertex_id[2], sizeof(s32));
 
-		#ifdef __BIG_ENDIAN__ //Never been tested
-			vertex_id[0] = OSReadSwapInt32(&vertex_id[0],0);
-			vertex_id[1] = OSReadSwapInt32(&vertex_id[1],0);
-			vertex_id[2] = OSReadSwapInt32(&vertex_id[2],0);
+		#ifdef __BIG_ENDIAN__
+			vertex_id[0] = os::Byteswap::byteswap(vertex_id[0]);
+			vertex_id[1] = os::Byteswap::byteswap(vertex_id[1]);
+			vertex_id[2] = os::Byteswap::byteswap(vertex_id[2]);
 		#endif
 
 
@@ -658,15 +658,15 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 	for (n=0; n<=3; n++)
 		file->read(&rotation[n], sizeof(f32));
 
-	#ifdef __BIG_ENDIAN__ //Never been tested
+	#ifdef __BIG_ENDIAN__
 		for (n=0; n<=2; n++)
-			position[n] = OSReadSwapInt32(&position[n],0);
+			position[n] = os::Byteswap::byteswap(position[n]);
 
 		for (n=0; n<=2; n++)
-			scale[n] = OSReadSwapInt32(&scale[n],0);
+			scale[n] = os::Byteswap::byteswap(scale[n]);
 
 		for (n=0; n<=4; n++)
-			rotation[n] = OSReadSwapInt32(&rotation[n],0);
+			rotation[n] = os::Byteswap::byteswap(rotation[n]);
 	#endif
 
 	SB3dNode *Node=new SB3dNode();
@@ -723,8 +723,8 @@ bool CAnimatedMeshB3d::ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s1
 		B3dChunkHeader header;
 		file->read(&header, sizeof(header));
 
-		#ifdef __BIG_ENDIAN__ //Never been tested
-			header.size = OSReadSwapInt32(&header.size,0);
+		#ifdef __BIG_ENDIAN__
+			header.size = os::Byteswap::byteswap(header.size);
 		#endif
 
 		B3dStack[B3dStackSize].name[0]=header.name[0];
@@ -798,9 +798,9 @@ bool CAnimatedMeshB3d::ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s1
 			file->read(&Bone.vertex_id, sizeof(Bone.vertex_id));
 			file->read(&Bone.weight, sizeof(Bone.weight));
 
-			#ifdef __BIG_ENDIAN__ //Never been tested
-				Bone.vertex_id = OSReadSwapInt32(&Bone.vertex_id,0);
-				Bone.weight = OSReadSwapInt32(&Bone.weight,0);
+			#ifdef __BIG_ENDIAN__
+				Bone.vertex_id = os::Byteswap::byteswap(Bone.vertex_id);
+				Bone.weight = os::Byteswap::byteswap(Bone.weight);
 			#endif
 
 			InNode->Bones.push_back(Bone);
@@ -818,8 +818,8 @@ bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s1
 
 	s32 flags;
 	file->read(&flags, sizeof(flags));
-	#ifdef __BIG_ENDIAN__ //Never been tested
-		flags = OSReadSwapInt32(&flags,0);
+	#ifdef __BIG_ENDIAN__
+		flags = os::Byteswap::byteswap(flags);
 	#endif
 
 	while(B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos()) //this chunk repeats
@@ -843,8 +843,8 @@ bool CAnimatedMeshB3d::ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		if (flags&4)
 			readFloats(file, rotation, 4);
 
-		#ifdef __BIG_ENDIAN__ //Never been tested
-		Key.frame = OSReadSwapInt32(&Key.frame,0);
+		#ifdef __BIG_ENDIAN__
+		Key.frame = os::Byteswap::byteswap(Key.frame);
 		#endif
 
 		Key.frame*=100;
@@ -871,9 +871,9 @@ bool CAnimatedMeshB3d::ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s1
 	file->read(&AnimFrames, sizeof(s32));
 	readFloats(file, &AnimFPS, 1);
 
-	#ifdef __BIG_ENDIAN__ //Never been tested
-		AnimFlags = OSReadSwapInt32(&AnimFlags,0);
-		AnimFrames = OSReadSwapInt32(&AnimFrames,0);
+	#ifdef __BIG_ENDIAN__
+		AnimFlags = os::Byteswap::byteswap(AnimFlags);
+		AnimFrames = os::Byteswap::byteswap(AnimFrames);
 	#endif
 
 	AnimFrames*=100;
@@ -910,7 +910,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 	file->read(&header, sizeof(header));
 
 	#ifdef __BIG_ENDIAN__
-		header.size = OSReadSwapInt32(&header.size,0);
+		header.size = os::Byteswap::byteswap(header.size);
 	#endif
 
 	if ( strncmp( header.name, "BB3D", 4 ) != 0 )
@@ -940,7 +940,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 	u32 FileVersion;
 	file->read(&FileVersion, sizeof(FileVersion));
 	#ifdef __BIG_ENDIAN__
-		FileVersion = OSReadSwapInt32(&FileVersion,0);
+		FileVersion = os::Byteswap::byteswap(FileVersion);
 	#endif
 
 	while (B3dStack[B3dStackSize].startposition + B3dStack[B3dStackSize].length>file->getPos())
@@ -956,7 +956,7 @@ bool CAnimatedMeshB3d::loadFile(io::IReadFile* file)
 		file->read(&header, sizeof(header));
 
 		#ifdef __BIG_ENDIAN__
-			header.size = OSReadSwapInt32(&header.size,0);
+			header.size = os::Byteswap::byteswap(header.size);
 		#endif
 
 		B3dStack[B3dStackSize].name[0]=header.name[0];

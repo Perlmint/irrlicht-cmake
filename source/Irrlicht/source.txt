@@ -30,11 +30,11 @@ If you get a compiling/linking problem like
  
 Then there are several solutions: 
 A) This disables the use of OpenGL extensions:
-  Open the file IrrCompileConfig.h, comment out _IRR_LINUX_OPENGL_USE_EXTENSIONS_,
+  Open the file IrrCompileConfig.h, comment out _IRR_OPENGL_USE_EXTPOINTER_,
   and recompile Irrlicht using 
   make clean
   make
-B) Replace all opccurrences of 'glXGetProcAddress' with 'glXGetProcAddressARB' and run a
+B) Replace all occurrences of 'glXGetProcAddress' with 'glXGetProcAddressARB' and run a
    make
    This will solve the issue but keep the OpenGL extension enabled.
    

@@ -93,8 +93,8 @@ bool CQ3LevelMesh::loadFile(io::IReadFile* file)
 	file->read(&header, sizeof(tBSPHeader));
 
 	#ifdef __BIG_ENDIAN__
-		header.strID = OSReadSwapInt32(&header.strID,0);
-		header.version = OSReadSwapInt32(&header.version,0);
+		header.strID = os::Byteswap::byteswap(header.strID);
+		header.version = os::Byteswap::byteswap(header.version);
 	#endif
 
 	if (header.strID != 0x50534249 || header.version != 0x2e)
@@ -108,30 +108,30 @@ bool CQ3LevelMesh::loadFile(io::IReadFile* file)
 	file->read(&Lumps[0], sizeof(tBSPLump)*kMaxLumps);
 
 	#ifdef __BIG_ENDIAN__
-	for (int i=0;i<kMaxLumps;i++)
+	for (int i=0;i<kMaxLumps;++i)
 	{
-		Lumps[i].offset = OSReadSwapInt32(&Lumps[i].offset,0);
-		Lumps[i].length = OSReadSwapInt32(&Lumps[i].length,0);
+		Lumps[i].offset = os::Byteswap::byteswap(Lumps[i].offset);
+		Lumps[i].length = os::Byteswap::byteswap(Lumps[i].length);
 	}
 	#endif
 
 	// load everything
 
 	loadTextures(&Lumps[kTextures], file);		// Load the textures
-	loadLightmaps(&Lumps[kLightmaps], file);      // Load the lightmaps
+	loadLightmaps(&Lumps[kLightmaps], file);	// Load the lightmaps
 	loadVerts(&Lumps[kVertices], file);		// Load the vertices
 	loadFaces(&Lumps[kFaces], file);		// Load the faces
 	loadPlanes(&Lumps[kPlanes], file);		// Load the Planes of the BSP
 	loadNodes(&Lumps[kNodes], file);		// load the Nodes of the BSP
 	loadLeafs(&Lumps[kLeafs], file);		// load the Leafs of the BSP
-	loadLeafFaces(&Lumps[kLeafFaces], file);		// load the Faces of the Leafs of the BSP
+	loadLeafFaces(&Lumps[kLeafFaces], file);	// load the Faces of the Leafs of the BSP
 	loadVisData(&Lumps[kVisData], file);		// load the visibility data of the clusters
 	loadEntities(&Lumps[kEntities], file);		// load the entities
 	loadModels(&Lumps[kModels], file);		// load the models
-	loadMeshVerts(&Lumps[kMeshVerts], file);		// load the mesh vertices
+	loadMeshVerts(&Lumps[kMeshVerts], file);	// load the mesh vertices
 	loadBrushes(&Lumps[kBrushes], file);		// load the brushes of the BSP
-	loadBrushSides(&Lumps[kBrushSides], file);		// load the brushsides of the BSP
-	loadLeafBrushes(&Lumps[kLeafBrushes], file);		// load the brushes of the leaf*/
+	loadBrushSides(&Lumps[kBrushSides], file);	// load the brushsides of the BSP
+	loadLeafBrushes(&Lumps[kLeafBrushes], file);	// load the brushes of the leaf*/
 
 	constructMesh();
 
@@ -168,8 +168,8 @@ void CQ3LevelMesh::loadTextures(tBSPLump* l, io::IReadFile* file)
 	#ifdef __BIG_ENDIAN__
 	for (int i=0;i<NumTextures;i++)
 	{
-		Textures[i].flags = OSReadSwapInt32(&Textures[i].flags,0);
-		Textures[i].contents = OSReadSwapInt32(&Textures[i].contents,0);
+		Textures[i].flags = os::Byteswap::byteswap(Textures[i].flags);
+		Textures[i].contents = os::Byteswap::byteswap(Textures[i].contents);
 	}
 	#endif
 }
@@ -196,16 +196,16 @@ void CQ3LevelMesh::loadVerts(tBSPLump* l, io::IReadFile* file)
 	#ifdef __BIG_ENDIAN__
 	for (int i=0;i<NumVertices;i++)
 	{
-		*((long*)&Vertices[i].vPosition[0]) = OSReadSwapInt32(&Vertices[i].vPosition[0],0);
-		*((long*)&Vertices[i].vPosition[1]) = OSReadSwapInt32(&Vertices[i].vPosition[1],0);
-		*((long*)&Vertices[i].vPosition[2]) = OSReadSwapInt32(&Vertices[i].vPosition[2],0);
-		*((long*)&Vertices[i].vTextureCoord[0]) = OSReadSwapInt32(&Vertices[i].vTextureCoord[0],0);
-		*((long*)&Vertices[i].vTextureCoord[1]) = OSReadSwapInt32(&Vertices[i].vTextureCoord[1],0);
-		*((long*)&Vertices[i].vLightmapCoord[0]) = OSReadSwapInt32(&Vertices[i].vLightmapCoord[0],0);
-		*((long*)&Vertices[i].vLightmapCoord[1]) = OSReadSwapInt32(&Vertices[i].vLightmapCoord[1],0);
-		*((long*)&Vertices[i].vNormal[0]) = OSReadSwapInt32(&Vertices[i].vNormal[0],0);
-		*((long*)&Vertices[i].vNormal[1]) = OSReadSwapInt32(&Vertices[i].vNormal[1],0);
-		*((long*)&Vertices[i].vNormal[2]) = OSReadSwapInt32(&Vertices[i].vNormal[2],0);
+		Vertices[i].vPosition[0] = os::Byteswap::byteswap(Vertices[i].vPosition[0]);
+		Vertices[i].vPosition[1] = os::Byteswap::byteswap(Vertices[i].vPosition[1]);
+		Vertices[i].vPosition[2] = os::Byteswap::byteswap(Vertices[i].vPosition[2]);
+		Vertices[i].vTextureCoord[0] = os::Byteswap::byteswap(Vertices[i].vTextureCoord[0]);
+		Vertices[i].vTextureCoord[1] = os::Byteswap::byteswap(Vertices[i].vTextureCoord[1]);
+		Vertices[i].vLightmapCoord[0] = os::Byteswap::byteswap(Vertices[i].vLightmapCoord[0]);
+		Vertices[i].vLightmapCoord[1] = os::Byteswap::byteswap(Vertices[i].vLightmapCoord[1]);
+		Vertices[i].vNormal[0] = os::Byteswap::byteswap(Vertices[i].vNormal[0]);
+		Vertices[i].vNormal[1] = os::Byteswap::byteswap(Vertices[i].vNormal[1]);
+		Vertices[i].vNormal[2] = os::Byteswap::byteswap(Vertices[i].vNormal[2]);
 	}
 	#endif
 }
@@ -222,32 +222,32 @@ void CQ3LevelMesh::loadFaces(tBSPLump* l, io::IReadFile* file)
 	#ifdef __BIG_ENDIAN__
 	for (int i=0;i<NumFaces;i++)
 	{
-		Faces[i].textureID = OSReadSwapInt32(&Faces[i].textureID,0);
-		Faces[i].effect = OSReadSwapInt32(&Faces[i].effect,0);
-		Faces[i].type = OSReadSwapInt32(&Faces[i].type,0);
-		Faces[i].vertexIndex = OSReadSwapInt32(&Faces[i].vertexIndex,0);
-		Faces[i].numOfVerts = OSReadSwapInt32(&Faces[i].numOfVerts,0);
-		Faces[i].meshVertIndex = OSReadSwapInt32(&Faces[i].meshVertIndex,0);
-		Faces[i].numMeshVerts = OSReadSwapInt32(&Faces[i].numMeshVerts,0);
-		Faces[i].lightmapID = OSReadSwapInt32(&Faces[i].lightmapID,0);
-		Faces[i].lMapCorner[0] = OSReadSwapInt32(&Faces[i].lMapCorner[0],0);
-		Faces[i].lMapCorner[1] = OSReadSwapInt32(&Faces[i].lMapCorner[1],0);
-		Faces[i].lMapSize[0] = OSReadSwapInt32(&Faces[i].lMapSize[0],0);
-		Faces[i].lMapSize[1] = OSReadSwapInt32(&Faces[i].lMapSize[1],0);
-		*((long*)&Faces[i].lMapPos[0]) = OSReadSwapInt32(&Faces[i].lMapPos[0],0);
-		*((long*)&Faces[i].lMapPos[1]) = OSReadSwapInt32(&Faces[i].lMapPos[1],0);
-		*((long*)&Faces[i].lMapPos[2]) = OSReadSwapInt32(&Faces[i].lMapPos[2],0);
-		*((long*)&Faces[i].lMapBitsets[0][0]) = OSReadSwapInt32(&Faces[i].lMapBitsets[0][0],0);
-		*((long*)&Faces[i].lMapBitsets[0][1]) = OSReadSwapInt32(&Faces[i].lMapBitsets[0][1],0);
-		*((long*)&Faces[i].lMapBitsets[0][2]) = OSReadSwapInt32(&Faces[i].lMapBitsets[0][2],0);
-		*((long*)&Faces[i].lMapBitsets[1][0]) = OSReadSwapInt32(&Faces[i].lMapBitsets[1][0],0);
-		*((long*)&Faces[i].lMapBitsets[1][1]) = OSReadSwapInt32(&Faces[i].lMapBitsets[1][1],0);
-		*((long*)&Faces[i].lMapBitsets[1][2]) = OSReadSwapInt32(&Faces[i].lMapBitsets[1][2],0);
-		*((long*)&Faces[i].vNormal[0]) = OSReadSwapInt32(&Faces[i].vNormal[0],0);
-		*((long*)&Faces[i].vNormal[1]) = OSReadSwapInt32(&Faces[i].vNormal[1],0);
-		*((long*)&Faces[i].vNormal[2]) = OSReadSwapInt32(&Faces[i].vNormal[2],0);
-		Faces[i].size[0] = OSReadSwapInt32(&Faces[i].size[0],0);
-		Faces[i].size[1] = OSReadSwapInt32(&Faces[i].size[1],0);
+		Faces[i].textureID = os::Byteswap::byteswap(Faces[i].textureID);
+		Faces[i].effect = os::Byteswap::byteswap(Faces[i].effect);
+		Faces[i].type = os::Byteswap::byteswap(Faces[i].type);
+		Faces[i].vertexIndex = os::Byteswap::byteswap(Faces[i].vertexIndex);
+		Faces[i].numOfVerts = os::Byteswap::byteswap(Faces[i].numOfVerts);
+		Faces[i].meshVertIndex = os::Byteswap::byteswap(Faces[i].meshVertIndex);
+		Faces[i].numMeshVerts = os::Byteswap::byteswap(Faces[i].numMeshVerts);
+		Faces[i].lightmapID = os::Byteswap::byteswap(Faces[i].lightmapID);
+		Faces[i].lMapCorner[0] = os::Byteswap::byteswap(Faces[i].lMapCorner[0]);
+		Faces[i].lMapCorner[1] = os::Byteswap::byteswap(Faces[i].lMapCorner[1]);
+		Faces[i].lMapSize[0] = os::Byteswap::byteswap(Faces[i].lMapSize[0]);
+		Faces[i].lMapSize[1] = os::Byteswap::byteswap(Faces[i].lMapSize[1]);
+		Faces[i].lMapPos[0] = os::Byteswap::byteswap(Faces[i].lMapPos[0]);
+		Faces[i].lMapPos[1] = os::Byteswap::byteswap(Faces[i].lMapPos[1]);
+		Faces[i].lMapPos[2] = os::Byteswap::byteswap(Faces[i].lMapPos[2]);
+		Faces[i].lMapBitsets[0][0] = os::Byteswap::byteswap(Faces[i].lMapBitsets[0][0]);
+		Faces[i].lMapBitsets[0][1] = os::Byteswap::byteswap(Faces[i].lMapBitsets[0][1]);
+		Faces[i].lMapBitsets[0][2] = os::Byteswap::byteswap(Faces[i].lMapBitsets[0][2]);
+		Faces[i].lMapBitsets[1][0] = os::Byteswap::byteswap(Faces[i].lMapBitsets[1][0]);
+		Faces[i].lMapBitsets[1][1] = os::Byteswap::byteswap(Faces[i].lMapBitsets[1][1]);
+		Faces[i].lMapBitsets[1][2] = os::Byteswap::byteswap(Faces[i].lMapBitsets[1][2]);
+		Faces[i].vNormal[0] = os::Byteswap::byteswap(Faces[i].vNormal[0]);
+		Faces[i].vNormal[1] = os::Byteswap::byteswap(Faces[i].vNormal[1]);
+		Faces[i].vNormal[2] = os::Byteswap::byteswap(Faces[i].vNormal[2]);
+		Faces[i].size[0] = os::Byteswap::byteswap(Faces[i].size[0]);
+		Faces[i].size[1] = os::Byteswap::byteswap(Faces[i].size[1]);
 	}
 	#endif
 }
@@ -304,7 +304,7 @@ void CQ3LevelMesh::loadMeshVerts(tBSPLump* l, io::IReadFile* file)
 	file->read(MeshVerts, l->length);
 
 	#ifdef __BIG_ENDIAN__
-	for (int i=0;i<NumMeshVerts;i++) MeshVerts[i] = OSReadSwapInt32(&MeshVerts[i],0);
+	for (int i=0;i<NumMeshVerts;i++) MeshVerts[i] = os::Byteswap::byteswap(MeshVerts[i]);
 	#endif
 }
 

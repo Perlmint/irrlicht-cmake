@@ -107,9 +107,9 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 	file->read(&header, sizeof(STGAHeader));
 
 #ifdef __BIG_ENDIAN__
-	header.ColorMapLength = OSReadSwapInt16(&header.ColorMapLength,0);
-	header.ImageWidth = OSReadSwapInt16(&header.ImageWidth,0);
-	header.ImageHeight = OSReadSwapInt16(&header.ImageHeight,0);
+	header.ColorMapLength = os::Byteswap::byteswap(header.ColorMapLength);
+	header.ImageWidth = os::Byteswap::byteswap(header.ImageWidth);
+	header.ImageHeight = os::Byteswap::byteswap(header.ImageHeight);
 #endif
 
 	// skip image identification field

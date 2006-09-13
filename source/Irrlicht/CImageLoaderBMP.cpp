@@ -53,7 +53,7 @@ bool CImageLoaderBMP::isALoadableFileFormat(irr::io::IReadFile* file)
 	u16 headerID;
 	file->read(&headerID, sizeof(u16));
 #ifdef __BIG_ENDIAN__
-	headerID = OSReadSwapInt16(&headerID,0);
+	headerID = os::Byteswap::byteswap(headerID);
 #endif
 	return headerID == 0x4d42;
 }
@@ -234,20 +234,20 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 	file->read(&header, sizeof(header));
 
 #ifdef __BIG_ENDIAN__
-	header.Id = OSReadSwapInt16(&header.Id,0);
-	header.FileSize = OSReadSwapInt32(&header.FileSize,0);
-	header.BitmapDataOffset = OSReadSwapInt32(&header.BitmapDataOffset,0);
-	header.BitmapHeaderSize = OSReadSwapInt32(&header.BitmapHeaderSize,0);
-	header.Width = OSReadSwapInt32(&header.Width,0);
-	header.Height = OSReadSwapInt32(&header.Height,0);
-	header.Planes = OSReadSwapInt16(&header.Planes,0);
-	header.BPP = OSReadSwapInt16(&header.BPP,0);
-	header.Compression = OSReadSwapInt32(&header.Compression,0);
-	header.BitmapDataSize = OSReadSwapInt32(&header.BitmapDataSize,0);
-	header.PixelPerMeterX = OSReadSwapInt32(&header.PixelPerMeterX,0);
-	header.PixelPerMeterY = OSReadSwapInt32(&header.PixelPerMeterY,0);
-	header.Colors = OSReadSwapInt32(&header.Colors,0);
-	header.ImportantColors = OSReadSwapInt32(&header.ImportantColors,0);
+	header.Id = os::Byteswap::byteswap(header.Id);
+	header.FileSize = os::Byteswap::byteswap(header.FileSize);
+	header.BitmapDataOffset = os::Byteswap::byteswap(header.BitmapDataOffset);
+	header.BitmapHeaderSize = os::Byteswap::byteswap(header.BitmapHeaderSize);
+	header.Width = os::Byteswap::byteswap(header.Width);
+	header.Height = os::Byteswap::byteswap(header.Height);
+	header.Planes = os::Byteswap::byteswap(header.Planes);
+	header.BPP = os::Byteswap::byteswap(header.BPP);
+	header.Compression = os::Byteswap::byteswap(header.Compression);
+	header.BitmapDataSize = os::Byteswap::byteswap(header.BitmapDataSize);
+	header.PixelPerMeterX = os::Byteswap::byteswap(header.PixelPerMeterX);
+	header.PixelPerMeterY = os::Byteswap::byteswap(header.PixelPerMeterY);
+	header.Colors = os::Byteswap::byteswap(header.Colors);
+	header.ImportantColors = os::Byteswap::byteswap(header.ImportantColors);
 #endif
 
 	s32 pitch = 0;
@@ -277,7 +277,7 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 		file->read(PaletteData, paletteSize * sizeof(s32));
 #ifdef __BIG_ENDIAN__
 		for (int i=0; i<paletteSize; ++i)
-			PaletteData[i] = OSReadSwapInt32(&PaletteData[i],0);
+			PaletteData[i] = os::Byteswap::byteswap(PaletteData[i]);
 #endif
 	}
 

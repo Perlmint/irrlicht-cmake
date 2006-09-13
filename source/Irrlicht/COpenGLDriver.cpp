@@ -38,6 +38,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
@@ -50,6 +51,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	pGlStencilFuncSeparate(0), pGlStencilOpSeparate(0),
 	pGlStencilFuncSeparateATI(0), pGlStencilOpSeparateATI(0),
 	pGlCompressedTexImage2D(0),
+#endif // _IRR_OPENGL_USE_EXTPOINTER_
 	wglSwapIntervalEXT(0)
 {
 	#ifdef _DEBUG
@@ -179,7 +181,7 @@ COpenGLDriver::~COpenGLDriver()
 
 	HDc = 0;
 }
-#endif
+#endif //IRR_WINDOWS
 
 // -----------------------------------------------------------------------
 // MACOSX CONSTRUCTOR
@@ -225,15 +227,15 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
-	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
-#ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
-	pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
+	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	,pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
-	pGlCompressedTexImage2D(0),
+	pGlCompressedTexImage2D(0)
 #endif
 #ifdef GLX_SGI_swap_control
-	glxSwapIntervalSGI(0)
+	,glxSwapIntervalSGI(0)
 #endif
 {
 	#ifdef _DEBUG
@@ -483,7 +485,7 @@ void COpenGLDriver::loadExtensions()
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
 
 		#elif defined(LINUX)
-			#ifdef _IRR_LINUX_OPENGL_USE_EXTENSIONS_
+			#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 
 			#ifdef GLX_VERSION_1_4
 				#define IRR_OGL_LOAD_EXTENSION glXGetProcAddress
@@ -594,30 +596,22 @@ void COpenGLDriver::loadExtensions()
 
 			pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompressedTexImage2D"));
+			#endif // _IRR_OPENGL_USE_EXTPOINTER_
 
 #ifdef GLX_SGI_swap_control
 			// get vsync extension
 			glxSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC)IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI"));
 #endif
-
-			#else // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
-
-			MultiTextureExtension = false;
-			ARBVertexProgramExtension = false;
-			ARBFragmentProgramExtension = false;
-			os::Printer::log("Extensions disabled.", ELL_WARNING);
-
-			#endif // _IRR_LINUX_OPENGL_USE_EXTENSIONS_
 		#endif // _IRR_WINDOWS_
 
 		// load common extensions
 
-		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &MaxTextureUnits);
+		glGetIntegerv(GL_MAX_TEXTURE_UNITS, &MaxTextureUnits);
 		glGetIntegerv(GL_MAX_LIGHTS, &MaxLights);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
 	}
 
-#if defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 	if (!pGlActiveTextureARB || !pGlClientActiveTextureARB)
 	{
 		MultiTextureExtension = false;
@@ -980,7 +974,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	// ok, we've clipped everything.
 	// now draw it.
 
-	s32 xPlus = -(renderTargetSize.Width>>1);
+	s32 xPlus = renderTargetSize.Width>>1;
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
@@ -996,9 +990,9 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	core::rect<s32> poss(targetPos, sourceSize);
 
 	core::rect<float> npos;
-	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X+xPlus+0.5f) * xFact;
+	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X-xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
-	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X+xPlus+0.5f) * xFact;
+	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X-xPlus+0.5f) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
 
 	setRenderStates2DMode(color.getAlpha()<255, true, useAlphaChannelOfTexture);
@@ -1043,16 +1037,16 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 	tcoords.LowerRightCorner.X = (((f32)sourceRect.UpperLeftCorner.X +0.5f + (f32)sourceRect.getWidth())) * ssw;
 	tcoords.LowerRightCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y +0.5f + (f32)sourceRect.getHeight())) * ssh;
 
-	s32 xPlus = -(renderTargetSize.Width>>1);
+	s32 xPlus = renderTargetSize.Width>>1;
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	core::rect<float> npos;
-	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact;
+	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X-xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact;
-	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact;
+	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X-xPlus+0.5f) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact;
 
 	video::SColor temp[4] =
@@ -1092,7 +1086,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 
 
 
-//! draw an 2d rectangle
+//! draw a 2d rectangle
 void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& position,
 		const core::rect<s32>* clip)
 {
@@ -1108,17 +1102,17 @@ void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& positio
 		return;
 
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
-	s32 xPlus = -(renderTargetSize.Width>>1);
+	s32 xPlus = renderTargetSize.Width>>1;
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-	glRectf((f32)(pos.UpperLeftCorner.X+xPlus) * xFact,
-		(f32)(yPlus-pos.UpperLeftCorner.Y) * yFact,
-		(f32)(pos.LowerRightCorner.X+xPlus) * xFact,
-		(f32)(yPlus-pos.LowerRightCorner.Y) * yFact);
+	glRectf((pos.UpperLeftCorner.X-xPlus) * xFact,
+		(yPlus-pos.UpperLeftCorner.Y) * yFact,
+		(pos.LowerRightCorner.X-xPlus) * xFact,
+		(yPlus-pos.LowerRightCorner.Y) * yFact);
 }
 
 
@@ -1137,16 +1131,16 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 		return;
 
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
-	s32 xPlus = -(renderTargetSize.Width>>1);
+	s32 xPlus = renderTargetSize.Width>>1;
 	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	core::rect<float> npos;
-	npos.UpperLeftCorner.X = (f32)(pos.UpperLeftCorner.X+xPlus) * xFact;
+	npos.UpperLeftCorner.X = (f32)(pos.UpperLeftCorner.X-xPlus) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact;
-	npos.LowerRightCorner.X = (f32)(pos.LowerRightCorner.X+xPlus) * xFact;
+	npos.LowerRightCorner.X = (f32)(pos.LowerRightCorner.X-xPlus) * xFact;
 	npos.LowerRightCorner.Y = (f32)(yPlus-pos.LowerRightCorner.Y) * yFact;
 
 	setRenderStates2DMode(colorLeftUp.getAlpha() < 255 ||
@@ -1186,7 +1180,7 @@ void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
 	// thanks to Vash TheStampede who sent in his implementation
 
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
-	const s32 xPlus = -(renderTargetSize.Width>>1);
+	const s32 xPlus = renderTargetSize.Width>>1;
 	const f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
 	const s32 yPlus =
@@ -1194,11 +1188,11 @@ void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
 	const f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
 	core::position2d<f32> npos_start;
-	npos_start.X  = (f32)(start.X + xPlus) * xFact;
+	npos_start.X  = (f32)(start.X - xPlus) * xFact;
 	npos_start.Y  = (f32)(yPlus - start.Y) * yFact;
 
 	core::position2d<f32> npos_end;
-	npos_end.X  = (f32)(end.X + xPlus) * xFact;
+	npos_end.X  = (f32)(end.X - xPlus) * xFact;
 	npos_end.Y  = (f32)(yPlus - end.Y) * yFact;
 
 	setRenderStates2DMode(color.getAlpha() < 255, false, false);
@@ -1901,7 +1895,9 @@ void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start,
 	CNullDriver::setFog(c, linearFog, start, end, density, pixelFog, rangeFog);
 
 	glFogi(GL_FOG_MODE, linearFog ? GL_LINEAR : GL_EXP);
+#ifdef GL_VERSION_1_4
 	glFogi(GL_FOG_COORDINATE_SOURCE, GL_FRAGMENT_DEPTH);
+#endif
 
 	if(linearFog)
 	{
@@ -1955,332 +1951,387 @@ E_DRIVER_TYPE COpenGLDriver::getDriverType()
 
 void COpenGLDriver::extGlActiveTextureARB(GLenum texture)
 {
-#ifdef MACOSX
-	if (MultiTextureExtension) glActiveTextureARB(texture);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (MultiTextureExtension && pGlActiveTextureARB)
 		pGlActiveTextureARB(texture);
+#else
+	if (MultiTextureExtension) glActiveTextureARB(texture);
 #endif
 }
 
 void COpenGLDriver::extGlClientActiveTextureARB(GLenum texture)
 {
-#ifdef MACOSX
-	if (MultiTextureExtension) glClientActiveTextureARB(texture);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (MultiTextureExtension && pGlClientActiveTextureARB)
 		pGlClientActiveTextureARB(texture);
+#else
+	if (MultiTextureExtension) glClientActiveTextureARB(texture);
 #endif
 }
 
 void COpenGLDriver::extGlGenProgramsARB(GLsizei n, GLuint *programs)
 {
-#ifdef MACOSX
-	glGenProgramsARB(n,programs);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGenProgramsARB)
 		pGlGenProgramsARB(n, programs);
+#elif defined(GL_ARB_vertex_program)
+	glGenProgramsARB(n,programs);
+#else
+	os::Printer::log("glGenProgramsARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlBindProgramARB(GLenum target, GLuint program)
 {
-#ifdef MACOSX
-	glBindProgramARB(target, program);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlBindProgramARB)
 		pGlBindProgramARB(target, program);
+#elif defined(GL_ARB_vertex_program)
+	glBindProgramARB(target, program);
+#else
+	os::Printer::log("glBindProgramARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlProgramStringARB(GLenum target, GLenum format, GLsizei len, const GLvoid *string)
 {
-#ifdef MACOSX
-	glProgramStringARB(target,format,len,string);
-#elif defined(WIN32) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlProgramStringARB)
 		pGlProgramStringARB(target, format, len, string);
+#elif defined(GL_ARB_vertex_program)
+	glProgramStringARB(target,format,len,string);
+#else
+	os::Printer::log("glProgramStringARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlDeleteProgramsARB(GLsizei n, const GLuint *programs)
 {
-#ifdef MACOSX
-	glDeleteProgramsARB(n,programs);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlDeleteProgramsARB)
 		pGlDeleteProgramsARB(n, programs);
+#elif defined(GL_ARB_vertex_program)
+	glDeleteProgramsARB(n,programs);
+#else
+	os::Printer::log("glDeleteProgramsARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlProgramLocalParameter4fvARB(GLenum n, GLuint i, const GLfloat * f)
 {
-#ifdef MACOSX
-	glProgramLocalParameter4fvARB(n,i,f);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlProgramLocalParameter4fvARB)
 		pGlProgramLocalParameter4fvARB(n,i,f);
+#elif defined(GL_ARB_vertex_program)
+	glProgramLocalParameter4fvARB(n,i,f);
+#else
+	os::Printer::log("glProgramLocalParameter4fvARB not supported", ELL_ERROR);
 #endif
 }
 
 GLhandleARB COpenGLDriver::extGlCreateShaderObjectARB(GLenum shaderType)
 {
-#ifdef MACOSX
-	return (glCreateShaderObjectARB(shaderType));
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlCreateShaderObjectARB)
 		return pGlCreateShaderObjectARB(shaderType);
-#endif
-
+#elif defined(GL_ARB_shader_objects)
+	return (glCreateShaderObjectARB(shaderType));
+#else
+	os::Printer::log("glCreateShaderObjectARB not supported", ELL_ERROR);
 	return 0;
+#endif
 }
 
 void COpenGLDriver::extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings)
 {
-#ifdef MACOSX
-	glShaderSourceARB(shader, numOfStrings, strings, (GLint *)lenOfStrings);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlShaderSourceARB)
 		pGlShaderSourceARB(shader, numOfStrings, strings, lenOfStrings);
+#elif defined(GL_ARB_shader_objects)
+	glShaderSourceARB(shader, numOfStrings, strings, (GLint *)lenOfStrings);
+#else
+	os::Printer::log("glShaderSourceARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlCompileShaderARB(GLhandleARB shader)
 {
-#ifdef MACOSX
-	glCompileShaderARB(shader);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlCompileShaderARB)
 		pGlCompileShaderARB(shader);
+#elif defined(GL_ARB_shader_objects)
+	glCompileShaderARB(shader);
+#else
+	os::Printer::log("glCompileShaderARB not supported", ELL_ERROR);
 #endif
 }
 
 GLhandleARB COpenGLDriver::extGlCreateProgramObjectARB(void)
 {
-#ifdef MACOSX
-	return (glCreateProgramObjectARB());
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlCreateProgramObjectARB)
 		return pGlCreateProgramObjectARB();
-#endif
-
+#elif defined(GL_ARB_shader_objects)
+	return glCreateProgramObjectARB();
+#else
+	os::Printer::log("glCreateProgramObjectARB not supported", ELL_ERROR);
 	return 0;
+#endif
 }
 
 void COpenGLDriver::extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader)
 {
-#ifdef MACOSX
-	glAttachObjectARB(program, shader);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlAttachObjectARB)
 		pGlAttachObjectARB(program, shader);
+#elif defined(GL_ARB_shader_objects)
+	glAttachObjectARB(program, shader);
+#else
+	os::Printer::log("glAttachObjectARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlLinkProgramARB(GLhandleARB program)
 {
-#ifdef MACOSX
-	glLinkProgramARB(program);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlLinkProgramARB)
 		pGlLinkProgramARB(program);
+#elif defined(GL_ARB_shader_objects)
+	glLinkProgramARB(program);
+#else
+	os::Printer::log("glLinkProgramARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUseProgramObjectARB(GLhandleARB prog)
 {
-#ifdef MACOSX
-	glUseProgramObjectARB(prog);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUseProgramObjectARB)
 		pGlUseProgramObjectARB(prog);
+#elif defined(GL_ARB_shader_objects)
+	glUseProgramObjectARB(prog);
+#else
+	os::Printer::log("glUseProgramObjectARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlDeleteObjectARB(GLhandleARB object)
 {
-#ifdef MACOSX
-	glDeleteObjectARB(object);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlDeleteObjectARB)
 		pGlDeleteObjectARB(object);
+#elif defined(GL_ARB_shader_objects)
+	glDeleteObjectARB(object);
+#else
+	os::Printer::log("gldeleteObjectARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlGetInfoLogARB(GLhandleARB object, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog)
 {
-#ifdef MACOSX
-	glGetInfoLogARB(object, maxLength, length, infoLog);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGetInfoLogARB)
 		pGlGetInfoLogARB(object, maxLength, length, infoLog);
+#elif defined(GL_ARB_shader_objects)
+	glGetInfoLogARB(object, maxLength, length, infoLog);
+#else
+	os::Printer::log("glGetInfoLogARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlGetObjectParameterivARB(GLhandleARB object, GLenum type, int *param)
 {
-#ifdef MACOSX
-	glGetObjectParameterivARB(object, type, (GLint *)param);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGetObjectParameterivARB)
 		pGlGetObjectParameterivARB(object, type, param);
+#elif defined(GL_ARB_shader_objects)
+	glGetObjectParameterivARB(object, type, (GLint *)param);
+#else
+	os::Printer::log("glGetObjectParameterivARB not supported", ELL_ERROR);
 #endif
 }
 
 GLint COpenGLDriver::extGlGetUniformLocationARB(GLhandleARB program, const char *name)
 {
-#ifdef MACOSX
-	return (glGetUniformLocationARB(program, name));
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGetUniformLocationARB)
 		return pGlGetUniformLocationARB(program, name);
-#endif
-
+#elif defined(GL_ARB_shader_objects)
+	return glGetUniformLocationARB(program, name);
+#else
+	os::Printer::log("glGetUniformLocationARB not supported", ELL_ERROR);
 	return 0;
+#endif
 }
 
 void COpenGLDriver::extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniform4fvARB(location, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniform4fvARB)
 		pGlUniform4fvARB(location, count, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniform4fvARB(location, count, v);
+#else
+	os::Printer::log("glUniform4fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniform1ivARB (GLint loc, GLsizei count, const GLint *v)
 {
-#ifdef MACOSX
-	glUniform1ivARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniform1ivARB)
 		pGlUniform1ivARB(loc, count, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniform1ivARB(loc, count, v);
+#else
+	os::Printer::log("glUniform1ivARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniform1fvARB (GLint loc, GLsizei count, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniform1fvARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniform1fvARB)
 		pGlUniform1fvARB(loc, count, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniform1fvARB(loc, count, v);
+#else
+	os::Printer::log("glUniform1fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniform2fvARB (GLint loc, GLsizei count, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniform2fvARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniform2fvARB)
 		pGlUniform2fvARB(loc, count, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniform2fvARB(loc, count, v);
+#else
+	os::Printer::log("glUniform2fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniform3fvARB (GLint loc, GLsizei count, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniform3fvARB(loc, count, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniform3fvARB)
 		pGlUniform3fvARB(loc, count, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniform3fvARB(loc, count, v);
+#else
+	os::Printer::log("glUniform3fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniformMatrix2fvARB (GLint loc, GLsizei count, GLboolean transpose, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniformMatrix2fvARB(loc, count, transpose, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniformMatrix2fvARB)
 		pGlUniformMatrix2fvARB(loc, count, transpose, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniformMatrix2fvARB(loc, count, transpose, v);
+#else
+	os::Printer::log("glUniformMatrix2fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniformMatrix3fvARB (GLint loc, GLsizei count, GLboolean transpose, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniformMatrix3fvARB(loc, count, transpose, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniformMatrix3fvARB)
 		pGlUniformMatrix3fvARB(loc, count, transpose, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniformMatrix3fvARB(loc, count, transpose, v);
+#else
+	os::Printer::log("glUniformMatrix3fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlUniformMatrix4fvARB (GLint loc, GLsizei count, GLboolean transpose, const GLfloat *v)
 {
-#ifdef MACOSX
-	glUniformMatrix4fvARB(loc, count, transpose, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlUniformMatrix4fvARB)
 		pGlUniformMatrix4fvARB(loc, count, transpose, v);
+#elif defined(GL_ARB_shader_objects)
+	glUniformMatrix4fvARB(loc, count, transpose, v);
+#else
+	os::Printer::log("glUniformMatrix4fvARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlGetActiveUniformARB (GLhandleARB program, GLuint index, GLsizei maxlength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name)
 {
-#ifdef MACOSX
-	glGetActiveUniformARB(program, index, maxlength, length, size, type, name);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGetActiveUniformARB)
 		pGlGetActiveUniformARB(program, index, maxlength, length, size, type, name);
+#elif defined(GL_ARB_shader_objects)
+	glGetActiveUniformARB(program, index, maxlength, length, size, type, name);
+#else
+	os::Printer::log("glGetActiveUniformARB not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlPointParameterfARB (GLint loc, GLfloat f)
 {
-#ifdef MACOSX
-	glPointParameterfARB(loc, f);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlPointParameterfARB)
 		pGlPointParameterfARB(loc, f);
+#else
+	glPointParameterfARB(loc, f);
 #endif
 }
 
 void COpenGLDriver::extGlPointParameterfvARB (GLint loc, const GLfloat *v)
 {
-#ifdef MACOSX
-	glPointParameterfvARB(loc, v);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlPointParameterfvARB)
 		pGlPointParameterfvARB(loc, v);
+#else
+	glPointParameterfvARB(loc, v);
 #endif
 }
 
 void COpenGLDriver::extGlStencilFuncSeparate (GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask)
 {
-#ifdef MACOSX
-	glStencilFuncSeparate(frontfunc, backfunc, ref, mask);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlStencilFuncSeparate)
 		pGlStencilFuncSeparate(frontfunc, backfunc, ref, mask);
 	else if (pGlStencilFuncSeparateATI)
 		pGlStencilFuncSeparateATI(frontfunc, backfunc, ref, mask);
+#elif defined(GL_VERSION_2_0)
+	glStencilFuncSeparate(frontfunc, backfunc, ref, mask);
+#elif defined(GL_ATI_separate_stencil)
+	glStencilFuncSeparateATI(frontfunc, backfunc, ref, mask);
+#else
+	os::Printer::log("glStencilFuncSeparate not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlStencilOpSeparate (GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
 {
-#ifdef MACOSX
-	glStencilOpSeparate(face, fail, zfail, zpass);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlStencilOpSeparate)
 		pGlStencilOpSeparate(face, fail, zfail, zpass);
 	else if (pGlStencilOpSeparateATI)
 		pGlStencilOpSeparateATI(face, fail, zfail, zpass);
+#elif defined(GL_VERSION_2_0)
+	glStencilOpSeparate(face, fail, zfail, zpass);
+#elif defined(GL_ATI_separate_stencil)
+	glStencilOpSeparateATI(face, fail, zfail, zpass);
+#else
+	os::Printer::log("glStencilOpSeparate not supported", ELL_ERROR);
 #endif
 }
 
 void COpenGLDriver::extGlCompressedTexImage2D (GLenum target, GLint level, GLenum internalformat, GLsizei width,
 		GLsizei height, GLint border, GLsizei imageSize, const void* data)
 {
-#ifdef MACOSX
-	glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
-#elif defined(_IRR_WINDOWS_) || defined(_IRR_LINUX_OPENGL_USE_EXTENSIONS_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlCompressedTexImage2D)
 		pGlCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+#else
+	glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 #endif
 }
 
@@ -2292,15 +2343,19 @@ bool COpenGLDriver::hasMultiTextureExtension()
 //! Sets a vertex shader constant.
 void COpenGLDriver::setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
+#ifdef GL_ARB_vertex_program
 	for (int i=0; i<constantAmount; ++i)
 		extGlProgramLocalParameter4fvARB(GL_VERTEX_PROGRAM_ARB, startRegister+i, &data[i*4]);
+#endif
 }
 
 //! Sets a pixel shader constant.
 void COpenGLDriver::setPixelShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
+#ifdef GL_ARB_fragment_program
 	for (int i=0; i<constantAmount; ++i)
 		extGlProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, startRegister+i, &data[i*4]);
+#endif
 }
 
 //! Sets a constant for the vertex shader based on a name.

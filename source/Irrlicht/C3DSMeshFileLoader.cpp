@@ -156,11 +156,6 @@ IAnimatedMesh* C3DSMeshFileLoader::createMesh(io::IReadFile* file)
 
 	readChunkData(file, data);
 
-#ifdef __BIG_ENDIAN__
-	data.header.id = OSReadSwapInt16(&data.header.id,0);
-	data.header.length = OSReadSwapInt32(&data.header.length,0);
-#endif
-
 	if (data.header.id != C3DS_MAIN3DS )
 		return false;
 
@@ -213,6 +208,9 @@ bool C3DSMeshFileLoader::readPercentageChunk(io::IReadFile* file,
 	{
 		// read short
 		file->read(&intpercentage, 2);
+#ifdef __BIG_ENDIAN__
+		intpercentage = os::Byteswap::byteswap(intpercentage);
+#endif
 		percentage=intpercentage/100.0f;
 		data.read += 2;
 	}
@@ -221,6 +219,9 @@ bool C3DSMeshFileLoader::readPercentageChunk(io::IReadFile* file,
 	{
 		// read float
 		file->read(&percentage, 4);
+#ifdef __BIG_ENDIAN__
+		percentage = os::Byteswap::byteswap(percentage);
+#endif
 		data.read += 4;
 	}
 	break;
@@ -263,6 +264,11 @@ bool C3DSMeshFileLoader::readColorChunk(io::IReadFile* file, ChunkData* chunk,
 	{
 		// read float data
 		file->read(cf, sizeof(cf));
+#ifdef __BIG_ENDIAN__
+		cf[0] = os::Byteswap::byteswap(cf[0]);
+		cf[1] = os::Byteswap::byteswap(cf[1]);
+		cf[2] = os::Byteswap::byteswap(cf[2]);
+#endif
 		out.set(255, (s32)(cf[0]*255.0f), (s32)(cf[1]*255.0f), (s32)(cf[2]*255.0f)); 
 		data.read += sizeof(cf);
 	}
@@ -342,6 +348,9 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			{
 				s16 flags;
 				file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				switch (flags)
 				{
 					case 0:
@@ -399,6 +408,9 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			{
 				s16 flags;
 				file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				data.read += 2;
 			}
 			break;
@@ -409,6 +421,9 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			{
 				f32 value;
 				file->read(&value, 4);
+#ifdef __BIG_ENDIAN__
+				value = os::Byteswap::byteswap(value);
+#endif
 				data.read += 4;
 			}
 			break;
@@ -436,13 +451,31 @@ bool C3DSMeshFileLoader::readTrackChunk(io::IReadFile* file, ChunkData& data,
 	u32 flags2;
 	// Track flags
 	file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+	flags = os::Byteswap::byteswap(flags);
+#endif
 	file->read(&flags2, 4);
+#ifdef __BIG_ENDIAN__
+	flags2 = os::Byteswap::byteswap(flags2);
+#endif
 	file->read(&flags2, 4);
+#ifdef __BIG_ENDIAN__
+	flags2 = os::Byteswap::byteswap(flags2);
+#endif
 	// Num keys
 	file->read(&flags2, 4);
+#ifdef __BIG_ENDIAN__
+	flags2 = os::Byteswap::byteswap(flags2);
+#endif
 	file->read(&flags2, 4);
+#ifdef __BIG_ENDIAN__
+	flags2 = os::Byteswap::byteswap(flags2);
+#endif
 	// TCB flags
 	file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+	flags = os::Byteswap::byteswap(flags);
+#endif
 	data.read += 20;
 
 	f32 angle=0.0f;
@@ -450,12 +483,20 @@ bool C3DSMeshFileLoader::readTrackChunk(io::IReadFile* file, ChunkData& data,
 	{
 		// Angle
 		file->read(&angle, sizeof(f32));
+#ifdef __BIG_ENDIAN__
+	angle = os::Byteswap::byteswap(angle);
+#endif
 		data.read += sizeof(f32);
 	}
 	core::vector3df vec;
 	file->read(&vec.X, sizeof(f32));
 	file->read(&vec.Y, sizeof(f32));
 	file->read(&vec.Z, sizeof(f32));
+#ifdef __BIG_ENDIAN__
+	vec.X = os::Byteswap::byteswap(vec.X);
+	vec.Y = os::Byteswap::byteswap(vec.X);
+	vec.Z = os::Byteswap::byteswap(vec.X);
+#endif
 	data.read += 12;
 	vec-=pivot;
 
@@ -497,9 +538,15 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 	{
 		u16 flags;
 		file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+		flags = os::Byteswap::byteswap(flags);
+#endif
 		c8* c = new c8[data.header.length - data.read-4];
 		file->read(c, data.header.length - data.read-4);
 		file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+		flags = os::Byteswap::byteswap(flags);
+#endif
 
 		data.read += data.header.length - data.read;
 		parent->read += data.read;
@@ -524,7 +571,13 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 			{
 				u32 flags;
 				file->read(&flags, 4);
+#ifdef __BIG_ENDIAN__
+		flags = os::Byteswap::byteswap(flags);
+#endif
 				file->read(&flags, 4);
+#ifdef __BIG_ENDIAN__
+		flags = os::Byteswap::byteswap(flags);
+#endif
 				data.read += 8;
 			}
 			break;
@@ -545,8 +598,17 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 				}
 
 				file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				data.read += data.header.length - data.read;
 				delete [] c;
 			}
@@ -555,6 +617,9 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 			{
 				u32 flags;
 				file->read(&flags, 4);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				data.read += 4;
 			}
 			break;
@@ -562,6 +627,9 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 			{
 				u16 flags;
 				file->read(&flags, 2);
+#ifdef __BIG_ENDIAN__
+				flags = os::Byteswap::byteswap(flags);
+#endif
 				data.read += 2;
 			}
 			break;
@@ -570,6 +638,11 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 				file->read(&pivot.X, sizeof(f32));
 				file->read(&pivot.Y, sizeof(f32));
 				file->read(&pivot.Z, sizeof(f32));
+#ifdef __BIG_ENDIAN__
+				pivot.X = os::Byteswap::byteswap(pivot.X);
+				pivot.Y = os::Byteswap::byteswap(pivot.Y);
+				pivot.Z = os::Byteswap::byteswap(pivot.Z);
+#endif
 				data.read += 12;
 			}
 			break;
@@ -580,10 +653,20 @@ bool C3DSMeshFileLoader::readFrameChunk(io::IReadFile* file, ChunkData* parent)
 				file->read(&bboxCenter.X, sizeof(f32));
 				file->read(&bboxCenter.Y, sizeof(f32));
 				file->read(&bboxCenter.Z, sizeof(f32));
+#ifdef __BIG_ENDIAN__
+				bboxCenter.X = os::Byteswap::byteswap(bboxCenter.X);
+				bboxCenter.Y = os::Byteswap::byteswap(bboxCenter.Y);
+				bboxCenter.Z = os::Byteswap::byteswap(bboxCenter.Z);
+#endif
 				bbox.reset(bboxCenter);
 				file->read(&bboxCenter.X, sizeof(f32));
 				file->read(&bboxCenter.Y, sizeof(f32));
 				file->read(&bboxCenter.Z, sizeof(f32));
+#ifdef __BIG_ENDIAN__
+				bboxCenter.X = os::Byteswap::byteswap(bboxCenter.X);
+				bboxCenter.Y = os::Byteswap::byteswap(bboxCenter.Y);
+				bboxCenter.Z = os::Byteswap::byteswap(bboxCenter.Z);
+#endif
 				bbox.addInternalPoint(bboxCenter);
 				bboxCenter=bbox.getCenter();
 				data.read += 24;
@@ -623,7 +706,7 @@ bool C3DSMeshFileLoader::readChunk(io::IReadFile* file, ChunkData* parent)
 				u16 version;
 				file->read(&version, sizeof(u16));
 #ifdef __BIG_ENDIAN__
-				version = OSReadSwapInt16(&version,0);
+				version = os::Byteswap::byteswap(version);
 #endif
 				file->seek(data.header.length - data.read - 2, true);
 				data.read += data.header.length - data.read;
@@ -645,7 +728,7 @@ bool C3DSMeshFileLoader::readChunk(io::IReadFile* file, ChunkData* parent)
 				u32 version;
 				file->read(&version, sizeof(u32));
 #ifdef __BIG_ENDIAN__
-				version = OSReadSwapInt32(&version,0);
+				version = os::Byteswap::byteswap(version);
 #endif
 				data.read += sizeof(u32);
 			}
@@ -695,10 +778,15 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 				u16 numVertex, flags;
 				file->read(&numVertex, sizeof(u16));
 #ifdef __BIG_ENDIAN__
-				numVertex= OSReadSwapInt16(&numVertex,0);
+				numVertex= os::Byteswap::byteswap(numVertex);
 #endif
 				for (u16 i=0; i<numVertex; ++i)
+				{
 					file->read(&flags, sizeof(u16));
+#ifdef __BIG_ENDIAN__
+					flags = os::Byteswap::byteswap(flags);
+#endif
+				}
 				data.read += (numVertex+1)*sizeof(u16);
 			}
 			break;
@@ -723,11 +811,19 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 				for (int i=0; i<3; ++i)
 				{
 					for (int j=0; j<3; ++j)
+#ifdef __BIG_ENDIAN__
+						TransformationMatrix(i,j)=os::Byteswap::byteswap(mat[i][j]);
+#else
 						TransformationMatrix(i,j)=mat[i][j];
+#endif
 				}
 				for (int j=0; j<3; ++j)
 				{
+#ifdef __BIG_ENDIAN__
+					TransformationMatrix(j,3)=os::Byteswap::byteswap(mat[3][j]);
+#else
 					TransformationMatrix(j,3)=mat[3][j];
+#endif
 				}
 				TransformationMatrix=TransformationMatrix.getTransposed();
 				data.read += 12*sizeof(f32);
@@ -745,6 +841,10 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 				u32 flags;
 				for (u16 i=0; i<CountFaces; ++i)
 					file->read(&flags, sizeof(u32));
+#ifdef __BIG_ENDIAN__
+				for (u16 i=0; i<CountFaces; ++i)
+					flags = os::Byteswap::byteswap(flags);
+#endif
 				data.read += CountFaces*sizeof(u32);
 			}
 			break;
@@ -1017,7 +1117,7 @@ void C3DSMeshFileLoader::readTextureCoords(io::IReadFile* file, ChunkData& data)
 {
 	file->read(&CountTCoords, sizeof(CountTCoords));
 #ifdef __BIG_ENDIAN__
-	CountTCoords = OSReadSwapInt16(&CountTCoords,0);
+	CountTCoords = os::Byteswap::byteswap(CountTCoords);
 #endif
 	data.read += sizeof(CountTCoords);
 
@@ -1032,7 +1132,7 @@ void C3DSMeshFileLoader::readTextureCoords(io::IReadFile* file, ChunkData& data)
 	TCoords = new f32[CountTCoords * 3];
 	file->read(TCoords, tcoordsBufferByteSize);
 #ifdef __BIG_ENDIAN__
-	for (int i=0;i<CountTCoords*2;i++) *((long*)&TCoords[i]) = OSReadSwapInt32(&TCoords[i],0);
+	for (int i=0;i<CountTCoords*2;i++) TCoords[i] = os::Byteswap::byteswap(TCoords[i]);
 #endif
 	data.read += tcoordsBufferByteSize;
 }
@@ -1046,7 +1146,7 @@ void C3DSMeshFileLoader::readMaterialGroup(io::IReadFile* file, ChunkData& data)
 
 	file->read(&group.faceCount, sizeof(group.faceCount));
 #ifdef __BIG_ENDIAN__
-	group.faceCount = OSReadSwapInt16(&group.faceCount,0);
+	group.faceCount = os::Byteswap::byteswap(group.faceCount);
 #endif
 	data.read += sizeof(group.faceCount);
 
@@ -1054,7 +1154,7 @@ void C3DSMeshFileLoader::readMaterialGroup(io::IReadFile* file, ChunkData& data)
 	group.faces = new s16[group.faceCount];
 	file->read(group.faces, sizeof(s16) * group.faceCount);
 #ifdef __BIG_ENDIAN__
-	for (int i=0;i<group.faceCount;i++) group.faces[i] = OSReadSwapInt16(&group.faces[i],0);
+	for (int i=0;i<group.faceCount;i++) group.faces[i] = os::Byteswap::byteswap(group.faces[i]);
 #endif
 	data.read += sizeof(s16) * group.faceCount;
 
@@ -1066,7 +1166,7 @@ void C3DSMeshFileLoader::readIndices(io::IReadFile* file, ChunkData& data)
 {
 	file->read(&CountFaces, sizeof(CountFaces));
 #ifdef __BIG_ENDIAN__
-	CountFaces = OSReadSwapInt16(&CountFaces,0);
+	CountFaces = os::Byteswap::byteswap(CountFaces);
 #endif
 	data.read += sizeof(CountFaces);
 
@@ -1077,7 +1177,7 @@ void C3DSMeshFileLoader::readIndices(io::IReadFile* file, ChunkData& data)
 	Indices = new u16[CountFaces * 4];
 	file->read(Indices, indexBufferByteSize);
 #ifdef __BIG_ENDIAN__
-	for (int i=0;i<CountFaces*4;++i) Indices[i] = OSReadSwapInt16(&Indices[i],0);
+	for (int i=0;i<CountFaces*4;++i) Indices[i] = os::Byteswap::byteswap(Indices[i]);
 #endif
 	data.read += indexBufferByteSize;
 }
@@ -1088,7 +1188,7 @@ void C3DSMeshFileLoader::readVertices(io::IReadFile* file, ChunkData& data)
 {
 	file->read(&CountVertices, sizeof(CountVertices));
 #ifdef __BIG_ENDIAN__
-	CountVertices = OSReadSwapInt16(&CountVertices,0);
+	CountVertices = os::Byteswap::byteswap(CountVertices);
 #endif
 	data.read += sizeof(CountVertices);
 
@@ -1103,7 +1203,7 @@ void C3DSMeshFileLoader::readVertices(io::IReadFile* file, ChunkData& data)
 	Vertices = new f32[CountVertices * 3];
 	file->read(Vertices, vertexBufferByteSize);
 #ifdef __BIG_ENDIAN__
-	for (int i=0;i<CountVertices*3;i++) *((long*)&Vertices[i]) = OSReadSwapInt32(&Vertices[i],0);
+	for (int i=0;i<CountVertices*3;i++) Vertices[i] = os::Byteswap::byteswap(Vertices[i]);
 #endif
 	data.read += vertexBufferByteSize;
 }
@@ -1114,8 +1214,8 @@ void C3DSMeshFileLoader::readChunkData(io::IReadFile* file, ChunkData& data)
 {
 	file->read(&data.header, sizeof(ChunkHeader));
 #ifdef __BIG_ENDIAN__
-	data.header.id = OSReadSwapInt16(&data.header.id,0);
-	data.header.length = OSReadSwapInt32(&data.header.length,0);
+	data.header.id = os::Byteswap::byteswap(data.header.id);
+	data.header.length = os::Byteswap::byteswap(data.header.length);
 #endif
 	data.read += sizeof(ChunkHeader);
 }

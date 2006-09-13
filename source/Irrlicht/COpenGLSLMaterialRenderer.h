@@ -17,11 +17,15 @@
 #endif
 
 #ifdef LINUX
+#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 #define GL_GLEXT_LEGACY 1
+#endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glx.h>
+#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 #include "glext.h"
+#endif
 #endif
 
 #ifdef MACOSX
