@@ -485,6 +485,7 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
 	switch (feature)
 	{
+	case EVDF_MULTITEXTURE:
 	case EVDF_BILINEAR_FILTER:
 		return true;
 	case EVDF_RENDER_TO_TARGET:
@@ -515,6 +516,8 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return Caps.PixelShaderVersion >= D3DPS_VERSION(3,0);
 	case EVDF_HLSL:
 		return Caps.VertexShaderVersion >= D3DVS_VERSION(1,1);
+	case EVDF_TEXTURE_NPOT:
+		return (Caps.TextureCaps & D3DPTEXTURECAPS_POW2) == 0;
 	default:
 		return false;
 	};
@@ -592,8 +595,7 @@ void CD3D9Driver::setMaterial(const SMaterial& material)
 //! returns a device dependent texture from a software surface (IImage)
 video::ITexture* CD3D9Driver::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	return new CD3D9Texture(surface, pID3DDevice,
-		TextureCreationFlags, name);
+	return new CD3D9Texture(surface, this, TextureCreationFlags, name);
 }
 
 
@@ -1938,7 +1940,7 @@ IVideoDriver* CD3D9Driver::getVideoDriver()
 //! Creates a render target texture.
 ITexture* CD3D9Driver::createRenderTargetTexture(core::dimension2d<s32> size)
 {
-	return new CD3D9Texture(pID3DDevice, size, 0);
+	return new CD3D9Texture(this, size, 0);
 }
 
 

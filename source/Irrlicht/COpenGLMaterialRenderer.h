@@ -46,7 +46,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				Driver->extGlActiveTextureARB(GL_TEXTURE1_ARB);
 				glDisable(GL_TEXTURE_2D);
@@ -79,7 +79,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				Driver->extGlActiveTextureARB(GL_TEXTURE1_ARB);
 				glDisable(GL_TEXTURE_2D);
@@ -112,7 +112,7 @@ public:
 
 			Driver->setTexture(1,0);
 
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
@@ -147,7 +147,7 @@ public:
 
 			Driver->setTexture(1,0);
 
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
 			glDisable(GL_ALPHA_TEST);
@@ -202,7 +202,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
@@ -258,7 +258,7 @@ public:
 
 			glAlphaFunc(GL_GREATER, 0.5);
 
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -291,7 +291,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				glDisable(GL_BLEND);
 				glDisable(GL_ALPHA_TEST);
@@ -376,7 +376,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				glDisable(GL_BLEND);
 				glDisable(GL_ALPHA_TEST);
@@ -421,7 +421,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				Driver->extGlActiveTextureARB(GL_TEXTURE1_ARB);
 				glDisable(GL_TEXTURE_2D);
@@ -445,7 +445,7 @@ public:
 
 	virtual void OnUnsetMaterial()
 	{
-		if (Driver->hasMultiTextureExtension())
+		if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);
@@ -469,7 +469,7 @@ public:
 			glDisable(GL_ALPHA_TEST);
 			glDisable(GL_BLEND);
 
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -508,7 +508,7 @@ public:
 
 	virtual void OnUnsetMaterial()
 	{
-		if (Driver->hasMultiTextureExtension())
+		if (Driver->queryFeature(EVDF_MULTITEXTURE))
 		{
 			Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -543,7 +543,7 @@ public:
 	{
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			if (Driver->hasMultiTextureExtension())
+			if (Driver->queryFeature(EVDF_MULTITEXTURE))
 			{
 				Driver->extGlActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -579,7 +579,7 @@ public:
 
 	virtual void OnUnsetMaterial()
 	{
-		if (Driver->hasMultiTextureExtension())
+		if (Driver->queryFeature(EVDF_MULTITEXTURE))
 		{
 			Driver->extGlActiveTextureARB(GL_TEXTURE1_ARB);
 			glDisable(GL_TEXTURE_2D);

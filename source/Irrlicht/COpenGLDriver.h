@@ -209,8 +209,6 @@ namespace video
 			GLenum internalformat, GLsizei width, GLsizei height,
 			GLint border, GLsizei imageSize, const void* data);
 
-		bool hasMultiTextureExtension();
-
 		//! Can be called by an IMaterialRenderer to make its work easier.
 		void setBasicRenderStates(const SMaterial& material, const SMaterial& lastmaterial,
 			bool resetAllRenderstates);
@@ -315,6 +313,7 @@ namespace video
 		bool SeparateStencilExtension;
 		bool GenerateMipmapExtension;
 		bool TextureCompressionExtension;
+		bool TextureNPOTExtension;
 
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;

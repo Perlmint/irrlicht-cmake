@@ -14,8 +14,10 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
+
+class CD3D8Driver;
 
 /*!
 	interface for a Video Driver dependent Texture.
@@ -25,11 +27,11 @@ class CD3D8Texture : public ITexture
 public:
 
 	//! constructor
-	CD3D8Texture(IImage* image, IDirect3DDevice8* device,
+	CD3D8Texture(IImage* image, CD3D8Driver* driver,
 		u32 flags, const char* name);
 
 	//! rendertarget constructor
-	CD3D8Texture(IDirect3DDevice8* device, core::dimension2d<s32> size, const char* name);
+	CD3D8Texture(CD3D8Driver* driver, core::dimension2d<s32> size, const char* name);
 
 	//! destructor
 	virtual ~CD3D8Texture();
@@ -61,7 +63,7 @@ public:
 	//! returns if texture has mipmap levels
 	bool hasMipMaps();
 
-	//! Regenerates the mip map levels of the texture. Useful after locking and 
+	//! Regenerates the mip map levels of the texture. Useful after locking and
 	//! modifying the texture
 	virtual void regenerateMipMapLevels();
 
@@ -84,7 +86,7 @@ private:
 	//! copies the image to the texture
 	bool copyTexture();
 
-	//! optimized for 16 bit to 16 copy. This is in here because before 
+	//! optimized for 16 bit to 16 copy. This is in here because before
 	//! version 0.4.2, the engine only used A1R5G5B5 hardware textures,
 	bool copyTo16BitTexture();
 
@@ -103,6 +105,7 @@ private:
 	IDirect3DDevice8* Device;
 	IDirect3DTexture8* Texture;
 	IDirect3DSurface8* RTTSurface;
+	CD3D8Driver* Driver;
 	core::dimension2d<s32> TextureSize;
 	core::dimension2d<s32> ImageSize;
 	s32 Pitch;

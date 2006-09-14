@@ -17,6 +17,7 @@ namespace irr
 namespace video
 {
 
+class CD3D9Driver;
 /*!
 	interface for a Video Driver dependent Texture.
 */
@@ -25,11 +26,11 @@ class CD3D9Texture : public ITexture
 public:
 
 	//! constructor
-	CD3D9Texture(IImage* image, IDirect3DDevice9* device,
+	CD3D9Texture(IImage* image, CD3D9Driver* driver,
 		u32 flags, const char* name);
 
 	//! rendertarget constructor
-	CD3D9Texture(IDirect3DDevice9* device, core::dimension2d<s32> size, const char* name);
+	CD3D9Texture(CD3D9Driver* driver, core::dimension2d<s32> size, const char* name);
 
 	//! destructor
 	virtual ~CD3D9Texture();
@@ -103,6 +104,7 @@ private:
 	IDirect3DDevice9* Device;
 	IDirect3DTexture9* Texture;
 	IDirect3DSurface9* RTTSurface;
+	CD3D9Driver* Driver;
 	core::dimension2d<s32> TextureSize;
 	core::dimension2d<s32> ImageSize;
 	s32 Pitch;

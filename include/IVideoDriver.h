@@ -46,11 +46,14 @@ namespace video
 		//! Is driver able to render to a surface?
 		EVDF_RENDER_TO_TARGET = 0,
 
-		//! Is driver able to render with a bilinear filter applied?
-		EVDF_BILINEAR_FILTER,
-
 		//! Is hardeware transform and lighting supported?
 		EVDF_HARDWARE_TL,
+
+		//! Are multiple textures per material possible?
+		EVDF_MULTITEXTURE,
+
+		//! Is driver able to render with a bilinear filter applied?
+		EVDF_BILINEAR_FILTER,
 
 		//! Can the driver handle mip maps?
 		EVDF_MIP_MAP,
@@ -98,7 +101,10 @@ namespace video
 		EVDF_ARB_GLSL,
 
 		//! Is HLSL supported?
-		EVDF_HLSL
+		EVDF_HLSL,
+
+		//! Are non-power-of-two textures supported?
+		EVDF_TEXTURE_NPOT
 	};
 
 	//! enumeration for geometry transformation states

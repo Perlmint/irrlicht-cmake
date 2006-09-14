@@ -230,8 +230,6 @@ void CSoftwareDriver2::selectRightTriangleRenderer()
 
 
 
-
-
 //! queries the features of the driver, returns true if feature is available
 bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
@@ -242,6 +240,7 @@ bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return true;
 #endif
 	case EVDF_RENDER_TO_TARGET:
+	case EVDF_MULTITEXTURE:
 		return true;
 	default:
 		return false;

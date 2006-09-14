@@ -36,6 +36,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
+	TextureNPOTExtension(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
@@ -196,6 +197,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
+	TextureNPOTExtension(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1),
 	CurrentRendertargetSize(0,0), _device(device)
@@ -226,6 +228,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
+	TextureNPOTExtension(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
@@ -383,6 +386,7 @@ void COpenGLDriver::loadExtensions()
 		SeparateStencilExtension = SeparateStencilExtension || gluCheckExtension((const GLubyte*)"GL_ARB_separate_stencil", t);
 		GenerateMipmapExtension = gluCheckExtension((const GLubyte*)"GL_SGIS_generate_mipmap", t);
 		TextureCompressionExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_compression", t);
+		TextureNPOTExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_non_power_of_two", t);
 	}
 	else
 	#endif
@@ -424,6 +428,9 @@ void COpenGLDriver::loadExtensions()
 				else
 				if (strstr(p, "GL_ARB_texture_compression"))
 					TextureCompressionExtension = true;
+				else
+				if (strstr(p, "GL_ARB_texture_non_power_of_two"))
+					TextureNPOTExtension = true;
 
 				p = p + strlen(p) + 1;
 			}
@@ -1214,6 +1221,8 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	{
 	case EVDF_RENDER_TO_TARGET:
 		return true;
+	case EVDF_MULTITEXTURE:
+		return MultiTextureExtension;
 	case EVDF_BILINEAR_FILTER:
 		return true;
 	case EVDF_MIP_MAP:
@@ -1228,6 +1237,8 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return ARBFragmentProgramExtension;
 	case EVDF_ARB_GLSL:
 		return ARBShadingLanguage100Extension;
+	case EVDF_TEXTURE_NPOT:
+		return TextureNPOTExtension;
 	default:
 		return false;
 	};
@@ -2333,11 +2344,6 @@ void COpenGLDriver::extGlCompressedTexImage2D (GLenum target, GLint level, GLenu
 #else
 	glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 #endif
-}
-
-bool COpenGLDriver::hasMultiTextureExtension()
-{
-	return MultiTextureExtension;
 }
 
 //! Sets a vertex shader constant.

@@ -304,7 +304,8 @@ void CQ3LevelMesh::loadMeshVerts(tBSPLump* l, io::IReadFile* file)
 	file->read(MeshVerts, l->length);
 
 	#ifdef __BIG_ENDIAN__
-	for (int i=0;i<NumMeshVerts;i++) MeshVerts[i] = os::Byteswap::byteswap(MeshVerts[i]);
+	for (int i=0;i<NumMeshVerts;i++)
+		MeshVerts[i] = os::Byteswap::byteswap(MeshVerts[i]);
 	#endif
 }
 

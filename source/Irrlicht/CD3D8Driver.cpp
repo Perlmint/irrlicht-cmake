@@ -492,9 +492,9 @@ bool CD3D8Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
 	switch (feature)
 	{
-	case EVDF_BILINEAR_FILTER:
-		return true;
 	case EVDF_RENDER_TO_TARGET:
+	case EVDF_MULTITEXTURE:
+	case EVDF_BILINEAR_FILTER:
 		return true;
 	case EVDF_HARDWARE_TL:
 		return (Caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0;
@@ -520,6 +520,8 @@ bool CD3D8Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return Caps.PixelShaderVersion >= D3DPS_VERSION(2,0);
 	case EVDF_PIXEL_SHADER_3_0:
 		return Caps.PixelShaderVersion >= D3DPS_VERSION(3,0);
+	case EVDF_TEXTURE_NPOT:
+		return (Caps.TextureCaps & D3DPTEXTURECAPS_POW2) == 0;
 	default:
 		return false;
 	};
@@ -596,8 +598,7 @@ void CD3D8Driver::setMaterial(const SMaterial& material)
 //! returns a device dependent texture from a software surface (IImage)
 video::ITexture* CD3D8Driver::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	return new CD3D8Texture(surface, pID3DDevice,
-		TextureCreationFlags, name);
+	return new CD3D8Texture(surface, this, TextureCreationFlags, name);
 }
 
 
@@ -714,7 +715,7 @@ bool CD3D8Driver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer
 //! Creates a render target texture.
 ITexture* CD3D8Driver::createRenderTargetTexture(core::dimension2d<s32> size)
 {
-	return new CD3D8Texture(pID3DDevice, size, 0);
+	return new CD3D8Texture(this, size, 0);
 }
 
 

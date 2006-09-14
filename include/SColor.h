@@ -200,10 +200,10 @@ namespace video
 		//! \param dest: address where the 4x8 bit OpenGL color is stored.
 		inline void toOpenGLColor(u8* dest) const
 		{
-			*dest =   (color >> 16) & 0xff;
-			*++dest = (color >>  8) & 0xff;
-			*++dest = (color      ) & 0xff;
-			*++dest = (color >> 24) & 0xff;
+			*dest =   getRed();
+			*++dest = getGreen();
+			*++dest = getBlue();
+			*++dest = getAlpha();
 		};
 
 		//! Sets all four components of the color at once.

@@ -7,6 +7,7 @@
 
 #define _IRR_DONT_DO_MEMORY_DEBUGGING_HERE
 #include "CD3D8Texture.h"
+#include "CD3D8Driver.h"
 #include "os.h"
 
 #include <stdio.h>
@@ -31,8 +32,8 @@ namespace video
 {
 
 //! rendertarget constructor
-CD3D8Texture::CD3D8Texture(IDirect3DDevice8* device, core::dimension2d<s32> size, const char* name)
-: ITexture(name), Image(0), Device(device), TextureSize(size),
+CD3D8Texture::CD3D8Texture(CD3D8Driver* driver, core::dimension2d<s32> size, const char* name)
+: ITexture(name), Image(0), Driver(driver), TextureSize(size),
 	Texture(0), Pitch(0), ImageSize(size), HasMipMaps(0),
 	IsRenderTarget(true), RTTSurface(0)
 {
@@ -40,6 +41,7 @@ CD3D8Texture::CD3D8Texture(IDirect3DDevice8* device, core::dimension2d<s32> size
 	setDebugName("CD3D8Texture");
 	#endif
 
+	Device=driver->getExposedVideoData().D3D8.D3DDev8;
 	if (Device)
 		Device->AddRef();
 
@@ -48,9 +50,9 @@ CD3D8Texture::CD3D8Texture(IDirect3DDevice8* device, core::dimension2d<s32> size
 
 
 //! constructor
-CD3D8Texture::CD3D8Texture(IImage* image, IDirect3DDevice8* device,
+CD3D8Texture::CD3D8Texture(IImage* image, CD3D8Driver* driver,
 				u32 flags, const char* name)
-: ITexture(name), Image(image), Device(device), TextureSize(0,0),
+: ITexture(name), Image(image), Driver(driver), TextureSize(0,0),
 Texture(0), Pitch(0), ImageSize(0,0), HasMipMaps(false), IsRenderTarget(false),
 RTTSurface(0)
 {
@@ -60,6 +62,7 @@ RTTSurface(0)
 
 	bool generateMipLevels = (flags & video::ETCF_CREATE_MIP_MAPS) != 0;
 
+	Device=driver->getExposedVideoData().D3D8.D3DDev8;
 	if (Device)
 		Device->AddRef();
 
@@ -104,8 +107,13 @@ void CD3D8Texture::createTexture(u32 flags)
 	core::dimension2d<s32> optSize;
 	ImageSize = Image->getDimension();
 
-	optSize.Width = getTextureSizeFromImageSize(ImageSize.Width);
-	optSize.Height = getTextureSizeFromImageSize(ImageSize.Height);
+	if (Driver->queryFeature(video::EVDF_TEXTURE_NPOT))
+		optSize=ImageSize;
+	else
+	{
+		optSize.Width = getTextureSizeFromImageSize(ImageSize.Width);
+		optSize.Height = getTextureSizeFromImageSize(ImageSize.Height);
+	}
 
 	HRESULT hr;
 	D3DFORMAT format = D3DFMT_A1R5G5B5;

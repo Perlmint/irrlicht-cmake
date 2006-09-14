@@ -67,8 +67,13 @@ void COpenGLTexture::getImageData(IImage* image)
 	}
 
 	core::dimension2d<s32> nImageSize;
-	nImageSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
-	nImageSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
+	if (Driver && Driver->queryFeature(EVDF_TEXTURE_NPOT))
+		nImageSize=ImageSize;
+	else
+	{
+		nImageSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
+		nImageSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
+	}
 	SurfaceHasSameSize=ImageSize==nImageSize;
 
 	s32 bpp=0;

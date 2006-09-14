@@ -334,25 +334,15 @@ void CColorConverter::convert_R8G8B8toR8G8B8(const void* sP, s32 sN, void* dP)
 
 void CColorConverter::convert_R8G8B8toA8R8G8B8(const void* sP, s32 sN, void* dP)
 {
-	u8* sB = (u8*)sP;
-	u8* dB = (u8*)dP;
+	u8*  sB = (u8* )sP;
+	u32* dB = (u32*)dP;
 
 	for (s32 x = 0; x < sN; ++x)
 	{
-#ifdef __BIG_ENDIAN__
-		dB[0] = 0xff;
-		dB[1] = sB[0];
-		dB[2] = sB[1];
-		dB[3] = sB[2];
-#else
-		dB[0] = sB[2];
-		dB[1] = sB[1];
-		dB[2] = sB[0];
-		dB[3] = 0xff;
-#endif
+		*dB = 0xff000000 | (sB[0]<<16) | (sB[1]<<8) | sB[2];
 
 		sB += 3;
-		dB += 4;
+		++dB;
 	}
 }
 
