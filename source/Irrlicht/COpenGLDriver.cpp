@@ -2035,11 +2035,11 @@ GLhandleARB COpenGLDriver::extGlCreateShaderObjectARB(GLenum shaderType)
 	if (pGlCreateShaderObjectARB)
 		return pGlCreateShaderObjectARB(shaderType);
 #elif defined(GL_ARB_shader_objects)
-	return (glCreateShaderObjectARB(shaderType));
+	return glCreateShaderObjectARB(shaderType);
 #else
 	os::Printer::log("glCreateShaderObjectARB not supported", ELL_ERROR);
-	return 0;
 #endif
+	return 0;
 }
 
 void COpenGLDriver::extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings)
@@ -2075,8 +2075,8 @@ GLhandleARB COpenGLDriver::extGlCreateProgramObjectARB(void)
 	return glCreateProgramObjectARB();
 #else
 	os::Printer::log("glCreateProgramObjectARB not supported", ELL_ERROR);
-	return 0;
 #endif
+	return 0;
 }
 
 void COpenGLDriver::extGlAttachObjectARB(GLhandleARB program, GLhandleARB shader)
@@ -2160,8 +2160,8 @@ GLint COpenGLDriver::extGlGetUniformLocationARB(GLhandleARB program, const char 
 	return glGetUniformLocationARB(program, name);
 #else
 	os::Printer::log("glGetUniformLocationARB not supported", ELL_ERROR);
-	return 0;
 #endif
+	return 0;
 }
 
 void COpenGLDriver::extGlUniform4fvARB(GLint location, GLsizei count, const GLfloat *v)

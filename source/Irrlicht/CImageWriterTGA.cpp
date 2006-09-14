@@ -75,7 +75,7 @@ bool CImageWriterTGA::writeImage(io::IWriteFile *file, IImage *image)
 	case ECF_R8G8B8:
 		CColorConverter_convertFORMATtoFORMAT
 			= CColorConverter::convert_R8G8B8toR8G8B8;
-		imageHeader.PixelDepth = 16;
+		imageHeader.PixelDepth = 24;
 		imageHeader.ImageDescriptor |= 0;
 		break;
 	}
@@ -121,7 +121,7 @@ bool CImageWriterTGA::writeImage(io::IWriteFile *file, IImage *image)
 	imageFooter.DeveloperOffset = 0;
 	strncpy(imageFooter.Signature, "TRUEVISION-XFILE.", 18);
 
-	if (file->write(&imageFooter, sizeof(imageFooter)) != sizeof(imageFooter))
+	if (file->write(&imageFooter, sizeof(imageFooter)) < sizeof(imageFooter))
 		return false;
 
 	return imageHeader.ImageHeight < y;

@@ -374,8 +374,8 @@ namespace video
 			HWND Window;
 			HGLRC HRc; // Permanent Rendering Context
 		#elif defined(LINUX)
-		GLXDrawable XWindow;
-		Display* XDisplay;
+			GLXDrawable XWindow;
+			Display* XDisplay;
 		#elif defined(MACOSX)
 			CIrrDeviceMacOSX *_device;
 		#endif

@@ -48,7 +48,7 @@ namespace scene
 
 		//! Gets the name of a joint.
 		//! \param number: Zero based index of joint. The last joint has the number
-		//! IAnimatedMeshMS3D::getJointCount()-1;
+		//! IAnimatedMeshB3d::getJointCount()-1;
 		//! \return Returns name of joint and null if an error happened.
 		virtual const c8* getJointName(s32 number) const = 0;
 

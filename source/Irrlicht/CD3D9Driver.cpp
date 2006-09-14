@@ -1768,10 +1768,17 @@ void CD3D9Driver::draw3DLine(const core::vector3df& start,
 bool CD3D9Driver::reset()
 {
 	// reset
+	HRESULT hr;
 	os::Printer::log("Resetting D3D9 device.", ELL_INFORMATION);
-	if (FAILED(pID3DDevice->Reset(&present)))
+	if (FAILED(hr = pID3DDevice->Reset(&present)))
 	{
-		os::Printer::log("Resetting failed.", ELL_WARNING);
+		if (hr == D3DERR_DEVICELOST)
+		{
+			DeviceLost = true;
+			os::Printer::log("Resetting failed due to device lost.", ELL_WARNING);
+		}
+		else
+			os::Printer::log("Resetting failed.", ELL_WARNING);
 		return false;
 	}
 
