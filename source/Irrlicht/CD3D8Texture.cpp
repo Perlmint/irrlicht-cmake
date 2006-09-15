@@ -107,7 +107,7 @@ void CD3D8Texture::createTexture(u32 flags)
 	core::dimension2d<s32> optSize;
 	ImageSize = Image->getDimension();
 
-	if (Driver->queryFeature(video::EVDF_TEXTURE_NPOT))
+	if (Driver->queryFeature(EVDF_TEXTURE_NPOT))
 		optSize=ImageSize;
 	else
 	{

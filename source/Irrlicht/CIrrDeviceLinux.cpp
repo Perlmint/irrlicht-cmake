@@ -174,15 +174,14 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	if (Fullscreen)
 	{
 		s32 eventbase, errorbase;
-		s32 modeCount;
 		s32 bestMode = -1;
 		s32 defaultDepth=DefaultDepth(display,screennr);
-		bool videoListEmpty = VideoModeList.getVideoModeCount() == 0;
 
 		#ifdef _IRR_LINUX_X11_VIDMODE_
 		if (XF86VidModeQueryExtension(display, &eventbase, &errorbase))
 		{
 			// enumerate video modes
+			s32 modeCount;
 			XF86VidModeModeInfo** modes;
 
 			XF86VidModeGetAllModeLines(display, screennr, &modeCount, &modes);
@@ -193,15 +192,16 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 			// find fitting mode
 
+			VideoModeList.setDesktop(defaultDepth, core::dimension2d<s32>(
+				modes[0]->hdisplay, modes[0]->vdisplay));
 			for (s32 i = 0; i<modeCount; ++i)
 			{
-				if (modes[i]->hdisplay == Width && modes[i]->vdisplay == Height)
-				{
+				if (bestMode==-1 && modes[i]->hdisplay >= Width && modes[i]->vdisplay >= Height)
 					bestMode = i;
-					if (videoListEmpty)
-						VideoModeList.addMode(core::dimension2d<s32>(
-							modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
-				}
+				else if (bestMode!=-1 && modes[i]->hdisplay >= Width && modes[i]->vdisplay >= Height && modes[i]->hdisplay < modes[bestMode]->vdisplay && modes[i]->vdisplay < modes[bestMode]->hdisplay)
+					bestMode = i;
+				VideoModeList.addMode(core::dimension2d<s32>(
+					modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
 			}
 			if (bestMode != -1)
 			{
@@ -223,18 +223,18 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		#ifdef _IRR_LINUX_X11_RANDR_
 		if (XRRQueryExtension(display, &eventbase, &errorbase))
 		{
+			s32 modeCount;
 			XRRScreenConfiguration *config=XRRGetScreenInfo(display,DefaultRootWindow(display));
 			oldRandrMode=XRRConfigCurrentConfiguration(config,&oldRandrRotation);
 			XRRScreenSize *modes=XRRConfigSizes(config,&modeCount);
+			VideoModeList.setDesktop(defaultDepth, core::dimension2d<s32>(
+				modes[oldRandrMode].width, modes[oldRandrMode].height));
 			for (s32 i = 0; i<modeCount; ++i)
 			{
-				if (modes[i].width == Width && modes[i].height == Height)
-				{
+				if (bestMode==-1 && modes[i].width >= Width && modes[i].height >= Height)
 					bestMode = i;
-					if (videoListEmpty)
-						VideoModeList.addMode(core::dimension2d<s32>(
-							modes[i].width, modes[i].height), defaultDepth);
-				}
+				VideoModeList.addMode(core::dimension2d<s32>(
+					modes[i].width, modes[i].height), defaultDepth);
 			}
 			if (bestMode != -1)
 			{
@@ -260,94 +260,97 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	Context=0;
 	GLXFBConfig glxFBConfig;
 	s32 major, minor;
+	bool isAvailableGLX=false;
 	if (DriverType==video::EDT_OPENGL)
-	if (glXQueryExtension(display,&major,&minor) &&
-		glXQueryVersion(display, &major, &minor))
 	{
-		if (major==1 && minor>2)
+		isAvailableGLX=glXQueryExtension(display,&major,&minor);
+		if (isAvailableGLX && glXQueryVersion(display, &major, &minor))
 		{
-			// attribute array for the draw buffer
-			int visualAttrBuffer[] =
+			if (major==1 && minor>2)
 			{
-			    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-			    GLX_RED_SIZE, 4,
-			    GLX_GREEN_SIZE, 4,
-			    GLX_BLUE_SIZE, 4,
-			    GLX_ALPHA_SIZE, 4,
-			    GLX_DEPTH_SIZE, 16,
-			    GLX_DOUBLEBUFFER, True,
-			    GLX_STENCIL_SIZE, 1,
-			    None
-			};
-	
-			GLXFBConfig *configList=0;
-			int nitems=0;
-			if (StencilBuffer)
-				configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
-			if (!configList)
-			{
-				if (StencilBuffer)
+				// attribute array for the draw buffer
+				int visualAttrBuffer[] =
 				{
-					os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-					StencilBuffer = false;
-				}
-				visualAttrBuffer[15]=0;
-	
-				configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+				    GLX_RENDER_TYPE, GLX_RGBA_BIT,
+				    GLX_RED_SIZE, 4,
+				    GLX_GREEN_SIZE, 4,
+				    GLX_BLUE_SIZE, 4,
+				    GLX_ALPHA_SIZE, 4,
+				    GLX_DEPTH_SIZE, 16,
+				    GLX_DOUBLEBUFFER, True,
+				    GLX_STENCIL_SIZE, 1,
+				    None
+				};
+
+				GLXFBConfig *configList=0;
+				int nitems=0;
+				if (StencilBuffer)
+					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
 				if (!configList)
 				{
-					os::Printer::log("No doublebuffering available.", ELL_WARNING);
-					visualAttrBuffer[13]=False;
+					if (StencilBuffer)
+					{
+						os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
+						StencilBuffer = false;
+					}
+					visualAttrBuffer[15]=0;
+
 					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+					if (!configList)
+					{
+						os::Printer::log("No doublebuffering available.", ELL_WARNING);
+						visualAttrBuffer[13]=False;
+						configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+					}
+				}
+				if (configList)
+				{
+					glxFBConfig=configList[0];
+					XFree(configList);
+					UseGLXWindow=true;
+					visual = glXGetVisualFromFBConfig(display,glxFBConfig);
 				}
 			}
-			if (configList)
+			else
 			{
-				glxFBConfig=configList[0];
-				XFree(configList);
-				UseGLXWindow=true;
-				visual = glXGetVisualFromFBConfig(display,glxFBConfig);
+				// attribute array for the draw buffer
+				int visualAttrBuffer[] =
+				{
+				    GLX_RGBA, True,
+				    GLX_RED_SIZE, 4,
+				    GLX_GREEN_SIZE, 4,
+				    GLX_BLUE_SIZE, 4,
+				    GLX_ALPHA_SIZE, 4,
+				    GLX_DEPTH_SIZE, 16,
+				    GLX_DOUBLEBUFFER, True,
+				    GLX_STENCIL_SIZE, 1,
+				    None
+				};
+
+				if (StencilBuffer)
+					visual=glXChooseVisual(display, screennr, visualAttrBuffer);
+				if (!visual)
+				{
+					if (StencilBuffer)
+					{
+						os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
+						StencilBuffer = false;
+					}
+					visualAttrBuffer[15]=0;
+
+					visual=glXChooseVisual(display, screennr, visualAttrBuffer);
+					if (!visual)
+					{
+						os::Printer::log("No doublebuffering available.", ELL_WARNING);
+						visualAttrBuffer[13]=False;
+						visual=glXChooseVisual(display, screennr, visualAttrBuffer);
+					}
+				}
 			}
 		}
 		else
-		{
-			// attribute array for the draw buffer
-			int visualAttrBuffer[] =
-			{
-			    GLX_RGBA, True,
-			    GLX_RED_SIZE, 4,
-			    GLX_GREEN_SIZE, 4,
-			    GLX_BLUE_SIZE, 4,
-			    GLX_ALPHA_SIZE, 4,
-			    GLX_DEPTH_SIZE, 16,
-			    GLX_DOUBLEBUFFER, True,
-			    GLX_STENCIL_SIZE, 1,
-			    None
-			};
-	
-			if (StencilBuffer)
-				visual=glXChooseVisual(display, screennr, visualAttrBuffer);
-			if (!visual)
-			{
-				if (StencilBuffer)
-				{
-					os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-					StencilBuffer = false;
-				}
-				visualAttrBuffer[15]=0;
-	
-				visual=glXChooseVisual(display, screennr, visualAttrBuffer);
-				if (!visual)
-				{
-					os::Printer::log("No doublebuffering available.", ELL_WARNING);
-					visualAttrBuffer[13]=False;
-					visual=glXChooseVisual(display, screennr, visualAttrBuffer);
-				}
-			}
-		}
+			os::Printer::log("No GLX support available. OpenGL driver will not work.", ELL_WARNING);
 	}
-	else
-		os::Printer::log("No GLX support.", ELL_WARNING);
 	
 #endif // _IRR_COMPILE_WITH_OPENGL_
 
@@ -428,7 +431,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 	// connect glx context to window
-	if (DriverType==video::EDT_OPENGL)
+	if (isAvailableGLX && DriverType==video::EDT_OPENGL)
 	if (UseGLXWindow)
 	{
 		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);
