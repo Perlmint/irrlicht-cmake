@@ -12,14 +12,12 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_LIBJPEG_
 extern "C" {
-	#include "jpeglib/jconfig.h"
-	#define JCONFIG_INCLUDED
 	#ifndef _IRR_USE_NON_SYSTEM_JPEG_LIB_
 	#include <jpeglib.h> // use system lib
-	#else  // _IRR_USE_NON_SYSTEM_JPEG_LIB_
+	#else
 	#include "jpeglib/jpeglib.h" // use irrlicht jpeglib
-    #endif // _IRR_USE_NON_SYSTEM_JPEG_LIB_
-    #include <setjmp.h>
+	#endif
+	#include <setjmp.h>
 }
 #endif // _IRR_COMPILE_WITH_LIBJPEG_
 

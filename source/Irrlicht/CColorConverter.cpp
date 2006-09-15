@@ -13,7 +13,7 @@ namespace video
 {
 
 //! converts a monochrome bitmap to A1R5G5B5 data
-void CColorConverter::convert1BitTo16Bit(const c8* in, s16* out, s32 width, s32 height, s32 linepad, bool flip)
+void CColorConverter::convert1BitTo16Bit(const u8* in, s16* out, s32 width, s32 height, s32 linepad, bool flip)
 {
 	if (!in || !out)
 		return;
@@ -50,7 +50,7 @@ void CColorConverter::convert1BitTo16Bit(const c8* in, s16* out, s32 width, s32 
 
 
 //! converts a 4 bit palettized image to A1R5G5B5
-void CColorConverter::convert4BitTo16Bit(const c8* in, s16* out, s32 width, s32 height, const s32* palette, s32 linepad, bool flip)
+void CColorConverter::convert4BitTo16Bit(const u8* in, s16* out, s32 width, s32 height, const s32* palette, s32 linepad, bool flip)
 {
 	if (!in || !out || !palette)
 		return;
@@ -89,7 +89,7 @@ void CColorConverter::convert4BitTo16Bit(const c8* in, s16* out, s32 width, s32 
 
 
 //! converts a 8 bit palettized image into A1R5G5B5
-void CColorConverter::convert8BitTo16Bit(const c8* in, s16* out, s32 width, s32 height, const s32* palette, s32 linepad, bool flip)
+void CColorConverter::convert8BitTo16Bit(const u8* in, s16* out, s32 width, s32 height, const s32* palette, s32 linepad, bool flip)
 {
 	if (!in || !out || !palette)
 		return;
@@ -143,7 +143,7 @@ void CColorConverter::convert16BitTo16Bit(const s16* in, s16* out, s32 width, s3
 
 
 //! copies R8G8B8 24bit data to 24bit data
-void CColorConverter::convert24BitTo24Bit(const c8* in, c8* out, s32 width, s32 height, s32 linepad, bool flip, bool bgr)
+void CColorConverter::convert24BitTo24Bit(const u8* in, u8* out, s32 width, s32 height, s32 linepad, bool flip, bool bgr)
 {
 	if (!in || !out)
 		return;

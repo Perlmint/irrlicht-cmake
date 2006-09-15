@@ -82,7 +82,7 @@ public:
 
 private:
 
-	c8* PCXData;
+	u8* PCXData;
 	s32* PaletteData;
 };
 

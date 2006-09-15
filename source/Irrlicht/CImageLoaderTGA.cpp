@@ -37,20 +37,20 @@ bool CImageLoaderTGA::isALoadableFileExtension(const c8* fileName)
 
 
 //! loads a compressed tga. 
-c8 *CImageLoaderTGA::loadCompressedImage(irr::io::IReadFile *file, STGAHeader *header)
+u8 *CImageLoaderTGA::loadCompressedImage(irr::io::IReadFile *file, STGAHeader *header)
 {
 	// This was written and sent in by Jon Pry, thank you very much!
 	// I only changed the formatting a little bit.
 
 	s32 bytesPerPixel = header->PixelDepth/8;
 	s32 imageSize =  header->ImageHeight * header->ImageWidth * bytesPerPixel;
-	c8* data = new c8[imageSize];
+	u8* data = new u8[imageSize];
 	s32 currentByte = 0;
 
 	while(currentByte < imageSize)					
 	{
 		u8 chunkheader = 0;
-		file->read(&chunkheader, sizeof(c8)); // Read The Chunk's Header
+		file->read(&chunkheader, sizeof(u8)); // Read The Chunk's Header
 
 		if(chunkheader < 128) // If The Chunk Is A 'RAW' Chunk
 		{
@@ -126,11 +126,11 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 
 	s32 bytesPerPixel = header.PixelDepth/8;
 	s32 imageSize = header.ImageHeight * header.ImageWidth * bytesPerPixel;
-	c8* data = 0;
+	u8* data = 0;
 
 	if (header.ImageType == 2)
 	{
-		data = new c8[imageSize];
+		data = new u8[imageSize];
 	  	file->read(data, imageSize);
 	}
 	else
@@ -169,7 +169,7 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
 			if (image)
 				CColorConverter::convert24BitTo24Bit(
-					(c8*)data, (c8*)image->lock(), header.ImageWidth, header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0, true);
+					(u8*)data, (u8*)image->lock(), header.ImageWidth, header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0, true);
 		}
 		break;
 	case 4:

@@ -105,7 +105,7 @@ bool CImageWriterBMP::writeImage(io::IWriteFile* file, IImage* image)
 	for (y = imageHeader.Height - 1; 0 <= y; --y)
 	{
 		if (image->getColorFormat()==ECF_R8G8B8)
-			CColorConverter::convert24BitTo24Bit((const c8*)&scan_lines[y * row_stride], (c8*)row_pointer, imageHeader.Width, 1, 0, false, true);
+			CColorConverter::convert24BitTo24Bit(&scan_lines[y * row_stride], row_pointer, imageHeader.Width, 1, 0, false, true);
 		else
 			// source, length [pixels], destination
 			CColorConverter_convertFORMATtoFORMAT(&scan_lines[y * row_stride], imageHeader.Width, row_pointer);

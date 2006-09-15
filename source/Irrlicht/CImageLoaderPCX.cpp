@@ -129,9 +129,9 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	width = header.XMax - header.XMin + 1;
 	height = header.YMax - header.YMin + 1;
 	imagebytes = header.BytesPerLine * height * header.Planes * header.BitsPerPixel / 8;
-	PCXData = new c8[imagebytes];
+	PCXData = new u8[imagebytes];
 
-	c8 cnt, value;
+	u8 cnt, value;
 	for( s32 offset = 0; offset < imagebytes; )
 	{
 		file->read( &cnt, 1 );
@@ -166,7 +166,7 @@ IImage* CImageLoaderPCX::loadImage(irr::io::IReadFile* file)
 	case 24:
 		image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(width, height));
 		if (image)
-			CColorConverter::convert24BitTo24Bit(PCXData, (c8*)image->lock(), width, height, pitch);
+			CColorConverter::convert24BitTo24Bit(PCXData, (u8*)image->lock(), width, height, pitch);
 		break;
 	};
 	if (image)

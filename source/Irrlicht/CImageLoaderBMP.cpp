@@ -59,12 +59,12 @@ bool CImageLoaderBMP::isALoadableFileFormat(irr::io::IReadFile* file)
 }
 
 
-void CImageLoaderBMP::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
+void CImageLoaderBMP::decompress8BitRLE(u8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
 {
-	c8* p = BmpData;
-	c8* newBmp = new c8[(width+pitch)*height];
-	c8* d = newBmp;
-	c8* destEnd = newBmp + (width+pitch)*height;
+	u8* p = BmpData;
+	u8* newBmp = new u8[(width+pitch)*height];
+	u8* d = newBmp;
+	u8* destEnd = newBmp + (width+pitch)*height;
 	s32 line = 0;
 
 	while (BmpData - p < size && d < destEnd)
@@ -125,13 +125,13 @@ void CImageLoaderBMP::decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 }
 
 
-void CImageLoaderBMP::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
+void CImageLoaderBMP::decompress4BitRLE(u8*& BmpData, s32 size, s32 width, s32 height, s32 pitch)
 {
 	s32 lineWidth = (width+1)/2+pitch;
-	c8* p = BmpData;
-	c8* newBmp = new c8[lineWidth*height];
-	c8* d = newBmp;
-	c8* destEnd = newBmp + lineWidth*height;
+	u8* p = BmpData;
+	u8* newBmp = new u8[lineWidth*height];
+	u8* d = newBmp;
+	u8* destEnd = newBmp + lineWidth*height;
 	s32 line = 0;
 	s32 shift = 4;
 
@@ -180,7 +180,7 @@ void CImageLoaderBMP::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 							readShift = 4;
 						}
 
-						c8 mask = 0x0f << shift;
+						u8 mask = 0x0f << shift;
 						*d = (*d & (~mask)) | ((color << shift) & mask);
 
 						shift -= 4;
@@ -206,8 +206,8 @@ void CImageLoaderBMP::decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 h
 
 			for (s32 i=0; i<count; ++i)
 			{
-				c8 mask = 0x0f << shift;
-				c8 toSet = (shift==0 ? color1 : color2) << shift;
+				u8 mask = 0x0f << shift;
+				u8 toSet = (shift==0 ? color1 : color2) << shift;
 				*d = (*d & (~mask)) | (toSet & mask);
 
 				shift -= 4;
@@ -301,7 +301,7 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 	s32 lineData = widthInBytes + ((4-(widthInBytes%4)))%4;
 	pitch = lineData - widthInBytes;
 
-	BmpData = new c8[header.BitmapDataSize];
+	BmpData = new u8[header.BitmapDataSize];
 	file->read(BmpData, header.BitmapDataSize);
 
 	// decompress data if needed
@@ -343,7 +343,7 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 	case 24:
 		image = new CImage(ECF_R8G8B8, core::dimension2d<s32>(header.Width, header.Height));
 		if (image)
-			CColorConverter::convert24BitTo24Bit(BmpData, (c8*)image->lock(), header.Width, header.Height, pitch, true, true);
+			CColorConverter::convert24BitTo24Bit(BmpData, (u8*)image->lock(), header.Width, header.Height, pitch, true, true);
 		break;
 	case 32: // thx to Reinhard Ostermeier
 		image = new CImage(ECF_A8R8G8B8, core::dimension2d<s32>(header.Width, header.Height));

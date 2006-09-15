@@ -174,7 +174,7 @@ bool CImageWriterPNG::writeImage(io::IWriteFile* file, IImage* image)
 	png_set_rows(png_ptr, info_ptr, RowPointers);
 
 	if (image->getColorFormat()==ECF_A8R8G8B8 || image->getColorFormat()==ECF_A1R5G5B5)
-		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR|PNG_TRANSFORM_INVERT_ALPHA, NULL);
+		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR, NULL);
 	else
 	{
 		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);

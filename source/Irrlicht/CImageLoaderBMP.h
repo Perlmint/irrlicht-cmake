@@ -94,11 +94,11 @@ public:
 
 private:
 
-	void decompress8BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch);
+	void decompress8BitRLE(u8*& BmpData, s32 size, s32 width, s32 height, s32 pitch);
 
-	void decompress4BitRLE(c8*& BmpData, s32 size, s32 width, s32 height, s32 pitch);
+	void decompress4BitRLE(u8*& BmpData, s32 size, s32 width, s32 height, s32 pitch);
 
-	c8* BmpData;
+	u8* BmpData;
 	s32* PaletteData;
 
 };

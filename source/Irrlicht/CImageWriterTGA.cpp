@@ -107,7 +107,10 @@ bool CImageWriterTGA::writeImage(io::IWriteFile *file, IImage *image)
 	for (y = 0; y < imageHeader.ImageHeight; ++y)
 	{
 		// source, length [pixels], destination
-		CColorConverter_convertFORMATtoFORMAT(&scan_lines[y * row_stride], imageHeader.ImageWidth, row_pointer);
+		if (image->getColorFormat()==ECF_R8G8B8)
+			CColorConverter::convert24BitTo24Bit(&scan_lines[y * row_stride], row_pointer, imageHeader.ImageWidth, 1, 0, 0, true);
+		else
+			CColorConverter_convertFORMATtoFORMAT(&scan_lines[y * row_stride], imageHeader.ImageWidth, row_pointer);
 		if (file->write(row_pointer, row_size) != row_size)
 			break;
 	}

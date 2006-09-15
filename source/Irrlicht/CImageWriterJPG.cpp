@@ -1,23 +1,22 @@
 
 #include "CImageWriterJPG.h"
-#include "CImageLoaderJPG.h"
 #include "CColorConverter.h"
 #include "IWriteFile.h"
 #include "os.h" // for logging
 #include <string.h>
+#include <stdio.h>
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_LIBJPEG_
 extern "C"
 {
-	#include "jpeglib/jconfig.h"
 #ifndef _IRR_USE_NON_SYSTEM_JPEG_LIB_
 	#include <jpeglib.h>
 	#include <jerror.h>
-#else  // _IRR_USE_NON_SYSTEM_JPEG_LIB_
+#else
 	#include "jpeglib/jpeglib.h"
 	#include "jpeglib/jerror.h"
-#endif // _IRR_USE_NON_SYSTEM_JPEG_LIB_
+#endif
 }
 #endif // _IRR_COMPILE_WITH_LIBJPEG_
 
@@ -56,3 +55,4 @@ bool CImageWriterJPG::writeImage(io::IWriteFile *file, IImage *image)
 
 }; // namespace video
 }; // namespace irr
+

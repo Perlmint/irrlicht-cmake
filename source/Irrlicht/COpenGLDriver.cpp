@@ -2529,32 +2529,30 @@ void COpenGLDriver::clearZBuffer()
 //! Returns an image created from the last rendered frame.
 IImage* COpenGLDriver::createScreenShot()
 {
-	IImage* newImage = new CImage(ECF_A8R8G8B8, ScreenSize);
+	IImage* newImage = new CImage(ECF_R8G8B8, ScreenSize);
 
-	u32* pPixels = (u32*)newImage->lock();
+	u8* pPixels = (u8*)newImage->lock();
 	if (!pPixels)
 	{
 		newImage->drop();
 		return 0;
 	}
 
-	glReadPixels(0, 0, ScreenSize.Width, ScreenSize.Height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pPixels);
+	glReadPixels(0, 0, ScreenSize.Width, ScreenSize.Height, GL_RGB, GL_UNSIGNED_BYTE, pPixels);
 
 	// opengl images are inverted, so we have to fix that here.
-	s32 y0 = 0, y1 = ScreenSize.Height - 1;
-	for (; y0 < y1; ++y0, --y1)
+	s32 pitch=newImage->getPitch();
+	u8* p2 = pPixels + (ScreenSize.Height - 1) * pitch;
+	u8* tmpBuffer = new u8[pitch];
+	for (s32 i=0; i < ScreenSize.Height; i += 2)
 	{
-		u32* topRow = &pPixels[y0 * ScreenSize.Width];
-		u32* botRow = &pPixels[y1 * ScreenSize.Width];
-
-		s32 x;
-		for(x = 0; x < ScreenSize.Width; ++x)
-		{
-			u32 pixel = topRow[x];
-			topRow[x] = botRow[x];
-			botRow[x] = pixel;
-		}
+		memcpy(tmpBuffer, pPixels, pitch);
+		memcpy(pPixels, p2, pitch);
+		memcpy(p2, tmpBuffer, pitch);
+		pPixels += pitch;
+		p2 -= pitch;
 	}
+	delete [] tmpBuffer;
 
 	newImage->unlock();
 
