@@ -62,11 +62,11 @@ void CLightSceneNode::render()
 		case video::ELT_DIRECTIONAL:
 			// misuse Position as direction..
 			LightData.Position = getAbsolutePosition();
-			LightData.Position.invert ();
+			LightData.Position.invert();
 			if ( LightData.Position.getLengthSQ() == 0.0 )
 			{
 				LightData.Position.set ( 0.f, -1.f, 0.f );
-				os::Printer::log ( "Invalid Directionial Light Direction" );
+				os::Printer::log ( "Invalid Directional Light Direction" );
 			}
 			else
 			{

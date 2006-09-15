@@ -71,7 +71,6 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	createKeyMap();
 
 	// create window
-
 	if (driverType != video::EDT_NULL)
 	{
 		// create the window, only if we do not use the null device
@@ -80,12 +79,10 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	}
 
 	// create cursor control
-
 	CursorControl = new CCursorControl(this, driverType == video::EDT_NULL);
 
 	// create driver
-
-	createDriver(driverType, windowSize, bits, vsync, antiAlias);
+	createDriver(windowSize, bits, vsync, antiAlias);
 
 	if (!VideoDriver)
 		return;
@@ -153,7 +150,7 @@ int IrrPrintXError(Display *display, XErrorEvent *event)
 
 
 bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
-						  u32 bits)
+						u32 bits)
 {
 	Width = windowSize.Width;
 	Height = windowSize.Height;
@@ -263,6 +260,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	Context=0;
 	GLXFBConfig glxFBConfig;
 	s32 major, minor;
+	if (DriverType==video::EDT_OPENGL)
 	if (glXQueryExtension(display,&major,&minor) &&
 		glXQueryVersion(display, &major, &minor))
 	{
@@ -430,7 +428,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 	// connect glx context to window
-
+	if (DriverType==video::EDT_OPENGL)
 	if (UseGLXWindow)
 	{
 		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);
@@ -498,11 +496,10 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 
 //! create the driver
-void CIrrDeviceLinux::createDriver(video::E_DRIVER_TYPE driverType,
-				   const core::dimension2d<s32>& windowSize,
+void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 				   u32 bits, bool vsync, bool antiAlias)
 {
-	switch(driverType)
+	switch(DriverType)
 	{
 
 	case video::EDT_SOFTWARE:
@@ -712,8 +709,8 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 		
 		if ((Depth == 32)||(Depth == 24))
 		{	
-			int destPitch = SoftwareImage->bytes_per_line / 4;
-			s32* destData = reinterpret_cast<s32*>(SoftwareImage->data);
+			int destPitch = SoftwareImage->bytes_per_line;
+			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
 			
 			for (int y=0; y<srcheight; ++y)
 			{
@@ -727,8 +724,8 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 		{
 			// convert to R5G6B6
 			
-			int destPitch = SoftwareImage->bytes_per_line / 2;
-			s16* destData = reinterpret_cast<s16*>(SoftwareImage->data);
+			int destPitch = SoftwareImage->bytes_per_line;
+			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
 			
 			for (int y=0; y<srcheight; ++y)
 			{
@@ -752,8 +749,8 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 		{
 			// convert from A1R5G5B5 to R5G6B6
 			
-			int destPitch = SoftwareImage->bytes_per_line / 2;
-			s16* destData = reinterpret_cast<s16*>(SoftwareImage->data);
+			int destPitch = SoftwareImage->bytes_per_line;
+			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
 			
 			for (int y=0; y<srcheight; ++y)
 			{
@@ -767,8 +764,8 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 		{
 			// convert from A1R5G5B5 to X8R8G8B8
 				
-			int destPitch = SoftwareImage->bytes_per_line / 4;
-			s32* destData = reinterpret_cast<s32*>(SoftwareImage->data);
+			int destPitch = SoftwareImage->bytes_per_line;
+			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
 			
 			for (int y=0; y<srcheight; ++y)
 			{

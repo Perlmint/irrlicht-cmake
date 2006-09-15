@@ -65,9 +65,8 @@ namespace irr
 	private:
 
 		//! create the driver
-		void createDriver(video::E_DRIVER_TYPE driverType,
-			const core::dimension2d<s32>& windowSize, u32 bits,
-			bool vsync, bool antiAlias);
+		void createDriver(const core::dimension2d<s32>& windowSize,
+					u32 bits, bool vsync, bool antiAlias);
 
 		bool createWindow(const core::dimension2d<s32>& windowSize, u32 bits);
 

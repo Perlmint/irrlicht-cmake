@@ -246,9 +246,9 @@ void CColorConverter::convert_A1R5G5B5toR8G8B8(const void* sP, s32 sN, void* dP)
 
 	for (s32 x = 0; x < sN; ++x)
 	{
-		dB[2] = ((*sB >> 10) & 0x1f) << 3;
-		dB[1] = ((*sB >>  5) & 0x1f) << 3;
-		dB[0] = ((*sB >>  0) & 0x1f) << 3;
+		dB[2] = (*sB & 0x7c) << 9;
+		dB[1] = (*sB & 0x3e) << 6;
+		dB[0] = (*sB & 0x1f) << 3;
 
 		sB += 1;
 		dB += 3;
