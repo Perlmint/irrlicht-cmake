@@ -102,6 +102,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 
 	// Process obj information
 	c8* pBufPtr = pBuf;
+	SObjMtl *pUseMtl=0;
 	while(pBufPtr && (pBufPtr-pBuf<filesize))
 	{
 		switch(pBufPtr[0])
@@ -190,7 +191,10 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 			// get name of material
 			pBufPtr = goAndCopyNextWord(wordBuffer, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
 			// retrieve the material
-			pCurrMtl = findMtl( wordBuffer );
+			pUseMtl = findMtl( wordBuffer );
+			// only change material if we found it
+			if (pUseMtl)
+				pCurrMtl = pUseMtl;
 			pBufPtr = goNextLine(pBufPtr, pBufEnd);
 			break;
 
