@@ -27,7 +27,7 @@ CDemo::~CDemo()
 void CDemo::run()
 {
 	device = createDevice(driverType,
-		core::dimension2d<s32>(640, 480), 32, fullscreen, shadows, vsync, this);;
+		core::dimension2d<s32>(800, 600), 32, fullscreen, shadows, vsync, this);;
 
 	device->getFileSystem()->addZipFileArchive("irrlicht.dat");
 	device->getFileSystem()->addZipFileArchive("../../media/irrlicht.dat");
@@ -107,9 +107,12 @@ bool CDemo::OnEvent(SEvent event)
 	{
 		video::IImage* image = device->getVideoDriver()->createScreenShot();
 		if (image)
+		{
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.bmp");
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.png");
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.tga");
+			device->getVideoDriver()->writeImageToFile(image, "screenshot.ppm");
+		}
 		image->drop();
 	}
 	else
