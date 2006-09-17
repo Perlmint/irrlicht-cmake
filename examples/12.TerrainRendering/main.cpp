@@ -152,7 +152,7 @@ int main()
 	terrain->setMaterialTexture(1, driver->getTexture("../../media/detailmap3.jpg"));
 	
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
-
+ 
 	terrain->scaleTexture(1.0f, 20.0f);
 
 	/*

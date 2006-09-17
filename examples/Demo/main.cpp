@@ -21,8 +21,8 @@ INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
 int main(int argc, char* argv[])
 #endif
 {
-	bool fullscreen = false;
-	bool music = true;
+	bool fullscreen = true;
+	bool music = false;
 	bool shadows = false;
 	bool additive = false;
 	bool vsync = false;

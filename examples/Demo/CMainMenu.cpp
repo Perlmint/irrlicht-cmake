@@ -5,7 +5,7 @@
 
 CMainMenu::CMainMenu()
 : startButton(0), device(0), start(false), fullscreen(true), selected(2),
-	music(true), shadows(false), additive(false), transparent(true), vsync(true)
+	music(false), shadows(false), additive(false), transparent(true), vsync(true)
 {
 }
 

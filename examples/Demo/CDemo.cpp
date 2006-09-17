@@ -108,6 +108,8 @@ bool CDemo::OnEvent(SEvent event)
 		video::IImage* image = device->getVideoDriver()->createScreenShot();
 		if (image)
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.bmp");
+			device->getVideoDriver()->writeImageToFile(image, "screenshot.png");
+			device->getVideoDriver()->writeImageToFile(image, "screenshot.tga");
 		image->drop();
 	}
 	else
