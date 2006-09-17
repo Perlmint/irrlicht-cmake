@@ -886,6 +886,9 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 			Mesh->addMeshBuffer(mb);
 			mb->Material = Materials[0].Material;
 			mb->drop();
+			// add an empty mesh buffer name
+			core::stringc c = "";
+			MeshBufferNames.push_back(c);
 		}
 	}
 
