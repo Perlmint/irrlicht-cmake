@@ -43,7 +43,18 @@ bool CGUIFont::load(io::IReadFile* file)
 	if (!Driver)
 		return false;
 
-	return loadTexture(Driver->getTexture(file));
+	// turn mip-maps off
+	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
+	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+
+	// get a pointer to the texture
+	video::ITexture* tex = Driver->getTexture(file);
+
+	// set previous mip-map state
+	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
+
+	// load the texture
+	return loadTexture(tex);
 }
 
 
@@ -184,7 +195,7 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 	s16 colorLowerRight = *(p+1);
 	s16 colorBackGround = *(p+2);
 	s16 colorBackGroundWithAlphaFalse = 0x7FFF & colorBackGround;
-	s16 colorFont = 0xFFFF;
+	u16 colorFont = 0xFFFF;
 
 	*(p+1) = colorBackGround;
 

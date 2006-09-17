@@ -13,7 +13,7 @@ namespace video
 
 //! constructor
 CZBuffer2::CZBuffer2(const core::dimension2d<s32>& size)
-: Buffer(0), Size(0,0), TotalSize(0), BufferEnd(0)
+: Buffer(0), Size(0,0), TotalSize(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CZBuffer2");
@@ -38,7 +38,7 @@ void CZBuffer2::clear()
 {
 	u32 zMaxValue;
 
-	f32 zMax = 1.f;
+	f32 zMax = 0.f;
 	zMaxValue = *(u32*) &zMax;
 
 	memset32 ( Buffer, zMaxValue, TotalSize * sizeof ( TZBufferType2 ) );
@@ -59,7 +59,7 @@ void CZBuffer2::setSize(const core::dimension2d<s32>& size)
 
 	TotalSize = size.Width * size.Height;
 	Buffer = new TZBufferType2[TotalSize];
-	BufferEnd = Buffer + TotalSize;
+//	BufferEnd = Buffer + TotalSize;
 }
 
 

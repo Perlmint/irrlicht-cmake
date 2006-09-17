@@ -40,7 +40,6 @@ namespace video
 	private:
 
 		TZBufferType2* Buffer;
-		TZBufferType2* BufferEnd;
 		core::dimension2d<s32> Size;
 		s32 TotalSize;
 	};

@@ -77,7 +77,7 @@ CTRTextureDetailMap2::CTRTextureDetailMap2(IZBuffer2* zbuffer)
 
 /*!
 */
-inline void CTRTextureDetailMap2::scanline_bilinear ( sScanLineData * data ) const
+void CTRTextureDetailMap2::scanline_bilinear ( sScanLineData * data ) const
 {
 	tVideoSample *dst;
 
@@ -185,12 +185,12 @@ inline void CTRTextureDetailMap2::scanline_bilinear ( sScanLineData * data ) con
 #endif
 		{
 #ifdef IPOL_W
-			inversew = inverse32 ( data->w[0] );
+			inversew = fix_inverse32 ( data->w[0] );
 
-			tx0 = f32_to_fixPoint ( data->t0[0].x * inversew);
-			ty0 = f32_to_fixPoint ( data->t0[0].y * inversew);
-			tx1 = f32_to_fixPoint ( data->t1[0].x * inversew);
-			ty1 = f32_to_fixPoint ( data->t1[0].y * inversew);
+			tx0 = f32_to_fixPoint ( data->t0[0].x,inversew);
+			ty0 = f32_to_fixPoint ( data->t0[0].y,inversew);
+			tx1 = f32_to_fixPoint ( data->t1[0].x,inversew);
+			ty1 = f32_to_fixPoint ( data->t1[0].y,inversew);
 
 #else
 			tx0 = f32_to_fixPoint ( data->t0[0].x );
@@ -293,13 +293,13 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 #endif
 
 #ifdef IPOL_T0
-	scan.slopeT0[0] = (c->Tex0 - a->Tex0) * scan.invDeltaY[0];
-	scan.t0[0] = a->Tex0;
+	scan.slopeT0[0] = (c->Tex[0] - a->Tex[0]) * scan.invDeltaY[0];
+	scan.t0[0] = a->Tex[0];
 #endif
 
 #ifdef IPOL_T1
-	scan.slopeT1[0] = (c->Tex1 - a->Tex1) * scan.invDeltaY[0];
-	scan.t1[0] = a->Tex1;
+	scan.slopeT1[0] = (c->Tex[1] - a->Tex[1]) * scan.invDeltaY[0];
+	scan.t1[0] = a->Tex[1];
 #endif
 
 	// top left fill convention y run
@@ -348,13 +348,13 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 #endif
 
 #ifdef IPOL_T0
-		scan.slopeT0[1] = (b->Tex0 - a->Tex0) * scan.invDeltaY[1];
-		scan.t0[1] = a->Tex0;
+		scan.slopeT0[1] = (b->Tex[0] - a->Tex[0]) * scan.invDeltaY[1];
+		scan.t0[1] = a->Tex[0];
 #endif
 
 #ifdef IPOL_T1
-		scan.slopeT1[1] = (b->Tex1 - a->Tex1) * scan.invDeltaY[1];
-		scan.t1[1] = a->Tex1;
+		scan.slopeT1[1] = (b->Tex[1] - a->Tex[1]) * scan.invDeltaY[1];
+		scan.t1[1] = a->Tex[1];
 #endif
 
 		// apply top-left fill convention, top part
@@ -481,10 +481,10 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 			scan.c[0] = a->Color + scan.slopeC[0] * temp[0];
 #endif
 #ifdef IPOL_T0
-			scan.t0[0] = a->Tex0 + scan.slopeT0[0] * temp[0];
+			scan.t0[0] = a->Tex[0] + scan.slopeT0[0] * temp[0];
 #endif
 #ifdef IPOL_T1
-			scan.t1[0] = a->Tex1 + scan.slopeT1[0] * temp[0];
+			scan.t1[0] = a->Tex[1] + scan.slopeT1[0] * temp[0];
 #endif
 
 		}
@@ -509,13 +509,13 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 #endif
 
 #ifdef IPOL_T0
-		scan.slopeT0[1] = (c->Tex0 - b->Tex0) * scan.invDeltaY[2];
-		scan.t0[1] = b->Tex0;
+		scan.slopeT0[1] = (c->Tex[0] - b->Tex[0]) * scan.invDeltaY[2];
+		scan.t0[1] = b->Tex[0];
 #endif
 
 #ifdef IPOL_T1
-		scan.slopeT1[1] = (c->Tex1 - b->Tex1) * scan.invDeltaY[2];
-		scan.t1[1] = b->Tex1;
+		scan.slopeT1[1] = (c->Tex[1] - b->Tex[1]) * scan.invDeltaY[2];
+		scan.t1[1] = b->Tex[1];
 #endif
 
 		// apply top-left fill convention, top part

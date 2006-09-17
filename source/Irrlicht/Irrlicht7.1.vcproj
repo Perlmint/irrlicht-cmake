@@ -86,26 +86,28 @@
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				AdditionalOptions="/QIfist"
+				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
-				EnableIntrinsicFunctions="FALSE"
+				EnableIntrinsicFunctions="TRUE"
 				ImproveFloatingPointConsistency="FALSE"
+				FavorSizeOrSpeed="0"
+				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="..\..\include;zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IRRLICHT_EXPORTS"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
 				RuntimeLibrary="4"
 				BufferSecurityCheck="FALSE"
-				EnableFunctionLevelLinking="TRUE"
-				PrecompiledHeaderFile=".\..\obj\IrrRelease/Irrlicht.pch"
+				EnableFunctionLevelLinking="FALSE"
+				EnableEnhancedInstructionSet="0"
 				AssemblerListingLocation=".\..\obj\IrrRelease/"
 				ObjectFile=".\..\obj\IrrRelease/"
 				ProgramDataBaseFileName=".\..\obj\IrrRelease/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"
-				CompileAs="0"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -1039,6 +1041,9 @@
 				</File>
 				<File
 					RelativePath=".\CZBuffer2.h">
+				</File>
+				<File
+					RelativePath=".\ITriangleRenderer2.cpp">
 				</File>
 				<File
 					RelativePath=".\ITriangleRenderer2.h">

@@ -93,7 +93,7 @@ private:
 	bool copyTo32BitTexture();
 
 	bool createMipMaps(s32 level=1);
-
+	
 	void copy16BitMipMap(char* src, char* tgt,
 		s32 width, s32 height,  s32 pitchsrc, s32 pitchtgt);
 

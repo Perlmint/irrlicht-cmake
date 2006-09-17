@@ -109,10 +109,10 @@ struct sVec4
 
 	void setA8R8G8B8 ( u32 argb )
 	{
-		x = ( ( argb & 0xFF000000 ) >> 24 ) / 255.f;
-		y = ( ( argb & 0x00FF0000 ) >> 16 ) / 255.f;
-		z = ( ( argb & 0x0000FF00 ) >>  8 ) / 255.f;
-		w = ( ( argb & 0x000000FF )       ) / 255.f;
+		x = ( ( argb & 0xFF000000 ) >> 24 ) * ( 1.f / 255.f );
+		y = ( ( argb & 0x00FF0000 ) >> 16 ) * ( 1.f / 255.f );
+		z = ( ( argb & 0x0000FF00 ) >>  8 ) * ( 1.f / 255.f );
+		w = ( ( argb & 0x000000FF )       ) * ( 1.f / 255.f );
 	}
 
 	void setColorf ( const irr::video::SColorf & color )
@@ -207,16 +207,15 @@ struct s4DVertex
 	sVec4 Pos;
 	sVec4 Color;
 
-	sVec2 Tex0;
-	sVec2 Tex1;
+	sVec2 Tex[2];
 
 	// f = a * t + b * ( 1 - t )
 	void interpolate(const s4DVertex& b, const s4DVertex& a, const f32 t)
 	{
 		Pos.interpolate ( a.Pos, b.Pos, t );
 		Color.interpolate ( a.Color, b.Color, t );
-		Tex0.interpolate ( a.Tex0, b.Tex0, t );
-		Tex1.interpolate ( a.Tex1, b.Tex1, t );
+		Tex[0].interpolate ( a.Tex[0], b.Tex[0], t );
+		Tex[1].interpolate ( a.Tex[1], b.Tex[1], t );
 	}
 };
 
@@ -299,9 +298,9 @@ inline void getSample_color (	tFixPoint &a, tFixPoint &r, tFixPoint &g, tFixPoin
 							)
 {
 	a = f32_to_fixPoint ( v.x );
-	r = f32_to_fixPoint ( v.y * (f32) COLOR_MAX );
-	g = f32_to_fixPoint ( v.z * (f32) COLOR_MAX );
-	b = f32_to_fixPoint ( v.w * (f32) COLOR_MAX );
+	r = f32_to_fixPoint ( v.y, COLOR_MAX * FIX_POINT_F32_MUL);
+	g = f32_to_fixPoint ( v.z, COLOR_MAX * FIX_POINT_F32_MUL);
+	b = f32_to_fixPoint ( v.w, COLOR_MAX * FIX_POINT_F32_MUL);
 }
 
 /*
@@ -311,9 +310,9 @@ inline void getSample_color (	tFixPoint &r, tFixPoint &g, tFixPoint &b,
 							const sVec4 &v
 							)
 {
-	r = f32_to_fixPoint ( v.y * (f32) COLOR_MAX );
-	g = f32_to_fixPoint ( v.z * (f32) COLOR_MAX );
-	b = f32_to_fixPoint ( v.w * (f32) COLOR_MAX );
+	r = f32_to_fixPoint ( v.y, COLOR_MAX * FIX_POINT_F32_MUL);
+	g = f32_to_fixPoint ( v.z, COLOR_MAX * FIX_POINT_F32_MUL);
+	b = f32_to_fixPoint ( v.w, COLOR_MAX * FIX_POINT_F32_MUL);
 }
 
 

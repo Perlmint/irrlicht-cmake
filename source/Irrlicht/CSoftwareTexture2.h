@@ -21,7 +21,7 @@ class CSoftwareTexture2 : public ITexture
 public:
 
 	//! constructor
-	CSoftwareTexture2(IImage* surface, const char* name);
+	CSoftwareTexture2(IImage* surface, const char* name,bool generateMipLevels);
 
 	//! destructor
 	virtual ~CSoftwareTexture2();
@@ -57,14 +57,27 @@ public:
 	//! modifying the texture
 	virtual void regenerateMipMapLevels();
 
+	//! Select a Mipmap Level
+	virtual void setCurrentMipMapLOD ( s32 lod );
+
 private:
 
 	//! returns the size of a texture which would be the optimize size for rendering it
 	inline s32 getTextureSizeFromSurfaceSize(s32 size);
 
-	CImage* Image;
-	CImage* Texture;
 	core::dimension2d<s32> OrigSize;
+
+
+#ifdef SOFTWARE_DRIVER_2_MIPMAPPING
+	#define SOFTWARE_DRIVER_2_MIPMAPPING_MAX		8
+#else
+	#define SOFTWARE_DRIVER_2_MIPMAPPING_MAX		1
+#endif
+
+	CImage * MipMap[SOFTWARE_DRIVER_2_MIPMAPPING_MAX];
+
+	s32 MipMapLOD;
+	bool HasMipMaps;
 
 };
 

@@ -35,7 +35,7 @@ static void png_cpexcept_error(png_structp png_ptr, png_const_charp msg)
 }
 
 // PNG function for file writing
-void user_write_data_fcn(png_structp png_ptr, png_bytep data, png_size_t length)
+void PNGAPI user_write_data_fcn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	png_size_t check;
 

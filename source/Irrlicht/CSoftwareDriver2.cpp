@@ -8,6 +8,10 @@
 #include "S3DVertex.h"
 #include "S4DVertex.h"
 
+#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
+	#include <float.h>
+#endif
+
 namespace irr
 {
 namespace video
@@ -221,8 +225,8 @@ void CSoftwareDriver2::selectRightTriangleRenderer()
 	CurrentTriangleRenderer = TriangleRenderer[renderer];
 	if ( CurrentTriangleRenderer )
 	{
-		CurrentTriangleRenderer->setTexture(0, Texmap[0].Texture);
-		CurrentTriangleRenderer->setTexture(1, Texmap[1].Texture);
+		//CurrentTriangleRenderer->setTexture(0, Texmap[0].Texture);
+		//CurrentTriangleRenderer->setTexture(1, Texmap[1].Texture);
 		CurrentTriangleRenderer->setRenderTarget(RenderTargetSurface, ViewPort);
 	}
 
@@ -239,9 +243,15 @@ bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	case EVDF_BILINEAR_FILTER:
 		return true;
 #endif
+#ifdef SOFTWARE_DRIVER_2_MIPMAPPING
+	case EVDF_MIP_MAP:
+		return true;
+#endif
+
 	case EVDF_RENDER_TO_TARGET:
 	case EVDF_MULTITEXTURE:
 		return true;
+
 	default:
 		return false;
 	};
@@ -289,9 +299,7 @@ bool CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
 
 	if ( Texture[stage] )
 	{
-		Texmap[stage].Texture = ((CSoftwareTexture2*)Texture[stage])->getTexture();
-		Texmap[stage].textureXMask = Texmap[stage].Texture->getDimension().Width - 1;
-		Texmap[stage].textureYMask = Texmap[stage].Texture->getDimension().Height - 1;
+		Texmap[stage].Texture = (video::CSoftwareTexture2*) Texture[stage];
 	}
 
 	selectRightTriangleRenderer();
@@ -318,6 +326,10 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 //! clears the zbuffer
 bool CSoftwareDriver2::beginScene(bool backBuffer, bool zBuffer, SColor color)
 {
+#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
+	_controlfp( _PC_24, MCW_PC );
+#endif
+
 	CNullDriver::beginScene(backBuffer, zBuffer, color);
 
 	if (backBuffer)
@@ -325,10 +337,6 @@ bool CSoftwareDriver2::beginScene(bool backBuffer, bool zBuffer, SColor color)
 
 	if (ZBuffer && zBuffer)
 		ZBuffer->clear();
-
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clear ();
-#endif
 
 	return true;
 }
@@ -340,16 +348,8 @@ bool CSoftwareDriver2::endScene( s32 windowId, core::rect<s32>* sourceRect )
 
 	Presenter->present(BackBuffer, windowId, sourceRect );
 
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.stop ();
-
-	static u32 lasttick = -1;
-	u32 now = os::Timer::getRealTime ();
-	if ( now - lasttick > 2000 )
-	{
-		//Stat.dump ();
-		lasttick = now;
-	}
+#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
+	_controlfp( _CW_DEFAULT, 0xfffff );
 #endif
 	return true;
 }
@@ -516,63 +516,6 @@ static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 in
 	return outCount;
 }
 
-/*!
-	Clip in NDC Space to Frustum
-	Clips a primitive at the viewing frustrum in hyper space
-	(<-w,w>, <-w,w>, <-w,w>)
-*/
-inline u32 CSoftwareDriver2::clipToFrustrum_Stat ( s4DVertex *v0, s4DVertex * v1, u32 vIn )
-{
-	u32 vOut;
-
-	vOut = vIn;
-
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[2] );		// right
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clip ( vOut, 0 );
-	if ( vOut < vIn )
-		return vOut;
-#endif
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[1] );		// left
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clip ( vOut, 1 );
-	if ( vOut < vIn )
-		return vOut;
-#endif
-
-
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[4] );		// top
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clip ( vOut, 2 );
-	if ( vOut < vIn )
-		return vOut;
-#endif
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[3] );		// bottom
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clip ( vOut, 3 );
-	if ( vOut < vIn )
-		return vOut;
-#endif
-
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[0] );		// near
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clip ( vOut, 4 );
-	if ( vOut < vIn )
-		return vOut;
-#endif
-
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[5] );		// far
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.clip ( vOut, 5 );
-	if ( vOut < vIn )
-		return vOut;
-#endif
-
-	return vOut;
-}
 
 inline u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * v1, u32 vIn )
 {
@@ -581,11 +524,27 @@ inline u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * 
 	vOut = vIn;
 
 	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[2] );		// right
+	if ( vOut < vIn )
+		return vOut;
+
 	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[1] );		// left
+	if ( vOut < vIn )
+		return vOut;
+
 	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[4] );		// top
+	if ( vOut < vIn )
+		return vOut;
+
 	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[3] );		// bottom
+	if ( vOut < vIn )
+		return vOut;
+
 	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[0] );		// near
+	if ( vOut < vIn )
+		return vOut;
+
 	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[5] );		// far
+
 	return vOut;
 }
 
@@ -629,26 +588,45 @@ inline void CSoftwareDriver2::ndc_2_dc_and_project ( s4DVertex *source, u32 vIn 
 
 #ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 		v0->Color *= rhw;
-		v0->Tex0 *= rhw;
-		v0->Tex1 *= rhw;
+		//v0->Tex[0] *= rhw;
+		//v0->Tex[1] *= rhw;
 #endif
 
 	}
 
 }
 
+
+/*!
+	crossproduct in projcteded 2D
+*/
+inline f32 CSoftwareDriver2::backface ( const s4DVertex *v0 ) const
+{
+	return	( ( v0[1].Pos.x - v0[0].Pos.x ) * ( v0[2].Pos.y - v0[0].Pos.y ) ) -
+			( ( v0[1].Pos.y - v0[0].Pos.y ) * ( v0[2].Pos.x - v0[0].Pos.x ) );
+}
+
 /*!
 */
-inline f32 CSoftwareDriver2::backface ( s4DVertex *v0 ) const
+inline f32 CSoftwareDriver2::texelarea ( const s4DVertex *v0, int tex ) const
 {
 	f32 x0,y0, x1,y1, z;
 
-	x0 = v0[1].Pos.x - v0[0].Pos.x;
-	y0 = v0[1].Pos.y - v0[0].Pos.y;
-	x1 = v0[2].Pos.x - v0[0].Pos.x;
-	y1 = v0[2].Pos.y - v0[0].Pos.y;
+//	x0 = (v0[1].Tex[tex].x * d.Width ) - ( v0[0].Tex[tex].x * d.Width );
+//	y0 = (v0[1].Tex[tex].y * d.Height ) - ( v0[0].Tex[tex].y * d.Height );
+//	x1 = (v0[2].Tex[tex].x * d.Width ) - ( v0[0].Tex[tex].x  * d.Width );
+//	y1 = (v0[2].Tex[tex].y * d.Height) -  ( v0[0].Tex[tex].y * d.Height );
 
-	z = x0*y1 - y0*x1;
+	x0 = v0[1].Tex[tex].x - v0[0].Tex[tex].x;
+	y0 = v0[1].Tex[tex].y - v0[0].Tex[tex].y;
+	x1 = v0[2].Tex[tex].x - v0[0].Tex[tex].x;
+	y1 = v0[2].Tex[tex].y - v0[0].Tex[tex].y;
+
+	z = x0*y1 - x1*y0;
+
+	const core::dimension2d<s32> &d = Texmap[tex].Texture->getOriginalSize();
+	z *= d.Height;
+	z *= d.Width;
 	return z;
 }
 
@@ -819,38 +797,27 @@ void CSoftwareDriver2::transform_and_lighting ( s4DVertex *dest, const S3DVertex
 #endif
 }
 
-inline void CSoftwareDriver2::apply_tex_coords ( s4DVertex *dest, const S3DVertex **face )
+
+/*!
+*/
+inline void CSoftwareDriver2::select_polygon_mipmap ( s4DVertex *source, u32 vIn, s32 tex )
 {
-	// granularity
-	f32 w0 = (f32) Texmap[0].textureXMask;
-	f32 h0 = (f32) Texmap[0].textureYMask;
-
-	// apply TexCoords
-	dest[0].Tex0.set ( face[0]->TCoords.X * w0, face[0]->TCoords.Y * h0 );
-	dest[1].Tex0.set ( face[1]->TCoords.X * w0, face[1]->TCoords.Y * h0 );
-	dest[2].Tex0.set ( face[2]->TCoords.X * w0, face[2]->TCoords.Y * h0 );
-
-}
-
-inline void CSoftwareDriver2::apply_tex_coords ( s4DVertex *dest, const S3DVertex2TCoords **face )
-{
-	// granularity
-	f32 w0 = (f32) Texmap[0].textureXMask;
-	f32 h0 = (f32) Texmap[0].textureYMask;
-
-	f32 w1 = (f32) Texmap[1].textureXMask;
-	f32 h1 = (f32) Texmap[1].textureYMask;
+	s4DVertex *v0;
+	u32 g;
 
 
-	// apply TexCoords
-	dest[0].Tex0.set ( face[0]->TCoords.X * w0, face[0]->TCoords.Y * h0 );
-	dest[1].Tex0.set ( face[1]->TCoords.X * w0, face[1]->TCoords.Y * h0 );
-	dest[2].Tex0.set ( face[2]->TCoords.X * w0, face[2]->TCoords.Y * h0 );
+	v0 = source;
 
-	// apply TexCoords
-	dest[0].Tex1.set ( face[0]->TCoords2.X * w1, face[0]->TCoords2.Y * h1 );
-	dest[1].Tex1.set ( face[1]->TCoords2.X * w1, face[1]->TCoords2.Y * h1);
-	dest[2].Tex1.set ( face[2]->TCoords2.X * w1, face[2]->TCoords2.Y * h1 );
+	core::dimension2d<f32> d;
+
+	d.Width = (f32) Texmap[tex].Texture->getSize().Width;
+	d.Height = (f32) Texmap[tex].Texture->getSize().Height;
+
+	for ( g = 0; g != vIn; ++g,++v0 )
+	{
+		v0->Tex[tex].x *= v0->Pos.w * d.Width;
+		v0->Tex[tex].y *= v0->Pos.w * d.Height;
+	}
 
 }
 
@@ -865,9 +832,20 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 	if ( 0 == CurrentTriangleRenderer )
 		return;
 
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-	Stat.Primitive += primitiveCount;
-#endif
+	s32 stride=0;
+	switch (vType)
+	{
+		case EVT_STANDARD:
+			stride=sizeof(S3DVertex);
+			break;
+		case EVT_2TCOORDS:
+			stride=sizeof(S3DVertex2TCoords);
+			break;
+		case EVT_TANGENTS:
+			stride=sizeof(S3DVertexTangents);
+			break;
+	}
+
 	// triangle face
 	const S3DVertex * face[3];
 	const S3DVertex2TCoords * face2[3];
@@ -890,6 +868,7 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 				break;
 		}
 	}
+
 	s32 pitch = 1;
 	switch (pType)
 	{
@@ -898,6 +877,8 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 			pitch=3;
 			break;
 	}
+
+	u32 g;
 	for ( s32 i = 0; i!= primitiveCount; i+=pitch )
 	{
 		switch (vType)
@@ -910,7 +891,11 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 				face[2] = &((S3DVertex*)vertices)[ indexList [ i + 2 ] ];
 
 				transform_and_lighting ( CurrentOut, face );
-				apply_tex_coords ( CurrentOut, face );
+
+				CurrentOut[0].Tex[0].set ( face[0]->TCoords.X, face[0]->TCoords.Y );
+				CurrentOut[1].Tex[0].set ( face[1]->TCoords.X, face[1]->TCoords.Y );
+				CurrentOut[2].Tex[0].set ( face[2]->TCoords.X, face[2]->TCoords.Y );
+
 				break;
 			case EVT_2TCOORDS:
 				// select face
@@ -920,7 +905,15 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 				face2[2] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 2 ] ];
 
 				transform_and_lighting ( CurrentOut, (const S3DVertex**) face2 );
-				apply_tex_coords ( CurrentOut, face2 );
+
+				CurrentOut[0].Tex[0].set ( face2[0]->TCoords.X, face2[0]->TCoords.Y );
+				CurrentOut[1].Tex[0].set ( face2[1]->TCoords.X, face2[1]->TCoords.Y );
+				CurrentOut[2].Tex[0].set ( face2[2]->TCoords.X, face2[2]->TCoords.Y );
+
+				CurrentOut[0].Tex[1].set ( face2[0]->TCoords2.X, face2[0]->TCoords2.Y );
+				CurrentOut[1].Tex[1].set ( face2[1]->TCoords2.X, face2[1]->TCoords2.Y );
+				CurrentOut[2].Tex[1].set ( face2[2]->TCoords2.X, face2[2]->TCoords2.Y );
+
 				break;
 			case EVT_TANGENTS:
 				// select face
@@ -930,39 +923,57 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 				faceT[2] = &((S3DVertexTangents*)vertices)[ indexList [ i + 2 ] ];
 
 				transform_and_lighting ( CurrentOut, (const S3DVertex**) faceT );
-				apply_tex_coords ( CurrentOut, (const S3DVertex2TCoords**) faceT );
+				CurrentOut[0].Tex[0].set ( face2[0]->TCoords.X, face2[0]->TCoords.Y );
+				CurrentOut[1].Tex[0].set ( face2[1]->TCoords.X, face2[1]->TCoords.Y );
+				CurrentOut[2].Tex[0].set ( face2[2]->TCoords.X, face2[2]->TCoords.Y );
+
+				CurrentOut[0].Tex[1].set ( face2[0]->TCoords2.X, face2[0]->TCoords2.Y );
+				CurrentOut[1].Tex[1].set ( face2[1]->TCoords2.X, face2[1]->TCoords2.Y );
+				CurrentOut[2].Tex[1].set ( face2[2]->TCoords2.X, face2[2]->TCoords2.Y );
 		}
 
 		// vertices count per triangle
-		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-		Stat.clip ( vOut, 6 );
-#endif
+		u32 vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 3 );
 		if ( vOut < 3 )
 			continue;
 
 		// to DC Space, project homogenous vertex
 		ndc_2_dc_and_project ( CurrentOut, vOut );
 
-		// check 2d backface culling
-		if ( Material.org.BackfaceCulling )
+		// check 2d backface culling on first
+		f32 cross = backface ( CurrentOut );
+
+		if ( Material.org.BackfaceCulling && cross <= 0.f )
+			continue;
+
+		// select mipmap
+
+		f32 texarea;
+		s32 lodLevel;
+
+		if ( Texmap[0].Texture )
 		{
-			if ( backface ( CurrentOut ) < 0.f )
-			{
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-				Stat.Backface += 1;
-#endif
-				continue;
-			}
+			texarea = texelarea ( CurrentOut, 0 );
+			lodLevel = s32_log2_f32 ( texarea / cross );
+			lodLevel = s32_clamp ( lodLevel, 0, 7 );
+
 		}
 
+		for ( g = 0; g!= 2; ++g )
+		{
+			if ( 0 == Texmap[g].Texture )
+				continue;
+
+			Texmap[g].Texture->setCurrentMipMapLOD ( lodLevel );
+			select_polygon_mipmap ( CurrentOut, vOut, g );
+			CurrentTriangleRenderer->setTexture(g, Texmap[g].Texture);
+		}
+
+
 		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( u32 g = 0; g <= vOut - 3; ++g )
+		for ( g = 0; g <= vOut - 3; ++g )
 		{
 			// rasterize
-#ifdef SOFTWARE_DRIVER_2_STATISTIC
-			Stat.DrawTriangle += 1;
-#endif
 			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
 		}
 	}
@@ -1086,7 +1097,7 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 		CurrentOut[2] = v[ indices [ i + 2 ] ];
 
 		// vertices count per triangle
-		u32 vOut = clipToFrustrum_Stat ( CurrentOut, Temp, 3 );
+		u32 vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 3 );
 		if ( vOut < 3 )
 			continue;
 
@@ -1149,9 +1160,9 @@ void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
 const wchar_t* CSoftwareDriver2::getName()
 {
 #ifdef SOFTWARE_DRIVER_2_32BIT
-	return L"apfelsoft 0.1 32Bit";
+	return L"apfelsoft 0.2 32Bit";
 #else
-	return L"apfelsoft 0.1 15Bit";
+	return L"apfelsoft 0.2 15Bit";
 #endif
 
 }
@@ -1173,7 +1184,7 @@ ITexture* CSoftwareDriver2::createRenderTargetTexture(core::dimension2d<s32> siz
 {
 	CImage* img = new CImage(ECF_SOFTWARE2, size);
 
-	ITexture* tex = new CSoftwareTexture2(img, 0);
+	ITexture* tex = new CSoftwareTexture2(img, 0, false);
 	img->drop();
 	return tex;	
 }
@@ -1193,12 +1204,20 @@ IImage* CSoftwareDriver2::createScreenShot()
 	return new CImage(BackBuffer->getColorFormat(), BackBuffer);
 }
 
+//! Enables or disables a texture creation flag.
+void CSoftwareDriver2::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled)
+{
+	CNullDriver::setTextureCreationFlag(flag,enabled);
+}
+
 
 //! returns a device dependent texture from a software surface (IImage)
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 ITexture* CSoftwareDriver2::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	return new CSoftwareTexture2(surface, name);
+	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
+
+	return new CSoftwareTexture2(surface, name, generateMipLevels);
 }
 
 
@@ -1207,6 +1226,7 @@ IVideoDriver* createSoftwareDriver2(const core::dimension2d<s32>& windowSize, bo
 {
 	return new CSoftwareDriver2(windowSize, fullscreen, io, presenter);
 }
+
 
 
 } // end namespace video

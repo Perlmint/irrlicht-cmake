@@ -1031,7 +1031,7 @@ void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 //! call.
 s32 CNullDriver::getMaximalPrimitiveCount()
 {
-	return (1<<31)-1;
+	return (1<<30)-1;
 }
 
 

@@ -18,11 +18,6 @@ namespace irr
 		s32 y1;
 	};
 
-	inline s32 s32_clamp (s32 value, s32 low, s32 high) 
-	{
-		return s32_min (s32_max(value,low), high);
-	}
-
 	inline void intersect ( AbsRectangle &dest, const AbsRectangle& a, const AbsRectangle& b)
 	{
 		dest.x0 = s32_max( a.x0, b.x0 );
@@ -1131,6 +1126,29 @@ s32 CImage::getBitsPerPixelFromFormat()
 	return 0;
 }
 
+//! sets a pixel
+void CImage::setPixel(s32 x, s32 y, const SColor &color )
+{
+	if (x < 0 || y < 0 || x >= Size.Width || y >= Size.Height)
+		return;
+
+	switch(Format)
+	{
+		case ECF_A1R5G5B5:
+		{
+			u16 * dest = (u16*) ((u8*) Data + ( y * Pitch ) + ( x << 1 ));
+			*dest = video::A8R8G8B8toA1R5G5B5 ( color.color );
+		} break;
+
+		case ECF_A8R8G8B8:
+		{
+			u32 * dest = (u32*) ((u8*) Data + ( y * Pitch ) + ( x << 2 ));
+			*dest = color.color;
+		} break;
+
+	}
+}
+
 
 //! returns a pixel
 SColor CImage::getPixel(s32 x, s32 y)
@@ -1308,6 +1326,98 @@ u32 CImage::getPitch()
 {
 	return Pitch;
 }
+
+
+//! get a filtered pixel
+inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy )
+{
+	SColor c;
+	u32 a = 0, r = 0, g = 0, b = 0;
+
+	for ( s32 dx = 0; dx != fx; ++dx )
+	{
+		for ( s32 dy = 0; dy != fy; ++dy )
+		{
+			c = getPixel ( x + dx , y + dy );
+			a += c.getAlpha ();
+			r += c.getRed();
+			g += c.getGreen();
+			b += c.getBlue ();
+		}
+	}
+
+#if 0
+	tFixPointu sdiv = FIX_POINT_ONE / ( fx * fy );
+
+	a *= sdiv;
+
+	r *= sdiv;
+	c.color = ( a & FIX_POINT_UNSIGNED_MASK ) << ( 24 - FIX_POINT_PRE );
+
+	g *= sdiv;
+	c.color |= ( r & FIX_POINT_UNSIGNED_MASK ) << ( 16 - FIX_POINT_PRE );
+
+	b *= sdiv;
+	c.color |= ( g & FIX_POINT_UNSIGNED_MASK ) >> ( FIX_POINT_PRE - 8 );
+	c.color |= ( b  ) >> ( FIX_POINT_PRE - 0 );
+
+#else
+	s32 sdiv = fx * fy;
+
+	a /= sdiv;
+	r /= sdiv;
+	g /= sdiv;
+	b /= sdiv;
+
+	c.set ( a, r, g, b );
+#endif
+	return c;
+}
+
+
+//! copies this surface into another, scaling it to fit it.
+void CImage::copyToScalingBoxFilter(CImage* target)
+{
+	video::ECOLOR_FORMAT destFormat = target->getColorFormat();
+
+	if (Format != destFormat )
+	{
+		os::Printer::log("Format not equal", ELL_ERROR);
+		return;
+	}
+
+	core::dimension2d<s32> destSize = target->getDimension();
+
+	f32 sourceXStep = (f32) Size.Width;
+	f32 sourceYStep = (f32) Size.Height;
+
+	sourceXStep /= (f32) ( destSize.Width - 0 );
+	sourceYStep /= (f32) ( destSize.Height - 0 );
+
+	s32 fx = ceil32 ( sourceXStep );
+	s32 fy = ceil32 ( sourceYStep );
+	f32 sx;
+	f32 sy;
+	SColor p;
+
+	sy = 0.f;
+
+	for ( s32 y = 0; y != destSize.Height; ++y )
+	{
+		sx = 0.f;
+		for ( s32 x = 0; x != destSize.Width; ++x )
+		{
+			target->setPixel ( x, y,getPixelBox ( floor32 ( sx ), floor32 ( sy ), fx, fy ) );
+
+			sx += sourceXStep;
+		}
+		sy += sourceYStep;
+	}
+
+	target->unlock ();
+
+}
+
 
 
 } // end namespace video

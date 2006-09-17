@@ -77,7 +77,7 @@ CTRTextureGouraud2::CTRTextureGouraud2(IZBuffer2* zbuffer)
 
 /*!
 */
-inline void CTRTextureGouraud2::scanline_bilinear ( sScanLineData * data ) const
+void CTRTextureGouraud2::scanline_bilinear ( sScanLineData * data ) const
 {
 	tVideoSample *dst;
 
@@ -186,13 +186,16 @@ inline void CTRTextureGouraud2::scanline_bilinear ( sScanLineData * data ) const
 #endif
 		{
 #ifdef IPOL_W
+			//TODO:
 			inversew = inverse32 ( data->w[0] );
 
-			tx0 = f32_to_fixPoint ( data->t0[0].x * inversew);
-			ty0 = f32_to_fixPoint ( data->t0[0].y * inversew);
 #ifdef IPOL_C
 			getSample_plain ( r1, g1, b1, data->c[0] * inversew );
 #endif
+
+			inversew *= FIX_POINT_F32_MUL;
+			tx0 = f32_to_fixPoint ( data->t0[0].x, inversew);
+			ty0 = f32_to_fixPoint ( data->t0[0].y, inversew);
 #else
 			tx0 = f32_to_fixPoint ( data->t0[0].x );
 			ty0 = f32_to_fixPoint ( data->t0[0].y );
@@ -293,13 +296,13 @@ void CTRTextureGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,co
 #endif
 
 #ifdef IPOL_T0
-	scan.slopeT0[0] = (c->Tex0 - a->Tex0) * scan.invDeltaY[0];
-	scan.t0[0] = a->Tex0;
+	scan.slopeT0[0] = (c->Tex[0] - a->Tex[0]) * scan.invDeltaY[0];
+	scan.t0[0] = a->Tex[0];
 #endif
 
 #ifdef IPOL_T1
-	scan.slopeT1[0] = (c->Tex1 - a->Tex1) * scan.invDeltaY[0];
-	scan.t1[0] = a->Tex1;
+	scan.slopeT1[0] = (c->Tex[1] - a->Tex[1]) * scan.invDeltaY[0];
+	scan.t1[0] = a->Tex[1];
 #endif
 
 	// top left fill convention y run
@@ -348,13 +351,13 @@ void CTRTextureGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,co
 #endif
 
 #ifdef IPOL_T0
-		scan.slopeT0[1] = (b->Tex0 - a->Tex0) * scan.invDeltaY[1];
-		scan.t0[1] = a->Tex0;
+		scan.slopeT0[1] = (b->Tex[0] - a->Tex[0]) * scan.invDeltaY[1];
+		scan.t0[1] = a->Tex[0];
 #endif
 
 #ifdef IPOL_T1
-		scan.slopeT1[1] = (b->Tex1 - a->Tex1) * scan.invDeltaY[1];
-		scan.t1[1] = a->Tex1;
+		scan.slopeT1[1] = (b->Tex[1] - a->Tex[1]) * scan.invDeltaY[1];
+		scan.t1[1] = a->Tex[1];
 #endif
 
 		// apply top-left fill convention, top part
@@ -481,10 +484,10 @@ void CTRTextureGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,co
 			scan.c[0] = a->Color + scan.slopeC[0] * temp[0];
 #endif
 #ifdef IPOL_T0
-			scan.t0[0] = a->Tex0 + scan.slopeT0[0] * temp[0];
+			scan.t0[0] = a->Tex[0] + scan.slopeT0[0] * temp[0];
 #endif
 #ifdef IPOL_T1
-			scan.t1[0] = a->Tex1 + scan.slopeT1[0] * temp[0];
+			scan.t1[0] = a->Tex[1] + scan.slopeT1[0] * temp[0];
 #endif
 
 		}
@@ -509,13 +512,13 @@ void CTRTextureGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,co
 #endif
 
 #ifdef IPOL_T0
-		scan.slopeT0[1] = (c->Tex0 - b->Tex0) * scan.invDeltaY[2];
-		scan.t0[1] = b->Tex0;
+		scan.slopeT0[1] = (c->Tex[0] - b->Tex[0]) * scan.invDeltaY[2];
+		scan.t0[1] = b->Tex[0];
 #endif
 
 #ifdef IPOL_T1
-		scan.slopeT1[1] = (c->Tex1 - b->Tex1) * scan.invDeltaY[2];
-		scan.t1[1] = b->Tex1;
+		scan.slopeT1[1] = (c->Tex[1] - b->Tex[1]) * scan.invDeltaY[2];
+		scan.t1[1] = b->Tex[1];
 #endif
 
 		// apply top-left fill convention, top part

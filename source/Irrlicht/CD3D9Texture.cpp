@@ -258,7 +258,6 @@ bool CD3D9Texture::createMipMaps(s32 level)
 }
 
 
-
 //! creates the hardware texture
 void CD3D9Texture::createTexture(u32 flags)
 {

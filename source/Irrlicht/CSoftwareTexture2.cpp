@@ -13,36 +13,49 @@ namespace video
 {
 
 //! constructor
-CSoftwareTexture2::CSoftwareTexture2(IImage* image, const char* name)
-: ITexture(name), Texture(0)
+CSoftwareTexture2::CSoftwareTexture2(IImage* image, const char* name, bool generateMipLevels)
+: ITexture(name), HasMipMaps(generateMipLevels),MipMapLOD(0)
 {
-	#ifdef _DEBUG
-	setDebugName("CSoftwareTexture2");
-	#endif	
+	#ifndef SOFTWARE_DRIVER_2_MIPMAPPING
+		HasMipMaps = false;
+	#endif
+
+	for ( s32 i = 0; i!= SOFTWARE_DRIVER_2_MIPMAPPING_MAX; ++i )
+	{
+		MipMap[i] = 0;
+	}
 
 	if (image)
 	{
+		
 		core::dimension2d<s32> optSize;
 		core::dimension2d<s32> origSize = image->getDimension();
 		OrigSize = origSize;
 
 		optSize.Width = getTextureSizeFromSurfaceSize(origSize.Width);
 		optSize.Height = getTextureSizeFromSurfaceSize(origSize.Height);
+		
+		OrigSize = optSize;
 
-
-		Image = new CImage(ECF_SOFTWARE2, image);
-
-		if (optSize == origSize)
+		if ( origSize == optSize )
 		{
-			Texture = Image;
-			Texture->grab();
+			MipMap[0] = new CImage(ECF_SOFTWARE2, image);
 		}
 		else
 		{
-			Texture = new CImage(ECF_SOFTWARE2, optSize);
-			Image->copyToScaling(Texture);			
+			MipMap[0] = new CImage(ECF_SOFTWARE2, optSize);
+
+			// temporary CImage needed
+			CImage * temp = new CImage ( ECF_SOFTWARE2, image );
+			temp->copyToScaling(MipMap[0]);
+			temp->drop ();
 		}
+
+
 	}
+
+	regenerateMipMapLevels ();
+	setCurrentMipMapLOD ( 0 );
 }
 
 
@@ -50,11 +63,11 @@ CSoftwareTexture2::CSoftwareTexture2(IImage* image, const char* name)
 //! destructor
 CSoftwareTexture2::~CSoftwareTexture2()
 {
-	if (Image)
-		Image->drop();
-
-	if (Texture)
-		Texture->drop();
+	for ( s32 i = 0; i!= SOFTWARE_DRIVER_2_MIPMAPPING_MAX; ++i )
+	{
+		if ( MipMap[i] )
+			MipMap[i]->drop ();
+	}
 }
 
 
@@ -62,7 +75,7 @@ CSoftwareTexture2::~CSoftwareTexture2()
 //! lock function
 void* CSoftwareTexture2::lock()
 {
-	return Image->lock();
+	return MipMap[MipMapLOD]->lock();
 }
 
 
@@ -70,34 +83,28 @@ void* CSoftwareTexture2::lock()
 //! unlock function
 void CSoftwareTexture2::unlock()
 {
-	if (Image != Texture)
-	{
-		os::Printer::log("Performance warning, slow unlock of non power of 2 texture.", ELL_WARNING);
-		Image->copyToScaling(Texture);
-	}
-
-	Image->unlock();
+	MipMap[MipMapLOD]->unlock();
 }
 
 
 //! Returns original size of the texture.
 const core::dimension2d<s32>& CSoftwareTexture2::getOriginalSize()
 {
-	return OrigSize;
+	return MipMap[0]->getDimension();
 }
 
 
 //! Returns (=size) of the texture.
 const core::dimension2d<s32>& CSoftwareTexture2::getSize()
 {
-	return Image->getDimension();
+	return MipMap[MipMapLOD]->getDimension();
 }
 
 
 //! returns unoptimized surface
 CImage* CSoftwareTexture2::getImage()
 {
-	return Image;
+	return MipMap[0];
 }
 
 
@@ -105,7 +112,7 @@ CImage* CSoftwareTexture2::getImage()
 //! returns texture surface
 CImage* CSoftwareTexture2::getTexture()
 {
-	return Texture;
+	return MipMap[MipMapLOD];
 }
 
 
@@ -141,7 +148,14 @@ ECOLOR_FORMAT CSoftwareTexture2::getColorFormat()
 //! returns pitch of texture (in bytes)
 s32 CSoftwareTexture2::getPitch()
 {
-	return Image->getPitch();
+	return MipMap[MipMapLOD]->getPitch();
+}
+
+//! Select a Mipmap Level
+void CSoftwareTexture2::setCurrentMipMapLOD ( s32 lod )
+{
+	if ( HasMipMaps )
+		MipMapLOD = lod;
 }
 
 
@@ -149,9 +163,36 @@ s32 CSoftwareTexture2::getPitch()
 //! modifying the texture
 void CSoftwareTexture2::regenerateMipMapLevels()
 {
-	// our software textures don't have mip maps
-}
+	if ( false == HasMipMaps )
+		return;
 
+	s32 i;
+
+	// release
+	for ( i = 1; i!= SOFTWARE_DRIVER_2_MIPMAPPING_MAX; ++i )
+	{
+		if ( MipMap[i] )
+			MipMap[i]->drop ();
+	}
+
+	core::dimension2d<s32> newSize;
+	core::dimension2d<s32> currentSize;
+
+	i = 1;
+	CImage * c = MipMap[0];
+	while ( i < SOFTWARE_DRIVER_2_MIPMAPPING_MAX )
+	{
+		currentSize = c->getDimension();
+		newSize.Width = max ( 1, currentSize.Width / 2 );
+		newSize.Height = max ( 1, currentSize.Height / 2 );
+
+		MipMap[i] = new CImage(ECF_SOFTWARE2, newSize);
+		MipMap[0]->copyToScalingBoxFilter ( MipMap[i] );
+
+		c = MipMap[i];
+		i += 1;
+	}
+}
 
 
 } // end namespace video

@@ -55,83 +55,16 @@ namespace video
 	class ITriangleRenderer2 : public virtual IUnknown
 	{
 	public:
-		ITriangleRenderer2(IZBuffer2* zbuffer)
-			:RenderTarget(0),ZBuffer(zbuffer)
-		{
-			IT[0].Texture = 0;
-			IT[1].Texture = 0;
-
-			#ifdef _DEBUG
-			setDebugName("CTRTextureLightMap2_M1");
-			#endif
-
-			if (ZBuffer)
-				zbuffer->grab();
-		}
-
+		ITriangleRenderer2(IZBuffer2* zbuffer);
 
 		//! destructor
-		virtual ~ITriangleRenderer2()
-		{
-			if (RenderTarget)
-				RenderTarget->drop();
-
-			if (ZBuffer)
-				ZBuffer->drop();
-
-			if ( IT[0].Texture )
-				IT[0].Texture->drop();
-
-			if ( IT[1].Texture )
-				IT[1].Texture->drop();
-		};
+		virtual ~ITriangleRenderer2();
 
 		//! sets a render target
-		virtual void setRenderTarget(video::IImage* surface, const core::rect<s32>& viewPort)
-		{
-			if (RenderTarget)
-				RenderTarget->drop();
-
-			RenderTarget = surface;
-
-			if (RenderTarget)
-			{
-				SurfaceWidth = RenderTarget->getDimension().Width;
-				RenderTarget->grab();
-			}
-		}
-
-
+		virtual void setRenderTarget(video::IImage* surface, const core::rect<s32>& viewPort);
 
 		//! sets the Texture
-		virtual void setTexture( u32 stage, video::IImage* texture)
-		{
-			sInternalTexture *it = &IT[stage];
-
-			if ( it->Texture == texture )
-				return;
-
-			if ( it->Texture)
-				it->Texture->drop();
-
-			it->Texture = texture;
-
-			if ( it->Texture)
-			{
-				it->Texture->grab();
-
-				// prepare for optimal fixpoint
-				it->pitch = it->Texture->getPitch();
-
-				it->textureXMask = s32_to_fixPoint ( it->Texture->getDimension().Width - 1 );
-				it->textureYMask = s32_to_fixPoint ( it->Texture->getDimension().Height - 1 );
-
-				it->textureXMask |= FIX_POINT_FRACT_MASK;
-				it->textureYMask |= FIX_POINT_FRACT_MASK;
-			}
-		}
-
-
+		virtual void setTexture( u32 stage, video::CSoftwareTexture2* texture);
 		virtual void drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c ) = 0;
 		virtual void drawLine ( const s4DVertex *a,const s4DVertex *b) {};
 
