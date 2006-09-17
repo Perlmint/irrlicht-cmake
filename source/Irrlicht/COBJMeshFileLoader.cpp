@@ -399,6 +399,11 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 						pBufPtr=readColor(pBufPtr, pCurrMaterial->pMeshbuffer->Material.AmbientColor, pBufEnd);
 					}
 					break;
+				case 'e':		// Ke = emissive
+					{
+						pBufPtr=readColor(pBufPtr, pCurrMaterial->pMeshbuffer->Material.EmissiveColor, pBufEnd);
+					}
+					break;
 
 				default:
 					// eat up rest of line
@@ -521,11 +526,11 @@ c8* COBJMeshFileLoader::readColor(c8* pBufPtr, video::SColor& color, const c8* p
 
 	color.setAlpha(255);
 	pBufPtr = goAndCopyNextWord(colStr,   pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
-	color.setRed((s32)(255-core::fast_atof(colStr) * 255));
+	color.setRed((s32)(core::fast_atof(colStr) * 255));
 	pBufPtr = goAndCopyNextWord(colStr,   pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
-	color.setGreen((s32)(255-core::fast_atof(colStr) * 255));
+	color.setGreen((s32)(core::fast_atof(colStr) * 255));
 	pBufPtr = goAndCopyNextWord(colStr,   pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
-	color.setBlue((s32)(255-core::fast_atof(colStr) * 255));
+	color.setBlue((s32)(core::fast_atof(colStr) * 255));
 
 	return goNextLine(pBufPtr, pBufEnd);
 }
