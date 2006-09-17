@@ -36,18 +36,18 @@ bool CImageLoaderTGA::isALoadableFileExtension(const c8* fileName)
 }
 
 
-//! loads a compressed tga. 
-u8 *CImageLoaderTGA::loadCompressedImage(irr::io::IReadFile *file, STGAHeader *header)
+//! loads a compressed tga.
+u8 *CImageLoaderTGA::loadCompressedImage(irr::io::IReadFile *file, const STGAHeader& header)
 {
 	// This was written and sent in by Jon Pry, thank you very much!
 	// I only changed the formatting a little bit.
 
-	s32 bytesPerPixel = header->PixelDepth/8;
-	s32 imageSize =  header->ImageHeight * header->ImageWidth * bytesPerPixel;
+	s32 bytesPerPixel = header.PixelDepth/8;
+	s32 imageSize =  header.ImageHeight * header.ImageWidth * bytesPerPixel;
 	u8* data = new u8[imageSize];
 	s32 currentByte = 0;
 
-	while(currentByte < imageSize)					
+	while(currentByte < imageSize)
 	{
 		u8 chunkheader = 0;
 		file->read(&chunkheader, sizeof(u8)); // Read The Chunk's Header
@@ -64,17 +64,17 @@ u8 *CImageLoaderTGA::loadCompressedImage(irr::io::IReadFile *file, STGAHeader *h
 			// thnx to neojzs for some fixes with this code
 
 			// If It's An RLE Header
-			chunkheader -= 127; // Subtract 127 To Get Rid Of The ID Bit 
+			chunkheader -= 127; // Subtract 127 To Get Rid Of The ID Bit
 
-			s32 dataOffset = currentByte; 
-			file->read(&data[dataOffset], bytesPerPixel); 
+			s32 dataOffset = currentByte;
+			file->read(&data[dataOffset], bytesPerPixel);
 
-			currentByte += bytesPerPixel; 
+			currentByte += bytesPerPixel;
 
-			for(s32 counter = 1; counter < chunkheader; counter++) 
-			{ 
-				for(s32 elementCounter=0; elementCounter < bytesPerPixel; elementCounter++) 
-					data[currentByte + elementCounter] = data[dataOffset + elementCounter]; 
+			for(s32 counter = 1; counter < chunkheader; counter++)
+			{
+				for(s32 elementCounter=0; elementCounter < bytesPerPixel; elementCounter++)
+					data[currentByte + elementCounter] = data[dataOffset + elementCounter];
 
 				currentByte += bytesPerPixel;
 			}
@@ -92,9 +92,10 @@ bool CImageLoaderTGA::isALoadableFileFormat(irr::io::IReadFile* file)
 	if (!file)
 		return false;
 
-	u8 type[3];
-	file->read(&type, sizeof(u8)*3);
-	return (type[2]==2); // we currently only handle tgas of type 2.
+	STGAFooter footer;
+	file->seek(file->getSize()-sizeof(STGAFooter));
+	file->read(&footer, sizeof(STGAFooter));
+	return (!strcmp(footer.Signature,"TRUEVISION-XFILE.")); // very old tgas are refused.
 }
 
 
@@ -103,6 +104,7 @@ bool CImageLoaderTGA::isALoadableFileFormat(irr::io::IReadFile* file)
 IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 {
 	STGAHeader header;
+	u8* colorMap(0);
 
 	file->read(&header, sizeof(STGAHeader));
 
@@ -116,44 +118,40 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 	if (header.IdLength)
 		file->seek(header.IdLength, true);
 
-	if (header.ColorMapType != 0)
+	if (header.ColorMapType)
 	{
-		// skip color map
-		file->seek((header.ColorMapEntrySize/8 * header.ColorMapLength), true);
+		// read color map
+		colorMap = new u8[header.ColorMapEntrySize/8 * header.ColorMapLength];
+		file->read(colorMap,header.ColorMapEntrySize/8 * header.ColorMapLength);
 	}
 
 	// read image
 
-	s32 bytesPerPixel = header.PixelDepth/8;
-	s32 imageSize = header.ImageHeight * header.ImageWidth * bytesPerPixel;
 	u8* data = 0;
 
 	if (header.ImageType == 2)
 	{
+		const s32 imageSize = header.ImageHeight * header.ImageWidth * header.PixelDepth/8;
 		data = new u8[imageSize];
 	  	file->read(data, imageSize);
 	}
 	else
 	if(header.ImageType == 10)
-		data = loadCompressedImage(file, &header); 
+		data = loadCompressedImage(file, header);
 	else
 	{
 		os::Printer::log("Unsupported TGA file type", file->getFileName(), ELL_ERROR);
-		return 0; 
+		if (colorMap)
+			delete [] colorMap;
+		return 0;
 	}
-
 
 	IImage* image = 0;
 
-	switch(bytesPerPixel)
+	switch(header.PixelDepth)
 	{
-	case 1: 
-		os::Printer::log("Unsupported TGA format, 8 bit", file->getFileName(), ELL_ERROR);
-		break;
-	case 2:
+	case 16:
 		{
-			// 16 bit image
-
 			image = new CImage(ECF_A1R5G5B5,
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
 			if (image)
@@ -161,10 +159,8 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 					(s16*)image->lock(), header.ImageWidth,	header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0);
 		}
 		break;
-	case 3:
+	case 24:
 		{
-			// 24 bit image
-
 			image = new CImage(ECF_R8G8B8,
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
 			if (image)
@@ -172,10 +168,8 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 					(u8*)data, (u8*)image->lock(), header.ImageWidth, header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0, true);
 		}
 		break;
-	case 4:
+	case 32:
 		{
-			// 32 bit image
-
 			image = new CImage(ECF_A8R8G8B8,
 				core::dimension2d<s32>(header.ImageWidth, header.ImageHeight));
 			if (image)
@@ -183,10 +177,15 @@ IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 					(s32*)image->lock(), header.ImageWidth, header.ImageHeight, 0, (header.ImageDescriptor&0x20)==0);
 		}
 		break;
+	default:
+		os::Printer::log("Unsupported TGA format", file->getFileName(), ELL_ERROR);
+		break;
 	}
 	if (image)
 		image->unlock();
 	delete [] data;
+	if (colorMap)
+		delete [] colorMap;
 
 	return image;
 }

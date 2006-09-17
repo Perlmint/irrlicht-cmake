@@ -80,7 +80,7 @@ public:
 private:
 
 	//! loads a compressed tga. Was written and sent in by Jon Pry, thank you very much!
-	u8* loadCompressedImage(irr::io::IReadFile *file, STGAHeader *header);
+	u8* loadCompressedImage(irr::io::IReadFile *file, const STGAHeader& header);
 
 };
 
