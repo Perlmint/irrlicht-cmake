@@ -569,6 +569,30 @@ void CNullDriver::draw2DImage(video::ITexture* texture, const core::position2d<s
 
 
 
+//! draws a set of 2d images, using a color and the alpha channel of the
+//! texture if desired. The images are drawn beginning at pos and concatenated
+//! in one line. All drawings are clipped against clipRect (if != 0).
+//! The subtextures are defined by the array of sourceRects and are chosen
+//! by the indices given.
+void CNullDriver::draw2DImage(video::ITexture* texture,
+				const core::position2d<s32>& pos,
+				const core::array<core::rect<s32> >& sourceRects,
+				const core::array<s32>& indices,
+				const core::rect<s32>* clipRect, SColor color,
+				bool useAlphaChannelOfTexture)
+{
+	core::position2d<s32> target(pos);
+	
+	for (u32 i=0; i<indices.size(); ++i)
+	{
+		draw2DImage(texture, target, sourceRects[indices[i]],
+				clipRect, color, useAlphaChannelOfTexture);
+		target.X += sourceRects[indices[i]].getWidth();
+	}
+}
+
+
+
 //! Draws a part of the texture into the rectangle.
 void CNullDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect,
 	const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect,

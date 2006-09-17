@@ -105,6 +105,29 @@ namespace video
 		//! draws an 2d image
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos);
 
+		//! draws a set of 2d images, using a color and the alpha
+		/** channel of the texture if desired. The images are drawn
+		beginning at pos and concatenated in one line. All drawings
+		are clipped against clipRect (if != 0).
+		The subtextures are defined by the array of sourceRects
+		and are chosen by the indices given.
+		\param texture: Texture to be drawn.
+		\param pos: Upper left 2d destination position where the image will be drawn.
+		\param sourceRects: Source rectangles of the image.
+		\param indices: List of indices which choose the actual rectangle used each time.
+		\param clipRect: Pointer to rectangle on the screen where the image is clipped to.
+		This pointer can be 0. Then the image is not clipped.
+		\param color: Color with which the image is colored.
+		Note that the alpha component is used: If alpha is other than 255, the image will be transparent.
+		\param useAlphaChannelOfTexture: If true, the alpha channel of the texture is
+		used to draw the image. */
+		virtual void draw2DImage(video::ITexture* texture,
+				const core::position2d<s32>& pos,
+				const core::array<core::rect<s32> >& sourceRects,
+				const core::array<s32>& indices,
+				const core::rect<s32>* clipRect, SColor color,
+				bool useAlphaChannelOfTexture);
+
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos, 
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,

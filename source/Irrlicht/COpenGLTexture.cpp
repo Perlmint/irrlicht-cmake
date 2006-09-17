@@ -133,41 +133,12 @@ void COpenGLTexture::getImageData(IImage* image)
 }
 
 
-//! test if an error occurred, prints the problem, and returns
-//! true if an error happened
-inline bool COpenGLTexture::testError()
-{
-	#ifdef _DEBUG
-	GLenum g = glGetError();
-	switch(g)
-	{
-	case GL_NO_ERROR:
-		return false;
-	case GL_INVALID_ENUM:
-		os::Printer::log("GL_INVALID_ENUM", ELL_ERROR); break;
-	case GL_INVALID_VALUE:
-		os::Printer::log("GL_INVALID_VALUE", ELL_ERROR); break;
-	case GL_INVALID_OPERATION:
-		os::Printer::log("GL_INVALID_OPERATION", ELL_ERROR); break;
-	case GL_STACK_OVERFLOW:
-		os::Printer::log("GL_STACK_OVERFLOW", ELL_ERROR); break;
-	case GL_STACK_UNDERFLOW:
-		os::Printer::log("GL_STACK_UNDERFLOW", ELL_ERROR); break;
-	case GL_OUT_OF_MEMORY:
-		os::Printer::log("GL_OUT_OF_MEMORY", ELL_ERROR); break;
-	};
-
-	return true;
-	#endif
-	return false;
-}
-
 
 //! copies the the texture into an open gl texture.
 void COpenGLTexture::copyTexture()
 {
 	glBindTexture(GL_TEXTURE_2D, TextureName);
-	if (testError())
+	if (Driver->testGLError())
 		os::Printer::log("Could not bind Texture", ELL_ERROR);
 
 	switch (ColorFormat)
@@ -228,7 +199,7 @@ void COpenGLTexture::copyTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, ImageSize.Width,
 		ImageSize.Height, 0, PixelFormat, PixelType, ImageData);
 
-	if (testError())
+	if (Driver->testGLError())
 		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
 }
 

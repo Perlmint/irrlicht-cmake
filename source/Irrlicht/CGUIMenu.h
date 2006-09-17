@@ -37,10 +37,10 @@ namespace gui
 		virtual void recalculateSize();
 
 		//! returns the item highlight-area
-		virtual core::rect<s32> getHRect(SItem& i, core::rect<s32>& absolute);
+		virtual core::rect<s32> getHRect(const SItem& i, const core::rect<s32>& absolute);
 
 		//! Gets drawing rect of Item
-		virtual core::rect<s32> getRect(SItem& i, core::rect<s32>& absolute);
+		virtual core::rect<s32> getRect(const SItem& i, const core::rect<s32>& absolute);
 
 		void closeAllSubMenus();
 

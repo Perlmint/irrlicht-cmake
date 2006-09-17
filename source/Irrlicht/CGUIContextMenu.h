@@ -65,7 +65,7 @@ namespace gui
 		virtual s32 getSelectedItem();
 
 		//! Returns a pointer to the submenu of an item.
-		//! \return Pointer to the submenu of an item. 
+		//! \return Pointer to the submenu of an item.
 		virtual IGUIContextMenu* getSubMenu(s32 idx);
 
 		//! Sets the visible state of this element.
@@ -97,21 +97,19 @@ namespace gui
 
 		//! sends a click Returns:
 		//! 0 if click went outside of the element,
-        //! 1 if a valid button was clicked,
+		//! 1 if a valid button was clicked,
 		//! 2 if a nonclickable element was clicked
-        virtual s32 sendClick(core::position2d<s32> p);
+		virtual s32 sendClick(core::position2d<s32> p);
 
 		//! returns the item highlight-area
-		virtual core::rect<s32> getHRect(SItem& i, core::rect<s32>& absolute);
+		virtual core::rect<s32> getHRect(const SItem& i, const core::rect<s32>& absolute);
 
 		//! Gets drawing rect of Item
-		virtual core::rect<s32> getRect(SItem& i, core::rect<s32>& absolute);
-
-		
+		virtual core::rect<s32> getRect(const SItem& i, const core::rect<s32>& absolute);
 
 		s32 HighLighted;
 		core::array<SItem> Items;
-		core::position2d<s32> Pos;		
+		core::position2d<s32> Pos;
 	};
 
 } // end namespace gui

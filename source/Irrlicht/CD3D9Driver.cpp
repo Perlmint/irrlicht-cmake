@@ -870,11 +870,13 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 
 
 
-//! draws a 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
-void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
-				 const core::rect<s32>& sourceRect,
-				 const core::rect<s32>* clipRect, SColor color,
-				 bool useAlphaChannelOfTexture)
+//! draws a 2d image, using a color and the alpha channel of the texture if
+//! desired. The image is drawn at pos and clipped against clipRect (if != 0).
+void CD3D9Driver::draw2DImage(video::ITexture* texture,
+				const core::position2d<s32>& pos,
+				const core::rect<s32>& sourceRect,
+				const core::rect<s32>* clipRect, SColor color,
+				bool useAlphaChannelOfTexture)
 {
 	if (!texture)
 		return;

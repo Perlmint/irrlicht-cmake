@@ -58,6 +58,10 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
+	ActiveTextures[0]=0;
+	ActiveTextures[1]=0;
+	ActiveTextures[2]=0;
+	ActiveTextures[3]=0;
 }
 
 //! inits the open gl driver
@@ -205,6 +209,10 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
+	ActiveTextures[0]=0;
+	ActiveTextures[1]=0;
+	ActiveTextures[2]=0;
+	ActiveTextures[3]=0;
 	genericDriverInit(screenSize);
 }
 
@@ -247,6 +255,10 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	XWindow = glXGetCurrentDrawable();
 	XDisplay = glXGetCurrentDisplay();
 	ExposedData.OpenGLLinux.Window = XWindow;
+	ActiveTextures[0]=0;
+	ActiveTextures[1]=0;
+	ActiveTextures[2]=0;
+	ActiveTextures[3]=0;
 	genericDriverInit(screenSize);
 
 #ifdef GLX_SGI_swap_control
@@ -885,11 +897,14 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 
 
 
-//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
-void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d<s32>& pos,
-				 const core::rect<s32>& sourceRect,
-				 const core::rect<s32>* clipRect, SColor color,
-				 bool useAlphaChannelOfTexture)
+//! draws a 2d image, using a color and the alpha channel of the texture if
+//! desired. The image is drawn at pos, clipped against clipRect (if != 0).
+//! Only the subtexture defined by sourceRect is used.
+void COpenGLDriver::draw2DImage(video::ITexture* texture,
+				const core::position2d<s32>& pos,
+				const core::rect<s32>& sourceRect,
+				const core::rect<s32>* clipRect, SColor color,
+				bool useAlphaChannelOfTexture)
 {
 	if (!texture)
 		return;
@@ -900,11 +915,10 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	if (!setTexture(0, texture))
 		return;
 
-	core::position2d<s32> targetPos = pos;
-	core::position2d<s32> sourcePos = sourceRect.UpperLeftCorner;
+	core::position2d<s32> targetPos(pos);
+	core::position2d<s32> sourcePos(sourceRect.UpperLeftCorner);
 	core::dimension2d<s32> sourceSize(sourceRect.getSize());
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
-
 	if (clipRect)
 	{
 		if (targetPos.X < clipRect->UpperLeftCorner.X)
@@ -981,22 +995,22 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	// ok, we've clipped everything.
 	// now draw it.
 
-	s32 xPlus = renderTargetSize.Width>>1;
-	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
-
-	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
-	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
-
 	const core::dimension2d<s32>& ss = texture->getOriginalSize();
 	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = (((f32)sourcePos.X)+0.5f) / ss.Width ;
-	tcoords.UpperLeftCorner.Y = (((f32)sourcePos.Y)+0.5f) / ss.Height;
-	tcoords.LowerRightCorner.X = (((f32)sourcePos.X +0.5f + (f32)sourceSize.Width)) / ss.Width;
-	tcoords.LowerRightCorner.Y = (((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height)) / ss.Height;
+	tcoords.UpperLeftCorner.X = ((f32)sourcePos.X+0.5f) / ss.Width;
+	tcoords.UpperLeftCorner.Y = ((f32)sourcePos.Y+0.5f) / ss.Height;
+	tcoords.LowerRightCorner.X = ((f32)sourcePos.X +0.5f + (f32)sourceSize.Width) / ss.Width;
+	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height) / ss.Height;
 
 	core::rect<s32> poss(targetPos, sourceSize);
-
 	core::rect<float> npos;
+
+	s32 xPlus = renderTargetSize.Width>>1;
+	f32 xFact = 1.0f / xPlus;
+
+	s32 yPlus = renderTargetSize.Height>>1;
+	f32 yFact = 1.0f / yPlus;
+
 	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X-xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
 	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X-xPlus+0.5f) * xFact;
@@ -1020,6 +1034,89 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::position2d
 	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
 
 	glEnd();
+}
+
+
+
+//! draws a set of 2d images, using a color and the alpha channel of the
+//! texture if desired. The images are drawn beginning at pos and concatenated
+//! in one line. All drawings are clipped against clipRect (if != 0).
+//! The subtextures are defined by the array of sourceRects and are chosen
+//! by the indices given.
+void COpenGLDriver::draw2DImage(video::ITexture* texture,
+				const core::position2d<s32>& pos,
+				const core::array<core::rect<s32> >& sourceRects,
+				const core::array<s32>& indices,
+				const core::rect<s32>* clipRect, SColor color,
+				bool useAlphaChannelOfTexture)
+{
+	if (!texture)
+		return;
+
+	if (!setTexture(0, texture))
+		return;
+
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
+	setRenderStates2DMode(color.getAlpha()<255, true, useAlphaChannelOfTexture);
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+	if (clipRect)
+	{
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(clipRect->UpperLeftCorner.X,renderTargetSize.Height-clipRect->LowerRightCorner.Y,
+			clipRect->getWidth(),clipRect->getHeight());
+	}
+
+	const core::dimension2d<s32>& ss = texture->getOriginalSize();
+	core::position2d<s32> targetPos(pos);
+	core::position2d<s32> sourcePos;
+	core::dimension2d<s32> sourceSize;
+	core::rect<f32> tcoords;
+	s32 xPlus = renderTargetSize.Width>>1;
+	f32 xFact = 1.0f / xPlus;
+
+	s32 yPlus = renderTargetSize.Height>>1;
+	f32 yFact = 1.0f / yPlus;
+
+	for (u32 i=0; i<indices.size(); ++i)
+	{
+		s32 currentIndex(indices[i]);
+		if (!sourceRects[currentIndex].isValid())
+			break;
+		sourcePos=sourceRects[currentIndex].UpperLeftCorner;
+		sourceSize=sourceRects[currentIndex].getSize();
+
+	tcoords.UpperLeftCorner.X = ((f32)sourcePos.X+0.5f) / ss.Width;
+	tcoords.UpperLeftCorner.Y = ((f32)sourcePos.Y+0.5f) / ss.Height;
+	tcoords.LowerRightCorner.X = ((f32)sourcePos.X +0.5f + (f32)sourceSize.Width) / ss.Width;
+	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height) / ss.Height;
+
+	core::rect<s32> poss(targetPos, sourceSize);
+	core::rect<float> npos;
+
+	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X-xPlus+0.5f) * xFact;
+	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
+	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X-xPlus+0.5f) * xFact;
+	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
+
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
+	glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
+
+	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
+	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
+
+	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
+	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
+
+	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
+	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
+
+	glEnd();
+	targetPos.X += sourceRects[currentIndex].getWidth();
+	}
+	if (clipRect)
+		glDisable(GL_SCISSOR_TEST);
 }
 
 
@@ -1252,16 +1349,22 @@ bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 	if (stage >= MATERIAL_MAX_TEXTURES)
 		return false;
 
+// Not working, texture confusion in menu of Meshviewer.
+//	if (ActiveTextures[stage]==texture)
+//		return true;
+
 	if (MultiTextureExtension)
 		extGlActiveTextureARB(GL_TEXTURE0_ARB + stage);
 	else
 		if (stage != 0)
 			return false;
 
+	ActiveTextures[stage]=texture;
+
 	if (texture == 0)
 	{
 		glDisable(GL_TEXTURE_2D);
-		return false;
+		return true;
 	}
 	else
 	{
@@ -1308,14 +1411,14 @@ void COpenGLDriver::setMaterial(const SMaterial& material)
 
 
 //! prints error if an error happened.
-inline void COpenGLDriver::printGLError()
+inline bool COpenGLDriver::testGLError()
 {
 #ifdef _DEBUG
 	GLenum g = glGetError();
 	switch(g)
 	{
 	case GL_NO_ERROR:
-		break;
+		return false;
 	case GL_INVALID_ENUM:
 		os::Printer::log("GL_INVALID_ENUM", ELL_ERROR); break;
 	case GL_INVALID_VALUE:
@@ -1331,7 +1434,9 @@ inline void COpenGLDriver::printGLError()
 	case GL_TABLE_TOO_LARGE:
 		os::Printer::log("GL_TABLE_TOO_LARGE", ELL_ERROR); break;
 	};
+	return true;
 #endif
+	return false;
 }
 
 
@@ -2460,6 +2565,16 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 		return false;
 	}
 
+	// The current texture is unbound, so update texture array.
+	glDisable(GL_TEXTURE_2D);
+	GLint level=0;
+	if (MultiTextureExtension)
+	{
+		glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE,&level);
+		level -= GL_TEXTURE0;
+	}
+	ActiveTextures[level]=0;
+
 	// check if we should set the previous RT back
 
 	bool ret = true;
@@ -2520,6 +2635,16 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 }
 
 
+// returns the current size of the screen or rendertarget
+core::dimension2d<s32> COpenGLDriver::getCurrentRenderTargetSize()
+{
+	if ( CurrentRendertargetSize.Width == 0 )
+		return ScreenSize;
+	else
+		return CurrentRendertargetSize;
+}
+
+
 //! Clears the ZBuffer.
 void COpenGLDriver::clearZBuffer()
 {
@@ -2556,7 +2681,7 @@ IImage* COpenGLDriver::createScreenShot()
 
 	newImage->unlock();
 
-	if (glGetError() != 0)
+	if (testGLError())
 	{
 		newImage->drop();
 		return 0;
@@ -2564,16 +2689,6 @@ IImage* COpenGLDriver::createScreenShot()
 
 	return newImage;
 }
-
-// returns the current size of the screen or rendertarget
-core::dimension2d<s32> COpenGLDriver::getCurrentRenderTargetSize()
-{
-	if ( CurrentRendertargetSize.Width == 0 )
-		return ScreenSize;
-	else
-		return CurrentRendertargetSize;
-}
-
 
 
 } // end namespace

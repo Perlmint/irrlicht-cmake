@@ -95,10 +95,6 @@ private:
 	//! returns the size of a texture which would be the optimize size for rendering it
 	inline s32 getTextureSizeFromSurfaceSize(s32 size);
 
-	//! test if an error occurred, prints the problem, and returns
-	//! true if an error happened
-	inline bool testError();
-
 	core::dimension2d<s32> ImageSize;
 	core::dimension2d<s32> OriginalSize;
 	s32 Pitch;

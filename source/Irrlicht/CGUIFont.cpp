@@ -4,6 +4,7 @@
 
 #include "CGUIFont.h"
 #include "os.h"
+#include "wchar.h"
 
 namespace irr
 {
@@ -287,20 +288,18 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 			offset.Y = ((position.getHeight() - textDimension.Height)>>1) + offset.Y;
 	}
 
-	u32 n;
-
+	core::array<s32> indices;
+	indices.reallocate(wcslen(text));
+	s32 n;
 	while(*text)
 	{
 		n = (*text) - 32;
 		if ( n > Positions.size())
 			n = WrongCharacter;
-
-		Driver->draw2DImage(Texture, offset, Positions[n], clip, color, true);
-
-		offset.X += Positions[n].getWidth();
-
+		indices.push_back(n);
 		++text;
 	}
+	Driver->draw2DImage(Texture, offset, Positions, indices, clip, color, true);
 }
 
 

@@ -18,9 +18,8 @@ namespace gui
 
 //! constructor
 CGUIContextMenu::CGUIContextMenu(IGUIEnvironment* environment,
-								 IGUIElement* parent, s32 id, 
-								 core::rect<s32> rectangle,
-								 bool getFocus)
+				 IGUIElement* parent, s32 id,
+				 core::rect<s32> rectangle, bool getFocus)
 : IGUIContextMenu(environment, parent, id, rectangle), HighLighted(-1)
 {
 	#ifdef _DEBUG
@@ -63,7 +62,7 @@ s32 CGUIContextMenu::addItem(const wchar_t* text, s32 id, bool enabled, bool has
 
 	if (hasSubMenu)
 	{
-		s.SubMenu = new CGUIContextMenu(Environment, this, -1, 
+		s.SubMenu = new CGUIContextMenu(Environment, this, -1,
 			core::rect<s32>(0,0,100,100), false);
 		s.SubMenu->setVisible(false);
 	}
@@ -169,7 +168,7 @@ bool CGUIContextMenu::OnEvent(SEvent event)
 		{
 		case gui::EGET_ELEMENT_FOCUS_LOST:
 			remove();
-            return true;
+			return true;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:
@@ -247,7 +246,7 @@ s32 CGUIContextMenu::sendClick(core::position2d<s32> p)
 		event.EventType = EET_GUI_EVENT;
 		event.GUIEvent.Caller = this;
 		event.GUIEvent.EventType = EGET_MENU_ITEM_SELECTED;
-		Parent->OnEvent(event);				
+		Parent->OnEvent(event);
 
 		return 1;
 	}
@@ -291,14 +290,14 @@ bool CGUIContextMenu::highlight(core::position2d<s32> p)
 					Items[j].SubMenu->setVisible(j == i);
 			return true;
 		}
-		
+
 	HighLighted = openmenu;
 	return false;
 }
 
 
 //! returns the item highlight-area
-core::rect<s32> CGUIContextMenu::getHRect(SItem& i, core::rect<s32>& absolute)
+core::rect<s32> CGUIContextMenu::getHRect(const SItem& i, const core::rect<s32>& absolute)
 {
 	core::rect<s32> r = absolute;
 	r.UpperLeftCorner.Y += i.PosY;
@@ -308,7 +307,7 @@ core::rect<s32> CGUIContextMenu::getHRect(SItem& i, core::rect<s32>& absolute)
 
 
 //! Gets drawing rect of Item
-core::rect<s32> CGUIContextMenu::getRect(SItem& i, core::rect<s32>& absolute)
+core::rect<s32> CGUIContextMenu::getRect(const SItem& i, const core::rect<s32>& absolute)
 {
 	core::rect<s32> r = absolute;
 	r.UpperLeftCorner.Y += i.PosY;
@@ -352,7 +351,7 @@ void CGUIContextMenu::draw()
 			rect.UpperLeftCorner.X += 5;
 			rect.LowerRightCorner.X -= 5;
 			driver->draw2DRectangle(skin->getColor(EGDC_3D_SHADOW), rect, clip);
-			
+
 			rect.LowerRightCorner.Y += 1;
 			rect.UpperLeftCorner.Y += 1;
 			driver->draw2DRectangle(skin->getColor(EGDC_3D_HIGH_LIGHT), rect, clip);
@@ -385,7 +384,7 @@ void CGUIContextMenu::draw()
 			if (!Items[i].Enabled)
 				c = EGDC_GRAY_TEXT;
 
-			font->draw(Items[i].Text.c_str(), rect, 
+			font->draw(Items[i].Text.c_str(), rect,
 				skin->getColor(c), false, true, clip);
 
 			// draw submenu symbol
@@ -394,7 +393,7 @@ void CGUIContextMenu::draw()
 				core::rect<s32> r = rect;
 				r.UpperLeftCorner.X = r.LowerRightCorner.X - 15;
 
-				defaultFont->draw(GUI_ICON_CURSOR_RIGHT, r, 
+				defaultFont->draw(GUI_ICON_CURSOR_RIGHT, r,
 					skin->getColor(c), true, true, clip);
 			}
 
@@ -458,7 +457,7 @@ void CGUIContextMenu::recalculateSize()
 			s32 h = Items[i].SubMenu->getAbsolutePosition().getHeight();
 
 			Items[i].SubMenu->setRelativePosition(
-				core::rect<s32>(width-5, Items[i].PosY, 
+				core::rect<s32>(width-5, Items[i].PosY,
 					width+w-5, Items[i].PosY+h));
 		}
 }
@@ -471,7 +470,7 @@ s32 CGUIContextMenu::getSelectedItem()
 }
 
 
-//! \return Returns a pointer to the submenu of an item. 
+//! \return Returns a pointer to the submenu of an item.
 IGUIContextMenu* CGUIContextMenu::getSubMenu(s32 idx)
 {
 	if (idx < 0 || idx >= (s32)Items.size())
@@ -498,7 +497,6 @@ void CGUIContextMenu::setItemCommandId(s32 idx, s32 id)
 
 	Items[idx].CommandId = id;
 }
-
 
 
 } // end namespace

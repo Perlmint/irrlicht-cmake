@@ -20,22 +20,22 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 
 
 	Colors[EGDC_3D_DARK_SHADOW] =	video::SColor(101,50,50,50);
-	Colors[EGDC_3D_SHADOW] =		video::SColor(101,130,130,130);
-	Colors[EGDC_3D_FACE] =			video::SColor(101,210,210,210);
+	Colors[EGDC_3D_SHADOW] =	video::SColor(101,130,130,130);
+	Colors[EGDC_3D_FACE] =		video::SColor(101,210,210,210);
 	Colors[EGDC_3D_HIGH_LIGHT] =	video::SColor(101,255,255,255);
-	Colors[EGDC_3D_LIGHT] =			video::SColor(101,210,210,210);
+	Colors[EGDC_3D_LIGHT] =		video::SColor(101,210,210,210);
 	Colors[EGDC_ACTIVE_BORDER] =	video::SColor(101,16,14,115);
 	Colors[EGDC_ACTIVE_CAPTION] =	video::SColor(101,255,255,255);
 	Colors[EGDC_APP_WORKSPACE] =	video::SColor(101,100,100,100);
-	Colors[EGDC_BUTTON_TEXT] =		video::SColor(101,0,0,0);
-	Colors[EGDC_GRAY_TEXT] =		video::SColor(101,130,130,130);
-	Colors[EGDC_HIGH_LIGHT] =		video::SColor(101,8,36,107);
+	Colors[EGDC_BUTTON_TEXT] =	video::SColor(101,0,0,0);
+	Colors[EGDC_GRAY_TEXT] =	video::SColor(101,130,130,130);
+	Colors[EGDC_HIGH_LIGHT] =	video::SColor(101,8,36,107);
 	Colors[EGDC_HIGH_LIGHT_TEXT] =	video::SColor(101,255,255,255);
 	Colors[EGDC_INACTIVE_BORDER] =	video::SColor(101,165,165,165);
 	Colors[EGDC_INACTIVE_CAPTION] = video::SColor(101,210,210,210);
-	Colors[EGDC_TOOLTIP] =			video::SColor(101,255,255,230);
-	Colors[EGDC_SCROLLBAR] =		video::SColor(101,230,230,230);
-	Colors[EGDC_WINDOW] =			video::SColor(101,255,255,255);
+	Colors[EGDC_TOOLTIP] =		video::SColor(101,255,255,230);
+	Colors[EGDC_SCROLLBAR] =	video::SColor(101,230,230,230);
+	Colors[EGDC_WINDOW] =		video::SColor(101,255,255,255);
 
 	Sizes[EGDS_SCROLLBAR_SIZE] = 14;
 	Sizes[EGDS_MENU_HEIGHT] = 18;
@@ -90,7 +90,7 @@ s32 CGUISkin::getSize(EGUI_DEFAULT_SIZE size)
 //! sets a default size
 void CGUISkin::setSize(EGUI_DEFAULT_SIZE which, s32 size)
 {
-	if (which >= 0 && which <= EGDS_COUNT) 
+	if (which >= 0 && which <= EGDS_COUNT)
 		Sizes[which] = size;
 }
 
@@ -132,13 +132,13 @@ void CGUISkin::setDefaultText(EGUI_DEFAULT_TEXT which, const wchar_t* newText)
 }
 
 //! draws a standard 3d button pane
-/**	Used for drawing for example buttons in normal state. 
+/**	Used for drawing for example buttons in normal state.
 It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
-EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
+EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details.
 \param rect: Defining area where to draw.
 \param clip: Clip area.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
+is usually not used by ISkin, but can be used for example by more complex
 implementations to find out how to draw the part exactly. */
 void CGUISkin::draw3DButtonPaneStandard(IGUIElement* element,
 										const core::rect<s32>& r,
@@ -173,15 +173,15 @@ void CGUISkin::draw3DButtonPaneStandard(IGUIElement* element,
 
 
 //! draws a pressed 3d button pane
-/**	Used for drawing for example buttons in pressed state. 
+/**	Used for drawing for example buttons in pressed state.
 It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
-EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
+EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details.
 \param rect: Defining area where to draw.
 \param clip: Clip area.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
+is usually not used by ISkin, but can be used for example by more complex
 implementations to find out how to draw the part exactly. */
-void CGUISkin::draw3DButtonPanePressed(IGUIElement* element, 
+void CGUISkin::draw3DButtonPanePressed(IGUIElement* element,
 	const core::rect<s32>& r,
 	const core::rect<s32>* clip)
 {
@@ -216,10 +216,10 @@ void CGUISkin::draw3DButtonPanePressed(IGUIElement* element,
 //! draws a sunken 3d pane
 /** Used for drawing the background of edit, combo or check boxes.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
-implementations to find out how to draw the part exactly. 
+is usually not used by ISkin, but can be used for example by more complex
+implementations to find out how to draw the part exactly.
 \param bgcolor: Background color.
-\param flat: Specifies if the sunken pane should be flat or displayed as sunken 
+\param flat: Specifies if the sunken pane should be flat or displayed as sunken
  deep into the ground.
 \param rect: Defining area where to draw.
 \param clip: Clip area.	*/
@@ -283,8 +283,8 @@ void CGUISkin::draw3DSunkenPane(IGUIElement* element,
 //! draws a window background
 /** Used for drawing the background of dialogs and windows.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
-implementations to find out how to draw the part exactly. 
+is usually not used by ISkin, but can be used for example by more complex
+implementations to find out how to draw the part exactly.
 \param titleBarColor: Title color.
 \param drawTitleBar: True to enable title drawing.
 \param rect: Defining area where to draw.
@@ -302,7 +302,7 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 
 	rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + 1;
 	Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, cl);
-	
+
 	rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
 	rect.LowerRightCorner.X = rect.UpperLeftCorner.X + 1;
 	Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, cl);
@@ -310,7 +310,7 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 	rect.UpperLeftCorner.X = r.LowerRightCorner.X - 1;
 	rect.LowerRightCorner.X = r.LowerRightCorner.X;
 	rect.UpperLeftCorner.Y = r.UpperLeftCorner.Y;
-    rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
+	rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
 	Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, cl);
 
 	rect.UpperLeftCorner.X -= 1;
@@ -345,13 +345,13 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 		video::SColor c1 = getColor(EGDC_3D_FACE);
 		Driver->draw2DRectangle(rect, c1, c1, c1, c2, cl);
 	}
-	
+
 	rect = r;
 	rect.UpperLeftCorner.X += 2;
 	rect.UpperLeftCorner.Y += 2;
 	rect.LowerRightCorner.X -= 2;
 	rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + getSize(EGDS_WINDOW_BUTTON_WIDTH) + 2;
-	
+
 	if (drawTitleBar)
 	{
 		// draw title bar
@@ -369,24 +369,23 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 
 
 //! draws a standard 3d menu pane
-/**	Used for drawing for menus and context menus. 
+/**	Used for drawing for menus and context menus.
 It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
-EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
+EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
-implementations to find out how to draw the part exactly. 
+is usually not used by ISkin, but can be used for example by more complex
+implementations to find out how to draw the part exactly.
 \param rect: Defining area where to draw.
 \param clip: Clip area.	*/
 void CGUISkin::draw3DMenuPane(IGUIElement* element,
-	const core::rect<s32>& r,
-	const core::rect<s32>* clip)
+			const core::rect<s32>& r, const core::rect<s32>* clip)
 {
 	if (!Driver)
 		return;
 
 	// in this skin, this is exactly what non pressed buttons look like,
 	// so we could simply call
-	// draw3DButtonPaneStandard(element, rect, clip);	
+	// draw3DButtonPaneStandard(element, rect, clip);
 	// here.
 	// but if the skin is transparent, this doesn't look that nice. So
 	// We draw it a little bit better, with some more draw2DRectangle calls,
@@ -403,7 +402,7 @@ void CGUISkin::draw3DMenuPane(IGUIElement* element,
 	rect.UpperLeftCorner.X = r.LowerRightCorner.X - 1;
 	rect.LowerRightCorner.X = r.LowerRightCorner.X;
 	rect.UpperLeftCorner.Y = r.UpperLeftCorner.Y;
-    rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
+	rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
 	Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, clip);
 
 	rect.UpperLeftCorner.X -= 1;
@@ -444,8 +443,8 @@ void CGUISkin::draw3DMenuPane(IGUIElement* element,
 //! draws a standard 3d tool bar
 /**	Used for drawing for toolbars and menus.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
-implementations to find out how to draw the part exactly. 
+is usually not used by ISkin, but can be used for example by more complex
+implementations to find out how to draw the part exactly.
 \param rect: Defining area where to draw.
 \param clip: Clip area.	*/
 void CGUISkin::draw3DToolBar(IGUIElement* element,
@@ -479,8 +478,8 @@ void CGUISkin::draw3DToolBar(IGUIElement* element,
 //! draws a tab button
 /**	Used for drawing for tab buttons on top of tabs.
 \param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
-implementations to find out how to draw the part exactly. 
+is usually not used by ISkin, but can be used for example by more complex
+implementations to find out how to draw the part exactly.
 \param active: Specifies if the tab is currently active.
 \param rect: Defining area where to draw.
 \param clip: Clip area.	*/
@@ -524,8 +523,8 @@ void CGUISkin::draw3DTabButton(IGUIElement* element, bool active,
 
 //! draws a tab control body
 /**	\param element: Pointer to the element which whiches to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex 
-implementations to find out how to draw the part exactly. 
+is usually not used by ISkin, but can be used for example by more complex
+implementations to find out how to draw the part exactly.
 \param border: Specifies if the border should be drawn.
 \param background: Specifies if the background should be drawn.
 \param rect: Defining area where to draw.
@@ -574,7 +573,6 @@ void CGUISkin::draw3DTabBody(IGUIElement* element, bool border, bool background,
 			Driver->draw2DRectangle(tr, c1, c1, c2, c2, clip);
 		}
 	}
-
 }
 
 

@@ -114,7 +114,7 @@ namespace gui
 		/**	Used for drawing for menus and context menus. 
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which whishes to draw this. This parameter
 		is usually not used by ISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
@@ -143,7 +143,8 @@ namespace gui
 		\param rect: Defining area where to draw.
 		\param clip: Clip area.	*/
 		virtual void draw3DTabButton(IGUIElement* element, bool active,
-			const core::rect<s32>& rect, const core::rect<s32>* clip=0);
+						const core::rect<s32>& rect,
+						const core::rect<s32>* clip=0);
 
 		//! draws a tab control body
 		/**	\param element: Pointer to the element which whiches to draw this. This parameter
@@ -154,7 +155,8 @@ namespace gui
 		\param rect: Defining area where to draw.
 		\param clip: Clip area.	*/
 		virtual void draw3DTabBody(IGUIElement* element, bool border, bool background,
-			const core::rect<s32>& rect, const core::rect<s32>* clip=0);
+						const core::rect<s32>& rect,
+						const core::rect<s32>* clip=0);
 
 	private:
 
@@ -165,8 +167,6 @@ namespace gui
 		video::IVideoDriver* Driver;
 		bool UseGradient;
 	};
-
-
 
 
 } // end namespace gui
