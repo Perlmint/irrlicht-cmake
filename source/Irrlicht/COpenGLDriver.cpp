@@ -1411,7 +1411,7 @@ void COpenGLDriver::setMaterial(const SMaterial& material)
 
 
 //! prints error if an error happened.
-inline bool COpenGLDriver::testGLError()
+bool COpenGLDriver::testGLError()
 {
 #ifdef _DEBUG
 	GLenum g = glGetError();

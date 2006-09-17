@@ -22,6 +22,8 @@
 #endif
 
 //#define SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
+#ifdef _MSC_VER
 #define SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
+#endif
 
 #endif
