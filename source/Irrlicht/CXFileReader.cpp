@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <cstring>
 
+
 namespace irr
 {
 namespace scene
@@ -803,7 +804,8 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 			mlist.FaceIndices[triangulatedindex++] = nonTriFaceIndices[tfi];
 
 	// in version 03.02, the face indices end with two semicolons.
-	if (!binary && MajorVersion == 3 && MinorVersion <= 2)
+	// commented out version check, as version 03.03 exported from blender also has 2 semicolons
+	if (!binary) // && MajorVersion == 3 && MinorVersion <= 2)
 	{
 		if (P[0] == ';')
 			++P;
