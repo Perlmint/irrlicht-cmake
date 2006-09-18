@@ -115,6 +115,56 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 }
 
 
+
+//! Writes attributes of the scene node.
+void CWaterSurfaceSceneNode::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
+{
+
+	out->addFloat("WaveLength",	WaveLength);
+	out->addFloat("WaveSpeed",	WaveSpeed);
+	out->addFloat("WaveHeight", WaveHeight);
+	
+	// serialize original mesh
+	scene::IMesh *swap = 0;
+
+	if (Mesh)
+	{
+		swap = Mesh;
+		Mesh = OriginalMesh;
+	}
+	CMeshSceneNode::serializeAttributes(out, options);
+	if (swap)
+	{
+		Mesh = swap;
+		OriginalMesh = Mesh;
+	}
+}
+
+
+//! Reads attributes of the scene node.
+void CWaterSurfaceSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
+{
+	WaveLength	= in->getAttributeAsFloat("WaveLength");
+	WaveSpeed	= in->getAttributeAsFloat("WaveSpeed");
+	WaveHeight	= in->getAttributeAsFloat("WaveHeight");
+	
+	if (Mesh)
+	{
+		Mesh->drop();
+		Mesh = OriginalMesh;
+		OriginalMesh = 0;
+	}
+	// deserialize original mesh
+	CMeshSceneNode::deserializeAttributes(in, options);
+
+	if (Mesh)
+	{
+		IMesh* clone = SceneManager->getMeshManipulator()->createMeshCopy(Mesh);
+		OriginalMesh = Mesh;
+		Mesh = clone;
+	}
+}
+
 } // end namespace scene
 } // end namespace irr
 
