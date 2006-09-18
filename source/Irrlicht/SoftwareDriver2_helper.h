@@ -470,7 +470,9 @@ static inline int f_round2(float f)
 #else
 	inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mulby = FIX_POINT_F32_MUL )
 	{
-	//	return (tFixPoint) (x * mul);
+#ifndef SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
+		return (tFixPoint) (x * mulby);
+#else
 		tFixPoint i;
 		__asm
 		{
@@ -479,6 +481,7 @@ static inline int f_round2(float f)
 			fistp i
 		}
 		return i;
+#endif
 	}
 #endif
 
