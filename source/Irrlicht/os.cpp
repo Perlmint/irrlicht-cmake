@@ -71,8 +71,10 @@ namespace os
 		delete [] tmp;
 	}
 
+
 	LARGE_INTEGER HighPerformanceFreq;
 	BOOL HighPerformanceTimerSupport = FALSE;
+
 
 	void Timer::initTimer()
 	{
@@ -88,7 +90,6 @@ namespace os
 			QueryPerformanceCounter(&nTime);
 			return u32((nTime.QuadPart) * 1000 / HighPerformanceFreq.QuadPart);
 		}
-
 		return GetTickCount();
 	}
 

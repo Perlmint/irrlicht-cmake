@@ -86,7 +86,6 @@
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/QIfist"
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"

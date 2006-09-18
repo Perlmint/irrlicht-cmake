@@ -454,6 +454,7 @@ static const sVec4 NDCPlane[6] =
 	sVec4(  0.f,  0.f, -1.f, -1.f )		// far
 };
 
+
 static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane )
 {
 	u32 outCount;
@@ -472,7 +473,13 @@ static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 in
 
 	for( u32 i = 1; i < inCount + 1; ++i)
 	{
-		a = &source[i%inCount];
+		//a = &source[ i%inCount];
+
+		const s32 condition = i - inCount;
+		s32 index = ( ( condition >> 31 ) & ( i ^ condition ) ) ^ condition;
+
+		a = &source[ index ];
+
 		aDotPlane = a->Pos.dotProduct ( plane );
 
 		// current point inside
@@ -611,11 +618,6 @@ inline f32 CSoftwareDriver2::backface ( const s4DVertex *v0 ) const
 inline f32 CSoftwareDriver2::texelarea ( const s4DVertex *v0, int tex ) const
 {
 	f32 x0,y0, x1,y1, z;
-
-//	x0 = (v0[1].Tex[tex].x * d.Width ) - ( v0[0].Tex[tex].x * d.Width );
-//	y0 = (v0[1].Tex[tex].y * d.Height ) - ( v0[0].Tex[tex].y * d.Height );
-//	x1 = (v0[2].Tex[tex].x * d.Width ) - ( v0[0].Tex[tex].x  * d.Width );
-//	y1 = (v0[2].Tex[tex].y * d.Height) -  ( v0[0].Tex[tex].y * d.Height );
 
 	x0 = v0[1].Tex[tex].x - v0[0].Tex[tex].x;
 	y0 = v0[1].Tex[tex].y - v0[0].Tex[tex].y;
@@ -923,13 +925,9 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 				faceT[2] = &((S3DVertexTangents*)vertices)[ indexList [ i + 2 ] ];
 
 				transform_and_lighting ( CurrentOut, (const S3DVertex**) faceT );
-				CurrentOut[0].Tex[0].set ( face2[0]->TCoords.X, face2[0]->TCoords.Y );
-				CurrentOut[1].Tex[0].set ( face2[1]->TCoords.X, face2[1]->TCoords.Y );
-				CurrentOut[2].Tex[0].set ( face2[2]->TCoords.X, face2[2]->TCoords.Y );
-
-				CurrentOut[0].Tex[1].set ( face2[0]->TCoords2.X, face2[0]->TCoords2.Y );
-				CurrentOut[1].Tex[1].set ( face2[1]->TCoords2.X, face2[1]->TCoords2.Y );
-				CurrentOut[2].Tex[1].set ( face2[2]->TCoords2.X, face2[2]->TCoords2.Y );
+				CurrentOut[0].Tex[0].set ( faceT[0]->TCoords.X, faceT[0]->TCoords.Y );
+				CurrentOut[1].Tex[0].set ( faceT[1]->TCoords.X, faceT[1]->TCoords.Y );
+				CurrentOut[2].Tex[0].set ( faceT[2]->TCoords.X, faceT[2]->TCoords.Y );
 		}
 
 		// vertices count per triangle
@@ -951,24 +949,19 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 		f32 texarea;
 		s32 lodLevel;
 
-		if ( Texmap[0].Texture )
-		{
-			texarea = texelarea ( CurrentOut, 0 );
-			lodLevel = s32_log2_f32 ( texarea / cross );
-			lodLevel = s32_clamp ( lodLevel, 0, 7 );
-
-		}
-
-		for ( g = 0; g!= 2; ++g )
+		for ( g = 0; g != 2; ++g )
 		{
 			if ( 0 == Texmap[g].Texture )
 				continue;
+
+			texarea = texelarea ( CurrentOut, g );
+			lodLevel = s32_log2_f32 ( texarea / cross );
+			lodLevel = s32_clamp ( lodLevel, 0, 7 );
 
 			Texmap[g].Texture->setCurrentMipMapLOD ( lodLevel );
 			select_polygon_mipmap ( CurrentOut, vOut, g );
 			CurrentTriangleRenderer->setTexture(g, Texmap[g].Texture);
 		}
-
 
 		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
 		for ( g = 0; g <= vOut - 3; ++g )

@@ -189,6 +189,15 @@ void CSoftwareTexture2::regenerateMipMapLevels()
 		MipMap[i] = new CImage(ECF_SOFTWARE2, newSize);
 		MipMap[0]->copyToScalingBoxFilter ( MipMap[i] );
 
+/*
+		core::rect<s32> r;
+		r.UpperLeftCorner.X = 0;
+		r.UpperLeftCorner.Y = 0;
+		r.LowerRightCorner.X = newSize.Width;
+		r.LowerRightCorner.Y = newSize.Height;
+
+		MipMap[i]->drawRectangle ( r, SColor ( 0x80, 32 * i, 0, 32 *i ) );
+*/
 		c = MipMap[i];
 		i += 1;
 	}

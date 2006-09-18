@@ -242,12 +242,12 @@ struct sScanConvertData
 	f32 x[2];			// x coordinate
 	f32 slopeX[2];		// x slope along edges
 
-	f32 z[2];			// z coordinate
-	f32 slopeZ[2];		// z slope along edges
-
-#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+#if defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) || defined ( SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT )
 	f32 w[2];			// w coordinate
 	f32 slopeW[2];		// w slope along edges
+#else
+	f32 z[2];			// z coordinate
+	f32 slopeZ[2];		// z slope along edges
 #endif
 
 	sVec4 c[2];			// color
@@ -266,10 +266,11 @@ struct sScanLineData
 {
 	s32 y;			// y position of scanline
 	f32 x[2];			// x start, x end of scanline
-	f32 z[2];			// z start, z end of scanline
 
-#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+#if defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) || defined ( SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT )
 	f32 w[2];			// w start, w end of scanline
+#else
+	f32 z[2];			// z start, z end of scanline
 #endif
 
 	sVec4 c[2];		// color start, color end of scanline

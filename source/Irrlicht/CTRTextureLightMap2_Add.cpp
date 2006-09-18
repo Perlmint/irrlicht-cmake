@@ -5,7 +5,6 @@
 #include "ITriangleRenderer2.h"
 
 // compile flag for this file
-
 #undef USE_Z
 #undef IPOL_Z
 #undef CMP_Z
@@ -16,38 +15,51 @@
 #undef WRITE_W
 
 #undef SUBTEXEL
+#undef INVERSE_W
 
 #undef IPOL_C
 #undef IPOL_T0
 #undef IPOL_T1
 
 // define render case
+#define SUBTEXEL
+#define INVERSE_W
 
 #define USE_Z
-#define IPOL_Z
-#define CMP_Z
-#define WRITE_Z
-
-#define SUBTEXEL
-
 #define IPOL_W
-//#define CMP_W
-//#define WRITE_W
+#define CMP_W
+#define WRITE_W
 
 //#define IPOL_C
 #define IPOL_T0
 #define IPOL_T1
 
 // apply global override
-
 #ifndef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
-	#undef IPOL_W
+	#undef INVERSE_W
 #endif
 
 #ifndef SOFTWARE_DRIVER_2_SUBTEXEL
 	#undef SUBTEXEL
 #endif
 
+#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_Z )
+	#ifndef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+		#undef IPOL_W
+	#endif
+	#define IPOL_Z
+
+	#ifdef CMP_W
+		#undef CMP_W
+		#define CMP_Z
+	#endif
+
+	#ifdef WRITE_W
+		#undef WRITE_W
+		#define WRITE_Z
+	#endif
+
+#endif
 
 namespace irr
 {
@@ -86,7 +98,6 @@ CTRTextureLightMap2_Add::CTRTextureLightMap2_Add(IZBuffer2* zbuffer)
 */
 void CTRTextureLightMap2_Add::scanline_bilinear ( sScanLineData * data ) const
 {
-	return;
 	tVideoSample *dst;
 
 #ifdef USE_Z
@@ -174,7 +185,7 @@ void CTRTextureLightMap2_Add::scanline_bilinear ( sScanLineData * data ) const
 #endif
 
 
-#ifdef IPOL_W
+#ifdef INVERSE_W
 	f32 inversew;
 #endif
 
@@ -195,7 +206,7 @@ void CTRTextureLightMap2_Add::scanline_bilinear ( sScanLineData * data ) const
 		if ( data->w[0] < z[i] )
 #endif
 		{
-#ifdef IPOL_W
+#ifdef INVERSE_W
 			inversew = fix_inverse32 ( data->w[0] );
 
 			tx0 = f32_to_fixPoint ( data->t0[0].x,inversew);

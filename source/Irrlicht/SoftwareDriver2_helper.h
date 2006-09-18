@@ -129,7 +129,7 @@ inline void memset32 ( void * dest, const u32 value, u32 bytesize )
 
 inline s32 floor32 ( f32 x )
 {
-	return (s32) x;
+	return (s32) floorf ( x );
 }
 
 inline s32 round32 ( f32 x )
@@ -448,6 +448,12 @@ inline f32 fix_inverse32 ( const f32 x )
 	hints: compileflag /QIfist for msvc7. msvc 8.0 has smth different
 	others should use their favourite assembler.. 
 */
+static inline int f_round2(float f)
+{
+	f += (3<<22);
+	return *((int*)&f) - 0x4b400000;
+}
+
 #if 0
 	inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mul = FIX_POINT_F32_MUL )
 	{
@@ -462,9 +468,17 @@ inline f32 fix_inverse32 ( const f32 x )
 	#endif
 	}
 #else
-	inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mul = FIX_POINT_F32_MUL )
+	inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mulby = FIX_POINT_F32_MUL )
 	{
-		return (tFixPoint) (x * mul);
+	//	return (tFixPoint) (x * mul);
+		tFixPoint i;
+		__asm
+		{
+			fld x;
+			fmul mulby
+			fistp i
+		}
+		return i;
 	}
 #endif
 
@@ -635,8 +649,8 @@ inline tVideoSample getSample_plain ( const sInternalTexture * t, const tFixPoin
 {
 	u32 ofs;
 
-	ofs = ( ty & t->textureXMask ) << t->pitchlog2;
-	ofs |= ( tx & t->textureYMask ) >> ( FIX_POINT_PRE - VIDEO_SAMPLE_GRANULARITY );
+	ofs = ( ( ty & t->textureYMask ) >> FIX_POINT_PRE ) << t->pitchlog2;
+	ofs |= ( tx & t->textureXMask ) >> ( FIX_POINT_PRE - VIDEO_SAMPLE_GRANULARITY );
 
 	// texel
 	return *((tVideoSample*)( (u8*) t->data + ofs ));
@@ -654,8 +668,8 @@ inline void getSample_texture ( tFixPoint &r, tFixPoint &g, tFixPoint &b,
 {
 	u32 ofs;
 
-	ofs = ( ty & t->textureXMask ) << t->pitchlog2;
-	ofs |= ( tx & t->textureYMask ) >> ( FIX_POINT_PRE - VIDEO_SAMPLE_GRANULARITY );
+	ofs = ( ( ty & t->textureYMask ) >> FIX_POINT_PRE ) << t->pitchlog2;
+	ofs |= ( tx & t->textureXMask ) >> ( FIX_POINT_PRE - VIDEO_SAMPLE_GRANULARITY );
 
 	// texel
 	tVideoSample t00;

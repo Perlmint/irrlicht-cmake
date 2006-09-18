@@ -2,6 +2,8 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "SoftwareDriver2_compile_config.h"
+
 #include "CZBuffer2.h"
 
 namespace irr
@@ -36,9 +38,14 @@ CZBuffer2::~CZBuffer2()
 //! clears the zbuffer
 void CZBuffer2::clear()
 {
-	u32 zMaxValue;
 
+#ifdef SOFTWARE_DRIVER_2_USE_WBUFFER
 	f32 zMax = 0.f;
+#else
+	f32 zMax = 1.f;
+#endif
+
+	u32 zMaxValue;
 	zMaxValue = *(u32*) &zMax;
 
 	memset32 ( Buffer, zMaxValue, TotalSize * sizeof ( TZBufferType2 ) );
