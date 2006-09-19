@@ -107,6 +107,13 @@ bool CGUIFont::loadTexture(video::ITexture* texture)
 	if (Positions.size() > 127)
 		WrongCharacter = 127;
 
+	// output warnings
+	if (!lowerRightPositions || !Positions.size())
+		os::Printer::log("The amount of upper corner pixels or lower corner pixels is == 0, font file may be corrupted.", ELL_ERROR);
+	else
+	if (lowerRightPositions != (s32)Positions.size())
+		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
+
 	return (!Positions.empty() && lowerRightPositions);
 }
 
@@ -180,13 +187,6 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 	// Positions parsed.
 
 	texture->unlock();
-
-	// output warnings
-	if (!lowerRightPositions || !Positions.size())
-		os::Printer::log("The amount of upper corner pixels or lower corner pixels is == 0, font file may be corrupted.", ELL_ERROR);
-	else
-	if (lowerRightPositions != (s32)Positions.size())
-		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
 }
 
 
@@ -250,13 +250,6 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 	// Positions parsed.
 
 	texture->unlock();
-
-	// output warnings
-	if (!lowerRightPositions || !Positions.size())
-		os::Printer::log("The amount of upper corner pixels or lower corner pixels is == 0, font file may be corrupted.", ELL_ERROR);
-	else
-	if (lowerRightPositions != (s32)Positions.size())
-		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
 }
 
 

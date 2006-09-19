@@ -17,7 +17,7 @@
 #include "Keycodes.h"
 #include "COSOperator.h"
 #include "CColorConverter.h"
-#include "irrlicht.h"
+#include "SIrrCreationParameters.h"
 
 namespace irr
 {
@@ -999,9 +999,6 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.sort();
 }
 
-
-#define IRRLICHT_API
-#define IRRCALLCONV
 
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationParameters& param)
 {

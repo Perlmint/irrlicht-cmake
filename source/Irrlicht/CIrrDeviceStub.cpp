@@ -9,7 +9,6 @@
 #include "IrrCompileConfig.h"
 #include "CTimer.h"
 #include "CLogger.h"
-#include "irrlicht.h"
 #include "irrString.h"
 #include <string.h>
 

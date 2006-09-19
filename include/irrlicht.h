@@ -129,9 +129,6 @@
 #include "SMeshBufferTangents.h"
 #include "irrTypes.h"
 
-//! Irrlicht SDK Version
-#define IRRLICHT_SDK_VERSION "1.1"
-
 /*! \mainpage Irrlicht Engine 1.1 API documentation
  *
  * <div align="center"><img src="logobig.png" ></div>
@@ -242,30 +239,6 @@
  * overview over the basic features of the engine. For more examples, please take
  * a look into the examples directory of the SDK.
  */
-
-#include <wchar.h>
-#ifdef _IRR_WINDOWS_
-//! Define for swprintf because this method does not match the ISO C standard
-//! on Windows platforms, but it does on all other ones.
-#define   swprintf   _snwprintf
-#endif // _IRR_WINDOWS_
-
-#ifdef _IRR_WINDOWS_
-
-#ifdef IRRLICHT_EXPORTS
-#define IRRLICHT_API __declspec(dllexport)
-#else
-#define IRRLICHT_API __declspec(dllimport)
-#endif // IRRLICHT_EXPORT
-#else
-#define IRRLICHT_API 
-#endif // _IRR_WINDOWS_
-
-#if defined(_STDCALL_SUPPORTED)
-#define IRRCALLCONV __stdcall  // Declare the calling convention.
-#else
-#define IRRCALLCONV	__cdecl
-#endif // STDCALL_SUPPORTED
 
 #include "SIrrCreationParameters.h"
 

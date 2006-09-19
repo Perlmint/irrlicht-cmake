@@ -254,7 +254,7 @@ IImage* CImageLoaderBMP::loadImage(irr::io::IReadFile* file)
 
 	//! return if the header is false
 
-	if (header.Id != 0x4d42 && header.Id != 0x424d)
+	if (header.Id != 0x4d42)
 		return 0;
 
 	if (header.Compression > 2) // we'll only handle RLE-Compression

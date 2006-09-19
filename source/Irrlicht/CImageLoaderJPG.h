@@ -52,16 +52,7 @@ public:
 private:
 
     #ifdef _IRR_COMPILE_WITH_LIBJPEG_
-
-    // struct for handling jpeg errors
-    struct irr_jpeg_error_mgr
-    {
-        // public jpeg error fields
-        struct jpeg_error_mgr pub;
-
-        // for longjmp, to return to caller on a fatal error
-        jmp_buf setjmp_buffer;
-    };
+	// several methods used via function pointers by jpeglib
 
 	/* 	Receives control for a fatal error.  Information sufficient to
 	generate the error message has been stored in cinfo->err; call
@@ -72,6 +63,9 @@ private:
 	clean up the JPEG object with jpeg_abort() or jpeg_destroy().
 	*/
 	static void error_exit (j_common_ptr cinfo);
+
+	/* output error messages via Irrlicht logger. */
+	static void output_message(j_common_ptr cinfo);
 
 	/*	Initialize source.  This is called by jpeg_read_header() before any
 	data is actually read.  Unlike init_destination(), it may leave
@@ -100,24 +94,9 @@ private:
 	A zero or negative skip count should be treated as a no-op. */
 	static void skip_input_data (j_decompress_ptr cinfo, long num_bytes);
 
-	/* This routine is called only when the decompressor has failed to find
-	a restart (RSTn) marker where one is expected.  Its mission is to
-	find a suitable point for resuming decompression.  For most
-	applications, we recommend that you just use the default resync
-	procedure, jpeg_resync_to_restart().  However, if you are able to back
-	up in the input data stream, or if you have a-priori knowledge about
-	the likely location of restart markers, you may be able to do better.
-	Read the read_restart_marker() and jpeg_resync_to_restart() routines
-	in jdmarker.c if you think you'd like to implement your own resync
-	procedure. */
-	static void resync_to_restart (j_decompress_ptr cinfo, long desired);
-
 	/* Terminate source --- called by jpeg_finish_decompress() after all
 	data has been read.  Often a no-op. */
 	static void term_source (j_decompress_ptr cinfo);
-
-	static void format_message (j_common_ptr cinfo, char * buffer);
-
 
 	#endif // _IRR_COMPILE_WITH_LIBJPEG_
 };

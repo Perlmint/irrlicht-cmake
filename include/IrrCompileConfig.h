@@ -5,6 +5,9 @@
 #ifndef __IRR_COMPILE_CONFIG_H_INCLUDED__
 #define __IRR_COMPILE_CONFIG_H_INCLUDED__
 
+//! Irrlicht SDK Version
+#define IRRLICHT_SDK_VERSION "1.1"
+
 //! The defines for different operating system are:
 //! _XBOX for XBox
 //! WIN32 for Windows32
@@ -114,6 +117,32 @@ watch registers, variables etc. This works with ASM, HLSL, and both with pixel a
 Note that the engine will run in D3D REF for this, which is a lot slower than HAL. */
 #define _IRR_D3D_NO_SHADER_DEBUGGING 
 
+
+#include <wchar.h>
+#ifdef _IRR_WINDOWS_
+//! Define for swprintf because this method does not match the ISO C standard
+//! on Windows platforms, but it does on all other ones.
+#define   swprintf   _snwprintf
+#endif // _IRR_WINDOWS_
+
+#ifdef _IRR_WINDOWS_
+
+#ifdef IRRLICHT_EXPORTS
+#define IRRLICHT_API __declspec(dllexport)
+#else
+#define IRRLICHT_API __declspec(dllimport)
+#endif // IRRLICHT_EXPORT
+
+#if defined(_STDCALL_SUPPORTED)
+#define IRRCALLCONV __stdcall  // Declare the calling convention.
+#else
+#define IRRCALLCONV	__cdecl
+#endif // STDCALL_SUPPORTED
+
+#else
+#define IRRLICHT_API 
+#define IRRCALLCONV
+#endif // _IRR_WINDOWS_
 
 // We need to disable DIRECT3D9 support for Visual Studio 6.0 because 
 // those $%&$!! disabled support for it since Dec. 2004 and users are complaining

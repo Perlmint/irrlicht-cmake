@@ -861,18 +861,6 @@ void CIrrDeviceWin32::setResizeAble(bool resize)
 		SWP_FRAMECHANGED | SWP_NOMOVE | SWP_SHOWWINDOW);
 }
 
-#ifdef IRRLICHT_EXPORTS
-#define IRRLICHT_API __declspec(dllexport)
-#else
-#define IRRLICHT_API __declspec(dllimport)
-#endif // IRRLICHT_EXPORT
-
-#if defined(_STDCALL_SUPPORTED)
-#define IRRCALLCONV __stdcall  // Declare the calling convention.
-#else
-#define IRRCALLCONV	__cdecl
-#endif // STDCALL_SUPPORTED
-
 
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(
 	const SIrrlichtCreationParameters& parameters)
