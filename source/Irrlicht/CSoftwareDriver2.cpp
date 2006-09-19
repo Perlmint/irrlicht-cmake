@@ -476,7 +476,7 @@ static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 in
 		//a = &source[ i%inCount];
 
 		const s32 condition = i - inCount;
-		s32 index = ( ( condition >> 31 ) & ( i ^ condition ) ) ^ condition;
+		const s32 index = ( ( condition >> 31 ) & ( i ^ condition ) ) ^ condition;
 
 		a = &source[ index ];
 
@@ -956,7 +956,7 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 
 			texarea = texelarea ( CurrentOut, g );
 			lodLevel = s32_log2_f32 ( texarea / cross );
-			lodLevel = s32_clamp ( lodLevel, 0, 7 );
+			lodLevel = s32_clamp ( lodLevel, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 );
 
 			Texmap[g].Texture->setCurrentMipMapLOD ( lodLevel );
 			select_polygon_mipmap ( CurrentOut, vOut, g );

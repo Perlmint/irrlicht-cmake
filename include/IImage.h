@@ -81,7 +81,7 @@ public:
 	virtual SColor getPixel(s32 x, s32 y) = 0;
 
 	//! returns the color format
-	virtual ECOLOR_FORMAT getColorFormat() = 0;
+	virtual ECOLOR_FORMAT getColorFormat() const = 0;
 
 	//! returns mask for red value of a pixel
 	virtual u32 getRedMask() = 0;

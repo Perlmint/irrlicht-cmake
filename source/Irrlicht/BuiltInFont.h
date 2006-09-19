@@ -13,6 +13,17 @@ namespace irr
 namespace gui
 {
 
+// byte-align structures
+#ifdef _MSC_VER
+#   pragma pack( push, packing )
+#   pragma pack( 1 )
+#   define PACK_STRUCT
+#elif defined( __GNUC__ )
+#   define PACK_STRUCT  __attribute__((packed))
+#else
+#   error compiler not supported
+#endif
+
 u8 BuiltInFontData[] = 
 {
 	0x42, 0x4d, 0x76, 0x20, 0x0, 0x0, 0x0, 0x0,
@@ -1054,7 +1065,14 @@ u8 BuiltInFontData[] =
 	0x2, 0x0, 0x0, 0x2, 0x0, 0x0, 0x2, 0x0,
 	0x0, 0x20, 0x0, 0x0, 0x20, 0x0, 0x2, 0x0,
 	0x0, 0x2, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0
-};
+} PACK_STRUCT;
+
+// Default alignment
+#ifdef _MSC_VER
+#	pragma pack( pop, packing )
+#endif
+
+#undef PACK_STRUCT
 
 	u32 BuiltInFontDataSize = sizeof(BuiltInFontData);
 } // end namespace gui

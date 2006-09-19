@@ -52,7 +52,7 @@ public:
 	virtual E_DRIVER_TYPE getDriverType();
 
 	//! returns color format of texture
-	virtual ECOLOR_FORMAT getColorFormat();
+	virtual ECOLOR_FORMAT getColorFormat() const;
 
 	//! returns pitch of texture (in bytes)
 	virtual s32 getPitch();

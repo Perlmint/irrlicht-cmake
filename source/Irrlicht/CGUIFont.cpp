@@ -97,7 +97,7 @@ bool CGUIFont::loadTexture(video::ITexture* texture)
 		readPositions16bit(texture, lowerRightPositions);
 		break;
 	case video::ECF_A8R8G8B8:
-		readPositions32bit(texture, lowerRightPositions);
+		readPositions32bit ( texture, lowerRightPositions );
 		break;
 	default:
 		os::Printer::log("Unsupported font texture color format.", ELL_ERROR);
@@ -123,7 +123,13 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 		return;
 	}
 
-	s32 colorTopLeft = *p;
+	// TODO: Hack till it's getting better...
+	// Pixel(0,0) == half opacity assume font with alpha..
+
+	s32 truealphaFont = ( (p[0] & 0xFF000000) == 0x7f000000 );
+	p[0] |= 0xFF000000;
+
+	s32 colorTopLeft = p[0];;
 	s32 colorLowerRight = *(p+1);
 	s32 colorBackGround = *(p+2);
 	s32 colorBackGroundWithAlphaFalse = 0x00FFFFFF & colorBackGround;
@@ -138,7 +144,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 	{
 		for (pos.X=0; pos.X<size.Width; ++pos.X)
 		{
-			if (*p == colorTopLeft)
+			if ( *p == colorTopLeft)
 			{
 				*p = colorBackGroundWithAlphaFalse;
 				Positions.push_back(core::rect<s32>(pos, pos));
@@ -159,9 +165,14 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 			}
 			else
 			if (*p == colorBackGround)
+			{
 				*p = colorBackGroundWithAlphaFalse;
+			}
 			else
+			if ( 0 == truealphaFont )
+			{
 				*p = colorFont;
+			}
 			++p;
 		}
 	}
@@ -177,6 +188,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 	if (lowerRightPositions != (s32)Positions.size())
 		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
 }
+
 
 
 
@@ -301,7 +313,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 
 	core::array<s32> indices;
 	indices.reallocate(wcslen(text));
-	s32 n;
+	u32 n;
 	while(*text)
 	{
 		n = (*text) - 32;

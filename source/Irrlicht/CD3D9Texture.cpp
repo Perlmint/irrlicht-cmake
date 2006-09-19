@@ -670,7 +670,7 @@ E_DRIVER_TYPE CD3D9Texture::getDriverType()
 
 
 //! returns color format of texture
-ECOLOR_FORMAT CD3D9Texture::getColorFormat()
+ECOLOR_FORMAT CD3D9Texture::getColorFormat() const
 {
 	return ColorFormat;
 }

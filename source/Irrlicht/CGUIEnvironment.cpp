@@ -92,7 +92,6 @@ CGUIEnvironment::~CGUIEnvironment()
 }
 
 
-
 void CGUIEnvironment::loadBuiltInFont()
 {
 	const c8* filename = "#DefaultFont";

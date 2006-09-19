@@ -538,7 +538,7 @@ static void executeBlit_TextureCopy_24_to_32 ( const SBlitJob * job )
 
 		for ( s32 dx = 0; dx != job->width; ++dx )
 		{
-			dst[dx] = s[0] << 16 | s[1] << 8 | s[2];
+			dst[dx] = 0xFF000000 | s[0] << 16 | s[1] << 8 | s[2];
 			s += 3;
 		}
 
@@ -730,15 +730,17 @@ static void executeBlit_ColorAlpha_32_to_32 ( const SBlitJob * job )
 
 /*!
 */
-static tExecuteBlit getBlitter ( eBlitter operation,video::IImage * dest,video::IImage * source )
+static tExecuteBlit getBlitter ( eBlitter operation,const video::IImage * dest,const video::IImage * source )
 {
-	video::ECOLOR_FORMAT sourceFormat = (video::ECOLOR_FORMAT)-1;
-	video::ECOLOR_FORMAT destFormat = (video::ECOLOR_FORMAT)-1;
+	video::ECOLOR_FORMAT sourceFormat = (video::ECOLOR_FORMAT) -1;
+	video::ECOLOR_FORMAT destFormat = (video::ECOLOR_FORMAT) -1;
 
 	if ( source )
-		sourceFormat = source->getColorFormat();
+		sourceFormat = source->getColorFormat ();
+
 	if ( dest )
-		destFormat = dest->getColorFormat();
+		destFormat = dest->getColorFormat ();
+
 
 	switch ( operation )
 	{
@@ -1176,7 +1178,7 @@ SColor CImage::getPixel(s32 x, s32 y)
 
 
 //! returns the color format
-ECOLOR_FORMAT CImage::getColorFormat()
+ECOLOR_FORMAT CImage::getColorFormat() const
 {
 	return Format;
 }
@@ -1207,7 +1209,8 @@ void CImage::copyTo(CImage* target, const core::position2d<s32>& pos, const core
 //! copies this surface into another, using the alpha mask, an cliprect and a color to add with
 void CImage::copyToWithAlpha(CImage* target, const core::position2d<s32>& pos, const core::rect<s32>& sourceRect, const SColor &color, const core::rect<s32>* clipRect)
 {
-	Blit (	BLITTER_TEXTURE_ALPHA_COLOR_BLEND, // color.color == 0xFFFFFFFF ? BLITTER_TEXTURE_ALPHA_BLEND: BLITTER_TEXTURE_ALPHA_COLOR_BLEND,
+	// color blend only necessary on not full spectrum aka. color.color != 0xFFFFFFFF
+	Blit (	color.color == 0xFFFFFFFF ? BLITTER_TEXTURE_ALPHA_BLEND: BLITTER_TEXTURE_ALPHA_COLOR_BLEND,
 			target, clipRect, &pos, this, &sourceRect, color.color );
 }
 
@@ -1329,7 +1332,7 @@ u32 CImage::getPitch()
 
 
 //! get a filtered pixel
-inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy )
+inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias )
 {
 	SColor c;
 	u32 a = 0, r = 0, g = 0, b = 0;
@@ -1346,37 +1349,20 @@ inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy )
 		}
 	}
 
-#if 0
-	tFixPointu sdiv = FIX_POINT_ONE / ( fx * fy );
+	s32 sdiv = (fx * fy);
 
-	a *= sdiv;
-
-	r *= sdiv;
-	c.color = ( a & FIX_POINT_UNSIGNED_MASK ) << ( 24 - FIX_POINT_PRE );
-
-	g *= sdiv;
-	c.color |= ( r & FIX_POINT_UNSIGNED_MASK ) << ( 16 - FIX_POINT_PRE );
-
-	b *= sdiv;
-	c.color |= ( g & FIX_POINT_UNSIGNED_MASK ) >> ( FIX_POINT_PRE - 8 );
-	c.color |= ( b  ) >> ( FIX_POINT_PRE - 0 );
-
-#else
-	s32 sdiv = fx * fy;
-
-	a /= sdiv;
-	r /= sdiv;
-	g /= sdiv;
-	b /= sdiv;
+	a = s32_clamp ( ( a / sdiv ) + bias, 0, 255 );
+	r = s32_clamp ( ( r / sdiv ) + bias, 0, 255 );
+	g = s32_clamp ( ( g / sdiv ) + bias, 0, 255 );
+	b = s32_clamp ( ( b / sdiv ) + bias, 0, 255 );
 
 	c.set ( a, r, g, b );
-#endif
 	return c;
 }
 
 
 //! copies this surface into another, scaling it to fit it.
-void CImage::copyToScalingBoxFilter(CImage* target)
+void CImage::copyToScalingBoxFilter(CImage* target, s32 bias)
 {
 	video::ECOLOR_FORMAT destFormat = target->getColorFormat();
 
@@ -1407,7 +1393,7 @@ void CImage::copyToScalingBoxFilter(CImage* target)
 		sx = 0.f;
 		for ( s32 x = 0; x != destSize.Width; ++x )
 		{
-			target->setPixel ( x, y,getPixelBox ( floor32 ( sx ), floor32 ( sy ), fx, fy ) );
+			target->setPixel ( x, y,getPixelBox ( floor32 ( sx ), floor32 ( sy ), fx, fy, bias ) );
 
 			sx += sourceXStep;
 		}

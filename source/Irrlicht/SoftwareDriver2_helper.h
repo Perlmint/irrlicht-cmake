@@ -223,6 +223,13 @@ inline const T clamp (const T value, const T low, const T high)
 	return min (max(value,low), high);
 }
 
+//! conditional set based on mask and arithemtic shift
+inline u32 if_c_a_else_b ( s32 condition, u32 a, u32 b )
+{
+	return ( ( -condition >> 31 ) & ( a ^ b ) ) ^ b;
+}
+
+
 // ------------------ Video---------------------------------------
 /*!
 	Pixel = dest * ( 1 - alpha ) + source * alpha

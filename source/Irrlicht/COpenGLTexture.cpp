@@ -257,7 +257,7 @@ E_DRIVER_TYPE COpenGLTexture::getDriverType()
 
 
 //! returns color format of texture
-ECOLOR_FORMAT COpenGLTexture::getColorFormat()
+ECOLOR_FORMAT COpenGLTexture::getColorFormat() const
 {
 	return ColorFormat;
 }

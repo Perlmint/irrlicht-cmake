@@ -29,8 +29,9 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	device->setWindowCaption(str.c_str());
 
 	// load font
-
-	gui::IGUIFont* font = guienv->getFont("../../media/fonthaettenschweiler.bmp");
+	gui::IGUIFont* font = guienv->getFont("../../media/fontlucida.png");
+	//gui::IGUIFont* font = guienv->getFont("../../media/fonthaettenschweiler.bmp");
+	
 	if (font)
 		guienv->getSkin()->setFont(font);
 
@@ -49,11 +50,11 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// add list box
 
-	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,220,105), optTab, 1);
+	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,230,120), optTab, 1);
 	box->addItem(L"OpenGL 1.5");
 	box->addItem(L"Direct3D 8.1");
 	box->addItem(L"Direct3D 9.0c");
-	box->addItem(L"Apfelbaum Software Renderer 1.0");
+	box->addItem(L"Apfelsoft Renderer 0.2");
 	box->addItem(L"Irrlicht Software Renderer 1.0");
 	box->setSelected(selected);
 
@@ -65,9 +66,9 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	const s32 d = 50;
 
-	guienv->addCheckBox(fullscreen, core::rect<int>(20,85+d,130,110+d),
+	guienv->addCheckBox(fullscreen, core::rect<int>(20,85+d,230,110+d),
 		optTab, 3, L"Fullscreen");
-	guienv->addCheckBox(music, core::rect<int>(20,110+d,130,135+d),
+	guienv->addCheckBox(music, core::rect<int>(20,110+d,230,135+d),
 		optTab, 4, L"Music & Sfx");
 	guienv->addCheckBox(shadows, core::rect<int>(20,135+d,230,160+d),
 		optTab, 5, L"Realtime shadows");
@@ -89,13 +90,13 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	wchar_t* text2 = L"This is the tech demo of the Irrlicht engine. To start, "\
 		L"select a device which works best with your hardware and press 'start demo'. "\
-		L"What you currently see is displayed using the Software Renderer, but this would be too slow "\
-		L"for the demo. The Irrlicht Engine was written by me, Nikolaus Gebhardt. The models, "\
+		L"What you currently see is displayed using the Software Renderer. "\
+		L"The Irrlicht Engine was written by me, Nikolaus Gebhardt. The models, "\
 		L"maps and textures were placed at my disposal by B.Collins, M.Cook and J.Marton. The music was created by "\
 		L"M.Rohde and is played back by Audiere.\n"\
 		L"For more informations, please visit the homepage of the Irrlicht engine:\nhttp://www.irrlicht.sourceforge.net";
 
-	guienv->addStaticText(text2, core::rect<int>(20, 40, 220, 300),
+	guienv->addStaticText(text2, core::rect<int>(10, 10, 230, 320),
 		true, true, aboutTab);
 
 

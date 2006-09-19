@@ -27,7 +27,7 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 	Colors[EGDC_ACTIVE_BORDER] =	video::SColor(101,16,14,115);
 	Colors[EGDC_ACTIVE_CAPTION] =	video::SColor(101,255,255,255);
 	Colors[EGDC_APP_WORKSPACE] =	video::SColor(101,100,100,100);
-	Colors[EGDC_BUTTON_TEXT] =	video::SColor(101,0,0,0);
+	Colors[EGDC_BUTTON_TEXT] =	video::SColor(101,10,10,10);
 	Colors[EGDC_GRAY_TEXT] =	video::SColor(101,130,130,130);
 	Colors[EGDC_HIGH_LIGHT] =	video::SColor(101,8,36,107);
 	Colors[EGDC_HIGH_LIGHT_TEXT] =	video::SColor(101,255,255,255);

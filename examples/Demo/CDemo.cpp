@@ -26,8 +26,17 @@ CDemo::~CDemo()
 
 void CDemo::run()
 {
-	device = createDevice(driverType,
-		core::dimension2d<s32>(800, 600), 32, fullscreen, shadows, vsync, this);;
+	if ( driverType == video::EDT_SOFTWARE2 )
+	{
+		// any resultion possible for apfelsoft, but use a smaller one
+		device = createDevice(driverType,
+			core::dimension2d<s32>(640, 480), 32, fullscreen, shadows, vsync, this);;
+	}
+	else
+	{
+		device = createDevice(driverType,
+			core::dimension2d<s32>(800, 600), 32, fullscreen, shadows, vsync, this);;
+	}
 
 	device->getFileSystem()->addZipFileArchive("irrlicht.dat");
 	device->getFileSystem()->addZipFileArchive("../../media/irrlicht.dat");
@@ -42,6 +51,7 @@ void CDemo::run()
 
 	wchar_t tmp[255];
 
+	u32 now = 0;
 	while(device->run() && driver)
 	{
 		if (device->isWindowActive())
@@ -351,7 +361,6 @@ void CDemo::loadSceneData()
 	// create sky box
 
 	//driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
-
 	skyboxNode = sm->addSkyBoxSceneNode(
 		driver->getTexture("../../media/irrlicht2_up.jpg"),
 		driver->getTexture("../../media/irrlicht2_dn.jpg"),
@@ -359,7 +368,11 @@ void CDemo::loadSceneData()
 		driver->getTexture("../../media/irrlicht2_rt.jpg"),
 		driver->getTexture("../../media/irrlicht2_ft.jpg"),
 		driver->getTexture("../../media/irrlicht2_bk.jpg"));
-
+/*
+	skyboxNode = sm->addSkyDomeSceneNode (
+		driver->getTexture("../../media/skydome0.jpg"),
+		30,8,0.96f,2.f);
+*/
 	//driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
 	// create walk-between-portals animation

@@ -500,7 +500,7 @@ E_DRIVER_TYPE CD3D8Texture::getDriverType()
 
 
 //! returns color format of texture
-ECOLOR_FORMAT CD3D8Texture::getColorFormat()
+ECOLOR_FORMAT CD3D8Texture::getColorFormat() const
 {
 	return ColorFormat;
 }

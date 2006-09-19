@@ -128,7 +128,7 @@ E_DRIVER_TYPE CSoftwareTexture::getDriverType()
 
 
 //! returns color format of texture
-ECOLOR_FORMAT CSoftwareTexture::getColorFormat()
+ECOLOR_FORMAT CSoftwareTexture::getColorFormat() const
 {
 	return ECF_A1R5G5B5;
 }

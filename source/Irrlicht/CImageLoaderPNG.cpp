@@ -188,11 +188,13 @@ IImage* CImageLoaderPng::loadImage(irr::io::IReadFile* file)
 
 	// Convert RGBA to BGRA
 	if (ColorType==PNG_COLOR_TYPE_RGB_ALPHA)
+	{
 #ifdef __BIG_ENDIAN__
 		png_set_swap_alpha(png_ptr);
 #else
 		png_set_bgr(png_ptr);
 #endif
+	}
 
 	// Update the changes
 	png_get_IHDR(png_ptr, info_ptr,

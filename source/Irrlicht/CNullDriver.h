@@ -448,7 +448,7 @@ namespace video
 			virtual const core::dimension2d<s32>& getOriginalSize() { return size; }
 			virtual const core::dimension2d<s32>& getSize() { return size; }
 			virtual E_DRIVER_TYPE getDriverType() { return video::EDT_NULL; }
-			virtual ECOLOR_FORMAT getColorFormat() { return video::ECF_R5G6B5; };
+			virtual ECOLOR_FORMAT getColorFormat() const { return video::ECF_R5G6B5; };
 			virtual s32 getPitch() { return 0; }
 			virtual void regenerateMipMapLevels() {};
 			core::dimension2d<s32> size;
