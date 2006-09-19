@@ -630,7 +630,7 @@ void COpenGLDriver::loadExtensions()
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
 	}
 
-#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (!pGlActiveTextureARB || !pGlClientActiveTextureARB)
 	{
 		MultiTextureExtension = false;

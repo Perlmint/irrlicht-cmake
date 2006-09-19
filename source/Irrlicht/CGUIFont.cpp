@@ -132,7 +132,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 	s32 colorTopLeft = p[0];;
 	s32 colorLowerRight = *(p+1);
 	s32 colorBackGround = *(p+2);
-	s32 colorBackGroundWithAlphaFalse = 0x00FFFFFF & colorBackGround;
+	s32 colorBackGroundTransparent = 0x00FFFFFF & colorBackGround;
 	s32 colorFont = 0xFFFFFFFF;
 
 	*(p+1) = colorBackGround;
@@ -146,7 +146,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 		{
 			if ( *p == colorTopLeft)
 			{
-				*p = colorBackGroundWithAlphaFalse;
+				*p = colorBackGroundTransparent;
 				Positions.push_back(core::rect<s32>(pos, pos));
 			}
 			else
@@ -159,14 +159,14 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 					return;
 				}
 
-				*p = colorBackGroundWithAlphaFalse;
+				*p = colorBackGroundTransparent;
 				Positions[lowerRightPositions].LowerRightCorner = pos;
 				++lowerRightPositions;
 			}
 			else
 			if (*p == colorBackGround)
 			{
-				*p = colorBackGroundWithAlphaFalse;
+				*p = colorBackGroundTransparent;
 			}
 			else
 			if ( 0 == truealphaFont )
@@ -206,7 +206,7 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 	s16 colorTopLeft = *p;
 	s16 colorLowerRight = *(p+1);
 	s16 colorBackGround = *(p+2);
-	s16 colorBackGroundWithAlphaFalse = 0x7FFF & colorBackGround;
+	s16 colorBackGroundTransparent = 0x7FFF & colorBackGround;
 	u16 colorFont = 0xFFFF;
 
 	*(p+1) = colorBackGround;
@@ -220,12 +220,13 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 		{
 			if (*p == colorTopLeft)
 			{
-				*p = colorBackGroundWithAlphaFalse;
+				*p = colorBackGroundTransparent;
 				Positions.push_back(core::rect<s32>(pos, pos));
 			}
 			else
 			if (*p == colorLowerRight)
 			{
+				// too many lower right points
 				if (Positions.size()<=(u32)lowerRightPositions)
 				{
 					texture->unlock();
@@ -233,13 +234,13 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 					return;
 				}
 
-				*p = colorBackGroundWithAlphaFalse;
+				*p = colorBackGroundTransparent;
 				Positions[lowerRightPositions].LowerRightCorner = pos;
 				++lowerRightPositions;
 			}
 			else
 			if (*p == colorBackGround)
-				*p = colorBackGroundWithAlphaFalse;
+				*p = colorBackGroundTransparent;
 			else
 				*p = colorFont;
 			++p;
