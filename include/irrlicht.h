@@ -264,7 +264,7 @@
 #if defined(_STDCALL_SUPPORTED)
 #define IRRCALLCONV __stdcall  // Declare the calling convention.
 #else
-#define IRRCALLCONV
+#define IRRCALLCONV	__cdecl
 #endif // STDCALL_SUPPORTED
 
 #include "SIrrCreationParameters.h"

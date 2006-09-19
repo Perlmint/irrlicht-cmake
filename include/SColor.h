@@ -49,7 +49,6 @@ namespace video
 
 
 	//! Returns A8R8G8B8 Color from A1R5G5B5 color
-	// signed input necessary because carry bit needed on artihemtic shift
 	inline u32 A1R5G5B5toA8R8G8B8(u32 color)
 	{
 		return	( ( -( (s32) color & 0x00008000 ) >> (s32) 31 ) & 0xFF000000 |

@@ -75,6 +75,23 @@ namespace core
 		return (a + ROUNDING_ERROR > b) && (a - ROUNDING_ERROR < b);
 	}
 
+	inline s32 floor32 ( f32 x )
+	{
+		return (s32) floorf ( x );
+	}
+
+	inline s32 ceil32 ( f32 x )
+	{
+		return (s32) ceilf ( x );
+	}
+
+
+	inline s32 round32 ( f32 x )
+	{
+		return (s32) ( x + 0.5f );
+	}
+
+
 } // end namespace core
 }// end namespace irr
 
