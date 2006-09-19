@@ -327,7 +327,11 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 bool CSoftwareDriver2::beginScene(bool backBuffer, bool zBuffer, SColor color)
 {
 #ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
-	_controlfp( _PC_24, MCW_PC );
+	// save fpu mode
+	fpu_orig_cw = _controlfp(0, 0); 
+
+	// set single-precision mode
+	_controlfp ( _PC_24, MCW_PC );
 #endif
 
 	CNullDriver::beginScene(backBuffer, zBuffer, color);
@@ -349,7 +353,7 @@ bool CSoftwareDriver2::endScene( s32 windowId, core::rect<s32>* sourceRect )
 	Presenter->present(BackBuffer, windowId, sourceRect );
 
 #ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
-	_controlfp( _CW_DEFAULT, 0xfffff );
+	_controlfp( fpu_orig_cw, 0xfffff );
 #endif
 	return true;
 }

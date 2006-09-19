@@ -132,8 +132,8 @@ void CTRTextureGouraudNoZ2::scanline_bilinear ( sScanLineData * data ) const
 #endif
 
 	// apply top-left fill-convention, left
-	xStart = ceil32( data->x[0] );
-	xEnd = ceil32( data->x[1] ) - 1;
+	xStart = irr::core::ceil32( data->x[0] );
+	xEnd = irr::core::ceil32( data->x[1] ) - 1;
 
 	dx = xEnd - xStart;
 
@@ -366,8 +366,8 @@ void CTRTextureGouraudNoZ2::drawTriangle ( const s4DVertex *a,const s4DVertex *b
 #endif
 
 		// apply top-left fill convention, top part
-		yStart = ceil32( a->Pos.y );
-		yEnd = ceil32( b->Pos.y ) - 1;
+		yStart = irr::core::ceil32( a->Pos.y );
+		yEnd = irr::core::ceil32( b->Pos.y ) - 1;
 
 #ifdef SUBTEXEL
 		subPixel = ( (f32) yStart ) - a->Pos.y;
@@ -527,8 +527,8 @@ void CTRTextureGouraudNoZ2::drawTriangle ( const s4DVertex *a,const s4DVertex *b
 #endif
 
 		// apply top-left fill convention, top part
-		yStart = ceil32( b->Pos.y );
-		yEnd = ceil32( c->Pos.y ) - 1;
+		yStart = irr::core::ceil32( b->Pos.y );
+		yEnd = irr::core::ceil32( c->Pos.y ) - 1;
 
 #ifdef SUBTEXEL
 

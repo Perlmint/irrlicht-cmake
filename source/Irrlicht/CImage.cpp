@@ -1161,11 +1161,11 @@ SColor CImage::getPixel(s32 x, s32 y)
 	switch(Format)
 	{
 	case ECF_A1R5G5B5:
-		return A1R5G5B5toA8R8G8B8(((s16*)Data)[y*Size.Width + x]);
+		return A1R5G5B5toA8R8G8B8(((u16*)Data)[y*Size.Width + x]);
 	case ECF_R5G6B5:
-		return R5G6B5toA8R8G8B8(((s16*)Data)[y*Size.Width + x]);
+		return R5G6B5toA8R8G8B8(((u16*)Data)[y*Size.Width + x]);
 	case ECF_A8R8G8B8:
-		return ((s32*)Data)[y*Size.Width + x];
+		return ((u32*)Data)[y*Size.Width + x];
 	case ECF_R8G8B8:
 		{
 			u8* p = &((u8*)Data)[(y*3)*Size.Width + (x*3)];
@@ -1380,8 +1380,8 @@ void CImage::copyToScalingBoxFilter(CImage* target, s32 bias)
 	sourceXStep /= (f32) ( destSize.Width - 0 );
 	sourceYStep /= (f32) ( destSize.Height - 0 );
 
-	s32 fx = ceil32 ( sourceXStep );
-	s32 fy = ceil32 ( sourceYStep );
+	s32 fx = irr::core::ceil32 ( sourceXStep );
+	s32 fy = irr::core::ceil32 ( sourceYStep );
 	f32 sx;
 	f32 sy;
 	SColor p;
@@ -1393,7 +1393,7 @@ void CImage::copyToScalingBoxFilter(CImage* target, s32 bias)
 		sx = 0.f;
 		for ( s32 x = 0; x != destSize.Width; ++x )
 		{
-			target->setPixel ( x, y,getPixelBox ( floor32 ( sx ), floor32 ( sy ), fx, fy, bias ) );
+			target->setPixel ( x, y,getPixelBox ( core::floor32 ( sx ), core::floor32 ( sy ), fx, fy, bias ) );
 
 			sx += sourceXStep;
 		}

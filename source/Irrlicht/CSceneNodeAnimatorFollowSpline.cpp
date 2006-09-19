@@ -3,6 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CSceneNodeAnimatorFollowSpline.h"
+#include "irrmath.h"
 
 namespace irr
 {
@@ -42,7 +43,7 @@ void CSceneNodeAnimatorFollowSpline::animateNode(ISceneNode* node, u32 timeMs)
 	core::vector3df t1, t2;
 
 	f32 dt = ( (timeMs-StartTime) * Speed );
-	s32 idx = static_cast< s32 >( 0.001f * dt ) % Points.size();
+	s32 idx = irr::core::floor32( 0.001f * dt ) % Points.size();
 	f32 u = 0.001f * fmodf( dt, 1000.0f );
 
 	p0 = Points[ clamp( idx - 1, Points.size() ) ];

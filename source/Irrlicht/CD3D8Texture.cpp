@@ -200,8 +200,8 @@ bool CD3D8Texture::copyTo32BitTexture()
 		return false;
 	}
 
-	s32* dest = (s32*)rect.pBits;
-	s32* source = (s32*)Image->lock();
+	u32* dest = (u32*)rect.pBits;
+	u32* source = (u32*)Image->lock();
 	Pitch = rect.Pitch;
 	s32 pitch = rect.Pitch / 4;
 

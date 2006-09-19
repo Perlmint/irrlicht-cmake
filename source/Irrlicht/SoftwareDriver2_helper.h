@@ -103,39 +103,6 @@ inline void memset32 ( void * dest, const u32 value, u32 bytesize )
 
 }
 
-#ifdef SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
-	static __inline s32 ceil32 ( f32 _x)
-	{
-		f64 x = (f64) _x;
-		const float round_towards_p_i = -0.5f;
-		s32 i;
-		__asm
-		{
-			fld x
-			fadd st, st (0)
-			fsubr round_towards_p_i
-			fistp i
-			sar i, 1
-		}
-		return -i;
-	}
-#else
-	inline s32 ceil32 ( f32 x )
-	{
-		return (s32) ceilf ( x );
-	}
-#endif
-
-
-inline s32 floor32 ( f32 x )
-{
-	return (s32) floorf ( x );
-}
-
-inline s32 round32 ( f32 x )
-{
-	return (s32) ( x + 0.5f );
-}
 
 // only for showing it's here.. precision lack, can't use
 #if 0
@@ -192,15 +159,14 @@ inline void swap_xor ( s32 &a, s32 &b )
 
 inline s32 s32_min ( s32 a, s32 b)
 {
-	s32 c = (a - b) >> 31;
-	return (a & c) + (b & ~c);
+	s32 mask = (a - b) >> 31;
+	return (a & mask) | (b & ~mask);
 }
 
 inline s32 s32_max ( s32 a, s32 b)
 {
-	b = a - b;
-	a -= b & (b>>31);
-	return a;
+	s32 mask = (a - b) >> 31;
+	return (b & mask) | (a & ~mask);
 }
 
 inline s32 s32_clamp (s32 value, s32 low, s32 high) 

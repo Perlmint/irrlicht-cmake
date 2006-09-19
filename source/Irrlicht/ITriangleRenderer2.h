@@ -7,6 +7,7 @@
 
 #include "SoftwareDriver2_compile_config.h"
 #include "IUnknown.h"
+#include "irrmath.h"
 #include "IImage.h"
 #include "S2DVertex.h"
 #include "rect.h"
