@@ -9,7 +9,8 @@ Changes in version 1.2 (???? 2006)
 	main reason to use faster float to int conversion on x86. ( fistp )
 	goal is that the compiler should do it.. ( eg. /QIfist on msvc 7.1 )
 	
-	- changed Visual Studio 7.1 vcproj release compiler flag
+	- changed Visual Studio 7.1 vcproj project config
+		"Release Fast FPU"
 		-> to __fastcall in
 		-> /QIfist
 - CGUIFont
