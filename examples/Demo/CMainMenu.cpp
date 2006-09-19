@@ -37,8 +37,6 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// add images
 
-	//gui::IGUIImage* img = guienv->addImage(core::rect<int>(0,0,512,384));
-	//img->setImage(driver->getTexture("../../media/demoback.bmp"));
 
 	const s32 leftX = 260;
 
@@ -156,12 +154,14 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	smgr->addCameraSceneNode(0, core::vector3df(45,0,0), core::vector3df(0,0,10));
 
-	// irrlicht logo
+	// irrlicht logo and background
 	// add irrlicht logo
+	// since applesoft render v.2 mipmaps are generated.. don't do it on 2d-images...
 	guienv->addImage(driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
 		core::position2d<s32>(5,5));
 
 	video::ITexture* irrlichtBack = driver->getTexture("../../media/demoback.bmp");
+
 
 	// set transparency
 	setTransparency();
