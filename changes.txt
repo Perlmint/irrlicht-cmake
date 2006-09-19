@@ -1,8 +1,17 @@
 -------------------------------------------
-Changes in version 1.3 (???? 2006)
+Changes in version 1.2 (???? 2006)
 - Apfelbaum software renderer:
 	basic mipmap support (per triangle)
 	switch for using w-buffer instad z-buffer ( default on )
+	
+- Better FPU support.
+	Changed various fpu-call's in whole project.
+	main reason to use faster float to int conversion on x86. ( fistp )
+	goal is that the compiler should do it.. ( eg. /QIfist on msvc 7.1 )
+	
+	- changed Visual Studio 7.1 vcproj release compiler flag
+		-> to __fastcall in
+		-> /QIfist
 - CGUIFont
 	- added True Alpha Font Support.
 		it's a little hack, but it'a goo starting point.
