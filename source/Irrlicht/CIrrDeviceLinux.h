@@ -17,9 +17,10 @@
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 #include <GL/gl.h>
+#define GLX_GLXEXT_LEGACY 1
 #include <GL/glx.h>
 #ifndef __sun__
-#include <GL/glxext.h>
+#include "glxext.h"
 #endif
 #endif
 #include <X11/Xlib.h>

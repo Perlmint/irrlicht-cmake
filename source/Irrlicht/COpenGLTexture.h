@@ -7,7 +7,6 @@
 
 #include "ITexture.h"
 #include "IImage.h"
-#include "COpenGLDriver.h"
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
@@ -34,15 +33,15 @@
 		#include "glext.h"
 	#endif
 	#include <GL/glu.h>
-	#include <GL/glx.h>
-	#include <X11/Xlib.h>
 #endif
+
 
 namespace irr
 {
 namespace video
 {
 
+class COpenGLDriver;
 //! OpenGL texture.
 class COpenGLTexture : public ITexture
 {

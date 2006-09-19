@@ -244,9 +244,9 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	pGlGenProgramsARB(0), pGlBindProgramARB(0), pGlProgramStringARB(0),
 	pGlDeleteProgramsARB(0), pGlProgramLocalParameter4fvARB(0),
 	pGlCompressedTexImage2D(0)
-#endif
 #ifdef GLX_SGI_swap_control
 	,glxSwapIntervalSGI(0)
+#endif
 #endif
 {
 	#ifdef _DEBUG
@@ -261,10 +261,15 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ActiveTextures[3]=0;
 	genericDriverInit(screenSize);
 
-#ifdef GLX_SGI_swap_control
 	// set vsync
+#ifdef GLX_SGI_swap_control
+#ifdef _IRR_OPENGL_USE_EXTPOINTERS_
 	if (vsync && glxSwapIntervalSGI)
 		glxSwapIntervalSGI(1);
+#else
+	if (vsync)
+		glXSwapIntervalSGI(1);
+#endif
 #endif
 }
 
@@ -615,12 +620,12 @@ void COpenGLDriver::loadExtensions()
 
 			pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)
 				IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCompressedTexImage2D"));
-			#endif // _IRR_OPENGL_USE_EXTPOINTER_
 
 #ifdef GLX_SGI_swap_control
 			// get vsync extension
 			glxSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC)IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI"));
 #endif
+			#endif // _IRR_OPENGL_USE_EXTPOINTER_
 		#endif // _IRR_WINDOWS_
 
 		// load common extensions

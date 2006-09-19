@@ -12,7 +12,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
 #include "glext.h"
 #endif
 
@@ -21,8 +20,6 @@
 #define GL_GLEXT_LEGACY 1
 #endif
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glx.h>
 #if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 #include "glext.h"
 #endif
@@ -30,7 +27,6 @@
 
 #ifdef MACOSX
 #include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
 #endif
 

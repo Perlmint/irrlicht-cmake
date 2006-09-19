@@ -30,10 +30,14 @@
 #else
 	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 		#define GL_GLEXT_LEGACY 1
+		#define GLX_GLXEXT_LEGACY 1
+	#else
+		#define GL_GLEXT_PROTOTYPES 1
+		#define GLX_GLXEXT_PROTOTYPES 1
 	#endif
 	#include <GL/gl.h>
 	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
-		#include "glext.h"
+	#include "glext.h"
 	#endif
 	#include <GL/glu.h>
 	#include <GL/glx.h>
