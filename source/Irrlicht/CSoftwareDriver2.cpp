@@ -1157,9 +1157,9 @@ void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
 const wchar_t* CSoftwareDriver2::getName()
 {
 #ifdef SOFTWARE_DRIVER_2_32BIT
-	return L"apfelsoft 0.2 32Bit";
+	return L"burning's video 0.2 32Bit";
 #else
-	return L"apfelsoft 0.2 15Bit";
+	return L"burning's video 0.2 15Bit";
 #endif
 
 }

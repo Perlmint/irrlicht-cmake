@@ -16,7 +16,8 @@ namespace scene
 	public:
 
 		//! constructor
-		CSceneNodeAnimatorFlyCircle(u32 time, const core::vector3df& center, f32 radius, f32 speed);
+		CSceneNodeAnimatorFlyCircle(u32 time, const core::vector3df& center, f32 radius, f32 speed,
+										const core::vector3df& direction);
 
 		//! destructor
 		virtual ~CSceneNodeAnimatorFlyCircle();
@@ -36,6 +37,7 @@ namespace scene
 	private:
 
 		core::vector3df Center;
+		core::vector3df Direction;
 		f32 Radius;
 		f32 Speed;
 		u32 StartTime;

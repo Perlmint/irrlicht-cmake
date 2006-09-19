@@ -3,6 +3,47 @@
 
 #include "CMainMenu.h"
 
+
+class CSceneNodeAnimatorFollowBoundingBox : public irr::scene::ISceneNodeAnimator
+{
+public:
+
+	//! constructor
+	CSceneNodeAnimatorFollowBoundingBox( irr::scene::ISceneNode* tofollow, const core::vector3df &offset )
+	{
+		Offset = offset;
+		ToFollow = tofollow;
+		ToFollow->grab ();
+	}
+
+	//! destructor
+	virtual ~CSceneNodeAnimatorFollowBoundingBox()
+	{
+		ToFollow->drop ();
+	}
+
+	//! animates a scene node
+	virtual void animateNode(irr::scene::ISceneNode* node, u32 timeMs)
+	{
+		if ( 0 == node )
+			return;
+
+		core::vector3df now = node->getPosition();
+
+		now += ToFollow->getBoundingBox().getCenter();
+		now += Offset;
+		node->setPosition ( now );
+	}
+
+
+private:
+
+	core::vector3df Offset;
+	irr::scene::ISceneNode* ToFollow;
+};
+
+
+
 CMainMenu::CMainMenu()
 : startButton(0), device(0), start(false), fullscreen(true), selected(2),
 	music(false), shadows(false), additive(false), transparent(true), vsync(true)
@@ -52,7 +93,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	box->addItem(L"OpenGL 1.5");
 	box->addItem(L"Direct3D 8.1");
 	box->addItem(L"Direct3D 9.0c");
-	box->addItem(L"Apfelsoft Renderer 0.2");
+	box->addItem(L"Burning's Video 0.2");
 	box->addItem(L"Irrlicht Software Renderer 1.0");
 	box->setSelected(selected);
 
@@ -101,47 +142,85 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	// add md2 model
 
 	scene::IAnimatedMesh* mesh = smgr->getMesh("../../media/faerie.md2");
-	scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode(mesh);
-	if (node)
+	scene::IAnimatedMeshSceneNode* modelNode = smgr->addAnimatedMeshSceneNode(mesh);
+	if (modelNode)
 	{
-		node->setMaterialTexture(0, driver->getTexture("../../media/faerie2.bmp"));
-		node->setMaterialFlag(video::EMF_LIGHTING, true);
-		node->setMD2Animation ( scene::EMAT_STAND );
+		modelNode->setMaterialTexture(0, driver->getTexture("../../media/faerie2.bmp"));
+		modelNode->setMaterialFlag(video::EMF_LIGHTING, true);
+		modelNode->setMD2Animation ( scene::EMAT_STAND );
 	}
 
 	// set ambient light
-	driver->setAmbientLight ( video::SColorf ( 0x005F6613 ) );
+	driver->setAmbientLight ( video::SColorf ( 0x00bdcb26 ) );
+
+	scene::ISceneNodeAnimator* anim;
+	scene::ISceneNode* bill;
 
 	// add light 1 (nearly red)
 	scene::ILightSceneNode* light1 =
-		smgr->addLightSceneNode(0, core::vector3df(0,0,0),
-		video::SColorf(0.8f, 0.0f, 0.f, 0.0f), 200.0f);
+		smgr->addLightSceneNode(0, core::vector3df(0,1,0),
+		video::SColorf(0.9f, 10.0f, 0.f, 0.0f), 200.0f);
 
 	light1->getLightData().Type = video::ELT_DIRECTIONAL;
 
+
 	// add fly circle animator to light 1
-	scene::ISceneNodeAnimator* anim =
-		smgr->createFlyCircleAnimator (core::vector3df(0,18,0),14.0f, -0.003f);
+	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),30.0f, -0.004f, core::vector3df ( 0.41f, 0.4f, 0.0f ) );
 	light1->addAnimator(anim);
 	anim->drop();
 
-	// attach billboard to the light
-	scene::ISceneNode* bill =
-		smgr->addBillboardSceneNode(light1, core::dimension2d<f32>(10, 10));
+	// let the lights follow the model...
+	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,16,0) );
+	light1->addAnimator(anim);
+	anim->drop();
 
+
+	// attach billboard to the light
+	bill = smgr->addBillboardSceneNode(light1, core::dimension2d<f32>(10, 10));
 	bill->setMaterialFlag(video::EMF_LIGHTING, false);
 	bill->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	bill->setMaterialTexture(0, driver->getTexture("../../media/particlered.bmp"));
 
-	// add light 2 (nearly green)
+
+	// add light 3 (nearly red)
+	scene::ILightSceneNode* light3 =
+		smgr->addLightSceneNode(0, core::vector3df(0,1,0),
+		video::SColorf(0.9f, 10.0f, 0.f, 0.0f), 200.0f);
+
+	light3->getLightData().Type = video::ELT_DIRECTIONAL;
+
+
+	// add fly circle animator to light 1
+	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),30.0f, 0.004f, core::vector3df ( 0.41f, 0.4f, 0.0f ) );
+	light3->addAnimator(anim);
+	anim->drop();
+
+	// let the lights follow the model...
+	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,-8,0) );
+	light3->addAnimator(anim);
+	anim->drop();
+
+
+	// attach billboard to the light
+	bill = smgr->addBillboardSceneNode(light3, core::dimension2d<f32>(10, 10));
+	bill->setMaterialFlag(video::EMF_LIGHTING, false);
+	bill->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+	bill->setMaterialTexture(0, driver->getTexture("../../media/particlered.bmp"));
+
+	// add light 2 (nearly blue)
 	scene::ILightSceneNode* light2 =
-		smgr->addLightSceneNode(0, core::vector3df(0,0,0),
-		video::SColorf(0.f, 0.f, 0.8f, 0.0f), 200.0f);
+		smgr->addLightSceneNode(0, core::vector3df(0,-1,0),
+		video::SColorf(0.f, 0.0f, 0.9f, 0.0f), 40.0f);
 
 	light2->getLightData().Type = video::ELT_DIRECTIONAL;
 
 	// add fly circle animator to light 2
-	anim = smgr->createFlyCircleAnimator (core::vector3df(0,-10.f,0),10.0f, 0.003f);
+	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),30.0f, 0.004f, core::vector3df ( -0.41f, -0.4f, 0.0f ) );
+	light2->addAnimator(anim);
+	anim->drop();
+
+	// let the lights follow the model...
+	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,8,0) );
 	light2->addAnimator(anim);
 	anim->drop();
 

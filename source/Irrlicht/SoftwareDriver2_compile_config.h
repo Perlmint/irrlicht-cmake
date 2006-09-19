@@ -8,11 +8,11 @@
 #include "IrrCompileConfig.h"
 
 
-// Generic Render Flags for apfelsoft rasterizer
+// Generic Render Flags for burning's video rasterizer
 
-#define APFELSOFT_RENDERER_BEAUTIFUL
+#define BURNINGVIDEO_RENDERER_BEAUTIFUL
 
-#ifdef APFELSOFT_RENDERER_BEAUTIFUL
+#ifdef BURNINGVIDEO_RENDERER_BEAUTIFUL
 	#define SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 	#define SOFTWARE_DRIVER_2_SUBTEXEL
 	#define SOFTWARE_DRIVER_2_BILINEAR

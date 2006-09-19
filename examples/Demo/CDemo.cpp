@@ -4,6 +4,8 @@
 #include "CDemo.h"
 #include <stdio.h>
 
+
+
 CDemo::CDemo(bool f, bool m, bool s, bool a, bool v, video::E_DRIVER_TYPE d)
 : fullscreen(f), driverType(d), currentScene(-2),
  model1(0), model2(0), music(m), 
@@ -28,7 +30,7 @@ void CDemo::run()
 {
 	if ( driverType == video::EDT_SOFTWARE2 )
 	{
-		// any resultion possible for apfelsoft, but use a smaller one
+		// any resultion possible for burning video, but use a smaller one
 		device = createDevice(driverType,
 			core::dimension2d<s32>(640, 480), 32, fullscreen, shadows, vsync, this);;
 	}
@@ -499,19 +501,21 @@ void CDemo::createLoadingScreen()
 	inOutFader->setColor(backColor);
 
 	// irrlicht logo
-/*
-	gui::IGUIImage* img = device->getGUIEnvironment()->addImage(
-		core::rect<int>(10,10,98,41));
-	img->setImage(
-		device->getVideoDriver()->getTexture("../../media/irrlichtlogoaligned.jpg"));
-*/
-	device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogoalpha2.tga"),
-		core::position2d<s32>(5,5));
+	if ( driverType == video::EDT_SOFTWARE2 )
+	{
+		device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/burninglogo.png"),
+			core::position2d<s32>(5,5));
+	}
+	else
+	{
+		device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogoalpha2.tga"),
+			core::position2d<s32>(5,5));
+	}
 
 	// loading text
 
 	const int lwidth = 220;
-	const int lheight = 15;
+	const int lheight = 18;
 
 	core::rect<int> pos(10, size.Height-lheight-10, 10+lwidth, size.Height-10);
 	
@@ -522,7 +526,7 @@ void CDemo::createLoadingScreen()
 	// load bigger font
 
 	device->getGUIEnvironment()->getSkin()->setFont(
-		device->getGUIEnvironment()->getFont("../../media/fonthaettenschweiler.bmp"));
+		device->getGUIEnvironment()->getFont("../../media/fontlucida.png"));
 
 	// set new font color
 

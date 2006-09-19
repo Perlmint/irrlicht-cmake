@@ -567,7 +567,7 @@ inline tVideoSample fix_to_color ( const tFixPoint r, const tFixPoint g, const t
 /*!
 	return fixpoint from VideoSample
 */
-inline void color_to_fix ( tFixPoint &r, tFixPoint &g, tFixPoint &b, tVideoSample t00 )
+inline void color_to_fix ( tFixPoint &r, tFixPoint &g, tFixPoint &b, const tVideoSample t00 )
 {
 	r	 =	(t00 & MASK_R) >> ( SHIFT_R - FIX_POINT_PRE );
 	//g	 =	(t00 & MASK_G) >> ( SHIFT_G - FIX_POINT_PRE );

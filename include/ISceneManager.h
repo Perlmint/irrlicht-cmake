@@ -794,7 +794,7 @@ namespace scene
 		 If you no longer need the animator, you should call ISceneNodeAnimator::drop().
 		 See IUnknown::drop() for more information. */
 		virtual ISceneNodeAnimator* createFlyCircleAnimator(const core::vector3df& center,
-			f32 radius, f32 speed=0.001f) = 0;
+			f32 radius, f32 speed=0.001f, const core::vector3df& direction= core::vector3df ( 0.f, 1.f, 0.f ) ) = 0;
 
 		//! Creates a fly straight animator, which lets the attached scene node fly or move along a line between two points.
 		/** \param startPoint: Start point of the line.

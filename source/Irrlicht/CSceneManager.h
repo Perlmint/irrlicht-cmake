@@ -235,7 +235,8 @@ namespace scene
 		//! \param rotationSpeed: 
 		//! \return Returns the animator. Attach it to a scene node with ISceneNode::addAnimator()
 		//! and the animator will animate it.
-		virtual ISceneNodeAnimator* createFlyCircleAnimator(const core::vector3df& normal, f32 radius, f32 speed);
+		virtual ISceneNodeAnimator* createFlyCircleAnimator(const core::vector3df& normal, f32 radius, f32 speed,
+			const core::vector3df& direction);
 
 		//! Creates a fly straight animator, which lets the attached scene node
 		//! fly or move along a line between two points.
