@@ -8,7 +8,6 @@
 #include "S3DVertex.h"
 #include "os.h"
 #include "CShadowVolumeSceneNode.h"
-#include "SViewFrustrum.h"
 #include "ICameraSceneNode.h"
 #include "IAnimatedMeshMS3D.h"
 #include "IAnimatedMeshX.h"

@@ -8,7 +8,6 @@
 #include "IrrCompileConfig.h"
 #include "CNullDriver.h"
 #include "IMaterialRendererServices.h"
-#include "IMeshBuffer.h"
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
@@ -206,7 +205,6 @@ namespace video
 		void extGlProgramStringARB(GLenum target, GLenum format, GLsizei len, const GLvoid *string);
 		void extGlDeleteProgramsARB(GLsizei n, const GLuint *programs);
 		void extGlProgramLocalParameter4fvARB(GLenum, GLuint, const GLfloat *);
-
 		GLhandleARB extGlCreateShaderObjectARB(GLenum shaderType);
 		void extGlShaderSourceARB(GLhandleARB shader, int numOfStrings, const char **strings, int *lenOfStrings);
 		void extGlCompileShaderARB(GLhandleARB shader);
@@ -296,13 +294,8 @@ namespace video
 		//! returns a device dependent texture from a software surface (IImage)
 		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const char* name);
 
-		void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
-		{
-			s32 i = 0;
-			for (s32 r=0; r<4; ++r)
-				for (s32 c=0; c<4; ++c)
-					gl_matrix[i++] = m(c,r);
-		}
+		//! creates a transposed matrix in supplied GLfloat array to pass to OpenGL
+		void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
 
 		//! sets the needed renderstates
 		void setRenderStates3DMode();

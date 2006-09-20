@@ -7,7 +7,6 @@
 
 #include "SoftwareDriver2_compile_config.h"
 #include "ITriangleRenderer2.h"
-#include "IMeshBuffer.h"
 #include "CNullDriver.h"
 #include "CImage.h"
 #include "os.h"

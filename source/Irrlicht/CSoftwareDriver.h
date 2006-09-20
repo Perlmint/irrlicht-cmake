@@ -9,7 +9,6 @@
 #include "CNullDriver.h"
 #include "SViewFrustrum.h"
 #include "CImage.h"
-#include "IMeshBuffer.h"
 
 namespace irr
 {
@@ -118,7 +117,7 @@ namespace video
 		void clipTriangle(f32* transformedPos);
 
 		//! creates the clipping planes from the view matrix
-		void createPlanes(core::matrix4& mat);
+		void createPlanes(const core::matrix4& mat);
 
 		template<class VERTEXTYPE>
 		void drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices,

@@ -428,7 +428,7 @@ bool CXFileReader::parseDataObjectTransformationMatrix(core::matrix4 &mat)
 
 	for (s32 i=0; i<4; ++i)
 		for (s32 j=0; j<4; ++j)
-			mat(j,i)=readFloat();
+			mat(i,j)=readFloat();
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -714,7 +714,7 @@ bool CXFileReader::parseDataObjectSkinWeights(SXSkinWeight& weights)
 
 	for (i=0; i<4; ++i)
 		for (u32 j=0; j<4; ++j)
-			weights.MatrixOffset(j,i) = readFloat();
+			weights.MatrixOffset(i,j) = readFloat();
 
 	if (!checkForTwoFollowingSemicolons())
 	{
@@ -1233,8 +1233,8 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 						return false;
 					}
 				}
-				for (s32 n=0; n<4; ++n)
-					for (s32 m=0; m<4; ++m)
+				for (s32 m=0; m<4; ++m)
+					for (s32 n=0; n<4; ++n)
 						animkey.getMatrix(i)(m,n) = readFloat();
 
 				if (!checkForTwoFollowingSemicolons())

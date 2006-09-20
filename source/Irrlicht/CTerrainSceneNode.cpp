@@ -12,6 +12,7 @@
 #include "ISceneManager.h"
 #include "ICameraSceneNode.h"
 #include "SMeshBufferLightMap.h"
+#include "SViewFrustrum.h"
 #include "irrMath.h"
 #include <stdio.h>
 #include "os.h"

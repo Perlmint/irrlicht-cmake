@@ -6,7 +6,6 @@
 #define __C_VIDEO_DIRECTX_8_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
-#include "IMeshBuffer.h"
 
 #if defined(_IRR_WINDOWS_) || defined(_XBOX)
 

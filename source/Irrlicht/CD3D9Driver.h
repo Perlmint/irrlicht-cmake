@@ -6,7 +6,6 @@
 #define __C_VIDEO_DIRECTX_9_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
-#include "IMeshBuffer.h"
 
 #ifdef _IRR_WINDOWS_
 #define WIN32_LEAN_AND_MEAN

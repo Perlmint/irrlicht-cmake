@@ -6,7 +6,6 @@
 #include "CSoftwareTexture.h"
 #include "os.h"
 #include "S3DVertex.h"
-#include "SViewFrustrum.h"
 
 namespace irr
 {
@@ -372,8 +371,7 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 	worldinv.makeInverse();
 
 	// calculate view frustrum planes
-	core::matrix4 mat = TransformationMatrix[ETS_PROJECTION] * TransformationMatrix[ETS_VIEW];
-	scene::SViewFrustrum frustrum(mat);
+	scene::SViewFrustrum frustrum(TransformationMatrix[ETS_PROJECTION] * TransformationMatrix[ETS_VIEW]);
 
 	// copy and transform clipping planes ignoring far plane
 	core::plane3df planes[5]; // ordered by near, left, right, bottom, top
@@ -626,7 +624,7 @@ void CSoftwareDriver::clipTriangle(f32* transformedPos)
 
 
 //! creates the clipping planes from the matrix
-void CSoftwareDriver::createPlanes(core::matrix4& mat)
+void CSoftwareDriver::createPlanes(const core::matrix4& mat)
 {
 	Frustrum = scene::SViewFrustrum(mat);
 }

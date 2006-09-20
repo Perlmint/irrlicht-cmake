@@ -551,13 +551,6 @@ void	CIrrDeviceMacOSX::initKeycodes()
 	_keycodes[0x1B] = irr::KEY_ESCAPE;
 }
 
-#define IRRLICHT_API
-
-#if defined(_STDCALL_SUPPORTED)
-#define IRRCALLCONV __stdcall  // Declare the calling convention.
-#else
-#define IRRCALLCONV
-#endif // STDCALL_SUPPORTED
 
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationParameters& param)
 {

@@ -1394,6 +1394,17 @@ bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 
 
 
+//! creates a transposed matrix in supplied GLfloat array to pass to OpenGL
+inline void COpenGLDriver::createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
+{
+	s32 i = 0;
+	for (s32 r=0; r<4; ++r)
+		for (s32 c=0; c<4; ++c)
+			gl_matrix[i++] = m(r,c);
+}
+
+
+
 //! returns a device dependent texture from a software surface (IImage)
 video::ITexture* COpenGLDriver::createDeviceDependentTexture(IImage* surface, const char* name)
 {

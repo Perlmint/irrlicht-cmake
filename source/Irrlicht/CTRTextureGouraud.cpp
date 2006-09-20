@@ -4,7 +4,6 @@
 
 #include "CTRTextureGouraud.h"
 #include "os.h"
-#include "SColor.h"
 
 namespace irr
 {

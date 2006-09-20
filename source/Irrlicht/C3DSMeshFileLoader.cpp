@@ -808,24 +808,18 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 			{
 				f32 mat[4][3];
 				file->read(&mat, 12*sizeof(f32));
-				for (int i=0; i<3; ++i)
+				TransformationMatrix.makeIdentity();
+				for (int i=0; i<4; ++i)
 				{
 					for (int j=0; j<3; ++j)
+					{
 #ifdef __BIG_ENDIAN__
 						TransformationMatrix(i,j)=os::Byteswap::byteswap(mat[i][j]);
 #else
 						TransformationMatrix(i,j)=mat[i][j];
 #endif
+					}
 				}
-				for (int j=0; j<3; ++j)
-				{
-#ifdef __BIG_ENDIAN__
-					TransformationMatrix(j,3)=os::Byteswap::byteswap(mat[3][j]);
-#else
-					TransformationMatrix(j,3)=mat[3][j];
-#endif
-				}
-				TransformationMatrix=TransformationMatrix.getTransposed();
 				data.read += 12*sizeof(f32);
 			}
 			break;

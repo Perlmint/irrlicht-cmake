@@ -15,9 +15,9 @@ namespace video
 	inline u16 RGBA16(u32 r, u32 g, u32 b, u32 a)
 	{
 		return ((a & 0x80) << 8 |
-			( r & 0xF8) << 7 |
-			( g & 0xF8) << 2 |
-			( b & 0xF8) >> 3);
+			(r & 0xF8) << 7 |
+			(g & 0xF8) << 2 |
+			(b & 0xF8) >> 3);
 	}
 
 
@@ -51,21 +51,12 @@ namespace video
 	//! Returns A8R8G8B8 Color from A1R5G5B5 color
 	inline u32 A1R5G5B5toA8R8G8B8(u32 color)
 	{
+		// alpha value is first set to -65535 or 0, then shifted right
+		// to introduce sign bits and and'ed with the desired 8bit value.
 		return	( ( -( (s32) color & 0x00008000 ) >> (s32) 31 ) & 0xFF000000 |
 				( color & 0x00007C00 ) << 9 |
 				( color & 0x000003E0 ) << 6 |
 				( color & 0x0000001F ) << 3);
-/*
-		if (color & 0x8000) // with alpha=1
-			return (0xFF000000 |
-				( color & 0x00007C00 ) << 9 |
-				( color & 0x000003E0 ) << 6 |
-				( color & 0x0000001F ) << 3);
-		else
-			return (( color & 0x00007C00 ) << 9 |
-				( color & 0x000003E0 ) << 6 |
-				( color & 0x0000001F ) << 3);
-*/
 	}
 
 

@@ -30,10 +30,10 @@ namespace core
 			matrix4();
 
 			//! Simple operator for directly accessing every element of the matrix.
-			f32& operator()(s32 row, s32 col) { return M[col * 4 + row]; }
+			f32& operator()(s32 row, s32 col) { return M[row * 4 + col]; }
 
 			//! Simple operator for directly accessing every element of the matrix.
-			const f32& operator()(s32 row, s32 col) const { return M[col * 4 + row]; }
+			const f32& operator()(s32 row, s32 col) const { return M[row * 4 + col]; }
 
 			//! Sets this matrix equal to the other matrix.
 			inline matrix4& operator=(const matrix4 &other);
@@ -166,11 +166,11 @@ namespace core
 			//! If this is 1, it is a point light, if it is 0, it is a directional light.
 			void buildShadowMatrix(const core::vector3df& light, core::plane3df plane, f32 point=1.0f);
 
-			//! Builds a matrix which transforms a normalized Device Corrdinate to Device Coordinates.
+			//! Builds a matrix which transforms a normalized Device Coordinate to Device Coordinates.
 			/** Used to scale <-1,-1><1,1> to viewport, for example from von <-1,-1> <1,1> to the viewport <0,0><0,640> */
 			void buildNDCToDCMatrix( const core::rect<s32>& area, f32 zScale);
 
-			//! creates a new matrix as interpolated matrix from to other ones.
+			//! creates a new matrix as interpolated matrix from two other ones.
 			//! \param b: other matrix to interpolate with
 			//! \param time: Must be a value between 0 and 1.
 			matrix4 interpolate(const core::matrix4& b, f32 time) const;
@@ -178,7 +178,7 @@ namespace core
 			//! returns transposed matrix
 			matrix4 getTransposed() const;
 
-			//! Matrix data, stored in column-major order
+			//! Matrix data, stored in row-major order
 			f32 M[16];
 	};
 
@@ -327,7 +327,7 @@ namespace core
 	{
 		const matrix4 &mat = *this;
 
-		f64 Y = -asin(mat(2,0));
+		f64 Y = -asin(mat(0,2));
 		f64 C = cos(Y);
 		Y *= GRAD_PI;
 
@@ -336,17 +336,17 @@ namespace core
 		if (fabs(C)>0.0005f)
 		{
 			rotx = mat(2,2) / C;
-			roty = mat(2,1) / C;
+			roty = mat(1,2) / C;
 			X = atan2( roty, rotx ) * GRAD_PI;
 			rotx = mat(0,0) / C;
-			roty = mat(1,0) / C;
+			roty = mat(0,1) / C;
 			Z = atan2( roty, rotx ) * GRAD_PI;
 		}
 		else
 		{
 			X = 0.0f;
 			rotx = mat(1,1);
-			roty = -mat(0,1);
+			roty = -mat(1,0);
 			Z = atan2( roty, rotx ) * GRAD_PI;
 		}
 
@@ -540,31 +540,34 @@ namespace core
 
 		const matrix4 &m = *this;
 
-		f32 d = (m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1)) * (m(2, 2) * m(3, 3) - m(3, 2) * m(2, 3))	- (m(0, 0) * m(2, 1) - m(2, 0) * m(0, 1)) * (m(1, 2) * m(3, 3) - m(3, 2) * m(1, 3))
-				+ (m(0, 0) * m(3, 1) - m(3, 0) * m(0, 1)) * (m(1, 2) * m(2, 3) - m(2, 2) * m(1, 3))	+ (m(1, 0) * m(2, 1) - m(2, 0) * m(1, 1)) * (m(0, 2) * m(3, 3) - m(3, 2) * m(0, 3))
-				- (m(1, 0) * m(3, 1) - m(3, 0) * m(1, 1)) * (m(0, 2) * m(2, 3) - m(2, 2) * m(0, 3))	+ (m(2, 0) * m(3, 1) - m(3, 0) * m(2, 1)) * (m(0, 2) * m(1, 3) - m(1, 2) * m(0, 3));
+		f32 d = (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) * (m(2, 2) * m(3, 3) - m(2, 3) * m(3, 2)) -
+			(m(0, 0) * m(1, 2) - m(0, 2) * m(1, 0)) * (m(2, 1) * m(3, 3) - m(2, 3) * m(3, 1)) +
+			(m(0, 0) * m(1, 3) - m(0, 3) * m(1, 0)) * (m(2, 1) * m(3, 2) - m(2, 2) * m(3, 1)) +
+			(m(0, 1) * m(1, 2) - m(0, 2) * m(1, 1)) * (m(2, 0) * m(3, 3) - m(2, 3) * m(3, 0)) -
+			(m(0, 1) * m(1, 3) - m(0, 3) * m(1, 1)) * (m(2, 0) * m(3, 2) - m(2, 2) * m(3, 0)) +
+			(m(0, 2) * m(1, 3) - m(0, 3) * m(1, 2)) * (m(2, 0) * m(3, 1) - m(2, 1) * m(3, 0));
 
 		if (d == 0.f)
 			return false;
 
 		d = 1.f / d;
 
-		out(0, 0) = d * (m(1, 1) * (m(2, 2) * m(3, 3) - m(3, 2) * m(2, 3)) + m(2, 1) * (m(3, 2) * m(1, 3) - m(1, 2) * m(3, 3)) + m(3, 1) * (m(1, 2) * m(2, 3) - m(2, 2) * m(1, 3)));
-		out(1, 0) = d * (m(1, 2) * (m(2, 0) * m(3, 3) - m(3, 0) * m(2, 3)) + m(2, 2) * (m(3, 0) * m(1, 3) - m(1, 0) * m(3, 3)) + m(3, 2) * (m(1, 0) * m(2, 3) - m(2, 0) * m(1, 3)));
-		out(2, 0) = d * (m(1, 3) * (m(2, 0) * m(3, 1) - m(3, 0) * m(2, 1)) + m(2, 3) * (m(3, 0) * m(1, 1) - m(1, 0) * m(3, 1)) + m(3, 3) * (m(1, 0) * m(2, 1) - m(2, 0) * m(1, 1)));
-		out(3, 0) = d * (m(1, 0) * (m(3, 1) * m(2, 2) - m(2, 1) * m(3, 2)) + m(2, 0) * (m(1, 1) * m(3, 2) - m(3, 1) * m(1, 2)) + m(3, 0) * (m(2, 1) * m(1, 2) - m(1, 1) * m(2, 2)));
-		out(0, 1) = d * (m(2, 1) * (m(0, 2) * m(3, 3) - m(3, 2) * m(0, 3)) + m(3, 1) * (m(2, 2) * m(0, 3) - m(0, 2) * m(2, 3)) + m(0, 1) * (m(3, 2) * m(2, 3) - m(2, 2) * m(3, 3)));
-		out(1, 1) = d * (m(2, 2) * (m(0, 0) * m(3, 3) - m(3, 0) * m(0, 3)) + m(3, 2) * (m(2, 0) * m(0, 3) - m(0, 0) * m(2, 3)) + m(0, 2) * (m(3, 0) * m(2, 3) - m(2, 0) * m(3, 3)));
-		out(2, 1) = d * (m(2, 3) * (m(0, 0) * m(3, 1) - m(3, 0) * m(0, 1)) + m(3, 3) * (m(2, 0) * m(0, 1) - m(0, 0) * m(2, 1)) + m(0, 3) * (m(3, 0) * m(2, 1) - m(2, 0) * m(3, 1)));
-		out(3, 1) = d * (m(2, 0) * (m(3, 1) * m(0, 2) - m(0, 1) * m(3, 2)) + m(3, 0) * (m(0, 1) * m(2, 2) - m(2, 1) * m(0, 2)) + m(0, 0) * (m(2, 1) * m(3, 2) - m(3, 1) * m(2, 2)));
-		out(0, 2) = d * (m(3, 1) * (m(0, 2) * m(1, 3) - m(1, 2) * m(0, 3)) + m(0, 1) * (m(1, 2) * m(3, 3) - m(3, 2) * m(1, 3)) + m(1, 1) * (m(3, 2) * m(0, 3) - m(0, 2) * m(3, 3)));
-		out(1, 2) = d * (m(3, 2) * (m(0, 0) * m(1, 3) - m(1, 0) * m(0, 3)) + m(0, 2) * (m(1, 0) * m(3, 3) - m(3, 0) * m(1, 3)) + m(1, 2) * (m(3, 0) * m(0, 3) - m(0, 0) * m(3, 3)));
-		out(2, 2) = d * (m(3, 3) * (m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1)) + m(0, 3) * (m(1, 0) * m(3, 1) - m(3, 0) * m(1, 1)) + m(1, 3) * (m(3, 0) * m(0, 1) - m(0, 0) * m(3, 1)));
-		out(3, 2) = d * (m(3, 0) * (m(1, 1) * m(0, 2) - m(0, 1) * m(1, 2)) + m(0, 0) * (m(3, 1) * m(1, 2) - m(1, 1) * m(3, 2)) + m(1, 0) * (m(0, 1) * m(3, 2) - m(3, 1) * m(0, 2)));
-		out(0, 3) = d * (m(0, 1) * (m(2, 2) * m(1, 3) - m(1, 2) * m(2, 3)) + m(1, 1) * (m(0, 2) * m(2, 3) - m(2, 2) * m(0, 3)) + m(2, 1) * (m(1, 2) * m(0, 3) - m(0, 2) * m(1, 3)));
-		out(1, 3) = d * (m(0, 2) * (m(2, 0) * m(1, 3) - m(1, 0) * m(2, 3)) + m(1, 2) * (m(0, 0) * m(2, 3) - m(2, 0) * m(0, 3)) + m(2, 2) * (m(1, 0) * m(0, 3) - m(0, 0) * m(1, 3)));
-		out(2, 3) = d * (m(0, 3) * (m(2, 0) * m(1, 1) - m(1, 0) * m(2, 1)) + m(1, 3) * (m(0, 0) * m(2, 1) - m(2, 0) * m(0, 1)) + m(2, 3) * (m(1, 0) * m(0, 1) - m(0, 0) * m(1, 1)));
-		out(3, 3) = d * (m(0, 0) * (m(1, 1) * m(2, 2) - m(2, 1) * m(1, 2)) + m(1, 0) * (m(2, 1) * m(0, 2) - m(0, 1) * m(2, 2)) + m(2, 0) * (m(0, 1) * m(1, 2) - m(1, 1) * m(0, 2)));
+		out(0, 0) = d * (m(1, 1) * (m(2, 2) * m(3, 3) - m(2, 3) * m(3, 2)) + m(1, 2) * (m(2, 3) * m(3, 1) - m(2, 1) * m(3, 3)) + m(1, 3) * (m(2, 1) * m(3, 2) - m(2, 2) * m(3, 1)));
+		out(0, 1) = d * (m(2, 1) * (m(0, 2) * m(3, 3) - m(0, 3) * m(3, 2)) + m(2, 2) * (m(0, 3) * m(3, 1) - m(0, 1) * m(3, 3)) + m(2, 3) * (m(0, 1) * m(3, 2) - m(0, 2) * m(3, 1)));
+		out(0, 2) = d * (m(3, 1) * (m(0, 2) * m(1, 3) - m(0, 3) * m(1, 2)) + m(3, 2) * (m(0, 3) * m(1, 1) - m(0, 1) * m(1, 3)) + m(3, 3) * (m(0, 1) * m(1, 2) - m(0, 2) * m(1, 1)));
+		out(0, 3) = d * (m(0, 1) * (m(1, 3) * m(2, 2) - m(1, 2) * m(2, 3)) + m(0, 2) * (m(1, 1) * m(2, 3) - m(1, 3) * m(2, 1)) + m(0, 3) * (m(1, 2) * m(2, 1) - m(1, 1) * m(2, 2)));
+		out(1, 0) = d * (m(1, 2) * (m(2, 0) * m(3, 3) - m(2, 3) * m(3, 0)) + m(1, 3) * (m(2, 2) * m(3, 0) - m(2, 0) * m(3, 2)) + m(1, 0) * (m(2, 3) * m(3, 2) - m(2, 2) * m(3, 3)));
+		out(1, 1) = d * (m(2, 2) * (m(0, 0) * m(3, 3) - m(0, 3) * m(3, 0)) + m(2, 3) * (m(0, 2) * m(3, 0) - m(0, 0) * m(3, 2)) + m(2, 0) * (m(0, 3) * m(3, 2) - m(0, 2) * m(3, 3)));
+		out(1, 2) = d * (m(3, 2) * (m(0, 0) * m(1, 3) - m(0, 3) * m(1, 0)) + m(3, 3) * (m(0, 2) * m(1, 0) - m(0, 0) * m(1, 2)) + m(3, 0) * (m(0, 3) * m(1, 2) - m(0, 2) * m(1, 3)));
+		out(1, 3) = d * (m(0, 2) * (m(1, 3) * m(2, 0) - m(1, 0) * m(2, 3)) + m(0, 3) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) + m(0, 0) * (m(1, 2) * m(2, 3) - m(1, 3) * m(2, 2)));
+		out(2, 0) = d * (m(1, 3) * (m(2, 0) * m(3, 1) - m(2, 1) * m(3, 0)) + m(1, 0) * (m(2, 1) * m(3, 3) - m(2, 3) * m(3, 1)) + m(1, 1) * (m(2, 3) * m(3, 0) - m(2, 0) * m(3, 3)));
+		out(2, 1) = d * (m(2, 3) * (m(0, 0) * m(3, 1) - m(0, 1) * m(3, 0)) + m(2, 0) * (m(0, 1) * m(3, 3) - m(0, 3) * m(3, 1)) + m(2, 1) * (m(0, 3) * m(3, 0) - m(0, 0) * m(3, 3)));
+		out(2, 2) = d * (m(3, 3) * (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) + m(3, 0) * (m(0, 1) * m(1, 3) - m(0, 3) * m(1, 1)) + m(3, 1) * (m(0, 3) * m(1, 0) - m(0, 0) * m(1, 3)));
+		out(2, 3) = d * (m(0, 3) * (m(1, 1) * m(2, 0) - m(1, 0) * m(2, 1)) + m(0, 0) * (m(1, 3) * m(2, 1) - m(1, 1) * m(2, 3)) + m(0, 1) * (m(1, 0) * m(2, 3) - m(1, 3) * m(2, 0)));
+		out(3, 0) = d * (m(1, 0) * (m(2, 2) * m(3, 1) - m(2, 1) * m(3, 2)) + m(1, 1) * (m(2, 0) * m(3, 2) - m(2, 2) * m(3, 0)) + m(1, 2) * (m(2, 1) * m(3, 0) - m(2, 0) * m(3, 1)));
+		out(3, 1) = d * (m(2, 0) * (m(0, 2) * m(3, 1) - m(0, 1) * m(3, 2)) + m(2, 1) * (m(0, 0) * m(3, 2) - m(0, 2) * m(3, 0)) + m(2, 2) * (m(0, 1) * m(3, 0) - m(0, 0) * m(3, 1)));
+		out(3, 2) = d * (m(3, 0) * (m(0, 2) * m(1, 1) - m(0, 1) * m(1, 2)) + m(3, 1) * (m(0, 0) * m(1, 2) - m(0, 2) * m(1, 0)) + m(3, 2) * (m(0, 1) * m(1, 0) - m(0, 0) * m(1, 1)));
+		out(3, 3) = d * (m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) + m(0, 1) * (m(1, 2) * m(2, 0) - m(1, 0) * m(2, 2)) + m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0)));
 
 		return true;
 	}
@@ -617,27 +620,27 @@ namespace core
 		f32 h = (f32)(1.0/tan(fieldOfViewRadians/2.0));
 		f32 w = h / aspectRatio;
 
-		(*this)(0,0) = w;
-		(*this)(1,0) = 0.0f;
-		(*this)(2,0) = 0.0f;
-		(*this)(3,0) = 0.0f;
+		M[0] = w;
+		M[1] = 0.0f;
+		M[2] = 0.0f;
+		M[3] = 0.0f;
 
-		(*this)(0,1) = 0.0f;
-		(*this)(1,1) = h;
-		(*this)(2,1) = 0.0f;
-		(*this)(3,1) = 0.0f;
+		M[4] = 0.0f;
+		M[5] = h;
+		M[6] = 0.0f;
+		M[7] = 0.0f;
 
-		(*this)(0,2) = 0.0f;
-		(*this)(1,2) = 0.0f;
-		(*this)(2,2) = zFar/(zNear-zFar); // DirectX version
-//		(*this)(2,2) = zFar+zNear/(zNear-zFar); // OpenGL version
-		(*this)(3,2) = -1.0f;
+		M[8] = 0.0f;
+		M[9] = 0.0f;
+		M[10] = zFar/(zNear-zFar); // DirectX version
+//		M[10] = zFar+zNear/(zNear-zFar); // OpenGL version
+		M[11] = -1.0f;
 
-		(*this)(0,3) = 0.0f;
-		(*this)(1,3) = 0.0f;
-		(*this)(2,3) = zNear*zFar/(zNear-zFar); // DirectX version
-//		(*this)(2,3) = 2.0f*zNear*zFar/(zNear-zFar); // OpenGL version
-		(*this)(3,3) = 0.0f;
+		M[12] = 0.0f;
+		M[13] = 0.0f;
+		M[14] = zNear*zFar/(zNear-zFar); // DirectX version
+//		M[14] = 2.0f*zNear*zFar/(zNear-zFar); // OpenGL version
+		M[15] = 0.0f;
 	}
 
 
@@ -648,25 +651,25 @@ namespace core
 		f32 h = (f32)(1.0/tan(fieldOfViewRadians/2.0));
 		f32 w = h / aspectRatio;
 
-		(*this)(0,0) = w;
-		(*this)(1,0) = 0.0f;
-		(*this)(2,0) = 0.0f;
-		(*this)(3,0) = 0.0f;
+		M[0] = w;
+		M[1] = 0.0f;
+		M[2] = 0.0f;
+		M[3] = 0.0f;
 
-		(*this)(0,1) = 0.0f;
-		(*this)(1,1) = h;
-		(*this)(2,1) = 0.0f;
-		(*this)(3,1) = 0.0f;
+		M[4] = 0.0f;
+		M[5] = h;
+		M[6] = 0.0f;
+		M[7] = 0.0f;
 
-		(*this)(0,2) = 0.0f;
-		(*this)(1,2) = 0.0f;
-		(*this)(2,2) = zFar/(zFar-zNear);
-		(*this)(3,2) = 1.0f;
+		M[8] = 0.0f;
+		M[9] = 0.0f;
+		M[10] = zFar/(zFar-zNear);
+		M[11] = 1.0f;
 
-		(*this)(0,3) = 0.0f;
-		(*this)(1,3) = 0.0f;
-		(*this)(2,3) = -zNear*zFar/(zFar-zNear);
-		(*this)(3,3) = 0.0f;
+		M[12] = 0.0f;
+		M[13] = 0.0f;
+		M[14] = -zNear*zFar/(zFar-zNear);
+		M[15] = 0.0f;
 	}
 
 
@@ -674,25 +677,25 @@ namespace core
 	//! Builds a left-handed orthogonal projection matrix.
 	inline void matrix4::buildProjectionMatrixOrthoLH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
-		(*this)(0,0) = 2/widthOfViewVolume;
-		(*this)(1,0) = 0;
-		(*this)(2,0) = 0;
-		(*this)(3,0) = 0;
+		M[0] = 2/widthOfViewVolume;
+		M[1] = 0;
+		M[2] = 0;
+		M[3] = 0;
 
-		(*this)(0,1) = 0;
-		(*this)(1,1) = 2/heightOfViewVolume;
-		(*this)(2,1) = 0;
-		(*this)(3,1) = 0;
+		M[4] = 0;
+		M[5] = 2/heightOfViewVolume;
+		M[6] = 0;
+		M[7] = 0;
 
-		(*this)(0,2) = 0;
-		(*this)(1,2) = 0;
-		(*this)(2,2) = 1/(zFar-zNear);
-		(*this)(3,2) = 0;
+		M[8] = 0;
+		M[9] = 0;
+		M[10] = 1/(zFar-zNear);
+		M[11] = 0;
 
-		(*this)(0,3) = 0;
-		(*this)(1,3) = 0;
-		(*this)(2,3) = zNear/(zNear-zFar);
-		(*this)(3,3) = 1;
+		M[12] = 0;
+		M[13] = 0;
+		M[14] = zNear/(zNear-zFar);
+		M[15] = 1;
 	}
 
 
@@ -700,75 +703,75 @@ namespace core
 	//! Builds a right-handed orthogonal projection matrix.
 	inline void matrix4::buildProjectionMatrixOrthoRH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
-		(*this)(0,0) = 2/widthOfViewVolume;
-		(*this)(1,0) = 0;
-		(*this)(2,0) = 0;
-		(*this)(3,0) = 0;
+		M[0] = 2/widthOfViewVolume;
+		M[1] = 0;
+		M[2] = 0;
+		M[3] = 0;
 
-		(*this)(0,1) = 0;
-		(*this)(1,1) = 2/heightOfViewVolume;
-		(*this)(2,1) = 0;
-		(*this)(3,1) = 0;
+		M[4] = 0;
+		M[5] = 2/heightOfViewVolume;
+		M[6] = 0;
+		M[7] = 0;
 
-		(*this)(0,2) = 0;
-		(*this)(1,2) = 0;
-		(*this)(2,2) = 1/(zNear-zFar);
-		(*this)(3,2) = 0;
+		M[8] = 0;
+		M[9] = 0;
+		M[10] = 1/(zNear-zFar);
+		M[11] = 0;
 
-		(*this)(0,3) = 0;
-		(*this)(1,3) = 0;
-		(*this)(2,3) = zNear/(zNear-zFar);
-		(*this)(3,3) = -1;
+		M[12] = 0;
+		M[13] = 0;
+		M[14] = zNear/(zNear-zFar);
+		M[15] = -1;
 	}
 
 
 	//! Builds a right-handed perspective projection matrix.
 	inline void matrix4::buildProjectionMatrixPerspectiveRH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
-		(*this)(0,0) = 2*zNear/widthOfViewVolume;
-		(*this)(1,0) = 0;
-		(*this)(2,0) = 0;
-		(*this)(3,0) = 0;
+		M[0] = 2*zNear/widthOfViewVolume;
+		M[1] = 0;
+		M[2] = 0;
+		M[3] = 0;
 
-		(*this)(0,1) = 0;
-		(*this)(1,1) = 2*zNear/heightOfViewVolume;
-		(*this)(2,1) = 0;
-		(*this)(3,1) = 0;
+		M[4] = 0;
+		M[5] = 2*zNear/heightOfViewVolume;
+		M[6] = 0;
+		M[7] = 0;
 
-		(*this)(0,2) = 0;
-		(*this)(1,2) = 0;
-		(*this)(2,2) = zFar/(zNear-zFar);
-		(*this)(3,2) = -1;
+		M[8] = 0;
+		M[9] = 0;
+		M[10] = zFar/(zNear-zFar);
+		M[11] = -1;
 
-		(*this)(0,3) = 0;
-		(*this)(1,3) = 0;
-		(*this)(2,3) = zNear*zFar/(zNear-zFar);
-		(*this)(3,3) = 0;
+		M[12] = 0;
+		M[13] = 0;
+		M[14] = zNear*zFar/(zNear-zFar);
+		M[15] = 0;
 	}
 
 
 	//! Builds a left-handed perspective projection matrix.
 	inline void matrix4::buildProjectionMatrixPerspectiveLH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
-		(*this)(0,0) = 2*zNear/widthOfViewVolume;
-		(*this)(1,0) = 0;
-		(*this)(2,0) = 0;
-		(*this)(3,0) = 0;
+		M[0] = 2*zNear/widthOfViewVolume;
+		M[1] = 0;
+		M[2] = 0;
+		M[3] = 0;
 
-		(*this)(0,1) = 0;
-		(*this)(1,1) = 2*zNear/heightOfViewVolume;
-		(*this)(2,1) = 0;
-		(*this)(3,1) = 0;
+		M[4] = 0;
+		M[5] = 2*zNear/heightOfViewVolume;
+		M[6] = 0;
+		M[7] = 0;
 
-		(*this)(0,2) = 0;
-		(*this)(1,2) = 0;
-		(*this)(2,2) = zFar/(zFar-zNear);
-		(*this)(3,2) = 1;
+		M[8] = 0;
+		M[9] = 0;
+		M[10] = zFar/(zFar-zNear);
+		M[11] = 1;
 
-		(*this)(0,3) = 0;
-		(*this)(1,3) = 0;
-		(*this)(2,3) = zNear*zFar/(zNear-zFar);
-		(*this)(3,3) = 0;
+		M[12] = 0;
+		M[13] = 0;
+		M[14] = zNear*zFar/(zNear-zFar);
+		M[15] = 0;
 	}
 
 
@@ -778,25 +781,25 @@ namespace core
 		plane.Normal.normalize();
 		f32 d = plane.Normal.dotProduct(light);
 
-		(*this)(0,0) = plane.Normal.X * light.X + d;
-		(*this)(1,0) = plane.Normal.X * light.Y;
-		(*this)(2,0) = plane.Normal.X * light.Z;
-		(*this)(3,0) = plane.Normal.X * point;
+		M[0] = plane.Normal.X * light.X + d;
+		M[1] = plane.Normal.X * light.Y;
+		M[2] = plane.Normal.X * light.Z;
+		M[3] = plane.Normal.X * point;
 
-		(*this)(0,1) = plane.Normal.Y * light.X;
-		(*this)(1,1) = plane.Normal.Y * light.Y + d;
-		(*this)(2,1) = plane.Normal.Y * light.Z;
-		(*this)(3,1) = plane.Normal.Y * point;
+		M[4] = plane.Normal.Y * light.X;
+		M[5] = plane.Normal.Y * light.Y + d;
+		M[6] = plane.Normal.Y * light.Z;
+		M[7] = plane.Normal.Y * point;
 
-		(*this)(0,2) = plane.Normal.Z * light.X;
-		(*this)(1,2) = plane.Normal.Z * light.Y;
-		(*this)(2,2) = plane.Normal.Z * light.Z + d;
-		(*this)(3,2) = plane.Normal.Z * point;
+		M[8] = plane.Normal.Z * light.X;
+		M[9] = plane.Normal.Z * light.Y;
+		M[10] = plane.Normal.Z * light.Z + d;
+		M[11] = plane.Normal.Z * point;
 
-		(*this)(0,3) = plane.D * light.X + d;
-		(*this)(1,3) = plane.D * light.Y;
-		(*this)(2,3) = plane.D * light.Z;
-		(*this)(3,3) = plane.D * point;
+		M[12] = plane.D * light.X + d;
+		M[13] = plane.D * light.Y;
+		M[14] = plane.D * light.Z;
+		M[15] = plane.D * point;
 	}
 
 	//! Builds a left-handed look-at matrix.
@@ -813,25 +816,25 @@ namespace core
 
 		vector3df yaxis = zaxis.crossProduct(xaxis);
 
-		(*this)(0,0) = xaxis.X;
-		(*this)(1,0) = yaxis.X;
-		(*this)(2,0) = zaxis.X;
-		(*this)(3,0) = 0;
+		M[0] = xaxis.X;
+		M[1] = yaxis.X;
+		M[2] = zaxis.X;
+		M[3] = 0;
 
-		(*this)(0,1) = xaxis.Y;
-		(*this)(1,1) = yaxis.Y;
-		(*this)(2,1) = zaxis.Y;
-		(*this)(3,1) = 0;
+		M[4] = xaxis.Y;
+		M[5] = yaxis.Y;
+		M[6] = zaxis.Y;
+		M[7] = 0;
 
-		(*this)(0,2) = xaxis.Z;
-		(*this)(1,2) = yaxis.Z;
-		(*this)(2,2) = zaxis.Z;
-		(*this)(3,2) = 0;
+		M[8] = xaxis.Z;
+		M[9] = yaxis.Z;
+		M[10] = zaxis.Z;
+		M[11] = 0;
 
-		(*this)(0,3) = -xaxis.dotProduct(position);
-		(*this)(1,3) = -yaxis.dotProduct(position);
-		(*this)(2,3) = -zaxis.dotProduct(position);
-		(*this)(3,3) = 1.0f;
+		M[12] = -xaxis.dotProduct(position);
+		M[13] = -yaxis.dotProduct(position);
+		M[14] = -zaxis.dotProduct(position);
+		M[15] = 1.0f;
 	}
 
 
@@ -850,25 +853,25 @@ namespace core
 
 		vector3df yaxis = zaxis.crossProduct(xaxis);
 
-		(*this)(0,0) = xaxis.X;
-		(*this)(1,0) = yaxis.X;
-		(*this)(2,0) = zaxis.X;
-		(*this)(3,0) = 0;
+		M[0] = xaxis.X;
+		M[1] = yaxis.X;
+		M[2] = zaxis.X;
+		M[3] = 0;
 
-		(*this)(0,1) = xaxis.Y;
-		(*this)(1,1) = yaxis.Y;
-		(*this)(2,1) = zaxis.Y;
-		(*this)(3,1) = 0;
+		M[4] = xaxis.Y;
+		M[5] = yaxis.Y;
+		M[6] = zaxis.Y;
+		M[7] = 0;
 
-		(*this)(0,2) = xaxis.Z;
-		(*this)(1,2) = yaxis.Z;
-		(*this)(2,2) = zaxis.Z;
-		(*this)(3,2) = 0;
+		M[8] = xaxis.Z;
+		M[9] = yaxis.Z;
+		M[10] = zaxis.Z;
+		M[11] = 0;
 
-		(*this)(0,3) = -xaxis.dotProduct(position);
-		(*this)(1,3) = -yaxis.dotProduct(position);
-		(*this)(2,3) = -zaxis.dotProduct(position);
-		(*this)(3,3) = 1.0f;
+		M[12] = -xaxis.dotProduct(position);
+		M[13] = -yaxis.dotProduct(position);
+		M[14] = -zaxis.dotProduct(position);
+		M[15] = 1.0f;
 	}
 
 

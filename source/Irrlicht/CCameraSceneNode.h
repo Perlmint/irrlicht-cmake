@@ -6,6 +6,7 @@
 #define __C_CAMERA_SCENE_NODE_H_INCLUDED__
 
 #include "ICameraSceneNode.h"
+#include "SViewFrustrum.h"
 
 namespace irr
 {
