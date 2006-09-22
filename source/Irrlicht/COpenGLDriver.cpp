@@ -32,7 +32,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 : CNullDriver(io, screenSize), HDc(0), HRc(0), Window(window),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
 	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	MultiTextureExtension(false), AnisotropyExtension(false),
+	MultiTextureExtension(false), MultiSamplingExtension(false), AnisotropyExtension(false),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
@@ -197,7 +197,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
 	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	MultiTextureExtension(false), AnisotropyExtension(false),
+	MultiTextureExtension(false), MultiSamplingExtension(false), AnisotropyExtension(false),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
@@ -232,7 +232,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 : CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
 	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
-	MultiTextureExtension(false), AnisotropyExtension(false),
+	MultiTextureExtension(false), MultiSamplingExtension(false), AnisotropyExtension(false),
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
@@ -263,7 +263,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 
 	// set vsync
 #ifdef GLX_SGI_swap_control
-#ifdef _IRR_OPENGL_USE_EXTPOINTERS_
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (vsync && glxSwapIntervalSGI)
 		glxSwapIntervalSGI(1);
 #else
@@ -318,6 +318,9 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glFrontFace( GL_CW );
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
+
+	if (AntiAlias && MultiSamplingExtension)
+		glEnable(GL_MULTISAMPLE_ARB);
 
 	// create material renderers
 	createMaterialRenderers();
@@ -395,6 +398,7 @@ void COpenGLDriver::loadExtensions()
 	if (gluVersion[0]>1 || gluVersion[3]>2)
 	{
 		MultiTextureExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multitexture", t);
+		MultiSamplingExtension = gluCheckExtension((const GLubyte*)"GL_ARB_multisample", t);
 		ARBVertexProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_vertex_program", t);
 		ARBFragmentProgramExtension = gluCheckExtension((const GLubyte*)"GL_ARB_fragment_program", t);
 		ARBShadingLanguage100Extension = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", t);
@@ -422,6 +426,9 @@ void COpenGLDriver::loadExtensions()
 				if (strstr(p, "GL_ARB_multitexture"))
 					MultiTextureExtension = true;
 				else
+				if (strstr(p, "GL_ARB_multisample"))
+					MultiSamplingExtension = true;
+				else 
 				if (strstr(p, "GL_ARB_vertex_program"))
 					ARBVertexProgramExtension = true;
 				else

@@ -45,7 +45,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	IEventReceiver* receiver,
 	const char* version)
  : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
-	DriverType(driverType), Fullscreen(fullscreen), StencilBuffer(sbuffer), SoftwareImage(0)
+	DriverType(driverType), Fullscreen(fullscreen), StencilBuffer(sbuffer), AntiAlias(antiAlias), SoftwareImage(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CIrrDeviceLinux");
@@ -82,7 +82,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	CursorControl = new CCursorControl(this, driverType == video::EDT_NULL);
 
 	// create driver
-	createDriver(windowSize, bits, vsync, antiAlias);
+	createDriver(windowSize, bits, vsync);
 
 	if (!VideoDriver)
 		return;
@@ -268,6 +268,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		{
 			if (major==1 && minor>2)
 			{
+				const int MAX_SAMPLES = 16;
 				// attribute array for the draw buffer
 				int visualAttrBuffer[] =
 				{
@@ -277,30 +278,114 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				    GLX_BLUE_SIZE, 4,
 				    GLX_ALPHA_SIZE, 4,
 				    GLX_DEPTH_SIZE, 16,
-				    GLX_DOUBLEBUFFER, True,
+				    GLX_DOUBLEBUFFER, GL_TRUE,
 				    GLX_STENCIL_SIZE, 1,
+				    GLX_SAMPLE_BUFFERS_ARB, GL_TRUE,
+				    GLX_SAMPLES_ARB, MAX_SAMPLES,
 				    None
 				};
 
 				GLXFBConfig *configList=0;
 				int nitems=0;
+				if (!AntiAlias)
+				{
+					visualAttrBuffer[17] = GL_FALSE;
+					visualAttrBuffer[19] = 0;
+				}
 				if (StencilBuffer)
+				{
 					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+					if (!configList && AntiAlias)
+					{
+						while (!configList && (visualAttrBuffer[19]>1))
+						{
+							visualAttrBuffer[19] >>= 1;
+							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+						}
+						if (!configList)
+						{
+							visualAttrBuffer[17] = GL_FALSE;
+							visualAttrBuffer[19] = 0;
+							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+							if (configList)
+							{
+								os::Printer::log("No FSAA available.", ELL_WARNING);
+								AntiAlias=false;
+							}
+							else
+							{
+								//reenable multisampling
+								visualAttrBuffer[17] = GL_TRUE;
+								visualAttrBuffer[19] = MAX_SAMPLES;
+							}
+						}
+					}
+				}
+				// Next try without stencil buffer
 				if (!configList)
 				{
 					if (StencilBuffer)
-					{
 						os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-						StencilBuffer = false;
-					}
+					StencilBuffer = false;
 					visualAttrBuffer[15]=0;
 
 					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
-					if (!configList)
+					if (!configList && AntiAlias)
 					{
-						os::Printer::log("No doublebuffering available.", ELL_WARNING);
-						visualAttrBuffer[13]=False;
-						configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+						while (!configList && (visualAttrBuffer[19]>1))
+						{
+							visualAttrBuffer[19] >>= 1;
+							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+						}
+						if (!configList)
+						{
+							visualAttrBuffer[17] = GL_FALSE;
+							visualAttrBuffer[19] = 0;
+							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+							if (configList)
+							{
+								os::Printer::log("No FSAA available.", ELL_WARNING);
+								AntiAlias=false;
+							}
+							else
+							{
+								//reenable multisampling
+								visualAttrBuffer[17] = GL_TRUE;
+								visualAttrBuffer[19] = MAX_SAMPLES;
+							}
+						}
+					}
+				}
+				// Next try without double buffer
+				if (!configList)
+				{
+					os::Printer::log("No doublebuffering available.", ELL_WARNING);
+					visualAttrBuffer[13] = GL_FALSE;
+					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+					if (!configList && AntiAlias)
+					{
+						while (!configList && (visualAttrBuffer[19]>1))
+						{
+							visualAttrBuffer[19] >>= 1;
+							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+						}
+						if (!configList)
+						{
+							visualAttrBuffer[17] = GL_FALSE;
+							visualAttrBuffer[19] = 0;
+							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+							if (configList)
+							{
+								os::Printer::log("No FSAA available.", ELL_WARNING);
+								AntiAlias=false;
+							}
+							else
+							{
+								//reenable multisampling
+								visualAttrBuffer[17] = GL_TRUE;
+								visualAttrBuffer[19] = MAX_SAMPLES;
+							}
+						}
 					}
 				}
 				if (configList)
@@ -316,13 +401,13 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				// attribute array for the draw buffer
 				int visualAttrBuffer[] =
 				{
-				    GLX_RGBA, True,
+				    GLX_RGBA, GL_TRUE,
 				    GLX_RED_SIZE, 4,
 				    GLX_GREEN_SIZE, 4,
 				    GLX_BLUE_SIZE, 4,
 				    GLX_ALPHA_SIZE, 4,
 				    GLX_DEPTH_SIZE, 16,
-				    GLX_DOUBLEBUFFER, True,
+				    GLX_DOUBLEBUFFER, GL_TRUE,
 				    GLX_STENCIL_SIZE, 1,
 				    None
 				};
@@ -342,7 +427,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 					if (!visual)
 					{
 						os::Printer::log("No doublebuffering available.", ELL_WARNING);
-						visualAttrBuffer[13]=False;
+						visualAttrBuffer[13] = GL_FALSE;
 						visual=glXChooseVisual(display, screennr, visualAttrBuffer);
 					}
 				}
@@ -500,7 +585,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 //! create the driver
 void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
-				   u32 bits, bool vsync, bool antiAlias)
+				   u32 bits, bool vsync)
 {
 	switch(DriverType)
 	{
@@ -516,7 +601,7 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 	case video::EDT_OPENGL:
 	#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
-			VideoDriver = video::createOpenGLDriver(windowSize, Fullscreen, StencilBuffer, FileSystem, vsync, antiAlias);
+			VideoDriver = video::createOpenGLDriver(windowSize, Fullscreen, StencilBuffer, FileSystem, vsync, AntiAlias);
 	#else
 		os::Printer::log("No OpenGL support compiled in.", ELL_WARNING);
 	#endif

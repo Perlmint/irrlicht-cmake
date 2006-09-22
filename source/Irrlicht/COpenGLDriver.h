@@ -40,6 +40,7 @@
 	#endif
 	#include <GL/glu.h>
 	#include <GL/glx.h>
+	#include "glxext.h"
 	#include <X11/Xlib.h>
 #endif
 
@@ -327,6 +328,7 @@ namespace video
 		bool StencilBuffer;
 		bool AntiAlias;
 		bool MultiTextureExtension;
+		bool MultiSamplingExtension;
 		bool AnisotropyExtension;
 		bool ARBVertexProgramExtension; //GL_ARB_vertex_program
 		bool ARBFragmentProgramExtension; //GL_ARB_fragment_program

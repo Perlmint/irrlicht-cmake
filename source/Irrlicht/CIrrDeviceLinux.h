@@ -67,7 +67,7 @@ namespace irr
 
 		//! create the driver
 		void createDriver(const core::dimension2d<s32>& windowSize,
-					u32 bits, bool vsync, bool antiAlias);
+					u32 bits, bool vsync);
 
 		bool createWindow(const core::dimension2d<s32>& windowSize, u32 bits);
 
@@ -224,6 +224,7 @@ namespace irr
 		XSetWindowAttributes attributes;
 		bool Fullscreen;
 		bool StencilBuffer;
+		bool AntiAlias;
 		XEvent event;
 		XImage* SoftwareImage;
 		video::E_DRIVER_TYPE DriverType;
