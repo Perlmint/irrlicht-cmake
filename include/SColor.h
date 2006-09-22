@@ -167,6 +167,12 @@ namespace video
 		//! 0 means no blue, 255 means full blue.
 		inline u32 getBlue() const { return color & 0xff; }
 
+		//! Returns the luminance of the color.
+		inline u32 getLuminance() const
+		{
+			return (u32)(0.3f*getRed() + 0.59f*getGreen() + 0.11*getBlue());
+		}
+
 		//! Sets the alpha component of the Color. The alpha component
 		//! defines how transparent a color should be.
 		//! \param a: Has to be a value between 0 and 255.

@@ -169,6 +169,9 @@ namespace scene
 			return TerrainData.Center;
 		}
 
+		//! Returns center of terrain.
+		virtual f32 getHeight( f32 x, f32 y );
+
 		//! Sets the movement camera threshold which is used to determine when to recalculate
 		//! indices for the scene node.  The default value is 10.0f.
 		virtual void setCameraMovementDelta(f32 delta) 

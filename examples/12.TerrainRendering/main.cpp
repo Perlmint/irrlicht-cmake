@@ -225,6 +225,10 @@ int main()
 			str += driver->getName();
 			str += "] FPS:";
 			str += fps;
+			// Also print terrain height of current camera position
+			// We can use camera position because terrain is located at coordinate origin
+			str += " Height: ";
+			str += terrain->getHeight(camera->getAbsolutePosition().X, camera->getAbsolutePosition().Z);
 
 			device->setWindowCaption(str.c_str());
 			lastFPS = fps;

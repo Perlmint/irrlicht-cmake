@@ -117,6 +117,9 @@ namespace scene
 		//! Returns center of terrain.
 		virtual core::vector3df getTerrainCenter() = 0;
 
+		//! Returns height of a point of the terrain.
+		virtual f32 getHeight( f32 x, f32 y ) = 0;
+
 		//! Sets the movement camera threshold.
 		/** It is used to determine when to recalculate
 		 indices for the scene node.  The default value is 10.0f. */

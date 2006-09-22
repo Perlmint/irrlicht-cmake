@@ -155,7 +155,6 @@ namespace scene
 		s32 vertexCount = pMeshBuffer->getVertexCount();
 
 		// We copy the data to the renderBuffer, after the normals have been calculated.
-		RenderBuffer.Vertices.reallocate( vertexCount );
 		RenderBuffer.Vertices.set_used( vertexCount );
 
 		for( s32 i = 0; i < vertexCount; i++ )
@@ -289,7 +288,6 @@ namespace scene
 		s32 vertexCount = pMeshBuffer->getVertexCount();
 
 		// We copy the data to the renderBuffer, after the normals have been calculated.
-		RenderBuffer.Vertices.reallocate( vertexCount );
 		RenderBuffer.Vertices.set_used( vertexCount );
 
 		for( s32 i = 0; i < vertexCount; i++ )
@@ -735,16 +733,18 @@ namespace scene
 
 	//! Creates a planar texture mapping on the terrain
 	//! \param resolution: resolution of the planar mapping. This is the value
-	//! specifying the releation between world space and texture coordinate space.
+	//! specifying the relation between world space and texture coordinate space.
 	void CTerrainSceneNode::scaleTexture(f32 resolution, f32 resolution2)
 	{
+		f32 resBySize = resolution / (f32)TerrainData.Size;
+		f32 res2BySize = resolution2 / (f32)TerrainData.Size;
+		u32 index = 0;
 		for (s32 x=0; x<TerrainData.Size; ++x)
 		{
 			for (s32 z=0; z<TerrainData.Size; ++z)
 			{
-				s32 index = x * TerrainData.Size + z;
-				RenderBuffer.Vertices[index].TCoords.X = x / (f32)TerrainData.Size * resolution;
-				RenderBuffer.Vertices[index].TCoords.Y = z / (f32)TerrainData.Size * resolution;
+				RenderBuffer.Vertices[index].TCoords.X = x * resBySize;
+				RenderBuffer.Vertices[index].TCoords.Y = z * resBySize;
 
 				if ( resolution2 == 0 )
 				{
@@ -752,9 +752,10 @@ namespace scene
 				}
 				else
 				{
-					RenderBuffer.Vertices[index].TCoords2.X = x / (f32)TerrainData.Size * resolution2;
-					RenderBuffer.Vertices[index].TCoords2.Y = z / (f32)TerrainData.Size * resolution2;
+					RenderBuffer.Vertices[index].TCoords2.X = x * res2BySize;
+					RenderBuffer.Vertices[index].TCoords2.Y = z * res2BySize;
 				}
+				++index;
 			}
 		}
 	}
@@ -1053,6 +1054,52 @@ namespace scene
 			TerrainData.Patches[i].CurrentLOD = lodarray[i];
 	}
 
+
+	//! Gets the height 
+	f32 CTerrainSceneNode::getHeight( f32 x, f32 z ) 
+	{ 
+		f32 height = -999999.9f; 
+ 
+		core::matrix4 rotMatrix; 
+		rotMatrix.setRotationDegrees( TerrainData.Rotation ); 
+		core::vector3df pos( x, 0.0f, z ); 
+		rotMatrix.rotateVect( pos ); 
+		pos -= TerrainData.Position; 
+		pos /= TerrainData.Scale; 
+
+		s32 X(core::floor32( pos.X )); 
+		s32 Z(core::floor32( pos.Z )); 
+ 
+		if( X >= 0 && X < TerrainData.Size && Z >= 0 && Z <= TerrainData.Size ) 
+		{ 
+			video::S3DVertex2TCoords* Vertices = (video::S3DVertex2TCoords*)Mesh.getMeshBuffer( 0 )->getVertices();
+			core::vector3df a = Vertices[ X * TerrainData.Size + Z ].Pos; 
+			core::vector3df b = Vertices[ (X + 1) * TerrainData.Size + Z ].Pos; 
+			core::vector3df c = Vertices[ X * TerrainData.Size + ( Z + 1 ) ].Pos; 
+			core::vector3df d = Vertices[ (X + 1) * TerrainData.Size + ( Z + 1 ) ].Pos; 
+ 
+			f32 dx = pos.X - X; 
+			f32 dz = pos.Z - Z; 
+			f32 invDX = 1.0f - dx; 
+ 
+			if( dz < invDX ) 
+			{ 
+				f32 uy = a.Y - c.Y; 
+				f32 vy = d.Y - c.Y; 
+				height = c.Y + core::lerp( 0.0f, uy, dx ) + core::lerp( 0.0f, vy, dz ); 
+			} 
+			else 
+			{ 
+				f32 uy = a.Y - b.Y; 
+				f32 vy = d.Y - b.Y; 
+				height = b.Y + core::lerp( 0.0f, uy, invDX ) + core::lerp( 0.0f, vy, 1.0f - dz ); 
+			} 
+			height *= TerrainData.Scale.Y; 
+			height += TerrainData.Position.Y; 
+		} 
+ 
+		return height; 
+	}
 
 } // end namespace scene
 } // end namespace irr
