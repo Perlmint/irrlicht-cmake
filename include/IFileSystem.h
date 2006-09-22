@@ -7,6 +7,7 @@
 
 #include "IUnknown.h"
 #include "IXMLReader.h"
+#include "irrString.h"
 
 namespace irr
 {
@@ -87,6 +88,9 @@ public:
 	the form "<drive>:\<directory>\<sudirectory>\<..>". An example would be: "C:\Windows\"
 	\return Returns true if successful, otherwise false. */
 	virtual bool changeWorkingDirectoryTo(const c8* newDirectory) = 0;
+
+	//! Converts a relative path to an absolute (unique) path, resolving symbolic links if required
+	virtual irr::core::stringc getAbsolutePath(irr::core::stringc &filename) = 0;
 
 	//! Creates a list of files and directories in the current working directory and returns it.
 	/** \return a Pointer to the created IFileList is returned. After the list has been used

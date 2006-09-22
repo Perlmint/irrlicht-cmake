@@ -237,6 +237,8 @@ public:
 	//! Comparison operator
 	bool operator ==(const T* str) const
 	{
+		if (!str)
+			return false;
 		s32 i;
 		for(i=0; array[i] && str[i]; ++i)
 			if (array[i] != str[i])
@@ -367,6 +369,8 @@ public:
 	//! compares the first n characters of the strings
 	bool equalsn(const T* str, int len) const
 	{
+		if (!str)
+			return false;
 		int i;
 		for(i=0; array[i] && str[i] && i < len; ++i)
 			if (array[i] != str[i])
@@ -395,6 +399,9 @@ public:
 	/** \param other: Char string to append. */
 	void append(const T* other)
 	{
+		if (!other)
+			return;
+	
 		--used;
 
 		s32 len = 0;
@@ -492,6 +499,9 @@ public:
 	or -1 if not found. */
 	s32 findFirstChar(T* c, int count) const
 	{
+		if (!c)
+			return -1;
+
 		for (s32 i=0; i<used; ++i)
 			for (int j=0; j<count; ++j)
 				if (array[i] == c[j])
@@ -513,7 +523,7 @@ public:
 	{
 		for (int i=0; i<used; ++i)
 		{
-            int j;
+			int j;
 			for (j=0; j<count; ++j)
 				if (array[i] == c[j])
 					break;
@@ -537,7 +547,7 @@ public:
 	{
 		for (int i=used-2; i>=0; --i)
 		{
-            int j;
+			int j;
 			for (j=0; j<count; ++j)
 				if (array[i] == c[j])
 					break;
@@ -652,7 +662,7 @@ public:
 	{
 		append(string<T>(i));
 	}
-    	
+
 	//! replaces all characters of a special type with another one
 	void replace(T toReplace, T replaceWith)
 	{

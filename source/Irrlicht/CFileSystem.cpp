@@ -149,7 +149,6 @@ const c8* CFileSystem::getWorkingDirectory()
 }
 
 
-
 //! Changes the current Working Directory to the string given.
 //! The string is operating system dependent. Under Windows it will look
 //! like this: "drive:\directory\sudirectory\"
@@ -166,6 +165,28 @@ bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 	success=(chdir(newDirectory) != 0);
 #endif
 	return success;
+}
+
+irr::core::stringc CFileSystem::getAbsolutePath(irr::core::stringc &filename)
+{
+	c8 *p;
+	irr::core::stringc ret;
+
+#ifdef _IRR_WINDOWS_
+
+	c8 fpath[_MAX_PATH];
+	p = _fullpath( fpath, filename.c_str(), _MAX_PATH);
+	ret = p;
+
+#elif (defined(LINUX) || defined(MACOSX))
+
+	c8 fpath[PATH_MAX];
+	p = realpath(filename.c_str(), fpath);
+	ret = p;
+
+#endif
+
+	return ret;
 }
 
 

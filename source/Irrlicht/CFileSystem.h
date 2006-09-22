@@ -50,6 +50,9 @@ public:
 	//! like this: "drive:\directory\sudirectory\"
 	virtual bool changeWorkingDirectoryTo(const c8* newDirectory);
 
+	//! Converts a relative path to an absolute (unique) path, resolving symbolic links
+	virtual irr::core::stringc getAbsolutePath(irr::core::stringc &filename);
+
 	//! Creates a list of files and directories in the current working directory 
 	//! and returns it.
 	virtual IFileList* createFileList();
