@@ -17,7 +17,6 @@
 #include "IMeshCache.h"
 #include "IAnimatedMesh.h"
 
-
 namespace irr
 {
 namespace scene
@@ -669,8 +668,6 @@ void CAnimatedMeshSceneNode::setMesh(IAnimatedMesh* mesh)
 	if (Mesh)
 		Mesh->grab();
 }
-
-
 
 } // end namespace scene
 } // end namespace irr

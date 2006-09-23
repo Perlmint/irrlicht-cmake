@@ -26,9 +26,10 @@
 #define INVERSE_W
 
 #define USE_Z
-//#define IPOL_W
-//#define CMP_W
-//#define WRITE_W
+#define IPOL_W
+#define CMP_W
+#define WRITE_W
+
 
 //#define IPOL_C
 #define IPOL_T0
@@ -167,11 +168,21 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 	f32 dataZ = a->Pos.z;
 #endif
 
+#ifdef IPOL_W
+	f32 slopeW = (b->Pos.w - a->Pos.w);
+	if (dx )
+		slopeW /= (f32) dx;
+	f32 dataW = a->Pos.w;
+#endif
+
 	run = dx;
 	while ( run )
 	{
 #ifdef CMP_Z
 		if ( *z >= dataZ )
+#endif
+#ifdef CMP_W
+		if ( dataW > *z )
 #endif
 		{
 			*dst = color;
@@ -179,10 +190,17 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 #ifdef WRITE_Z
 			*z = dataZ;
 #endif
+#ifdef WRITE_W
+			*z = dataW;
+#endif
+
 		}
 
 		dst = (tVideoSample*) ( (u8*) dst + xInc0 );	// x += xInc
 #ifdef IPOL_Z
+		z = (TZBufferType2*) ( (u8*) z + xInc1 );
+#endif
+#ifdef IPOL_W
 		z = (TZBufferType2*) ( (u8*) z + xInc1 );
 #endif
 
@@ -193,12 +211,20 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 #ifdef IPOL_Z
 			z = (TZBufferType2*) ( (u8*) z + yInc1 );
 #endif
+#ifdef IPOL_W
+			z = (TZBufferType2*) ( (u8*) z + yInc1 );
+#endif
+
 			d -= c;
 		}
 		run -= 1;
 #ifdef IPOL_Z
 		dataZ += slopeZ;
 #endif
+#ifdef IPOL_W
+		dataW += slopeW;
+#endif
+
 	}
 
 }

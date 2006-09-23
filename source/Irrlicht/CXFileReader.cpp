@@ -171,11 +171,11 @@ bool CXFileReader::readFileIntoMemory(io::IReadFile* file)
 	tmp[2] = 0x0;
 	tmp[0] = Buffer[4];
 	tmp[1] = Buffer[5];
-	MajorVersion = strtol(tmp, &P, 10);
+	MajorVersion = strtol(tmp, (char**) &P, 10);
 
 	tmp[0] = Buffer[6];
 	tmp[1] = Buffer[7];
-	MinorVersion = strtol(tmp, &P, 10);
+	MinorVersion = strtol(tmp, (char**) &P, 10);
 
 	//! read format
 	if (strncmp(&Buffer[8], "txt ", 4) ==0)

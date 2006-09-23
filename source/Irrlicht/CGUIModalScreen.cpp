@@ -31,7 +31,7 @@ CGUIModalScreen::~CGUIModalScreen()
 
 
 //! called if an event happened.
-bool CGUIModalScreen::OnEvent(SEvent event)
+bool CGUIModalScreen::OnEvent(const SEvent &event)
 {
     switch(event.EventType)
 	{

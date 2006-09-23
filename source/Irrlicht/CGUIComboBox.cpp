@@ -108,7 +108,7 @@ void CGUIComboBox::setSelected(s32 id)
 
 
 //! called if an event happened.
-bool CGUIComboBox::OnEvent(SEvent event)
+bool CGUIComboBox::OnEvent(const SEvent &event)
 {
 	switch(event.EventType)
 	{

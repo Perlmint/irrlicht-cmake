@@ -45,6 +45,9 @@ void CDemo::run()
 	device->getFileSystem()->addZipFileArchive("map-20kdm2.pk3");
 	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
 
+//	device->getFileSystem()->addUnZipFileArchive ( "/baseq3" );
+
+
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 	gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
@@ -67,7 +70,7 @@ void CDemo::run()
 
 			// draw everything
 
-			driver->beginScene(true, true, backColor);
+			driver->beginScene(false, true, backColor);
 
 			smgr->drawAll();
 			guienv->drawAll();
@@ -86,7 +89,7 @@ void CDemo::run()
 }
 
 
-bool CDemo::OnEvent(SEvent event)
+bool CDemo::OnEvent(const SEvent &event)
 {
 	if (!device)
 		return false;
@@ -275,7 +278,7 @@ void CDemo::switchToNextScene()
 			keyMap[7].Action = EKA_STRAFE_RIGHT;
 			keyMap[7].KeyCode = KEY_KEY_D;
 
-			camera = sm->addCameraSceneNodeFPS(0, 100.0f, 300.0f, -1, keyMap, 8);
+			camera = sm->addCameraSceneNodeFPS(0, 100.0f, 700.0f, -1, keyMap, 8);
 			camera->setPosition(core::vector3df(108,140,-140));
 			
 			scene::ISceneNodeAnimatorCollisionResponse* collider = 
@@ -308,6 +311,8 @@ void CDemo::loadSceneData()
 	scene::ISceneManager* sm = device->getSceneManager();
 
 	quakeLevelMesh = sm->getMesh("20kdm2.bsp");
+	//quakeLevelMesh = sm->getMesh("maps/q3dm0.bsp");
+	
 	
 	if (quakeLevelMesh)
 	{
@@ -324,9 +329,33 @@ void CDemo::loadSceneData()
 			// set additive blending if wanted
 			if (additive)
 				quakeLevelNode->setMaterialType(video::EMT_LIGHTMAP_ADD);
+
+			//quakeLevelNode->setMaterialTexture ( 0, 0 );
+			//quakeLevelNode->setMaterialTexture ( 1, 0 );
+			//quakeLevelNode->setMaterialType ( video::EMT_SOLID );
+
+
 		}
 	}
 
+/*
+	if (quakeLevelNode && quakeLevelMesh)
+	{
+		// dirty hack 
+		core::array < video::SLight > *lightData = (core::array < video::SLight > *) quakeLevelMesh->getMesh ( 1 );
+		if ( lightData )
+		{
+			quakeLevelNode->setMaterialFlag(video::EMF_LIGHTING, true);
+
+			for ( s32 i = 0; i!= lightData->size(); ++i )
+			{
+				scene::ILightSceneNode* l = sm->addLightSceneNode(quakeLevelNode);
+				l->getLightData() = (*lightData)[i];
+				l->setAutomaticCulling ( true );
+			}
+		}
+	}
+*/
 	// load sydney model and create 2 instances
 
 	scene::IAnimatedMesh* mesh = 0;
@@ -361,8 +390,7 @@ void CDemo::loadSceneData()
 	scene::ISceneNodeAnimator* anim = 0;
 
 	// create sky box
-
-	//driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
 	skyboxNode = sm->addSkyBoxSceneNode(
 		driver->getTexture("../../media/irrlicht2_up.jpg"),
 		driver->getTexture("../../media/irrlicht2_dn.jpg"),
@@ -370,12 +398,12 @@ void CDemo::loadSceneData()
 		driver->getTexture("../../media/irrlicht2_rt.jpg"),
 		driver->getTexture("../../media/irrlicht2_ft.jpg"),
 		driver->getTexture("../../media/irrlicht2_bk.jpg"));
+	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 /*
 	skyboxNode = sm->addSkyDomeSceneNode (
 		driver->getTexture("../../media/skydome0.jpg"),
 		30,8,0.96f,2.f);
 */
-	//driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
 	// create walk-between-portals animation
 
@@ -508,7 +536,7 @@ void CDemo::createLoadingScreen()
 	}
 	else
 	{
-		device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogoalpha2.tga"),
+		device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogo2.png"),
 			core::position2d<s32>(5,5));
 	}
 

@@ -57,7 +57,7 @@ namespace scene
 		example with ISceneManager::addMayaCameraSceneNode or
 		ISceneManager::addMeshViewerCameraSceneNode, may want to get this input
 		for changing their position, look at target or whatever.  */
-		virtual bool OnEvent(SEvent event) = 0;
+		virtual bool OnEvent(const SEvent &event) = 0;
 
 		//! Sets the look at target of the camera
 		/** \param pos: Look at target of the camera. */

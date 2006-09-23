@@ -197,9 +197,6 @@ namespace video
 
 		SInternalMaterial Material;
 
-#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
-	unsigned int fpu_orig_cw;
-#endif
 	};
 
 } // end namespace video

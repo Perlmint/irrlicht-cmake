@@ -4,6 +4,7 @@
 #include "CMainMenu.h"
 
 
+//! we want the lights follow the model when it's moving
 class CSceneNodeAnimatorFollowBoundingBox : public irr::scene::ISceneNodeAnimator
 {
 public:
@@ -99,7 +100,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// add button
 
-	startButton = guienv->addButton(core::rect<int>(30,295,200,324), optTab, 2, L"Start Demo");
+	startButton = guienv->addButton(core::rect<int>(30,295,200,322), optTab, 2, L"Start Demo");
 
 	// add checkbox
 
@@ -129,7 +130,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	wchar_t* text2 = L"This is the tech demo of the Irrlicht engine. To start, "\
 		L"select a device which works best with your hardware and press 'start demo'. "\
-		L"What you currently see is displayed using the Software Renderer. "\
+		L"What you currently see is displayed using the Burning Software Renderer (Thomas Alten). "\
 		L"The Irrlicht Engine was written by me, Nikolaus Gebhardt. The models, "\
 		L"maps and textures were placed at my disposal by B.Collins, M.Cook and J.Marton. The music was created by "\
 		L"M.Rohde and is played back by Audiere.\n"\
@@ -235,8 +236,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// irrlicht logo and background
 	// add irrlicht logo
-	// since applesoft render v.2 mipmaps are generated.. don't do it on 2d-images...
-	guienv->addImage(driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
+	guienv->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(5,5));
 
 	video::ITexture* irrlichtBack = driver->getTexture("../../media/demoback.bmp");
@@ -286,7 +286,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 
 
-bool CMainMenu::OnEvent(SEvent event)
+bool CMainMenu::OnEvent(const SEvent &event)
 {
 	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT &&
 		event.MouseInput.Event == EMIE_RMOUSE_LEFT_UP )
@@ -358,6 +358,7 @@ bool CMainMenu::OnEvent(SEvent event)
 
 void CMainMenu::setTransparency()
 {
+	return;
 	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
 	{
 		video::SColor col = device->getGUIEnvironment()->getSkin()->

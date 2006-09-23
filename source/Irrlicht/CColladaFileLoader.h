@@ -204,14 +204,14 @@ private:
 
 	//! parses a float from a char pointer and moves the pointer to
 	//! the end of the parsed float
-	inline f32 readFloat(c8** p);
+	inline f32 readFloat(const c8** p);
 
 	//! parses an int from a char pointer and moves the pointer to
 	//! the end of the parsed float
-	inline s32 readInt(c8** p);
+	inline s32 readInt(const c8** p);
 
 	//! places pointer to next begin of a token
-	void findNextNoneWhiteSpace(c8** p);
+	void findNextNoneWhiteSpace(const c8** p);
 
 	//! reads floats from inside of xml element until end of xml element
 	void readFloatsInsideElement(io::IXMLReaderUTF8* reader, f32* floats, s32 count);

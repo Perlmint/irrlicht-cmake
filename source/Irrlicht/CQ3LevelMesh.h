@@ -11,6 +11,7 @@
 #include "SMesh.h"
 #include "IVideoDriver.h"
 #include "irrString.h"
+#include "ISceneManager.h"
 
 namespace irr
 {
@@ -23,7 +24,7 @@ namespace scene
 	public:
 
 		//! constructor
-		CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver);
+		CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver,  scene::ISceneManager* smgr);
 
 		//! destructor
 		virtual ~CQ3LevelMesh();
@@ -252,6 +253,64 @@ namespace scene
 		video::IVideoDriver* Driver;
 		core::stringc LevelName;
 		io::IFileSystem* FileSystem; // needs because there are no file extenstions stored in .bsp files.
+
+		// Additional
+		scene::ISceneManager* SceneManager;
+		enum eToken
+		{
+			Q3_TOKEN_EOF		= 1,
+			Q3_TOKEN_START_LIST,
+			Q3_TOKEN_END_LIST,
+			Q3_TOKEN_IDENTITY,
+		};
+		struct SQ3Parser
+		{
+			const c8 *source;
+			u32 sourcesize;
+			u32 index;
+			core::stringc token;
+			u32 tokenresult;
+		};
+		SQ3Parser Parser;
+
+		// use plain old c for better memory allocation performance
+		struct SQ3Variable
+		{
+			c8 name[64];
+			c8 content[64];
+			bool operator < ( const SQ3Variable &other ) const
+			{
+				return strcmp ( name, other.name ) < 0;
+			}
+		};
+
+		// optimized for parsing.. ( it's reused heavily)
+		struct SQ3VarGroup
+		{
+			SQ3VarGroup ()
+			{
+				Variable.set_used ( 4 );
+			}
+
+			void clear ()
+			{
+				Variable.set_used ( 0 );
+			}
+			const c8 * get( const char * name ) const;
+			core::array < SQ3Variable > Variable;
+		};
+
+		typedef core::array < SQ3VarGroup > tGroupList;
+
+		void addLightData ( const SQ3VarGroup &group );
+		core::array < video::SLight > LightData;
+
+		void parser_parse ( const void * data, u32 size );
+		void parser_nextToken ();
+
+		const c8 * parser_get_float ( f32 &out, const c8* in ) const;
+		void parser_get_vector ( core::vector3df &vector, const c8* string ) const;
+
 	};
 
 } // end namespace scene

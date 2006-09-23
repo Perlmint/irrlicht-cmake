@@ -15,14 +15,15 @@ namespace scene
 {
 
 //! Constructor
-CDefaultMeshFormatLoader::CDefaultMeshFormatLoader(io::IFileSystem* fs, video::IVideoDriver* driver)
-: FileSystem(fs), Driver(driver)
+CDefaultMeshFormatLoader::CDefaultMeshFormatLoader(io::IFileSystem* fs,video::IVideoDriver* driver, scene::ISceneManager* smgr)
+: FileSystem(fs), Driver(driver),SceneManager ( smgr )
 {
 	if (FileSystem)
 		FileSystem->grab();
 
 	if (Driver)
 		Driver->grab();
+
 }
 
 
@@ -35,6 +36,7 @@ CDefaultMeshFormatLoader::~CDefaultMeshFormatLoader()
 
 	if (Driver)
 		Driver->drop();
+
 }
 
 
@@ -88,7 +90,7 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	// load quake 3 bsp
 	if (strstr(file->getFileName(), ".bsp"))
 	{
-		msh = new CQ3LevelMesh(FileSystem, Driver);
+		msh = new CQ3LevelMesh(FileSystem, Driver, SceneManager);
 		success = ((CQ3LevelMesh*)msh)->loadFile(file);
 		if (success)
 			return msh;

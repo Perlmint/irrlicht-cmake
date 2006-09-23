@@ -9,6 +9,7 @@
 #include "IReadFile.h"
 #include "irrArray.h"
 #include "irrString.h"
+#include "IFileSystem.h"
 
 namespace irr
 {
@@ -112,6 +113,9 @@ namespace io
 		
 		//! scans for a local header, returns false if there is no more local file header.
 		bool scanLocalHeader();
+		IReadFile* File;
+
+	protected:
 
 		//! splits filename from zip file into useful filenames and paths
 		void extractFilename(SZipFileEntry* entry);
@@ -119,12 +123,31 @@ namespace io
 		//! deletes the path from a filename
 		void deletePathFromFilename(core::stringc& filename);
 
-		IReadFile* File;
-
-		core::array<SZipFileEntry> FileList;
 
 		bool IgnoreCase;
 		bool IgnorePaths;
+		core::array<SZipFileEntry> FileList;
+	};
+
+
+	class CUnZipReader : public CZipReader
+	{
+	public:
+
+		CUnZipReader( IFileSystem *parent, const c8* basename, bool ignoreCase, bool ignorePaths);
+
+		//! opens a file by file name
+		virtual IReadFile* openFile(const c8* filename);
+
+		//! returns fileindex
+		s32 findFile(const c8* filename);
+
+	private:
+
+		IFileSystem *Parent;
+		void buildDirectory ();
+
+		core::stringc Base;
 	};
 
 } // end namespace io

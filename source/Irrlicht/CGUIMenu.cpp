@@ -62,13 +62,11 @@ void CGUIMenu::draw()
 			rect = getRect(Items[i], AbsoluteRect);
 
 			// draw highlighted
-
 			if (i == HighLighted && Items[i].Enabled)
 			{
 				skin->draw3DSunkenPane(this, skin->getColor(EGDC_3D_DARK_SHADOW),
 					true, true, rect, &AbsoluteClippingRect);
 			}
-
 			// draw text
 
 			EGUI_DEFAULT_COLOR c = EGDC_BUTTON_TEXT;
@@ -89,7 +87,7 @@ void CGUIMenu::draw()
 
 
 //! called if an event happened.
-bool CGUIMenu::OnEvent(SEvent event)
+bool CGUIMenu::OnEvent(const SEvent &event)
 {
 	if (!IsEnabled)
 		return Parent ? Parent->OnEvent(event) : false;

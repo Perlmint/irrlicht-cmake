@@ -39,6 +39,7 @@ namespace video
 
 		ETR_TEXTURE_GOURAUD_LIGHTMAP,
 		ETR_TEXTURE_GOURAUD_LIGHTMAP_M2,
+		ETR_TEXTURE_LIGHTMAP_M4,
 		ETR_TEXTURE_GOURAUD_LIGHTMAP_M4,
 
 		ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD,
@@ -88,6 +89,7 @@ namespace video
 	ITriangleRenderer2* createTriangleRendererTextureLightMap2_M1(IZBuffer2* zbuffer);
 	ITriangleRenderer2* createTriangleRendererTextureLightMap2_M2(IZBuffer2* zbuffer);
 	ITriangleRenderer2* createTriangleRendererTextureLightMap2_M4(IZBuffer2* zbuffer);
+	ITriangleRenderer2* createTriangleRendererGTextureLightMap2_M4(IZBuffer2* zbuffer);
 	ITriangleRenderer2* createTriangleRendererTextureLightMap2_Add(IZBuffer2* zbuffer);
 	ITriangleRenderer2* createTriangleRendererTextureDetailMap2(IZBuffer2* zbuffer);
 	ITriangleRenderer2* createTriangleRendererTextureVertexAlpha2(IZBuffer2* zbuffer);

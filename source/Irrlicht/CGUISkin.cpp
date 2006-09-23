@@ -5,6 +5,7 @@
 #include "CGUISkin.h"
 #include "IGUIFont.h"
 #include "IVideoDriver.h"
+#include "SoftwareDriver2_helper.h"
 
 namespace irr
 {
@@ -12,46 +13,86 @@ namespace gui
 {
 
 CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
-: Font(0), Driver(driver)
+: Font(0), Driver(driver), Type ( type )
 {
 	#ifdef _DEBUG
 	setDebugName("CGUISkin");
 	#endif
 
+	if (	(Type == EGST_WINDOWS_CLASSIC) |
+			(Type == EGST_WINDOWS_METALLIC)
+		)
+	{
+		Colors[EGDC_3D_DARK_SHADOW] =	video::SColor(101,50,50,50);
+		Colors[EGDC_3D_SHADOW] =	video::SColor(101,130,130,130);
+		Colors[EGDC_3D_FACE] =		video::SColor(101,210,210,210);
+		Colors[EGDC_3D_HIGH_LIGHT] =	video::SColor(101,255,255,255);
+		Colors[EGDC_3D_LIGHT] =		video::SColor(101,210,210,210);
+		Colors[EGDC_ACTIVE_BORDER] =	video::SColor(101,16,14,115);
+		Colors[EGDC_ACTIVE_CAPTION] =	video::SColor(101,255,255,255);
+		Colors[EGDC_APP_WORKSPACE] =	video::SColor(101,100,100,100);
+		Colors[EGDC_BUTTON_TEXT] =	video::SColor(101,10,10,10);
+		Colors[EGDC_GRAY_TEXT] =	video::SColor(101,130,130,130);
+		Colors[EGDC_HIGH_LIGHT] =	video::SColor(101,8,36,107);
+		Colors[EGDC_HIGH_LIGHT_TEXT] =	video::SColor(101,255,255,255);
+		Colors[EGDC_INACTIVE_BORDER] =	video::SColor(101,165,165,165);
+		Colors[EGDC_INACTIVE_CAPTION] = video::SColor(101,210,210,210);
+		Colors[EGDC_TOOLTIP] =		video::SColor(101,255,255,230);
+		Colors[EGDC_SCROLLBAR] =	video::SColor(101,230,230,230);
+		Colors[EGDC_WINDOW] =		video::SColor(101,255,255,255);
 
-	Colors[EGDC_3D_DARK_SHADOW] =	video::SColor(101,50,50,50);
-	Colors[EGDC_3D_SHADOW] =	video::SColor(101,130,130,130);
-	Colors[EGDC_3D_FACE] =		video::SColor(101,210,210,210);
-	Colors[EGDC_3D_HIGH_LIGHT] =	video::SColor(101,255,255,255);
-	Colors[EGDC_3D_LIGHT] =		video::SColor(101,210,210,210);
-	Colors[EGDC_ACTIVE_BORDER] =	video::SColor(101,16,14,115);
-	Colors[EGDC_ACTIVE_CAPTION] =	video::SColor(101,255,255,255);
-	Colors[EGDC_APP_WORKSPACE] =	video::SColor(101,100,100,100);
-	Colors[EGDC_BUTTON_TEXT] =	video::SColor(101,10,10,10);
-	Colors[EGDC_GRAY_TEXT] =	video::SColor(101,130,130,130);
-	Colors[EGDC_HIGH_LIGHT] =	video::SColor(101,8,36,107);
-	Colors[EGDC_HIGH_LIGHT_TEXT] =	video::SColor(101,255,255,255);
-	Colors[EGDC_INACTIVE_BORDER] =	video::SColor(101,165,165,165);
-	Colors[EGDC_INACTIVE_CAPTION] = video::SColor(101,210,210,210);
-	Colors[EGDC_TOOLTIP] =		video::SColor(101,255,255,230);
-	Colors[EGDC_SCROLLBAR] =	video::SColor(101,230,230,230);
-	Colors[EGDC_WINDOW] =		video::SColor(101,255,255,255);
+		Sizes[EGDS_SCROLLBAR_SIZE] = 14;
+		Sizes[EGDS_MENU_HEIGHT] = 30;
+		Sizes[EGDS_WINDOW_BUTTON_WIDTH] = 15;
+		Sizes[EGDS_CHECK_BOX_WIDTH] = 18;
+		Sizes[EGDS_MESSAGE_BOX_WIDTH] = 500;
+		Sizes[EGDS_MESSAGE_BOX_HEIGHT] = 200;
+		Sizes[EGDS_BUTTON_WIDTH] = 80;
+		Sizes[EGDS_BUTTON_HEIGHT] = 30;
+	
+		Sizes[EGDS_TEXT_DISTANCE_X] = 2;
+		Sizes[EGDS_TEXT_DISTANCE_Y] = 0;
+	}
+	else
+	{
+		Colors[EGDC_3D_DARK_SHADOW] =	0x80303030;
+		Colors[EGDC_3D_SHADOW] =	0x7023252c;
+		Colors[EGDC_3D_FACE] =		0xc0c9ccd4;
+		Colors[EGDC_3D_HIGH_LIGHT] =	0x50c7ccdc;
+		Colors[EGDC_3D_LIGHT] =		0x802e313a;
+		Colors[EGDC_ACTIVE_BORDER] =	0x80404040;
+		Colors[EGDC_ACTIVE_CAPTION] =	0xf0d0d0d0;
+		Colors[EGDC_APP_WORKSPACE] =	video::SColor(0xc0,100,100,100);
+		Colors[EGDC_BUTTON_TEXT] =	0xd0161616;
+		Colors[EGDC_GRAY_TEXT] =	video::SColor(60,20,20,20);
+		Colors[EGDC_HIGH_LIGHT] =	0x8cb0b0b0;
+		Colors[EGDC_HIGH_LIGHT_TEXT] =	0xd0646464;
+		Colors[EGDC_INACTIVE_BORDER] =	video::SColor(240,165,165,165);
+		Colors[EGDC_INACTIVE_CAPTION] = video::SColor(240,210,210,210);
+		Colors[EGDC_TOOLTIP]	=	video::SColor(240,255,255,230);
+		Colors[EGDC_SCROLLBAR]	=	0xf0e0e0e0;
+		Colors[EGDC_WINDOW]		=	0xf0f0f0f0;
 
-	Sizes[EGDS_SCROLLBAR_SIZE] = 14;
-	Sizes[EGDS_MENU_HEIGHT] = 18;
-	Sizes[EGDS_WINDOW_BUTTON_WIDTH] = 15;
-	Sizes[EGDS_CHECK_BOX_WIDTH] = 18;
-	Sizes[EGDS_MESSAGE_BOX_WIDTH] = 500;
-	Sizes[EGDS_MESSAGE_BOX_HEIGHT] = 200;
-	Sizes[EGDS_BUTTON_WIDTH] = 80;
-	Sizes[EGDS_BUTTON_HEIGHT] = 30;
+		Sizes[EGDS_SCROLLBAR_SIZE] = 14;
+		Sizes[EGDS_MENU_HEIGHT] = 28;
+		Sizes[EGDS_WINDOW_BUTTON_WIDTH] = 15;
+		Sizes[EGDS_CHECK_BOX_WIDTH] = 18;
+		Sizes[EGDS_MESSAGE_BOX_WIDTH] = 500;
+		Sizes[EGDS_MESSAGE_BOX_HEIGHT] = 200;
+		Sizes[EGDS_BUTTON_WIDTH] = 80;
+		Sizes[EGDS_BUTTON_HEIGHT] = 30;
+
+		Sizes[EGDS_TEXT_DISTANCE_X] = 3;
+		Sizes[EGDS_TEXT_DISTANCE_Y] = 2;
+	}
 
 	Texts[EGDT_MSG_BOX_OK] = L"OK";
 	Texts[EGDT_MSG_BOX_CANCEL] = L"Cancel";
 	Texts[EGDT_MSG_BOX_YES] = L"Yes";
 	Texts[EGDT_MSG_BOX_NO] = L"No";
 
-	UseGradient = (type == EGST_WINDOWS_METALLIC);
+	UseGradient = (Type == EGST_WINDOWS_METALLIC) |
+					(Type == EGST_BURNING_SKIN) ;
 }
 
 
@@ -148,6 +189,19 @@ void CGUISkin::draw3DButtonPaneStandard(IGUIElement* element,
 		return;
 
 	core::rect<s32> rect = r;
+
+	if ( Type == EGST_BURNING_SKIN )
+	{
+		rect.UpperLeftCorner.X -= 1;
+		rect.UpperLeftCorner.Y -= 1;
+		rect.LowerRightCorner.X += 1;
+		rect.LowerRightCorner.Y += 1;
+		draw3DSunkenPane(element,
+						getColor( EGDC_WINDOW ).getInterpolated( 0xFFFFFFFF, 0.9f )
+						,false, true, rect, 0);
+		return;
+	}
+
 	Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, clip);
 
 	rect.LowerRightCorner.X -= 1;
@@ -162,7 +216,9 @@ void CGUISkin::draw3DButtonPaneStandard(IGUIElement* element,
 	rect.LowerRightCorner.Y -= 1;
 
 	if (!UseGradient)
+	{
 		Driver->draw2DRectangle(getColor(EGDC_3D_FACE), rect, clip);
+	}
 	else
 	{
 		video::SColor c1 = getColor(EGDC_3D_FACE);
@@ -203,7 +259,9 @@ void CGUISkin::draw3DButtonPanePressed(IGUIElement* element,
 	rect.UpperLeftCorner.Y += 1;
 
 	if (!UseGradient)
+	{
 		Driver->draw2DRectangle(getColor(EGDC_3D_FACE), rect, clip);
+	}
 	else
 	{
 		video::SColor c1 = getColor(EGDC_3D_FACE);
@@ -232,6 +290,7 @@ void CGUISkin::draw3DSunkenPane(IGUIElement* element,
 		return;
 
 	core::rect<s32> rect = r;
+
 
 	if (flat)
 	{
@@ -300,6 +359,7 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 
 	core::rect<s32> rect = r;
 
+
 	rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + 1;
 	Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, cl);
 
@@ -338,7 +398,18 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 	rect.LowerRightCorner.Y -= 2;
 
 	if (!UseGradient)
+	{
 		Driver->draw2DRectangle(getColor(EGDC_3D_FACE), rect, cl);
+	}
+	else
+	if ( Type == EGST_BURNING_SKIN )
+	{
+		video::SColor c1 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.9f );
+		video::SColor c2 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.8f );
+
+		Driver->draw2DRectangle(rect, c1, c1, c2, c2, cl);
+
+	}
 	else
 	{
 		video::SColor c2 = getColor(EGDC_3D_SHADOW);
@@ -358,6 +429,12 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 		//if (!UseGradient)
 		//	Driver->draw2DRectangle(titleBarColor, rect, cl);
 		//else
+		if ( Type == EGST_BURNING_SKIN )
+		{
+			video::SColor c = titleBarColor.getInterpolated( 0xffffffff, 0.8f);
+			Driver->draw2DRectangle(rect, titleBarColor, titleBarColor, c, c, cl);
+		}
+		else
 		{
 			video::SColor c = titleBarColor.getInterpolated(video::SColor(255,0,0,0), 0.2f);
 			Driver->draw2DRectangle(rect, titleBarColor, c, titleBarColor, c, cl);
@@ -380,6 +457,14 @@ implementations to find out how to draw the part exactly.
 void CGUISkin::draw3DMenuPane(IGUIElement* element,
 			const core::rect<s32>& r, const core::rect<s32>* clip)
 {
+	if ( Type == EGST_BURNING_SKIN )
+	{	
+		core::rect<s32> rect = r;
+		rect.UpperLeftCorner.Y -= 3;
+		draw3DButtonPaneStandard(element, rect, clip);
+		return;
+	}
+
 	if (!Driver)
 		return;
 
@@ -466,7 +551,19 @@ void CGUISkin::draw3DToolBar(IGUIElement* element,
 	rect.LowerRightCorner.Y -= 1;
 
 	if (!UseGradient)
+	{
 		Driver->draw2DRectangle(getColor(EGDC_3D_FACE), rect, clip);
+	}
+	else
+	if ( Type == EGST_BURNING_SKIN )
+	{
+		video::SColor c1 = 0xF0000000 | getColor(EGDC_3D_FACE).color;
+		video::SColor c2 = 0xF0000000 | getColor(EGDC_3D_SHADOW).color;
+
+		rect.LowerRightCorner.Y += 1;
+		Driver->draw2DRectangle(rect, c1, c2, c1, c2, clip);
+
+	}
 	else
 	{
 		video::SColor c1 = getColor(EGDC_3D_FACE);

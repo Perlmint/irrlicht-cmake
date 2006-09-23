@@ -77,7 +77,7 @@ CGUIScrollBar::~CGUIScrollBar()
 
 
 //! called if an event happened.
-bool CGUIScrollBar::OnEvent(SEvent event)
+bool CGUIScrollBar::OnEvent(const SEvent &event)
 {
 	switch(event.EventType)
 	{
@@ -110,7 +110,7 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 		{
 		case EMIE_MOUSE_WHEEL:
 			{ // thanks to a bug report by REAPER
-				setPos(getPos() + (s32)event.MouseInput.Wheel*-10); 
+				setPos(getPos() + (s32)event.MouseInput.Wheel* -SmallStep); 
 				SEvent newEvent; 
 				newEvent.EventType = EET_GUI_EVENT; 
 				newEvent.GUIEvent.Caller = this; 
@@ -234,6 +234,16 @@ void CGUIScrollBar::setPos(s32 pos)
 	}
 }
 
+
+//! sets the small step value
+void CGUIScrollBar::setSmallStep(s32 step)
+{
+	if (step > 0)
+		SmallStep = step;
+	else
+		SmallStep = 10;
+
+}
 
 
 //! sets the maximum value of the scrollbar. must be > 0

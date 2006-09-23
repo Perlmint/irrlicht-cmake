@@ -187,11 +187,11 @@ void CSoftwareTexture2::regenerateMipMapLevels()
 	while ( i < SOFTWARE_DRIVER_2_MIPMAPPING_MAX )
 	{
 		currentSize = c->getDimension();
-		newSize.Width = max ( 1, currentSize.Width / 2 );
-		newSize.Height = max ( 1, currentSize.Height / 2 );
+		newSize.Width = max ( 1, currentSize.Width >> 1 );
+		newSize.Height = max ( 1, currentSize.Height >> 1 );
 
 		MipMap[i] = new CImage(ECF_SOFTWARE2, newSize);
-		MipMap[0]->copyToScalingBoxFilter ( MipMap[i], - ( i * 2 ) );
+		MipMap[0]->copyToScalingBoxFilter ( MipMap[i], 0 );
 		c = MipMap[i];
 		i += 1;
 	}

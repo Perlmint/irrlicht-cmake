@@ -15,6 +15,7 @@
 #include "CGUICheckBox.h"
 #include "CGUIListBox.h"
 #include "CGUIFileOpenDialog.h"
+#include "CGUIColorSelectDialog.h"
 #include "CGUIStaticText.h"
 #include "CGUIEditBox.h"
 #include "CGUIInOutFader.h"
@@ -58,7 +59,7 @@ CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* drive
 
 	loadBuiltInFont();
 
-	IGUISkin* skin = createSkin(EGST_WINDOWS_METALLIC);
+	IGUISkin* skin = createSkin( EGST_BURNING_SKIN);
 	setSkin(skin);
 	skin->drop();
 }
@@ -187,7 +188,7 @@ video::IVideoDriver* CGUIEnvironment::getVideoDriver()
 
 
 //! called by ui if an event happened.
-bool CGUIEnvironment::OnEvent(SEvent event)
+bool CGUIEnvironment::OnEvent(const SEvent &event)
 {
 	if (UserReceiver && event.GUIEvent.Caller != this)
 		return UserReceiver->OnEvent(event);
@@ -239,7 +240,7 @@ void CGUIEnvironment::setUserEventReceiver(IEventReceiver* evr)
 
 
 //! posts an input event to the environment
-bool CGUIEnvironment::postEventFromUser(SEvent event)
+bool CGUIEnvironment::postEventFromUser(const SEvent &event)
 {
 	switch(event.EventType)
 	{
@@ -477,6 +478,27 @@ IGUIFileOpenDialog* CGUIEnvironment::addFileOpenDialog(const wchar_t* title,
 	}
 
     IGUIFileOpenDialog* d = new CGUIFileOpenDialog(FileSystem, title,
+			this, parent, id);
+
+	d->drop();
+	return d;
+}
+
+
+//! adds a color select dialog. The returned pointer must not be dropped.
+IGUIColorSelectDialog* CGUIEnvironment::addColorSelectDialog(const wchar_t* title, 
+													   bool modal,
+													   IGUIElement* parent, s32 id)
+{
+	parent = parent ? parent : this;
+
+	if (modal)
+	{
+		parent = new CGUIModalScreen(this, parent, -1);
+		parent->drop();
+	}
+
+    IGUIColorSelectDialog* d = new CGUIColorSelectDialog( title,
 			this, parent, id);
 
 	d->drop();

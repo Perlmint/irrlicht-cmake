@@ -210,16 +210,16 @@ void CTRTextureGouraud2::scanline_bilinear ( sScanLineData * data ) const
 
 		{
 #ifdef INVERSE_W
-			//TODO:
-			inversew = inverse32 ( data->w[0] );
-
-#ifdef IPOL_C
-			getSample_plain ( r1, g1, b1, data->c[0] * inversew );
-#endif
-
-			inversew *= FIX_POINT_F32_MUL;
+			inversew = fix_inverse32 ( data->w[0] );
 			tx0 = f32_to_fixPoint ( data->t0[0].x, inversew);
 			ty0 = f32_to_fixPoint ( data->t0[0].y, inversew);
+
+#ifdef IPOL_C
+			r1 = f32_to_fixPoint ( data->c[0].y ,inversew );
+			g1 = f32_to_fixPoint ( data->c[0].z ,inversew );
+			b1 = f32_to_fixPoint ( data->c[0].w ,inversew );
+#endif
+
 #else
 			tx0 = f32_to_fixPoint ( data->t0[0].x );
 			ty0 = f32_to_fixPoint ( data->t0[0].y );

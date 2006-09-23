@@ -15,6 +15,7 @@ namespace io
 
 	class CZipReader;
 	class CPakReader;
+	class CUnZipReader;
 	const s32 FILE_SYSTEM_MAX_PATH = 1024;
 
 /*!
@@ -38,7 +39,8 @@ public:
 
 	//! adds an zip archive to the filesystem
 	virtual bool addZipFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true);
-	
+	virtual bool addUnZipFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true);
+
 	//! adds an pak archive to the filesystem
 	virtual bool addPakFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true);
 
@@ -85,6 +87,7 @@ private:
 
 	core::array<CZipReader*> ZipFileSystems;
 	core::array<CPakReader*> PakFileSystems;
+	core::array<CUnZipReader*> UnZipFileSystems;
 	c8 WorkingDirectory[FILE_SYSTEM_MAX_PATH];
 };
 

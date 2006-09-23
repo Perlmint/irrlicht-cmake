@@ -36,7 +36,7 @@ namespace gui
 		virtual void enableOverrideColor(bool enable);
 
 		//! called if an event happened.
-		virtual bool OnEvent(SEvent event);
+		virtual bool OnEvent(const SEvent &event);
 
 		//! draws the element and its children
 		virtual void draw();
@@ -54,8 +54,8 @@ namespace gui
 
 	protected:
 
-		bool processKey(SEvent& event);
-		bool processMouse(SEvent& event);
+		bool processKey(const SEvent& event);
+		bool processMouse(const SEvent& event);
 		s32 getCursorPos(s32 x);
 
 		bool MouseMarking;

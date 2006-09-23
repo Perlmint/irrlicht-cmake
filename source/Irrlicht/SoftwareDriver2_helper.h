@@ -12,7 +12,6 @@
 
 #include "SoftwareDriver2_compile_config.h"
 #include "irrMath.h"
-//#include "IImage.h"
 #include "CSoftwareTexture2.h"
 
 
@@ -134,19 +133,16 @@ static inline s32 s32_log2_f32( f32 x)
 	return log2;
 }
 
-#ifdef SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
-	static inline s32 s32_log2(u32 x) 
-	{
-		__asm {
-			bsr eax, x
-		}
-	}
-#else
-	static inline s32 s32_log2(u32 x)
-	{
-		return s32_log2_f32( (f32) x);
-	}
-#endif
+static inline s32 s32_log2(u32 x)
+{
+	return s32_log2_f32( (f32) x);
+}
+
+static inline s32 s32_abs(s32 x)
+{
+	s32 b = x >> 31;
+	return (x ^ b ) - b;
+}
 
 // swap integer with xor
 inline void swap_xor ( s32 &a, s32 &b )
@@ -283,6 +279,17 @@ inline u16 PixelMul16 ( u16 c0, u16 c1)
 inline u32 PixelMul32 ( u32 c0, u32 c1)
 {
 	return	c0 & 0xFF000000 |
+			( ( (c0 & 0x00FF0000) >> 12 ) * ( (c1 & 0x00FF0000) >> 12 ) ) & 0x00FF0000 |
+			( ( (c0 & 0x0000FF00) * (c1 & 0x0000FF00) ) >> 16 ) & 0x0000FF00 |
+			( ( (c0 & 0x000000FF) * (c1 & 0x000000FF) ) >> 8  ) & 0x000000FF;
+}
+
+/*
+	Pixel = c0 * (c1/255). 
+*/
+inline u32 PixelMul32_2 ( u32 c0, u32 c1)
+{
+	return	( ( (c0 & 0xFF000000) >> 16 ) * ( (c1 & 0xFF000000) >> 16 ) ) & 0xFF000000 |
 			( ( (c0 & 0x00FF0000) >> 12 ) * ( (c1 & 0x00FF0000) >> 12 ) ) & 0x00FF0000 |
 			( ( (c0 & 0x0000FF00) * (c1 & 0x0000FF00) ) >> 16 ) & 0x0000FF00 |
 			( ( (c0 & 0x000000FF) * (c1 & 0x000000FF) ) >> 8  ) & 0x000000FF;
@@ -427,57 +434,22 @@ static inline int f_round2(float f)
 	return *((int*)&f) - 0x4b400000;
 }
 
-#if 0
-	inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mul = FIX_POINT_F32_MUL )
-	{
-		static const f64 _double2fixmagic = 68719476736.0*1.5;
-
-		f64 val = _double2fixmagic + ( x * mul );
-
-	#ifdef __BIG_ENDIAN__
-		return ((s32*)&val)[1] >> FIX_POINT_PRE; 
-	#else
-		return ((s32*)&val)[0] >> FIX_POINT_PRE; 
-	#endif
-	}
-#else
-	inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mulby = FIX_POINT_F32_MUL )
-	{
-#ifndef SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
-		return (tFixPoint) (x * mulby);
-#else
-		tFixPoint i;
-		__asm
-		{
-			fld x;
-			fmul mulby
-			fistp i
-		}
-		return i;
-#endif
-	}
-#endif
+/*
+	convert f32 to Fix Point.
+	multiply is needed anyway, so scale mulby
+*/
+inline tFixPoint f32_to_fixPoint (const f32 x, const f32 mulby = FIX_POINT_F32_MUL )
+{
+	return (tFixPoint) (x * mulby);
+}
 
 /*
-	Fix Point Multiply
+	Fix Point , Fix Point Multiply
 */
-
-#ifdef SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
-	inline tFixPoint imulFix(const tFixPoint x, const tFixPoint y)
-	{
-		__asm
-		{
-			mov eax, x
-			imul y
-			shrd eax, edx, FIX_POINT_PRE
-		}
-	}
-#else
-	inline tFixPoint imulFix(const tFixPoint x, const tFixPoint y)
-	{
-		return (x * y) >> FIX_POINT_PRE;
-	}
-#endif
+inline tFixPoint imulFix(const tFixPoint x, const tFixPoint y)
+{
+	return (x * y) >> FIX_POINT_PRE;
+}
 
 /*
 	Multiply x * y * 2
@@ -490,27 +462,14 @@ inline tFixPoint imulFix2(const tFixPoint x, const tFixPoint y)
 /*
 	Multiply x * y * 4
 */
-#ifdef SOFTWARE_DRIVER_2_USE_X32_ASSEMBLER
-	inline tFixPoint imulFix3(const tFixPoint x, const tFixPoint y)
-	{
-		__asm
-		{
-			mov eax, x
-			imul y
-			shrd eax, edx, FIX_POINT_PRE + ( VIDEO_SAMPLE_GRANULARITY * 3 )
-		}
-	}
-
+inline tFixPoint imulFix3(const tFixPoint x, const tFixPoint y)
+{
+#ifdef SOFTWARE_DRIVER_2_32BIT
+	return ( ( x >> 2 ) * ( y >> 2 ) ) >> ( FIX_POINT_PRE + 2 );
 #else
-	inline tFixPoint imulFix3(const tFixPoint x, const tFixPoint y)
-	{
-	#ifdef SOFTWARE_DRIVER_2_32BIT
-		return ( ( x >> 2 ) * ( y >> 2 ) ) >> ( FIX_POINT_PRE + 2 );
-	#else
-		return ( x * y) >> ( FIX_POINT_PRE + ( VIDEO_SAMPLE_GRANULARITY * 3 ) );
-	#endif
-	}
+	return ( x * y) >> ( FIX_POINT_PRE + ( VIDEO_SAMPLE_GRANULARITY * 3 ) );
 #endif
+}
 
 /*!
 	clamp FixPoint to maxcolor in FixPoint, min(a,31)

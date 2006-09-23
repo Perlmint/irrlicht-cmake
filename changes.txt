@@ -1,15 +1,6 @@
 -------------------------------------------
 Changes in version 1.2 (???? 2006)
 
-- Added getHeight method for terrain node submitted by Spintz. It calculates the height from the base mesh instead of requiring ray casts and collision detection and is much faster.
-
-- New methods core::lerp to linearly interpolate two floats and SColor.getLuminance to calculate luminance of RGB color.
-
-- Multisampling with OpenGL under Linux added
-
-- MAJOR API CHANGE:
-  Fixed matrix access methods mat(x,y). These were previously said to be (row,column) but actually were (column, row). This lead to some confusion and made their use quite tricky. Irrlicht code is updated for the new method, but applications will silently fail now (i.e. compile without errors, but not working as expected).
-
 - Update to zlib-1.2.3
 
 - Fixed vertex alpha handling in DirectX drivers.
@@ -53,7 +44,7 @@ Changes in version 1.2 (???? 2006)
 		-> /QIfist
 - CGUIFont
 	- added True Alpha Font Support.
-		it's a little hack, but it'a good starting point.
+		it's a little hack, but it'a goo starting point.
 		currently fonts are compatible.
 		in font-file make first pixel half transparent..
 - Scolor

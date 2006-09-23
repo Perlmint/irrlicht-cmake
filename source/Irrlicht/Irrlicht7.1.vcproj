@@ -173,9 +173,11 @@
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
 				RuntimeLibrary="4"
+				StructMemberAlignment="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
 				EnableEnhancedInstructionSet="0"
+				TreatWChar_tAsBuiltInType="TRUE"
 				AssemblerListingLocation=".\..\obj\IrrRelease/"
 				ObjectFile=".\..\obj\IrrRelease/"
 				ProgramDataBaseFileName=".\..\obj\IrrRelease/"
@@ -195,7 +197,9 @@
 				IgnoreDefaultLibraryNames="libci.lib"
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="..\obj\IrrRelease\Irrlicht.pdb"
-				ImportLibrary="..\..\lib\Win32-visualstudio\Irrlicht.lib"/>
+				EnableCOMDATFolding="0"
+				ImportLibrary="..\..\lib\Win32-visualstudio\Irrlicht.lib"
+				TargetMachine="0"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
@@ -551,6 +555,9 @@
 					RelativePath=".\..\..\include\IGUICheckbox.h">
 				</File>
 				<File
+					RelativePath="..\..\include\IGUIColorSelectDialog.h">
+				</File>
+				<File
 					RelativePath=".\..\..\include\IGUIComboBox.h">
 				</File>
 				<File
@@ -620,6 +627,12 @@
 			</File>
 			<File
 				RelativePath=".\CGUICheckbox.h">
+			</File>
+			<File
+				RelativePath=".\CGUIColorSelectDialog.cpp">
+			</File>
+			<File
+				RelativePath=".\CGUIColorSelectDialog.h">
 			</File>
 			<File
 				RelativePath="CGUIComboBox.cpp">
@@ -747,6 +760,9 @@
 			</File>
 			<File
 				RelativePath="CVideoModeList.h">
+			</File>
+			<File
+				RelativePath=".\SColor.cpp">
 			</File>
 			<Filter
 				Name="Software"
@@ -1107,6 +1123,9 @@
 				</File>
 				<File
 					RelativePath=".\CTRTextureLightMap2_M4.cpp">
+				</File>
+				<File
+					RelativePath=".\CTRTextureLightMapGouraud2_M4.cpp">
 				</File>
 				<File
 					RelativePath=".\CTRTextureWire2.cpp">

@@ -8,6 +8,9 @@
 #include "SMeshBufferLightMap.h"
 #include "irrString.h"
 #include "CColorConverter.h"
+#include "ILightSceneNode.h"
+#include "fast_atof.h"
+
 #include <stdio.h>
 
 namespace irr
@@ -17,10 +20,10 @@ namespace scene
 
 
 //! constructor
-CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver)
+CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver, scene::ISceneManager* smgr)
 : Textures(0), LightMaps(0),
  Vertices(0), Faces(0),	Planes(0), Nodes(0), Leafs(0), LeafFaces(0),
-	MeshVerts(0), Brushes(0), Driver(driver), FileSystem(fs)
+	MeshVerts(0), Brushes(0), Driver(driver), FileSystem(fs), SceneManager ( smgr )
 {
 	#ifdef _DEBUG
 	IUnknown::setDebugName("CQ3LevelMesh");
@@ -33,6 +36,7 @@ CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver)
 
 	if (FileSystem)
 		FileSystem->grab();
+
 }
 
 
@@ -153,6 +157,10 @@ s32 CQ3LevelMesh::getFrameCount()
 //! returns the animated mesh based on a detail level. 0 is the lowest, 255 the highest detail. Note, that some Meshes will ignore the detail level.
 IMesh* CQ3LevelMesh::getMesh(s32 frameInMs, s32 detailLevel, s32 startFrameLoop, s32 endFrameLoop)
 {
+	// Dirty Hack
+	if ( frameInMs == 1 )
+		return (IMesh*) ((void*)&LightData);
+
 	return Mesh;
 }
 
@@ -285,7 +293,151 @@ void CQ3LevelMesh::loadVisData(tBSPLump* l, io::IReadFile* file)
 
 void CQ3LevelMesh::loadEntities(tBSPLump* l, io::IReadFile* file)
 {
+	core::array<u8> entity;
+	entity.set_used ( l->length + 2 );
+	entity[l->length + 1 ] = 0;
+
+	file->seek(l->offset);
+	file->read ( entity.pointer(), l->length);
+
+	parser_parse ( entity.pointer(), l->length );
 	// ignore
+}
+
+
+void CQ3LevelMesh::parser_nextToken ()
+{
+	c8 symbol;
+
+	Parser.token = "";
+
+	// skip white space
+	do
+	{
+		if ( Parser.index >= Parser.sourcesize )
+		{
+			Parser.tokenresult = Q3_TOKEN_EOF;
+			return;
+		}
+
+		symbol = Parser.source [ Parser.index ];
+		Parser.index += 1;
+	} while ( symbol == ' ' || symbol == '\t' || symbol == '\n' );
+
+	// one byte 
+	switch ( symbol )
+	{
+		case '{':
+			Parser.tokenresult = Q3_TOKEN_START_LIST;
+			break;
+		case '}':
+			Parser.tokenresult = Q3_TOKEN_END_LIST;
+			break;
+		case '"':
+		{
+			do
+			{
+				if ( Parser.index >= Parser.sourcesize )
+				{
+					Parser.tokenresult = Q3_TOKEN_EOF;
+					return;
+				}
+				symbol = Parser.source [ Parser.index ];
+				Parser.index += 1;
+				if ( symbol != '"' )
+					Parser.token.append ( symbol );
+			} while ( symbol != '"' );
+			Parser.tokenresult = Q3_TOKEN_IDENTITY;
+		} break;
+	}
+
+}
+
+
+void CQ3LevelMesh::parser_parse ( const void * data, const u32 size )
+{
+	Parser.source = (const c8*) data;
+	Parser.sourcesize = size;
+	Parser.index = 0;
+
+	SQ3VarGroup group;
+	SQ3Variable entity;
+
+	do
+	{
+		parser_nextToken ();
+		switch ( Parser.tokenresult )
+		{
+			case Q3_TOKEN_START_LIST:
+			{
+				group.clear ();
+			}  break;
+
+			case Q3_TOKEN_IDENTITY:
+			{
+				strcpy ( entity.name, Parser.token.c_str () );
+				parser_nextToken ();
+				strcpy ( entity.content, Parser.token.c_str () );
+				group.Variable.push_back ( entity );
+			}  break;
+
+			case Q3_TOKEN_END_LIST:
+			{
+				const c8 *classname = group.get ( "classname" );
+
+				if ( 0 == strcmp ( classname, "light" ) )
+				{
+					addLightData ( group );
+				}
+
+			} break;
+
+		}
+	} while ( Parser.tokenresult != Q3_TOKEN_EOF );
+}
+
+// simple assozitave array
+const c8 * CQ3LevelMesh::SQ3VarGroup::get( const char * name ) const
+{
+	SQ3Variable search;
+	strcpy ( search.name, name );
+
+	s32 index = Variable.linear_search ( search );
+	if ( index < 0 )
+		return 0;
+
+	return Variable [index].content;
+}
+
+
+
+const c8 * CQ3LevelMesh::parser_get_float ( f32 &out, const c8* in ) const
+{
+	if ( 0 == in )
+		return 0;
+	return core::fast_atof_move ( in, out );
+}
+
+void CQ3LevelMesh::parser_get_vector ( core::vector3df &vector, const c8* string ) const
+{
+	const c8 * in = string;
+
+	in = parser_get_float ( vector.X, in );
+	in = parser_get_float ( vector.Y, in );
+	in = parser_get_float ( vector.Z, in );
+}
+
+
+// extract light info
+void CQ3LevelMesh::addLightData ( const SQ3VarGroup &group )
+{
+	video::SLight light;
+	light.Type = video::ELT_POINT;
+	light.Radius = 200;
+
+	parser_get_vector ( light.Position, group.get ( "origin" ) );
+	parser_get_float ( light.Radius, group.get ( "light" ) );
+	LightData.push_back ( light );
 }
 
 
@@ -386,8 +538,8 @@ void CQ3LevelMesh::constructMesh()
 							video::S3DVertex2TCoords currentVertex;
 							tBSPVertex *v = &Vertices[vidxes[vu]];
 
-							//currentVertex.Color = video::SColor(v->color[3], v->color[0], v->color[1], v->color[2]);
-							currentVertex.Color.set(255,255,255,255);
+							currentVertex.Color = video::SColor(v->color[3], v->color[0], v->color[1], v->color[2]);
+							//currentVertex.Color.set(255,255,255,255);
 
 							currentVertex.Pos.X = v->vPosition[0];
 							currentVertex.Pos.Y = v->vPosition[2];
@@ -721,6 +873,7 @@ void CQ3LevelMesh::loadTextures()
 			++i;
 	}
 }
+
 
 
 //! Returns an axis aligned bounding box of the mesh.

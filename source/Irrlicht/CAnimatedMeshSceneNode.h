@@ -118,6 +118,7 @@ namespace scene
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_ANIMATED_MESH; }
 
+
 	private:
 
 		core::array<video::SMaterial> Materials;
@@ -138,6 +139,7 @@ namespace scene
 		IShadowVolumeSceneNode* Shadow;
 
 		core::array<IDummyTransformationSceneNode* > JointChildSceneNodes;
+
 	};
 
 } // end namespace scene

@@ -104,7 +104,7 @@ const core::matrix4& CCameraSceneNode::getViewMatrix()
 //! example with scene::ISceneManager::addMayaCameraSceneNode or
 //! scene::ISceneManager::addMeshViewerCameraSceneNode, may want to get this input
 //! for changing their position, look at target or whatever. 
-bool CCameraSceneNode::OnEvent(SEvent event)
+bool CCameraSceneNode::OnEvent(const SEvent &event)
 {
 	return false;
 }

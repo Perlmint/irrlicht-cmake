@@ -203,7 +203,7 @@ void CTRTextureLightMap2_Add::scanline_bilinear ( sScanLineData * data ) const
 		if ( data->z[0] < z[i] )
 #endif
 #ifdef CMP_W
-		if ( data->w[0] < z[i] )
+		if ( data->w[0] > z[i] )
 #endif
 		{
 #ifdef INVERSE_W

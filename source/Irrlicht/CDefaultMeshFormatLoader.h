@@ -8,6 +8,7 @@
 #include "IMeshLoader.h"
 #include "IFileSystem.h"
 #include "IVideoDriver.h"
+#include "ISceneManager.h"
 
 namespace irr
 {
@@ -21,7 +22,7 @@ class CDefaultMeshFormatLoader : public IMeshLoader
 public:
 
 	//! Constructor
-	CDefaultMeshFormatLoader(io::IFileSystem* fs, video::IVideoDriver* driver);
+	CDefaultMeshFormatLoader(io::IFileSystem* fs, video::IVideoDriver* driver, scene::ISceneManager* smgr);
 
 	//! destructor
 	virtual ~CDefaultMeshFormatLoader();
@@ -38,6 +39,7 @@ public:
 
 private:
 
+	scene::ISceneManager* SceneManager;
 	io::IFileSystem* FileSystem;
 	video::IVideoDriver* Driver;
 };

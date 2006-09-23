@@ -58,6 +58,7 @@
 #include "IGUIEditBox.h"
 #include "IGUIEnvironment.h"
 #include "IGUIFileOpenDialog.h"
+#include "IGUIColorSelectDialog.h"
 #include "IGUIFont.h"
 #include "IGUIImage.h"
 #include "IGUIInOutFader.h"

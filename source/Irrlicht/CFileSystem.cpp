@@ -17,6 +17,7 @@
 
 #ifdef _IRR_WINDOWS_
 #include <direct.h> // for _chdir
+#include <stdlib.h>
 #endif
 
 #if (defined(LINUX) || defined(MACOSX))
@@ -44,11 +45,16 @@ CFileSystem::CFileSystem()
 //! destructor
 CFileSystem::~CFileSystem()
 {
-	for (u32 i=0; i<ZipFileSystems.size(); ++i)
+	u32 i;
+
+	for ( i=0; i<ZipFileSystems.size(); ++i)
 		ZipFileSystems[i]->drop();
 
-	for (u32 f=0; f<PakFileSystems.size(); ++f)
-		PakFileSystems[f]->drop();
+	for ( i=0; i<PakFileSystems.size(); ++i)
+		PakFileSystems[i]->drop();
+
+	for ( i= 0; i<UnZipFileSystems.size(); ++i)
+		UnZipFileSystems[i]->drop();
 }
 
 
@@ -57,17 +63,25 @@ CFileSystem::~CFileSystem()
 IReadFile* CFileSystem::createAndOpenFile(const c8* filename)
 {
 	IReadFile* file = 0;
+	u32 i;
 
-	for (u32 i=0; i<ZipFileSystems.size(); ++i)
+	for ( i=0; i<ZipFileSystems.size(); ++i)
 	{
 		file = ZipFileSystems[i]->openFile(filename);
 		if (file)
 			return file;
 	}
 
-	for (u32 f=0; f<PakFileSystems.size(); ++f)
+	for ( i = 0; i<PakFileSystems.size(); ++i)
 	{
-		file = PakFileSystems[f]->openFile(filename);
+		file = PakFileSystems[i]->openFile(filename);
+		if (file)
+			return file;
+	}
+
+	for ( i = 0; i<UnZipFileSystems.size(); ++i)
+	{
+		file = UnZipFileSystems[i]->openFile(filename);
 		if (file)
 			return file;
 	}
@@ -83,6 +97,28 @@ IWriteFile* CFileSystem::createAndWriteFile(const c8* filename, bool append)
 	return createWriteFile(filename, append);
 }
 
+
+bool CFileSystem::addUnZipFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
+{
+	bool ret = false;
+
+	CUnZipReader* zr = new CUnZipReader( this, filename, ignoreCase, ignorePaths);
+	if (zr)
+	{
+		UnZipFileSystems.push_back(zr);
+		ret = true;
+	}
+
+	#ifdef _DEBUG
+	if ( false == ret )
+	{
+		os::Printer::log("Could not open file. UnZipfile not added", filename, ELL_ERROR);
+	}
+	#endif
+
+	return ret;
+
+}
 
 
 //! adds an zip archive to the filesystem
@@ -210,6 +246,10 @@ bool CFileSystem::existFile(const c8* filename)
 
 	for (i=0; i<PakFileSystems.size(); ++i)
 		if (PakFileSystems[i]->findFile(filename)!=-1)
+			return true;
+
+	for (i=0; i<UnZipFileSystems.size(); ++i)
+		if (UnZipFileSystems[i]->findFile(filename)!=-1)
 			return true;
 
 	FILE* f = fopen(filename, "rb");

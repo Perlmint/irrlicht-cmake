@@ -154,7 +154,7 @@ IGUITab* CGUITabControl::getTab(s32 idx)
 
 
 //! called if an event happened.
-bool CGUITabControl::OnEvent(SEvent event)
+bool CGUITabControl::OnEvent(const SEvent &event)
 {
 	if (!IsEnabled)
 		return Parent ? Parent->OnEvent(event) : false;

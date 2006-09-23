@@ -27,7 +27,7 @@ public:
 		Terrain = terrain;
 	}
 
-	bool OnEvent(SEvent event)
+	bool OnEvent(const SEvent &event)
 	{
 		// check if user presses the key 'W' or 'D'
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT && !event.KeyInput.PressedDown)
@@ -70,7 +70,7 @@ int main()
 
 	printf("Please select the driver you want for this example:\n"\
 		" (a) Direct3D 9.0c\n (b) Direct3D 8.1\n (c) OpenGL 1.5\n"\
-		" (d) Software Renderer\n (e) Apfelbaum Software Renderer\n"\
+		" (d) Software Renderer\n (e) Burning's Software Renderer\n"\
 		" (f) NullDevice\n (otherKey) exit\n\n");
 
 	char i;
@@ -108,7 +108,7 @@ int main()
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
 	// add irrlicht logo
-	env->addImage(driver->getTexture("../../media/irrlichtlogoalpha.tga"),
+	env->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(10,10));
 
 	// add some help text

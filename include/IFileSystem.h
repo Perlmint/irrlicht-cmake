@@ -66,6 +66,16 @@ public:
 	without its complete path.
 	\return Returns true if the archive was added successful, false if not. */
 	virtual bool addZipFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
+
+	//! Adds an unzipped archive ( or basedirectory with subdirectories..) to the file system.
+	/** Useful for handling data which will be in a zip file
+	\param filename: Filename of the unzipped zip archive base directory to add to the file system.
+	\param ignoreCase: If set to true, files in the archive can be accessed without
+	writing all letters in the right case.
+	\param ignorePaths: If set to true, files in the added archive can be accessed
+	without its complete path.
+	\return Returns true if the archive was added successful, false if not. */
+	virtual bool addUnZipFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
 	
 	//! Adds an pak archive to the file system.
 	/** After calling this, the Irrlicht Engine will search and open files directly from this archive too. 
@@ -78,6 +88,8 @@ public:
 	without its complete path.(should not use with Quake2 paks
 	\return Returns true if the archive was added successful, false if not. */
 	virtual bool addPakFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
+
+
 
 	//! Returns the string of the current working directory.
 	virtual const c8* getWorkingDirectory() = 0;

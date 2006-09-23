@@ -79,7 +79,7 @@ const video::SMaterial& CGUIMeshViewer::getMaterial()
 
 
 //! called if an event happened.
-bool CGUIMeshViewer::OnEvent(SEvent event)
+bool CGUIMeshViewer::OnEvent(const SEvent &event)
 {
 	return Parent ? Parent->OnEvent(event) : false;
 }

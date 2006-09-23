@@ -8,10 +8,6 @@
 #include "S3DVertex.h"
 #include "S4DVertex.h"
 
-#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
-	#include <float.h>
-#endif
-
 namespace irr
 {
 namespace video
@@ -58,7 +54,8 @@ CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, boo
 	TriangleRenderer[ETR_TEXTURE_GOURAUD] = createTriangleRendererTextureGouraud2(ZBuffer);
 	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP] = createTriangleRendererTextureLightMap2_M1(ZBuffer);
 	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_M2] = createTriangleRendererTextureLightMap2_M2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_M4] = createTriangleRendererTextureLightMap2_M4(ZBuffer);
+	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_M4] = createTriangleRendererGTextureLightMap2_M4(ZBuffer);
+	TriangleRenderer[ETR_TEXTURE_LIGHTMAP_M4] = createTriangleRendererTextureLightMap2_M4(ZBuffer);
 	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD] = createTriangleRendererTextureLightMap2_Add(ZBuffer);
 	TriangleRenderer[ETR_TEXTURE_GOURAUD_DETAIL_MAP] = createTriangleRendererTextureDetailMap2(ZBuffer);
 
@@ -189,12 +186,15 @@ void CSoftwareDriver2::selectRightTriangleRenderer()
 			break;
 
 		case EMT_LIGHTMAP_LIGHTING_M4:
-		case EMT_LIGHTMAP_M4:
 			renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP_M4;
+			break;
+		case EMT_LIGHTMAP_M4:
+			renderer = ETR_TEXTURE_LIGHTMAP_M4;
 			break;
 
 		case EMT_LIGHTMAP_ADD:
-			renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD;
+			if ( Material.org.Texture2 )
+				renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD;
 			break;
 
 		case EMT_DETAIL_MAP:
@@ -326,13 +326,6 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 //! clears the zbuffer
 bool CSoftwareDriver2::beginScene(bool backBuffer, bool zBuffer, SColor color)
 {
-#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
-	// save fpu mode
-	fpu_orig_cw = _controlfp(0, 0); 
-
-	// set single-precision mode
-	_controlfp ( _PC_24, MCW_PC );
-#endif
 
 	CNullDriver::beginScene(backBuffer, zBuffer, color);
 
@@ -352,9 +345,6 @@ bool CSoftwareDriver2::endScene( s32 windowId, core::rect<s32>* sourceRect )
 
 	Presenter->present(BackBuffer, windowId, sourceRect );
 
-#ifdef SOFTWARE_DRIVER_2_CHANGE_FPU_STATE
-	_controlfp( fpu_orig_cw, 0xfffff );
-#endif
 	return true;
 }
 
@@ -955,15 +945,15 @@ void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexC
 
 		for ( g = 0; g != 2; ++g )
 		{
-			if ( 0 == Texmap[g].Texture )
-				continue;
+			if ( Texmap[g].Texture )
+			{
+				texarea = texelarea ( CurrentOut, g );
+				lodLevel = s32_log2_f32 ( texarea / cross );
+				lodLevel = s32_clamp ( lodLevel, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 );
 
-			texarea = texelarea ( CurrentOut, g );
-			lodLevel = s32_log2_f32 ( texarea / cross );
-			lodLevel = s32_clamp ( lodLevel, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 );
-
-			Texmap[g].Texture->setCurrentMipMapLOD ( lodLevel );
-			select_polygon_mipmap ( CurrentOut, vOut, g );
+				Texmap[g].Texture->setCurrentMipMapLOD ( lodLevel );
+				select_polygon_mipmap ( CurrentOut, vOut, g );
+			}
 			CurrentTriangleRenderer->setTexture(g, Texmap[g].Texture);
 		}
 

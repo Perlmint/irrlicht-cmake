@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include "CZipReader.h"
+#include "CFileList.h"
 #include "os.h"
 
 #include "IrrCompileConfig.h"
@@ -85,7 +86,11 @@ void CZipReader::extractFilename(SZipFileEntry* entry)
 	if (thereIsAPath)
 	{
 		lorfn = (s32)(p - entry->zipFileName.c_str());
-		entry->path.append(entry->zipFileName, lorfn);
+		
+		entry->path = entry->zipFileName.subString ( 0, lorfn );
+
+		//entry->path.append(entry->zipFileName, lorfn);
+		//entry->path.append ( "" );
 	}
 
 	if (!IgnorePaths)
@@ -339,6 +344,127 @@ s32 CZipReader::findFile(const c8* simpleFilename)
 	return res;
 }
 
+
+// ------------------------------------------------------------------------------------------
+#if 1
+CUnZipReader::CUnZipReader( IFileSystem * parent, const c8* basename, bool ignoreCase, bool ignorePaths)
+:CZipReader ( 0, ignoreCase, ignorePaths ), Parent ( parent )
+{
+	Base = basename;
+	if (	Base [ Base.size() - 1 ] != '\\' ||
+			Base [ Base.size() - 1 ] != '/'
+		)
+	{
+		Base += "/";
+	}
+
+}
+
+void CUnZipReader::buildDirectory ( )
+{
+}
+
+//! opens a file by file name
+IReadFile* CUnZipReader::openFile(const c8* filename)
+{
+	IReadFile *file;
+	core::stringc fname;
+	fname = Base;
+	fname += filename;
+
+	file = createReadFile( fname.c_str() );
+	return file;
+}
+
+//! returns fileindex
+s32 CUnZipReader::findFile(const c8* filename)
+{
+	IReadFile *file = openFile ( filename );
+	if ( 0 == file )
+		return -1;
+	file->drop ();
+	return 1;
+}
+
+#else
+
+CUnZipReader::CUnZipReader( IFileSystem * parent, const c8* basename, bool ignoreCase, bool ignorePaths)
+:CZipReader ( 0, ignoreCase, ignorePaths ), Parent ( parent )
+{
+	strcpy ( Buf, Parent->getWorkingDirectory () );
+
+	Parent->changeWorkingDirectoryTo ( basename );
+	buildDirectory ( );
+	Parent->changeWorkingDirectoryTo ( Buf );
+
+	FileList.sort();
+}
+
+void CUnZipReader::buildDirectory ( )
+{
+	s32 i;
+	s32 size;
+	const c8 * rel;
+
+	IFileList * list;
+	list = new CFileList ();
+
+	SZipFileEntry entry;
+
+	size = list->getFileCount();
+	for ( i = 0; i!= size; ++i )
+	{
+		if ( false == list->isDirectory( i ) )
+		{
+			entry.zipFileName = list->getFullFileName ( i );
+			entry.header.FilenameLength = entry.zipFileName.size ();
+			extractFilename(&entry);
+			FileList.push_back(entry);
+		}
+		else
+		{
+			rel = list->getFileName ( i );
+
+			if (	strcmp ( rel, "." ) &&
+					strcmp ( rel, ".." )
+				)
+			{
+				Parent->changeWorkingDirectoryTo ( rel );
+				buildDirectory ();
+				Parent->changeWorkingDirectoryTo ( ".." );
+			}
+		}
+
+	}
+
+	list->drop ();
+
+}
+
+//! opens a file by file name
+IReadFile* CUnZipReader::openFile(const c8* filename)
+{
+	s32 index = -1;
+
+	if ( IgnorePaths )
+	{
+		index = findFile(filename);
+	}
+	else
+	if ( FileList.size () )
+	{
+		core::stringc search = FileList[0].path + filename;
+		index = findFile( search.c_str() );
+	}
+
+	if (index == -1)
+		return 0;
+
+	IReadFile *file;
+	file = createReadFile(FileList[index].zipFileName.c_str() );
+	return file;
+}
+#endif
 
 
 } // end namespace io

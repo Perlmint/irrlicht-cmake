@@ -45,7 +45,7 @@ CGUIToolBar::CGUIToolBar(IGUIEnvironment* environment, IGUIElement* parent, s32 
 
 	RelativeRect.UpperLeftCorner.X = 0;
 	RelativeRect.UpperLeftCorner.Y = y;
-	s32 height = 30;
+	s32 height = Environment->getSkin()->getSize ( EGDS_MENU_HEIGHT );
 
 	/*IGUISkin* skin = Environment->getSkin();
 	IGUIFont* font = skin->getFont();

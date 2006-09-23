@@ -84,7 +84,7 @@ CCameraFPSSceneNode::~CCameraFPSSceneNode()
 //! example with scene::ISceneManager::addMayaCameraSceneNode or
 //! scene::ISceneManager::addMeshViewerCameraSceneNode, may want to get this input
 //! for changing their position, look at target or whatever. 
-bool CCameraFPSSceneNode::OnEvent(SEvent event)
+bool CCameraFPSSceneNode::OnEvent(const SEvent &event)
 {
 	if (!InputReceiverEnabled)
 		return false;

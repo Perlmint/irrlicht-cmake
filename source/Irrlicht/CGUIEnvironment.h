@@ -33,14 +33,14 @@ public:
 	virtual video::IVideoDriver* getVideoDriver();
 
 	//! posts an input event to the environment
-	virtual bool postEventFromUser(SEvent event);
+	virtual bool postEventFromUser(const SEvent &event);
 
 	//! This sets a new event receiver for gui events. Usually you do not have to
 	//! use this method, it is used by the internal engine.
 	virtual void setUserEventReceiver(IEventReceiver* evr);
 
 	//! called if an event happened.
-	virtual bool OnEvent(SEvent event);
+	virtual bool OnEvent(const SEvent &event);
 
 	//! returns the current gui skin
 	virtual IGUISkin* getSkin();
@@ -91,6 +91,7 @@ public:
 
 	//! Adds a file open dialog.
 	virtual IGUIFileOpenDialog* addFileOpenDialog(const wchar_t* title = 0, bool modal=true, IGUIElement* parent=0, s32 id=-1);
+	virtual IGUIColorSelectDialog* addColorSelectDialog(const wchar_t* title = 0, bool modal=true, IGUIElement* parent=0, s32 id=-1);
 
 	//! adds a static text. The returned pointer must not be dropped.
 	virtual IGUIStaticText* addStaticText(const wchar_t* text, const core::rect<s32>& rectangle,

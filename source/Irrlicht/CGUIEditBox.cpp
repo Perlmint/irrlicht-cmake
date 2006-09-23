@@ -77,7 +77,7 @@ void CGUIEditBox::enableOverrideColor(bool enable)
 
 
 //! called if an event happened.
-bool CGUIEditBox::OnEvent(SEvent event)
+bool CGUIEditBox::OnEvent(const SEvent &event)
 {
 	switch(event.EventType)
 	{
@@ -100,7 +100,7 @@ bool CGUIEditBox::OnEvent(SEvent event)
 }
 
 
-bool CGUIEditBox::processKey(SEvent& event)
+bool CGUIEditBox::processKey(const SEvent& event)
 {
 	if (!event.KeyInput.PressedDown)
 		return false;
@@ -612,7 +612,7 @@ s32 CGUIEditBox::getMax()
 }
 
 
-bool CGUIEditBox::processMouse(SEvent& event)
+bool CGUIEditBox::processMouse(const SEvent& event)
 {
 	switch(event.MouseInput.Event)
 	{

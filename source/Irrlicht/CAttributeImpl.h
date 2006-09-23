@@ -340,7 +340,7 @@ public:
 	{
 		// parse text
 
-		char* P = (char*)text;
+		const char* P = (const char*)text;
 		Value.set(0,0,0,0);
 
 		for ( int i=0; i<4 && *P; ++i )
@@ -654,7 +654,7 @@ public:
 	{
 		// parse text
 
-		char* P = (char*)text;
+		const char* P = (const char*)text;
 		Value.set(0,0,0);
 
 		for ( int i=0; i<3 && *P; ++i )

@@ -22,11 +22,11 @@
 #undef IPOL_T1
 
 // define render case
-#define SUBTEXEL
-#define INVERSE_W
+//#define SUBTEXEL
+//#define INVERSE_W
 
 //#define USE_Z
-#define IPOL_W
+//#define IPOL_W
 //#define CMP_W
 //#define WRITE_W
 

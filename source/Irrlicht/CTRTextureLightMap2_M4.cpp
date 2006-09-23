@@ -196,6 +196,10 @@ void CTRTextureLightMap2_M4::scanline_bilinear ( sScanLineData * data ) const
 	tFixPoint r1, g1, b1;
 	tFixPoint r2, g2, b2;
 
+#ifdef IPOL_C
+	tFixPoint r3, g3, b3;
+#endif
+
 	for ( s32 i = 0; i <= dx; i++ )
 	{
 #ifdef CMP_Z
@@ -212,6 +216,13 @@ void CTRTextureLightMap2_M4::scanline_bilinear ( sScanLineData * data ) const
 			ty0 = f32_to_fixPoint ( data->t0[0].y,inversew);
 			tx1 = f32_to_fixPoint ( data->t1[0].x,inversew);
 			ty1 = f32_to_fixPoint ( data->t1[0].y,inversew);
+
+#ifdef IPOL_C
+			r3 = f32_to_fixPoint ( data->c[0].y ,inversew );
+			g3 = f32_to_fixPoint ( data->c[0].z ,inversew );
+			b3 = f32_to_fixPoint ( data->c[0].w ,inversew );
+#endif
+
 #else
 			tx0 = f32_to_fixPoint ( data->t0[0].x );
 			ty0 = f32_to_fixPoint ( data->t0[0].y );
@@ -222,9 +233,25 @@ void CTRTextureLightMap2_M4::scanline_bilinear ( sScanLineData * data ) const
 			getSample_texture ( r0, g0, b0, &IT[0], tx0, ty0 );
 			getSample_texture ( r1, g1, b1, &IT[1], tx1, ty1 );
 
+#ifdef IPOL_C
+			r2 = imulFix ( r0, r3 );
+			g2 = imulFix ( g0, g3 );
+			b2 = imulFix ( b0, b3 );
+
+			r2 = clampfix_maxcolor ( imulFix3 ( r2, r1 ) );
+			g2 = clampfix_maxcolor ( imulFix3 ( g2, g1 ) );
+			b2 = clampfix_maxcolor ( imulFix3 ( b2, b1 ) );
+/*
+			r2 = r3 << 8;
+			g2 = g3 << 8;
+			b2 = b3 << 8;
+*/
+#else
 			r2 = clampfix_maxcolor ( imulFix3 ( r0, r1 ) );
 			g2 = clampfix_maxcolor ( imulFix3 ( g0, g1 ) );
 			b2 = clampfix_maxcolor ( imulFix3 ( b0, b1 ) );
+#endif
+
 
 			dst[i] = fix_to_color ( r2, g2, b2 );
 

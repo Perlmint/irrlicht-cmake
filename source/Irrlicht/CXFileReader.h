@@ -297,7 +297,7 @@ private:
 	c8* Buffer;
 	s32 Size;
 	c8 FloatSize;
-	c8* P;
+	const c8* P;
 	c8* End;
 
    SXFrame * m_pgCurFrame;

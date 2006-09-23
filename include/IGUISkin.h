@@ -32,7 +32,10 @@ namespace gui
 		EGST_WINDOWS_CLASSIC,
 
 		//! Like EGST_WINDOWS_CLASSIC, but with metallic shaded windows and buttons
-		EGST_WINDOWS_METALLIC
+		EGST_WINDOWS_METALLIC,
+
+		//!
+		EGST_BURNING_SKIN
 	};
 
 	//! Enumeration for skin colors
@@ -102,7 +105,13 @@ namespace gui
 
 		//! height of a default button
 		EGDS_BUTTON_HEIGHT,
-		
+	
+		//! distance for text from background
+		EGDS_TEXT_DISTANCE_X,
+
+		//! distance for text from background
+		EGDS_TEXT_DISTANCE_Y,
+
 		//! this value is not used, it only specifies the amount of default sizes
 		//! available.
 		EGDS_COUNT

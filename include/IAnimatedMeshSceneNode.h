@@ -186,6 +186,7 @@ namespace scene
 
 		//! Sets a new mesh
 		virtual void setMesh(IAnimatedMesh* mesh) = 0;
+
 	};
 
 } // end namespace scene

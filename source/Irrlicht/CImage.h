@@ -96,7 +96,7 @@ public:
 	void copyToScaling(CImage* target);
 
 	//! copies this surface into another, scaling it to fit it, appyling a box filter
-	void copyToScalingBoxFilter(CImage* target, s32 bias);
+	void copyToScalingBoxFilter(CImage* target, s32 bias = 0);
 
 	//! draws a line from to
 	void drawLine(const core::position2d<s32>& from, const core::position2d<s32>& to, const SColor &color);

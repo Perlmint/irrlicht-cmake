@@ -111,7 +111,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 
 	// add default format loader
 
-	MeshLoaderList.push_back(new CDefaultMeshFormatLoader(FileSystem, Driver));
+	MeshLoaderList.push_back(new CDefaultMeshFormatLoader(FileSystem, Driver, this));
 	MeshLoaderList.push_back(new C3DSMeshFileLoader(MeshManipulator,FileSystem, Driver));
 	MeshLoaderList.push_back(new CXMeshFileLoader(MeshManipulator, Driver));
 	MeshLoaderList.push_back(new COCTLoader(Driver));
@@ -122,7 +122,6 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	MeshLoaderList.push_back(new CDMFLoader(Driver, this));
 	MeshLoaderList.push_back(new COgreMeshFileLoader(MeshManipulator, FileSystem, Driver));
 	MeshLoaderList.push_back(new COBJMeshFileLoader(FileSystem, Driver));
-
 	// factories
 
 	ISceneNodeFactory* factory = new CDefaultSceneNodeFactory(this);
@@ -1120,7 +1119,7 @@ ISceneNode* CSceneManager::getSceneNodeFromId(s32 id, ISceneNode* start)
 
 //! Posts an input event to the environment. Usually you do not have to
 //! use this method, it is used by the internal engine.
-bool CSceneManager::postEventFromUser(SEvent event)
+bool CSceneManager::postEventFromUser(const SEvent &event)
 {
 	bool ret = false;
 	ICameraSceneNode* cam = getActiveCamera();

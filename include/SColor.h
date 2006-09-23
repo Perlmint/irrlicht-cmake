@@ -359,6 +359,23 @@ namespace video
 		}
 	};
 
+	//! Class representing a color in HSV format
+	/**	The color values for hue, saturation, value
+	are stored in a 32 bit floating point variable.
+	*/
+	class SColorHSL
+	{
+	public:
+		void setfromRGB ( const SColor &color );
+		void settoRGB ( SColor &color );
+
+		f32 Hue;
+		f32 Saturation;
+		f32 Luminance;
+	private:
+		u32 toRGB1(f32 rm1, f32 rm2, f32 rh) const;
+	};
+
 } // end namespace video
 } // end namespace irr
 

@@ -37,7 +37,7 @@ We will use this input to move the scene node with the keys W and S.
 class MyEventReceiver : public IEventReceiver
 {
 public:
-	virtual bool OnEvent(SEvent event)
+	virtual bool OnEvent(const SEvent &event)
 	{
 		/*
 		If the key 'W' or 'S' was left up, we get the position of the scene node,
@@ -163,7 +163,7 @@ int main()
 	Add a colorful irrlicht logo
 	*/
 	device->getGUIEnvironment()->addImage(
-		driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
+		driver->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(10,10));
 
 	/*

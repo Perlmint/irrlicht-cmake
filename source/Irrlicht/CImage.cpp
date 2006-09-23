@@ -639,7 +639,7 @@ static void executeBlit_TextureBlendColor_32_to_32 ( const SBlitJob * job )
 	{
 		for ( s32 dx = 0; dx != job->width; ++dx )
 		{
-			dst[dx] = PixelBlend32 ( dst[dx], PixelMul32 ( src[dx], job->argb ) );
+			dst[dx] = PixelBlend32 ( dst[dx], PixelMul32_2 ( src[dx], job->argb ) );
 		}
 		src = (u32*) ( (u8*) (src) + job->srcPitch );
 		dst = (u32*) ( (u8*) (dst) + job->dstPitch );
@@ -1335,26 +1335,27 @@ u32 CImage::getPitch()
 inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias )
 {
 	SColor c;
-	u32 a = 0, r = 0, g = 0, b = 0;
+	s32 a = 0, r = 0, g = 0, b = 0;
 
 	for ( s32 dx = 0; dx != fx; ++dx )
 	{
 		for ( s32 dy = 0; dy != fy; ++dy )
 		{
 			c = getPixel ( x + dx , y + dy );
+
 			a += c.getAlpha ();
 			r += c.getRed();
 			g += c.getGreen();
-			b += c.getBlue ();
+			b += c.getBlue();
 		}
 	}
 
-	s32 sdiv = (fx * fy);
+	s32 sdiv = s32_log2(fx * fy);
 
-	a = s32_clamp ( ( a / sdiv ) + bias, 0, 255 );
-	r = s32_clamp ( ( r / sdiv ) + bias, 0, 255 );
-	g = s32_clamp ( ( g / sdiv ) + bias, 0, 255 );
-	b = s32_clamp ( ( b / sdiv ) + bias, 0, 255 );
+	a = s32_clamp ( ( a >> sdiv ) + bias, 0, 255 );
+	r = s32_clamp ( ( r >> sdiv ) + bias, 0, 255 );
+	g = s32_clamp ( ( g >> sdiv ) + bias, 0, 255 );
+	b = s32_clamp ( ( b >> sdiv ) + bias, 0, 255 );
 
 	c.set ( a, r, g, b );
 	return c;

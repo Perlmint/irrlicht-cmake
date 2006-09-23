@@ -789,7 +789,7 @@ void CColladaFileLoader::readGeometry(io::IXMLReaderUTF8* reader)
 			{
 				core::array<f32>& a = sources.getLast().Array.Data;
 				core::stringc data = reader->getNodeData();
-				char* p = &data[0];
+				const c8* p = &data[0];
 
 				for (int i=0; i<(int)a.size(); ++i)
 				{
@@ -958,7 +958,7 @@ void CColladaFileLoader::readPolygonSection(io::IXMLReaderUTF8* reader,
 			{
 				// parse this text and add it to the last polygon data
 				core::stringc data = reader->getNodeData();
-				char* p = &data[0];
+				const c8* p = &data[0];
 				SPolygon& poly = polygons.getLast();
 				while(*p)
 				{
@@ -1309,7 +1309,7 @@ void CColladaFileLoader::readColladaParameters(io::IXMLReaderUTF8* reader,
 
 //! parses a float from a char pointer and moves the pointer
 //! to the end of the parsed float
-inline f32 CColladaFileLoader::readFloat(c8** p)
+inline f32 CColladaFileLoader::readFloat(const c8** p)
 {
 	f32 ftmp;
 	*p = core::fast_atof_move(*p, ftmp);
@@ -1318,15 +1318,15 @@ inline f32 CColladaFileLoader::readFloat(c8** p)
 
 //! parses an int from a char pointer and moves the pointer to
 //! the end of the parsed float
-inline s32 CColladaFileLoader::readInt(c8** p)
+inline s32 CColladaFileLoader::readInt(const c8** p)
 {
 	return (s32)readFloat(p);
 }
 
 //! places pointer to next begin of a token
-void CColladaFileLoader::findNextNoneWhiteSpace(c8** start)
+void CColladaFileLoader::findNextNoneWhiteSpace(const c8** start)
 {
-	c8* p = *start;
+	const c8* p = *start;
 
 	while(*p && (*p==' ' || *p=='\n' || *p=='\r' || *p=='\t'))
 		++p;
@@ -1352,7 +1352,7 @@ void CColladaFileLoader::readFloatsInsideElement(io::IXMLReaderUTF8* reader, f32
 		{
 			// parse float data
 			core::stringc data = reader->getNodeData();
-			char* p = &data[0];
+			const c8* p = &data[0];
 			
 			for (int i=0; i<count; ++i)
 			{

@@ -2,7 +2,8 @@
 <config>
 <!--This is a config file for the Irrlicht Engine Mesh Viewer.-->
 <startUpModel file="../../media/dwarf.x" />
-<messageText caption="Irrlicht Engine Mesh Viewer">Welcome to the Mesh Viewer of the &quot;Irrlicht Engine&quot;. This program is able to load and display all 3D geometry and models the Irrlicht Engine can
+<messageText caption="Irrlicht Engine Mesh Viewer">Welcome to the Mesh Viewer of the &quot;Irrlicht Engine&quot;!.
+This program is able to load and display all 3D geometry and models the Irrlicht Engine can.
 Controls: Left mouse to rotate, right mouse to move, both buttons to zoom.
 
 Supported formats are:

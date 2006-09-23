@@ -43,7 +43,7 @@ CGUIButton::~CGUIButton()
 
 
 //! called if an event happened.
-bool CGUIButton::OnEvent(SEvent event)
+bool CGUIButton::OnEvent(const SEvent &event)
 {
 	if (!IsEnabled)
 		return Parent ? Parent->OnEvent(event) : false;

@@ -27,7 +27,7 @@ namespace gui
 		~CGUIScrollBar();
 
 		//! called if an event happened.
-		virtual bool OnEvent(SEvent event);
+		virtual bool OnEvent(const SEvent &event);
 
 		//! draws the element and its children
 		virtual void draw();
@@ -37,6 +37,9 @@ namespace gui
 
 		//! sets the maximum value of the scrollbar. must be > 0
 		virtual void setMax(s32 max);
+
+		//! sets the small step value
+		virtual void setSmallStep(s32 step);
 
 		//! gets the current position of the scrollbar
 		virtual s32 getPos();

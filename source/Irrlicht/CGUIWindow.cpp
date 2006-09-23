@@ -62,7 +62,7 @@ CGUIWindow::~CGUIWindow()
 
 
 //! called if an event happened.
-bool CGUIWindow::OnEvent(SEvent event)
+bool CGUIWindow::OnEvent(const SEvent &event)
 {
 	switch(event.EventType)
 	{
@@ -134,7 +134,8 @@ void CGUIWindow::draw()
 
 	if (Text.size())
 	{
-		rect.UpperLeftCorner.X += 2;
+		rect.UpperLeftCorner.X += skin->getSize(EGDS_TEXT_DISTANCE_X);
+		rect.UpperLeftCorner.Y += skin->getSize(EGDS_TEXT_DISTANCE_Y);
 		rect.LowerRightCorner.X -= skin->getSize(EGDS_WINDOW_BUTTON_WIDTH) + 5;
 
 		IGUIFont* font = skin->getFont();
