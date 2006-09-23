@@ -518,11 +518,19 @@ static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 in
 }
 
 
-inline u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * v1, u32 vIn )
+u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * v1, u32 vIn )
 {
 	u32 vOut;
 
 	vOut = vIn;
+
+	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[0] );		// near
+	if ( vOut < vIn )
+		return vOut;
+
+	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[5] );		// far
+	if ( vOut < vIn )
+		return vOut;
 
 	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[2] );		// right
 	if ( vOut < vIn )
@@ -537,14 +545,7 @@ inline u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * 
 		return vOut;
 
 	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[3] );		// bottom
-	if ( vOut < vIn )
-		return vOut;
 
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[0] );		// near
-	if ( vOut < vIn )
-		return vOut;
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[5] );		// far
 
 	return vOut;
 }

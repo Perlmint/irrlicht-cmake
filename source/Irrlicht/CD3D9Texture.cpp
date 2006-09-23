@@ -174,7 +174,7 @@ bool CD3D9Texture::createMipMaps(s32 level)
 		Texture->GenerateMipSubLevels();
 		return true;
 	}
-	os::Printer::log("manual mipmap");
+	//os::Printer::log("manual mipmap");
 
 	// The D3DXFilterTexture function seems to get linked wrong when
 	// compiling with both D3D8 and 9, causing it not to work in the D3D9 device.
