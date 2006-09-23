@@ -54,6 +54,13 @@ void CDemo::run()
 
 	device->setWindowCaption(L"Irrlicht Engine Demo");
 
+	// clear backbuffer
+	if ( driver )
+	{
+		driver->beginScene(true, true, 0);
+		driver->endScene();
+	}
+
 	wchar_t tmp[255];
 
 	u32 now = 0;
