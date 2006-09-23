@@ -136,7 +136,7 @@ void COpenGLTexture::getImageData(IImage* image)
 
 
 //! copies the the texture into an open gl texture.
-void COpenGLTexture::copyTexture()
+void COpenGLTexture::copyTexture(bool newTexture)
 {
 	glBindTexture(GL_TEXTURE_2D, TextureName);
 	if (Driver->testGLError())
@@ -197,8 +197,12 @@ void COpenGLTexture::copyTexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
-	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, ImageSize.Width,
-		ImageSize.Height, 0, PixelFormat, PixelType, ImageData);
+	if (newTexture)
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, ImageSize.Width,
+			ImageSize.Height, 0, PixelFormat, PixelType, ImageData);
+	else
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, ImageSize.Width,
+			ImageSize.Height, PixelFormat, PixelType, ImageData);
 
 	if (Driver->testGLError())
 		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
@@ -228,7 +232,7 @@ void* COpenGLTexture::lock()
 //! unlock function
 void COpenGLTexture::unlock()
 {
-	copyTexture();
+	copyTexture(false);
 }
 
 

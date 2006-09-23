@@ -21,6 +21,8 @@
 
 #if (defined(LINUX) || defined(MACOSX))
 #include <unistd.h>
+#include <limits.h>
+#include <stdlib.h>
 #endif
 
 namespace irr
@@ -169,7 +171,7 @@ bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 
 irr::core::stringc CFileSystem::getAbsolutePath(irr::core::stringc &filename)
 {
-	c8 *p;
+	c8 *p=0;
 	irr::core::stringc ret;
 
 #ifdef _IRR_WINDOWS_
@@ -180,7 +182,7 @@ irr::core::stringc CFileSystem::getAbsolutePath(irr::core::stringc &filename)
 
 #elif (defined(LINUX) || defined(MACOSX))
 
-	c8 fpath[PATH_MAX];
+	c8 fpath[4096];
 	p = realpath(filename.c_str(), fpath);
 	ret = p;
 

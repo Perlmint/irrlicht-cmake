@@ -174,6 +174,7 @@ bool CD3D9Texture::createMipMaps(s32 level)
 		Texture->GenerateMipSubLevels();
 		return true;
 	}
+os::Printer::log("manual mipmap");
 
 	// The D3DXFilterTexture function seems to get linked wrong when
 	// compiling with both D3D8 and 9, causing it not to work in the D3D9 device.
@@ -742,11 +743,13 @@ void CD3D9Texture::copy32BitMipMap(char* src, char* tgt,
 	SColor c;
 
 	for (int x=0; x<width; ++x)
+	{
 		for (int y=0; y<height; ++y)
 		{
 			s32 a=0, r=0, g=0, b=0;
 
 			for (int dx=0; dx<2; ++dx)
+			{
 				for (int dy=0; dy<2; ++dy)
 				{
 					int tgx = (x*2)+dx;
@@ -759,6 +762,7 @@ void CD3D9Texture::copy32BitMipMap(char* src, char* tgt,
 					g += c.getGreen();
 					b += c.getBlue();
 				}
+			}
 
 			a >>= 2;
 			r >>= 2;
@@ -768,6 +772,7 @@ void CD3D9Texture::copy32BitMipMap(char* src, char* tgt,
 			c = ((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff);
 			*(u32*)((void*)&tgt[(x*4)+(y*pitchtgt)]) = c.color;
 		}
+	}
 }
 
 

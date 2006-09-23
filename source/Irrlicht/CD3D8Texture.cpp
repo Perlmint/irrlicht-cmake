@@ -622,11 +622,13 @@ void CD3D8Texture::copy16BitMipMap(char* src, char* tgt,
 	u16 c;
 
 	for (int x=0; x<width; ++x)
+	{
 		for (int y=0; y<height; ++y)
 		{
 			s32 a=0, r=0, g=0, b=0;
 
 			for (int dx=0; dx<2; ++dx)
+			{
 				for (int dy=0; dy<2; ++dy)
 				{
 					int tgx = (x*2)+dx;
@@ -639,6 +641,7 @@ void CD3D8Texture::copy16BitMipMap(char* src, char* tgt,
 					g += getGreen(c);
 					b += getBlue(c);
 				}
+			}
 
 			a /= 4;
 			r /= 4;
@@ -648,6 +651,7 @@ void CD3D8Texture::copy16BitMipMap(char* src, char* tgt,
 			c = ((a & 0x1) <<15) | ((r & 0x1F)<<10) | ((g & 0x1F)<<5) | (b & 0x1F);
 			*(u16*)((void*)&tgt[(x*2)+(y*pitchtgt)]) = c;
 		}
+	}
 }
 
 
@@ -658,11 +662,13 @@ void CD3D8Texture::copy32BitMipMap(char* src, char* tgt,
 	SColor c;
 
 	for (int x=0; x<width; ++x)
+	{
 		for (int y=0; y<height; ++y)
 		{
 			s32 a=0, r=0, g=0, b=0;
 
 			for (int dx=0; dx<2; ++dx)
+			{
 				for (int dy=0; dy<2; ++dy)
 				{
 					int tgx = (x*2)+dx;
@@ -675,6 +681,7 @@ void CD3D8Texture::copy32BitMipMap(char* src, char* tgt,
 					g += c.getGreen();
 					b += c.getBlue();
 				}
+			}
 
 			a >>= 2;
 			r >>= 2;
@@ -684,6 +691,7 @@ void CD3D8Texture::copy32BitMipMap(char* src, char* tgt,
 			c = ((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff);
 			*(u32*)((void*)&tgt[(x*4)+(y*pitchtgt)]) = c.color;
 		}
+	}
 }
 
 

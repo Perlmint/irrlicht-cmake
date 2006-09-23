@@ -89,7 +89,8 @@ private:
 	void getImageData(IImage* image);
 
 	//! copies the the texture into an open gl texture.
-	void copyTexture();
+	//! \param: newTexture is true if method is called from a newly created texture for the first time. Otherwise call with false to improve memory handling.
+	void copyTexture(bool newTexture=true);
 
 	//! returns the size of a texture which would be the optimize size for rendering it
 	inline s32 getTextureSizeFromSurfaceSize(s32 size);
