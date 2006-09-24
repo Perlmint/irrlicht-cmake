@@ -36,6 +36,24 @@ CGUIFont::~CGUIFont()
 }
 
 
+//! loads a font file, native file needed, for texture parsing
+bool CGUIFont::load(io::IReadFile* file)
+{
+	return loadTexture ( Driver->createImageFromFile ( file ),
+						file->getFileName()
+							);
+}
+
+//! loads a font file, native file needed, for texture parsing
+bool CGUIFont::load(const c8* filename)
+{
+	return loadTexture (	Driver->createImageFromFile ( filename ),
+							filename
+							);
+}
+
+
+/*
 
 //! loads a font file
 bool CGUIFont::load(io::IReadFile* file)
@@ -46,12 +64,14 @@ bool CGUIFont::load(io::IReadFile* file)
 	// turn mip-maps off
 	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
 	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, false);
 
 	// get a pointer to the texture
 	video::ITexture* tex = Driver->getTexture(file);
 
 	// set previous mip-map state
 	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
+	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, true);
 
 	// load the texture
 	return loadTexture(tex);
@@ -61,43 +81,45 @@ bool CGUIFont::load(io::IReadFile* file)
 //! loads a font file
 bool CGUIFont::load(const c8* filename)
 {
+	Environment->getFileSystem ();
+	FileSystem->createAndOpenFile(filename);
+
 	if (!Driver)
 		return false;
 
 	// turn mip-maps off
 	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
 	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, false);
 
 	// get a pointer to the texture
 	video::ITexture* tex = Driver->getTexture(filename);
 
 	// set previous mip-map state
 	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
+	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, true);
 
 	// load the texture
 	return loadTexture(tex);
 }
-
+*/
 
 
 //! load & prepare font from ITexture
-bool CGUIFont::loadTexture(video::ITexture* texture)
+bool CGUIFont::loadTexture(video::IImage* image, const c8 * name)
 {
-	if (!texture)
+	if (!image)
 		return false;
-
-	Texture = texture;
-	Texture->grab();
 
 	s32 lowerRightPositions = 0;
 
-	switch(texture->getColorFormat())
+	switch(image->getColorFormat())
 	{
 	case video::ECF_A1R5G5B5:
-		readPositions16bit(texture, lowerRightPositions);
+		readPositions16bit(image, lowerRightPositions);
 		break;
 	case video::ECF_A8R8G8B8:
-		readPositions32bit ( texture, lowerRightPositions );
+		readPositions32bit ( image, lowerRightPositions );
 		break;
 	default:
 		os::Printer::log("Unsupported font texture color format.", ELL_ERROR);
@@ -114,16 +136,26 @@ bool CGUIFont::loadTexture(video::ITexture* texture)
 	if (lowerRightPositions != (s32)Positions.size())
 		os::Printer::log("The amount of upper corner pixels and the lower corner pixels is not equal, font file may be corrupted.", ELL_ERROR);
 
-	return (!Positions.empty() && lowerRightPositions);
+	bool ret = ( !Positions.empty() && lowerRightPositions );
+
+
+	if ( ret )
+	{
+		Texture = Driver->addTexture ( name, image );
+		Texture->grab ();
+		image->drop ();
+	}
+
+	return ret;
 }
 
 
 
-void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPositions)
+void CGUIFont::readPositions32bit(video::IImage* image, s32& lowerRightPositions)
 {
-	const core::dimension2d<s32>& size = texture->getOriginalSize();
+	const core::dimension2d<s32>& size = image->getDimension();
 
-	s32* p = (s32*)texture->lock();
+	s32* p = (s32*)image->lock();
 	if (!p)
 	{
 		os::Printer::log("Could not lock texture while preparing texture for a font.", ELL_ERROR);
@@ -161,7 +193,7 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 			{
 				if (Positions.size()<=(u32)lowerRightPositions)
 				{
-					texture->unlock();
+					image->unlock();
 					lowerRightPositions = 0;
 					return;
 				}
@@ -186,24 +218,27 @@ void CGUIFont::readPositions32bit(video::ITexture* texture, s32& lowerRightPosit
 
 	// Positions parsed.
 
-	texture->unlock();
+	image->unlock();
 }
 
 
 
 
-void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPositions)
+void CGUIFont::readPositions16bit(video::IImage* image, s32& lowerRightPositions)
 {
-	core::dimension2d<s32> size = texture->getOriginalSize();
+	core::dimension2d<s32> size = image->getDimension();
 
-	s16* p = (s16*)texture->lock();
+	s16* p = (s16*)image->lock();
 	if (!p)
 	{
 		os::Printer::log("Could not lock texture while preparing texture for a font.", ELL_ERROR);
 		return;
 	}
 
-	s16 colorTopLeft = *p;
+	s16 truealphaFont = ( (p[0] & 0x8000) == 0x8000 );
+	p[0] |= 0x8000;
+
+	s16 colorTopLeft = p[0];;
 	s16 colorLowerRight = *(p+1);
 	s16 colorBackGround = *(p+2);
 	s16 colorBackGroundTransparent = 0x7FFF & colorBackGround;
@@ -229,7 +264,7 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 				// too many lower right points
 				if (Positions.size()<=(u32)lowerRightPositions)
 				{
-					texture->unlock();
+					image->unlock();
 					lowerRightPositions = 0;
 					return;
 				}
@@ -242,14 +277,17 @@ void CGUIFont::readPositions16bit(video::ITexture* texture, s32& lowerRightPosit
 			if (*p == colorBackGround)
 				*p = colorBackGroundTransparent;
 			else
+			if ( 0 == truealphaFont )
+			{
 				*p = colorFont;
+			}
 			++p;
 		}
 	}
 
 	// Positions parsed.
 
-	texture->unlock();
+	image->unlock();
 }
 
 

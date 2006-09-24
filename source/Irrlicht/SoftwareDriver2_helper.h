@@ -253,6 +253,26 @@ inline u16 PixelBlend16 ( const u16 c2, const u32 c1, const u32 alpha )
 	return rb | xg; 
 }
 
+/*!
+	alpha 0 - 256
+*/
+inline u32 PixelLerp32 ( const u32 source, const u32 alpha )
+{
+	u32 srcRB = source & 0x00FF00FF;
+	u32 srcXG = (source & 0xFF00FF00) >> 8;
+
+	srcRB *= alpha;
+	srcXG *= alpha;
+
+	srcRB >>= 8;
+	//srcXG >>= 8;
+
+	srcRB &= 0x00FF00FF;
+	srcXG &= 0xFF00FF00;
+
+	return srcRB | srcXG; 
+}
+
 /*
 	return alpha in [0;256] Granularity
 	 add highbit alpha ( alpha > 127 ? + 1 )
@@ -271,6 +291,17 @@ inline u16 PixelMul16 ( u16 c0, u16 c1)
 			( ( (c0 & 0x03E0) * (c1 & 0x03E0) ) & 0x000F8000 ) >> 10 |
 			( ( (c0 & 0x001F) * (c1 & 0x001F) ) & 0x000003E0 ) >> 5  |
 			c0 & 0x8000;
+}
+
+/*
+	Pixel = c0 * (c1/31). 
+*/
+inline u16 PixelMul16_2 ( u16 c0, u16 c1)
+{
+	return	( ( (c0 & 0x7C00) * (c1 & 0x7C00) ) & 0x3E000000 ) >> 15 |
+			( ( (c0 & 0x03E0) * (c1 & 0x03E0) ) & 0x000F8000 ) >> 10 |
+			( ( (c0 & 0x001F) * (c1 & 0x001F) ) & 0x000003E0 ) >> 5  |
+			( c0 & c1 & 0x8000);
 }
 
 /*

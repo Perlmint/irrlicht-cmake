@@ -451,7 +451,7 @@ static void RenderLine16_Blend (	video::IImage *t,
 */
 static void executeBlit_TextureCopy_x_to_x ( const SBlitJob * job )
 {
-	void *src = (void*) job->src;
+	const void *src = (void*) job->src;
 	void *dst = (void*) job->dst;
 
 	const u32 widthPitch = job->width * job->dstPixelMul;
@@ -464,18 +464,23 @@ static void executeBlit_TextureCopy_x_to_x ( const SBlitJob * job )
 	}
 }
 
+
 /*!
 */
 static void executeBlit_TextureCopy_32_to_16 ( const SBlitJob * job )
 {
-	u32 *src = (u32*) job->src;
+	const u32 *src = (u32*) job->src;
 	u16 *dst = (u16*) job->dst;
+
+	u32 s;
 
 	for ( s32 dy = 0; dy != job->height; ++dy )
 	{
 		for ( s32 dx = 0; dx != job->width; ++dx )
 		{
-			dst[dx] = video::A8R8G8B8toA1R5G5B5 ( src[dx] );
+			//16 bit Blitter depends on pre-multiplied color
+			s = PixelLerp32 ( src[dx] | 0xFF000000, extractAlpha ( src[dx] ) );
+			dst[dx] = video::A8R8G8B8toA1R5G5B5 ( s );
 		}
 
 		src = (u32*) ( (u8*) (src) + job->srcPitch );
@@ -487,7 +492,7 @@ static void executeBlit_TextureCopy_32_to_16 ( const SBlitJob * job )
 */
 static void executeBlit_TextureCopy_24_to_16 ( const SBlitJob * job )
 {
-	void *src = (void*) job->src;
+	const void *src = (void*) job->src;
 	u16 *dst = (u16*) job->dst;
 
 	for ( s32 dy = 0; dy != job->height; ++dy )
@@ -510,7 +515,7 @@ static void executeBlit_TextureCopy_24_to_16 ( const SBlitJob * job )
 */
 static void executeBlit_TextureCopy_16_to_32 ( const SBlitJob * job )
 {
-	u16 *src = (u16*) job->src;
+	const u16 *src = (u16*) job->src;
 	u32 *dst = (u32*) job->dst;
 
 	for ( s32 dy = 0; dy != job->height; ++dy )
@@ -552,17 +557,22 @@ static void executeBlit_TextureCopy_24_to_32 ( const SBlitJob * job )
 */
 static void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
 {
+	u32 dx;
+	u32 dy;
+
 	u32 *src = (u32*) job->src;
 	u32 *dst = (u32*) job->dst;
 
-	u32 rdx = job->width >> 1;
-	u32 off = job->width & 1 ? (job->width - 1 ) : 0;
+
+	const u32 rdx = job->width >> 1;
+	const u32 off = if_c_a_else_b ( job->width & 1 ,job->width - 1, 0 );
+
 
 	if ( 0 == off )
 	{
-		for ( s32 dy = 0; dy != job->height; ++dy )
+		for ( dy = 0; dy != job->height; ++dy )
 		{
-			for ( u32 dx = 0; dx != rdx; ++dx )
+			for ( dx = 0; dx != rdx; ++dx )
 			{
 				dst[dx] = PixelBlend16_simd ( dst[dx], src[dx] );
 			}
@@ -574,9 +584,9 @@ static void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
 	}
 	else
 	{
-		for ( s32 dy = 0; dy != job->height; ++dy )
+		for ( dy = 0; dy != job->height; ++dy )
 		{
-			for ( u32 dx = 0; dx != rdx; ++dx )
+			for ( dx = 0; dx != rdx; ++dx )
 			{
 				dst[dx] = PixelBlend16_simd ( dst[dx], src[dx] );
 			}
@@ -620,7 +630,7 @@ static void executeBlit_TextureBlendColor_16_to_16 ( const SBlitJob * job )
 	{
 		for ( s32 dx = 0; dx != job->width; ++dx )
 		{
-			dst[dx] = PixelBlend16 ( dst[dx], PixelMul16 ( src[dx], blend ) );
+			dst[dx] = PixelBlend16 ( dst[dx], PixelMul16_2 ( src[dx], blend ) );
 		}
 		src = (u16*) ( (u8*) (src) + job->srcPitch );
 		dst = (u16*) ( (u8*) (dst) + job->dstPitch );
@@ -652,7 +662,7 @@ static void executeBlit_Color_16_to_16 ( const SBlitJob * job )
 {
 	u16 *dst = (u16*) job->dst;
 
-	u32 c0 = video::A8R8G8B8toA1R5G5B5 ( job->argb );
+	u16 c0 = video::A8R8G8B8toA1R5G5B5 ( job->argb );
 	u32 c = c0 | c0 << 16;
 
 	if ( 0 == (job->srcPitch & 3 ) )
@@ -696,8 +706,8 @@ static void executeBlit_ColorAlpha_16_to_16 ( const SBlitJob * job )
 {
 	u16 *dst = (u16*) job->dst;
 
-	u32 alpha = extractAlpha ( job->argb ) >> 3;
-	u32 src = video::A8R8G8B8toA1R5G5B5 ( job->argb );
+	const u32 alpha = extractAlpha ( job->argb ) >> 3;
+	const u32 src = video::A8R8G8B8toA1R5G5B5 ( job->argb );
 
 	for ( s32 dy = 0; dy != job->height; ++dy )
 	{
@@ -715,8 +725,8 @@ static void executeBlit_ColorAlpha_32_to_32 ( const SBlitJob * job )
 {
 	u32 *dst = (u32*) job->dst;
 
-	u32 alpha = extractAlpha ( job->argb );
-	u32 src = job->argb;
+	const u32 alpha = extractAlpha ( job->argb );
+	const u32 src = job->argb;
 
 	for ( s32 dy = 0; dy != job->height; ++dy )
 	{

@@ -1203,9 +1203,9 @@ void CSoftwareDriver2::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 ITexture* CSoftwareDriver2::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
+	return new CSoftwareTexture2(surface, name, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS)
+					);
 
-	return new CSoftwareTexture2(surface, name, generateMipLevels);
 }
 
 

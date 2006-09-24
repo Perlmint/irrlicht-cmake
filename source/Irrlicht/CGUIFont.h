@@ -43,10 +43,10 @@ public:
 private:
 
 	//! load & prepare font from ITexture
-	bool loadTexture(video::ITexture* texture);
+	bool loadTexture(video::IImage * image, const c8* name);
 
-	void readPositions16bit(video::ITexture* texture, s32& lowerRightPositions);
-	void readPositions32bit(video::ITexture* texture, s32& lowerRightPositions);
+	void readPositions16bit(video::IImage* texture, s32& lowerRightPositions);
+	void readPositions32bit(video::IImage* texture, s32& lowerRightPositions);
 
 	inline s32 getWidthFromCharacter(wchar_t c);
 
