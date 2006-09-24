@@ -728,6 +728,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGUIColorSelectDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath="CGUIComboBox.cpp"
 				>
 			</File>
@@ -881,6 +885,10 @@
 			</File>
 			<File
 				RelativePath=".\GUIIcons.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SColor.cpp"
 				>
 			</File>
 		</Filter>
@@ -1364,6 +1372,10 @@
 				</File>
 				<File
 					RelativePath=".\CTRTextureLightMap2_M4.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CTRTextureLightMapGouraud2_M4.cpp"
 					>
 				</File>
 				<File

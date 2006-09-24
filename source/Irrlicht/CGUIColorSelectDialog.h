@@ -9,7 +9,7 @@
 #include "IGUIButton.h"
 #include "IGUIListBox.h"
 #include "IGUIEditBox.h"
-#include "IGUIScrollbar.h"
+#include "IGUIScrollBar.h"
 #include "IGUIImage.h"
 
 #include "irrArray.h"

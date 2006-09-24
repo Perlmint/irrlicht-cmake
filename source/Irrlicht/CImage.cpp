@@ -558,7 +558,7 @@ static void executeBlit_TextureCopy_24_to_32 ( const SBlitJob * job )
 static void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
 {
 	u32 dx;
-	u32 dy;
+	s32 dy;
 
 	u32 *src = (u32*) job->src;
 	u32 *dst = (u32*) job->dst;

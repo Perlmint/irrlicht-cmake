@@ -37,7 +37,7 @@ static const sTemplate Template [] =
 	{ L"R:", L"255", 0,20,205, 0, 255 },
 	{ L"G:", L"255", 0,20,230, 0, 255 },
 	{ L"B:", L"255", 0,20,255, 0, 255 },
-	{ L"H:", L"360", L"°",180,205, 0, 360 },
+	{ L"H:", L"360", L"%",180,205, 0, 360 },
 	{ L"S:", L"100", L"%",180,230, 0, 100 },
 	{ L"L:", L"100", L"%",180,255, 0, 100 },
 };
@@ -144,7 +144,7 @@ CGUIColorSelectDialog::~CGUIColorSelectDialog()
 	if (CancelButton)
 		CancelButton->drop();
 
-	for ( s32 i = 0; i!= Battery.size ();++i )
+	for ( u32 i = 0; i != Battery.size ();++i )
 	{
 		Battery[i].Edit->drop ();
 		Battery[i].Scrollbar->drop ();
@@ -309,7 +309,6 @@ void CGUIColorSelectDialog::buildColorRing( const core::dimension2d<s32> & dim, 
 //! called if an event happened.
 bool CGUIColorSelectDialog::OnEvent(const SEvent &event)
 {
-	
 
 	switch(event.EventType)
 	{
@@ -318,7 +317,7 @@ bool CGUIColorSelectDialog::OnEvent(const SEvent &event)
 		{
 			case EGET_SCROLL_BAR_CHANGED:
 			{
-				for ( s32 i = 0; i!= Battery.size (); ++i )
+				for ( u32 i = 0; i!= Battery.size (); ++i )
 				{
 					if ( event.GUIEvent.Caller == Battery[i].Scrollbar )
 					{
@@ -328,7 +327,6 @@ bool CGUIColorSelectDialog::OnEvent(const SEvent &event)
 						Battery[i].Edit->setText ( s.c_str() );
 					}
 				}
-				int i = 1;
 				return true;
 			} break;
 
