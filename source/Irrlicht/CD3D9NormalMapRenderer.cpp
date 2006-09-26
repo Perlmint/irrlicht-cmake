@@ -106,7 +106,7 @@ namespace video
 		"mul r0.xyz, t0, r0             ; total luminance * base color\n"\
 		"+mov r0.a, v0.a             ; write interpolated vertex alpha value \n"\
 		"\n"\
-		"";	
+		"";
 
 	CD3D9NormalMapRenderer::CD3D9NormalMapRenderer(
 		IDirect3DDevice9* d3ddev, video::IVideoDriver* driver, 
@@ -204,7 +204,7 @@ namespace video
 		// and set them as constants
 
 		int cnt = driver->getDynamicLightCount();
-		
+
 		for (int i=0; i<2; ++i)
 		{
 			video::SLight light; 
@@ -227,7 +227,7 @@ namespace video
 		f32 c95[] = {0.5f, 0.5f, 0.5f, 0.5f};
 		services->setVertexShaderConstant(c95, 95, 1);
 	}
-	
+
 
 } // end namespace video
 } // end namespace irr

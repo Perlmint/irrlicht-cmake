@@ -249,7 +249,6 @@ namespace scene
 		// resize the vertex array for the mesh buffer one time ( makes loading faster )
 		SMeshBufferLightMap* pMeshBuffer = new SMeshBufferLightMap();
 		pMeshBuffer->Vertices.reallocate( TerrainData.Size * TerrainData.Size );
-		pMeshBuffer->Vertices.set_used( TerrainData.Size * TerrainData.Size );
 
 		video::S3DVertex2TCoords vertex;
 		vertex.Normal.set( 0.0f, 1.0f, 0.0f );
@@ -821,13 +820,12 @@ namespace scene
 	{
 		s32 count;
 		core::vector3df a, b, c, t;
-		core::vector3df normal = core::vector3df ( 0.0f, 1.0f, 0.0f );
 
 		for (s32 x=0; x<TerrainData.Size; ++x)
 			for (s32 z=0; z<TerrainData.Size; ++z)
 			{
 				count = 0;
-				normal = core::vector3df ( 0.0f, 0.0f, 0.0f );
+				core::vector3df normal;
 
 				// top left
 				if (x>0 && z>0)
@@ -927,12 +925,11 @@ namespace scene
 
 				if ( count != 0 )
 				{
-					normal /= (f32)count;
 					normal.normalize ( );
 				}
 				else
 				{
-					normal = core::vector3df ( 0.0f, 1.0f, 0.0f );
+					normal.set( 0.0f, 1.0f, 0.0f );
 				}
 
 				pMeshBuffer->Vertices[x * TerrainData.Size + z].Normal = normal;

@@ -37,7 +37,7 @@ static const sTemplate Template [] =
 	{ L"R:", L"255", 0,20,205, 0, 255 },
 	{ L"G:", L"255", 0,20,230, 0, 255 },
 	{ L"B:", L"255", 0,20,255, 0, 255 },
-	{ L"H:", L"360", L"%",180,205, 0, 360 },
+	{ L"H:", L"360", L"°",180,205, 0, 360 },
 	{ L"S:", L"100", L"%",180,230, 0, 100 },
 	{ L"L:", L"100", L"%",180,255, 0, 100 },
 };
@@ -235,7 +235,7 @@ void CGUIColorSelectDialog::buildColorRing( const core::dimension2d<s32> & dim, 
 					hsl.Luminance = 1.f - ( hsl.Saturation / 2.4f );
 					hsl.Luminance = 0.5f;
 					hsl.settoRGB  ( rgb );
-					//*dst = rgb.color;
+					// *dst = rgb.color;
 				}
 				else
 				if ( rTest < 0.75f )

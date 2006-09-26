@@ -284,13 +284,9 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 	}
 
 	// run affectors
-	core::list<IParticleAffector*>::Iterator ait;
-	ait = AffectorList.begin();
-	while (ait != AffectorList.end())
-	{
+	core::list<IParticleAffector*>::Iterator ait = AffectorList.begin();
+	for (; ait != AffectorList.end(); ++ait)
 		(*ait)->affect(now, Particles.pointer(), Particles.size());
-		++ait;
-	}
 
 	if (ParticlesAreGlobal)
 		Buffer.BoundingBox.reset(AbsoluteTransformation.getTranslation());

@@ -60,8 +60,8 @@ namespace scene
 
 			// delete all animators
 			core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
-				for (; ait != Animators.end(); ++ait)
-					(*ait)->drop();
+			for (; ait != Animators.end(); ++ait)
+				(*ait)->drop();
 
 			if (TriangleSelector)
 				TriangleSelector->drop();

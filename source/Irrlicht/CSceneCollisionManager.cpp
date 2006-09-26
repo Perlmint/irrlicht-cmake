@@ -82,11 +82,10 @@ void CSceneCollisionManager::getPickedNodeBB(ISceneNode* root,
 					   f32& outbestdistance,
 					   ISceneNode*& outbestnode)
 {
-	const core::list<ISceneNode*>& children = root->getChildren();
 	core::vector3df edges[8];
 
+	const core::list<ISceneNode*>& children = root->getChildren();
 	core::list<ISceneNode*>::Iterator it = children.begin();
-
 	for (; it != children.end(); ++it)
 	{
 		ISceneNode* current = *it;
