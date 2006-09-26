@@ -4,7 +4,7 @@
 
 #include "CGUIFont.h"
 #include "os.h"
-#include "wchar.h"
+#include "CImage.h"
 
 namespace irr
 {
@@ -113,17 +113,22 @@ bool CGUIFont::loadTexture(video::IImage* image, const c8 * name)
 
 	s32 lowerRightPositions = 0;
 
+	video::IImage* tmpImage=image;
+	bool deleteTmpImage=false;
 	switch(image->getColorFormat())
 	{
+	case video::ECF_R5G6B5:
+		tmpImage =  new video::CImage(video::ECF_A1R5G5B5,image);
+		deleteTmpImage=true;
 	case video::ECF_A1R5G5B5:
-		readPositions16bit(image, lowerRightPositions);
+		readPositions16bit(tmpImage, lowerRightPositions);
 		break;
+	case video::ECF_R8G8B8:
+		tmpImage = new video::CImage(video::ECF_A8R8G8B8,image);
+		deleteTmpImage=true;
 	case video::ECF_A8R8G8B8:
-		readPositions32bit ( image, lowerRightPositions );
+		readPositions32bit (tmpImage, lowerRightPositions);
 		break;
-	default:
-		os::Printer::log("Unsupported font texture color format.", ELL_ERROR);
-		return false;
 	}
 
 	if (Positions.size() > 127)
@@ -141,10 +146,12 @@ bool CGUIFont::loadTexture(video::IImage* image, const c8 * name)
 
 	if ( ret )
 	{
-		Texture = Driver->addTexture ( name, image );
+		Texture = Driver->addTexture ( name, tmpImage );
 		Texture->grab ();
-		image->drop ();
 	}
+	if (deleteTmpImage)
+		delete tmpImage;
+	image->drop ();
 
 	return ret;
 }
