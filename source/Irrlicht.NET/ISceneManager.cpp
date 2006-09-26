@@ -229,7 +229,7 @@ namespace Scene
 				parent ? parent->get_NativeSceneNode() : 0,
 				id, 
 				irr::NativeConverter::getNativeVector(position),
-				irr::core::vector3df(1,1,1),
+				irr::core::vector3df(0,0,0),
 				irr::NativeConverter::getNativeVector(scale),
 				color.color );
 
