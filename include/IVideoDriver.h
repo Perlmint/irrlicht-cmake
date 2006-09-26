@@ -714,7 +714,7 @@ namespace video
 		\return Returns the created image.
 		If you no longer need the image, you should call IImage::drop().
 		See IUnknown::drop() for more information. */
-		virtual IImage* createImageFromFile(const char* filename) = 0;
+		virtual IImage* createImageFromFile(const c8* filename) = 0;
 
 		//! Creates a software image from a file.
 		/** No hardware texture will
@@ -732,7 +732,7 @@ namespace video
 		\param image: Image to write to disk
 		\param filename: name of the file to write
 		\return Returns true on success */
-		virtual bool writeImageToFile(IImage* image, const char* filename) = 0;
+		virtual bool writeImageToFile(IImage* image, const c8* filename) = 0;
 
 		//! Creates a software image from a byte array.
 		/** No hardware texture will
@@ -775,7 +775,7 @@ namespace video
 		-1 is returned if an error occured. (For example if you tried to add
 		an material renderer to the software renderer or the null device, which do not accept
 		material renderers.) */
-		virtual s32 addMaterialRenderer(IMaterialRenderer* renderer, const char* name = 0) = 0;
+		virtual s32 addMaterialRenderer(IMaterialRenderer* renderer, const c8* name = 0) = 0;
 
 		//! Returns pointer to material renderer or null if not existing.
 		/** \param idx: Id of the material renderer. Can be a value of the E_MATERIAL_TYPE enum or a
@@ -791,13 +791,13 @@ namespace video
 		returned name will be also used when serializing Materials.
 		\param idx: Id of the material renderer. Can be a value of the E_MATERIAL_TYPE enum or a
 		value which was returned by addMaterialRenderer(). */
-		virtual const char* getMaterialRendererName(s32 idx) = 0;
+		virtual const c8* getMaterialRendererName(s32 idx) = 0;
 
 		//! Sets the name of a material renderer.
 		/** Will have no effect on built-in material renderers.
 		\param idx: Id of the material renderer. Can be a value of the E_MATERIAL_TYPE enum or a
 		value which was returned by addMaterialRenderer(). */
-		virtual void setMaterialRendererName(s32 idx, const char* name) = 0;
+		virtual void setMaterialRendererName(s32 idx, const c8* name) = 0;
 
 		//! Creates material attributes list from a material, usable for serialization and more.
 		/** Please note that the videodriver will use the material renderer names from

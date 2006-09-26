@@ -675,8 +675,8 @@ public:
 	/** Removes whitespace from begin and end of the string. */
 	void trim()
 	{
-		const char whitespace[] = " \t\n";
-		const int whitespacecount = 3;
+		const c8 whitespace[] = " \t\n\r";
+		const int whitespacecount = 4;
 
 		// find start and end of real string without whitespace
 		int begin = findFirstCharNotInList(whitespace, whitespacecount);

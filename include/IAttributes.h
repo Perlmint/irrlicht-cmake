@@ -74,16 +74,16 @@ public:
 	virtual void addFloat(const c8* attributeName, f32 value) = 0;
 
 	//! Adds an attribute as string
-	virtual void addString(const c8* attributeName, const char* value) = 0;
+	virtual void addString(const c8* attributeName, const c8* value) = 0;
 
 	//! Adds an attribute as bool
 	virtual void addBool(const c8* attributeName, bool value) = 0;
 
 	//! Adds an attribute as enum
-	virtual void addEnum(const c8* attributeName, const char* enumValue, const char* const* enumerationLiterals) = 0;
+	virtual void addEnum(const c8* attributeName, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
 
 	//! Adds an attribute as enum
-	virtual void addEnum(const c8* attributeName, s32 enumValue, const char* const* enumerationLiterals) = 0;
+	virtual void addEnum(const c8* attributeName, s32 enumValue, const c8* const* enumerationLiterals) = 0;
 
 	//! Adds an attribute as color
 	virtual void addColor(const c8* attributeName, video::SColor value) = 0;
@@ -129,7 +129,7 @@ public:
 	//! Gets an attribute as string.
 	//! \param attributeName: Name of the attribute to get.
 	//! \param target: Buffer where the string is copied to.
-	virtual void getAttributeAsString(const c8* attributeName, char* target) = 0;
+	virtual void getAttributeAsString(const c8* attributeName, c8* target) = 0;
 
 	//! Returns attribute value as string by index. 
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
@@ -219,12 +219,12 @@ public:
 	virtual void getAttributeAsBinaryData(s32 index, void* outData, s32 maxSizeInBytes) = 0;
 
 	//! Sets an attribute as enumeration
-	virtual void setAttribute(const c8* attributeName, const char* enumValue, const char* const* enumerationLiterals) = 0;
+	virtual void setAttribute(const c8* attributeName, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
 
 	//! Gets an attribute as enumeration
 	//! \param attributeName: Name of the attribute to get.
 	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual const char* getAttributeAsEnumeration(const c8* attributeName) = 0;
+	virtual const c8* getAttributeAsEnumeration(const c8* attributeName) = 0;
 
 	//! Gets an attribute as enumeration
 	//! \param attributeName: Name of the attribute to get.
@@ -232,15 +232,15 @@ public:
 	//! This is useful when the attribute list maybe was read from an xml file, and only contains the enumeration string, but
 	//! no information about its index.
 	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual s32 getAttributeAsEnumeration(const c8* attributeName, const char* const* enumerationLiteralsToUse) = 0;
+	virtual s32 getAttributeAsEnumeration(const c8* attributeName, const c8* const* enumerationLiteralsToUse) = 0;
 
 	//! Gets an attribute as enumeration
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual s32 getAttributeAsEnumeration(s32 index, const char* const* enumerationLiteralsToUse) = 0;
+	virtual s32 getAttributeAsEnumeration(s32 index, const c8* const* enumerationLiteralsToUse) = 0;
 
 	//! Gets an attribute as enumeration
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual const char* getAttributeAsEnumeration(s32 index) = 0;
+	virtual const c8* getAttributeAsEnumeration(s32 index) = 0;
 
 	//! Gets the list of enumeration literals of an enumeration attribute 
 	//! \param attributeName: Name of the attribute to get.
@@ -293,7 +293,7 @@ public:
 	virtual void setAttribute(s32 index, void* data, s32 dataSizeInBytes ) = 0;
 
 	//! Sets an attribute as enumeration
-	virtual void setAttribute(s32 index, const char* enumValue, const char* const* enumerationLiterals) = 0;
+	virtual void setAttribute(s32 index, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
 
 	//! Sets an attribute as texture reference
 	virtual void setAttribute(s32 index, video::ITexture* texture) = 0;

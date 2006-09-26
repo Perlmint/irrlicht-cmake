@@ -23,7 +23,7 @@ enum E_PARTICLE_AFFECTOR_TYPE
 };
 
 //! Names for built in particle affectors
-const char* const ParticleAffectorTypeNames[] =
+const c8* const ParticleAffectorTypeNames[] =
 {
 	"None",
 	"FadeOut",

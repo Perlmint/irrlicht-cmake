@@ -274,7 +274,7 @@ namespace irr
 		bool stencilbuffer=false,
 		bool vsync=false,
 		IEventReceiver* receiver = 0,
-		const char* sdk_version_do_not_use = IRRLICHT_SDK_VERSION);
+		const c8* sdk_version_do_not_use = IRRLICHT_SDK_VERSION);
 
 	//! Creates an Irrlicht device with the option to specify advanced parameters. 
 	/** Usually you should used createDevice() for creating an Irrlicht Engine device.

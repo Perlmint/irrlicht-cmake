@@ -96,7 +96,7 @@ class ITexture : public virtual IUnknown
 public:
 
 	//! constructor
-	ITexture(const char* name) : Name(name) { Name.make_lower(); }
+	ITexture(const c8* name) : Name(name) { Name.make_lower(); }
 
 	//! destructor
 	virtual ~ITexture() {};

@@ -116,7 +116,7 @@ namespace scene
 
 		//! Returns the name of the node.
 		//! \return Returns name as wide character string.
-		virtual const char* getName() const
+		virtual const c8* getName() const
 		{
 			return Name.c_str();
 		}
@@ -124,7 +124,7 @@ namespace scene
 
 		//! Sets the name of the node.
 		//! \param name: New name of the scene node.
-		virtual void setName(const char* name)
+		virtual void setName(const c8* name)
 		{
 			Name = name;
 		}

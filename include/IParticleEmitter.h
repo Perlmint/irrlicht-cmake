@@ -22,7 +22,7 @@ enum E_PARTICLE_EMITTER_TYPE
 };
 
 //! Names for built in particle emitters
-const char* const ParticleEmitterTypeNames[] = 
+const c8* const ParticleEmitterTypeNames[] = 
 {
 	"Point",
 	"Box",

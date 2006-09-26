@@ -613,7 +613,7 @@ namespace scene
 		 terrain could not be created, for example because the heightmap could not be loaded.
 		 The returned pointer should not be dropped. See IUnknown::drop() for more information. */
 		virtual ITerrainSceneNode* addTerrainSceneNode(
-				const char* heightMapFileName,
+				const c8* heightMapFileName,
 				ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
@@ -741,7 +741,7 @@ namespace scene
 		 taken.
 		 \return Returns pointer to the first scene node with this id,
 		 and null if no scene node could be found. */
-		virtual ISceneNode* getSceneNodeFromName(const char* name, ISceneNode* start=0) = 0;
+		virtual ISceneNode* getSceneNodeFromName(const c8* name, ISceneNode* start=0) = 0;
 
 		//! Returns the current active camera.
 		/** \return The active camera is returned. Note that this can be NULL, if there
