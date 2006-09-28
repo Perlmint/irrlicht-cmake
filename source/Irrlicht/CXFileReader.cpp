@@ -615,6 +615,12 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 				return false;
 		}
 		else
+		if (objectName == "MeshVertexColors")
+		{
+			if (!parseDataObjectMeshVertexColors(mesh.VertexColors))
+				return false;
+		}
+		else
 		if (objectName == "MeshMaterialList")
 		{
 			if (!parseDataObjectMeshMaterialList(mesh.MaterialList,
@@ -1423,6 +1429,56 @@ bool CXFileReader::parseDataObjectMeshTextureCoords(
 	if (!checkForTwoFollowingSemicolons())
 	{
 		os::Printer::log("No finishing semicolon in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
+		return false;
+	}
+
+	if (getNextToken() != "}")
+	{
+		os::Printer::log("No closing brace in Mesh Texture Coordinates Array found in x file", ELL_WARNING);
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool CXFileReader::parseDataObjectMeshVertexColors(
+	core::array<SXIndexedColor>& vertexColors)
+{
+#ifdef _XREADER_DEBUG
+	os::Printer::log("CXFileReader: reading mesh vertex colors");
+#endif
+
+	if (!readHeadOfDataObject())
+	{
+		os::Printer::log("No opening brace for Mesh Vertex Colors found in x file", ELL_WARNING);
+		return false;
+	}
+
+	s32 nColors;
+	u32 count;
+	nColors = readInt();
+	if (binary)
+	{
+		if (readBinWord() != 7)
+		{
+			os::Printer::log("Binary X: MeshVertexColors: Expecting float list", ELL_WARNING);
+			return false;
+		}
+		count = readBinDWord();
+	}
+	vertexColors.set_used(nColors);
+
+	for (s32 i=0; i<nColors; ++i)
+	{
+		vertexColors[i].Index=readInt();
+		readRGBA(vertexColors[i].Color);
+	}
+
+	if (getNextToken() != ";")
+	{
+		os::Printer::log("No finishing semicolon in Mesh Vertex Colors Array found in x file", ELL_WARNING);
 		return false;
 	}
 

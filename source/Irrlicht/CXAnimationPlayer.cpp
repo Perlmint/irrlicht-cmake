@@ -219,13 +219,14 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 {
 	scene::SMeshBuffer* buf = (SMeshBuffer*)OriginalMesh.MeshBuffers[meshbuffernr];
 
-	s32 tcnt = mesh.TextureCoords.size();
-	s32 ncnt = mesh.Normals.size();
-	s32 fcnt = mesh.Indices.size();
+	u32 tcnt = mesh.TextureCoords.size();
+	u32 ncnt = mesh.Normals.size();
+	u32 fcnt = mesh.Indices.size();
+	u32 ccnt = mesh.VertexColors.size();
 
 	// precompute which joint belongs to which weight array
 	core::array< s32 > jointNumberWeightNumberMap;
-	for (s32 w=0; w<(s32)mesh.SkinWeights.size(); ++w)
+	for (u32 w=0; w<mesh.SkinWeights.size(); ++w)
 	{
 		s32 jnr = getJointNumberFromName(mesh.SkinWeights[w].TransformNodeName);
 		if (jnr == -1)
@@ -245,7 +246,7 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 	v.Color.set(255,255,255,255);
 
 	// add only those with material matnr
-	for (s32 i=0; i<(s32)mesh.MaterialList.FaceIndices.size(); ++i)
+	for (u32 i=0; i<mesh.MaterialList.FaceIndices.size(); ++i)
 	{
 		if (mesh.MaterialList.FaceIndices[i] == matnr)
 		{
@@ -259,6 +260,7 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 
 				if (tcnt) v.TCoords = mesh.TextureCoords[idx];
 				if (ncnt) v.Normal = mesh.Normals[mesh.NormalIndices[idxidx]];
+				if (ccnt) v.Color = mesh.VertexColors[idx].Color.toSColor();
 
 				s32 nidx = buf->Vertices.linear_reverse_search(v);
 				bool alreadyIn = (nidx != -1);

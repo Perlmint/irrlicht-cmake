@@ -72,7 +72,7 @@ public:
 	struct SXIndexedColor
 	{
 		s32 Index;
-		video::SColor Color;
+		video::SColorf Color;
 	};
 
 	struct SXSkinMeshHeader
@@ -270,6 +270,7 @@ private:
 		core::array< s32 >& normalIndices, s32 triangulatedIndexCount,
 		core::array< s32 >& indexCountPerFace);
 	bool parseDataObjectMeshTextureCoords(core::array<core::vector2df>& textureCoords);
+	bool parseDataObjectMeshVertexColors(core::array<SXIndexedColor>& vertexColors);
 	bool parseDataObjectMeshMaterialList(SXMeshMaterialList& materiallist,
 		s32 triangulatedIndexCount, core::array< s32 >& indexCountPerFace);
 	bool parseDataObjectMaterial(SXMaterial& material);
