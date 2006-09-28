@@ -16,6 +16,7 @@
 
 #include "CDMFLoader.h"
 #include "ISceneManager.h"
+#include "IAttributes.h"
 #include "SAnimatedMesh.h"
 #include "SMeshBufferLightMap.h"
 #include "irrString.h"

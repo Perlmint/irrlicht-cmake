@@ -12,7 +12,8 @@
 #include "SColor.h"
 #include "SMaterial.h"
 #include "IEventReceiver.h"
-#include "ITerrainSceneNode.h"
+#include "ETerrainElements.h"
+#include "ESceneNodeTypes.h"
 #include "SceneParameters.h"
 
 namespace irr

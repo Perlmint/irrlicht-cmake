@@ -15,6 +15,7 @@
 #include "IVideoDriver.h"
 #include <string.h>
 #include "SAnimatedMesh.h"
+#include "SMeshBufferLightMap.h"
 
 namespace irr
 {

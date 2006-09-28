@@ -63,8 +63,8 @@ define. */
 #define _IRR_OPENGL_USE_EXTPOINTER_
 #endif
 
-//! On some Linux systems the X11 vidmode extension is missing. Use this flag
-//! to remove it from compilation such that Irrlicht will run on those systems.
+//! On some Linux systems the XF86 vidmode extension or X11 RandR are missing. Use these flags
+//! to remove the dependencies such that Irrlicht will compile on those systems, too.
 #if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX) && !defined(__sun__)
 #define _IRR_LINUX_X11_VIDMODE_
 //#define _IRR_LINUX_X11_RANDR_

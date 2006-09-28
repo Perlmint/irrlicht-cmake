@@ -670,7 +670,7 @@ bool CIrrDeviceLinux::run()
 				irrevent.MouseInput.X = event.xbutton.x;
 				irrevent.MouseInput.Y = event.xbutton.y;
 
-				irrevent.MouseInput.Event = irr::EMIE_MOUSE_MOVED;
+				irrevent.MouseInput.Event = irr::EMIE_COUNT;
 
 				switch(event.xbutton.button)
 				{
@@ -700,7 +700,7 @@ bool CIrrDeviceLinux::run()
 					break;
 				}
 
-				if (irrevent.MouseInput.Event != irr::EMIE_MOUSE_MOVED)
+				if (irrevent.MouseInput.Event != irr::EMIE_COUNT)
 					postEventFromUser(irrevent);
 				break;
 

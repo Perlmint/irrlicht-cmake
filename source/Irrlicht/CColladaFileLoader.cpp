@@ -16,6 +16,7 @@
 #include "IAttributes.h"
 #include "IMeshCache.h"
 #include "IMeshSceneNode.h"
+#include "SMeshBufferLightMap.h"
 
 //#define COLLADA_READER_DEBUG
 namespace irr

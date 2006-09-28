@@ -7,6 +7,7 @@
 
 #include "IUnknown.h"
 #include "ESceneNodeTypes.h"
+#include "ISceneManager.h"
 #include "ISceneNodeAnimator.h"
 #include "ITriangleSelector.h"
 #include "SMaterial.h"
@@ -21,9 +22,6 @@ namespace irr
 {
 namespace scene
 {
-
-	class ISceneManager;
-
 	//! Scene node interface.
 	/** A scene node is a node in the hirachical scene graph. Every scene node may have children,
 	which are other scene nodes. Children move relative the their parents position. If the parent of a node is not
@@ -538,7 +536,7 @@ namespace scene
 		//! updates the absolute position based on the relative and the parents position
 		virtual void updateAbsolutePosition()
 		{
-			if (Parent)
+			if (Parent && SceneManager && (Parent != SceneManager->getRootSceneNode()))
 				AbsoluteTransformation =
 					Parent->getAbsoluteTransformation() * getRelativeTransformation();
 			else
