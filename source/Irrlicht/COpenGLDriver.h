@@ -254,7 +254,11 @@ namespace video
 		//! Returns whether setting was a success or not.
 		bool setTexture(s32 stage, video::ITexture* texture);
 
-		//! Adds a new material renderer to the VideoDriver, usingextGLGetObjectParameterivARB(shaderHandle, GL_OBJECT_COMPILE_STATUS_ARB, &status) pixel and/or
+		//! disables all textures beginning with the optional fromStage parameter. Otherwise all texture stages are disabled.
+		//! Returns whether disabling was successful or not.
+		bool disableTextures(s32 fromStage=0);
+
+		//! Adds a new material renderer to the VideoDriver, using extGLGetObjectParameterivARB(shaderHandle, GL_OBJECT_COMPILE_STATUS_ARB, &status) pixel and/or
 		//! vertex shaders to render geometry.
 		s32 addShaderMaterial(const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 			IShaderConstantSetCallBack* callback, E_MATERIAL_TYPE baseMaterial, s32 userData);
@@ -339,7 +343,7 @@ namespace video
 
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;
-		ITexture* ActiveTextures[MATERIAL_MAX_TEXTURES];
+		ITexture* CurrentTexture[MATERIAL_MAX_TEXTURES];
 		s32 LastSetLight;
 		f32 MaxAnisotropy;
 

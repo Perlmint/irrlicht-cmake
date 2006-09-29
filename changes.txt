@@ -1,6 +1,8 @@
 -------------------------------------------
 Changes in version 1.2 (???? 2006)
 
+- Fixed many OpenGL render state problems which were related to wrong texture states. The textures are now enabled and disabled by the material renderers in OnSetMaterial. Also enabled the texture state cache which helps preventing texture changes just as the one for D3Dx. Thanks to hey_i_am_real for some good hints on where the problem was located. 
+
 - Added compile flag _IRR_COMPILE_WITH_X11_ which is by default enabled. Disabling the flag removes all X11 dependencies from Irrlicht and allows for a headless Linux Irrlicht server - added by request :-)
 
 - Win32 OpenGL driver tries to use the requested bpp size.

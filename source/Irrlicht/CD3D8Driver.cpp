@@ -42,7 +42,7 @@ CD3D8Driver::CD3D8Driver(const core::dimension2d<s32>& screenSize, HWND window,
 
 	printVersion();
 
-	for (int i=0; i<4; ++i)
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 		CurrentTexture[i] = 0;
 
 	// create sphere map matrix
@@ -72,7 +72,7 @@ CD3D8Driver::~CD3D8Driver()
 {
 	deleteMaterialRenders();
 
-	for (int i=0; i<4; ++i)
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 		if (CurrentTexture[i])
 			CurrentTexture[i]->drop();
 
@@ -429,7 +429,7 @@ bool CD3D8Driver::reset()
 	ResetRenderStates = true;
 	LastVertexType = (E_VERTEX_TYPE)-1;
 
-	for (int i=0; i<4; ++i)
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 	{
 		if (CurrentTexture[i]) CurrentTexture[i]->drop();
 			CurrentTexture[i] = 0;
@@ -588,10 +588,8 @@ void CD3D8Driver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	setTexture(0, Material.Texture1);
-	setTexture(1, Material.Texture2);
-	setTexture(2, Material.Texture3);
-	setTexture(3, Material.Texture4);
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+		setTexture(i, Material.Textures[i]);
 }
 
 

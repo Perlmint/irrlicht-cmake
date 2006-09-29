@@ -258,8 +258,8 @@ namespace video
 		bool ResetRenderStates; // bool to make all renderstates be reseted if set.
 		bool Transformation3DChanged;
 		bool StencilBuffer;
-		bool LastTextureMipMapsAvailable[4];
-		ITexture* CurrentTexture[4];
+		bool LastTextureMipMapsAvailable[MATERIAL_MAX_TEXTURES];
+		ITexture* CurrentTexture[MATERIAL_MAX_TEXTURES];
 
 		HINSTANCE D3DLibrary;
 		IDirect3D9* pID3D;

@@ -409,6 +409,7 @@ namespace video
 				Shininess != b.Shininess ||
 				MaterialTypeParam != b.MaterialTypeParam ||
 				MaterialTypeParam2 != b.MaterialTypeParam2 ||
+				Thickness != b.Thickness ||
 				Wireframe != b.Wireframe ||
 				PointCloud != b.PointCloud ||
 				GouraudShading != b.GouraudShading ||
@@ -420,7 +421,11 @@ namespace video
 				TrilinearFilter != b.TrilinearFilter ||
 				AnisotropicFilter != b.AnisotropicFilter ||
 				FogEnable != b.FogEnable ||
-				NormalizeNormals != b.NormalizeNormals;
+				NormalizeNormals != b.NormalizeNormals ||
+				Texture1 != b.Texture1 ||
+				Texture2 != b.Texture2 ||
+				Texture3 != b.Texture3 ||
+				Texture4 != b.Texture4;
 		}
 	};
 

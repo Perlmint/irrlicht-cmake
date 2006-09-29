@@ -58,10 +58,6 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
-	ActiveTextures[0]=0;
-	ActiveTextures[1]=0;
-	ActiveTextures[2]=0;
-	ActiveTextures[3]=0;
 }
 
 //! inits the open gl driver
@@ -209,10 +205,6 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
 	#endif
-	ActiveTextures[0]=0;
-	ActiveTextures[1]=0;
-	ActiveTextures[2]=0;
-	ActiveTextures[3]=0;
 	genericDriverInit(screenSize);
 }
 
@@ -255,10 +247,6 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	XWindow = glXGetCurrentDrawable();
 	XDisplay = glXGetCurrentDisplay();
 	ExposedData.OpenGLLinux.Window = XWindow;
-	ActiveTextures[0]=0;
-	ActiveTextures[1]=0;
-	ActiveTextures[2]=0;
-	ActiveTextures[3]=0;
 	genericDriverInit(screenSize);
 
 	// set vsync
@@ -304,6 +292,10 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 		os::Printer::log((const c8*)renderer, (const c8*)vendor, ELL_INFORMATION);
 	}
 
+	CurrentTexture[0]=0;
+	CurrentTexture[1]=0;
+	CurrentTexture[2]=0;
+	CurrentTexture[3]=0;
 	// load extensions
 	loadExtensions();
 
@@ -313,7 +305,7 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
 	glClearDepth(1.0f);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
 	glDepthFunc(GL_LEQUAL);
 	glFrontFace( GL_CW );
 	glEnable(GL_POINT_SMOOTH);
@@ -655,6 +647,7 @@ void COpenGLDriver::loadExtensions()
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);
 	}
+	MaxTextureUnits = core::max_(MaxTextureUnits,MATERIAL_MAX_TEXTURES);
 }
 
 
@@ -924,6 +917,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 	if (!sourceRect.isValid())
 		return;
 
+	disableTextures(1);
 	if (!setTexture(0, texture))
 		return;
 
@@ -1065,6 +1059,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 	if (!texture)
 		return;
 
+	disableTextures(1);
 	if (!setTexture(0, texture))
 		return;
 
@@ -1177,6 +1172,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 
 	setRenderStates2DMode(useColor[0].getAlpha()<255 || useColor[1].getAlpha()<255 || useColor[2].getAlpha()<255 || useColor[3].getAlpha()<255, true, useAlphaChannelOfTexture);
 
+	disableTextures(1);
 	setTexture(0, texture);
 
 	glBegin(GL_QUADS);
@@ -1207,7 +1203,7 @@ void COpenGLDriver::draw2DRectangle(SColor color, const core::rect<s32>& positio
 		const core::rect<s32>* clip)
 {
 	setRenderStates2DMode(color.getAlpha() < 255, false, false);
-	setTexture(0,0);
+	disableTextures();
 
 	core::rect<s32> pos = position;
 
@@ -1264,7 +1260,7 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 		colorLeftDown.getAlpha() < 255 ||
 		colorRightDown.getAlpha() < 255, false, false);
 
-	setTexture(0,0);
+	disableTextures();
 
 	glBegin(GL_QUADS);
 	glColor4ub(colorLeftUp.getRed(), colorLeftUp.getGreen(),
@@ -1312,7 +1308,7 @@ void COpenGLDriver::draw2DLine(const core::position2d<s32>& start,
 	npos_end.Y  = (f32)(yPlus - end.Y) * yFact;
 
 	setRenderStates2DMode(color.getAlpha() < 255, false, false);
-	setTexture(0,0);
+	disableTextures();
 
 	glBegin(GL_LINES);
 	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
@@ -1358,20 +1354,17 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 //! sets the current Texture
 bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 {
-	if (stage >= MATERIAL_MAX_TEXTURES)
+	if (stage >= MaxTextureUnits)
 		return false;
 
 // Not working, texture confusion in menu of Meshviewer.
-//	if (ActiveTextures[stage]==texture)
-//		return true;
+	if (CurrentTexture[stage]==texture)
+		return true;
 
 	if (MultiTextureExtension)
 		extGlActiveTextureARB(GL_TEXTURE0_ARB + stage);
-	else
-		if (stage != 0)
-			return false;
 
-	ActiveTextures[stage]=texture;
+	CurrentTexture[stage]=texture;
 
 	if (texture == 0)
 	{
@@ -1401,6 +1394,18 @@ bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 
 
 
+//! disables all textures beginning with the optional fromStage parameter. Otherwise all texture stages are disabled.
+//! Returns whether disabling was successful or not.
+bool COpenGLDriver::disableTextures(s32 fromStage)
+{
+	bool result=true;
+	for (s32 i=fromStage; i<MaxTextureUnits; ++i)
+		result &= setTexture(i, 0);
+	return result;
+}
+
+
+
 //! creates a transposed matrix in supplied GLfloat array to pass to OpenGL
 inline void COpenGLDriver::createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 {
@@ -1426,9 +1431,6 @@ video::ITexture* COpenGLDriver::createDeviceDependentTexture(IImage* surface, co
 void COpenGLDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
-
-	for (s32 i = MATERIAL_MAX_TEXTURES-1; i>=0; --i)
-		setTexture(i, Material.Textures[i]);
 }
 
 
@@ -1499,10 +1501,10 @@ void COpenGLDriver::setRenderStates3DMode()
 
 		// set new material.
 
-		setBasicRenderStates(Material, LastMaterial, ResetRenderStates);
 		if (Material.MaterialType >= 0 && Material.MaterialType < (s32)MaterialRenderers.size())
 			MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(
 				Material, LastMaterial, ResetRenderStates, this);
+		setBasicRenderStates(Material, LastMaterial, ResetRenderStates);
 		LastMaterial = Material;
 		ResetRenderStates = false;
 	}
@@ -1529,36 +1531,36 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 		float inv = 1.0f / 255.0f;
 
-		color[0] = Material.AmbientColor.getRed() * inv;
-		color[1] = Material.AmbientColor.getGreen() * inv;
-		color[2] = Material.AmbientColor.getBlue() * inv;
-		color[3] = Material.AmbientColor.getAlpha() * inv;
+		color[0] = material.AmbientColor.getRed() * inv;
+		color[1] = material.AmbientColor.getGreen() * inv;
+		color[2] = material.AmbientColor.getBlue() * inv;
+		color[3] = material.AmbientColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color);
 
-		color[0] = Material.DiffuseColor.getRed() * inv;
-		color[1] = Material.DiffuseColor.getGreen() * inv;
-		color[2] = Material.DiffuseColor.getBlue() * inv;
-		color[3] = Material.DiffuseColor.getAlpha() * inv;
+		color[0] = material.DiffuseColor.getRed() * inv;
+		color[1] = material.DiffuseColor.getGreen() * inv;
+		color[2] = material.DiffuseColor.getBlue() * inv;
+		color[3] = material.DiffuseColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
 
 		// disable Specular colors if no shininess is set
-		if (Material.Shininess == 0.0f)
+		if (material.Shininess == 0.0f)
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 		else
 		{
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material.Shininess);
-			color[0] = Material.SpecularColor.getRed() * inv;
-			color[1] = Material.SpecularColor.getGreen() * inv;
-			color[2] = Material.SpecularColor.getBlue() * inv;
-			color[3] = Material.SpecularColor.getAlpha() * inv;
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material.Shininess);
+			color[0] = material.SpecularColor.getRed() * inv;
+			color[1] = material.SpecularColor.getGreen() * inv;
+			color[2] = material.SpecularColor.getBlue() * inv;
+			color[3] = material.SpecularColor.getAlpha() * inv;
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
 		}
 
-		color[0] = Material.EmissiveColor.getRed() * inv;
-		color[1] = Material.EmissiveColor.getGreen() * inv;
-		color[2] = Material.EmissiveColor.getBlue() * inv;
-		color[3] = Material.EmissiveColor.getAlpha() * inv;
+		color[0] = material.EmissiveColor.getRed() * inv;
+		color[1] = material.EmissiveColor.getGreen() * inv;
+		color[2] = material.EmissiveColor.getBlue() * inv;
+		color[3] = material.EmissiveColor.getAlpha() * inv;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color);
 	}
 
@@ -1566,23 +1568,22 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	// Has to be checked always because it depends on the textures
 	// Filtering has to be set for each texture layer
 
-	s32 i=1;
-	if (MultiTextureExtension)
-		i=MATERIAL_MAX_TEXTURES;
-	for (--i; i>=0; --i)
+	for (s32 i=0; i<MaxTextureUnits; ++i)
 	{
+		if (!material.Textures[i])
+			continue;
 		if (MultiTextureExtension)
 			extGlActiveTextureARB(GL_TEXTURE0_ARB + i);
 
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-			(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
+			(material.BilinearFilter || material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
 
 		if (material.Textures[i] && material.Textures[i]->hasMipMaps())
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
-				Material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : Material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
+				material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
 		else
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-				(Material.BilinearFilter || Material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
+				(material.BilinearFilter || material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
 
 		if (AnisotropyExtension)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
@@ -1608,7 +1609,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 
 	if (resetAllRenderStates || lastmaterial.Lighting != material.Lighting)
 	{
-		if (Material.Lighting)
+		if (material.Lighting)
 		{
 			glEnable(GL_LIGHTING);
 			// enable specular colors
@@ -1702,15 +1703,6 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDisable(GL_LIGHTING);
 
-		if (MultiTextureExtension)
-		{
-			extGlActiveTextureARB(GL_TEXTURE1_ARB);
-			glDisable(GL_TEXTURE_2D);
-
-			extGlActiveTextureARB(GL_TEXTURE0_ARB);
-		}
-		glEnable(GL_TEXTURE_2D);
-
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);
 
@@ -1740,6 +1732,7 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 		{
 			if (alpha)
 			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
 				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
 				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_PRIMARY_COLOR_EXT);
 				glDisable(GL_ALPHA_TEST);
@@ -1801,12 +1794,12 @@ void COpenGLDriver::deleteAllDynamicLights()
 //! adds a dynamic light
 void COpenGLDriver::addDynamicLight(const SLight& light)
 {
-	++LastSetLight;
-	if (!(LastSetLight < MaxLights))
+	if (LastSetLight == MaxLights-1)
 		return;
 
 	setTransform(ETS_WORLD, core::matrix4());
 
+	++LastSetLight;
 	CNullDriver::addDynamicLight(light);
 
 	s32 lidx = GL_LIGHT0 + LastSetLight;
@@ -1972,11 +1965,7 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	if (!StencilBuffer)
 		return;
 
-	// disable textures
-	setTexture(0,0);
-	setTexture(1,0);
-	setTexture(2,0);
-	setTexture(3,0);
+	disableTextures();
 
 	// store attributes
 	glPushAttrib( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT | GL_POLYGON_BIT | GL_STENCIL_BUFFER_BIT );
@@ -2578,7 +2567,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 }
 
 bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
-								 bool clearZBuffer, SColor color)
+					 bool clearZBuffer, SColor color)
 {
 	// check for right driver type
 
@@ -2588,49 +2577,30 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 		return false;
 	}
 
-	// The current texture is unbound, so update texture array.
-	glDisable(GL_TEXTURE_2D);
-	GLint level=0;
-	if (MultiTextureExtension)
-	{
-		glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE,&level);
-		level -= GL_TEXTURE0;
-	}
-	ActiveTextures[level]=0;
-
 	// check if we should set the previous RT back
 
 	bool ret = true;
 
+	setTexture(0, 0);
+	ResetRenderStates=true;
+	if (RenderTargetTexture!=0)
+	{
+		glBindTexture(GL_TEXTURE_2D, RenderTargetTexture->getOpenGLTextureName());
+
+		// Copy Our ViewPort To The Texture
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0,
+			RenderTargetTexture->getSize().Width,
+			RenderTargetTexture->getSize().Height);
+	}
+
 	if (texture == 0)
 	{
-		if (RenderTargetTexture!=0)
-		{
-			glBindTexture(GL_TEXTURE_2D, RenderTargetTexture->getOpenGLTextureName());
-
-			// Copy Our ViewPort To The Texture
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0,
-				RenderTargetTexture->getSize().Width, RenderTargetTexture->getSize().Height);
-
-			glViewport(0,0,ScreenSize.Width,ScreenSize.Height);
-			RenderTargetTexture = 0;
-			CurrentRendertargetSize = core::dimension2d<s32>(0,0);
-		}
+		glViewport(0, 0, ScreenSize.Width, ScreenSize.Height);
+		RenderTargetTexture = 0;
+		CurrentRendertargetSize = core::dimension2d<s32>(0,0);
 	}
 	else
 	{
-		if (RenderTargetTexture!=0)
-		{
-			glBindTexture(GL_TEXTURE_2D, RenderTargetTexture->getOpenGLTextureName());
-
-			// Copy Our ViewPort To The Texture
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0,
-				RenderTargetTexture->getSize().Width,
-				RenderTargetTexture->getSize().Height);
-
-			glViewport(0, 0, ScreenSize.Width, ScreenSize.Height);
-		}
-
 		// we want to set a new target. so do this.
 		glViewport(0, 0, texture->getSize().Width, texture->getSize().Height);
 		RenderTargetTexture = (COpenGLTexture*)texture;

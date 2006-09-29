@@ -150,7 +150,7 @@ namespace video
 		//! Returns the alpha component of the color. The alpha component
 		//! defines how transparent a color should be.
 		//! 0 means not transparent (opaque), 255 means fully transparent.
-		inline u32 getAlpha() const { return (color>>24) & 0xff; }
+		inline u32 getAlpha() const { return color>>24; }
 
 		//! Returns the red component of the color.
 		//! \return Returns a value between 0 and 255, specifying how red the color is.

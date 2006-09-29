@@ -42,7 +42,7 @@ CD3D9Driver::CD3D9Driver(const core::dimension2d<s32>& screenSize, HWND window,
 
 	printVersion();
 
-	for (int i=0; i<4; ++i)
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 	{
 		CurrentTexture[i] = 0;
 		LastTextureMipMapsAvailable[i] = false;
@@ -74,7 +74,7 @@ CD3D9Driver::~CD3D9Driver()
 {
 	deleteMaterialRenders();
 
-	for (int i=0; i<4; ++i)
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 		if (CurrentTexture[i])
 			CurrentTexture[i]->drop();
 
@@ -584,10 +584,8 @@ void CD3D9Driver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	setTexture(0, Material.Texture1);
-	setTexture(1, Material.Texture2);
-	setTexture(2, Material.Texture3);
-	setTexture(3, Material.Texture4);
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+		setTexture(i, Material.Textures[i]);
 }
 
 
@@ -1507,8 +1505,6 @@ void CD3D9Driver::setRenderStates2DMode(bool alpha, bool texture, bool alphaChan
 			}
 
 			pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			//pID3DDevice->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
-			//pID3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 			pID3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pID3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 		}
@@ -1799,7 +1795,7 @@ bool CD3D9Driver::reset()
 	ResetRenderStates = true;
 	LastVertexType = (E_VERTEX_TYPE)-1;
 
-	for (int i=0; i<4; ++i)
+	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 	{
 		if (CurrentTexture[i])
 			CurrentTexture[i]->drop();

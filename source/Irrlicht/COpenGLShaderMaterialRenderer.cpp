@@ -99,6 +99,10 @@ bool COpenGLShaderMaterialRenderer::OnRender(IMaterialRendererServices* service,
 void COpenGLShaderMaterialRenderer::OnSetMaterial(video::SMaterial& material, const video::SMaterial& lastMaterial,
 	bool resetAllRenderstates, video::IMaterialRendererServices* services)
 {
+	Driver->setTexture(3, material.Texture4);
+	Driver->setTexture(2, material.Texture3);
+	Driver->setTexture(1, material.Texture2);
+	Driver->setTexture(0, material.Texture1);
 	if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 	{
 #ifdef GL_ARB_vertex_program
