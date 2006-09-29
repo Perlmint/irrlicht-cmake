@@ -86,8 +86,7 @@ private:
 	//! copies the image to the texture
 	bool copyTexture();
 
-	//! optimized for 16 bit to 16 copy. This is in here because before
-	//! version 0.4.2, the engine only used A1R5G5B5 hardware textures,
+	//! optimized for 16 bit to 16 copy.
 	bool copyTo16BitTexture();
 
 	//! copies texture to 32 bit hardware texture

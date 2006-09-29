@@ -279,8 +279,7 @@ bool CD3D8Texture::copyTo32BitTexture()
 }
 
 
-//! optimized for 16 bit to 16 copy. This is in here because before
-//! version 0.4.2, the engine only used A1R5G5B5 hardware textures,
+//! optimized for 16 bit to 16 copy.
 bool CD3D8Texture::copyTo16BitTexture()
 {
 	D3DLOCKED_RECT rect;

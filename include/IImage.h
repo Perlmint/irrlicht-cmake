@@ -16,9 +16,7 @@ namespace video
 {
 
 //! An enum for the color format of textures used by the Irrlicht Engine.
-/** A color format specifies how color information is stored. The Irrlicht Engine
-mostly uses the format ECF_A1R5G5B5.
-*/
+/** A color format specifies how color information is stored. */
 enum ECOLOR_FORMAT
 {
 	//! 16 bit color format used by the software driver, and thus preferred

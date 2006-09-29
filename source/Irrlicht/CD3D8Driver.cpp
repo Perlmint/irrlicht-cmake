@@ -713,7 +713,7 @@ bool CD3D8Driver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer
 }
 
 //! Creates a render target texture.
-ITexture* CD3D8Driver::createRenderTargetTexture(core::dimension2d<s32> size)
+ITexture* CD3D8Driver::createRenderTargetTexture(const core::dimension2d<s32>& size)
 {
 	return new CD3D8Texture(this, size, 0);
 }

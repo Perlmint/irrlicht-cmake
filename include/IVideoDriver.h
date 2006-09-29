@@ -233,10 +233,9 @@ namespace video
 		the driver may choose to create the texture in another color format.
 		\return Returns a pointer to the new created Texture.
 		This pointer should not be dropped. See IUnknown::drop() for more information.
-		The format of the new texture will be chosen by the driver, and will in most
-		cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format. */
+		The format of the new texture will be chosen by the driver. */
 		virtual ITexture* addTexture(const core::dimension2d<s32>& size,
-			const c8* name, ECOLOR_FORMAT format = ECF_A1R5G5B5) = 0;
+			const c8* name, ECOLOR_FORMAT format = ECF_A8R8G8B8) = 0;
 
 		//! Creates a texture from a loaded IImage.
 		/** \param name: A name for the texture. Later calls of getTexture() with this name
@@ -244,8 +243,7 @@ namespace video
 		\param image: Image from which the texture is created from.
 		\return Returns a pointer to the new created Texture.
 		This pointer should not be dropped. See IUnknown::drop() for more information.
-		The format of the new texture will be chosen by the driver, and will in most
-		cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format. */
+		The format of the new texture will be chosen by the driver. */
 		virtual ITexture* addTexture(const c8* name, IImage* image) = 0;
 
 		//! Creates a render target texture.
@@ -256,7 +254,7 @@ namespace video
 		\return Returns a pointer to the created texture or 0 if the texture could not
 		be created. If you no longer need the image, you should call ITexture::drop().
 		See IUnknown::drop() for more information. */
-		virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size) = 0;
+		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size) = 0;
 
 		//! Removes a texture from the texture cache and deletes it, freeing lot of memory.
 		/** Please note that after calling this, the pointer to the ITexture
@@ -313,7 +311,7 @@ namespace video
 		way:
 		\code
 		// create render target
-		ITexture* target = driver->createRenderTargetTexture(core::dimension2d<s32>(128,128);
+		ITexture* target = driver->createRenderTargetTexture(core::dimension2d<s32>(128,128));
 
 		// ...
 

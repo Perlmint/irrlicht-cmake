@@ -57,7 +57,7 @@ namespace video
 		virtual s32 getTextureCount();
 
 		//! creates a Texture
-		virtual ITexture* addTexture(const core::dimension2d<s32>& size, const c8* name, ECOLOR_FORMAT format);
+		virtual ITexture* addTexture(const core::dimension2d<s32>& size, const c8* name, ECOLOR_FORMAT format = ECF_A8R8G8B8);
 
 		//! sets a render target
 		virtual bool setRenderTarget(video::ITexture* texture, bool clearBackBuffer, 
@@ -226,7 +226,7 @@ namespace video
 		virtual void removeAllTextures();
 
 		//! Creates a render target texture.
-		virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
+		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size);
 
 		//! Creates an 1bit alpha channel of the texture based of an color key.
 		virtual void makeColorKeyTexture(video::ITexture* texture, video::SColor color);

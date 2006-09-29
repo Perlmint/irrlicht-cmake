@@ -1168,7 +1168,7 @@ const core::matrix4& CSoftwareDriver2::getTransform(E_TRANSFORMATION_STATE state
 }
 
 //! Creates a render target texture.
-ITexture* CSoftwareDriver2::createRenderTargetTexture(core::dimension2d<s32> size)
+ITexture* CSoftwareDriver2::createRenderTargetTexture(const core::dimension2d<s32>& size)
 {
 	CImage* img = new CImage(ECF_SOFTWARE2, size);
 

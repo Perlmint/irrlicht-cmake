@@ -61,7 +61,7 @@ namespace video
 
 		//! inits the windows specific parts of the open gl driver
 		bool initDriver(const core::dimension2d<s32>& screenSize, HWND window,
-			bool fullscreen, bool vsync);
+			u32 bits, bool fullscreen, bool vsync);
 		#endif
 
 		#ifdef LINUX
@@ -273,7 +273,7 @@ namespace video
 		//! IMaterialRendererServices)
 		virtual IVideoDriver* getVideoDriver();
 
-		ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
+		ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size);
 
 		bool setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
 					bool clearZBuffer, SColor color);

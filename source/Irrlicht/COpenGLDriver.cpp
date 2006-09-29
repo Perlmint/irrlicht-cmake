@@ -66,7 +66,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 
 //! inits the open gl driver
 bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
-				HWND window, bool fullscreen, bool vsync)
+				HWND window, u32 bits, bool fullscreen, bool vsync)
 {
 	static	PIXELFORMATDESCRIPTOR pfd =	{
 		sizeof(PIXELFORMATDESCRIPTOR),	// Size Of This Pixel Format Descriptor
@@ -75,13 +75,13 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
 		PFD_SUPPORT_OPENGL |		// Format Must Support OpenGL
 		PFD_DOUBLEBUFFER,		// Must Support Double Buffering
 		PFD_TYPE_RGBA,			// Request An RGBA Format
-		16,				// Select Our Color Depth
+		bits,				// Select Our Color Depth
 		0, 0, 0, 0, 0, 0,		// Color Bits Ignored
 		0,				// No Alpha Buffer
 		0,				// Shift Bit Ignored
 		0,				// No Accumulation Buffer
 		0, 0, 0, 0,			// Accumulation Bits Ignored
-		16,				// 16Bit Z-Buffer (Depth Buffer)
+		24,				// Z-Buffer (Depth Buffer)
 		StencilBuffer ? 1 : 0,		// Stencil Buffer
 		0,				// No Auxiliary Buffer
 		PFD_MAIN_PLANE,			// Main Drawing Layer
@@ -2560,13 +2560,13 @@ IGPUProgrammingServices* COpenGLDriver::getGPUProgrammingServices()
 	return this;
 }
 
-ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
+ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>& size)
 {
 	//disable mip-mapping
 	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
 
-	video::ITexture* rtt = addTexture(size, "rt" , ECF_A1R5G5B5);
+	video::ITexture* rtt = addTexture(size, "rt");
 
 	if (rtt)
 		rtt->grab();
@@ -2731,11 +2731,11 @@ namespace video
 // -----------------------------------
 #ifdef _IRR_WINDOWS_
 IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-	HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
+	HWND window, u32 bits, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias)
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	COpenGLDriver* ogl =  new COpenGLDriver(screenSize, window, fullscreen, stencilBuffer, io, antiAlias);
-	if (!ogl->initDriver(screenSize, window, fullscreen, vsync))
+	if (!ogl->initDriver(screenSize, window, bits, fullscreen, vsync))
 	{
 		ogl->drop();
 		ogl = 0;

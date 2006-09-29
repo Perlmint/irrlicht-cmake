@@ -137,9 +137,7 @@ public:
 	virtual E_DRIVER_TYPE getDriverType() = 0;
 
 	//! Returns the color format of texture.
-	/** This format is in most cases
-	ECF_A1R5G5B5 or ECF_A8R8G8B8.
-	\return Returns the color format of texture. */
+	/** \return Returns the color format of texture. */
 	virtual ECOLOR_FORMAT getColorFormat() const = 0;
 
 	//! Returns pitch of texture (in bytes).

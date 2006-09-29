@@ -1615,7 +1615,7 @@ s32 CNullDriver::addShaderMaterialFromFiles(const c8* vertexShaderProgramFileNam
 }
 
 //! Creates a render target texture.
-ITexture* CNullDriver::createRenderTargetTexture(core::dimension2d<s32> size)
+ITexture* CNullDriver::createRenderTargetTexture(const core::dimension2d<s32>& size)
 {
 	return 0;
 }

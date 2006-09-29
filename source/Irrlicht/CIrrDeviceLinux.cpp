@@ -607,13 +607,15 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 	#endif
 		break;
 
-	case video::EDT_NULL:
-		VideoDriver = video::createNullDriver(FileSystem, windowSize);
+	case video::EDT_DIRECT3D8:
+	case video::EDT_DIRECT3D9:
+		os::Printer::log("This driver is not available in Linux. Try OpenGL or Software renderer.",
+			ELL_WARNING);
 		break;
 
 	default:
-		os::Printer::log("This driver is not available in Linux. Try OpenGL or Software renderer.",
-			ELL_WARNING);
+		VideoDriver = video::createNullDriver(FileSystem, windowSize);
+		break;
 	}
 }
 
