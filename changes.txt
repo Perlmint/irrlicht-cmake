@@ -1,9 +1,21 @@
 -------------------------------------------
 Changes in version 1.2 (???? 2006)
 
+- Added compile flag _IRR_COMPILE_WITH_X11_ which is by default enabled. Disabling the flag removes all X11 dependencies from Irrlicht and allows for a headless Linux Irrlicht server - added by request :-)
+
+- Win32 OpenGL driver tries to use the requested bpp size.
+
+- Default texture format is now A8R8G8B8 if not explicitly specified. This fixes some color artifacts with lightmaps. Bugfix submitted by hey_i_am_real.
+
+- In OnPostRender all transformations were taken as relative and multiplied with the root transformation matrix every time due to a wrong check for the real root node. This shoudl increase render performance for scenes with lots of (invisible) nodes.
+
+- Added correct list copy constructor.
+
 - Color selection dialog added.
 
 - New GUI skin "Burning Skin".
+
+- GUIStatic text is correctly grayed out if disabled.
 
 - API change: The OnEvent method must be changed to OnEvent(const SEvent&) to correctly implement the interfaces again.
 
@@ -107,7 +119,7 @@ Changes in version 1.2 (???? 2006)
 
 - Default specular color is white again, thus simply enabling shininess is enough to get speculars.
 
-- Some .x loader and animator improvements.
+- Some .x loader and animator improvements. Vertex color support.
 
 - isActive now also work under Linux.
 

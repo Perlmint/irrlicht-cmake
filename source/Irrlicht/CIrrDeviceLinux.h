@@ -88,6 +88,7 @@ namespace irr
 			CCursorControl(CIrrDeviceLinux* dev, bool null)
 				: Device(dev), IsVisible(true), Null(null)
 			{
+#ifdef _IRR_COMPILE_WITH_X11_
 				if (!null)
 				{
 					GC gc;
@@ -117,12 +118,14 @@ namespace irr
 
 					invisCursor = XCreatePixmapCursor( Device->display, invisBitmap, maskBitmap, &fg, &bg, 1, 1 );
 				}
+#endif
 			}
 
 			//! Changes the visible state of the mouse cursor.
 			virtual void setVisible(bool visible)
 			{
 				IsVisible = visible;
+#ifdef _IRR_COMPILE_WITH_X11_
 				if (!Null)
 				{
 					if ( !IsVisible )
@@ -130,6 +133,7 @@ namespace irr
 					else
 						XUndefineCursor( Device->display, Device->window );
 				}
+#endif
 			}
 
 			//! Returns if the cursor is currently visible.
@@ -159,6 +163,7 @@ namespace irr
 			//! Sets the new position of the cursor.
 			virtual void setPosition(s32 x, s32 y)
 			{
+#ifdef _IRR_COMPILE_WITH_X11_
 				if (!Null)
 				{
 					XWarpPointer(Device->display,
@@ -168,6 +173,7 @@ namespace irr
 				 		Device->Height, x, y);
 					XFlush(Device->display);
 				}
+#endif
 			}
 
 			//! Returns the current position of the mouse cursor.
@@ -189,6 +195,7 @@ namespace irr
 
 			void updateCursorPos()
 			{
+#ifdef _IRR_COMPILE_WITH_X11_
 				if (Null)
 					return;
 					
@@ -208,19 +215,23 @@ namespace irr
 					CursorPos.Y = 0;
 				if (CursorPos.Y > Device->Height)
 					CursorPos.Y = Device->Height;
+#endif
 			}
 
 			core::position2d<s32> CursorPos;
 			bool IsVisible;
 			CIrrDeviceLinux* Device;
+#ifdef _IRR_COMPILE_WITH_X11_
 			Cursor invisCursor;
 			Pixmap invisBitmap;
 			Pixmap maskBitmap;
+#endif
 			bool Null;
 		};
 
 		friend class CCursorControl;
 
+#ifdef _IRR_COMPILE_WITH_X11_
 		Display *display;
 		int screennr;
 		Window window;
@@ -229,11 +240,12 @@ namespace irr
 		GLXContext Context;
 		#endif
 		XSetWindowAttributes attributes;
+		XEvent event;
+		XImage* SoftwareImage;
+#endif
 		bool Fullscreen;
 		bool StencilBuffer;
 		bool AntiAlias;
-		XEvent event;
-		XImage* SoftwareImage;
 		video::E_DRIVER_TYPE DriverType;
 
 		s32 x,y;

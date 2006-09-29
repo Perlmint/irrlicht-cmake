@@ -45,7 +45,10 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	IEventReceiver* receiver,
 	const char* version)
  : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
-	DriverType(driverType), Fullscreen(fullscreen), StencilBuffer(sbuffer), AntiAlias(antiAlias), SoftwareImage(0)
+#ifdef _IRR_COMPILE_WITH_X11_
+	SoftwareImage(0),
+#endif
+	DriverType(driverType), Fullscreen(fullscreen), StencilBuffer(sbuffer), AntiAlias(antiAlias)
 {
 	#ifdef _DEBUG
 	setDebugName("CIrrDeviceLinux");
@@ -138,7 +141,7 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 
 
 
-#if define(_IRR_COMPILE_WITH_X11_) && define (_DEBUG)
+#if defined(_IRR_COMPILE_WITH_X11_) && defined(_DEBUG)
 int IrrPrintXError(Display *display, XErrorEvent *event)
 {
 	char msg[256];
@@ -916,6 +919,7 @@ void CIrrDeviceLinux::createKeyMap()
 	// the lookuptable, but I'll leave it like that until
 	// I find a better version.
 
+#ifdef _IRR_COMPILE_WITH_X11_
 	KeyMap.push_back(SKeyMap(XK_BackSpace, KEY_BACK));
 	KeyMap.push_back(SKeyMap(XK_Tab, KEY_TAB));
 	KeyMap.push_back(SKeyMap(XK_Linefeed, 0)); // ???
@@ -1103,6 +1107,7 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_udiaeresis, 0)); //?
 
 	KeyMap.sort();
+#endif
 }
 
 
