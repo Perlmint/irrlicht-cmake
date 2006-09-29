@@ -79,7 +79,7 @@ void CGUIStaticText::draw()
 		{
 			if (!WordWrap)
 				font->draw(Text.c_str(), frameRect, 
-					OverrideColorEnabled ? OverrideColor : skin->getColor(EGDC_BUTTON_TEXT),
+					OverrideColorEnabled ? OverrideColor : skin->getColor(IsEnabled ? EGDC_BUTTON_TEXT : EGDC_GRAY_TEXT),
 					false, true, &AbsoluteClippingRect);
 			else
 			{
@@ -92,7 +92,7 @@ void CGUIStaticText::draw()
 				for (u32 i=0; i<BrokenText.size(); ++i)
 				{
 					font->draw(BrokenText[i].c_str(), r,
-						OverrideColorEnabled ? OverrideColor : skin->getColor(EGDC_BUTTON_TEXT),
+						OverrideColorEnabled ? OverrideColor : skin->getColor(IsEnabled ? EGDC_BUTTON_TEXT : EGDC_GRAY_TEXT),
 						false, false, &AbsoluteClippingRect);
 
 					r.LowerRightCorner.Y += height;

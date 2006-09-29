@@ -41,7 +41,6 @@
 	#include <GL/glu.h>
 	#include <GL/glx.h>
 	#include "glxext.h"
-	#include <X11/Xlib.h>
 #endif
 
 namespace irr

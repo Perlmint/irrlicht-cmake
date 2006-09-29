@@ -46,14 +46,24 @@ and this to the linker settings: -ld3dx9 -ld3dx8 **/
 
 #endif
 
-//! Define _IRR_COMPILE_WITH_OPENGL_ to compile the irrlicht engine with OpenGL.
-/** If you do not wish the engine to be compiled with OpengGL, out comment this
-define. */
+//! Define _IRR_COMPILE_WITH_OPENGL_ to compile the Irrlicht engine with OpenGL.
+/** If you do not wish the engine to be compiled with OpengGL, comment this
+define out. */
 #if !defined(_XBOX)
 
 #define _IRR_COMPILE_WITH_OPENGL_
 
 #endif // ! _XBOX
+
+
+//! Define _IRR_COMPILE_WITH_X11_ to compile the Irrlicht engine with X11 support.
+/** If you do not wish the engine to be compiled with X11, comment this
+define out. */
+#if defined(LINUX)
+
+#define _IRR_COMPILE_WITH_X11_
+
+#endif
 
 
 //! Define _IRR_OPENGL_USE_EXTPOINTER_ if the OpenGL renderer should use OpenGL extensions via function pointers.
@@ -65,7 +75,7 @@ define. */
 
 //! On some Linux systems the XF86 vidmode extension or X11 RandR are missing. Use these flags
 //! to remove the dependencies such that Irrlicht will compile on those systems, too.
-#if !defined(_IRR_WINDOWS_) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX) && !defined(__sun__)
+#if defined(LINUX) && !defined(__sun__)
 #define _IRR_LINUX_X11_VIDMODE_
 //#define _IRR_LINUX_X11_RANDR_
 #endif

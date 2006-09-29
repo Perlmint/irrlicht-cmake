@@ -95,6 +95,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 //! destructor
 CIrrDeviceLinux::~CIrrDeviceLinux()
 {
+#ifdef _IRR_COMPILE_WITH_X11_
 	if (display)
 	{
 		//os::Printer::log("Deleting window...", ELL_INFORMATION);
@@ -132,11 +133,12 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		XDestroyWindow(display,window);
 		XCloseDisplay(display);
 	}
+#endif // #ifdef _IRR_COMPILE_WITH_X11_
 }
 
 
 
-#ifdef _DEBUG
+#if define(_IRR_COMPILE_WITH_X11_) && define (_DEBUG)
 int IrrPrintXError(Display *display, XErrorEvent *event)
 {
 	char msg[256];
@@ -155,6 +157,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	Width = windowSize.Width;
 	Height = windowSize.Height;
 
+#ifdef _IRR_COMPILE_WITH_X11_
 #ifdef _DEBUG
 	os::Printer::log("Creating X window...", ELL_INFORMATION);
 	XSetErrorHandler(IrrPrintXError);
@@ -579,6 +582,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	} 
 
 	XFree(visual);
+#endif // #ifdef _IRR_COMPILE_WITH_X11_
 	return true;
 }
 
@@ -589,6 +593,7 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 {
 	switch(DriverType)
 	{
+#ifdef _IRR_COMPILE_WITH_X11_
 
 	case video::EDT_SOFTWARE:
 		VideoDriver = video::createSoftwareDriver(windowSize, Fullscreen, FileSystem, this);
@@ -616,6 +621,14 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 	default:
 		VideoDriver = video::createNullDriver(FileSystem, windowSize);
 		break;
+#else
+	case video::EDT_NULL:
+		VideoDriver = video::createNullDriver(FileSystem, windowSize);
+		break;
+	default:
+		os::Printer::log("No X11 support compiled in. Only Null driver available.", ELL_WARNING);
+		break;
+#endif
 	}
 }
 
@@ -626,6 +639,7 @@ bool CIrrDeviceLinux::run()
 {
 	os::Timer::tick();
 
+#ifdef _IRR_COMPILE_WITH_X11_
 	if (DriverType != video::EDT_NULL)
 	{
 		irr::SEvent irrevent;
@@ -748,6 +762,7 @@ bool CIrrDeviceLinux::run()
 
 		} // end while
 	}
+#endif //_IRR_COMPILE_WITH_X11_
 
 	return !Close;
 }
@@ -760,9 +775,11 @@ void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 	if (DriverType == video::EDT_NULL)
 		return;
 
+#ifdef _IRR_COMPILE_WITH_X11_
 	core::stringc textc = text;
 	XSetStandardProperties(display, window, textc.c_str(), textc.c_str(),
 			       None, NULL, 0, NULL);
+#endif
 }
 
 
@@ -770,6 +787,7 @@ void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 //! presents a surface in the client area
 void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32>* src )
 {
+#ifdef _IRR_COMPILE_WITH_X11_
 	// this is only necessary for software drivers.
 	if (DriverType != video::EDT_SOFTWARE && DriverType != video::EDT_SOFTWARE2)
 		return;
@@ -872,6 +890,7 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 
 	GC gc = DefaultGC(display, DefaultScreen(display));
 	XPutImage(display, window, gc, SoftwareImage, 0, 0, 0, 0, destwidth, destheight);
+#endif
 }
 
 

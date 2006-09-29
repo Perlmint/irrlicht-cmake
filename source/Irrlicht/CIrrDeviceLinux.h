@@ -15,6 +15,8 @@
 #include "IGUIEnvironment.h"
 #include "ICursorControl.h"
 
+#ifdef _IRR_COMPILE_WITH_X11_
+
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 #include <GL/gl.h>
 #define GLX_GLXEXT_LEGACY 1
@@ -23,6 +25,7 @@
 #include "glxext.h"
 #endif
 #endif
+
 #include <X11/Xlib.h>
 #ifdef _IRR_LINUX_X11_VIDMODE_
 #include <X11/extensions/xf86vmode.h>
@@ -31,6 +34,10 @@
 #include <X11/extensions/Xrandr.h>
 #endif
 #include <X11/keysym.h>
+
+#else
+#define KeySym s32
+#endif
 
 namespace irr
 {
@@ -236,6 +243,7 @@ namespace irr
 		bool UseXVidMode;
 		bool UseXRandR;
 		bool UseGLXWindow;
+#ifdef _IRR_COMPILE_WITH_X11_
 		#ifdef _IRR_LINUX_X11_VIDMODE_
 		XF86VidModeModeInfo oldVideoMode;
 		#endif
@@ -243,6 +251,7 @@ namespace irr
 		SizeID oldRandrMode;
 		Rotation oldRandrRotation;
 		#endif
+#endif
 
 		struct SKeyMap
 		{
