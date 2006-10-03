@@ -46,6 +46,7 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 	}
 
 	recalculateProjectionMatrix();
+	recalculateViewArea();
 }
 
 
