@@ -274,7 +274,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 	// Combine all the groups (meshbuffers) into the mesh
 	for ( u32 m = 0; m < materials.size(); ++m )
 	{
-		if ( materials[m]->pMeshbuffer->getIndices() > 0 )
+		if ( materials[m]->pMeshbuffer->getIndexCount() > 0 )
 		{
 			materials[m]->pMeshbuffer->recalculateBoundingBox();
 			Mesh->addMeshBuffer( materials[m]->pMeshbuffer );

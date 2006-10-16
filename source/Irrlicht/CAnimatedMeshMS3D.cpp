@@ -430,7 +430,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			v.Normal.X = triangles[i].VertexNormals[j][0];
 			v.Normal.Y = triangles[i].VertexNormals[j][1];
 			v.Normal.Z = triangles[i].VertexNormals[j][2];
-			v.Color = Buffers[Groups[triangles[i].GroupIndex].MaterialIdx].Material.DiffuseColor;
+			if(triangles[i].GroupIndex < Groups.size() && Groups[triangles[i].GroupIndex].MaterialIdx < Buffers.size())
+				v.Color = Buffers[Groups[triangles[i].GroupIndex].MaterialIdx].Material.DiffuseColor;
 			v.Pos.X = vertices[triangles[i].VertexIndices[j]].Vertex[0];
 			v.Pos.Y = vertices[triangles[i].VertexIndices[j]].Vertex[1];
 			v.Pos.Z = vertices[triangles[i].VertexIndices[j]].Vertex[2];
