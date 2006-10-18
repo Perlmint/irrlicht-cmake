@@ -8,6 +8,7 @@
 #include "IUnknown.h"
 #include "SColor.h"
 #include "vector3d.h"
+#include "position2d.h"
 #include "irrString.h"
 #include "irrArray.h"
 #include "IXMLReader.h"
@@ -48,6 +49,9 @@ enum E_ATTRIBUTE_TYPE
 
 	// 3d vector attribute
 	EAT_VECTOR3D,
+
+	// 2d position attribute
+	EAT_POSITION2D,
 
 	// binary data attribute
 	EAT_BINARY,
@@ -93,6 +97,9 @@ public:
 
 	//! Adds an attribute as 3d vector
 	virtual void addVector3d(const c8* attributeName, core::vector3df value) = 0;
+
+	//! Adds an attribute as position
+	virtual void addPosition2d(const c8* attributeName, core::position2df value) = 0;
 
 	//! Adds an attribute as binary data
 	virtual void addBinary(const c8* attributeName, void* data, s32 dataSizeInBytes) = 0;
@@ -195,17 +202,29 @@ public:
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual video::SColorf getAttributeAsColorf(s32 index) = 0;
 
-	//! Sets a attribute as vector
+	//! Sets a attribute as 3d vector
 	virtual void setAttribute(const c8* attributeName, core::vector3df v) = 0;
 
-	//! Gets an attribute as floating point color
+	//! Gets an attribute as 3d vector
 	//! \param attributeName: Name of the attribute to get.
 	//! \return Returns value of the attribute previously set by setAttribute()
 	virtual core::vector3df getAttributeAsVector3d(const c8* attributeName) = 0;
 
-	//! Gets an attribute as floating point color
+	//! Gets an attribute as 3d vector
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual core::vector3df getAttributeAsVector3d(s32 index) = 0;
+
+	//! Sets a attribute as 2d position
+	virtual void setAttribute(const c8* attributeName, core::position2df v) = 0;
+
+	//! Gets an attribute as position
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::position2df getAttributeAsPosition2d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as position
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::position2df getAttributeAsPosition2d(s32 index) = 0;
 
 	//! Sets an attribute as binary data
 	virtual void setAttribute(const c8* attributeName, void* data, s32 dataSizeInBytes ) = 0;
