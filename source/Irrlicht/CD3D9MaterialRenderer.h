@@ -198,7 +198,8 @@ public:
 	virtual void OnSetMaterial(SMaterial& material, const SMaterial& lastMaterial,
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
-		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
+		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates
+			|| material.MaterialTypeParam != lastMaterial.MaterialTypeParam )
 		{
 			pID3DDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
 			pID3DDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );

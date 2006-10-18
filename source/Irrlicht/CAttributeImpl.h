@@ -703,6 +703,87 @@ public:
 	core::vector3df Value;
 };
 
+// Attribute implemented for 2d vectors
+class CPosition2DAttribute : public IAttribute
+{
+public:
+
+	CPosition2DAttribute(const char* name, core::position2df value)
+	{
+		Name = name;
+		Value = value;
+	}
+
+	virtual void getString(char* target)
+	{
+		sprintf(target, "%f, %f", Value.X, Value.Y);
+	}
+
+	virtual void setString(const char* text)
+	{
+		// parse text
+
+		const char* P = (const char*)text;
+		Value.X = 0;
+		Value.Y = 0;
+
+		for ( int i=0; i<2 && *P; ++i )
+		{
+			while(*P && P[0]!='-' && ( P[0]==' ' || (P[0] < '0' || P[0] > '9') ) )
+				++P;
+
+			// set component
+
+			if (*P)
+			{
+				f32 c = 0;
+				P = core::fast_atof_move(P, c);
+
+				switch(i)
+				{
+				case 0: Value.X = c; break;
+				case 1: Value.Y = c; break;
+				}
+			}
+		}
+	}
+
+	virtual core::vector3df getVector()
+	{
+		return core::vector3df(Value.X, Value.Y, 0);
+	}
+
+	virtual core::position2df getPosition()
+	{
+		return Value;
+	}
+
+	virtual void setVector(core::vector3df v)
+	{
+		Value.X = v.X;
+		Value.Y = v.Y;
+	}
+
+	virtual void setPosition(core::position2df v)
+	{
+		Value = v;
+	}
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_POSITION2D;
+	}
+
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"vector2d";
+	}
+
+	core::position2df Value;
+};
+
+
 
 // Attribute implemented for texture references
 class CTextureAttribute : public IAttribute

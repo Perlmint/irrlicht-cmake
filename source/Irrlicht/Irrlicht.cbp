@@ -268,10 +268,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="SColor.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="..\..\include\SColor.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
@@ -796,11 +792,21 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="CGUICheckbox.cpp">
+		<Unit filename="CGUICheckBox.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="CGUICheckbox.h">
+		<Unit filename="CGUICheckBox.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIColorSelectDialog.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIColorSelectDialog.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -874,6 +880,12 @@
 		</Unit>
 		<Unit filename="CGUIImage.cpp">
 			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIImage.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="CGUIInOutFader.cpp">
@@ -991,16 +1003,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="CGUIWindow.h">
-			<Option compilerVar="CPP"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="CGUIColorSelectDialog.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="CGUIColorSelectDialog.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1634,6 +1636,12 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="CSoftware2MaterialRenderer.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="CSoftwareDriver.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -1906,6 +1914,12 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="CXMLReaderImpl.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="CXMLWriter.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -1968,6 +1982,16 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="ITriangleRenderer.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="ITriangleRenderer2.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="ITriangleRenderer2.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
@@ -2008,6 +2032,10 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="SColor.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="SoftwareDriver2_compile_config.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
@@ -2020,6 +2048,12 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="dmfsupport.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="fast_atof.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
@@ -2028,6 +2062,12 @@
 		</Unit>
 		<Unit filename="glext.h">
 			<Option compilerVar="CPP"/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="glxext.h">
+			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>

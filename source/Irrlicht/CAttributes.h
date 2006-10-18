@@ -6,10 +6,6 @@
 #define __C_ATTRIBUTES_H_INCLUDED__
 
 #include "IAttributes.h"
-#include "irrString.h"
-#include "irrArray.h"
-#include "SColor.h"
-#include "vector3d.h"
 
 namespace irr
 {
@@ -60,6 +56,9 @@ public:
 
 	//! Adds an attribute as 3d vector
 	virtual void addVector3d(const c8* attributeName, core::vector3df value);
+
+	//! Adds an attribute as position
+	virtual void addPosition2d(const c8* attributeName, core::position2df value);
 
 	//! Adds an attribute as binary data
 	virtual void addBinary(const c8* attributeName, void* data, s32 dataSizeInBytes);
@@ -162,17 +161,29 @@ public:
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual video::SColorf getAttributeAsColorf(s32 index);
 
-	//! Sets a attribute as vector
+	//! Sets a attribute as vector 3d
 	virtual void setAttribute(const c8* attributeName, core::vector3df v);
 
-	//! Gets an attribute as floating point color
+	//! Gets an attribute as vector 3d
 	//! \param attributeName: Name of the attribute to get.
 	//! \return Returns value of the attribute previously set by setAttribute()
 	virtual core::vector3df getAttributeAsVector3d(const c8* attributeName);
 
-	//! Gets an attribute as floating point color
+	//! Gets an attribute as vector 3d
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual core::vector3df getAttributeAsVector3d(s32 index);
+
+	//! Sets a attribute as position
+	virtual void setAttribute(const c8* attributeName, core::position2df v);
+
+	//! Gets an attribute as position2d
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::position2df getAttributeAsPosition2d(const c8* attributeName);
+
+	//! Gets an attribute as position
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::position2df getAttributeAsPosition2d(s32 index);
 
 	//! Sets an attribute as binary data
 	virtual void setAttribute(const c8* attributeName, void* data, s32 dataSizeInBytes );
@@ -301,6 +312,7 @@ public:
 	virtual bool getBool()					{ return false; }
 	virtual void getBinary(void* outdata, s32 maxLenght) {};
 	virtual core::vector3df getVector()		{ return core::vector3df(); }
+	virtual core::position2df getPosition()	{ return core::position2df(); }
 	virtual video::ITexture* getTexture()	{ return 0; }
 	virtual const char* getEnum()			{ return 0; }
 
@@ -313,6 +325,7 @@ public:
 	virtual void setBool(bool boolValue)		{};
 	virtual void setBinary(void* data, s32 maxLenght) {};
 	virtual void setVector(core::vector3df v)	{};
+	virtual void setPosition(core::position2df v)	{};
 	virtual void setEnum(const char* enumValue, const char* const* enumerationLiterals) {};
 	virtual void setTexture(video::ITexture*)	{};
 

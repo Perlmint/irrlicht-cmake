@@ -267,6 +267,32 @@ video::SColorf CAttributes::getAttributeAsColorf(const c8* attributeName)
 	return ret;
 }
 
+//! Sets a attribute as 2d position
+void CAttributes::setAttribute(const c8* attributeName, core::position2df value)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		att->setPosition(value);
+	else
+	{
+		Attributes.push_back(new CPosition2DAttribute(attributeName, value));
+	}
+}
+
+//! Gets an attribute as 2d position
+//! \param attributeName: Name of the attribute to get.
+//! \return Returns value of the attribute previously set by setAttribute()
+core::position2df CAttributes::getAttributeAsPosition2d(const c8* attributeName)
+{
+	core::position2df ret;
+
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		ret = att->getPosition();
+
+	return ret;
+}
+
 //! Sets a attribute as vector
 void CAttributes::setAttribute(const c8* attributeName, core::vector3df value)
 {
@@ -279,7 +305,7 @@ void CAttributes::setAttribute(const c8* attributeName, core::vector3df value)
 	}
 }
 
-//! Gets an attribute as floating point color
+//! Gets an attribute as vector
 //! \param attributeName: Name of the attribute to get.
 //! \return Returns value of the attribute previously set by setAttribute()
 core::vector3df CAttributes::getAttributeAsVector3d(const c8* attributeName)
@@ -509,7 +535,7 @@ video::SColorf CAttributes::getAttributeAsColorf(s32 index)
 	return ret;
 }
 
-//! Gets an attribute as floating point color
+//! Gets an attribute as 3d vector
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 core::vector3df CAttributes::getAttributeAsVector3d(s32 index)
 {
@@ -520,6 +546,19 @@ core::vector3df CAttributes::getAttributeAsVector3d(s32 index)
 
 	return ret;
 }
+
+//! Gets an attribute as 3d vector
+//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+core::position2df CAttributes::getAttributeAsPosition2d(s32 index)
+{
+	core::position2df ret;
+
+	if (index >= 0 && index < (s32)Attributes.size())
+		ret = Attributes[index]->getPosition();
+
+	return ret;
+}
+
 
 //! Gets an attribute as binary data
 ///! \param index: Index value, must be between 0 and getAttributeCount()-1.
@@ -626,6 +665,12 @@ void CAttributes::addColorf(const c8* attributeName, video::SColorf value)
 void CAttributes::addVector3d(const c8* attributeName, core::vector3df value)
 {
 	Attributes.push_back(new CVector3DAttribute(attributeName, value));
+}
+
+//! Adds an attribute as 2d position
+void CAttributes::addPosition2d(const c8* attributeName, core::position2df value)
+{
+	Attributes.push_back(new CPosition2DAttribute(attributeName, value));
 }
 
 //! Adds an attribute as binary data

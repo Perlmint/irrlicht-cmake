@@ -192,7 +192,8 @@ public:
 	{
 		Driver->disableTextures(1);
 		Driver->setTexture(0, material.Texture1);
-		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
+		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates
+			|| material.MaterialTypeParam != lastMaterial.MaterialTypeParam )
 		{
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
 			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);

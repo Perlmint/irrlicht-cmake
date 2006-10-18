@@ -150,7 +150,7 @@ bool CGUIFont::loadTexture(video::IImage* image, const c8 * name)
 		Texture->grab ();
 	}
 	if (deleteTmpImage)
-		delete tmpImage;
+		tmpImage->drop();
 	image->drop ();
 
 	return ret;
