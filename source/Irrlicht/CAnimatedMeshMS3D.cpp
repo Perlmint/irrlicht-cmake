@@ -214,7 +214,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		Groups.push_back(SGroup());
 		SGroup& grp = Groups.getLast();
 
-		grp.Name = (const c8*) pPtr;
+		// The byte flag is before the name, so add 1
+		grp.Name = ((const c8*) pPtr) + 1;
 
 		pPtr += 33; // name and 1 byte flags
 		u16 triangleCount = *(u16*)pPtr;
@@ -416,6 +417,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			jnt.AbsoluteTransformation = Joints[jnt.Parent].AbsoluteTransformation;
 			jnt.AbsoluteTransformation *= jnt.RelativeTransformation;
 		}
+
+		jnt.AbsoluteTransformationAnimated = jnt.AbsoluteTransformation;
 	}
 
 	// create vertices and indices, attach them to the joints.
@@ -541,7 +544,7 @@ void CAnimatedMeshMS3D::getKeyframeData(core::array<SKeyframe>& keys, f32 time, 
 //! mesh based on a frame time.
 core::matrix4* CAnimatedMeshMS3D::getMatrixOfJoint(s32 jointNumber, s32 frame)
 {
-	if (!HasAnimation || jointNumber < 0 || jointNumber >= (s32)Joints.size())
+	if (jointNumber < 0 || jointNumber >= (s32)Joints.size())
 		return 0;
 
 	animate(frame);
@@ -754,4 +757,5 @@ video::E_VERTEX_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexType() const
 
 } // end namespace scene
 } // end namespace irr
+
 
