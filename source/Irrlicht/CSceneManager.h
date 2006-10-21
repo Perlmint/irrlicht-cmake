@@ -476,7 +476,8 @@ namespace scene
 		IMeshManipulator* MeshManipulator;
 
 		//! render pass lists
-		core::array<ISceneNode*> LightAndCameraList;
+		core::array<ISceneNode*> CameraList;
+		core::array<ISceneNode*> LightList;
 		core::array<ISceneNode*> ShadowNodeList;
 		core::array<ISceneNode*> SkyBoxList;
 		core::array<DefaultNodeEntry> SolidNodeList;

@@ -539,11 +539,11 @@ void CQ3LevelMesh::constructMesh()
 							tBSPVertex *v = &Vertices[vidxes[vu]];
 
 							currentVertex.Color = video::SColor(v->color[3], v->color[0], v->color[1], v->color[2]);
-							//currentVertex.Color.set(255,255,255,255);
-
-							currentVertex.Pos.X = v->vPosition[0];
-							currentVertex.Pos.Y = v->vPosition[2];
-							currentVertex.Pos.Z =  v->vPosition[1];
+							
+							// round the position values or the mesh has small gaps
+							currentVertex.Pos.X = floorf(v->vPosition[0]+0.5f);
+							currentVertex.Pos.Y = floorf(v->vPosition[2]+0.5f);
+							currentVertex.Pos.Z =  floorf(v->vPosition[1]+0.5f);
 							currentVertex.Normal.X = v->vNormal[0];
 							currentVertex.Normal.Y = v->vNormal[2];
 							currentVertex.Normal.Z = v->vNormal[1];
@@ -660,9 +660,9 @@ void CQ3LevelMesh::createCurvedSurface(SMeshBufferLightMap* meshBuffer, s32 i)
 
 					// Vert 1
 					currentVertex[0].Color.set(255,255,255,255);
-					currentVertex[0].Pos.X = Blend( cs, ct, v, (char*)&v[0]->vPosition[0] - (char*)v[0]);
-					currentVertex[0].Pos.Y = Blend( cs, ct, v, (char*)&v[0]->vPosition[2] - (char*)v[0]);
-					currentVertex[0].Pos.Z = Blend( cs, ct, v, (char*)&v[0]->vPosition[1] - (char*)v[0]);
+					currentVertex[0].Pos.X = floorf( Blend( cs, ct, v, (char*)&v[0]->vPosition[0] - (char*)v[0])+ 0.5f);
+					currentVertex[0].Pos.Y = floorf( Blend( cs, ct, v, (char*)&v[0]->vPosition[2] - (char*)v[0])+ 0.5f);
+					currentVertex[0].Pos.Z = floorf( Blend( cs, ct, v, (char*)&v[0]->vPosition[1] - (char*)v[0])+ 0.5f);
 					currentVertex[0].Normal.X = Blend( cs, ct, v, (char*)&v[0]->vNormal[0] - (char*)v[0]);
 					currentVertex[0].Normal.Y = Blend( cs, ct, v, (char*)&v[0]->vNormal[2] - (char*)v[0]);
 					currentVertex[0].Normal.Z = Blend( cs, ct, v, (char*)&v[0]->vNormal[1] - (char*)v[0]);
@@ -672,9 +672,9 @@ void CQ3LevelMesh::createCurvedSurface(SMeshBufferLightMap* meshBuffer, s32 i)
 					currentVertex[0].TCoords2.Y = Blend( cs, ct, v, (char*)&v[0]->vLightmapCoord[1] - (char*)v[0]);
 					// Vert 2
 					currentVertex[1].Color.set(255,255,255,255);
-					currentVertex[1].Pos.X = Blend( cs, nxt, v, (char*)&v[0]->vPosition[0] - (char*)v[0]);
-					currentVertex[1].Pos.Y = Blend( cs, nxt, v, (char*)&v[0]->vPosition[2] - (char*)v[0]);
-					currentVertex[1].Pos.Z = Blend( cs, nxt, v, (char*)&v[0]->vPosition[1] - (char*)v[0]);
+					currentVertex[1].Pos.X = floorf( Blend( cs, nxt, v, (char*)&v[0]->vPosition[0] - (char*)v[0])+ 0.5f);
+					currentVertex[1].Pos.Y = floorf( Blend( cs, nxt, v, (char*)&v[0]->vPosition[2] - (char*)v[0])+ 0.5f);
+					currentVertex[1].Pos.Z = floorf( Blend( cs, nxt, v, (char*)&v[0]->vPosition[1] - (char*)v[0])+ 0.5f);
 					currentVertex[1].Normal.X = Blend( cs, nxt, v, (char*)&v[0]->vNormal[0] - (char*)v[0]);
 					currentVertex[1].Normal.Y = Blend( cs, nxt, v, (char*)&v[0]->vNormal[2] - (char*)v[0]);
 					currentVertex[1].Normal.Z = Blend( cs, nxt, v, (char*)&v[0]->vNormal[1] - (char*)v[0]);
@@ -684,9 +684,9 @@ void CQ3LevelMesh::createCurvedSurface(SMeshBufferLightMap* meshBuffer, s32 i)
 					currentVertex[1].TCoords2.Y = Blend( cs, nxt, v, (char*)&v[0]->vLightmapCoord[1] - (char*)v[0]);
 					// Vert 3
 					currentVertex[2].Color.set(255,255,255,255);
-					currentVertex[2].Pos.X = Blend( nxs, ct, v, (char*)&v[0]->vPosition[0] - (char*)v[0]);
-					currentVertex[2].Pos.Y = Blend( nxs, ct, v, (char*)&v[0]->vPosition[2] - (char*)v[0]);
-					currentVertex[2].Pos.Z = Blend( nxs, ct, v, (char*)&v[0]->vPosition[1] - (char*)v[0]);
+					currentVertex[2].Pos.X = floorf( Blend( nxs, ct, v, (char*)&v[0]->vPosition[0] - (char*)v[0])+ 0.5f);
+					currentVertex[2].Pos.Y = floorf( Blend( nxs, ct, v, (char*)&v[0]->vPosition[2] - (char*)v[0])+ 0.5f);
+					currentVertex[2].Pos.Z = floorf( Blend( nxs, ct, v, (char*)&v[0]->vPosition[1] - (char*)v[0])+ 0.5f);
 					currentVertex[2].Normal.X = Blend( nxs, ct, v, (char*)&v[0]->vNormal[0] - (char*)v[0]);
 					currentVertex[2].Normal.Y = Blend( nxs, ct, v, (char*)&v[0]->vNormal[2] - (char*)v[0]);
 					currentVertex[2].Normal.Z = Blend( nxs, ct, v, (char*)&v[0]->vNormal[1] - (char*)v[0]);
@@ -696,9 +696,9 @@ void CQ3LevelMesh::createCurvedSurface(SMeshBufferLightMap* meshBuffer, s32 i)
 					currentVertex[2].TCoords2.Y = Blend( nxs, ct, v, (char*)&v[0]->vLightmapCoord[1] - (char*)v[0]);
 					// Vert 4
 					currentVertex[3].Color.set(255,255,255,255);
-					currentVertex[3].Pos.X = Blend( nxs, nxt, v, (char*)&v[0]->vPosition[0] - (char*)v[0]);
-					currentVertex[3].Pos.Y = Blend( nxs, nxt, v, (char*)&v[0]->vPosition[2] - (char*)v[0]);
-					currentVertex[3].Pos.Z = Blend( nxs, nxt, v, (char*)&v[0]->vPosition[1] - (char*)v[0]);
+					currentVertex[3].Pos.X = floorf(Blend( nxs, nxt, v, (char*)&v[0]->vPosition[0] - (char*)v[0])+ 0.5f);
+					currentVertex[3].Pos.Y = floorf(Blend( nxs, nxt, v, (char*)&v[0]->vPosition[2] - (char*)v[0])+ 0.5f);
+					currentVertex[3].Pos.Z = floorf(Blend( nxs, nxt, v, (char*)&v[0]->vPosition[1] - (char*)v[0])+ 0.5f);
 					currentVertex[3].Normal.X = Blend( nxs, nxt, v, (char*)&v[0]->vNormal[0] - (char*)v[0]);
 					currentVertex[3].Normal.Y = Blend( nxs, nxt, v, (char*)&v[0]->vNormal[2] - (char*)v[0]);
 					currentVertex[3].Normal.Z = Blend( nxs, nxt, v, (char*)&v[0]->vNormal[1] - (char*)v[0]);

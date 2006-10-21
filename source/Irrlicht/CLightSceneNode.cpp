@@ -40,7 +40,7 @@ void CLightSceneNode::OnPreRender()
 {
 	if (IsVisible)
 	{
-		SceneManager->registerNodeForRendering(this, ESNRP_LIGHT_AND_CAMERA);
+		SceneManager->registerNodeForRendering(this, ESNRP_LIGHT);
 		ISceneNode::OnPreRender();
 	}
 }

@@ -736,8 +736,19 @@ void CSceneManager::registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_REND
 {
 	switch(time)
 	{
+	// hack to support ESNRP_LIGHT_AND_CAMERA
 	case ESNRP_LIGHT_AND_CAMERA:
-		LightAndCameraList.push_back(node);
+		if ( dynamic_cast<ICameraSceneNode*>(node) )
+			CameraList.push_back(node);
+		else
+			LightList.push_back(node);
+		break;
+
+	case ESNRP_CAMERA:
+		CameraList.push_back(node);
+		break;
+	case ESNRP_LIGHT:
+		LightList.push_back(node);
 		break;
 	case ESNRP_SKY_BOX:
 		SkyBoxList.push_back(node);
@@ -799,18 +810,27 @@ void CSceneManager::drawAll()
 	// let all nodes register themselfes
 	OnPreRender();
 
-	//render lights and cameras
+	// render cameras
 
-	CurrentRendertime = ESNRP_LIGHT_AND_CAMERA;
-
-	Driver->deleteAllDynamicLights();
+	CurrentRendertime = ESNRP_CAMERA;
 	
 	u32 i; // new ISO for scoping problem in some compilers
 
-	for (i=0; i<LightAndCameraList.size(); ++i)
-		LightAndCameraList[i]->render();
+	for (i=0; i<CameraList.size(); ++i)
+		CameraList[i]->render();
 
-	LightAndCameraList.clear();
+	CameraList.clear();
+
+	// render lights
+
+	CurrentRendertime = ESNRP_LIGHT;
+
+	Driver->deleteAllDynamicLights();
+
+	for (i=0; i<LightList.size(); ++i)
+		LightList[i]->render();
+
+	LightList.clear();
 
 	// render skyboxes
 

@@ -47,9 +47,15 @@ namespace scene
 	specifying when the mode wants to be drawn in relation to the other nodes. */
 	enum E_SCENE_NODE_RENDER_PASS
 	{
-		//! Scene nodes which are lights or camera should use this,
-		//! the very first pass.
+		//! Deprecated. You should use ESNRP_LIGHT or ESNRP_CAMERA instead
 		ESNRP_LIGHT_AND_CAMERA,
+
+		//! Camera pass. The active view is set up here.
+		//! The very first pass.
+		ESNRP_CAMERA,
+
+		//! In this pass, lights are transformed into camera space and added to the driver
+		ESNRP_LIGHT,
 
 		//! This is used for sky boxes.
 		ESNRP_SKY_BOX,

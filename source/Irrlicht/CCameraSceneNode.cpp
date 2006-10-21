@@ -230,7 +230,7 @@ void CCameraSceneNode::OnPreRender()
 		View.buildCameraLookAtMatrixLH(pos, Target, up);
 		recalculateViewArea();
 
-		SceneManager->registerNodeForRendering(this, ESNRP_LIGHT_AND_CAMERA);
+		SceneManager->registerNodeForRendering(this, ESNRP_CAMERA);
 	}
 
 	if (IsVisible)
