@@ -49,6 +49,8 @@ public:
 
 	//! constructor
 	COpenGLTexture(IImage* surface, bool generateMipLevels, const char* name, COpenGLDriver* driver=0);
+    //! FrameBufferObject constructor
+	COpenGLTexture(const core::dimension2d<s32>& size, bool extPackedDepthStencilSupported, const char* name, COpenGLDriver* driver=0);
 
 	//! destructor
 	virtual ~COpenGLTexture();
@@ -84,6 +86,15 @@ public:
 	//! locking and modifying the texture
 	virtual void regenerateMipMapLevels();
 
+	//! Is it a FrameBufferObject?
+	bool isFrameBufferObject();
+
+	//! Bind FrameBufferObject (valid only if isFrameBufferObject() returns true).
+	void bindFrameBufferObject();
+
+	//! Unbind FrameBufferObject (valid only if isFrameBufferObject() returns true).
+	void unbindFrameBufferObject();
+
 private:
 
 	void getImageData(IImage* image);
@@ -109,6 +120,10 @@ private:
 	GLenum PixelType;
 	bool HasMipMaps;
 	bool AutomaticMipmapUpdate;
+
+    GLuint ColorFrameBuffer; // for FBO path
+    GLuint DepthRenderBuffer; // for FBO path
+    GLuint StencilRenderBuffer; // for FBO path
 };
 
 

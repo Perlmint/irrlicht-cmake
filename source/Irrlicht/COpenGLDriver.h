@@ -234,6 +234,17 @@ namespace video
 			GLenum internalformat, GLsizei width, GLsizei height,
 			GLint border, GLsizei imageSize, const void* data);
 
+        void extGlBindFramebufferEXT (GLenum target, GLuint framebuffer);
+        void extGlDeleteFramebuffersEXT (GLsizei n, const GLuint *framebuffers);
+        void extGlGenFramebuffersEXT (GLsizei n, GLuint *framebuffers);
+        GLenum extGlCheckFramebufferStatusEXT (GLenum target);
+        void extGlFramebufferTexture2DEXT (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+        void extGlBindRenderbufferEXT (GLenum target, GLuint renderbuffer);
+        void extGlDeleteRenderbuffersEXT (GLsizei n, const GLuint *renderbuffers);
+        void extGlGenRenderbuffersEXT (GLsizei n, GLuint *renderbuffers);
+        void extGlRenderbufferStorageEXT (GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+        void extGlFramebufferRenderbufferEXT (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+
 		//! Can be called by an IMaterialRenderer to make its work easier.
 		void setBasicRenderStates(const SMaterial& material, const SMaterial& lastmaterial,
 			bool resetAllRenderstates);
@@ -340,6 +351,7 @@ namespace video
 		bool GenerateMipmapExtension;
 		bool TextureCompressionExtension;
 		bool TextureNPOTExtension;
+		bool EXTPackedDepthStencil;
 
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;
@@ -393,6 +405,16 @@ namespace video
 			#elif defined(LINUX) && defined(GLX_SGI_swap_control)
 			PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 			#endif
+			PFNGLBINDFRAMEBUFFEREXTPROC pGlBindFramebufferEXT;
+			PFNGLDELETEFRAMEBUFFERSEXTPROC pGlDeleteFramebuffersEXT;
+			PFNGLGENFRAMEBUFFERSEXTPROC pGlGenFramebuffersEXT;
+			PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC pGlCheckFramebufferStatusEXT;
+			PFNGLFRAMEBUFFERTEXTURE2DEXTPROC pGlFramebufferTexture2DEXT;
+            PFNGLBINDRENDERBUFFEREXTPROC pGlBindRenderBufferEXT;
+            PFNGLDELETERENDERBUFFERSEXTPROC pGlDeleteRenderBuffersEXT;
+            PFNGLGENRENDERBUFFERSEXTPROC pGlGenRenderbuffersEXT;
+            PFNGLRENDERBUFFERSTORAGEEXTPROC pGlRenderbufferStorageEXT;
+            PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC pGlFramebufferRenderbufferEXT;
 		#endif
 
 		#ifdef _IRR_WINDOWS_
@@ -413,4 +435,5 @@ namespace video
 
 #endif // _IRR_COMPILE_WITH_OPENGL_
 #endif
+
 

@@ -197,7 +197,7 @@ void CSkyBoxSceneNode::render()
 
 		if ( tex )
 		{
-			core::rect<s32> rctDest(core::position2d<s32>(-1,0), driver->getScreenSize());
+			core::rect<s32> rctDest(core::position2d<s32>(-1,0), driver->getCurrentRenderTargetSize());
 			core::rect<s32> rctSrc(core::position2d<s32>(0,0), tex->getSize());
 
 			driver->draw2DImage(tex, rctDest, rctSrc);

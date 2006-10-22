@@ -40,8 +40,8 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 	video::IVideoDriver* d = mgr->getVideoDriver();
 	if (d)
 	{
-		screenDim.Width = (f32)d->getScreenSize().Width;
-		screenDim.Height = (f32)d->getScreenSize().Height;
+		screenDim.Width = (f32)d->getCurrentRenderTargetSize().Width;
+		screenDim.Height = (f32)d->getCurrentRenderTargetSize().Height;
 		Aspect = screenDim.Width / screenDim.Height;
 	}
 
@@ -207,8 +207,8 @@ void CCameraSceneNode::OnPreRender()
 
 	if (SceneManager->getActiveCamera() == this)
 	{
-		screenDim.Width = (f32)driver->getScreenSize().Width;
-		screenDim.Height = (f32)driver->getScreenSize().Height;
+		screenDim.Width = (f32)driver->getCurrentRenderTargetSize().Width;
+		screenDim.Height = (f32)driver->getCurrentRenderTargetSize().Height;
 
 		driver->setTransform(video::ETS_PROJECTION, Projection);
 

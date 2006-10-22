@@ -738,10 +738,10 @@ void CSceneManager::registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_REND
 	{
 	// hack to support ESNRP_LIGHT_AND_CAMERA
 	case ESNRP_LIGHT_AND_CAMERA:
-		if ( dynamic_cast<ICameraSceneNode*>(node) )
-			CameraList.push_back(node);
-		else
+		if ( node->getType() == ESNT_LIGHT )
 			LightList.push_back(node);
+		else
+			CameraList.push_back(node);
 		break;
 
 	case ESNRP_CAMERA:

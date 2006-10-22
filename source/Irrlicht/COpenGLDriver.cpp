@@ -36,7 +36,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
-	TextureNPOTExtension(false),
+	TextureNPOTExtension(false), EXTPackedDepthStencil(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
@@ -54,6 +54,10 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	pGlCompressedTexImage2D(0),
 #endif // _IRR_OPENGL_USE_EXTPOINTER_
 	wglSwapIntervalEXT(0)
+    ,pGlBindFramebufferEXT(0), pGlDeleteFramebuffersEXT(0), pGlGenFramebuffersEXT(0),
+    pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
+    pGlBindRenderBufferEXT(0), pGlDeleteRenderBuffersEXT(0), pGlGenRenderbuffersEXT(0),
+    pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
@@ -197,7 +201,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
-	TextureNPOTExtension(false),
+	TextureNPOTExtension(false), EXTPackedDepthStencil(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1),
 	CurrentRendertargetSize(0,0), _device(device)
@@ -228,7 +232,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
-	TextureNPOTExtension(false),
+	TextureNPOTExtension(false), EXTPackedDepthStencil(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
@@ -239,6 +243,10 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 #ifdef GLX_SGI_swap_control
 	,glxSwapIntervalSGI(0)
 #endif
+    ,pGlBindFramebufferEXT(0), pGlDeleteFramebuffersEXT(0), pGlGenFramebuffersEXT(0),
+    pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
+    pGlBindRenderBufferEXT(0), pGlDeleteRenderBuffersEXT(0), pGlGenRenderbuffersEXT(0),
+    pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0)
 #endif
 {
 	#ifdef _DEBUG
@@ -400,6 +408,7 @@ void COpenGLDriver::loadExtensions()
 		GenerateMipmapExtension = gluCheckExtension((const GLubyte*)"GL_SGIS_generate_mipmap", t);
 		TextureCompressionExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_compression", t);
 		TextureNPOTExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_non_power_of_two", t);
+		EXTPackedDepthStencil = gluCheckExtension((const GLubyte*)"GL_EXT_packed_depth_stencil", t);
 	}
 	else
 	#endif
@@ -420,7 +429,7 @@ void COpenGLDriver::loadExtensions()
 				else
 				if (strstr(p, "GL_ARB_multisample"))
 					MultiSamplingExtension = true;
-				else 
+				else
 				if (strstr(p, "GL_ARB_vertex_program"))
 					ARBVertexProgramExtension = true;
 				else
@@ -447,6 +456,9 @@ void COpenGLDriver::loadExtensions()
 				else
 				if (strstr(p, "GL_ARB_texture_non_power_of_two"))
 					TextureNPOTExtension = true;
+				else
+				if (strstr(p, "GL_EXT_packed_depth_stencil"))
+					EXTPackedDepthStencil = true;
 
 				p = p + strlen(p) + 1;
 			}
@@ -503,6 +515,18 @@ void COpenGLDriver::loadExtensions()
 		pGlStencilOpSeparateATI = (PFNGLSTENCILOPSEPARATEATIPROC) wglGetProcAddress("glStencilOpSeparateATI");
 
 		pGlCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC) wglGetProcAddress("glCompressedTexImage2D");
+
+        // FrameBufferObjects
+        pGlBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC) wglGetProcAddress("glBindFramebufferEXT");
+        pGlDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC) wglGetProcAddress("glDeleteFramebuffersEXT");
+        pGlGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) wglGetProcAddress("glGenFramebuffersEXT");
+        pGlCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) wglGetProcAddress("glCheckFramebufferStatusEXT");
+        pGlFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) wglGetProcAddress("glFramebufferTexture2DEXT");
+        pGlBindRenderBufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC) wglGetProcAddress("glBindRenderBufferEXT");
+        pGlDeleteRenderBuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC) wglGetProcAddress("glDeleteRenderBuffersEXT");
+        pGlGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC) wglGetProcAddress("glGenRenderbuffersEXT");
+        pGlRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress("glRenderbufferStorageEXT");
+        pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) wglGetProcAddress("glFramebufferRenderbufferEXT");
 
 		// get vsync extension
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
@@ -624,6 +648,38 @@ void COpenGLDriver::loadExtensions()
 			// get vsync extension
 			glxSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC)IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI"));
 #endif
+
+            // FrameBufferObjects
+            pGlBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glBindFramebufferEXT"));
+
+            pGlDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteFramebuffersEXT"));
+
+            pGlGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenFramebuffersEXT"));
+
+            pGlCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glCheckFramebufferStatusEXT"));
+
+            pGlFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glFramebufferTexture2DEXT"));
+
+            pGlBindRenderBufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glBindRenderBufferEXT"));
+
+            pGlDeleteRenderBuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteRenderBuffersEXT"));
+
+            pGlGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenRenderbuffersEXT"));
+
+            pGlRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glRenderbufferStorageEXT"));
+
+            pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glFramebufferRenderbufferEXT"));
+
 			#endif // _IRR_OPENGL_USE_EXTPOINTER_
 		#endif // _IRR_WINDOWS_
 
@@ -1579,7 +1635,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			(material.BilinearFilter || material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
 
 		if (material.Textures[i] && material.Textures[i]->hasMipMaps())
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 				material.TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR : material.BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST );
 		else
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -1885,12 +1941,12 @@ void COpenGLDriver::setAmbientLight(const SColorf& color)
 void COpenGLDriver::setViewPort(const core::rect<s32>& area)
 {
 	core::rect<s32> vp = area;
-	core::rect<s32> rendert(0,0, ScreenSize.Width, ScreenSize.Height);
+	core::rect<s32> rendert(0,0, getCurrentRenderTargetSize().Width, getCurrentRenderTargetSize().Height);
 	vp.clipAgainst(rendert);
 
 	if (vp.getHeight()>0 && vp.getWidth()>0)
 		glViewport(vp.UpperLeftCorner.X,
-		           ScreenSize.Height - vp.UpperLeftCorner.Y - vp.getHeight(),
+		           getCurrentRenderTargetSize().Height - vp.UpperLeftCorner.Y - vp.getHeight(),
 			   vp.getWidth(), vp.getHeight());
 
 	ViewPort = vp;
@@ -2463,6 +2519,106 @@ void COpenGLDriver::extGlCompressedTexImage2D (GLenum target, GLint level, GLenu
 #endif
 }
 
+void COpenGLDriver::extGlBindFramebufferEXT (GLenum target, GLuint framebuffer)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlBindFramebufferEXT)
+		pGlBindFramebufferEXT(target, framebuffer);
+#else
+	glBindFramebufferEXT(target, framebuffer);
+#endif
+}
+
+void COpenGLDriver::extGlDeleteFramebuffersEXT (GLsizei n, const GLuint *framebuffers)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlDeleteFramebuffersEXT)
+		pGlDeleteFramebuffersEXT(n, framebuffers);
+#else
+	glDeleteFramebuffersEXT(n, framebuffers);
+#endif
+}
+
+void COpenGLDriver::extGlGenFramebuffersEXT (GLsizei n, GLuint *framebuffers)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGenFramebuffersEXT)
+		pGlGenFramebuffersEXT(n, framebuffers);
+#else
+	glGenFramebuffersEXT(n, framebuffers);
+#endif
+}
+
+GLenum COpenGLDriver::extGlCheckFramebufferStatusEXT (GLenum target)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlCheckFramebufferStatusEXT)
+		return pGlCheckFramebufferStatusEXT(target);
+#else
+	return glCheckFramebufferStatusEXT(target);
+#endif
+}
+
+void COpenGLDriver::extGlFramebufferTexture2DEXT (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlFramebufferTexture2DEXT)
+		pGlFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
+#else
+	glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
+#endif
+}
+
+void COpenGLDriver::extGlBindRenderbufferEXT (GLenum target, GLuint renderbuffer)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlBindRenderBufferEXT)
+		pGlBindRenderBufferEXT(target, renderbuffer);
+#else
+	glBindRenderBufferEXT(target, renderbuffer);
+#endif
+}
+
+void COpenGLDriver::extGlDeleteRenderbuffersEXT (GLsizei n, const GLuint *renderbuffers)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlDeleteRenderBuffersEXT)
+		pGlDeleteRenderBuffersEXT(n, renderbuffers);
+#else
+	glDeleteRenderBuffersEXT(n, renderbuffers);
+#endif
+}
+
+void COpenGLDriver::extGlGenRenderbuffersEXT (GLsizei n, GLuint *renderbuffers)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGenRenderbuffersEXT)
+		pGlGenRenderbuffersEXT(n, renderbuffers);
+#else
+	glGenRenderbuffersEXT(n, renderbuffers);
+#endif
+}
+
+void COpenGLDriver::extGlRenderbufferStorageEXT (GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlRenderbufferStorageEXT)
+		pGlRenderbufferStorageEXT(target, internalformat, width, height);
+#else
+	glRenderbufferStorageEXT(target, internalformat, width, height);
+#endif
+}
+
+void COpenGLDriver::extGlFramebufferRenderbufferEXT (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlFramebufferRenderbufferEXT)
+		pGlFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
+#else
+	glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
+#endif
+}
+
 //! Sets a vertex shader constant.
 void COpenGLDriver::setVertexShaderConstant(const f32* data, s32 startRegister, s32 constantAmount)
 {
@@ -2555,10 +2711,15 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
 
-	video::ITexture* rtt = addTexture(size, "rt");
-
-	if (rtt)
-		rtt->grab();
+    video::ITexture* rtt = 0;
+    if (pGlFramebufferTexture2DEXT) // if driver supports FrameBufferObjects, use them
+        rtt = new COpenGLTexture(size, EXTPackedDepthStencil, "rt", this);
+	else
+	{
+        rtt = addTexture(size, "rt");
+		if (rtt)
+			rtt->grab();
+	}
 
 	//restore mip-mapping
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);
@@ -2567,7 +2728,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 }
 
 bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
-					 bool clearZBuffer, SColor color)
+								 bool clearZBuffer, SColor color)
 {
 	// check for right driver type
 
@@ -2583,28 +2744,39 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 
 	setTexture(0, 0);
 	ResetRenderStates=true;
-	if (RenderTargetTexture!=0)
-	{
-		glBindTexture(GL_TEXTURE_2D, RenderTargetTexture->getOpenGLTextureName());
+    if (RenderTargetTexture!=0)
+    {
+        if (RenderTargetTexture->isFrameBufferObject())
+        {
+            RenderTargetTexture->unbindFrameBufferObject();
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, RenderTargetTexture->getOpenGLTextureName());
 
-		// Copy Our ViewPort To The Texture
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0,
-			RenderTargetTexture->getSize().Width,
-			RenderTargetTexture->getSize().Height);
-	}
+            // Copy Our ViewPort To The Texture
+            glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0,
+                RenderTargetTexture->getSize().Width, RenderTargetTexture->getSize().Height);
+        }
+    }
 
-	if (texture == 0)
-	{
-		glViewport(0, 0, ScreenSize.Width, ScreenSize.Height);
-		RenderTargetTexture = 0;
-		CurrentRendertargetSize = core::dimension2d<s32>(0,0);
-	}
-	else
-	{
+    if (texture)
+    {
 		// we want to set a new target. so do this.
 		glViewport(0, 0, texture->getSize().Width, texture->getSize().Height);
 		RenderTargetTexture = (COpenGLTexture*)texture;
 		CurrentRendertargetSize = texture->getSize();
+
+        if (RenderTargetTexture->isFrameBufferObject())
+        {
+            RenderTargetTexture->bindFrameBufferObject();
+        }
+	}
+	else
+	{
+        glViewport(0,0,ScreenSize.Width,ScreenSize.Height);
+        RenderTargetTexture = 0;
+        CurrentRendertargetSize = core::dimension2d<s32>(0,0);
 	}
 
 	GLbitfield mask = 0;
@@ -2752,4 +2924,5 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 
 } // end namespace
 } // end namespace
+
 

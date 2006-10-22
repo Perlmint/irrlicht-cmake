@@ -162,6 +162,9 @@ namespace video
 		//! returns screen size
 		virtual core::dimension2d<s32> getScreenSize();
 
+		//! returns screen size
+		virtual core::dimension2d<s32> getCurrentRenderTargetSize();
+
 		// returns current frames per second value
 		virtual s32 getFPS();
 

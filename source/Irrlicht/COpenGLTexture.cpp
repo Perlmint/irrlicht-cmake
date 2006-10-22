@@ -18,11 +18,63 @@ namespace irr
 namespace video
 {
 
+const bool checkFBOStatus(COpenGLDriver* Driver)
+{
+
+    GLenum status = Driver->extGlCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+
+    //Our FBO is perfect, return true
+    if (status == GL_FRAMEBUFFER_COMPLETE_EXT)
+    {
+        return true;
+    }
+
+    switch (status)
+    {
+        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+            os::Printer::log("FBO has invalid read buffer", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+            os::Printer::log("FBO has invalid draw buffer", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+            os::Printer::log("FBO has one or several incomplete image attachments", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+            os::Printer::log("FBO has one or several image attachments with different internal formats", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+            os::Printer::log("FBO has one or several image attachments with different dimensions", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
+            os::Printer::log("FBO has a duplicate image attachment", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+            os::Printer::log("FBO missing an image attachment", ELL_ERROR);
+            break;
+
+        case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+            os::Printer::log("FBO format unsupported", ELL_ERROR);
+            break;
+        default:
+            break;
+    }
+    os::Printer::log("FBO error", ELL_ERROR);
+    return false;
+}
+
 //! constructor
 COpenGLTexture::COpenGLTexture(IImage* image, bool generateMipLevels, const char* name, COpenGLDriver* driver)
  : ITexture(name), Pitch(0), ImageSize(0,0), HasMipMaps(generateMipLevels),
   Driver(driver), ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0),
-  InternalFormat(GL_RGBA), PixelFormat(GL_BGRA_EXT), PixelType(GL_UNSIGNED_BYTE)
+  InternalFormat(GL_RGBA), PixelFormat(GL_BGRA_EXT), PixelType(GL_UNSIGNED_BYTE),
+  ColorFrameBuffer(0), DepthRenderBuffer(0)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLTexture");
@@ -37,13 +89,129 @@ COpenGLTexture::COpenGLTexture(IImage* image, bool generateMipLevels, const char
 	}
 }
 
+//! ColorFrameBuffer constructor
+COpenGLTexture::COpenGLTexture(const core::dimension2d<s32>& size,
+                                bool extPackedDepthStencilSupported,
+                                const char* name,
+                                COpenGLDriver* driver)
+ : ITexture(name), Pitch(0), ImageSize(size), HasMipMaps(false),
+  Driver(driver), ImageData(0), ColorFormat(ECF_A8R8G8B8), TextureName(0),
+  InternalFormat(GL_RGBA), PixelFormat(GL_BGRA_EXT), PixelType(GL_UNSIGNED_BYTE),
+  ColorFrameBuffer(0), DepthRenderBuffer(0)
+{
+	#ifdef _DEBUG
+	setDebugName("COpenGLTexture_FBO");
+	#endif
+
+    // generate color texture
+    glGenTextures(1, &TextureName);
+	glBindTexture(GL_TEXTURE_2D, TextureName);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, ImageSize.Width,
+                    ImageSize.Height, 0, GL_RGBA, GL_INT, 0);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    if (extPackedDepthStencilSupported)
+    {
+        // generate packed depth stencil texture
+        #ifndef GL_DEPTH_STENCIL_EXT
+            #define GL_DEPTH_STENCIL_EXT 0x84f9
+        #endif
+        #ifndef GL_UNSIGNED_INT_24_8_EXT
+            #define GL_UNSIGNED_INT_24_8_EXT 0x84FA
+        #endif
+        glGenTextures(1, &DepthRenderBuffer);
+        glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_EXT, ImageSize.Width,
+                        ImageSize.Height, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, 0);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        StencilRenderBuffer = DepthRenderBuffer; // stencil is packed with depth
+    }
+    else // generate separate stencil and depth textures
+    {
+        // generate depth texture
+        glGenTextures(1, &DepthRenderBuffer);
+        glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, ImageSize.Width,
+                        ImageSize.Height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        // we 're in trouble! the code below does not complete the FBO currently...
+        // stencil buffer is only supported with EXT_packed_depth_stencil extension (above)
+
+//        // generate stencil texture
+//        glGenTextures(1, &StencilRenderBuffer);
+//        glBindTexture(GL_TEXTURE_2D, StencilRenderBuffer);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, ImageSize.Width,
+//                        ImageSize.Height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, 0);
+//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+
+    // generate frame buffer
+    Driver->extGlGenFramebuffersEXT(1, &ColorFrameBuffer);
+    Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, ColorFrameBuffer);
+
+    // attach color texture to frame buffer
+    Driver->extGlFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
+                                         GL_COLOR_ATTACHMENT0_EXT,
+                                         GL_TEXTURE_2D,
+                                         TextureName,
+                                         0);
+    // attach depth texture to depth buffer
+    Driver->extGlFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
+                                         GL_DEPTH_ATTACHMENT_EXT,
+                                         GL_TEXTURE_2D,
+                                         DepthRenderBuffer,
+                                         0);
+    // attach stencil texture to stencil buffer
+    Driver->extGlFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
+                                         GL_STENCIL_ATTACHMENT_EXT,
+                                         GL_TEXTURE_2D,
+                                         StencilRenderBuffer,
+                                         0);
+    glGetError();
+
+    // check the status
+    if (!checkFBOStatus(Driver))
+    {
+        printf("FBO=%d, Color=%d, Depth=%d, Stencil=%d\n",
+                ColorFrameBuffer, TextureName, DepthRenderBuffer, StencilRenderBuffer);
+        if (ColorFrameBuffer)
+            Driver->extGlDeleteFramebuffersEXT(1, &ColorFrameBuffer);
+        if (DepthRenderBuffer)
+            glDeleteTextures(1, &DepthRenderBuffer);
+        if (StencilRenderBuffer && StencilRenderBuffer != DepthRenderBuffer)
+            glDeleteTextures(1, &StencilRenderBuffer);
+        ColorFrameBuffer = 0;
+        DepthRenderBuffer = 0;
+        StencilRenderBuffer = 0;
+    }
+    Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+}
 
 //! destructor
 COpenGLTexture::~COpenGLTexture()
 {
+    if (ColorFrameBuffer)
+        Driver->extGlDeleteFramebuffersEXT(1, &ColorFrameBuffer);
+    if (DepthRenderBuffer)
+        glDeleteTextures(1, &DepthRenderBuffer);
+    if (StencilRenderBuffer && StencilRenderBuffer != DepthRenderBuffer)
+        glDeleteTextures(1, &StencilRenderBuffer);
+    ColorFrameBuffer = 0;
+    DepthRenderBuffer = 0;
+    StencilRenderBuffer = 0;
+
+    glDeleteTextures(1, &TextureName);
 	if (ImageData)
 	{
-		glDeleteTextures(1, &TextureName);
 		delete [] ImageData;
 		ImageData=0;
 	}
@@ -327,6 +495,25 @@ void COpenGLTexture::regenerateMipMapLevels()
 			height>>=1;
 		++i;
 	}
+}
+
+bool COpenGLTexture::isFrameBufferObject()
+{
+    return ColorFrameBuffer != 0;
+}
+
+//! Bind ColorFrameBuffer (valid only if isFrameBufferObject() returns true).
+void COpenGLTexture::bindFrameBufferObject()
+{
+    if (ColorFrameBuffer != 0)
+        Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, ColorFrameBuffer);
+}
+
+//! Unbind ColorFrameBuffer (valid only if isFrameBufferObject() returns true).
+void COpenGLTexture::unbindFrameBufferObject()
+{
+    if (ColorFrameBuffer != 0)
+        Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 
 

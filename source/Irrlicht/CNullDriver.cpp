@@ -672,6 +672,12 @@ core::dimension2d<s32> CNullDriver::getScreenSize()
 	return ScreenSize;
 }
 
+//! returns the current render target size, 
+//! or the screen size if render targets are not implemented
+core::dimension2d<s32> CNullDriver::getCurrentRenderTargetSize()
+{
+	return ScreenSize;
+}
 
 
 // returns current frames per second value

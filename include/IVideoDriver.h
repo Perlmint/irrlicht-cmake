@@ -622,6 +622,12 @@ namespace video
 		/** \return Size of screen or render window. */
 		virtual core::dimension2d<s32> getScreenSize() = 0;
 
+		//! Returns the size of the current render target, or the screen size if the driver 
+		//! doesnt support render to texture
+		/** \return Size of render target or screen/window */
+		virtual core::dimension2d<s32> getCurrentRenderTargetSize() = 0;
+
+
 		//! Returns current frames per second value.
 		/** \return Returns amount of frames per second drawn. **/
 		virtual s32 getFPS() = 0;
