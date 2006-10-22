@@ -2809,12 +2809,17 @@ core::dimension2d<s32> COpenGLDriver::getCurrentRenderTargetSize()
 		return CurrentRendertargetSize;
 }
 
-
 //! Clears the ZBuffer.
 void COpenGLDriver::clearZBuffer()
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
-}
+   GLboolean enabled = GL_TRUE;
+   glGetBooleanv(GL_DEPTH_WRITEMASK, &enabled);
+
+   glDepthMask(GL_TRUE);
+   glClear(GL_DEPTH_BUFFER_BIT);
+
+   glDepthMask(enabled);
+} 
 
 //! Returns an image created from the last rendered frame.
 IImage* COpenGLDriver::createScreenShot()
