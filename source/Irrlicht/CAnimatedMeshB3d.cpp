@@ -220,6 +220,16 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		if (texture_id[1]!=-1)
 			B3dMaterial.Textures[1]=&Textures[texture_id[1]];
 
+		//Hack, Fixes problems when the lightmap is on the first texture
+		if (texture_id[0]!=-1)
+		if (Textures[texture_id[0]].Flags &65536) // 65536 = secondary UV
+		{
+			SB3dTexture *TmpTexture;
+			TmpTexture=B3dMaterial.Textures[1];
+			B3dMaterial.Textures[1]=B3dMaterial.Textures[0];
+			B3dMaterial.Textures[0]=TmpTexture;
+		} 
+
 		if (B3dMaterial.Textures[0]!=0)
 			B3dMaterial.Material->Texture1 = B3dMaterial.Textures[0]->Texture;
 		if (B3dMaterial.Textures[1]!=0)
@@ -612,8 +622,9 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 		vertex_id[2]+=Vertices_Start;
 
 		for(s32 i=0;i<3;i++)
-			if (AnimatedVertices_VertexID[ vertex_id[i] ]==-1)
 		{
+			if (AnimatedVertices_VertexID[ vertex_id[i] ]==-1)
+			{
 				MeshBuffer->Vertices.push_back(*Vertices[vertex_id[i]] );
 				AnimatedVertices_VertexID[ vertex_id[i] ]=MeshBuffer->Vertices.size()-1;
 				AnimatedVertices_MeshBuffer[ vertex_id[i] ]=MeshBuffer;
@@ -621,9 +632,10 @@ bool CAnimatedMeshB3d::ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s1
 				//Apply Material...
 				irr::video::S3DVertex2TCoords *Vertex=&MeshBuffer->Vertices[MeshBuffer->Vertices.size()-1];
 
-
+				if (B3dMaterial) // Fixes crashes when mesh has no material
 				Vertex->Color.setAlpha( (s32)(B3dMaterial->alpha*255.0) );
 
+			}
 		}
 
 
