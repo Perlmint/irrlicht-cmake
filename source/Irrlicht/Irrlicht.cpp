@@ -14,7 +14,7 @@
 	#include <xtl.h>
 #endif // _XBOX
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(__GNUWIN32__)
 #include <crtdbg.h>
 #endif // _DEBUG
 
@@ -63,7 +63,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     switch (ul_reason_for_call)
 	{
 		case DLL_PROCESS_ATTACH:
-			#ifdef _DEBUG
+			#if defined(_DEBUG) && !defined(__GNUWIN32__)
 				_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 			#endif
 			break;
