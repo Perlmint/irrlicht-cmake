@@ -761,9 +761,6 @@
 			<File
 				RelativePath="CVideoModeList.h">
 			</File>
-			<File
-				RelativePath=".\SColor.cpp">
-			</File>
 			<Filter
 				Name="Software"
 				Filter="">

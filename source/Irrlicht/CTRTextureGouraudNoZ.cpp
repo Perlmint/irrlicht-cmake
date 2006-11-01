@@ -27,18 +27,18 @@ public:
 	{
 		const S2DVertex *v1, *v2, *v3;
 
-		s16 color;
+		u16 color;
 		f32 tmpDiv; // temporary division factor
 		f32 longest; // saves the longest span
 		s32 height; // saves height of triangle
-		s16* targetSurface; // target pointer where to plot pixels
+		u16* targetSurface; // target pointer where to plot pixels
 		s32 spanEnd; // saves end of spans
 		f32 leftdeltaxf; // amount of pixels to increase on left side of triangle
 		f32 rightdeltaxf; // amount of pixels to increase on right side of triangle
 		s32 leftx, rightx; // position where we are 
 		f32 leftxf, rightxf; // same as above, but as f32 values
 		s32 span; // current span
-		s16 *hSpanBegin, *hSpanEnd; // pointer used when plotting pixels
+		u16 *hSpanBegin, *hSpanEnd; // pointer used when plotting pixels
 		s32 leftR, leftG, leftB, rightR, rightG, rightB; // color values
 		s32 leftStepR, leftStepG, leftStepB,
 			rightStepR, rightStepG, rightStepB; // color steps
@@ -48,8 +48,8 @@ public:
 		s32 spanTx, spanTy, spanTxStep, spanTyStep; // values of Texturecoords when drawing a span
 		core::rect<s32> TriangleRect;
 
-		lockedSurface = (s16*)RenderTarget->lock();
-		lockedTexture = (s16*)Texture->lock();
+		lockedSurface = (u16*)RenderTarget->lock();
+		lockedTexture = (u16*)Texture->lock();
 		
 		for (s32 i=0; i<triangleCount; ++i)
 		{

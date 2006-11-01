@@ -29,14 +29,14 @@ public:
 		f32 tmpDiv; // temporary division factor
 		f32 longest; // saves the longest span
 		s32 height; // saves height of triangle
-		s16* targetSurface; // target pointer where to plot pixels
+		u16* targetSurface; // target pointer where to plot pixels
 		s32 spanEnd; // saves end of spans
 		f32 leftdeltaxf; // amount of pixels to increase on left side of triangle
 		f32 rightdeltaxf; // amount of pixels to increase on right side of triangle
 		s32 leftx, rightx; // position where we are 
 		f32 leftxf, rightxf; // same as above, but as f32 values
 		s32 span; // current span
-		s16 *hSpanBegin, *hSpanEnd; // pointer used when plotting pixels
+		u16 *hSpanBegin, *hSpanEnd; // pointer used when plotting pixels
 		s32 leftTx, rightTx, leftTy, rightTy; // texture interpolating values
 		s32 leftTxStep, rightTxStep, leftTyStep, rightTyStep; // texture interpolating values
 		s32 spanTx, spanTy, spanTxStep, spanTyStep; // values of Texturecoords when drawing a span
@@ -47,9 +47,9 @@ public:
 		s32 spanZValue, spanZStep; // ZValues when drawing a span
 		TZBufferType* zTarget, *spanZTarget; // target of ZBuffer;
 
-		lockedSurface = (s16*)RenderTarget->lock();
+		lockedSurface = (u16*)RenderTarget->lock();
 		lockedZBuffer = ZBuffer->lock();
-		lockedTexture = (s16*)Texture->lock();
+		lockedTexture = (u16*)Texture->lock();
 		
 		for (s32 i=0; i<triangleCount; ++i)
 		{

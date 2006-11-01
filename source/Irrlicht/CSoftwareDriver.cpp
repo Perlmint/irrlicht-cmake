@@ -107,6 +107,7 @@ void CSoftwareDriver::switchToTriangleRenderer(ETriangleRenderer renderer)
 //! void selects the right triangle renderer based on the render states.
 void CSoftwareDriver::selectRightTriangleRenderer()
 {
+
 	ETriangleRenderer renderer = ETR_FLAT;
 
 	if (Texture)

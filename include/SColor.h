@@ -28,6 +28,15 @@ namespace video
 	}
 
 
+	//! Creates a 16 bit A1R5G5B5 color, based on 16 bit input values
+	inline u16 RGB16from16(u16 r, u16 g, u16 b)
+	{
+		return (r & 0x1F) << 10 |
+			   (g & 0x1F) << 5  |
+			   (b & 0x1F);
+	}
+
+
 	//! Converts a 32 bit (X8R8G8B8) color to a 16 A1R5G5B5 color
 	inline u16 X8R8G8B8toA1R5G5B5(u32 color)
 	{
@@ -111,6 +120,29 @@ namespace video
 	//! Returns the blue component from A1R5G5B5 color
 	//! Shift left by 3 to get 8 bit value.
 	inline u32 getBlue(u16 color)
+	{
+		return (color & 0x1F);
+	}
+
+		//! Returns the red component from A1R5G5B5 color.
+	//! Shift left by 3 to get 8 bit value.
+	inline s32 getRedSigned(u16 color)
+	{
+		return ((color >> 10)&0x1F);
+	}
+
+
+	//! Returns the green component from A1R5G5B5 color
+	//! Shift left by 3 to get 8 bit value.
+	inline s32 getGreenSigned(u16 color)
+	{
+		return ((color >> 5)&0x1F);
+	}
+
+
+	//! Returns the blue component from A1R5G5B5 color
+	//! Shift left by 3 to get 8 bit value.
+	inline s32 getBlueSigned(u16 color)
 	{
 		return (color & 0x1F);
 	}
@@ -359,22 +391,6 @@ namespace video
 		}
 	};
 
-	//! Class representing a color in HSV format
-	/**	The color values for hue, saturation, value
-	are stored in a 32 bit floating point variable.
-	*/
-	class SColorHSL
-	{
-	public:
-		void setfromRGB ( const SColor &color );
-		void settoRGB ( SColor &color );
-
-		f32 Hue;
-		f32 Saturation;
-		f32 Luminance;
-	private:
-		u32 toRGB1(f32 rm1, f32 rm2, f32 rh) const;
-	};
 
 } // end namespace video
 } // end namespace irr

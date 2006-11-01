@@ -26,11 +26,11 @@ public:
 	{
 		const S2DVertex *v1, *v2, *v3;
 
-		s16 color;
+		u16 color;
 		f32 tmpDiv; // temporary division factor
 		f32 longest; // saves the longest span
 		s32 height; // saves height of triangle
-		s16* targetSurface; // target pointer where to plot pixels
+		u16* targetSurface; // target pointer where to plot pixels
 		s32 spanEnd; // saves end of spans
 		f32 leftdeltaxf; // amount of pixels to increase on left side of triangle
 		f32 rightdeltaxf; // amount of pixels to increase on right side of triangle
@@ -48,9 +48,9 @@ public:
 		s32 leftZStep, rightZStep;
 		TZBufferType* zTarget;//, *spanZTarget; // target of ZBuffer;
 
-		lockedSurface = (s16*)RenderTarget->lock();
+		lockedSurface = (u16*)RenderTarget->lock();
 		lockedZBuffer = ZBuffer->lock();
-		lockedTexture = (s16*)Texture->lock();
+		lockedTexture = (u16*)Texture->lock();
 
 		for (s32 i=0; i<triangleCount; ++i)
 		{

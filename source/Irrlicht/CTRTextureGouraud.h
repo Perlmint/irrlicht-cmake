@@ -54,8 +54,8 @@ namespace video
 		s32 SurfaceHeight;
 		bool BackFaceCullingEnabled;
 		TZBufferType* lockedZBuffer;
-		s16* lockedSurface;
-		s16* lockedTexture;
+		u16* lockedSurface;
+		u16* lockedTexture;
 		s32 lockedTextureWidth;
 		s32 textureXMask, textureYMask;
 		video::IImage* Texture;
