@@ -2557,6 +2557,8 @@ GLenum COpenGLDriver::extGlCheckFramebufferStatusEXT (GLenum target)
 #else
 	return glCheckFramebufferStatusEXT(target);
 #endif
+
+	return 0;
 }
 
 void COpenGLDriver::extGlFramebufferTexture2DEXT (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)

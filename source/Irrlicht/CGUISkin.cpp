@@ -29,12 +29,12 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Colors[EGDC_3D_HIGH_LIGHT] =	video::SColor(101,255,255,255);
 		Colors[EGDC_3D_LIGHT] =		video::SColor(101,210,210,210);
 		Colors[EGDC_ACTIVE_BORDER] =	video::SColor(101,16,14,115);
-		Colors[EGDC_ACTIVE_CAPTION] =	video::SColor(101,255,255,255);
+		Colors[EGDC_ACTIVE_CAPTION] =	video::SColor(240,255,255,255);
 		Colors[EGDC_APP_WORKSPACE] =	video::SColor(101,100,100,100);
-		Colors[EGDC_BUTTON_TEXT] =	video::SColor(101,10,10,10);
-		Colors[EGDC_GRAY_TEXT] =	video::SColor(101,130,130,130);
+		Colors[EGDC_BUTTON_TEXT] =	video::SColor(240,10,10,10);
+		Colors[EGDC_GRAY_TEXT] =	video::SColor(240,130,130,130);
 		Colors[EGDC_HIGH_LIGHT] =	video::SColor(101,8,36,107);
-		Colors[EGDC_HIGH_LIGHT_TEXT] =	video::SColor(101,255,255,255);
+		Colors[EGDC_HIGH_LIGHT_TEXT] =	video::SColor(240,255,255,255);
 		Colors[EGDC_INACTIVE_BORDER] =	video::SColor(101,165,165,165);
 		Colors[EGDC_INACTIVE_CAPTION] = video::SColor(101,210,210,210);
 		Colors[EGDC_TOOLTIP] =		video::SColor(101,255,255,230);
@@ -91,8 +91,8 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 	Texts[EGDT_MSG_BOX_YES] = L"Yes";
 	Texts[EGDT_MSG_BOX_NO] = L"No";
 
-	UseGradient = (Type == EGST_WINDOWS_METALLIC) |
-					(Type == EGST_BURNING_SKIN) ;
+	UseGradient = (Type == EGST_WINDOWS_METALLIC) ||
+				  (Type == EGST_BURNING_SKIN) ;
 }
 
 
@@ -408,7 +408,6 @@ core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 		video::SColor c2 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.8f );
 
 		Driver->draw2DRectangle(rect, c1, c1, c2, c2, cl);
-
 	}
 	else
 	{

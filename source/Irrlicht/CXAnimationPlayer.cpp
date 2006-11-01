@@ -319,7 +319,8 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 	{
 		video::S3DVertex* vertex = &buf->Vertices[0];
 		fcnt = buf->Indices.size();
-		for (s32 u=0; u<fcnt; u+=3)
+
+		for (s32 u=0; u<(s32)fcnt; u+=3)
 		{
 			core::plane3d<f32> p(vertex[buf->Indices[u+0]].Pos,
 				vertex[buf->Indices[u+1]].Pos, vertex[buf->Indices[u+2]].Pos);
