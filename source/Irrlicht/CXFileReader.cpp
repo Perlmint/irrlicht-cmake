@@ -246,7 +246,10 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 			// combine this frame with parent
 			// add child frames to parent
 			pgParent->LocalMatrix = pgParent->LocalMatrix * pgFrame->LocalMatrix;
-			for( u32 c=0; c<pgFrame->ChildFrames.size(); ++c )
+
+			u32 c;
+
+			for( c=0; c<pgFrame->ChildFrames.size(); ++c )
 			{
 				// add child frames to parent
 				for (u32 c=0; c<pgFrame->ChildFrames.size(); ++c)
@@ -254,8 +257,10 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 					pgParent->ChildFrames.push_back(pgFrame->ChildFrames[c]);
 				}
 			}
+
 			// add meshes to parent
-			for( u32 c=0; c<pgFrame->Meshes.size(); ++c )
+
+			for( c=0; c<pgFrame->Meshes.size(); ++c )
 			{
 				// add meshes frames to parent
 				pgParent->Meshes.push_back( pgFrame->Meshes[c] );
@@ -263,11 +268,12 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 
 			// remove child fames in our list
 			pgFrame->ChildFrames.clear();
+
 			// remove meshes
 			pgFrame->Meshes.clear();
 
 			// find ourselve and remove from parent frame
-			for( u32 c=0; c< pgParent->ChildFrames.size(); ++c )
+			for( c=0; c< pgParent->ChildFrames.size(); ++c )
 			{
 				if( &pgParent->ChildFrames[c] == pgFrame )
 				{

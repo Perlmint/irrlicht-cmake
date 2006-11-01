@@ -104,7 +104,7 @@ bool CImageLoaderTGA::isALoadableFileFormat(irr::io::IReadFile* file)
 IImage* CImageLoaderTGA::loadImage(irr::io::IReadFile* file)
 {
 	STGAHeader header;
-	u8* colorMap(0);
+	u8* colorMap = 0;
 
 	file->read(&header, sizeof(STGAHeader));
 

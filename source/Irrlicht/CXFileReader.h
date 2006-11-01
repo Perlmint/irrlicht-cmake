@@ -44,7 +44,7 @@ public:
 	SXAnimationSet& getAnimationSet(s32 i);
 
 	//! returns array of root frames
-   core::array<CXFileReader::SXFrame> & getRootFrames();
+   core::array<SXFrame> & getRootFrames();
 
 
 

@@ -323,16 +323,18 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCo
 	switch (pType)
 	{
 		case scene::EPT_TRIANGLE_FAN:
-			// TODO: don't convert fan to list
-			newBuffer.reallocate(primitiveCount*3);
-			for( s32 t=0; t<primitiveCount; ++t )
 			{
-				newBuffer.push_back(indexList[0]);
-				newBuffer.push_back(indexList[t+1]);
-				newBuffer.push_back(indexList[t+2]);
-			}
+				// TODO: don't convert fan to list
+				newBuffer.reallocate(primitiveCount*3);
+				for( s32 t=0; t<primitiveCount; ++t )
+				{
+					newBuffer.push_back(indexList[0]);
+					newBuffer.push_back(indexList[t+1]);
+					newBuffer.push_back(indexList[t+2]);
+				}
 
-			indexPointer=newBuffer.pointer();
+				indexPointer = newBuffer.pointer();
+			}
 			break;
 		case scene::EPT_TRIANGLES:
 			indexPointer=indexList;
