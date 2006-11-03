@@ -20,7 +20,7 @@ namespace video
 
 const bool checkFBOStatus(COpenGLDriver* Driver)
 {
-
+#ifdef GL_EXT_framebuffer_object
     GLenum status = Driver->extGlCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 
     //Our FBO is perfect, return true
@@ -66,6 +66,7 @@ const bool checkFBOStatus(COpenGLDriver* Driver)
             break;
     }
     os::Printer::log("FBO error", ELL_ERROR);
+#endif
     return false;
 }
 
@@ -103,37 +104,39 @@ COpenGLTexture::COpenGLTexture(const core::dimension2d<s32>& size,
 	setDebugName("COpenGLTexture_FBO");
 	#endif
 
-    // generate color texture
-    glGenTextures(1, &TextureName);
+	// generate color texture
+	glGenTextures(1, &TextureName);
 	glBindTexture(GL_TEXTURE_2D, TextureName);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, ImageSize.Width,
-                    ImageSize.Height, 0, GL_RGBA, GL_INT, 0);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, ImageSize.Width,
+		ImageSize.Height, 0, GL_RGBA, GL_INT, 0);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    if (extPackedDepthStencilSupported)
-    {
-        // generate packed depth stencil texture
-        glGenTextures(1, &DepthRenderBuffer);
-        glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_EXT, ImageSize.Width,
-                        ImageSize.Height, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, 0);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        StencilRenderBuffer = DepthRenderBuffer; // stencil is packed with depth
-    }
-    else // generate separate stencil and depth textures
-    {
-        // generate depth texture
-        glGenTextures(1, &DepthRenderBuffer);
-        glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, ImageSize.Width,
-                        ImageSize.Height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#ifdef GL_EXT_packed_depth_stencil
+	if (extPackedDepthStencilSupported)
+	{
+		// generate packed depth stencil texture
+		glGenTextures(1, &DepthRenderBuffer);
+		glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_EXT, ImageSize.Width,
+			ImageSize.Height, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, 0);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		StencilRenderBuffer = DepthRenderBuffer; // stencil is packed with depth
+	}
+	else // generate separate stencil and depth textures
+#endif
+	{
+		// generate depth texture
+		glGenTextures(1, &DepthRenderBuffer);
+		glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, ImageSize.Width,
+			ImageSize.Height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // we 're in trouble! the code below does not complete the FBO currently...
         // stencil buffer is only supported with EXT_packed_depth_stencil extension (above)
@@ -146,8 +149,9 @@ COpenGLTexture::COpenGLTexture(const core::dimension2d<s32>& size,
 //                        ImageSize.Height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, 0);
 //        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 //        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    }
+	}
 
+#ifdef GL_EXT_framebuffer_object
     // generate frame buffer
     Driver->extGlGenFramebuffersEXT(1, &ColorFrameBuffer);
     Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, ColorFrameBuffer);
@@ -188,6 +192,7 @@ COpenGLTexture::COpenGLTexture(const core::dimension2d<s32>& size,
         StencilRenderBuffer = 0;
     }
     Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+#endif
 }
 
 //! destructor
@@ -499,15 +504,19 @@ bool COpenGLTexture::isFrameBufferObject()
 //! Bind ColorFrameBuffer (valid only if isFrameBufferObject() returns true).
 void COpenGLTexture::bindFrameBufferObject()
 {
+#ifdef GL_EXT_framebuffer_object
     if (ColorFrameBuffer != 0)
         Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, ColorFrameBuffer);
+#endif
 }
 
 //! Unbind ColorFrameBuffer (valid only if isFrameBufferObject() returns true).
 void COpenGLTexture::unbindFrameBufferObject()
 {
+#ifdef GL_EXT_framebuffer_object
     if (ColorFrameBuffer != 0)
         Driver->extGlBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+#endif
 }
 
 

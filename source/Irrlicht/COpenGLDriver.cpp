@@ -2524,7 +2524,7 @@ void COpenGLDriver::extGlBindFramebufferEXT (GLenum target, GLuint framebuffer)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlBindFramebufferEXT)
 		pGlBindFramebufferEXT(target, framebuffer);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glBindFramebufferEXT(target, framebuffer);
 #endif
 }
@@ -2534,7 +2534,7 @@ void COpenGLDriver::extGlDeleteFramebuffersEXT (GLsizei n, const GLuint *framebu
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlDeleteFramebuffersEXT)
 		pGlDeleteFramebuffersEXT(n, framebuffers);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glDeleteFramebuffersEXT(n, framebuffers);
 #endif
 }
@@ -2544,7 +2544,7 @@ void COpenGLDriver::extGlGenFramebuffersEXT (GLsizei n, GLuint *framebuffers)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGenFramebuffersEXT)
 		pGlGenFramebuffersEXT(n, framebuffers);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glGenFramebuffersEXT(n, framebuffers);
 #endif
 }
@@ -2554,11 +2554,11 @@ GLenum COpenGLDriver::extGlCheckFramebufferStatusEXT (GLenum target)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlCheckFramebufferStatusEXT)
 		return pGlCheckFramebufferStatusEXT(target);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	return glCheckFramebufferStatusEXT(target);
-#endif
-
+#else
 	return 0;
+#endif
 }
 
 void COpenGLDriver::extGlFramebufferTexture2DEXT (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
@@ -2566,7 +2566,7 @@ void COpenGLDriver::extGlFramebufferTexture2DEXT (GLenum target, GLenum attachme
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlFramebufferTexture2DEXT)
 		pGlFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
 #endif
 }
@@ -2576,7 +2576,7 @@ void COpenGLDriver::extGlBindRenderbufferEXT (GLenum target, GLuint renderbuffer
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlBindRenderBufferEXT)
 		pGlBindRenderBufferEXT(target, renderbuffer);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glBindRenderBufferEXT(target, renderbuffer);
 #endif
 }
@@ -2586,7 +2586,7 @@ void COpenGLDriver::extGlDeleteRenderbuffersEXT (GLsizei n, const GLuint *render
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlDeleteRenderBuffersEXT)
 		pGlDeleteRenderBuffersEXT(n, renderbuffers);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glDeleteRenderBuffersEXT(n, renderbuffers);
 #endif
 }
@@ -2596,7 +2596,7 @@ void COpenGLDriver::extGlGenRenderbuffersEXT (GLsizei n, GLuint *renderbuffers)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlGenRenderbuffersEXT)
 		pGlGenRenderbuffersEXT(n, renderbuffers);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glGenRenderbuffersEXT(n, renderbuffers);
 #endif
 }
@@ -2606,7 +2606,7 @@ void COpenGLDriver::extGlRenderbufferStorageEXT (GLenum target, GLenum internalf
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlRenderbufferStorageEXT)
 		pGlRenderbufferStorageEXT(target, internalformat, width, height);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glRenderbufferStorageEXT(target, internalformat, width, height);
 #endif
 }
@@ -2616,7 +2616,7 @@ void COpenGLDriver::extGlFramebufferRenderbufferEXT (GLenum target, GLenum attac
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlFramebufferRenderbufferEXT)
 		pGlFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
-#else
+#elif defined(GL_EXT_framebuffer_object)
 	glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
 #endif
 }
@@ -2713,12 +2713,15 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 	bool generateMipLevels = getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
 
-    video::ITexture* rtt = 0;
-    if (pGlFramebufferTexture2DEXT) // if driver supports FrameBufferObjects, use them
-        rtt = new COpenGLTexture(size, EXTPackedDepthStencil, "rt", this);
+	video::ITexture* rtt = 0;
+#if defined(GL_EXT_framebuffer_object)
+	// if driver supports FrameBufferObjects, use them
+	if (pGlFramebufferTexture2DEXT)
+        	rtt = new COpenGLTexture(size, EXTPackedDepthStencil, "rt", this);
 	else
+#endif
 	{
-        rtt = addTexture(size, "rt");
+	        rtt = addTexture(size, "rt");
 		if (rtt)
 			rtt->grab();
 	}
