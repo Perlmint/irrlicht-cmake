@@ -2032,10 +2032,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="SColor.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="SoftwareDriver2_compile_config.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>

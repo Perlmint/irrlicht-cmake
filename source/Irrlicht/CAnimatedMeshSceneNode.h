@@ -109,6 +109,9 @@ namespace scene
 		//! Sets a new mesh
 		virtual void setMesh(IAnimatedMesh* mesh);
 
+		//! Returns the current mesh
+		virtual IAnimatedMesh* getMesh(void) { return Mesh; }
+
 		//! Writes attributes of the scene node.
 		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0);
 
