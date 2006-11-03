@@ -115,12 +115,6 @@ COpenGLTexture::COpenGLTexture(const core::dimension2d<s32>& size,
     if (extPackedDepthStencilSupported)
     {
         // generate packed depth stencil texture
-        #ifndef GL_DEPTH_STENCIL_EXT
-            #define GL_DEPTH_STENCIL_EXT 0x84f9
-        #endif
-        #ifndef GL_UNSIGNED_INT_24_8_EXT
-            #define GL_UNSIGNED_INT_24_8_EXT 0x84FA
-        #endif
         glGenTextures(1, &DepthRenderBuffer);
         glBindTexture(GL_TEXTURE_2D, DepthRenderBuffer);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

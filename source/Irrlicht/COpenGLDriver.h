@@ -37,10 +37,10 @@
 	#include <GL/gl.h>
 	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 	#include "glext.h"
+	#include "glxext.h"
 	#endif
 	#include <GL/glu.h>
 	#include <GL/glx.h>
-	#include "glxext.h"
 #endif
 
 namespace irr

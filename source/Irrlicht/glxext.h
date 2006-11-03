@@ -52,9 +52,68 @@ extern "C" {
 /*************************************************************/
 
 /* Header file version number, required by OpenGL ABI for Linux */
-/* glxext.h last updated 2005/01/20 */
-/* Current version at http://oss.sgi.com/projects/ogl-sample/registry/ */
-#define GLX_GLXEXT_VERSION 10
+/* glxext.h last updated 2006/10/11 */
+/* Current version at http://www.opengl.org/registry/ */
+#define GLX_GLXEXT_VERSION 15
+
+#ifndef GLX_VERSION_1_3
+#define GLX_WINDOW_BIT                     0x00000001
+#define GLX_PIXMAP_BIT                     0x00000002
+#define GLX_PBUFFER_BIT                    0x00000004
+#define GLX_RGBA_BIT                       0x00000001
+#define GLX_COLOR_INDEX_BIT                0x00000002
+#define GLX_PBUFFER_CLOBBER_MASK           0x08000000
+#define GLX_FRONT_LEFT_BUFFER_BIT          0x00000001
+#define GLX_FRONT_RIGHT_BUFFER_BIT         0x00000002
+#define GLX_BACK_LEFT_BUFFER_BIT           0x00000004
+#define GLX_BACK_RIGHT_BUFFER_BIT          0x00000008
+#define GLX_AUX_BUFFERS_BIT                0x00000010
+#define GLX_DEPTH_BUFFER_BIT               0x00000020
+#define GLX_STENCIL_BUFFER_BIT             0x00000040
+#define GLX_ACCUM_BUFFER_BIT               0x00000080
+#define GLX_CONFIG_CAVEAT                  0x20
+#define GLX_X_VISUAL_TYPE                  0x22
+#define GLX_TRANSPARENT_TYPE               0x23
+#define GLX_TRANSPARENT_INDEX_VALUE        0x24
+#define GLX_TRANSPARENT_RED_VALUE          0x25
+#define GLX_TRANSPARENT_GREEN_VALUE        0x26
+#define GLX_TRANSPARENT_BLUE_VALUE         0x27
+#define GLX_TRANSPARENT_ALPHA_VALUE        0x28
+#define GLX_DONT_CARE                      0xFFFFFFFF
+#define GLX_NONE                           0x8000
+#define GLX_SLOW_CONFIG                    0x8001
+#define GLX_TRUE_COLOR                     0x8002
+#define GLX_DIRECT_COLOR                   0x8003
+#define GLX_PSEUDO_COLOR                   0x8004
+#define GLX_STATIC_COLOR                   0x8005
+#define GLX_GRAY_SCALE                     0x8006
+#define GLX_STATIC_GRAY                    0x8007
+#define GLX_TRANSPARENT_RGB                0x8008
+#define GLX_TRANSPARENT_INDEX              0x8009
+#define GLX_VISUAL_ID                      0x800B
+#define GLX_SCREEN                         0x800C
+#define GLX_NON_CONFORMANT_CONFIG          0x800D
+#define GLX_DRAWABLE_TYPE                  0x8010
+#define GLX_RENDER_TYPE                    0x8011
+#define GLX_X_RENDERABLE                   0x8012
+#define GLX_FBCONFIG_ID                    0x8013
+#define GLX_RGBA_TYPE                      0x8014
+#define GLX_COLOR_INDEX_TYPE               0x8015
+#define GLX_MAX_PBUFFER_WIDTH              0x8016
+#define GLX_MAX_PBUFFER_HEIGHT             0x8017
+#define GLX_MAX_PBUFFER_PIXELS             0x8018
+#define GLX_PRESERVED_CONTENTS             0x801B
+#define GLX_LARGEST_PBUFFER                0x801C
+#define GLX_WIDTH                          0x801D
+#define GLX_HEIGHT                         0x801E
+#define GLX_EVENT_MASK                     0x801F
+#define GLX_DAMAGED                        0x8020
+#define GLX_SAVED                          0x8021
+#define GLX_WINDOW                         0x8022
+#define GLX_PBUFFER                        0x8023
+#define GLX_PBUFFER_HEIGHT                 0x8040
+#define GLX_PBUFFER_WIDTH                  0x8041
+#endif
 
 #ifndef GLX_VERSION_1_4
 #define GLX_SAMPLE_BUFFERS                 100000
@@ -252,10 +311,7 @@ extern "C" {
 /*************************************************************/
 
 #ifndef GLX_ARB_get_proc_address
-/*
- * Linux OpenGL ABI specifies glXGetProcAddressARB should be
- * in glx.h moving related defines there as well.
- */
+typedef void (*__GLXextFuncPtr)(void);
 #endif
 
 #ifndef GLX_SGIX_video_source
@@ -284,99 +340,99 @@ typedef struct {
 } GLXBufferClobberEventSGIX;
 #endif
 
-#ifndef GLX_NV_swap_group
-#endif
-
-#ifndef GLX_NV_video_out
-/*
- * GLXVideoDeviceNV is an opaque handle to a video device (part of the
- * GLX_NV_video_out extension).
- */
-typedef unsigned int GLXVideoDeviceNV;
-
-/* glXBindVideoImageNV iVideoBuffer values (NV_video_out) */
-#define GLX_VIDEO_OUT_COLOR_NV           0x20C3
-#define GLX_VIDEO_OUT_ALPHA_NV           0x20C4
-#define GLX_VIDEO_OUT_DEPTH_NV           0x20C5
-#define GLX_VIDEO_OUT_COLOR_AND_ALPHA_NV 0x20C6
-#define GLX_VIDEO_OUT_COLOR_AND_DEPTH_NV 0x20C7
-
-/* glXSendPbufferToVideoNV iBufferType values (NV_video_out) */
-#define GLX_VIDEO_OUT_FRAME_NV           0x20C8
-#define GLX_VIDEO_OUT_FIELD_1_NV         0x20C9
-#define GLX_VIDEO_OUT_FIELD_2_NV         0x20CA
-#endif
-
-#ifndef GLX_EXT_texture_from_pixmap
-/* New glXGetFBConfigAttrib <attrib_list> tokens */
-#define GLX_BIND_TO_TEXTURE_RGB_EXT      0x20D0
-#define GLX_BIND_TO_TEXTURE_RGBA_EXT     0x20D1
-#define GLX_BIND_TO_MIPMAP_TEXTURE_EXT   0x20D2
-#define GLX_BIND_TO_TEXTURE_TARGETS_EXT  0x20D3
-#define GLX_Y_INVERTED_EXT               0x20D4
-
-/* New glXCreatePixmap attributes and glXQueryDrawable attributes */
-#define GLX_TEXTURE_FORMAT_EXT           0x20D5
-#define GLX_TEXTURE_TARGET_EXT           0x20D6
-#define GLX_MIPMAP_TEXTURE_EXT           0x20D7
-
-/* Values for GLX_TEXTURE_FORMAT_EXT */
-#define GLX_TEXTURE_FORMAT_NONE_EXT      0x20D8
-#define GLX_TEXTURE_FORMAT_RGB_EXT       0x20D9
-#define GLX_TEXTURE_FORMAT_RGBA_EXT      0x20DA
-
-/* Bits for GLX_BIND_TO_TEXTURE_TARGETS_EXT mask */
-#define GLX_TEXTURE_1D_BIT_EXT           0x00000001
-#define GLX_TEXTURE_2D_BIT_EXT           0x00000002
-#define GLX_TEXTURE_RECTANGLE_BIT_EXT    0x00000004
-
-/* Values for GLX_TEXTURE_TARGET_EXT */
-#define GLX_TEXTURE_1D_EXT               0x20DB
-#define GLX_TEXTURE_2D_EXT               0x20DC
-#define GLX_TEXTURE_RECTANGLE_EXT        0x20DD
-
-/*
- * Values for the buffer parameter of glXBindTexImageEXT and
- * glXReleaseTexImageEXT
- */ 
-#define GLX_FRONT_LEFT_EXT               0x20DE
-#define GLX_FRONT_RIGHT_EXT              0x20DF
-#define GLX_BACK_LEFT_EXT                0x20E0
-#define GLX_BACK_RIGHT_EXT               0x20E1
-#define GLX_FRONT_EXT                    GLX_FRONT_LEFT_EXT
-#define GLX_BACK_EXT                     GLX_BACK_LEFT_EXT
-#define GLX_AUX0_EXT                     0x20E2
-#define GLX_AUX1_EXT                     0x20E3
-#define GLX_AUX2_EXT                     0x20E4
-#define GLX_AUX3_EXT                     0x20E5
-#define GLX_AUX4_EXT                     0x20E6
-#define GLX_AUX5_EXT                     0x20E7
-#define GLX_AUX6_EXT                     0x20E8
-#define GLX_AUX7_EXT                     0x20E9
-#define GLX_AUX8_EXT                     0x20EA
-#define GLX_AUX9_EXT                     0x20EB
-
-#endif
-
-/* Define int32_t and int64_t types for UST/MSC */
+#ifndef GLEXT_64_TYPES_DEFINED
+/* This code block is duplicated in glxext.h, so must be protected */
+#define GLEXT_64_TYPES_DEFINED
+/* Define int32_t, int64_t, and uint64_t types for UST/MSC */
 /* (as used in the GLX_OML_sync_control extension). */
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #include <inttypes.h>
-#elif defined( __VMS ) || defined(__FreeBSD__)
+#elif defined(__sun__)
 #include <inttypes.h>
-#elif (defined(__sun__) && defined(__svr4__)) || (defined(__sun) && defined(__SVR4))
+#if defined(__STDC__)
+#if defined(__arch64__)
+typedef long int int64_t;
+typedef unsigned long int uint64_t;
+#else
+typedef long long int int64_t;
+typedef unsigned long long int uint64_t;
+#endif /* __arch64__ */
+#endif /* __STDC__ */
+#elif defined( __VMS )
 #include <inttypes.h>
-#elif defined(__SCO__) || defined(__USLC__) || defined(__linux__) || defined(__CYGWIN__)
+#elif defined(__SCO__) || defined(__USLC__)
 #include <stdint.h>
 #elif defined(__UNIXOS2__) || defined(__SOL64__)
 typedef long int int32_t;
 typedef long long int int64_t;
+typedef unsigned long long int uint64_t;
+#elif defined(WIN32) && defined(__GNUC__)
+#include <stdint.h>
+#elif defined(WIN32)
+typedef __int32 int32_t;
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
 #else
-#error "int32_t and int64_t are undefined!"
+#include <inttypes.h>     /* Fallback option */
+#endif
+#endif
+
+#ifndef GLX_VERSION_1_3
+#define GLX_VERSION_1_3 1
+#ifdef GLX_GLXEXT_PROTOTYPES
+extern GLXFBConfig * glXGetFBConfigs (Display *, int, int *);
+extern GLXFBConfig * glXChooseFBConfig (Display *, int, const int *, int *);
+extern int glXGetFBConfigAttrib (Display *, GLXFBConfig, int, int *);
+extern XVisualInfo * glXGetVisualFromFBConfig (Display *, GLXFBConfig);
+extern GLXWindow glXCreateWindow (Display *, GLXFBConfig, Window, const int *);
+extern void glXDestroyWindow (Display *, GLXWindow);
+extern GLXPixmap glXCreatePixmap (Display *, GLXFBConfig, Pixmap, const int *);
+extern void glXDestroyPixmap (Display *, GLXPixmap);
+extern GLXPbuffer glXCreatePbuffer (Display *, GLXFBConfig, const int *);
+extern void glXDestroyPbuffer (Display *, GLXPbuffer);
+extern void glXQueryDrawable (Display *, GLXDrawable, int, unsigned int *);
+extern GLXContext glXCreateNewContext (Display *, GLXFBConfig, int, GLXContext, Bool);
+extern Bool glXMakeContextCurrent (Display *, GLXDrawable, GLXDrawable, GLXContext);
+extern GLXDrawable glXGetCurrentReadDrawable (void);
+extern Display * glXGetCurrentDisplay (void);
+extern int glXQueryContext (Display *, GLXContext, int, int *);
+extern void glXSelectEvent (Display *, GLXDrawable, unsigned long);
+extern void glXGetSelectedEvent (Display *, GLXDrawable, unsigned long *);
+#endif /* GLX_GLXEXT_PROTOTYPES */
+typedef GLXFBConfig * ( * PFNGLXGETFBCONFIGSPROC) (Display *dpy, int screen, int *nelements);
+typedef GLXFBConfig * ( * PFNGLXCHOOSEFBCONFIGPROC) (Display *dpy, int screen, const int *attrib_list, int *nelements);
+typedef int ( * PFNGLXGETFBCONFIGATTRIBPROC) (Display *dpy, GLXFBConfig config, int attribute, int *value);
+typedef XVisualInfo * ( * PFNGLXGETVISUALFROMFBCONFIGPROC) (Display *dpy, GLXFBConfig config);
+typedef GLXWindow ( * PFNGLXCREATEWINDOWPROC) (Display *dpy, GLXFBConfig config, Window win, const int *attrib_list);
+typedef void ( * PFNGLXDESTROYWINDOWPROC) (Display *dpy, GLXWindow win);
+typedef GLXPixmap ( * PFNGLXCREATEPIXMAPPROC) (Display *dpy, GLXFBConfig config, Pixmap pixmap, const int *attrib_list);
+typedef void ( * PFNGLXDESTROYPIXMAPPROC) (Display *dpy, GLXPixmap pixmap);
+typedef GLXPbuffer ( * PFNGLXCREATEPBUFFERPROC) (Display *dpy, GLXFBConfig config, const int *attrib_list);
+typedef void ( * PFNGLXDESTROYPBUFFERPROC) (Display *dpy, GLXPbuffer pbuf);
+typedef void ( * PFNGLXQUERYDRAWABLEPROC) (Display *dpy, GLXDrawable draw, int attribute, unsigned int *value);
+typedef GLXContext ( * PFNGLXCREATENEWCONTEXTPROC) (Display *dpy, GLXFBConfig config, int render_type, GLXContext share_list, Bool direct);
+typedef Bool ( * PFNGLXMAKECONTEXTCURRENTPROC) (Display *dpy, GLXDrawable draw, GLXDrawable read, GLXContext ctx);
+typedef GLXDrawable ( * PFNGLXGETCURRENTREADDRAWABLEPROC) (void);
+typedef Display * ( * PFNGLXGETCURRENTDISPLAYPROC) (void);
+typedef int ( * PFNGLXQUERYCONTEXTPROC) (Display *dpy, GLXContext ctx, int attribute, int *value);
+typedef void ( * PFNGLXSELECTEVENTPROC) (Display *dpy, GLXDrawable draw, unsigned long event_mask);
+typedef void ( * PFNGLXGETSELECTEDEVENTPROC) (Display *dpy, GLXDrawable draw, unsigned long *event_mask);
+#endif
+
+#ifndef GLX_VERSION_1_4
+#define GLX_VERSION_1_4 1
+#ifdef GLX_GLXEXT_PROTOTYPES
+extern __GLXextFuncPtr glXGetProcAddress (const GLubyte *);
+#endif /* GLX_GLXEXT_PROTOTYPES */
+typedef __GLXextFuncPtr ( * PFNGLXGETPROCADDRESSPROC) (const GLubyte *procName);
 #endif
 
 #ifndef GLX_ARB_get_proc_address
-/* Moved to glx.h */
+#define GLX_ARB_get_proc_address 1
+#ifdef GLX_GLXEXT_PROTOTYPES
+extern __GLXextFuncPtr glXGetProcAddressARB (const GLubyte *);
+#endif /* GLX_GLXEXT_PROTOTYPES */
+typedef __GLXextFuncPtr ( * PFNGLXGETPROCADDRESSARBPROC) (const GLubyte *procName);
 #endif
 
 #ifndef GLX_ARB_multisample
@@ -408,11 +464,9 @@ typedef int ( * PFNGLXSWAPINTERVALSGIPROC) (int interval);
 #ifdef GLX_GLXEXT_PROTOTYPES
 extern int glXGetVideoSyncSGI (unsigned int *);
 extern int glXWaitVideoSyncSGI (int, int, unsigned int *);
-extern int glXGetRefreshRateSGI(unsigned int *);
 #endif /* GLX_GLXEXT_PROTOTYPES */
 typedef int ( * PFNGLXGETVIDEOSYNCSGIPROC) (unsigned int *count);
 typedef int ( * PFNGLXWAITVIDEOSYNCSGIPROC) (int divisor, int remainder, unsigned int *count);
-typedef int ( * PFNGLXGETREFRESHRATESGIPROC) (unsigned int *);
 #endif
 
 #ifndef GLX_SGI_make_current_read
@@ -666,137 +720,6 @@ extern unsigned int glXGetAGPOffsetMESA (const void *);
 typedef unsigned int ( * PFNGLXGETAGPOFFSETMESAPROC) (const void *pointer);
 #endif
 
-/*
- * GLX_NV_vertex_array_range is not a real extension name...
- */
-#ifndef GLX_NV_vertex_array_range
-#define GLX_NV_vertex_array_range 1
-#ifdef GLX_GLXEXT_PROTOTYPES
-extern void *glXAllocateMemoryNV(GLsizei size, GLfloat readfreq,
-                                 GLfloat writefreq, GLfloat priority);
-
-extern void glXFreeMemoryNV(GLvoid *pointer);
-#endif
-typedef void * ( * PFNGLXALLOCATEMEMORYNVPROC) (GLsizei size,
-                                                GLfloat readfreq,
-                                                GLfloat writefreq,
-                                                GLfloat priority);
-
-typedef void ( * PFNGLXFREEMEMORYNVPROC) (GLvoid *pointer);
-#endif
-
-#ifndef GLX_NV_swap_group
-#define GLX_NV_swap_group 1
-#ifdef GLX_GLXEXT_PROTOTYPES
-extern Bool glXJoinSwapGroupNV(Display *dpy, GLXDrawable drawable,
-                               GLuint group);
-
-extern Bool glXBindSwapBarrierNV(Display *dpy, GLuint group, GLuint barrier);
-
-extern Bool glXQuerySwapGroupNV(Display *dpy, GLXDrawable drawable,
-                                GLuint *group, GLuint *barrier);
-
-extern Bool glXQueryMaxSwapGroupsNV(Display *dpy, int screen,
-                                    GLuint *maxGroups, GLuint *maxBarriers);
-
-extern Bool glXQueryFrameCountNV(Display *dpy, int screen, GLuint *count);
-
-extern Bool glXResetFrameCountNV(Display *dpy, int screen);
-#endif
-typedef Bool ( * PFNGLXJOINSWAPGROUPNVPROC) (Display *dpy,
-                                             GLXDrawable drawable,
-                                             GLuint group);
-
-typedef Bool ( * PFNGLXBINDSWAPBARRIERNVPROC) (Display *dpy,
-                                               GLuint group,
-                                               GLuint barrier);
-
-typedef Bool ( * PFNGLXQUERYSWAPGROUPNVPROC) (Display *dpy,
-                                              GLXDrawable drawable,
-                                              GLuint *group,
-                                              GLuint *barrier);
-
-typedef Bool ( * PFNGLXQUERYMAXSWAPGROUPSNVPROC) (Display *dpy,
-                                                  int screen,
-                                                  GLuint *maxGroups,
-                                                  GLuint *maxBarriers);
-
-typedef Bool ( * PFNGLXQUERYFRAMECOUNTNVPROC) (Display *dpy,
-                                               int screen,
-                                               GLuint *count);
-
-typedef Bool ( * PFNGLXRESETFRAMECOUNTNVPROC) (Display *dpy, int screen);
-#endif
-
-#ifndef GLX_NV_video_out
-#define GLX_NV_video_out 1
-#ifdef GLX_GLXEXT_PROTOTYPES
-extern int glXGetVideoDeviceNV(Display *dpy, int screen, int numVideoDevices,
-                               GLXVideoDeviceNV *pVideoDevice);
-
-extern int glXReleaseVideoDeviceNV(Display *dpy, int screen,
-                                   GLXVideoDeviceNV VideoDevice);
-
-extern int glXBindVideoImageNV(Display *dpy, GLXVideoDeviceNV VideoDevice,
-                               GLXPbuffer pbuf, int iVideoBuffer);
-
-extern int glXReleaseVideoImageNV(Display *dpy, GLXPbuffer pbuf);
-
-extern int glXSendPbufferToVideoNV(Display *dpy, GLXPbuffer pbuf,
-                                   int iBufferType,
-                                   unsigned long *pulCounterPbuffer,
-                                   GLboolean bBlock);
-
-extern int glXGetVideoInfoNV(Display *dpy, int screen,
-                             GLXVideoDeviceNV VideoDevice,
-                             unsigned long *pulCounterOutputVideo,
-                             unsigned long *pulCounterOutputPbuffer);
-#endif
-typedef int ( * PFNGLXGETVIDEODEVICENVPROC) (Display *dpy,
-                                             int screen,
-                                             int numVideoDevices,
-                                             GLXVideoDeviceNV *pVideoDevice);
-
-typedef int ( * PFNGLXRELEASEVIDEODEVICENVPROC) (Display *dpy,
-                                                 int screen,
-                                                 GLXVideoDeviceNV VideoDevice);
-
-typedef int ( * PFNGLXBINDVIDEOIMAGENVPROC) (Display *dpy,
-                                             GLXVideoDeviceNV VideoDevice,
-                                             GLXPbuffer pbuf,
-                                             int iVideoBuffer);
-
-typedef int ( * PFNGLXRELEASEVIDEOIMAGENVPROC) (Display *dpy,
-                                                GLXPbuffer pbuf);
-
-typedef int ( * PFNGLXSENDPBUFFERTOVIDEONVPROC) (Display *dpy,
-                                                 GLXPbuffer pbuf,
-                                                 int iBufferType,
-                                                 unsigned long *pulCounterPbuffer,
-                                                 GLboolean bBlock);
-
-typedef int ( * PFNGLXGETVIDEOINFONVPROC) (Display *dpy, int screen,
-                                           GLXVideoDeviceNV VideoDevice,
-                                           unsigned long *pulCounterOutputVideo,
-                                           unsigned long *pulCounterOutputPbuffer);
-#endif
-
-#ifndef GLX_EXT_texture_from_pixmap
-#define GLX_EXT_texture_from_pixmap
-#ifdef GLX_GLXEXT_PROTOTYPES
-extern void glXBindTexImageEXT(Display *dpy, GLXDrawable drawable,
-                               int buffer, const int *attrib_list);
-extern void glXReleaseTextImageEXT(Display *dpy, GLXDrawable drawable,
-                                   int buffer);
-#endif
-typedef void ( * PFNGLXBINDTEXIMAGEEXTPROC) (Display *dpy,
-                                             GLXDrawable drawable,
-                                             int buffer,
-                                             const int *attrib_list);
-typedef void ( * PFNGLXRELEASETEXIMAGEEXTPROC) (Display *dpy,
-                                             GLXDrawable drawable,
-                                             int buffer);
-#endif
 
 #ifdef __cplusplus
 }
