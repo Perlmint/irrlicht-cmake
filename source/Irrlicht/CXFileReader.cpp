@@ -17,7 +17,7 @@ namespace scene
 {
 
 CXFileReader::CXFileReader(io::IReadFile* file)
-: ErrorHappened(false), Buffer(0), Size(0), P(0), End(0), binary(false)
+: ErrorHappened(false), Buffer(0), Size(0), P(0), End(0), binary(false), m_pgCurFrame(0)
 {
 	if (!file)
 	{
@@ -312,6 +312,12 @@ bool CXFileReader::parseDataObject()
 	else
 	if (objectName == "Mesh")
 	{
+		// some meshes have no frames at all
+		if (!m_pgCurFrame)
+		{
+			RootFrames.push_back(SXFrame());
+			m_pgCurFrame = &RootFrames[ RootFrames.size() - 1 ];
+		}
 		m_pgCurFrame->Meshes.push_back(SXMesh());
 		return parseDataObjectMesh(m_pgCurFrame->Meshes[m_pgCurFrame->Meshes.size()-1]);
 	}
