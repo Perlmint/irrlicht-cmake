@@ -2554,6 +2554,8 @@ GLenum COpenGLDriver::extGlCheckFramebufferStatusEXT (GLenum target)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	if (pGlCheckFramebufferStatusEXT)
 		return pGlCheckFramebufferStatusEXT(target);
+	else
+		return 0;
 #elif defined(GL_EXT_framebuffer_object)
 	return glCheckFramebufferStatusEXT(target);
 #else

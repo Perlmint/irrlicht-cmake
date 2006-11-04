@@ -402,6 +402,11 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		}
 	}
 
+	core::matrix4 defaultTransformation;
+	defaultTransformation.makeIdentity();
+	defaultTransformation.setRotationDegrees(core::vector3df(180.0f, 0.0f, 90.0f));
+	defaultTransformation.makeInverse();
+
 	// sets up all joints with initial rotation and translation
 	for (i=0; i<(s32)Joints.size(); ++i)
 	{
@@ -411,7 +416,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		jnt.RelativeTransformation.setTranslation(jnt.Translation);
 
 		if (jnt.Parent == -1)
-			jnt.AbsoluteTransformation = jnt.RelativeTransformation;
+			jnt.AbsoluteTransformation  = jnt.RelativeTransformation;
 		else
 		{
 			jnt.AbsoluteTransformation = Joints[jnt.Parent].AbsoluteTransformation;
@@ -454,6 +459,12 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 				s32 boneid = vertices[triangles[i].VertexIndices[j]].BoneID;
 				if (boneid>=0 && boneid<(s32)Joints.size())
 					Joints[boneid].VertexIds.push_back(Vertices.size());
+				else
+				{
+					// default rotation
+					defaultTransformation.inverseRotateVect(v.Pos);
+					defaultTransformation.inverseRotateVect(v.Normal);
+				}
 				Vertices.push_back(v);
 				index = Vertices.size() - 1;
 			}
@@ -528,13 +539,28 @@ IMesh* CAnimatedMeshMS3D::getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop
 
 void CAnimatedMeshMS3D::getKeyframeData(core::array<SKeyframe>& keys, f32 time, core::vector3df& outdata)
 {
-	for (s32 i=0; i<(s32)keys.size()-1; ++i)
+
+	if (keys.size())
 	{
-		if (keys[i].timeindex <= time && keys[i+1].timeindex >= time)
+		if (time < keys[0].timeindex)
 		{
-			f32 interpolate = (time - keys[i].timeindex)/(keys[i+1].timeindex - keys[i].timeindex);
-			outdata = keys[i].data + ((keys[i+1].data - keys[i].data) * interpolate);
+			outdata = keys[0].data;
 			return;
+		}
+		if (time > keys[keys.size()-1].timeindex)
+		{
+			outdata = keys[keys.size()-1].data;
+			return;
+		}
+
+		for (s32 i=0; i<(s32)keys.size()-1; ++i)
+		{
+			if (keys[i].timeindex <= time && keys[i+1].timeindex >= time)
+			{
+				f32 interpolate = (time - keys[i].timeindex)/(keys[i+1].timeindex - keys[i].timeindex);
+				outdata = keys[i].data + ((keys[i+1].data - keys[i].data) * interpolate);
+				return;
+			}
 		}
 	}
 }
