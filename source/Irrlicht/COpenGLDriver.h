@@ -35,12 +35,12 @@
 		#define GLX_GLXEXT_PROTOTYPES 1
 	#endif
 	#include <GL/gl.h>
+	#include <GL/glu.h>
+	#include <GL/glx.h>
 	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
 	#include "glext.h"
 	#include "glxext.h"
 	#endif
-	#include <GL/glu.h>
-	#include <GL/glx.h>
 #endif
 
 namespace irr
