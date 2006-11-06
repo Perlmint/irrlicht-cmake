@@ -402,11 +402,6 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		}
 	}
 
-	core::matrix4 defaultTransformation;
-	defaultTransformation.makeIdentity();
-	defaultTransformation.setRotationDegrees(core::vector3df(180.0f, 0.0f, 90.0f));
-	defaultTransformation.makeInverse();
-
 	// sets up all joints with initial rotation and translation
 	for (i=0; i<(s32)Joints.size(); ++i)
 	{
@@ -459,12 +454,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 				s32 boneid = vertices[triangles[i].VertexIndices[j]].BoneID;
 				if (boneid>=0 && boneid<(s32)Joints.size())
 					Joints[boneid].VertexIds.push_back(Vertices.size());
-				else
-				{
-					// default rotation
-					defaultTransformation.inverseRotateVect(v.Pos);
-					defaultTransformation.inverseRotateVect(v.Normal);
-				}
+
 				Vertices.push_back(v);
 				index = Vertices.size() - 1;
 			}

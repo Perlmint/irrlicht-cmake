@@ -5,6 +5,7 @@
 #include "CXMLWriter.h"
 #include <wchar.h>
 #include "irrString.h"
+#include "IrrCompileConfig.h"
 
 namespace irr
 {
@@ -88,6 +89,39 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 	}
 }
 
+//! Writes an xml element with any number of attributes
+void CXMLWriter::writeElement(const wchar_t* name, bool empty,
+							  core::array<core::stringw> &names, core::array<core::stringw> &values)
+{
+	if (!File || !name)
+		return;
+
+	if (Tabs > 0)
+	{
+		for (int i=0; i<Tabs; ++i)
+			File->write("\t", 2);
+	}
+	
+	// write name
+
+	File->write(L"<", 2);
+    File->write(name, wcslen(name)*2);
+
+	// write attributes
+	u32 i=0;
+	for (; i < names.size() && i < values.size(); ++i)
+		writeAttribute(names[i].c_str(), values[i].c_str());
+
+	// write closing tag
+	if (empty)
+		File->write(L" />", 6);
+	else
+	{
+		File->write(L">", 2);
+		++Tabs;
+	}
+}
+
 
 void CXMLWriter::writeAttribute(const wchar_t* name, const wchar_t* value)
 {
@@ -97,7 +131,7 @@ void CXMLWriter::writeAttribute(const wchar_t* name, const wchar_t* value)
 	File->write(L" ", 2);
 	File->write(name, wcslen(name)*2);
 	File->write(L"=\"", 4);
-	File->write(value, wcslen(value)*2); // TODO: replace special characters
+	writeText(value);
 	File->write(L"\"", 2);
 }
 
@@ -109,7 +143,7 @@ void CXMLWriter::writeComment(const wchar_t* comment)
 		return;
 
 	File->write(L"<!--", 8);
-    File->write(comment, wcslen(comment)*2); // TODO: replace special characters
+	writeText(comment);
 	File->write(L"-->", 6);
 }
 
@@ -183,7 +217,17 @@ void CXMLWriter::writeLineBreak()
 	if (!File)
 		return;
 
-	File->write("\n", 2);
+#if (defined(LINUX) || defined(MACOSX))
+
+	File->write(L"\x000A", 2);
+
+#elif (defined(_IRR_WINDOWS_) || defined(_XBOX))
+
+	File->write(L"\x000D\x000A", 4);
+#else
+	File->write(L"\n", 2);
+#endif
+
 }
 
 

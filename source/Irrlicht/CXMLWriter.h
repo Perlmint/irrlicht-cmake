@@ -35,6 +35,10 @@ namespace io
 			const wchar_t* attr4Name = 0, const wchar_t* attr4Value = 0,
 			const wchar_t* attr5Name = 0, const wchar_t* attr5Value = 0);
 
+		//! Writes an xml element with any number of attributes
+        virtual void writeElement(const wchar_t* name, bool empty,
+				core::array<core::stringw> &names, core::array<core::stringw> &values);
+
 		//! Writes a comment into the xml file
 		virtual void writeComment(const wchar_t* comment);
 
