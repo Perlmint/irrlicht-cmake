@@ -67,13 +67,12 @@ namespace scene
 	private:
 
 		//! recursive method for going through all scene nodes
-		void getPickedNodeBB(ISceneNode* root, const core::vector3df& linemiddle, 
-				const core::vector3df& linevect,
-				const core::vector3df& pos, 
-				f32 halflength, s32 bits, 
-				bool bNoDebugObjects,
-				f32& outdist,
-				ISceneNode*& outbest);
+		void CSceneCollisionManager::getPickedNodeBB(ISceneNode* root,
+					   const core::line3df& ray,
+					   s32 bits,
+					   bool bNoDebugObjects,
+					   f32& outbestdistance,
+					   ISceneNode*& outbestnode);
 
 		struct SCollisionData
 		{

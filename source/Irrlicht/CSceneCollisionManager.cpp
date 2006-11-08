@@ -64,8 +64,7 @@ ISceneNode* CSceneCollisionManager::getSceneNodeFromRayBB(core::line3d<f32> ray,
 	ISceneNode* best = 0;
 	f32 dist = 9999999999.0f;
 
-	getPickedNodeBB(SceneManager->getRootSceneNode(), ray.getMiddle(),
-		ray.getVector().normalize(), ray.start, (f32)(ray.getLength() * 0.5),
+	getPickedNodeBB(SceneManager->getRootSceneNode(), ray, 
 		idBitMask, bNoDebugObjects, dist, best);
 
 	return best;
@@ -74,52 +73,61 @@ ISceneNode* CSceneCollisionManager::getSceneNodeFromRayBB(core::line3d<f32> ray,
 
 //! recursive method for going through all scene nodes
 void CSceneCollisionManager::getPickedNodeBB(ISceneNode* root,
-					const core::vector3df& linemiddle,
-					const core::vector3df& linevect,
-					const core::vector3df& pos,
-					f32 halflength, s32 bits,
-					bool bNoDebugObjects,
-					f32& outbestdistance,
-					ISceneNode*& outbestnode)
+               const core::line3df& ray,
+               s32 bits,
+               bool bNoDebugObjects,
+               f32& outbestdistance,
+               ISceneNode*& outbestnode)
 {
-	core::vector3df edges[8];
+   core::vector3df edges[8];
 
-	const core::list<ISceneNode*>& children = root->getChildren();
-	core::list<ISceneNode*>::Iterator it = children.begin();
-	for (; it != children.end(); ++it)
-	{
-		ISceneNode* current = *it;
+   const core::list<ISceneNode*>& children = root->getChildren();
 
-		if (current->isVisible() &&
-			(bNoDebugObjects ? !current->isDebugObject() : true) &&
-			(bits==0 || (bits != 0 && (current->getID() & bits))))
-		{
-			const core::aabbox3df& box = current->getTransformedBoundingBox();
+   core::list<ISceneNode*>::Iterator it = children.begin();
+   for (; it != children.end(); ++it)
+   {
+      ISceneNode* current = *it;
 
-			if (box.intersectsWithLine(linemiddle, linevect, halflength))
-			{
-				box.getEdges(edges);
-				f32 distance = 0.0f;
+      if (current->isVisible() &&
+          (bNoDebugObjects ? !current->isDebugObject() : true) &&
+          (bits==0 || (bits != 0 && (current->getID() & bits))))
+      {
+         // get world to object space transform
+         core::matrix4 mat;
+         if (!current->getAbsoluteTransformation().getInverse(mat))
+            continue;
 
-				for (s32 e=0; e<8; ++e)
-				{
-					f32 t = edges[e].getDistanceFromSQ(pos);
-					if (t > distance)
-						distance = t;
-				}
+         // transform vector from world space to object space
+         core::line3df line(ray);
+         mat.transformVect(line.start);
+         mat.transformVect(line.end);
 
-				if (distance < outbestdistance)
-				{
-					outbestnode = current;
-					outbestdistance = distance;
-				}
-			}
-		}
+         const core::aabbox3df& box = current->getBoundingBox();
 
-		getPickedNodeBB(current, linemiddle, linevect, pos,
-			halflength, bits, bNoDebugObjects, outbestdistance, outbestnode);
-	}
-}
+         // do intersection test in object space
+         if (box.intersectsWithLine(line))
+         {
+            box.getEdges(edges);
+            f32 distance = 0.0f;
+
+            for (s32 e=0; e<8; ++e)
+            {
+               f32 t = edges[e].getDistanceFromSQ(line.start);
+               if (t > distance)
+                  distance = t;
+            }
+
+            if (distance < outbestdistance)
+            {
+               outbestnode = current;
+               outbestdistance = distance;
+            }
+         }
+      }
+
+      getPickedNodeBB(current, ray, bits, bNoDebugObjects, outbestdistance, outbestnode);
+   }
+} 
 
 
 
