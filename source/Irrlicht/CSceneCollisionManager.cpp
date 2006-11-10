@@ -167,7 +167,7 @@ bool CSceneCollisionManager::getCollisionPoint(const core::line3d<f32>& ray,
 	s32 cnt = 0;
 	selector->getTriangles(Triangles.pointer(), totalcnt, cnt, ray);
 
-	core::vector3df linevect = ray.getVector();
+	core::vector3df linevect = ray.getVector().normalize();
 	core::vector3df intersection;
 	f32 nearest = 9999999999999.0f;
 	bool found = false;
