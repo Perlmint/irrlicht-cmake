@@ -240,22 +240,25 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 				for (s32 i=0; i<mesh->getMeshBufferCount(); ++i)
 				{
 					IMeshBuffer* b = mesh->getMeshBuffer(i);
-					Materials.push_back(b->getMaterial());
+					if (b->getVertexCount() && b->getIndexCount()) 
+					{
+						Materials.push_back(b->getMaterial());
 
-					OctTree<video::S3DVertex>::SMeshChunk chunk;
-					chunk.MaterialId = i;
-					StdMeshes.push_back(chunk);
-					OctTree<video::S3DVertex>::SMeshChunk &nchunk = StdMeshes[StdMeshes.size()-1];
+						OctTree<video::S3DVertex>::SMeshChunk chunk;
+						chunk.MaterialId = Materials.size() - 1;
+						StdMeshes.push_back(chunk);
+						OctTree<video::S3DVertex>::SMeshChunk &nchunk = StdMeshes[StdMeshes.size()-1];
 
-					s32 v;
+						s32 v;
 
-					for (v=0; v<b->getVertexCount(); ++v)
-						nchunk.Vertices.push_back(((video::S3DVertex*)b->getVertices())[v]);
+						for (v=0; v<b->getVertexCount(); ++v)
+							nchunk.Vertices.push_back(((video::S3DVertex*)b->getVertices())[v]);
 
-					polyCount += b->getIndexCount();
+						polyCount += b->getIndexCount();
 
-					for (v=0; v<b->getIndexCount(); ++v)
-						nchunk.Indices.push_back(b->getIndices()[v]);
+						for (v=0; v<b->getIndexCount(); ++v)
+							nchunk.Indices.push_back(b->getIndices()[v]);
+					}
 				}
 
 				StdOctTree = new OctTree<video::S3DVertex>(StdMeshes, MinimalPolysPerNode);
@@ -267,23 +270,27 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 				for (s32 i=0; i<mesh->getMeshBufferCount(); ++i)
 				{
 					IMeshBuffer* b = mesh->getMeshBuffer(i);
-					Materials.push_back(b->getMaterial());
 
-					OctTree<video::S3DVertex2TCoords>::SMeshChunk chunk;
-					chunk.MaterialId = i;
-					LightMapMeshes.push_back(chunk);
-					OctTree<video::S3DVertex2TCoords>::SMeshChunk& nchunk =
-						LightMapMeshes[LightMapMeshes.size()-1];
+					if (b->getVertexCount() && b->getIndexCount()) 
+					{
+						Materials.push_back(b->getMaterial());
 
-					s32 v;
+						OctTree<video::S3DVertex2TCoords>::SMeshChunk chunk;
+						chunk.MaterialId = Materials.size() - 1;
+						LightMapMeshes.push_back(chunk);
+						OctTree<video::S3DVertex2TCoords>::SMeshChunk& nchunk =
+							LightMapMeshes[LightMapMeshes.size()-1];
 
-					for (v=0; v<b->getVertexCount(); ++v)
-						nchunk.Vertices.push_back(((video::S3DVertex2TCoords*)b->getVertices())[v]);
+						s32 v;
 
-					polyCount += b->getIndexCount();
+						for (v=0; v<b->getVertexCount(); ++v)
+							nchunk.Vertices.push_back(((video::S3DVertex2TCoords*)b->getVertices())[v]);
 
-					for (v=0; v<b->getIndexCount(); ++v)
-						nchunk.Indices.push_back(b->getIndices()[v]);
+						polyCount += b->getIndexCount();
+
+						for (v=0; v<b->getIndexCount(); ++v)
+							nchunk.Indices.push_back(b->getIndices()[v]);
+					}
 				}
 
 				LightMapOctTree = new OctTree<video::S3DVertex2TCoords>(LightMapMeshes, MinimalPolysPerNode);
