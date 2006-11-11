@@ -56,7 +56,7 @@ namespace gui
 		virtual void removeAllItems();
 
 		//! called if an event happened.
-		virtual bool OnEvent(const SEvent &event);
+		virtual bool OnEvent(SEvent event);
 
 		//! draws the element and its children
 		virtual void draw();

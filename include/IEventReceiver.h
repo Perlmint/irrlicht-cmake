@@ -212,7 +212,7 @@ public:
 	virtual ~IEventReceiver() {};
 
 	//! called if an event happened. returns true if event was processed
-	virtual bool OnEvent(const SEvent &event) = 0;
+	virtual bool OnEvent(SEvent event) = 0;
 };
 
 

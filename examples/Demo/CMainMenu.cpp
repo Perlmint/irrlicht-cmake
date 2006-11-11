@@ -47,7 +47,7 @@ private:
 
 CMainMenu::CMainMenu()
 : startButton(0), device(0), start(false), fullscreen(true), selected(2),
-	music(false), shadows(false), additive(false), transparent(true), vsync(true)
+	music(true), shadows(false), additive(false), transparent(true), vsync(true)
 {
 }
 
@@ -71,9 +71,8 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	device->setWindowCaption(str.c_str());
 
 	// load font
-	gui::IGUIFont* font = guienv->getFont("../../media/fontlucida.png");
-	//gui::IGUIFont* font = guienv->getFont("../../media/fonthaettenschweiler.bmp");
-	
+
+	gui::IGUIFont* font = guienv->getFont("../../media/fonthaettenschweiler.bmp");
 	if (font)
 		guienv->getSkin()->setFont(font);
 
@@ -90,7 +89,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// add list box
 
-	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,230,120), optTab, 1);
+	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,220,105), optTab, 1);
 	box->addItem(L"OpenGL 1.5");
 	box->addItem(L"Direct3D 8.1");
 	box->addItem(L"Direct3D 9.0c");
@@ -100,15 +99,15 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// add button
 
-	startButton = guienv->addButton(core::rect<int>(30,295,200,322), optTab, 2, L"Start Demo");
+	startButton = guienv->addButton(core::rect<int>(30,295,200,324), optTab, 2, L"Start Demo");
 
 	// add checkbox
 
 	const s32 d = 50;
 
-	guienv->addCheckBox(fullscreen, core::rect<int>(20,85+d,230,110+d),
+	guienv->addCheckBox(fullscreen, core::rect<int>(20,85+d,130,110+d),
 		optTab, 3, L"Fullscreen");
-	guienv->addCheckBox(music, core::rect<int>(20,110+d,230,135+d),
+	guienv->addCheckBox(music, core::rect<int>(20,110+d,130,135+d),
 		optTab, 4, L"Music & Sfx");
 	guienv->addCheckBox(shadows, core::rect<int>(20,135+d,230,160+d),
 		optTab, 5, L"Realtime shadows");
@@ -136,7 +135,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 		L"M.Rohde and is played back by Audiere.\n"\
 		L"For more informations, please visit the homepage of the Irrlicht engine:\nhttp://www.irrlicht.sourceforge.net";
 
-	guienv->addStaticText(text2, core::rect<int>(10, 10, 230, 320),
+	guienv->addStaticText(text2, core::rect<int>(20, 40, 220, 300),
 		true, true, aboutTab);
 
 
@@ -236,7 +235,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// irrlicht logo and background
 	// add irrlicht logo
-	guienv->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
+	guienv->addImage(driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
 		core::position2d<s32>(5,5));
 
 	video::ITexture* irrlichtBack = driver->getTexture("../../media/demoback.bmp");
@@ -286,7 +285,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 
 
-bool CMainMenu::OnEvent(const SEvent &event)
+bool CMainMenu::OnEvent(SEvent event)
 {
 	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT &&
 		event.MouseInput.Event == EMIE_RMOUSE_LEFT_UP )

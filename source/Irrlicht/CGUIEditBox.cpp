@@ -77,7 +77,7 @@ void CGUIEditBox::enableOverrideColor(bool enable)
 
 
 //! called if an event happened.
-bool CGUIEditBox::OnEvent(const SEvent &event)
+bool CGUIEditBox::OnEvent(SEvent event)
 {
 	switch(event.EventType)
 	{

@@ -100,7 +100,7 @@ const wchar_t* CGUIFileOpenDialog::getFilename()
 
 
 //! called if an event happened.
-bool CGUIFileOpenDialog::OnEvent(const SEvent &event)
+bool CGUIFileOpenDialog::OnEvent(SEvent event)
 {
 	switch(event.EventType)
 	{

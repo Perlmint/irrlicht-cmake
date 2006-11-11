@@ -33,7 +33,7 @@ CGUICheckBox::~CGUICheckBox()
 
 
 //! called if an event happened.
-bool CGUICheckBox::OnEvent(const SEvent &event)
+bool CGUICheckBox::OnEvent(SEvent event)
 {
 	switch(event.EventType)
 	{

@@ -26,7 +26,7 @@ namespace gui
 		~CGUIMessageBox();
 
 		//! called if an event happened.
-		virtual bool OnEvent(const SEvent &event);
+		virtual bool OnEvent(SEvent event);
 
 	private:
 

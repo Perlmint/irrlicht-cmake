@@ -145,7 +145,7 @@ while(device->run())
 		input library for example for doing joystick input, you can use this to post key or mouse input 
 		events to the engine. Internally, this method only delegates the events further to the 
 		scene manager and the GUI environment. */
-		virtual void postEventFromUser(const SEvent &event) = 0;
+		virtual void postEventFromUser(SEvent event) = 0;
 
 		//! Sets if the window should be resizeable in windowed mode.
 		/** The default is false. This method only works in windowed mode. */

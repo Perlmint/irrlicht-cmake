@@ -160,7 +160,7 @@ CGUIMessageBox::~CGUIMessageBox()
 
 
 //! called if an event happened.
-bool CGUIMessageBox::OnEvent(const SEvent &event)
+bool CGUIMessageBox::OnEvent(SEvent event)
 {
 	SEvent outevent;
 	outevent.EventType = EET_GUI_EVENT;

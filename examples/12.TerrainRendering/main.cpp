@@ -27,7 +27,7 @@ public:
 		Terrain = terrain;
 	}
 
-	bool OnEvent(const SEvent &event)
+	bool OnEvent(SEvent event)
 	{
 		// check if user presses the key 'W' or 'D'
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT && !event.KeyInput.PressedDown)
@@ -108,7 +108,7 @@ int main()
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
 	// add irrlicht logo
-	env->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
+	env->addImage(driver->getTexture("../../media/irrlichtlogoalpha.tga"),
 		core::position2d<s32>(10,10));
 
 	// add some help text
@@ -152,7 +152,7 @@ int main()
 	terrain->setMaterialTexture(1, driver->getTexture("../../media/detailmap3.jpg"));
 	
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
- 
+
 	terrain->scaleTexture(1.0f, 20.0f);
 
 	/*

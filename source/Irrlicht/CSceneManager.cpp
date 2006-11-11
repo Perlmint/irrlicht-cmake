@@ -1139,7 +1139,7 @@ ISceneNode* CSceneManager::getSceneNodeFromId(s32 id, ISceneNode* start)
 
 //! Posts an input event to the environment. Usually you do not have to
 //! use this method, it is used by the internal engine.
-bool CSceneManager::postEventFromUser(const SEvent &event)
+bool CSceneManager::postEventFromUser(SEvent event)
 {
 	bool ret = false;
 	ICameraSceneNode* cam = getActiveCamera();

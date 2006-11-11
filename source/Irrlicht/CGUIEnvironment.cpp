@@ -188,7 +188,7 @@ video::IVideoDriver* CGUIEnvironment::getVideoDriver()
 
 
 //! called by ui if an event happened.
-bool CGUIEnvironment::OnEvent(const SEvent &event)
+bool CGUIEnvironment::OnEvent(SEvent event)
 {
 	if (UserReceiver && event.GUIEvent.Caller != this)
 		return UserReceiver->OnEvent(event);
@@ -240,7 +240,7 @@ void CGUIEnvironment::setUserEventReceiver(IEventReceiver* evr)
 
 
 //! posts an input event to the environment
-bool CGUIEnvironment::postEventFromUser(const SEvent &event)
+bool CGUIEnvironment::postEventFromUser(SEvent event)
 {
 	switch(event.EventType)
 	{

@@ -37,7 +37,7 @@ We will use this input to move the scene node with the keys W and S.
 class MyEventReceiver : public IEventReceiver
 {
 public:
-	virtual bool OnEvent(const SEvent &event)
+	virtual bool OnEvent(SEvent event)
 	{
 		/*
 		If the key 'W' or 'S' was left up, we get the position of the scene node,

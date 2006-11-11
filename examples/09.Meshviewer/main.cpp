@@ -105,7 +105,7 @@ void createToolBox()
 	if (e) e->remove();
 
 	// create the toolbox window
-	IGUIWindow* wnd = env->addWindow(core::rect<s32>(610,25,800,480),
+	IGUIWindow* wnd = env->addWindow(core::rect<s32>(450,25,640,480),
 		false, L"Toolset", 0, 5000);
 
 	// create tab control and tabs
@@ -120,14 +120,14 @@ void createToolBox()
 	env->addEditBox(L"1.0", core::rect<s32>(40,80,130,100), true, t1, 902);
 	env->addEditBox(L"1.0", core::rect<s32>(40,110,130,130), true, t1, 903);
 
-	env->addButton(core::rect<s32>(50,150,120,180), t1, 1101, L"set");
+	env->addButton(core::rect<s32>(10,150,100,190), t1, 1101, L"set");
 
 	// add senseless checkbox
 	env->addCheckBox(true, core::rect<s32>(10,220,200,240), t1, -1, L"Senseless Checkbox");
 
 	// add undocumentated transparent control
-	env->addStaticText(L"Transparency Control:", core::rect<s32>(10,250,150,270), true, false, t1);
-	IGUIScrollBar* scrollbar = env->addScrollBar(true, core::rect<s32>(10,275,150,290), t1, 104);
+	env->addStaticText(L"Transparent Control:", core::rect<s32>(10,240,150,260), true, false, t1);
+	IGUIScrollBar* scrollbar = env->addScrollBar(true, core::rect<s32>(10,260,150,275), t1, 104);
 	scrollbar->setMax(255);
 
 	// bring irrlicht engine logo to front, because it
@@ -145,7 +145,7 @@ void createToolBox()
 class MyEventReceiver : public IEventReceiver
 {
 public:
-	virtual bool OnEvent(const SEvent &event)
+	virtual bool OnEvent(SEvent event)
 	{
 		if (event.EventType == EET_GUI_EVENT)
 		{
@@ -343,7 +343,7 @@ int main()
 	// create device and exit if creation failed
 
 	MyEventReceiver receiver;
-	Device = createDevice(driverType, core::dimension2d<s32>(800, 600),
+	Device = createDevice(driverType, core::dimension2d<s32>(640, 480),
 		16, false, false, false, &receiver);
 
 	if (Device == 0)
@@ -418,7 +418,7 @@ int main()
 	// set a nicer font
 
 	IGUISkin* skin = env->getSkin();
-	IGUIFont* font = env->getFont("../../media/fontlucida.png");
+	IGUIFont* font = env->getFont("../../media/fonthaettenschweiler.bmp");
 	if (font)
 		skin->setFont(font);
 
@@ -471,7 +471,7 @@ int main()
 
 	// create a combobox with some senseless texts
 
-	gui::IGUIComboBox* box = env->addComboBox(core::rect<s32>(100,4,200,23), bar, 108);
+	gui::IGUIComboBox* box = env->addComboBox(core::rect<s32>(100,5,200,25), bar, 108);
 	box->addItem(L"No filtering");
 	box->addItem(L"Bilinear");
 	box->addItem(L"Trilinear");
@@ -486,21 +486,21 @@ int main()
 	*/
 
 	// disable alpha
-/*
+
 	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
 	{
 		video::SColor col = env->getSkin()->getColor((gui::EGUI_DEFAULT_COLOR)i);
 		col.setAlpha(255);
 		env->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
 	}
-*/
+
 	// add a tabcontrol
 
 	createToolBox();
 
 	// create fps text 
 
-	IGUIStaticText* fpstext = env->addStaticText(L"", core::rect<s32>(210,4,270,23), true, false, bar);
+	IGUIStaticText* fpstext = env->addStaticText(L"", core::rect<s32>(210,26,270,41), true);
 
 	// set window caption
 
@@ -536,8 +536,9 @@ int main()
 	smgr->addCameraSceneNodeMaya();
 
 	// load the irrlicht engine logo
-	env->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
-		core::position2d<s32>(10, driver->getScreenSize().Height - 64));
+
+	video::ITexture* irrLogo = 
+		driver->getTexture("../../media/irrlichtlogoaligned.jpg");
 
 	// draw everything
 
@@ -548,6 +549,12 @@ int main()
 
 			smgr->drawAll();
 			env->drawAll();
+
+			// draw irrlicht engine logo
+			driver->draw2DImage(irrLogo,
+				core::position2d<s32>(10, driver->getScreenSize().Height - 50),
+				core::rect<s32>(0,0,108-20,460-429));
+		
 			driver->endScene();
 
 			core::stringw str = L"FPS: ";

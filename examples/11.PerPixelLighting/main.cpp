@@ -36,16 +36,16 @@ public:
 
 		// set a nicer font
 		gui::IGUISkin* skin = env->getSkin();
-		gui::IGUIFont* font = env->getFont("../../media/fontlucida.png");
+		gui::IGUIFont* font = env->getFont("../../media/fonthaettenschweiler.bmp");
 		if (font)
 			skin->setFont(font);
 
 		// add window and listbox
 		gui::IGUIWindow* window = env->addWindow(
-			core::rect<s32>(460,360,630,470), false, L"Use 'E' + 'R' to change");
+			core::rect<s32>(490,390,630,470), false, L"Use 'E' + 'R' to change");
 
 		ListBox = env->addListBox(
-			core::rect<s32>(2,22,166,104), window);
+			core::rect<s32>(2,22,135,78), window);
 
 		ListBox->addItem(L"Diffuse");
 		ListBox->addItem(L"Bump mapping");
@@ -56,7 +56,7 @@ public:
 		ProblemText = env->addStaticText(
 			L"Your hardware or this renderer is not able to use the "\
 			L"needed shaders for this material. Using fall back materials.",
-			core::rect<s32>(150,20,470,75));
+			core::rect<s32>(150,20,470,60));
 
 		ProblemText->setOverrideColor(video::SColor(100,255,255,255));
 
@@ -70,7 +70,7 @@ public:
 		setMaterial();
 	}
 
-	bool OnEvent(const SEvent &event)
+	bool OnEvent(SEvent event)
 	{
 		// check if user presses the key 'E' or 'R'
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT &&
@@ -200,7 +200,7 @@ int main()
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
 	// add irrlicht logo
-	env->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
+	env->addImage(driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
 		core::position2d<s32>(10,10));
 		
 	// add camera

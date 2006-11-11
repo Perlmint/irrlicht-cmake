@@ -77,7 +77,7 @@ CGUIScrollBar::~CGUIScrollBar()
 
 
 //! called if an event happened.
-bool CGUIScrollBar::OnEvent(const SEvent &event)
+bool CGUIScrollBar::OnEvent(SEvent event)
 {
 	switch(event.EventType)
 	{

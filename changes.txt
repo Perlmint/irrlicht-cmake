@@ -21,8 +21,6 @@ Changes in version 1.2 (???? 2006)
 
 - GUIStatic text is correctly grayed out if disabled.
 
-- API change: The OnEvent method must be changed to OnEvent(const SEvent&) to correctly implement the interfaces again.
-
 - Added getHeight method for terrain node submitted by Spintz. It calculates the height from the base mesh instead of requiring ray casts and collision detection and is much faster.
 
 - New methods core::lerp to linearly interpolate two floats and SColor.getLuminance to calculate luminance of RGB color.

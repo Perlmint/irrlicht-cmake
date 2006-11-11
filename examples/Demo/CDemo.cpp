@@ -96,7 +96,7 @@ void CDemo::run()
 }
 
 
-bool CDemo::OnEvent(const SEvent &event)
+bool CDemo::OnEvent(SEvent event)
 {
 	if (!device)
 		return false;
@@ -318,8 +318,6 @@ void CDemo::loadSceneData()
 	scene::ISceneManager* sm = device->getSceneManager();
 
 	quakeLevelMesh = sm->getMesh("20kdm2.bsp");
-	//quakeLevelMesh = sm->getMesh("maps/q3dm0.bsp");
-	
 	
 	if (quakeLevelMesh)
 	{
@@ -336,33 +334,9 @@ void CDemo::loadSceneData()
 			// set additive blending if wanted
 			if (additive)
 				quakeLevelNode->setMaterialType(video::EMT_LIGHTMAP_ADD);
-
-			//quakeLevelNode->setMaterialTexture ( 0, 0 );
-			//quakeLevelNode->setMaterialTexture ( 1, 0 );
-			//quakeLevelNode->setMaterialType ( video::EMT_SOLID );
-
-
 		}
 	}
 
-/*
-	if (quakeLevelNode && quakeLevelMesh)
-	{
-		// dirty hack 
-		core::array < video::SLight > *lightData = (core::array < video::SLight > *) quakeLevelMesh->getMesh ( 1 );
-		if ( lightData )
-		{
-			quakeLevelNode->setMaterialFlag(video::EMF_LIGHTING, true);
-
-			for ( s32 i = 0; i!= lightData->size(); ++i )
-			{
-				scene::ILightSceneNode* l = sm->addLightSceneNode(quakeLevelNode);
-				l->getLightData() = (*lightData)[i];
-				l->setAutomaticCulling ( true );
-			}
-		}
-	}
-*/
 	// load sydney model and create 2 instances
 
 	scene::IAnimatedMesh* mesh = 0;
@@ -406,11 +380,8 @@ void CDemo::loadSceneData()
 		driver->getTexture("../../media/irrlicht2_ft.jpg"),
 		driver->getTexture("../../media/irrlicht2_bk.jpg"));
 	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
-/*
-	skyboxNode = sm->addSkyDomeSceneNode (
-		driver->getTexture("../../media/skydome0.jpg"),
-		30,8,0.96f,2.f);
-*/
+
+	//driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
 	// create walk-between-portals animation
 
@@ -536,21 +507,19 @@ void CDemo::createLoadingScreen()
 	inOutFader->setColor(backColor);
 
 	// irrlicht logo
-	if ( driverType == video::EDT_SOFTWARE2 )
-	{
-		device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/burninglogo.png"),
-			core::position2d<s32>(5,5));
-	}
-	else
-	{
-		device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogo2.png"),
-			core::position2d<s32>(5,5));
-	}
+/*
+	gui::IGUIImage* img = device->getGUIEnvironment()->addImage(
+		core::rect<int>(10,10,98,41));
+	img->setImage(
+		device->getVideoDriver()->getTexture("../../media/irrlichtlogoaligned.jpg"));
+*/
+	device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogoalpha2.tga"),
+		core::position2d<s32>(5,5));
 
 	// loading text
 
 	const int lwidth = 220;
-	const int lheight = 18;
+	const int lheight = 15;
 
 	core::rect<int> pos(10, size.Height-lheight-10, 10+lwidth, size.Height-10);
 	
@@ -561,7 +530,7 @@ void CDemo::createLoadingScreen()
 	// load bigger font
 
 	device->getGUIEnvironment()->getSkin()->setFont(
-		device->getGUIEnvironment()->getFont("../../media/fontlucida.png"));
+		device->getGUIEnvironment()->getFont("../../media/fonthaettenschweiler.bmp"));
 
 	// set new font color
 

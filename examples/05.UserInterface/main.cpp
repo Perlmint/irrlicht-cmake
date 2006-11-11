@@ -27,8 +27,6 @@ IrrlichtDevice *device = 0;
 s32 cnt = 0;
 IGUIListBox* listbox = 0;
 
-core::array < SColor > SkinColor;
-
 
 /*
 The Event Receiver is not only capable of getting keyboard and
@@ -44,7 +42,7 @@ the pointer to the gui environment.
 class MyEventReceiver : public IEventReceiver
 {
 public:
-	virtual bool OnEvent(const SEvent &event)
+	virtual bool OnEvent(SEvent event)
 	{
 		if (event.EventType == EET_GUI_EVENT)
 		{
@@ -69,15 +67,8 @@ public:
 					
 					for (s32 i=0; i<EGDC_COUNT ; ++i)
 					{
-						SColor col = SkinColor[i]; //env->getSkin()->getColor((EGUI_DEFAULT_COLOR)i);
-						s32 alpha = col.getAlpha ();
-						alpha += pos - 128;
-						if ( alpha < 0 )
-							alpha = 0;
-						else
-							if ( alpha > 255 )
-								alpha = 255;
-						col.setAlpha( alpha );
+						SColor col = env->getSkin()->getColor((EGUI_DEFAULT_COLOR)i);
+						col.setAlpha(pos);
 						env->getSkin()->setColor((EGUI_DEFAULT_COLOR)i, col);
 					}
 					
@@ -126,13 +117,6 @@ public:
 				{
 					listbox->addItem(L"File open");
 					env->addFileOpenDialog(L"Please choose a file.");
-					return true;
-				}
-
-				if (id == 104)
-				{
-					listbox->addItem(L"Color select");
-					env->addColorSelectDialog(L"Please select a color.");
 					return true;
 				}
 
@@ -199,10 +183,9 @@ int main()
 	the button in the event receiver.
 	*/	
 
-	env->addButton(rect<s32>(10,210,110,210 + 32), 0, 101, L"Quit");
-	env->addButton(rect<s32>(10,250,110,250 + 32), 0, 102, L"New Window");
-	env->addButton(rect<s32>(10,290,110,290 + 32), 0, 103, L"File Open");
-	env->addButton(rect<s32>(10,330,110,330 + 32), 0, 104, L"Color Select");
+	env->addButton(rect<s32>(10,210,100,240), 0, 101, L"Quit");
+	env->addButton(rect<s32>(10,250,100,290), 0, 102, L"New Window");
+	env->addButton(rect<s32>(10,300,100,340), 0, 103, L"File Open");
 
 	/*
 	To make the font a little bit nicer, we load an external font
@@ -211,25 +194,13 @@ int main()
 	*/
 
 	IGUISkin* skin = env->getSkin();
-	IGUIFont* font = env->getFont("../../media/fontlucida.png");
+	IGUIFont* font = env->getFont("../../media/fonthaettenschweiler.bmp");
 	if (font)
 		skin->setFont(font);
 
 	IGUIImage* img = env->addImage(
-		driver->getTexture("../../media/irrlichtlogo2.png"),
+		driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
 		position2d<int>(10,10));
-
-
-	/*
-		We Save the original Skin Color Values, because
-		we only want to lerp alpha value.
-		new skins uses alpha values
-	*/
-
-	for (s32 i=0; i<EGDC_COUNT ; ++i)
-	{
-		SkinColor.push_back ( env->getSkin()->getColor((EGUI_DEFAULT_COLOR)i) );
-	}
 
 	/*
 	Now, we add a static text and a scrollbar, which modifies the
@@ -239,16 +210,16 @@ int main()
 	Then we create an other static text and a list box.
 	*/
 
-	env->addStaticText(L"Transparency Control:", rect<s32>(150,20,350,38), true);
+	env->addStaticText(L"Transparent Control:", rect<s32>(150,20,350,40), true);
 	IGUIScrollBar* scrollbar = env->addScrollBar(true, rect<s32>(150, 45, 350, 60), 0, 104);
 	scrollbar->setMax(255);
 
 	// set scrollbar position to alpha value of an arbitrary element
-	scrollbar->setPos( 128 ); // env->getSkin()->getColor((EGUI_DEFAULT_COLOR)0).getAlpha());
+	scrollbar->setPos(env->getSkin()->getColor((EGUI_DEFAULT_COLOR)0).getAlpha());
 
-	env->addStaticText(L"Logging ListBox:", rect<s32>(50,80,250,98), true);
+	env->addStaticText(L"Logging ListBox:", rect<s32>(50,80,250,100), true);
 	listbox = env->addListBox(rect<s32>(50, 110, 250, 180));
-	env->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 104));
+	env->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
 
 	/*
 	That's all, we only have to draw everything.
@@ -257,7 +228,8 @@ int main()
 	while(device->run() && driver)
 	if (device->isWindowActive())
 	{
-		driver->beginScene(true, true, SColor(0,157,165,196));
+		driver->beginScene(true, true, SColor(0,200,200,200));
+
 		env->drawAll();
 	
 		driver->endScene();

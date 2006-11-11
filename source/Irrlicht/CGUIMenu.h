@@ -27,7 +27,7 @@ namespace gui
 		virtual void draw();
 
 		//! called if an event happened.
-		virtual bool OnEvent(const SEvent &event);
+		virtual bool OnEvent(SEvent event);
 
 		//! Updates the absolute position.
 		virtual void updateAbsolutePosition();

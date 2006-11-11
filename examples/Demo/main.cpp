@@ -15,14 +15,14 @@ using namespace irr;
 
 #ifdef _WIN32
 
-//#pragma comment(lib, "Irrlicht.lib")
+#pragma comment(lib, "Irrlicht.lib")
 INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
 #else
 int main(int argc, char* argv[])
 #endif
 {
 	bool fullscreen = false;
-	bool music = false;
+	bool music = true;
 	bool shadows = false;
 	bool additive = false;
 	bool vsync = false;
@@ -32,8 +32,6 @@ int main(int argc, char* argv[])
 #else
 	video::E_DRIVER_TYPE driverType = video::EDT_DIRECT3D9;
 #endif
-
-	driverType = video::EDT_SOFTWARE2;
 
 	CMainMenu menu;
 
