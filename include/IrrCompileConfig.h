@@ -5,9 +5,6 @@
 #ifndef __IRR_COMPILE_CONFIG_H_INCLUDED__
 #define __IRR_COMPILE_CONFIG_H_INCLUDED__
 
-//! Irrlicht SDK Version
-#define IRRLICHT_SDK_VERSION "1.1"
-
 //! The defines for different operating system are:
 //! _XBOX for XBox
 //! WIN32 for Windows32

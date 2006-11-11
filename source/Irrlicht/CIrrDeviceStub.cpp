@@ -11,6 +11,7 @@
 #include "CLogger.h"
 #include "irrString.h"
 #include <string.h>
+#include "irrlicht.h"
 
 namespace irr
 {

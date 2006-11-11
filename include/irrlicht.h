@@ -130,7 +130,10 @@
 #include "SMeshBufferTangents.h"
 #include "irrTypes.h"
 
-/*! \mainpage Irrlicht Engine 1.1 API documentation
+//! Irrlicht SDK Version
+#define IRRLICHT_SDK_VERSION "1.2"
+
+/*! \mainpage Irrlicht Engine 1.2 API documentation
  *
  * <div align="center"><img src="logobig.png" ></div>
  *
