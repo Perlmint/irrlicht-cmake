@@ -128,6 +128,7 @@
 #include "SMeshBuffer.h"
 #include "SMeshBufferLightMap.h"
 #include "SMeshBufferTangents.h"
+#include "SViewFrustrum.h"
 #include "irrTypes.h"
 
 //! Irrlicht SDK Version
