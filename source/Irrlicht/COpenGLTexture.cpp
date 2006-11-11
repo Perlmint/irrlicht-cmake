@@ -51,9 +51,12 @@ const bool checkFBOStatus(COpenGLDriver* Driver)
             os::Printer::log("FBO has one or several image attachments with different dimensions", ELL_ERROR);
             break;
 
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT
+
         case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
             os::Printer::log("FBO has a duplicate image attachment", ELL_ERROR);
             break;
+#endif
 
         case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
             os::Printer::log("FBO missing an image attachment", ELL_ERROR);
