@@ -10,7 +10,7 @@
 #include "plane3d.h"
 #include "aabbox3d.h"
 #include "rect.h"
-#include <cstring>
+#include <string.h>
 
 namespace irr
 {

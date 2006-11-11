@@ -11,7 +11,7 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#include <cstring>
+#include <string.h>
 
 namespace irr
 {
@@ -21,56 +21,55 @@ namespace video
 const bool checkFBOStatus(COpenGLDriver* Driver)
 {
 #ifdef GL_EXT_framebuffer_object
-    GLenum status = Driver->extGlCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	GLenum status = Driver->extGlCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 
-    //Our FBO is perfect, return true
-    if (status == GL_FRAMEBUFFER_COMPLETE_EXT)
-    {
-        return true;
-    }
+	switch (status)
+	{
+		//Our FBO is perfect, return true
+		case GL_FRAMEBUFFER_COMPLETE_EXT:
+			return true;
 
-    switch (status)
-    {
-        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-            os::Printer::log("FBO has invalid read buffer", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+			os::Printer::log("FBO has invalid read buffer", ELL_ERROR);
+			break;
 
-        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-            os::Printer::log("FBO has invalid draw buffer", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+			os::Printer::log("FBO has invalid draw buffer", ELL_ERROR);
+			break;
 
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-            os::Printer::log("FBO has one or several incomplete image attachments", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+			os::Printer::log("FBO has one or several incomplete image attachments", ELL_ERROR);
+			break;
 
-        case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-            os::Printer::log("FBO has one or several image attachments with different internal formats", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+			os::Printer::log("FBO has one or several image attachments with different internal formats", ELL_ERROR);
+			break;
 
-        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-            os::Printer::log("FBO has one or several image attachments with different dimensions", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+			os::Printer::log("FBO has one or several image attachments with different dimensions", ELL_ERROR);
+			break;
 
+// not part of fbo_object anymore, but won't harm as it is just a return value
 #ifdef GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT
-
-        case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-            os::Printer::log("FBO has a duplicate image attachment", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
+			os::Printer::log("FBO has a duplicate image attachment", ELL_ERROR);
+			break;
 #endif
 
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-            os::Printer::log("FBO missing an image attachment", ELL_ERROR);
-            break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+			os::Printer::log("FBO missing an image attachment", ELL_ERROR);
+			break;
 
-        case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-            os::Printer::log("FBO format unsupported", ELL_ERROR);
-            break;
-        default:
-            break;
-    }
-    os::Printer::log("FBO error", ELL_ERROR);
+		case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+			os::Printer::log("FBO format unsupported", ELL_ERROR);
+			break;
+
+		default:
+			break;
+	}
+	os::Printer::log("FBO error", ELL_ERROR);
 #endif
-    return false;
+	return false;
 }
 
 //! constructor

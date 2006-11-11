@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CZBuffer.h"
-#include <cstring>
+#include <string.h>
 
 namespace irr
 {

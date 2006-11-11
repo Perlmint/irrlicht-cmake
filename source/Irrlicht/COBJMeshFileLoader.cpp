@@ -2,8 +2,8 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include <cstring>
-#include <cctype>
+#include <string.h>
+#include <ctype.h>
 
 #include "COBJMeshFileLoader.h"
 #include "SMeshBuffer.h"
