@@ -61,6 +61,11 @@ void CSceneNodeAnimatorFlyCircle::deserializeAttributes(io::IAttributes* in, io:
 	Radius = in->getAttributeAsFloat("Radius");
 	Speed = in->getAttributeAsFloat("Speed");
 	Direction = in->getAttributeAsVector3d("Direction");
+	
+	if (Direction.equals(core::vector3df(0,0,0)))
+		Direction.set(0,1,0); // irrlicht 1.1 backwards compatibility
+	else
+		Direction.normalize();
 }
 
 
