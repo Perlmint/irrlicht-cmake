@@ -1,5 +1,5 @@
-VERSION = 1.1.0
-# Irrlicht Engine 1.1.0
+VERSION = 1.2.0
+# Irrlicht Engine 1.2
 # Makefile for Linux, created by N.Gebhardt.
 # 
 # To use, just run:
@@ -40,7 +40,8 @@ STATIC_LIB = libIrrlicht.a
 SHARED_LIB = libIrrlicht.so
 IRRLICHT_DLL = ../../bin/Win32-gcc/Irrlicht.dll
 CPPFLAGS = $(CXXINCS) -DIRRLICHT_EXPORTS=1
-CXXFLAGS = -g -Wall -Wno-reorder
+#CXXFLAGS = -g -Wall -Wno-reorder
+CXXFLAGS = -g -Wno-reorder
 # -fexpensive-optimizations -O3
 CFLAGS = -fexpensive-optimizations -O3
 INSTALL_DIR = /usr/local/lib

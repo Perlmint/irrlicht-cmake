@@ -870,7 +870,7 @@ void CColladaFileLoader::readPolygonSection(io::IXMLReaderUTF8* reader,
 	scene::SMesh* mesh)
 {
 	core::stringc material = reader->getAttributeValue("material");
-	int polygonCount = reader->getAttributeValueAsInt("count");
+	// int polygonCount = reader->getAttributeValueAsInt("count");
 	core::array<SInputSlot> slots;
 	core::array<SPolygon> polygons;
 	bool parsePolygonOK = false;

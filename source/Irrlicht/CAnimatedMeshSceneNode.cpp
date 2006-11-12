@@ -162,7 +162,7 @@ inline s32 CAnimatedMeshSceneNode::getFrameNr()
 //! OnPostRender() is called just after rendering the whole scene.
 void CAnimatedMeshSceneNode::OnPostRender(u32 timeMs)
 {
-	s32 frameNr = getFrameNr();
+	getFrameNr();
 
 	if (IsVisible)
 	{

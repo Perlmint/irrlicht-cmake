@@ -131,8 +131,6 @@
 #include "SViewFrustrum.h"
 #include "irrTypes.h"
 
-//! Irrlicht SDK Version
-#define IRRLICHT_SDK_VERSION "1.2"
 
 /*! \mainpage Irrlicht Engine 1.2 API documentation
  *
