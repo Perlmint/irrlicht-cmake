@@ -133,7 +133,7 @@ public:
 				--it;
 			}
 
-		if (AbsoluteRect.isPointInside(point) && IsVisible)
+		if (AbsoluteClippingRect.isPointInside(point) && IsVisible)
 			target = this;
 		
 		return target;
