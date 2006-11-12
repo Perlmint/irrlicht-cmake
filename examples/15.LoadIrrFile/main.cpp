@@ -2,7 +2,7 @@
 Since version 1.1, Irrlicht is able to save and load
 the full scene graph into an .irr file, an xml based
 format. There is also an editor available to edit
-those files, named irrEdit on http://irredit.irrlicht3d.org,
+those files, named irrEdit on http://www.ambiera.com/irredit,
 which can also be used as world and particle editor.
 This tutorial shows how to use .irr files.
 
