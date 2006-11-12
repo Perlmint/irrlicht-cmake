@@ -1,5 +1,21 @@
 -------------------------------------------
-Changes in version 1.2 (???? 2006)
+Changes in version 1.2 (16 Nov 2006)
+
+- Added Solaris/Sparc port (basically some compiler define statements). Irrlicht and the examples should compile out-of-the-box on Suns with the usual Makefiles and gnumake.
+
+- Added texture matrix support for hardware accelerated drivers. This allows for efficient texture coord manipulations for complete meshes at once.
+
+- Multisampling with OpenGL under Linux added
+
+- Non-power-of-two textures are left unscaled if the driver supports such textures.
+
+- new draw2DImage method that speeds up drawing many quads from the same texture. Font drawing is improved by this under OpenGL.
+
+- TGA files are now always correctly flipped and loaded if compressed. All PNG color formats are now supported, including correct alpha handling.
+
+- 3ds mesh loader fix in texture loading, now loads some textures that were not loaded before, but might introduce problems with very recent files. OGRE mesh loader bugfixes and lightmap support. Several B3d mesh loader updates. Obj and mtl loader enhancements.
+
+- A new compile flag (IRR_OPENGL_USE_EXTPOINTER) allows Irrlicht to either use OpenGL extension function pointers or direct OpenGL calls.
 
 - Split ESNRP_LIGHT_AND_CAMERA passes into ESNRP_LIGHT and ESNRP_CAMERA to fix a problem with lights being rendered before cameras in OpenGL (thanks again to Vitek for finding this). ESNRP_LIGHT_AND_CAMERA is now deprecated.
 
@@ -25,8 +41,6 @@ Changes in version 1.2 (???? 2006)
 
 - New methods core::lerp to linearly interpolate two floats and SColor.getLuminance to calculate luminance of RGB color.
 
-- Multisampling with OpenGL under Linux added
-
 - MAJOR API CHANGE:
   Fixed matrix access methods mat(x,y). These were previously said to be (row,column) but actually were (column, row). This lead to some confusion and made their use quite tricky. Irrlicht code is updated for the new method, but applications will silently fail now (i.e. compile without errors, but not working as expected).
 
@@ -34,61 +48,33 @@ Changes in version 1.2 (???? 2006)
 
 - Fixed vertex alpha handling in DirectX drivers.
 
-- Added texture matrix support for hardware accelerated drivers. This allows for efficient texture coord manipulations for complete meshes at once.
-
 - Image writers fixed and working (at least for little endian systems).
 
 - VSync under Linux fixed and correctly working.
-
-- Added Solaris/Sparc port (basically some compiler define statements). Irrlicht and the examples should compile out-of-the-box on Suns with the usual Makefiles and gnumake.
-
-- A new compile flag (IRR_OPENGL_USE_EXTPOINTER) allows Irrlicht to either use OpenGL extension function pointers or direct OpenGL calls.
 
 - New os::Byteswap::byteswap methods which can be used for byteswapping (endianess correction) in mesh loaders and image loaders.
 
 - New video driver feature to check for multitexture feature.
 
-- Non-power-of-two textures are left unscaled if the driver supports such textures.
-
 - Direct3D drivers update the devicelost variable if reseeting failed with this return code.
 
 - VideoModeList under Linux is correctly filled now. No glX calls are made if GLX extension is not found - only software drivers are available then. RandR extension can be enabled with a new compile flag in IrrCompileConfig.h, either instead of XF86VidMode or in addition.
 
-- new draw2DImage method that speeds up drawing many quads from the same texture. Font drawing is improved by this under OpenGL.
-
 - Big Endian support for MS3D loader.
 
-- Apfelbaum software renderer:
-	basic mipmap support (per triangle)
-	switch for using w-buffer instad z-buffer ( default on )
+- Apfelbaum software renderer: basic mipmap support (per triangle), switch for using w-buffer instad z-buffer ( default on )
 
-- Better FPU support.
-	Changed various fpu-call's in whole project.
-	main reason to use faster float to int conversion on x86. ( fistp )
-	goal is that the compiler should do it.. ( eg. /QIfist on msvc 7.1 )
+- Better FPU support: Changed various fpu-call's in whole project (main reason to use faster float to int conversion on x86. ( fistp ))
 
-	- changed Visual Studio 7.1 vcproj project config
-		"Release Fast FPU"
-		-> to __fastcall in
-		-> /QIfist
-- CGUIFont
-	- added True Alpha Font Support.
-		it's a little hack, but it'a good starting point.
-		currently fonts are compatible.
-		in font-file make first pixel half transparent..
-- Scolor
-	replaced s16 color with u16 color
-	replaced s32 color with u32 color
-	main reason:
-		-	get rid of unnecessary arithmetic shift
+- changed Visual Studio 7.1 vcproj project config "Release Fast FPU" to __fastcall in /QIfist
 
-- Colorconverter:
-		X8R8G8B8toA1R5G5B5	-> set Alpha High
-		minor:
-			A1R5G5B5toA8R8G8B8
-				changed if (a) to conditional set
-- CImage
-	added boxfilter (weigthed average), (generic, slow)
+- CGUIFont added True Alpha Font Support. (currently it's a little hack, but it'a good starting point. Fonts are back compatible. To use the new feature make first pixel half transparent in the font file.)
+
+- Scolor: replaced s16 color with u16 color, replaced s32 color with u32 color to get rid of unnecessary arithmetic shift
+
+- Colorconverter: X8R8G8B8toA1R5G5B5, set Alpha High, minor: A1R5G5B5toA8R8G8B8 	changed if (a) to conditional set
+
+- CImage: added boxfilter (weigthed average), (generic, slow)
 
 - The scene manager now sets an ambient light color when calling ISceneManager::drawAll().
   You can influence this by calling ISceneManager::setAmbientLight(). That light color
@@ -99,13 +85,9 @@ Changes in version 1.2 (???? 2006)
 
 - File lists are now sorted.
 
-- TGA files are now always correctly flipped and loaded if compressed. All PNG color formats are now supported, including correct alpha handling.
-
 - Dynamically checking the OpenGL version now instead of at compile time to call the supported methods of the executing machine, not that one of the compile host. This should fix the extension check and the automatic mipmap update.
 
 - Fixed vertex alpha handling of 2D images with OpenGL.
-
-- 3ds mesh loader fix in texture loading, now loads some textures that were not loaded before, but might introduce problems with very recent files. OGRE mesh loader bugfixes and lightmap support. Several B3d mesh loader updates. Obj and mtl loader enhancements.
 
 - Default depth buffer under Windows now 24bit to avoid zbuffer fighting.
 
