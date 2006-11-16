@@ -4,7 +4,7 @@
 
 #include "CImage.h"
 #include "os.h"
-#include <memory.h>
+#include <string.h>
 #include <stdio.h>
 #include "SoftwareDriver2_helper.h"
 

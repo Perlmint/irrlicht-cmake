@@ -12,7 +12,6 @@
 #include "ISceneUserDataSerializer.h"
 
 #include "os.h"
-#include <wchar.h>
 #include <string.h>
 
 #include "CGeometryCreator.h"
@@ -71,9 +70,9 @@ namespace irr
 namespace scene
 {
 
-const wchar_t* IRR_XML_FORMAT_SCENE		= L"irr_scene";
-const wchar_t* IRR_XML_FORMAT_NODE		= L"node";
-const wchar_t* IRR_XML_FORMAT_NODE_ATTR_TYPE	= L"type";
+const core::stringw IRR_XML_FORMAT_SCENE		(L"irr_scene");
+const core::stringw IRR_XML_FORMAT_NODE			(L"node");
+const core::stringw IRR_XML_FORMAT_NODE_ATTR_TYPE	(L"type");
 
 //! constructor
 CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
@@ -1362,13 +1361,13 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent, IS
 
 	scene::ISceneNode* node = 0;
 
-	if ((!parent && !wcscmp(IRR_XML_FORMAT_SCENE, reader->getNodeName())) ||
-		( parent && !wcscmp(IRR_XML_FORMAT_NODE, reader->getNodeName())))
+	if ((!parent && IRR_XML_FORMAT_SCENE==reader->getNodeName()) ||
+		( parent && IRR_XML_FORMAT_NODE==reader->getNodeName()))
 	{
 		if (parent)
 		{
 			// find node type and create it
-			core::stringc attrName = reader->getAttributeValue(IRR_XML_FORMAT_NODE_ATTR_TYPE);
+			core::stringc attrName = reader->getAttributeValue(IRR_XML_FORMAT_NODE_ATTR_TYPE.c_str());
 
 			for (int i=0; i<(int)SceneNodeFactoryList.size() && !node; ++i)
 				node = SceneNodeFactoryList[i]->addSceneNode(attrName.c_str(), parent);
@@ -1389,14 +1388,14 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent, IS
 		switch (reader->getNodeType())
 		{
 		case io::EXN_ELEMENT_END:
-			if (!wcscmp(IRR_XML_FORMAT_NODE,  reader->getNodeName()) ||
-				!wcscmp(IRR_XML_FORMAT_SCENE, reader->getNodeName()))
+			if ((IRR_XML_FORMAT_NODE==reader->getNodeName()) ||
+				(IRR_XML_FORMAT_SCENE==reader->getNodeName()))
 			{
 				endreached = true;
 			}
 			break;
 		case io::EXN_ELEMENT:
-			if (!wcscmp(L"attributes", reader->getNodeName()))
+			if (core::stringw(L"attributes")==reader->getNodeName())
 			{
 				// read attributes
 				io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
@@ -1408,17 +1407,17 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent, IS
 				attr->drop();
 			}
 			else
-			if (!wcscmp(L"materials", reader->getNodeName()))
+			if (core::stringw(L"materials")==reader->getNodeName())
 				readMaterials(reader, node);
 			else
-			if (!wcscmp(L"animators", reader->getNodeName()))
+			if (core::stringw(L"animators")==reader->getNodeName())
 				readAnimators(reader, node);
 			else
-			if (!wcscmp(L"userData", reader->getNodeName()))
+			if (core::stringw(L"userData")==reader->getNodeName())
 				readUserData(reader, node, userDataSerializer);
 			else
-			if (!wcscmp(IRR_XML_FORMAT_NODE, reader->getNodeName()) ||
-				!wcscmp(IRR_XML_FORMAT_SCENE, reader->getNodeName()))
+			if ((IRR_XML_FORMAT_NODE==reader->getNodeName()) ||
+				(IRR_XML_FORMAT_SCENE==reader->getNodeName()))
 			{
 				readSceneNode(reader, node, userDataSerializer);
 			}
@@ -1449,11 +1448,11 @@ void CSceneManager::readMaterials(io::IXMLReader* reader, ISceneNode* node)
 		switch(reader->getNodeType())
 		{
 		case io::EXN_ELEMENT_END:
-			if (!wcscmp(L"materials", name))
+			if (core::stringw(L"materials")==name)
 				return;
 			break;
 		case io::EXN_ELEMENT:
-			if (!wcscmp(L"attributes", name))
+			if (core::stringw(L"attributes")==name)
 			{
 				// read materials from attribute list
 				io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
@@ -1486,11 +1485,11 @@ void CSceneManager::readAnimators(io::IXMLReader* reader, ISceneNode* node)
 		switch(reader->getNodeType())
 		{
 		case io::EXN_ELEMENT_END:
-			if (!wcscmp(L"animators", name))
+			if (core::stringw(L"animators")==name)
 				return;
 			break;
 		case io::EXN_ELEMENT:
-			if (!wcscmp(L"attributes", name))
+			if (core::stringw(L"attributes")==name)
 			{
 				// read animator data from attribute list
 				io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
@@ -1530,11 +1529,11 @@ void CSceneManager::readUserData(io::IXMLReader* reader, ISceneNode* node, IScen
 		switch(reader->getNodeType())
 		{
 		case io::EXN_ELEMENT_END:
-			if (!wcscmp(L"userData", name))
+			if (core::stringw(L"userData")==name)
 				return;
 			break;
 		case io::EXN_ELEMENT:
-			if (!wcscmp(L"attributes", name))
+			if (core::stringw(L"attributes")==name)
 			{
 				// read user data from attribute list
 				io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
@@ -1563,13 +1562,13 @@ void CSceneManager::writeSceneNode(io::IXMLWriter* writer, ISceneNode* node, ISc
 
 	if (node == this)
 	{
-		name = IRR_XML_FORMAT_SCENE;
+		name = IRR_XML_FORMAT_SCENE.c_str();
 		writer->writeElement(name, false);
 	}
 	else
 	{
-		name = IRR_XML_FORMAT_NODE;
-		writer->writeElement(name, false, IRR_XML_FORMAT_NODE_ATTR_TYPE,
+		name = IRR_XML_FORMAT_NODE.c_str();
+		writer->writeElement(name, false, IRR_XML_FORMAT_NODE_ATTR_TYPE.c_str(),
 			core::stringw(getSceneNodeTypeName(node->getType())).c_str());
 	}
 

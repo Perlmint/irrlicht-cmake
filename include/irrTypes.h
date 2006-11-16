@@ -63,6 +63,7 @@ typedef double				f64;
 } // end namespace
 
 
+#include <wchar.h>
 // define the wchar_t type if not already built in.
 #ifdef _MSC_VER 
 #ifndef _WCHAR_T_DEFINED

@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CMemoryReadFile.h"
-#include <memory.h>
+#include <string.h>
 
 namespace irr
 {

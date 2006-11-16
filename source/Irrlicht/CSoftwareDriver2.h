@@ -10,7 +10,7 @@
 #include "CNullDriver.h"
 #include "CImage.h"
 #include "os.h"
-#include <memory.h>
+#include <string.h>
 
 namespace irr
 {

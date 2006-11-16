@@ -9,7 +9,7 @@
 #include "S3DVertex.h"
 #include "aabbox3d.h"
 #include "irrArray.h"
-#include <memory.h>
+#include <string.h>
 
 namespace irr
 {

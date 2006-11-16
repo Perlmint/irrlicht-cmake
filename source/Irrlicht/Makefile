@@ -41,7 +41,7 @@ SHARED_LIB = libIrrlicht.so
 IRRLICHT_DLL = ../../bin/Win32-gcc/Irrlicht.dll
 CPPFLAGS = $(CXXINCS) -DIRRLICHT_EXPORTS=1
 #CXXFLAGS = -g -Wall -Wno-reorder
-CXXFLAGS = -g -Wno-reorder
+CXXFLAGS = -Wno-reorder
 # -fexpensive-optimizations -O3
 CFLAGS = -fexpensive-optimizations -O3
 INSTALL_DIR = /usr/local/lib

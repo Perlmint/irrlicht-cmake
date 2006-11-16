@@ -56,10 +56,11 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 
 	// print version, distribution etc.
 	// thx to LynxLuna for pointing me to the uname function
+	core::stringc linuxversion;
 	struct utsname LinuxInfo; 
 	uname(&LinuxInfo);
 
-	core::stringc linuxversion(LinuxInfo.sysname);
+	linuxversion += LinuxInfo.sysname;
 	linuxversion += " ";
 	linuxversion += LinuxInfo.release;
 	linuxversion += " ";

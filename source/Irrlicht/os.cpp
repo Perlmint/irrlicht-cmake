@@ -24,7 +24,7 @@
 		#include <sys/endian.h>
 		#define bswap_16(X) bswap16(X)
 		#define bswap_32(X) bswap32(X)
-	#elif !defined(__sun__)
+	#elif !defined(__sun__) && !defined(__PPC__)
 		#include <byteswap.h>
 	#else
 		#define bswap_16(X) ((((X)&0xFF) << 8) | (((X)&=0xFF00) >> 8))

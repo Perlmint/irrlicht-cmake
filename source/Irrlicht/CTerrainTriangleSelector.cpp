@@ -6,7 +6,7 @@
 #include "CTerrainSceneNode.h"
 #include "os.h"
 #include <stdio.h>
-#include <memory.h>
+#include <string.h>
 
 namespace irr
 {

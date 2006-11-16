@@ -128,7 +128,6 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 #define _IRR_D3D_NO_SHADER_DEBUGGING 
 
 
-#include <wchar.h>
 #ifdef _IRR_WINDOWS_
 //! Define for swprintf because this method does not match the ISO C standard
 //! on Windows platforms, but it does on all other ones.

@@ -351,7 +351,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 	}
 
 	core::array<s32> indices;
-	indices.reallocate(wcslen(text));
+	indices.reallocate(core::stringw(text).size());
 	u32 n;
 	while(*text)
 	{
