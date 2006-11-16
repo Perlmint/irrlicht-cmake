@@ -129,12 +129,6 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 
 
 #ifdef _IRR_WINDOWS_
-//! Define for swprintf because this method does not match the ISO C standard
-//! on Windows platforms, but it does on all other ones.
-#define   swprintf   _snwprintf
-#endif // _IRR_WINDOWS_
-
-#ifdef _IRR_WINDOWS_
 
 #ifdef IRRLICHT_EXPORTS
 #define IRRLICHT_API __declspec(dllexport)

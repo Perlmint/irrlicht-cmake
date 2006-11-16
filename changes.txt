@@ -109,8 +109,6 @@ Changes in version 1.2 (16 Nov 2006)
 
 - isActive now also work under Linux.
 
-- Fixed light count in OpenGL.
-
 -------------------------------------------
 
 Changes in version 1.1 (06 Aug 2006)

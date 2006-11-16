@@ -313,9 +313,11 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 
 	glViewport(0, 0, screenSize.Width, screenSize.Height); // Reset The Current Viewport
 	setAmbientLight(SColorf(0.0f,0.0f,0.0f,0.0f));
+#ifdef GL_EXT_separate_specular_color
 	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+#endif
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-	glClearDepth(1.0f);
+	glClearDepth(1.0);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
 	glDepthFunc(GL_LEQUAL);
@@ -1612,7 +1614,9 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 		else
 		{
+#ifdef GL_EXT_separate_specular_color
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+#endif
 			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material.Shininess);
 			color[0] = material.SpecularColor.getRed() * inv;
 			color[1] = material.SpecularColor.getGreen() * inv;
@@ -1676,14 +1680,18 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		if (material.Lighting)
 		{
 			glEnable(GL_LIGHTING);
+#ifdef GL_EXT_separate_specular_color
 			// enable specular colors
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+#endif
 		}
 		else
 		{
-			// disable specular colors
 			glDisable(GL_LIGHTING);
+#ifdef GL_EXT_separate_specular_color
+			// disable specular colors
 			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
+#endif
 		}
 	}
 
