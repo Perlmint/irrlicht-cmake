@@ -166,11 +166,11 @@ void CSphereSceneNode::setSizeAndPolys()
 	}
 
 	// the vertex at the top of the sphere
-	Buffer.Vertices[i] = video::S3DVertex(0.0f,Radius,0.0f, 1.0f,1.0f,1.0f, clr, 0.5f, 0.5f);
+	Buffer.Vertices[i] = video::S3DVertex(0.0f,Radius,0.0f, 0.0f,1.0f,0.0f, clr, 0.5f, 0.5f);
 
 	// the vertex at the bottom of the sphere
 	++i;
-	Buffer.Vertices[i] = video::S3DVertex(0.0f,-Radius,0.0f, -1.0f,-1.0f,-1.0f, clr, 0.5f, 0.5f);
+	Buffer.Vertices[i] = video::S3DVertex(0.0f,-Radius,0.0f, 0.0f,-1.0f,0.0f, clr, 0.5f, 0.5f);
 
 	// recalculate bounding box
 

@@ -86,6 +86,7 @@
 #include "ISceneManager.h"
 #include "ISceneNode.h"
 #include "IAttributes.h"
+#include "ISceneUserDataSerializer.h"
 #include "ITriangleSelector.h"
 #include "ISceneNodeAnimator.h"
 #include "ISceneCollisionManager.h"
