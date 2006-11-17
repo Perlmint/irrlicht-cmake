@@ -307,7 +307,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 	
 	totalTime = (frameCount / framesPerSecond) * 1000.0f;
 	
-	s32 jointCount = *(u16*)pPtr;
+	u16 jointCount = *(u16*)pPtr;
 #ifdef __BIG_ENDIAN__
 	jointCount = os::Byteswap::byteswap(jointCount);
 #endif
@@ -352,8 +352,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 #ifdef __BIG_ENDIAN__
 			kf->Time = os::Byteswap::byteswap(kf->Time);
-			for (j=0; j<3; ++j)
-				kf->Parameter[j] = os::Byteswap::byteswap(kf->Parameter[j]);
+			for (l=0; l<3; ++l)
+				kf->Parameter[l] = os::Byteswap::byteswap(kf->Parameter[l]);
 #endif
 			pPtr += sizeof(MS3DKeyframe);
 
@@ -371,8 +371,8 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 #ifdef __BIG_ENDIAN__
 			kf->Time = os::Byteswap::byteswap(kf->Time);
-			for (j=0; j<3; ++j)
-				kf->Parameter[j] = os::Byteswap::byteswap(kf->Parameter[j]);
+			for (l=0; l<3; ++l)
+				kf->Parameter[l] = os::Byteswap::byteswap(kf->Parameter[l]);
 #endif
 			pPtr += sizeof(MS3DKeyframe);
 
