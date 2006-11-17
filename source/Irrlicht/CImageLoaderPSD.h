@@ -71,7 +71,7 @@ private:
 
 	bool readRawImageData(irr::io::IReadFile* file);
 	bool readRLEImageData(irr::io::IReadFile* file);
-	c8 getShiftFromChannel(c8 channelNr);
+	s16 getShiftFromChannel(c8 channelNr);
 
 	// member variables
 

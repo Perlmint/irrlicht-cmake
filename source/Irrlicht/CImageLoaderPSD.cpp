@@ -181,7 +181,7 @@ bool CImageLoaderPSD::readRawImageData(irr::io::IReadFile* file)
 			break;
 		}
 
-		c8 shift = getShiftFromChannel(channel);
+		s16 shift = getShiftFromChannel(channel);
 		if (shift != -1)
 		{
 			u32 mask = 0xff << shift;
@@ -320,7 +320,7 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 			}
 		}
 
-		s8 shift = getShiftFromChannel(channel);
+		s16 shift = getShiftFromChannel(channel);
 
 		if (shift != -1)
 		{
@@ -344,7 +344,7 @@ bool CImageLoaderPSD::readRLEImageData(irr::io::IReadFile* file)
 }
 
 
-c8 CImageLoaderPSD::getShiftFromChannel(c8 channelNr)
+s16 CImageLoaderPSD::getShiftFromChannel(c8 channelNr)
 {
 	switch(channelNr)
 	{
