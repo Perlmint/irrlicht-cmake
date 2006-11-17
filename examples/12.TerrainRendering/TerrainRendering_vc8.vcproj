@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="TerrainRendering_vc8"
+	Name="12.TerrainRendering_vc8"
 	ProjectGUID="{3A5B74E5-6390-43B0-A459-2793B81FFD31}"
 	RootNamespace="TerrainRendering_vc8"
 	>

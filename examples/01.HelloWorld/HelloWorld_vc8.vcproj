@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="HelloWorld_vc8"
+	Name="01.HelloWorld_vc8"
 	ProjectGUID="{5AD4C95C-BA38-4692-BA4B-8C25A86208F9}"
 	RootNamespace="HelloWorld_vc8"
 	>

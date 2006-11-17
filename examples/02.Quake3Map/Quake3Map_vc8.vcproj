@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="Quake3Map_vc8"
+	Name="02.Quake3Map_vc8"
 	ProjectGUID="{D1A464A2-D479-458C-98A2-60965D823CD1}"
 	RootNamespace="Quake3Map_vc8"
 	>

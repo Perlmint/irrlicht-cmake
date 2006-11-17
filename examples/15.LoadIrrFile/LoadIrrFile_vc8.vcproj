@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="LoadIrrFile_vc8"
+	Name="15.LoadIrrFile_vc8"
 	ProjectGUID="{78C9F424-523C-49AC-94B7-823AA4A26BF9}"
 	RootNamespace="LoadIrrFile_vc8"
 	>
