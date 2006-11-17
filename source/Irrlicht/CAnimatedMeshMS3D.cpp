@@ -352,7 +352,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 #ifdef __BIG_ENDIAN__
 			kf->Time = os::Byteswap::byteswap(kf->Time);
-			for (l=0; l<3; ++l)
+			for (u32 l=0; l<3; ++l)
 				kf->Parameter[l] = os::Byteswap::byteswap(kf->Parameter[l]);
 #endif
 			pPtr += sizeof(MS3DKeyframe);
@@ -371,7 +371,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 #ifdef __BIG_ENDIAN__
 			kf->Time = os::Byteswap::byteswap(kf->Time);
-			for (l=0; l<3; ++l)
+			for (u32 l=0; l<3; ++l)
 				kf->Parameter[l] = os::Byteswap::byteswap(kf->Parameter[l]);
 #endif
 			pPtr += sizeof(MS3DKeyframe);
