@@ -16,8 +16,8 @@ namespace scene
 {
 
 //! A particle system scene node.
-/** A scene node controlling a particle System. The behavior of the particles
-can be controlling by setting the right particle emitters and effectors.
+/** A scene node controlling a particle system. The behavior of the particles
+can be controlled by setting the right particle emitters and affectors.
 */
 class CParticleSystemSceneNode : public IParticleSystemSceneNode
 {
@@ -36,7 +36,7 @@ public:
 	//! Sets the particle emitter, which creates the particles.
 	virtual void setEmitter(IParticleEmitter* emitter);
 
-	//! Adds new particle effector to the particle system.
+	//! Adds new particle affector to the particle system.
 	virtual void addAffector(IParticleAffector* affector);
 
 	//! Removes all particle affectors in the particle system.
@@ -92,8 +92,8 @@ public:
 	virtual void setParticleSize(
 		const core::dimension2d<f32> &size = core::dimension2d<f32>(5.0f, 5.0f));
 
-	//! Sets if the particles should be global. If it is, the particles are affected by 
-	//! the movement of the particle system scene node too, otherwise they completely 
+	//! Sets if the particles should be global. If they are, the particles are affected by
+	//! the movement of the particle system scene node too, otherwise they completely
 	//! ignore it. Default is true.
 	virtual void setParticlesAreGlobal(bool global);
 
@@ -114,10 +114,19 @@ private:
 	core::list<IParticleAffector*> AffectorList;
 	IParticleEmitter* Emitter;
 	core::array<SParticle> Particles;
-	u32 LastEmitTime;
 	core::dimension2d<f32> ParticleSize;
+	u32 LastEmitTime;
+	s32 MaxParticles;
 
 	SMeshBuffer Buffer;
+
+	enum E_PARTICLES_PRIMITIVE
+	{
+		EPP_POINT=0,
+		EPP_BILLBOARD,
+		EPP_POINTSPRITE
+	};
+	E_PARTICLES_PRIMITIVE ParticlePrimitive;
 
 	bool ParticlesAreGlobal;
 };
