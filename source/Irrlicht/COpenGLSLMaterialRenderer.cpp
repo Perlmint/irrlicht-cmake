@@ -138,6 +138,9 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(video::SMaterial& material,
 	Driver->setTexture(2, material.Texture3);
 	Driver->setTexture(1, material.Texture2);
 	Driver->setTexture(0, material.Texture1);
+
+	Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 	if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 	{
 		if(Program)

@@ -1566,11 +1566,10 @@ void COpenGLDriver::setRenderStates3DMode()
 			MaterialRenderers[LastMaterial.MaterialType].Renderer->OnUnsetMaterial();
 
 		// set new material.
-
 		if (Material.MaterialType >= 0 && Material.MaterialType < (s32)MaterialRenderers.size())
 			MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(
 				Material, LastMaterial, ResetRenderStates, this);
-		setBasicRenderStates(Material, LastMaterial, ResetRenderStates);
+
 		LastMaterial = Material;
 		ResetRenderStates = false;
 	}

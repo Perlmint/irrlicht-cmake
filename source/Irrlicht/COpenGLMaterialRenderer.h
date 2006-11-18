@@ -55,7 +55,9 @@ public:
 			glDisable(GL_BLEND);
 			glDisable(GL_ALPHA_TEST);
 		}
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
+
 };
 
 
@@ -87,6 +89,9 @@ public:
 			glDisable(GL_BLEND);
 			glDisable(GL_ALPHA_TEST);
 		}
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 	}
 };
 
@@ -112,6 +117,9 @@ public:
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			glEnable(GL_BLEND);
 		}
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		glDepthMask(GL_FALSE);
 	}
 
@@ -136,10 +144,9 @@ public:
 	{
 		Driver->disableTextures(1);
 		Driver->setTexture(0, material.Texture1);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			glDisable(GL_ALPHA_TEST);
-
 			glDisable(GL_ALPHA_TEST);
 
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
@@ -154,6 +161,7 @@ public:
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
 		}
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 		glDepthMask(GL_FALSE);
 	}
 
@@ -192,6 +200,9 @@ public:
 	{
 		Driver->disableTextures(1);
 		Driver->setTexture(0, material.Texture1);
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates
 			|| material.MaterialTypeParam != lastMaterial.MaterialTypeParam )
 		{
@@ -243,6 +254,9 @@ public:
 	{
 		Driver->disableTextures(1);
 		Driver->setTexture(0, material.Texture1);
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			glEnable(GL_ALPHA_TEST);
@@ -281,6 +295,7 @@ public:
 		Driver->disableTextures(2);
 		Driver->setTexture(1, material.Texture2);
 		Driver->setTexture(0, material.Texture1);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			if (Driver->queryFeature(EVDF_MULTITEXTURE))
@@ -347,6 +362,7 @@ public:
 				}
 			}
 		}
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
 };
 
@@ -366,6 +382,9 @@ public:
 		Driver->disableTextures(2);
 		Driver->setTexture(1, material.Texture2);
 		Driver->setTexture(0, material.Texture1);
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			if (Driver->queryFeature(EVDF_MULTITEXTURE))
@@ -409,6 +428,9 @@ public:
 	{
 		Driver->disableTextures(1);
 		Driver->setTexture(0, material.Texture1);
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			if (Driver->queryFeature(EVDF_MULTITEXTURE))
@@ -456,6 +478,9 @@ public:
 		Driver->disableTextures(2);
 		Driver->setTexture(1, material.Texture2);
 		Driver->setTexture(0, material.Texture1);
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			glDisable(GL_ALPHA_TEST);
@@ -532,6 +557,9 @@ public:
 		Driver->disableTextures(2);
 		Driver->setTexture(1, material.Texture2);
 		Driver->setTexture(0, material.Texture1);
+
+		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			if (Driver->queryFeature(EVDF_MULTITEXTURE))
