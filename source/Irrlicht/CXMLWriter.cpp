@@ -42,7 +42,7 @@ void CXMLWriter::writeXMLHeader()
 	File->write(&h, 2);
 
 	wchar_t* p = L"<?xml version=\"1.0\"?>";
-	File->write(p, wcslen(p)*sizeof(wchar_t));
+	File->write(p, wcslen(p)*2);
 
 	writeLineBreak();
 }
@@ -69,7 +69,7 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 	// write name
 
 	File->write(L"<", 2);
-	File->write(name, wcslen(name)*sizeof(wchar_t));
+	File->write(name, wcslen(name)*2);
 
 	// write attributes
 
@@ -105,7 +105,7 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 	// write name
 
 	File->write(L"<", 2);
-	File->write(name, wcslen(name)*sizeof(wchar_t));
+	File->write(name, wcslen(name)*2);
 
 	// write attributes
 	u32 i=0;
@@ -129,7 +129,7 @@ void CXMLWriter::writeAttribute(const wchar_t* name, const wchar_t* value)
 		return;
 
 	File->write(L" ", 2);
-	File->write(name, wcslen(name)*sizeof(wchar_t));
+	File->write(name, wcslen(name)*2);
 	File->write(L"=\"", 4);
 	writeText(value);
 	File->write(L"\"", 2);
@@ -163,7 +163,7 @@ void CXMLWriter::writeClosingTag(const wchar_t* name)
 	}
 
 	File->write(L"</", 4);
-	File->write(name, wcslen(name)*sizeof(wchar_t));
+	File->write(name, wcslen(name)*2);
 	File->write(L">", 2);
 }
 
