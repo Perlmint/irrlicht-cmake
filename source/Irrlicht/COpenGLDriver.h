@@ -11,7 +11,7 @@
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#ifdef WIN32
+#ifdef _IRR_WINDOWS_
 	// include windows headers for HWND
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>

@@ -13,7 +13,7 @@
 
 namespace irr
 {
-namespace video  
+namespace video
 {
 
 //! Class for rendering normal maps with OpenGL
@@ -22,7 +22,7 @@ class COpenGLNormalMapRenderer : public COpenGLShaderMaterialRenderer, public IS
 public:
 
 	//! Constructor
-	COpenGLNormalMapRenderer(video::COpenGLDriver* driver, 
+	COpenGLNormalMapRenderer(video::COpenGLDriver* driver,
 		s32& outMaterialTypeNr, IMaterialRenderer* baseMaterial);
 
 	//! Destructor
@@ -32,12 +32,12 @@ public:
 	//! material renderer should be set.
 	virtual void OnSetConstants(IMaterialRendererServices* services, s32 userData);
 
-	//! Returns the render capability of the material. 
+	//! Returns the render capability of the material.
 	virtual s32 getRenderCapability();
 
 protected:
 
-	bool CompiledShaders;	
+	bool CompiledShaders;
 };
 
 
