@@ -36,7 +36,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
-	TextureNPOTExtension(false), EXTPackedDepthStencil(false),
+	TextureNPOTExtension(false), FramebufferObjectExtension(false), EXTPackedDepthStencil(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0),
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
@@ -203,7 +203,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
-	TextureNPOTExtension(false), EXTPackedDepthStencil(false),
+	TextureNPOTExtension(false), FramebufferObjectExtension(false), EXTPackedDepthStencil(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1),
 	CurrentRendertargetSize(0,0), _device(device)
@@ -234,7 +234,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 	ARBVertexProgramExtension(false), ARBFragmentProgramExtension(false),
 	ARBShadingLanguage100Extension(false), SeparateStencilExtension(false),
 	GenerateMipmapExtension(false), TextureCompressionExtension(false),
-	TextureNPOTExtension(false), EXTPackedDepthStencil(false),
+	TextureNPOTExtension(false), FramebufferObjectExtension(false), EXTPackedDepthStencil(false),
 	RenderTargetTexture(0), LastSetLight(-1), MaxAnisotropy(1),
 	MaxTextureUnits(1), MaxLights(1), CurrentRendertargetSize(0,0)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
@@ -414,6 +414,7 @@ void COpenGLDriver::loadExtensions()
 		GenerateMipmapExtension = gluCheckExtension((const GLubyte*)"GL_SGIS_generate_mipmap", t);
 		TextureCompressionExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_compression", t);
 		TextureNPOTExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_non_power_of_two", t);
+		FramebufferObjectExtension = gluCheckExtension((const GLubyte*)"GL_EXT_framebuffer_object", t);
 		EXTPackedDepthStencil = gluCheckExtension((const GLubyte*)"GL_EXT_packed_depth_stencil", t);
 	}
 	else
@@ -462,6 +463,9 @@ void COpenGLDriver::loadExtensions()
 				else
 				if (strstr(p, "GL_ARB_texture_non_power_of_two"))
 					TextureNPOTExtension = true;
+				else
+				if (strstr(p, "GL_EXT_framebuffer_object"))
+					FramebufferObjectExtension = true;
 				else
 				if (strstr(p, "GL_EXT_packed_depth_stencil"))
 					EXTPackedDepthStencil = true;
@@ -713,7 +717,7 @@ void COpenGLDriver::loadExtensions()
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);
 	}
-	MaxTextureUnits = core::min_(MaxTextureUnits,MATERIAL_MAX_TEXTURES);
+	MaxTextureUnits = core::min_((s32)MaxTextureUnits,MATERIAL_MAX_TEXTURES);
 }
 
 
@@ -1410,6 +1414,8 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return ARBShadingLanguage100Extension;
 	case EVDF_TEXTURE_NPOT:
 		return TextureNPOTExtension;
+	case EVDF_FRAMEBUFFER_OBJECT:
+		return FramebufferObjectExtension;
 	default:
 		return false;
 	};
@@ -2735,7 +2741,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 	video::ITexture* rtt = 0;
 #if defined(GL_EXT_framebuffer_object)
 	// if driver supports FrameBufferObjects, use them
-	if (pGlFramebufferTexture2DEXT)
+	if (FramebufferObjectExtension)
         	rtt = new COpenGLTexture(size, EXTPackedDepthStencil, "rt", this);
 	else
 #endif

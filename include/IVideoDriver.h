@@ -105,7 +105,10 @@ namespace video
 		EVDF_HLSL,
 
 		//! Are non-power-of-two textures supported?
-		EVDF_TEXTURE_NPOT
+		EVDF_TEXTURE_NPOT,
+
+		//! Are framebuffer objects supported?
+		EVDF_FRAMEBUFFER_OBJECT
 	};
 
 	//! enumeration for geometry transformation states

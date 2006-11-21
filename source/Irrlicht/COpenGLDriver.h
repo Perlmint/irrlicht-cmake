@@ -351,6 +351,7 @@ namespace video
 		bool GenerateMipmapExtension;
 		bool TextureCompressionExtension;
 		bool TextureNPOTExtension;
+		bool FramebufferObjectExtension;
 		bool EXTPackedDepthStencil;
 
 		SMaterial Material, LastMaterial;
