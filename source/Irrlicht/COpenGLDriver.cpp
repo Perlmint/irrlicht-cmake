@@ -2002,7 +2002,7 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 	glStencilFunc(GL_ALWAYS, 0, 0);
 	glEnable(GL_CULL_FACE);
 
-	glEnable(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3,GL_FLOAT,sizeof(core::vector3df),&triangles[0]);
 
 	if (!zfail)
@@ -2030,7 +2030,7 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 		glDrawArrays(GL_TRIANGLES,0,count);
 	}
 
-	glDisable(GL_VERTEX_ARRAY); //not stored on stack
+	glDisableClientState(GL_VERTEX_ARRAY); //not stored on stack
 	glPopAttrib();
 }
 
@@ -2046,7 +2046,6 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 
 	// store attributes
 	glPushAttrib( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT | GL_POLYGON_BIT | GL_STENCIL_BUFFER_BIT );
-	glPushMatrix();
 
 	glDisable( GL_LIGHTING );
 	glDisable(GL_FOG);
@@ -2061,26 +2060,27 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable( GL_STENCIL_TEST );
-	glStencilFunc(GL_LESS, 0, 0xFFFFFFFFL);
+	glStencilFunc(GL_NOTEQUAL, 0, 0xFFFFFFFFL);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-	glLoadIdentity();
-
 	// draw a shadow rectangle covering the entire screen using stencil buffer
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
 
 	glBegin(GL_TRIANGLE_STRIP);
 
 	glColor4ub (leftUpEdge.getRed(), leftUpEdge.getGreen(), leftUpEdge.getBlue(), leftUpEdge.getAlpha() );
-	glVertex3f(-10.1f, 10.1f,0.90f);
+	glVertex3f(-1.1f, 1.1f,0.9f);
 
 	glColor4ub (leftDownEdge.getRed(), leftDownEdge.getGreen(), leftDownEdge.getBlue(), leftDownEdge.getAlpha() );
-	glVertex3f(-10.1f,-10.1f,0.90f);
+	glVertex3f(-1.1f,-1.1f,0.9f);
 
 	glColor4ub (rightUpEdge.getRed(), rightUpEdge.getGreen(), rightUpEdge.getBlue(), rightUpEdge.getAlpha() );
-	glVertex3f( 10.1f, 10.1f,0.90f);
+	glVertex3f( 1.1f, 1.1f,0.9f);
 
 	glColor4ub (rightDownEdge.getRed(), rightDownEdge.getGreen(), rightDownEdge.getBlue(), rightDownEdge.getAlpha() );
-	glVertex3f( 10.1f,-10.1f,0.90f);
+	glVertex3f( 1.1f,-1.1f,0.9f);
 
 	glEnd();
 
