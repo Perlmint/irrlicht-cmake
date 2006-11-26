@@ -4,7 +4,7 @@
 #ifndef __C_DEMO_H_INCLUDED__
 #define __C_DEMO_H_INCLUDED__
 
-//#define USE_AUDIERE
+#define USE_IRRKLANG
 //#define USE_SDL_MIXER
 
 #include <irrlicht.h>
@@ -13,21 +13,23 @@
 #include <windows.h>
 #endif
 
-#ifdef USE_AUDIERE
-#include <audiere.h> // your compiler throws an error here? get audiere from 
-                     // http://audiere.sourceforge.net/ or comment 
-                     // the 'define USE_AUDIERE' above.
-using namespace audiere;
-#ifdef _IRR_WINDOWS_
-#pragma comment (lib, "audiere.lib")
-#endif
+using namespace irr;
+
+// audio support
+
+#ifdef USE_IRRKLANG
+	#include <irrKlang.h>	// problem here? go to http://www.ambiera.com/irrklang and download
+							// the irrKlang library or undefine USE_IRRKLANG at the beginning
+							// of this file.
+	#ifdef _IRR_WINDOWS_
+	#pragma comment (lib, "irrKlang.lib")
+	#endif
 #endif
 #ifdef USE_SDL_MIXER
-# include <SDL/SDL.h>
-# include <SDL/SDL_mixer.h>
+	# include <SDL/SDL.h>
+	# include <SDL/SDL_mixer.h>
 #endif
 
-using namespace irr;
 const int CAMERA_COUNT = 7;
 
 class CDemo : public IEventReceiver
@@ -58,13 +60,13 @@ private:
 	video::E_DRIVER_TYPE driverType;
 	IrrlichtDevice *device;
 
-#ifdef USE_AUDIERE
-	void startAudiere();
-	AudioDevicePtr audiereDevice;
-	OutputStreamPtr stream;
-	OutputStreamPtr ballSound;
-	OutputStreamPtr impactSound;
+#ifdef USE_IRRKLANG
+	void startIrrKlang();
+	audio::ISoundEngine* irrKlang;	
+	audio::ISoundSource* ballSound;
+	audio::ISoundSource* impactSound;
 #endif
+
 #ifdef USE_SDL_MIXER
 	void startSound();
 	void playSound(Mix_Chunk *);

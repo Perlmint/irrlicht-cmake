@@ -1,5 +1,5 @@
 -------------------------------------------
-Changes in version 1.2 (16 Nov 2006)
+Changes in version 1.2 (29 Nov 2006)
 
 - Added Solaris/Sparc port (basically some compiler define statements). Irrlicht and the examples should compile out-of-the-box on Suns with the usual Makefiles and gnumake.
 

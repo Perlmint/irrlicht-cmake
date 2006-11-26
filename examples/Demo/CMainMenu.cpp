@@ -357,7 +357,6 @@ bool CMainMenu::OnEvent(SEvent event)
 
 void CMainMenu::setTransparency()
 {
-	return;
 	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
 	{
 		video::SColor col = device->getGUIEnvironment()->getSkin()->

@@ -1,11 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Quake3Map", "Quake3Map.vcproj", "{AF8861FB-BB79-4562-9F17-34C72F94DCD1}"
 	ProjectSection(ProjectDependencies) = postProject
-		{E08E042A-6C45-411B-92BE-3CC31331019F} = {E08E042A-6C45-411B-92BE-3CC31331019F}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Irrlicht", "..\..\source\Irrlicht\Irrlicht7.1.vcproj", "{E08E042A-6C45-411B-92BE-3CC31331019F}"
-	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -21,12 +16,6 @@ Global
 		{AF8861FB-BB79-4562-9F17-34C72F94DCD1}.Relase - Fast FPU.Build.0 = Release|Win32
 		{AF8861FB-BB79-4562-9F17-34C72F94DCD1}.Release.ActiveCfg = Release|Win32
 		{AF8861FB-BB79-4562-9F17-34C72F94DCD1}.Release.Build.0 = Release|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug.ActiveCfg = Debug|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug.Build.0 = Debug|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Relase - Fast FPU.ActiveCfg = Relase - Fast FPU|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Relase - Fast FPU.Build.0 = Relase - Fast FPU|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release.ActiveCfg = Release|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
