@@ -65,6 +65,9 @@ namespace gui
 		//! An icon is a string, displayed with the icon font. When using the build-in-font of the
 		//! Irrlicht engine as icon font, the icon strings defined in GUIIcons.h can be used.
 		virtual void setIconFont(IGUIFont* font);
+		
+		//! Update the position and size of the listbox, and update the scrollbar
+		virtual void updateAbsolutePosition();
 
 	private:
 

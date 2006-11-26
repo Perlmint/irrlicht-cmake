@@ -43,9 +43,13 @@ namespace gui
 
 		//! gets the current position of the scrollbar
 		virtual s32 getPos();
-		
+
+		//! updates the rectangle
+		virtual void updateAbsolutePosition();
+
 	private:
 
+		void refreshControls();
 		void setPosFromMousePos(s32 x, s32 y);
 
 		IGUIButton* UpButton;

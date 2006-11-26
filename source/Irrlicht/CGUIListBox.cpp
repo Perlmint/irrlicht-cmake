@@ -31,13 +31,15 @@ CGUIListBox::CGUIListBox(IGUIEnvironment* environment, IGUIElement* parent,
 	IGUISkin* skin = Environment->getSkin();
 	s32 s = skin->getSize(EGDS_SCROLLBAR_SIZE);
 	//ScrollBar = Environment->addScrollBar(false, core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()), this);
+
+	if (!clip)
+		AbsoluteClippingRect = AbsoluteRect;
+
 	ScrollBar = new CGUIScrollBar(false, Environment, this, 0,
 		core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()),
 		!clip);
-	ScrollBar->drop();
 
 	ScrollBar->setPos(0);
-	ScrollBar->grab();
 	
 	recalculateItemHeight();
 }
@@ -247,6 +249,21 @@ void CGUIListBox::selectNew(s32 ypos, bool onlyHover)
 	}
 }
 
+//! Update the position and size of the listbox, and update the scrollbar
+void CGUIListBox::updateAbsolutePosition()
+{
+	// update scrollbar
+	IGUISkin* skin = Environment->getSkin();
+	s32 s = skin->getSize(EGDS_SCROLLBAR_SIZE);
+	ScrollBar->setRelativePosition(core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()));
+
+	recalculateItemHeight();
+
+	IGUIElement::updateAbsolutePosition();
+
+	if (!Clip)
+		AbsoluteClippingRect = AbsoluteRect;
+}
 
 //! draws the element and its children
 void CGUIListBox::draw()
@@ -260,7 +277,7 @@ void CGUIListBox::draw()
 	irr::video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32>* clipRect = 0;
-	if (Clip)
+	if (!Clip)
 		clipRect = &AbsoluteClippingRect;
 
 	// draw background
@@ -362,8 +379,6 @@ void CGUIListBox::setIconFont(IGUIFont* font)
 	if (IconFont)
 		IconFont->grab();
 }
-
-
 
 
 } // end namespace gui
