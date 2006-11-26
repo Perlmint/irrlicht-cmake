@@ -320,10 +320,12 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glClearDepth(1.0);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 	glDepthFunc(GL_LEQUAL);
 	glFrontFace( GL_CW );
 	glEnable(GL_POINT_SMOOTH);
-	glEnable(GL_LINE_SMOOTH);
+// currently disabled, because often in software, and thus very slow
+//	glEnable(GL_LINE_SMOOTH);
 
 	if (AntiAlias && MultiSamplingExtension)
 		glEnable(GL_MULTISAMPLE_ARB);
@@ -1079,7 +1081,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height) / ss.Height;
 
 	core::rect<s32> poss(targetPos, sourceSize);
-	core::rect<float> npos;
+	core::rect<f32> npos;
 
 	s32 xPlus = renderTargetSize.Width>>1;
 	f32 xFact = 1.0f / xPlus;
@@ -1168,7 +1170,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height) / ss.Height;
 
 	core::rect<s32> poss(targetPos, sourceSize);
-	core::rect<float> npos;
+	core::rect<f32> npos;
 
 	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X-xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
@@ -1209,8 +1211,8 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
 	const core::dimension2d<s32>& ss = texture->getOriginalSize();
-	float ssw=1.0f/ss.Width;
-	float ssh=1.0f/ss.Height;
+	f32 ssw=1.0f/ss.Width;
+	f32 ssh=1.0f/ss.Height;
 
 	core::rect<f32> tcoords;
 	tcoords.UpperLeftCorner.X = (((f32)sourceRect.UpperLeftCorner.X)+0.5f) * ssw;
@@ -1224,7 +1226,7 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
-	core::rect<float> npos;
+	core::rect<f32> npos;
 	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X-xPlus+0.5f) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact;
 	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X-xPlus+0.5f) * xFact;
@@ -1319,7 +1321,7 @@ void COpenGLDriver::draw2DRectangle(const core::rect<s32>& position,
 	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
 	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
-	core::rect<float> npos;
+	core::rect<f32> npos;
 	npos.UpperLeftCorner.X = (f32)(pos.UpperLeftCorner.X-xPlus) * xFact;
 	npos.UpperLeftCorner.Y = (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact;
 	npos.LowerRightCorner.X = (f32)(pos.LowerRightCorner.X-xPlus) * xFact;
@@ -1600,7 +1602,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	{
 		GLfloat color[4];
 
-		float inv = 1.0f / 255.0f;
+		f32 inv = 1.0f / 255.0f;
 
 		color[0] = material.AmbientColor.getRed() * inv;
 		color[1] = material.AmbientColor.getGreen() * inv;

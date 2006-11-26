@@ -1900,20 +1900,20 @@ inline bool CXFileReader::readVector3(core::vector3df& vec)
 // read color without alpha value. Stops after second semicolon after blue value
 inline bool CXFileReader::readRGB(video::SColorf& color)
 {
-	color.a = 1.0f;
 	color.r = readFloat();
 	color.g = readFloat();
 	color.b = readFloat();
+	color.a = 1.0f;
 	return checkForTwoFollowingSemicolons();
 }
 
 // read color with alpha value. Stops after second semicolon after blue value
 inline bool CXFileReader::readRGBA(video::SColorf& color)
 {
-	color.a = readFloat();
 	color.r = readFloat();
 	color.g = readFloat();
 	color.b = readFloat();
+	color.a = readFloat();
 	return checkForTwoFollowingSemicolons();
 }
 
