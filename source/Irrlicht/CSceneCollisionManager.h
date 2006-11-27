@@ -67,7 +67,7 @@ namespace scene
 	private:
 
 		//! recursive method for going through all scene nodes
-		void CSceneCollisionManager::getPickedNodeBB(ISceneNode* root,
+		void getPickedNodeBB(ISceneNode* root,
 					   const core::line3df& ray,
 					   s32 bits,
 					   bool bNoDebugObjects,
