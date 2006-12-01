@@ -482,18 +482,56 @@ namespace core
 	//! Transforms a axis aligned bounding box more accurately than transformBox()
 	inline void matrix4::transformBoxEx(core::aabbox3d<f32>& box) const
 	{
-		core::vector3df edges[8];
-		box.getEdges(edges);
 
-		int i;
-		for (i=0; i<8; ++i)
-			transformVect(edges[i]);
+		const matrix4 &m = *this;
 
-		box.reset(edges[0]);
+		f32 Amin[3];
+		f32 Amax[3];
+		f32 Bmin[3];
+		f32 Bmax[3];
+ 
+		Amin[0] = box.MinEdge.X;
+		Amin[1] = box.MinEdge.Y;
+		Amin[2] = box.MinEdge.Z;
 
-		for (i=1; i<8; ++i)
-			box.addInternalPoint(edges[i]);
+		Amax[0] = box.MaxEdge.X;
+		Amax[1] = box.MaxEdge.Y;
+		Amax[2] = box.MaxEdge.Z;
+
+		Bmin[0] = Bmax[0] = m.M[12];
+		Bmin[1] = Bmax[1] = m.M[13];
+		Bmin[2] = Bmax[2] = m.M[14];
+
+		u32 i, j;
+		for (i = 0; i < 3; ++i) 
+		{
+			for (j = 0; j < 3; ++j) 
+			{
+				f32 a = m(j,i) * Amin[j];
+				f32 b = m(j,i) * Amax[j];
+
+				if (a < b)
+				{
+					Bmin[i] += a;
+					Bmax[i] += b;
+				}
+				else
+				{
+					Bmin[i] += b;
+					Bmax[i] += a;
+				}
+			}
+		}
+
+		box.MinEdge.X = Bmin[0];
+		box.MinEdge.Y = Bmin[1];
+		box.MinEdge.Z = Bmin[2];
+
+		box.MaxEdge.X = Bmax[0];
+		box.MaxEdge.Y = Bmax[1];
+		box.MaxEdge.Z = Bmax[2];
 	}
+
 
 	//! Multiplies this matrix by a 1x4 matrix
 	inline void matrix4::multiplyWith1x4Matrix(f32* matrix) const

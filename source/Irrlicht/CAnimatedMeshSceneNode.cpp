@@ -313,7 +313,7 @@ bool CAnimatedMeshSceneNode::setFrameLoop(s32 begin, s32 end)
 
 	s32 frameCount = Mesh->getFrameCount();
 
-	if (!(begin <= end && 0 < begin && end <= frameCount))
+	if (!(begin <= end && begin >= 0 && end <= frameCount))
 		return false;
 
 	StartFrame = begin;
