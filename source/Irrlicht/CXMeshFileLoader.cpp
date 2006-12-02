@@ -18,7 +18,7 @@ namespace scene
 
 //! Constructor
 CXMeshFileLoader::CXMeshFileLoader(IMeshManipulator* manip,
-								   video::IVideoDriver* driver)
+				   video::IVideoDriver* driver)
 : Manipulator(manip), Driver(driver)
 {
 	if (Manipulator)

@@ -123,18 +123,18 @@ void CSphereSceneNode::setSizeAndPolys()
 
 	// calculate the angle which separates all points in a circle
 
-	float Angle = 2 * core::PI / (f32)PolyCount;
-	float sinay;
-	float cosay;
-	float sinaxz;
-	float cosaxz;
+	f32 Angle = 2 * core::PI / (f32)PolyCount;
+	f32 sinay;
+	f32 cosay;
+	f32 sinaxz;
+	f32 cosaxz;
 
 	i = 0;
-	float axz;
+	f32 axz;
 
 	// we don't start at 0.
 
-	float ay = -Angle / 4;
+	f32 ay = -Angle / 4;
 
 	for (int y = 0; y < PolyCount; ++y)
 	{

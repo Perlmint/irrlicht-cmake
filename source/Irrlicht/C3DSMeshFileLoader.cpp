@@ -205,12 +205,13 @@ IAnimatedMesh* C3DSMeshFileLoader::createMesh(io::IReadFile* file)
 
 
 bool C3DSMeshFileLoader::readPercentageChunk(io::IReadFile* file,
-					ChunkData* chunk, float& percentage)
+					ChunkData* chunk, f32& percentage)
 {
 	ChunkData data;
 	readChunkData(file, data);
 
-	s16 intpercentage;
+	short intpercentage;
+	float fpercentage;
 
 	switch(data.header.id)
 	{
@@ -228,11 +229,13 @@ bool C3DSMeshFileLoader::readPercentageChunk(io::IReadFile* file,
 	case C3DS_PERCENTAGE_F:
 	{
 		// read float
-		file->read(&percentage, 4);
+		file->read(&fpercentage, sizeof(float));
+		data.read += sizeof(float);
 #ifdef __BIG_ENDIAN__
-		percentage = os::Byteswap::byteswap(percentage);
+		percentage = os::Byteswap::byteswap(fpercentage);
+#else
+		percentage = (f32)fpercentage;
 #endif
-		data.read += 4;
 	}
 	break;
 	default:
@@ -335,7 +338,7 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			break;
 		case C3DS_TRANSPARENCY:
 			{
-				float percentage;
+				f32 percentage;
 				readPercentageChunk(file, &data, percentage);
 				if (percentage>0.0f)
 				{

@@ -58,7 +58,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	wglSwapIntervalEXT(0)
     ,pGlBindFramebufferEXT(0), pGlDeleteFramebuffersEXT(0), pGlGenFramebuffersEXT(0),
     pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
-    pGlBindRenderBufferEXT(0), pGlDeleteRenderBuffersEXT(0), pGlGenRenderbuffersEXT(0),
+    pGlBindRenderbufferEXT(0), pGlDeleteRenderbuffersEXT(0), pGlGenRenderbuffersEXT(0),
     pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0)
 {
 	#ifdef _DEBUG
@@ -255,7 +255,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, bool full
 #endif
     ,pGlBindFramebufferEXT(0), pGlDeleteFramebuffersEXT(0), pGlGenFramebuffersEXT(0),
     pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
-    pGlBindRenderBufferEXT(0), pGlDeleteRenderBuffersEXT(0), pGlGenRenderbuffersEXT(0),
+    pGlBindRenderbufferEXT(0), pGlDeleteRenderbuffersEXT(0), pGlGenRenderbuffersEXT(0),
     pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0)
 #endif
 {
@@ -325,12 +325,12 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
 	glClearDepth(1.0);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 	glDepthFunc(GL_LEQUAL);
 	glFrontFace( GL_CW );
-	glEnable(GL_POINT_SMOOTH);
 // currently disabled, because often in software, and thus very slow
+//	glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+//	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+//	glEnable(GL_POINT_SMOOTH);
 //	glEnable(GL_LINE_SMOOTH);
 
 	if (AntiAlias && MultiSamplingExtension)
@@ -542,8 +542,8 @@ void COpenGLDriver::loadExtensions()
         pGlGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) wglGetProcAddress("glGenFramebuffersEXT");
         pGlCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) wglGetProcAddress("glCheckFramebufferStatusEXT");
         pGlFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) wglGetProcAddress("glFramebufferTexture2DEXT");
-        pGlBindRenderBufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC) wglGetProcAddress("glBindRenderBufferEXT");
-        pGlDeleteRenderBuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC) wglGetProcAddress("glDeleteRenderBuffersEXT");
+        pGlBindRenderbufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC) wglGetProcAddress("glBindRenderbufferEXT");
+        pGlDeleteRenderbuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC) wglGetProcAddress("glDeleteRenderbuffersEXT");
         pGlGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC) wglGetProcAddress("glGenRenderbuffersEXT");
         pGlRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress("glRenderbufferStorageEXT");
         pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) wglGetProcAddress("glFramebufferRenderbufferEXT");
@@ -687,11 +687,11 @@ void COpenGLDriver::loadExtensions()
             pGlFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)
                 IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glFramebufferTexture2DEXT"));
 
-            pGlBindRenderBufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC)
-                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glBindRenderBufferEXT"));
+            pGlBindRenderbufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glBindRenderbufferEXT"));
 
-            pGlDeleteRenderBuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC)
-                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteRenderBuffersEXT"));
+            pGlDeleteRenderbuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC)
+                IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDeleteRenderbuffersEXT"));
 
             pGlGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC)
                 IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenRenderbuffersEXT"));
@@ -2607,20 +2607,20 @@ void COpenGLDriver::extGlFramebufferTexture2DEXT (GLenum target, GLenum attachme
 void COpenGLDriver::extGlBindRenderbufferEXT (GLenum target, GLuint renderbuffer)
 {
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
-	if (pGlBindRenderBufferEXT)
-		pGlBindRenderBufferEXT(target, renderbuffer);
+	if (pGlBindRenderbufferEXT)
+		pGlBindRenderbufferEXT(target, renderbuffer);
 #elif defined(GL_EXT_framebuffer_object)
-	glBindRenderBufferEXT(target, renderbuffer);
+	glBindRenderbufferEXT(target, renderbuffer);
 #endif
 }
 
 void COpenGLDriver::extGlDeleteRenderbuffersEXT (GLsizei n, const GLuint *renderbuffers)
 {
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
-	if (pGlDeleteRenderBuffersEXT)
-		pGlDeleteRenderBuffersEXT(n, renderbuffers);
+	if (pGlDeleteRenderbuffersEXT)
+		pGlDeleteRenderbuffersEXT(n, renderbuffers);
 #elif defined(GL_EXT_framebuffer_object)
-	glDeleteRenderBuffersEXT(n, renderbuffers);
+	glDeleteRenderbuffersEXT(n, renderbuffers);
 #endif
 }
 

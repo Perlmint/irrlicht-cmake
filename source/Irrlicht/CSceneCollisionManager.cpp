@@ -276,7 +276,7 @@ void CSceneCollisionManager::testTriangleIntersection(SCollisionData* colData,
 
 		core::vector3df collisionPoint;
 		bool foundCollision = false;
-		float t = 1.0f;
+		f32 t = 1.0f;
 
 		// first check the easy case: Collision within the triangle;
 		// if this happens, it must be at t0 and this is when the sphere

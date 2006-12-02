@@ -136,7 +136,7 @@ class aabbox3d
 		{
 			const vector3d<T> e = getExtent() * (T)0.5;
 			const vector3d<T> t = getCenter() - linemiddle;
-			float r;
+			T r;
 
 			if ((fabs(t.X) > e.X + halflength * fabs(linevect.X)) || 
 				(fabs(t.Y) > e.Y + halflength * fabs(linevect.Y)) ||

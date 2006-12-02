@@ -154,7 +154,7 @@ namespace irr
 
 			core::position2d<s32> CursorPos;
 			core::dimension2d<s32> WindowSize;
-			core::dimension2d<float> InvWindowSize;
+			core::dimension2d<f32> InvWindowSize;
 			bool IsVisible;
 			HWND HWnd;
 

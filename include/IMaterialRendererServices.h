@@ -44,7 +44,7 @@ public:
 	//! {
 	//! 	video::IVideoDriver* driver = services->getVideoDriver();
 	//! 
-	//! 	float time = (float)os::Timer::getTime()/100000.0f;
+	//! 	f32 time = (f32)os::Timer::getTime()/100000.0f;
 	//! 	services->setVertexShaderConstant("fTime", &time, 1);
 	//! 
 	//! 	core::matrix4 worldViewProj(driver->getTransform(video::ETS_PROJECTION));

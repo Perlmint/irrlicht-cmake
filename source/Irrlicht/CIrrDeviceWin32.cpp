@@ -23,15 +23,15 @@ namespace irr
 {
 	namespace video
 	{
-		IVideoDriver* createDirectX8Driver(const core::dimension2d<s32>& screenSize, HWND window, 
-			u32 bits, bool fullscreen, bool stencilbuffer, io::IFileSystem* io, 
-			bool pureSoftware, bool highPrecisionFPU, bool vsync, bool antiAlias);
-
-		IVideoDriver* createDirectX9Driver(const core::dimension2d<s32>& screenSize, HWND window, 
+		IVideoDriver* createDirectX8Driver(const core::dimension2d<s32>& screenSize, HWND window,
 			u32 bits, bool fullscreen, bool stencilbuffer, io::IFileSystem* io,
 			bool pureSoftware, bool highPrecisionFPU, bool vsync, bool antiAlias);
 
-		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, 
+		IVideoDriver* createDirectX9Driver(const core::dimension2d<s32>& screenSize, HWND window,
+			u32 bits, bool fullscreen, bool stencilbuffer, io::IFileSystem* io,
+			bool pureSoftware, bool highPrecisionFPU, bool vsync, bool antiAlias);
+
+		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window,
 			u32 bits, bool fullscreen, bool stencilBuffer, io::IFileSystem* io,
 			bool vsync, bool antiAlias);
 	}
@@ -82,7 +82,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	irr::SEvent event;
 	SEnvMapper* envm = 0;
 
-	switch (message) 
+	switch (message)
 	{
 	case WM_PAINT:
 		{
@@ -95,29 +95,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_ERASEBKGND:
 		return 0;
 
-	case WM_SETCURSOR: 
+	case WM_SETCURSOR:
 		envm = getEnvMapperFromHWnd(hWnd);
 		if (envm &&	!envm->irrDev->getWin32CursorControl()->isVisible())
 		{
-			SetCursor(NULL); 
-			return 0; 
+			SetCursor(NULL);
+			return 0;
 		}
         break;
 
-	case WM_MOUSEWHEEL: 
-		event.EventType = irr::EET_MOUSE_INPUT_EVENT; 
-		event.MouseInput.Wheel = (float)((short)HIWORD(wParam)) / (float)WHEEL_DELTA;
+	case WM_MOUSEWHEEL:
+		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+		event.MouseInput.Wheel = ((irr::f32)((short)HIWORD(wParam))) / (irr::f32)WHEEL_DELTA;
 		event.MouseInput.Event = irr::EMIE_MOUSE_WHEEL;
 
 		POINT p; // fixed by jox
 		p.x = 0; p.y = 0;
 		ClientToScreen(hWnd, &p);
 		event.MouseInput.X = LOWORD(lParam) - p.x;
-		event.MouseInput.Y = HIWORD(lParam) - p.y; 
+		event.MouseInput.Y = HIWORD(lParam) - p.y;
 
-		dev = getDeviceFromHWnd(hWnd); 
-		if (dev) 
-			dev->postEventFromUser(event); 
+		dev = getDeviceFromHWnd(hWnd);
+		if (dev)
+			dev->postEventFromUser(event);
 		break;
 
 	case WM_LBUTTONDOWN:
@@ -261,10 +261,10 @@ namespace irr
 {
 
 //! constructor
-CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType, 
+CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 				 core::dimension2d<s32> windowSize,
-				 u32 bits, bool fullscreen, 
-				 bool stencilbuffer, bool vsync, 
+				 u32 bits, bool fullscreen,
+				 bool stencilbuffer, bool vsync,
 				 bool antiAlias,
 				 bool highPrecisionFPU,
 				 IEventReceiver* receiver,
@@ -284,7 +284,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 	HINSTANCE hInstance = GetModuleHandle(0);
 
 	#ifdef _DEBUG
-	setDebugName("CIrrDeviceWin32");	
+	setDebugName("CIrrDeviceWin32");
 	#endif
 
 	if (driverType != video::EDT_NULL && externalWindow==0)
@@ -296,7 +296,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 		// Register Class
 
 		WNDCLASSEX wcex;
-		wcex.cbSize		= sizeof(WNDCLASSEX); 
+		wcex.cbSize		= sizeof(WNDCLASSEX);
 		wcex.style		= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= (WNDPROC)WndProc;
 		wcex.cbClsExtra		= 0;
@@ -310,7 +310,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 		wcex.hIconSm		= 0;
 
 		// if there is an icon, load it
-		wcex.hIcon = (HICON)LoadImage(hInstance, "irr.ico", IMAGE_ICON, 0,0, LR_LOADFROMFILE); 
+		wcex.hIcon = (HICON)LoadImage(hInstance, "irr.ico", IMAGE_ICON, 0,0, LR_LOADFROMFILE);
 
 		RegisterClassEx(&wcex);
 
@@ -321,7 +321,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 		clientSize.left = 0;
 		clientSize.right = windowSize.Width;
 		clientSize.bottom = windowSize.Height;
-		
+
 		DWORD style = WS_POPUP;
 
 		if (!fullscreen)
@@ -343,7 +343,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 
 		// create window
 
-		HWnd = CreateWindow( ClassName, "", style, windowLeft, windowTop, 
+		HWnd = CreateWindow( ClassName, "", style, windowLeft, windowTop,
 					realWidth, realHeight,	NULL, NULL, hInstance, NULL);
 
 		ShowWindow(HWnd , SW_SHOW);
@@ -423,7 +423,7 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 	{
 	case video::EDT_DIRECT3D8:
 		#ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
-		VideoDriver = video::createDirectX8Driver(windowSize, HWnd, bits, fullscreen, 
+		VideoDriver = video::createDirectX8Driver(windowSize, HWnd, bits, fullscreen,
 			stencilbuffer, FileSystem, false, highPrecisionFPU, vsync, antiAlias);
 		if (!VideoDriver)
 		{
@@ -433,11 +433,11 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 		os::Printer::log("DIRECT3D8 Driver was not compiled into this dll. Try another one.", ELL_ERROR);
 		#endif
 
-		break;	
+		break;
 
 	case video::EDT_DIRECT3D9:
 		#ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
-		VideoDriver = video::createDirectX9Driver(windowSize, HWnd, bits, fullscreen, 
+		VideoDriver = video::createDirectX9Driver(windowSize, HWnd, bits, fullscreen,
 			stencilbuffer, FileSystem, false, highPrecisionFPU, vsync, antiAlias);
 		if (!VideoDriver)
 		{
@@ -447,8 +447,8 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 		os::Printer::log("DIRECT3D9 Driver was not compiled into this dll. Try another one.", ELL_ERROR);
 		#endif
 
-		break;	
-	
+		break;
+
 	case video::EDT_OPENGL:
 
 		#ifdef _IRR_COMPILE_WITH_OPENGL_
@@ -462,7 +462,7 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 		#else
 		os::Printer::log("OpenGL driver was not compiled into this dll.", ELL_ERROR);
 		#endif
-		break;	
+		break;
 
 	case video::EDT_SOFTWARE:
 		if (fullscreen)	switchToFullScreen(windowSize.Width, windowSize.Height, bits);
@@ -575,7 +575,7 @@ void CIrrDeviceWin32::present(video::IImage* image, s32 windowId, core::rect<s32
 		RECT rect;
 		GetClientRect(hwnd, &rect);
 		const void* memory = (const void *)image->lock();
-				
+
 		BITMAPV4HEADER bi;
 		ZeroMemory (&bi, sizeof(bi));
 		bi.bV4Size          = sizeof(BITMAPINFOHEADER);
@@ -623,7 +623,7 @@ void CIrrDeviceWin32::closeDevice()
 bool CIrrDeviceWin32::isWindowActive()
 {
 	bool ret = (GetActiveWindow() == HWnd);
-	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;	
+	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return ret;
 }
 
@@ -641,7 +641,7 @@ bool CIrrDeviceWin32::switchToFullScreen(s32 width, s32 height, s32 bits)
 	dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 	LONG ret = ChangeDisplaySettings(&dm, CDS_FULLSCREEN);
-	
+
 	switch(ret)
 	{
 	case DISP_CHANGE_SUCCESSFUL:
@@ -713,7 +713,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 	if(!(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO*) &osvi)))
 	{
 		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) ) 
+		if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) )
 			return;
 	}
 
@@ -755,7 +755,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 			DWORD dwBufLen;
 
 			RegOpenKeyEx( HKEY_LOCAL_MACHINE,
-				"SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 
+				"SYSTEM\\CurrentControlSet\\Control\\ProductOptions",
 				0, KEY_QUERY_VALUE, &hKey );
 			RegQueryValueEx( hKey, "ProductType", NULL, NULL,
 				(LPBYTE) szProductType, &dwBufLen);
@@ -770,7 +770,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
          	}
 
 		// Display version, service pack (if any), and build number.
-		
+
 		char tmp[255];
 
 		if (osvi.dwMajorVersion <= 4 )
@@ -783,7 +783,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 		}
 		else
 		{
-			sprintf (tmp, "%s (Build %d)", osvi.szCSDVersion, 
+			sprintf (tmp, "%s (Build %d)", osvi.szCSDVersion,
 				osvi.dwBuildNumber & 0xFFFF);
 		}
 
@@ -799,14 +799,14 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 			out.append("Microsoft Windows 95 ");
 			if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' )
 				out.append("OSR2 " );
-		} 
+		}
 
 		if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
 		{
 			out.append("Microsoft Windows 98 ");
 			if ( osvi.szCSDVersion[1] == 'A' )
 				out.append( "SE " );
-        } 
+        }
 
 		if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
 			out.append("Microsoft Windows Me ");
@@ -857,7 +857,7 @@ void CIrrDeviceWin32::setResizeAble(bool resize)
 	s32 windowLeft = (GetSystemMetrics(SM_CXSCREEN) - realWidth) / 2;
 	s32 windowTop = (GetSystemMetrics(SM_CYSCREEN) - realHeight) / 2;
 
-	SetWindowPos(HWnd, HWND_TOP, windowLeft, windowTop, realWidth, realHeight, 
+	SetWindowPos(HWnd, HWND_TOP, windowLeft, windowTop, realWidth, realHeight,
 		SWP_FRAMECHANGED | SWP_NOMOVE | SWP_SHOWWINDOW);
 }
 
@@ -890,7 +890,7 @@ IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(
 }
 
 
-} // end namespace 
+} // end namespace
 
 #endif // _IRR_WINDOWS_
 

@@ -31,22 +31,22 @@ namespace core
 	const f64 PI64			= 3.1415926535897932384626433832795028841971693993751;
 
 	//! Constant for converting radians to degrees.
-	const f64 GRAD_PI		= 180.0 / PI64;
+	const f64 GRAD_PI    = 180.0 / PI64;
 
 	//! Constant for converting degrees to radians.
-	const f64 GRAD_PI2		= PI64 / 180.0;
+	const f64 GRAD_PI2   = PI64 / 180.0;
 
-       //! 32bit Constant for converting from degrees to radians
-       const f32 DEGTORAD              = PI / 180.0f;
+	//! 32bit Constant for converting from degrees to radians
+	const f32 DEGTORAD   = PI / 180.0f;
 
 	//! 32bit constant for converting from radians to degrees
-	const f32 RADTODEG              = 180.0f / PI;
+	const f32 RADTODEG   = 180.0f / PI;
 
 	//! 64bit constant for converting from degrees to radians
-	const f64 DEGTORAD64    = PI64 / 180.0;
+	const f64 DEGTORAD64 = PI64 / 180.0;
 
 	//! 64bit constant for converting from radians to degrees
-	const f64 RADTODEG64    = 180.0 / PI64;
+	const f64 RADTODEG64 = 180.0 / PI64;
 
 	//! returns minimum of two values. Own implementation to get rid of the STL (VS6 problems)
 	template<class T>
@@ -54,8 +54,8 @@ namespace core
 	{
 		return a < b ? a : b;
 	}
-	
-	//! returns minimum of two values. Own implementation to get rid of the STL (VS6 problems)
+
+	//! returns maximum of two values. Own implementation to get rid of the STL (VS6 problems)
 	template<class T>
 	inline T max_(const T a, const T b)
 	{
@@ -93,7 +93,6 @@ namespace core
 	{
 		return (s32) ceilf ( x );
 	}
-
 
 	inline s32 round32 ( f32 x )
 	{

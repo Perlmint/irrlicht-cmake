@@ -136,7 +136,7 @@ private:
 	bool readTrackChunk(io::IReadFile* file, ChunkData& data,
 				IMeshBuffer* mb, const core::vector3df& pivot);
 	bool readObjectChunk(io::IReadFile* file, ChunkData* parent);
-	bool readPercentageChunk(io::IReadFile* file, ChunkData* chunk, float&percentage);
+	bool readPercentageChunk(io::IReadFile* file, ChunkData* chunk, f32& percentage);
 	bool readColorChunk(io::IReadFile* file, ChunkData* chunk, video::SColor& out);
 
 	void readChunkData(io::IReadFile* file, ChunkData& data);

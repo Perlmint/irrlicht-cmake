@@ -32,8 +32,8 @@ IAnimatedMesh* CGeometryCreator::createHillPlaneMesh(const core::dimension2d<f32
 	if (countHills.Width < 0.01f) countHills.Width = 1;
 	if (countHills.Height < 0.01f) countHills.Height = 1;
 
-	float halfX = (tileSize.Width * tileCount.Width) / 2;
-	float halfY = (tileSize.Height * tileCount.Height) / 2;
+	f32 halfX = (tileSize.Width * tileCount.Width) / 2.0f;
+	f32 halfY = (tileSize.Height * tileCount.Height) / 2.0f;
 
 	core::dimension2d<f32> tx;
 	tx.Width = 1.0f / (tileCount.Width / textureRepeatCount.Width);

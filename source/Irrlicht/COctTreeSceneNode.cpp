@@ -116,7 +116,7 @@ void COctTreeSceneNode::render()
 
 	frust.transform(invTrans);
 
-	core::aabbox3d<float> box = frust.getBoundingBox();
+	core::aabbox3d<f32> box = frust.getBoundingBox();
 
 	switch(vertexType)
 	{
