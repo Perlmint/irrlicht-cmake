@@ -84,23 +84,29 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
 		0,				// No Accumulation Buffer
 		0, 0, 0, 0,			// Accumulation Bits Ignored
 		24,				// Z-Buffer (Depth Buffer)
-		StencilBuffer ? 1 : 0,		// Stencil Buffer
+		StencilBuffer ? 1 : 0,		// Stencil Buffer Depth
 		0,				// No Auxiliary Buffer
 		PFD_MAIN_PLANE,			// Main Drawing Layer
 		0,				// Reserved
 		0, 0, 0				// Layer Masks Ignored
 	};
 
-	for (int i=0; i<3; ++i)
+	for (int i=0; i<4; ++i)
 	{
 		if (i == 1)
 		{
-			os::Printer::log("Cannot create a GL device with stencil buffer, disabling stencil shadows.", ELL_WARNING);
+			if (StencilBuffer)
+				os::Printer::log("Cannot create a GL device with stencil buffer, disabling stencil shadows.", ELL_WARNING);
 			StencilBuffer = false;
 			pfd.cStencilBits = 0;
 		}
 		else
 		if (i == 2)
+		{
+			pfd.cDepthBits = 16;
+		}
+		else
+		if (i == 3)
 		{
 			os::Printer::log("Cannot create a GL device context.", ELL_ERROR);
 			return false;
