@@ -5,6 +5,7 @@
 #ifndef __C_XML_WRITER_H_INCLUDED__
 #define __C_XML_WRITER_H_INCLUDED__
 
+#include <wchar.h>
 #include "IXMLWriter.h"
 #include "IWriteFile.h"
 

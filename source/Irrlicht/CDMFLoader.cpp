@@ -1,13 +1,12 @@
 // Copyright (C) 2002-2006 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
-// 
+//
 // This file was originally written by Salvatore Russo.
-// I (Nikolaus Gebhardt) did some minor modifications and changes to it and integrated 
-// it into Irrlicht.
+// I (Nikolaus Gebhardt) did some minor modifications and changes to it and
+// integrated it into Irrlicht.
 // Thanks a lot to Salvatore for his work on this and that he gave me
 // his permission to add it into Irrlicht using the zlib license.
-
 /*
   CDMFLoader by Salvatore Russo (September 2005)
 
@@ -35,9 +34,9 @@ CDMFLoader::CDMFLoader(video::IVideoDriver* driver, ISceneManager* smgr)
 {
 	#ifdef _DEBUG
 	IUnknown::setDebugName("CDMFLoader");
-	#endif	
+	#endif
 
-	if (Driver) 
+	if (Driver)
 		Driver->grab();
 }
 
@@ -45,17 +44,17 @@ CDMFLoader::CDMFLoader(video::IVideoDriver* driver, ISceneManager* smgr)
 /** Destructor*/
 CDMFLoader::~CDMFLoader()
 {
-	if (Driver) 
+	if (Driver)
 		Driver->drop();
 }
 
 
 
 /** Given first three points of a face, returns a face normal*/
-void CDMFLoader::GetFaceNormal(f32 a[3], //First point
-							   f32 b[3], //Second point
-                               f32 c[3], //Third point
-							   f32 out[3]) //Normal computed
+void CDMFLoader::GetFaceNormal(	f32 a[3], //First point
+				f32 b[3], //Second point
+				f32 c[3], //Third point
+				f32 out[3]) //Normal computed
 {
 	f32 v1[3], v2[3];
 
@@ -73,9 +72,9 @@ void CDMFLoader::GetFaceNormal(f32 a[3], //First point
 
 	f32 dist = (f32)sqrtf((out[0] * out[0]) + (out[1] * out[1]) + (out[2] * out[2]));
 
-	if (dist == 0.0f) 
+	if (dist == 0.0f)
 		dist = 0.001f;
-	
+
 	out[0] /= dist;
 	out[1] /= dist;
 	out[2] /= dist;
@@ -86,21 +85,21 @@ void CDMFLoader::GetFaceNormal(f32 a[3], //First point
  \return Pointer to the created mesh. Returns 0 if loading failed.
  If you no longer need the mesh, you should call IAnimatedMesh::drop().
  See IUnknown::drop() for more information.*/
-IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file) 
+IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 {
 	SMesh * Mesh = new SMesh();
 
 	u32 i;
-    
-	if (!file) 
+
+	if (!file)
 		return false;
 
     //Load stringlist
     StringList dmfRawFile(file);
-    
-    if (dmfRawFile.size()==0) 
+
+    if (dmfRawFile.size()==0)
 		return false;
-    
+
     //begin logging with
     //fprintf(flog,"DMF Loader version %1.1f log file\nTrying to load: %s\n",DMFloader_vers,file->getFileName());
     dmfHeader header;
@@ -120,18 +119,18 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
                     header.dmfShadow,header.numObjects,header.numMaterials,
                     header.numVertices,header.numFaces,header.numLights);*/
 
-       //let's set ambient light             
+       //let's set ambient light
        Driver->setAmbientLight( header.dmfAmbient);
-      
+
        //let's create the correct number of materials, vertices and faces
        dmfMaterial *materiali=new dmfMaterial[header.numMaterials];
        dmfVert *verts=new dmfVert[header.numVertices];
-       dmfFace *faces=new dmfFace[header.numFaces];       
-       
+       dmfFace *faces=new dmfFace[header.numFaces];
+
        //let's get the materials
        bool use_mat_dirs=false;
        use_mat_dirs=SceneMgr->getParameters()->getAttributeAsBool(DMF_USE_MATERIALS_DIRS);
-       
+
        if ( GetDMFMaterials(dmfRawFile , materiali,header.numMaterials,use_mat_dirs))
 	   {
                //print to log file some stats
@@ -142,11 +141,11 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
                             materiali[0].lightmapName,materiali[header.numMaterials-1].materialID,
                             materiali[header.numMaterials-1].textureName,materiali[header.numMaterials-1].lightmapName);*/
        }
-       /*else 
+       /*else
 		   fprintf(flog,"Cannot Load Materials.\n");
 
        fprintf(flog,"Trying to load Vertices and Faces...");*/
-       
+
        //let's get vertices and faces
        if(GetDMFVerticesFaces(dmfRawFile, verts,faces))
 	   {
@@ -158,12 +157,12 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
                             verts[header.numVertices-1].tc[0],verts[header.numVertices-1].tc[1],
                             verts[header.numVertices-1].lc[0],verts[header.numVertices-1].lc[1]);*/
        }
-	   /*else 
+	   /*else
 		   fprintf(flog,"Cannot Load Vertices and Faces.\n");*/
-              
-       //create a meshbuffer for each material, then we'll remove empty ones
-       for (i=0; i<header.numMaterials; i++)
-	   {
+
+	//create a meshbuffer for each material, then we'll remove empty ones
+	for (i=0; i<header.numMaterials; i++)
+	{
 			//create a new SMeshBufferLightMap for each material
 			SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
 			buffer->Material.MaterialType = video::EMT_LIGHTMAP_LIGHTING  ;
@@ -172,24 +171,24 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 			buffer->Material.BilinearFilter = true;
 			Mesh->addMeshBuffer(buffer);
 			buffer->drop();
-	   }
-  
-  // Build the mesh buffers 
-	for (i = 0; i < header.numFaces; i++) 
+	}
+
+	// Build the mesh buffers
+	for (i = 0; i < header.numFaces; i++)
 	{
-		if (faces[i].numVerts < 3) 
+		if (faces[i].numVerts < 3)
 			continue;
 
 		f32 normal[3];
 
-		GetFaceNormal(verts[faces[i].firstVert].pos, 
+		GetFaceNormal(verts[faces[i].firstVert].pos,
 			verts[faces[i].firstVert+1].pos, verts[faces[i].firstVert+2].pos, normal);
 
 		SMeshBufferLightMap * meshBuffer = (SMeshBufferLightMap*)Mesh->getMeshBuffer(
 			faces[i].materialID);
 
 		u32 base = meshBuffer->Vertices.size();
-		
+
 		// Add this face's verts
 		u32 v;
 		for (v = 0; v < faces[i].numVerts; v++)
@@ -197,7 +196,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 			dmfVert * vv = &verts[faces[i].firstVert + v];
 			video::S3DVertex2TCoords vert(vv->pos[0], vv->pos[1], vv->pos[2],
 				normal[0], normal[1], normal[2], video::SColor(0,255,255,255), 0.0f, 0.0f);
-			if ( materiali[faces[i].materialID].textureBlend==4 && 
+			if ( materiali[faces[i].materialID].textureBlend==4 &&
 				 SceneMgr->getParameters()->getAttributeAsBool(DMF_FLIP_ALPHA_TEXTURES))
 			{
 				vert.TCoords.set(vv->tc[0],-vv->tc[1]);
@@ -218,26 +217,26 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 		u32 h = faces[i].numVerts - 1, l = 0, c; // High, Low, Center
 		for (v = 0; v < faces[i].numVerts - 2; v++)
 		{
-			if (v & 1) 
-				c = h - 1; 
-			else 
+			if (v & 1)
+				c = h - 1;
+			else
 				c = l + 1;
 
 			meshBuffer->Indices.push_back(base + h);
 			meshBuffer->Indices.push_back(base + l);
 			meshBuffer->Indices.push_back(base + c);
 
-			if (v & 1) 
-				h--; 
-			else 
+			if (v & 1)
+				h--;
+			else
 				l++;
 		}
-    }
+	}
 
     //load textures and lightmaps in materials.
     //don't worry if you receive a could not load texture, cause if you don't need
     //a particular material in your scene it will be loaded and then destroyed.
-    for (i=0; i<header.numMaterials; i++)
+	for (i=0; i<header.numMaterials; i++)
 	{
 		String path;
         path = "";
@@ -255,25 +254,24 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 			for (int j=0; j<(int)(filepath.size()-1); j++)
 				path = path + filepath[j] + String("\\");
         }
-        else 
-			path = path + 
+        else
+			path = path +
 				String( SceneMgr->getParameters()->getAttributeAsString(DMF_TEXTURE_PATH)) + String("\\");
 
         //texture and lightmap
         ITexture *tex = 0;
         ITexture *lig = 0;
-        
-		
+
         //currrent buffer to apply material
         SMeshBufferLightMap* buffer = (SMeshBufferLightMap*)Mesh->getMeshBuffer(i);
 
 		//Primary texture is normal
-        if (materiali[i].textureFlag==0) 
+        if (materiali[i].textureFlag==0)
 			if(materiali[i].textureBlend==4) Driver->setTextureCreationFlag  (ETCF_ALWAYS_32_BIT,true);
 			tex = Driver->getTexture((path+String(materiali[i].textureName)).c_str());
 
         //Primary texture is just a colour
-        if(materiali[i].textureFlag==1) 
+        if(materiali[i].textureFlag==1)
 		{
 			String colour(materiali[i].textureName);
 			String alpha,red,green,blue;
@@ -305,11 +303,11 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 				core::dimension2d<s32>(8,8),buf);
 
 			tex = Driver->addTexture("", immagine);
-			
+
 			//to support transparent materials
 			if(color.getAlpha()!=255 && materiali[i].textureBlend==4){
 			    buffer->Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL ;
-                buffer->Material.MaterialTypeParam =(((float) (color.getAlpha()-1))/255.0f);
+                buffer->Material.MaterialTypeParam =(((f32) (color.getAlpha()-1))/255.0f);
 			}
 			immagine->drop();
         }
@@ -318,30 +316,30 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
         if (materiali[i].lightmapFlag == 0)
             lig = Driver->getTexture((path+String(materiali[i].lightmapName)).c_str());
         else //no lightmap
-		{
+	{
              lig = 0;
              buffer->Material.MaterialType = video::EMT_SOLID;
-             float mult = 100.0f - header.dmfShadow;
-             mult = mult/100.0f;
+             f32 mult = 100.0f - header.dmfShadow;
+             mult /= 100.0f;
              buffer->Material.AmbientColor=header.dmfAmbient.getInterpolated  (  SColor(255,0,0,0),mult);
-        }		
-        
+        }
+
         if(materiali[i].textureBlend==4) {
         	buffer->Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
         	buffer->Material.MaterialTypeParam =SceneMgr->getParameters()->getAttributeAsFloat(DMF_ALPHA_CHANNEL_REF);
-        	}
-             
+       	}
+
         core::dimension2d<s32> texsize;
         core::dimension2d<s32> ligsize;
-        
+
         if (tex && header.dmfVersion<1.1)
 			texsize=tex->getSize();
 
         if (lig && header.dmfVersion<1.1)
-			ligsize=lig->getSize();					
-                    
+			ligsize=lig->getSize();
+
         // fprintf(flog,"%s real size w:%d h:%d\n",materiali[i].textureName,texsize.Width,texsize.Height);
-        
+
         //if texture is present mirror vertically owing to DeleD rapresentation
         if (tex && header.dmfVersion<1.1)
 		{
@@ -377,13 +375,12 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 						}
 			     //fprintf(flog,"  Color Format: ECF_A8R8G8B8\n"	);
 				}
-				
 		}
     }
 
     if(tex && header.dmfVersion<1.1)
 	{
-       tex->unlock();   
+       tex->unlock();
        tex->regenerateMipMapLevels();
     }
 
@@ -423,7 +420,6 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 
 					//fprintf(flog,"  Color Format: ECF_A8R8G8B8\n"	);
 				}
-				
 			}
     }
 
@@ -431,19 +427,19 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 	{
             lig->unlock();
             lig->regenerateMipMapLevels();
-    }       
+    }
 
     buffer->Material.Texture1=tex;
     buffer->Material.Texture2=lig;
   }
-  
+
   delete verts;
   delete faces;
   delete materiali;
 }
 //else
-// fprintf(flog,"Cannot load %s, please check it's generated with DeleD 0.91+.");   
-    
+// fprintf(flog,"Cannot load %s, please check it's generated with DeleD 0.91+.");
+
     //closing log file
     //fclose(flog);
 
@@ -457,7 +453,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 		{
 			// Meshbuffer is empty -- drop it
 			Mesh->MeshBuffers[i]->drop();
-			Mesh->MeshBuffers.erase(i);		
+			Mesh->MeshBuffers.erase(i);
 		}
 		else
 		{
@@ -467,7 +463,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 
 
 	// create bounding box
-	for (i = 0; i < Mesh->MeshBuffers.size(); i++) 
+	for (i = 0; i < Mesh->MeshBuffers.size(); i++)
 	{
 		((SMeshBufferLightMap*)Mesh->MeshBuffers[i])->recalculateBoundingBox();
 	}

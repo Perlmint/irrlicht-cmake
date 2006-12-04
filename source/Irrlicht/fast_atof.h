@@ -13,33 +13,32 @@ namespace irr
 namespace core
 {
 
-const float fast_atof_table[] =	{
-										0.f,
-										0.1f,
-										0.01f,
-										0.001f,
-										0.0001f,
-										0.00001f,
-										0.000001f,
-										0.0000001f,
-										0.00000001f,
-										0.000000001f,
-										0.0000000001f,
-										0.00000000001f,
-										0.000000000001f,
-										0.0000000000001f,
-										0.00000000000001f,
-										0.000000000000001f
-									};
+const f32 fast_atof_table[] = {
+	0.f,
+	0.1f,
+	0.01f,
+	0.001f,
+	0.0001f,
+	0.00001f,
+	0.000001f,
+	0.0000001f,
+	0.00000001f,
+	0.000000001f,
+	0.0000000001f,
+	0.00000000001f,
+	0.000000000001f,
+	0.0000000000001f,
+	0.00000000000001f,
+	0.000000000000001f
+};
 
 //! Provides a fast function for converting a string into a float,
 //! about 6 times faster than atof in win32.
-// If you find any bugs, please send them to me, niko (at) irrlicht3d.org.
-inline const char* fast_atof_move( const char* c, float& out)
+inline const char* fast_atof_move(const char* c, f32& out)
 {
 	bool inv = false;
 	char *t;
-	float f;
+	f32 f;
 
 	if (*c=='-')
 	{
@@ -47,7 +46,7 @@ inline const char* fast_atof_move( const char* c, float& out)
 		inv = true;
 	}
 
-	f = (float)strtol(c, &t, 10);
+	f = (f32)strtol(c, &t, 10);
 
 	c = t;
 
@@ -55,7 +54,7 @@ inline const char* fast_atof_move( const char* c, float& out)
 	{
 		c++;
 
-		float pl = (float)strtol(c, &t, 10);
+		f32 pl = (f32)strtol(c, &t, 10);
 		pl *= fast_atof_table[t-c];
 
 		f += pl;
@@ -65,8 +64,8 @@ inline const char* fast_atof_move( const char* c, float& out)
 		if (*c == 'e')
 		{
 			++c;
-			float exp = (float)strtol(c, &t, 10);
-			f *= (float)pow(10.0f, exp);
+			f32 exp = (f32)strtol(c, &t, 10);
+			f *= (f32)pow(10.0f, exp);
 			c = t;
 		}
 	}
@@ -80,12 +79,11 @@ inline const char* fast_atof_move( const char* c, float& out)
 
 //! Provides a fast function for converting a string into a float,
 //! about 6 times faster than atof in win32.
-// If you find any bugs, please send them to me, niko (at) irrlicht3d.org.
-inline const char* fast_atof_move_const(const char* c, float& out)
+inline const char* fast_atof_move_const(const char* c, f32& out)
 {
 	bool inv = false;
 	char *t;
-	float f;
+	f32 f;
 
 	if (*c=='-')
 	{
@@ -93,7 +91,7 @@ inline const char* fast_atof_move_const(const char* c, float& out)
 		inv = true;
 	}
 
-	f = (float)strtol(c, &t, 10);
+	f = (f32)strtol(c, &t, 10);
 
 	c = t;
 
@@ -101,7 +99,7 @@ inline const char* fast_atof_move_const(const char* c, float& out)
 	{
 		c++;
 
-		float pl = (float)strtol(c, &t, 10);
+		f32 pl = (f32)strtol(c, &t, 10);
 		pl *= fast_atof_table[t-c];
 
 		f += pl;
@@ -125,9 +123,9 @@ inline const char* fast_atof_move_const(const char* c, float& out)
 }
 
 
-inline float fast_atof(const char* c)
+inline f32 fast_atof(const char* c)
 {
-	float ret;
+	f32 ret;
 	fast_atof_move_const(c, ret);
 	return ret;
 }

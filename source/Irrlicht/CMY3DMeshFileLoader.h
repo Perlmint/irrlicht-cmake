@@ -1,7 +1,7 @@
 // Copyright (C) 2002-2006 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
-// 
+//
 // This file was originally written by ZDimitor.
 // I (Nikolaus Gebhardt) did some few changes to this:
 // - replaced logging calls to their os:: counterparts
@@ -11,10 +11,10 @@
 // - added EAMT_MY3D file type
 // - fixed a memory leak when decompressing RLE data.
 // - cleaned multi character constant problems with gcc
-// - removed octree child scene node generation because irrlicht is now able to draw 
+// - removed octree child scene node generation because irrlicht is now able to draw
 //   scene nodes with transparent and sold materials in them at the same time. (see changes.txt)
 // Thanks a lot to ZDimitor for his work on this and that he gave me
-// his permission to add it into Irrlicht. 
+// his permission to add it into Irrlicht.
 
 //--------------------------------------------------------------------------------
 // This tool created by ZDimitor everyone can use it as wants
@@ -41,30 +41,29 @@
 
 #include "CMY3DStuff.h"
 
-namespace irr 
+namespace irr
 {
-namespace scene 
+namespace scene
 {
-
 
 
 class CMY3DMeshFileLoader : public IMeshLoader
 {
 public:
 	CMY3DMeshFileLoader(
-        io::IFileSystem* fs, video::IVideoDriver* driver, ISceneManager *scmgr);
+	io::IFileSystem* fs, video::IVideoDriver* driver, ISceneManager *scmgr);
 	virtual ~CMY3DMeshFileLoader();
 
 	virtual bool isALoadableFileExtension(const c8* fileName);
 
 	virtual IAnimatedMesh* createMesh(io::IReadFile* file);
 
-	//! getting access to the nodes (with transparent material), creating 
-    //! while loading .my3d file 
+	//! getting access to the nodes (with transparent material), creating
+	//! while loading .my3d file
 	core::array<ISceneNode*>& getChildNodes();
-	
+
 private:
-	
+
 	scene::SMesh* Mesh;
 
 	video::IVideoDriver* Driver;
@@ -77,8 +76,9 @@ private:
 	struct SMyMaterialEntry
 	{
 		SMyMaterialEntry ()
-            : Texture1FileName("null"), Texture2FileName("null"),
-            Texture1(0), Texture2(0), MaterialType(video::EMT_SOLID) {;}
+		: Texture1FileName("null"), Texture2FileName("null"),
+		Texture1(0), Texture2(0), MaterialType(video::EMT_SOLID) {;}
+
 		SMyMaterialHeader Header;
 		core::stringc Texture1FileName;
 		core::stringc Texture2FileName;

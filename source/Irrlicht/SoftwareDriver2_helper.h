@@ -20,7 +20,7 @@ namespace irr
 
 
 //! used as zBuffer Type
-typedef float TZBufferType2;
+typedef f32 TZBufferType2;
 
 // supporting different packed pixel needs many defines...
 
@@ -124,7 +124,7 @@ inline f32 inverse32 ( const f32 p )
 
 
 // integer log2 of a float ieee 754. TODO: non ieee floating point
-static inline s32 s32_log2_f32( f32 x)
+static inline s32 s32_log2_f32(f32 x)
 {
 	u32 ix = (u32&)x;
 	u32 exp = (ix >> 23) & 0xFF;
@@ -459,7 +459,7 @@ inline f32 fix_inverse32 ( const f32 x )
 	hints: compileflag /QIfist for msvc7. msvc 8.0 has smth different
 	others should use their favourite assembler.. 
 */
-static inline int f_round2(float f)
+static inline int f_round2(f32 f)
 {
 	f += (3<<22);
 	return *((int*)&f) - 0x4b400000;

@@ -31,7 +31,7 @@ License:
 --------
 
 It's free. You are encouraged to give me credit if you use it in your software.
-  
+
 Version History:
 ----------------
 
@@ -216,7 +216,7 @@ IAnimatedMesh* CLMTSMeshFileLoader::createMesh(irr::io::IReadFile* file) {
 		file->read(&Triangles[i], sizeof(SLMTSTriangleDataEntry));
 	}
 
-    /////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////
 
 	constructMesh();
 
@@ -231,8 +231,7 @@ IAnimatedMesh* CLMTSMeshFileLoader::createMesh(irr::io::IReadFile* file) {
 	am->recalculateBoundingBox();
 	Mesh->drop();
 	Mesh = 0;
-    return am;
-	
+	return am;
 }
 
 void CLMTSMeshFileLoader::constructMesh()
@@ -262,7 +261,7 @@ void CLMTSMeshFileLoader::constructMesh()
 		for (u32 sc=0; sc<Subsets[i].Count; sc++) {
 
 			s32 idx = meshBuffer->getVertexCount();
-			
+
 			for (s32 vu=0; vu<3; ++vu)
 			{
 				video::S3DVertex2TCoords currentVertex;
@@ -313,7 +312,7 @@ void CLMTSMeshFileLoader::loadTextures()
 	s32 lm_count = 0;
 	core::stringc Path = Parameters->getAttributeAsString(LMTS_TEXTURE_PATH);
 
-	for (t=0; t<Header.TextureCount; t++) 
+	for (t=0; t<Header.TextureCount; t++)
 	{
 		video::ITexture* tmptex = 0;
 		s = Path;

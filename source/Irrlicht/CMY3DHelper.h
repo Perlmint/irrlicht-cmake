@@ -25,7 +25,7 @@ namespace core
 {
 
 //---------------------------------------------------------------------
-inline float fmax(float v1, float v2)
+inline f32 fmax(f32 v1, f32 v2)
 {   return (v1>v2)?v1:v2;
 }
 //----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ s32 strlen(T* str)
             break;
         len++;
     }
-    return len;        
+    return len;
 }
 //----------------------------------------------------------------------------
 template <class T>
@@ -158,7 +158,7 @@ const unsigned long EOD = 0x00454f44; // was: #define EOD       'EOD'
 int nDecodedBytes=0;
 // number of coded bytes
 int nCodedBytes=0;
-// number of readed bytes
+// number of read bytes
 int nReadedBytes=0;
 // table used to look for sequences of repeating bytes 
 unsigned char tmpbuf[4];  // we use subscripts 1 - 3 
@@ -299,7 +299,7 @@ unsigned long process_comp(
 
 
 //----------------------------------------------------------------
-// This adds 1 non-repeating byte to outbuf.  If outbuf becomes full
+// This adds 1 non-repeating byte to outbuf. If outbuf becomes full
 // with 128 bytes, it flushes outbuf.
 // There are no return codes and no bytes are read from the input.
 //----------------------------------------------------------------

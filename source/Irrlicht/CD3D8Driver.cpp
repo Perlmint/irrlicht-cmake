@@ -222,9 +222,9 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 		present.FullScreen_PresentationInterval = vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 
 		if (bits == 32)
-			present.BackBufferFormat = D3DFMT_A8R8G8B8;
+			present.BackBufferFormat = D3DFMT_X8R8G8B8;
 		else
-			present.BackBufferFormat = D3DFMT_A1R5G5B5;
+			present.BackBufferFormat = D3DFMT_R5G6B5;
 	}
 
 	D3DDEVTYPE devtype = D3DDEVTYPE_HAL;
@@ -1080,7 +1080,7 @@ void CD3D8Driver::draw2DRectangle(const core::rect<s32>& position,
 	setVertexShader(EVT_STANDARD);
 
 	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
-											D3DFMT_INDEX16, &vtx[0], sizeof(S3DVertex));
+		D3DFMT_INDEX16, &vtx[0], sizeof(S3DVertex));
 
 }
 
@@ -1239,13 +1239,16 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	{
 		if (material.BilinearFilter || material.TrilinearFilter || material.AnisotropicFilter)
 		{
-			pID3DDevice->SetTextureStageState (0, D3DTSS_MAGFILTER, material.AnisotropicFilter ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR );
-			pID3DDevice->SetTextureStageState (0, D3DTSS_MINFILTER, material.AnisotropicFilter ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR );
-			pID3DDevice->SetTextureStageState (0, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
+			D3DTEXTUREFILTERTYPE tftMagAniso = (Caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMinAniso = (Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
 
-			pID3DDevice->SetTextureStageState (1, D3DTSS_MAGFILTER, material.AnisotropicFilter ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR );
-			pID3DDevice->SetTextureStageState (1, D3DTSS_MINFILTER, material.AnisotropicFilter ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR );
-			pID3DDevice->SetTextureStageState (1, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
+			pID3DDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
+			pID3DDevice->SetTextureStageState(0, D3DTSS_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
+			pID3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
+
+			pID3DDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
+			pID3DDevice->SetTextureStageState(1, D3DTSS_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
+			pID3DDevice->SetTextureStageState(1, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
 		}
 		else
 		{
@@ -1744,7 +1747,7 @@ void CD3D8Driver::drawStencilShadow(bool clearStencilBuffer, video::SColor leftU
 	setVertexShader(EVT_STANDARD);
 
 	pID3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, &indices[0],
-										D3DFMT_INDEX16, &vtx[0], sizeof(S3DVertex));
+		D3DFMT_INDEX16, &vtx[0], sizeof(S3DVertex));
 
 	if (clearStencilBuffer)
 		pID3DDevice->Clear( 0, NULL, D3DCLEAR_STENCIL,0, 1.0, 0);
