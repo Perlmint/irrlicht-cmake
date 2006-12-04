@@ -180,6 +180,14 @@ namespace core
 			return plane3d<T>(pointA, pointB, pointC);
 		}
 
+		//! Returns the area of the triangle
+		T getArea() const
+		{
+			return (pointB - pointA).crossProduct(pointC - pointA).getLength() * 0.5;
+
+		}
+
+		//! sets the triangle's points
 		void set(const core::vector3d<T>& a, const core::vector3d<T>& b, const core::vector3d<T>& c)
 		{
 			pointA = a;
