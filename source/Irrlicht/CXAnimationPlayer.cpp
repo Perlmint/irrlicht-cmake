@@ -260,7 +260,10 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 
 				if (tcnt) v.TCoords = mesh.TextureCoords[idx];
 				if (ncnt) v.Normal = mesh.Normals[mesh.NormalIndices[idxidx]];
-				if (ccnt) v.Color = mesh.VertexColors[idx].Color.toSColor();
+				if (ccnt)
+					v.Color = mesh.VertexColors[idx].Color.toSColor();
+				else
+					v.Color = buf->Material.DiffuseColor;
 
 				s32 nidx = buf->Vertices.linear_reverse_search(v);
 				bool alreadyIn = (nidx != -1);
