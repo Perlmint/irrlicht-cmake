@@ -57,6 +57,8 @@ public:
 		*this = tmpbuf;
 	}
 
+
+
 	//! Constructs a string from an int
 	string(int number)
 	: array(0), allocated(0), used(0)
@@ -89,17 +91,50 @@ public:
 
 		while(number && idx)
 		{
-			idx--;
+			--idx;
 			tmpbuf[idx] = (c8)('0' + (number % 10));
-			number = number / 10;
+			number /= 10;
 		}
 
 		// add sign
 
 		if (negative)
 		{
-			idx--;
+			--idx;
 			tmpbuf[idx] = '-';
+		}
+
+		*this = &tmpbuf[idx];
+	}
+
+
+
+	//! Constructs a string from an unsigned int
+	string(unsigned int number)
+	: array(0), allocated(0), used(0)
+	{
+		// temporary buffer for 16 numbers
+
+		c8 tmpbuf[16];
+		tmpbuf[15] = 0;
+		s32 idx = 15;
+
+		// special case '0'
+
+		if (!number)
+		{
+			tmpbuf[14] = '0';
+			*this = &tmpbuf[14];
+			return;
+		}
+
+		// add numbers
+
+		while(number && idx)
+		{
+			--idx;
+			tmpbuf[idx] = (c8)('0' + (number % 10));
+			number /= 10;
 		}
 
 		*this = &tmpbuf[idx];

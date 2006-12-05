@@ -1103,6 +1103,11 @@ namespace scene
 		\return Returns true if successful.	*/
 		virtual bool loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer=0) = 0;	
 
+		//! Sets ambient color of the scene
+		virtual void setAmbientLight(video::SColorf ambientColor) =0;
+
+		//! Returns ambient color of the scene
+		virtual video::SColorf getAmbientLight() =0;
 	};
 
 
