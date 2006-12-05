@@ -48,7 +48,7 @@ enum ECOLLADA_PARAM_TYPE
 	ECPT_COUNT
 };
 
-//! Collada Parameter 
+//! Collada Parameter
 struct SColladaParam
 {
 	SColladaParam()
@@ -75,7 +75,7 @@ enum ECOLLADA_INPUT_SEMANTIC
 	ECIS_COUNT
 };
 
-//! Collada Input 
+//! Collada Input
 struct SColladaInput
 {
 	SColladaInput()
@@ -95,7 +95,7 @@ struct SColladaMaterial
 };
 
 
-struct SNumberArray // for stroring float and int arrays 
+struct SNumberArray // for stroring float and int arrays
 {
 	core::stringc Name;
 	core::array<f32> Data;
@@ -112,7 +112,7 @@ struct SAccessor
 	int Offset;
 	int Stride;
 
-	core::array<SColladaParam> Parameters; // parameters defining the accessor		
+	core::array<SColladaParam> Parameters; // parameters defining the accessor
 };
 
 struct SSource
@@ -129,7 +129,7 @@ class CColladaFileLoader : public IMeshLoader
 public:
 
 	//! Constructor
-	CColladaFileLoader(video::IVideoDriver* driver, 
+	CColladaFileLoader(video::IVideoDriver* driver,
 		scene::ISceneManager* smgr, io::IFileSystem* fs);
 
 	//! destructor
@@ -187,7 +187,7 @@ private:
 	core::matrix4 readTranslateNode(io::IXMLReaderUTF8* reader);
 
 	//! reads a <instance> node and creates a scene node from it
-	void readInstanceNode(io::IXMLReaderUTF8* reader, scene::ISceneNode* parent, 
+	void readInstanceNode(io::IXMLReaderUTF8* reader, scene::ISceneNode* parent,
 		scene::ISceneNode** outNode);
 
 	//! reads a <light> element and stores it as prefab
@@ -226,7 +226,7 @@ private:
 	SColladaParam* getColladaParameter(ECOLLADA_PARAM_NAME name);
 
 	//! parses all collada inuts inside an element and stores them in Inputs. Reads
-	//! until first tag which is not an input tag or the end of the parent is reached	
+	//! until first tag which is not an input tag or the end of the parent is reached
 	void readColladaInputs(io::IXMLReaderUTF8* reader, const core::stringc& parentName);
 
 	//! reads a collada input tag and adds it to the input parameter
@@ -249,7 +249,7 @@ private:
 
 	scene::IAnimatedMesh* DummyMesh;
 	core::stringc CurrentlyLoadingMesh;
-	
+
 	scene::IAnimatedMesh* FirstLoadedMesh;
 	core::stringc FirstLoadedMeshName;
 	s32 LoadedMeshCount;
@@ -271,7 +271,7 @@ class IColladaPrefab : public virtual IUnknown
 public:
 
 	//! creates an instance of this prefab
-	virtual scene::ISceneNode* addInstance(scene::ISceneNode* parent, 
+	virtual scene::ISceneNode* addInstance(scene::ISceneNode* parent,
 		scene::ISceneManager* mgr) = 0;
 
 	//! returns id of this prefab

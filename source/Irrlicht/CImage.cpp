@@ -324,10 +324,10 @@ static void RenderLine32_Blend (	video::IImage *t,
 
 /*
 */
-static void RenderLine16_Decal (	video::IImage *t,
-							const core::position2d<s32> &p0,
-							const core::position2d<s32> &p1,
-							u32 argb )
+static void RenderLine16_Decal (video::IImage *t,
+				const core::position2d<s32> &p0,
+				const core::position2d<s32> &p1,
+				u32 argb )
 {
 	s32 dx = p1.X - p0.X;
 	s32 dy = p1.Y - p0.Y;
@@ -349,7 +349,6 @@ static void RenderLine16_Decal (	video::IImage *t,
 	if ( dy < 0 )
 	{
 		yInc = -yInc;
-
 		dy = -dy;
 	}
 
@@ -385,12 +384,11 @@ static void RenderLine16_Decal (	video::IImage *t,
 
 /*
 */
-static void RenderLine16_Blend (	video::IImage *t,
-							const core::position2d<s32> &p0,
-							const core::position2d<s32> &p1,
-							u32 argb,
-							u32 alpha
-						)
+static void RenderLine16_Blend (video::IImage *t,
+				const core::position2d<s32> &p0,
+				const core::position2d<s32> &p1,
+				u32 argb,
+				u32 alpha)
 {
 	s32 dx = p1.X - p0.X;
 	s32 dy = p1.Y - p0.Y;

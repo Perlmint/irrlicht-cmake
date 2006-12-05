@@ -502,6 +502,12 @@ namespace scene
 		CMeshCache* MeshCache;
 
 		E_SCENE_NODE_RENDER_PASS CurrentRendertime;	
+
+		//! constants for reading and writing XML.
+		//! Not made static due to portability problems.
+		const core::stringw IRR_XML_FORMAT_SCENE;
+		const core::stringw IRR_XML_FORMAT_NODE;
+		const core::stringw IRR_XML_FORMAT_NODE_ATTR_TYPE;
 	};
 
 } // end namespace video

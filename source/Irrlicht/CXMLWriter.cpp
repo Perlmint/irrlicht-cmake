@@ -91,7 +91,8 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 
 //! Writes an xml element with any number of attributes
 void CXMLWriter::writeElement(const wchar_t* name, bool empty,
-							  core::array<core::stringw> &names, core::array<core::stringw> &values)
+				  core::array<core::stringw> &names,
+				  core::array<core::stringw> &values)
 {
 	if (!File || !name)
 		return;
