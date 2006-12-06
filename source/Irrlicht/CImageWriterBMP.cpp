@@ -46,9 +46,10 @@ bool CImageWriterBMP::writeImage(io::IWriteFile* file, IImage* image)
 	imageHeader.Colors = 0;
 	imageHeader.ImportantColors = 0;
 
-	// data size is rounded up to nearest 4 bytes
-	imageHeader.BitmapDataSize = (imageHeader.Width * imageHeader.Height) * 3;
+	// data size is rounded up to next larger 4 bytes boundary
+	imageHeader.BitmapDataSize = imageHeader.Width * imageHeader.BPP / 8;
 	imageHeader.BitmapDataSize = (imageHeader.BitmapDataSize + 3) & ~3;
+	imageHeader.BitmapDataSize *= imageHeader.Height;
 
 	// file size is data size plus offset to data
 	imageHeader.FileSize = imageHeader.BitmapDataOffset + imageHeader.BitmapDataSize;
