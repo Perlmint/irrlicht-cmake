@@ -59,7 +59,7 @@ public:
 
 	//! Returns the squared lenth of this vector
 	/** This is useful because it is much faster than getLength(). */
-	f64 getLengthSQ() const { return X*X + Y*Y; }
+	T getLengthSQ() const { return X*X + Y*Y; }
 
 	//! Returns the dot product of this vector with another.
 	T dotProduct(const vector2d<T>& other) const
@@ -76,7 +76,7 @@ public:
 
 	//! Returns squared distance from another point. Here, the vector is interpreted as
 	//! point in 2 dimensional space.
-	f64 getDistanceFromSQ(const vector2d<T>& other) const
+	T getDistanceFromSQ(const vector2d<T>& other) const
 	{
 		return vector2d<T>(X - other.X, Y - other.Y).getLengthSQ();
 	}
@@ -182,7 +182,7 @@ public:
 	//! \return True if this vector is between begin and end.  False if not.
 	bool isBetweenPoints(const vector2d<T>& begin, const vector2d<T>& end) const
 	{
-		f64 f = (end - begin).getLengthSQ();
+		T f = (end - begin).getLengthSQ();
 		return getDistanceFromSQ(begin) < f && 
 			getDistanceFromSQ(end) < f;
 	}

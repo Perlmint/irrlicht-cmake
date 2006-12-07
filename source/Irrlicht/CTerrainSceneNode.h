@@ -89,7 +89,7 @@ namespace scene
 
 		//! Gets the last rotation factor applied to the scene node.
 		//! \return Returns the last rotation factor applied to the scene node.
-		virtual const core::vector3df getRotation() const 
+		virtual const core::vector3df& getRotation() const 
 		{
 			return TerrainData.Rotation;
 		}

@@ -47,7 +47,7 @@ class line2d
 
 		//! Returns squared length of the line
 		//! \return Returns squared length of line.
-		f64 getLengthSQ() const { return start.getDistanceFromSQ(end); };
+		T getLengthSQ() const { return start.getDistanceFromSQ(end); };
 
 		//! Returns middle of the line
 		vector2d<T> getMiddle() const
