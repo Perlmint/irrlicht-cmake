@@ -57,17 +57,28 @@ public:
 	//! \return Returns the length of the vector.
 	f64 getLength() const { return sqrt(X*X + Y*Y); }
 
-	//! Returns the dot product of this vector with an other.
+	//! Returns the squared lenth of this vector
+	/** This is useful because it is much faster than getLength(). */
+	f64 getLengthSQ() const { return X*X + Y*Y; }
+
+	//! Returns the dot product of this vector with another.
 	T dotProduct(const vector2d<T>& other) const
 	{
 		return X*other.X + Y*other.Y;
 	}
 
-	//! Returns distance from an other point. Here, the vector is interpreted as
+	//! Returns distance from another point. Here, the vector is interpreted as
 	//! point in 2 dimensional space.
 	f64 getDistanceFrom(const vector2d<T>& other) const
 	{
 		return vector2d<T>(X - other.X, Y - other.Y).getLength();
+	}
+
+	//! Returns squared distance from another point. Here, the vector is interpreted as
+	//! point in 2 dimensional space.
+	f64 getDistanceFromSQ(const vector2d<T>& other) const
+	{
+		return vector2d<T>(X - other.X, Y - other.Y).getLengthSQ();
 	}
 
 	//! rotates the point around a center by an amount of degrees.
@@ -164,6 +175,17 @@ public:
 		return atan(sqrt(1 - tmp*tmp) / tmp) * GRAD_PI;
 	}
 
+	//! Returns if this vector interpreted as a point is on a line between two other points.
+	/** It is assumed that the point is on the line. */
+	//! \param begin: Beginning vector to compare between.
+	//! \param end: Ending vector to compare between.
+	//! \return True if this vector is between begin and end.  False if not.
+	bool isBetweenPoints(const vector2d<T>& begin, const vector2d<T>& end) const
+	{
+		T f = (end - begin).getLengthSQ();
+		return getDistanceFromSQ(begin) < f && 
+			getDistanceFromSQ(end) < f;
+	}
 
 	//! returns interpolated vector
 	//! \param other: other vector to interpolate between

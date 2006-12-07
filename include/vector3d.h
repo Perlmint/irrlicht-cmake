@@ -67,7 +67,7 @@ namespace core
 		f64 getLength() const { return sqrt(X*X + Y*Y + Z*Z); }
 
 		//! Returns squared length of the vector.
-		/** This is useful because it is much faster then
+		/** This is useful because it is much faster than
 		getLength(). */
 		T getLengthSQ() const { return X*X + Y*Y + Z*Z; }
 
@@ -77,14 +77,14 @@ namespace core
 			return X*other.X + Y*other.Y + Z*other.Z;
 		}
 
-		//! Returns distance from an other point.
+		//! Returns distance from another point.
 		/** Here, the vector is interpreted as point in 3 dimensional space. */
 		f64 getDistanceFrom(const vector3d<T>& other) const
 		{
 			return vector3d<T>(X - other.X, Y - other.Y, Z - other.Z).getLength();
 		}
 
-		//! Returns squared distance from an other point. 
+		//! Returns squared distance from another point. 
 		/** Here, the vector is interpreted as point in 3 dimensional space. */
 		T getDistanceFromSQ(const vector3d<T>& other) const
 		{
