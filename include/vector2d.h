@@ -182,7 +182,7 @@ public:
 	//! \return True if this vector is between begin and end.  False if not.
 	bool isBetweenPoints(const vector2d<T>& begin, const vector2d<T>& end) const
 	{
-		T f = (end - begin).getLengthSQ();
+		f64 f = (end - begin).getLengthSQ();
 		return getDistanceFromSQ(begin) < f && 
 			getDistanceFromSQ(end) < f;
 	}

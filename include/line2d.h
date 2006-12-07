@@ -127,7 +127,7 @@ class line2d
 		bool isPointOnLine(const vector2d<T>& point)
 		{
 			T d = getPointOrientation(point);
-			return (d > 0 && point.isBetweenPoints(start, end));
+			return (d == 0 && point.isBetweenPoints(start, end));
 		}
 
 		//! Returns if the given point is between start and end of the
