@@ -18,7 +18,7 @@ namespace irr
 
 //! constructor
 CIrrDeviceStub::CIrrDeviceStub(const char* version, irr::IEventReceiver* resv)
-: Logger(0), Operator(0), VideoDriver(0)
+: VideoDriver(0), GUIEnvironment(0), SceneManager(0), CursorControl(0), UserReceiver(0), Operator(0)
 {
 	UserReceiver = resv;
 
