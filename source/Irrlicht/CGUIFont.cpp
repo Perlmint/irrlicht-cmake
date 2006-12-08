@@ -39,17 +39,19 @@ CGUIFont::~CGUIFont()
 //! loads a font file, native file needed, for texture parsing
 bool CGUIFont::load(io::IReadFile* file)
 {
-	return loadTexture ( Driver->createImageFromFile ( file ),
-						file->getFileName()
-							);
+	if (!Driver)
+		return false;
+	return loadTexture(Driver->createImageFromFile( file ),
+				file->getFileName());
 }
 
 //! loads a font file, native file needed, for texture parsing
 bool CGUIFont::load(const c8* filename)
 {
-	return loadTexture (	Driver->createImageFromFile ( filename ),
-							filename
-							);
+	if (!Driver)
+		return false;
+	return loadTexture(Driver->createImageFromFile( filename ),
+				filename);
 }
 
 
@@ -81,11 +83,11 @@ bool CGUIFont::load(io::IReadFile* file)
 //! loads a font file
 bool CGUIFont::load(const c8* filename)
 {
-	Environment->getFileSystem ();
-	FileSystem->createAndOpenFile(filename);
-
 	if (!Driver)
 		return false;
+
+	Environment->getFileSystem ();
+	FileSystem->createAndOpenFile(filename);
 
 	// turn mip-maps off
 	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
