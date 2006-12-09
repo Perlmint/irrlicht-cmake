@@ -425,7 +425,8 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				// extract new material's name
 				c8 textureNameBuf[WORD_BUFFER_LENGTH];
 				pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
-				if (type==1) {
+				if (type==1) 
+				{
 					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
 					pCurrMaterial->pMeshbuffer->Material.MaterialTypeParam=core::fast_atof(textureNameBuf);
 					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
@@ -441,12 +442,14 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				{
 					if (type==0)
 						pCurrMaterial->pMeshbuffer->Material.Texture1 = pTexture;
-					else if (type==1) {
+					else if (type==1) 
+					{
 						Driver->makeNormalMapTexture(pTexture);
 						pCurrMaterial->pMeshbuffer->Material.Texture2 = pTexture;
 						pCurrMaterial->pMeshbuffer->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
 					}
-					else if (type==2) {
+					else if (type==2) 
+					{
 						pCurrMaterial->pMeshbuffer->Material.Texture1 = pTexture;
 						pCurrMaterial->pMeshbuffer->Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
 					}
@@ -494,7 +497,8 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 					f32 transparency = ( core::fast_atof(redStr) + core::fast_atof(greenStr) + core::fast_atof(blueStr) ) / 3;
 
 					pCurrMaterial->pMeshbuffer->Material.DiffuseColor.setAlpha( (s32)(transparency * 255) );
-					pCurrMaterial->pMeshbuffer->Material.MaterialType = irr::video::EMT_TRANSPARENT_VERTEX_ALPHA;
+					if (transparency < 1.0f)
+						pCurrMaterial->pMeshbuffer->Material.MaterialType = irr::video::EMT_TRANSPARENT_VERTEX_ALPHA;
 				}
 			}
 
