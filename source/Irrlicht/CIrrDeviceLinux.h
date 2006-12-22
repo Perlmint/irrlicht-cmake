@@ -90,9 +90,9 @@ namespace irr
 				: Device(dev), IsVisible(true), Null(null)
 			{
 #ifdef _IRR_COMPILE_WITH_X11_
+				Device->grab();
 				if (!null)
 				{
-					GC gc;
 					XGCValues values;
 					unsigned long valuemask = 0;
 
@@ -120,6 +120,12 @@ namespace irr
 					invisCursor = XCreatePixmapCursor( Device->display, invisBitmap, maskBitmap, &fg, &bg, 1, 1 );
 				}
 #endif
+			}
+
+			~CCursorControl()
+			{
+				XFreeGC(Device->display, gc);	
+				Device->drop();
 			}
 
 			//! Changes the visible state of the mouse cursor.
@@ -223,6 +229,7 @@ namespace irr
 			bool IsVisible;
 			CIrrDeviceLinux* Device;
 #ifdef _IRR_COMPILE_WITH_X11_
+			GC gc;
 			Cursor invisCursor;
 			Pixmap invisBitmap;
 			Pixmap maskBitmap;
