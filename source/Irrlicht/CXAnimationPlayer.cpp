@@ -334,15 +334,14 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 	}
 
 	// transform vertices and normals
-	/*core::matrix4 mat = frame.LocalMatrix;
-	mat.makeInverse();
+	core::matrix4 mat = frame.LocalMatrix;
 
 	s32 vcnt = buf->Vertices.size();
 	for (s32 u=0; u<vcnt; ++u)
 	{
 		mat.transformVect(buf->Vertices[u].Pos);
-		mat.inverseRotateVect(buf->Vertices[u].Normal);
-	}*/
+		mat.rotateVect(buf->Vertices[u].Normal);
+	} 
 }
 
 
@@ -736,14 +735,22 @@ void CXAnimationPlayer::prepareAnimationData()
 					continue;
 				}
 
+				// copy track
+				s32 keyCount = (s32)readerSet.Animations[a].Keys[k].numberOfKeys;
+				if (!keyCount)
+				{
+					os::Printer::log(
+						"CXAnimationPlayer: Skipping Animationtrack with zero key frames",
+						readerSet.Animations[a].FrameName.c_str());
+					continue;
+				}
+
 				// add new track
 				mySet.Animations.push_back(SXAnimationTrack());
 				SXAnimationTrack& myTrack = mySet.Animations.getLast();
 				myTrack.jointNr = jntnr;
 				IsAnimatedSkinnedMesh = true;
 
-				// copy track
-				s32 keyCount = (s32)readerSet.Animations[a].Keys[k].numberOfKeys;
 				s32 type = readerSet.Animations[a].Keys[k].keyType;
 				s32 l;
 				myTrack.keyType = type;
@@ -773,11 +780,14 @@ void CXAnimationPlayer::prepareAnimationData()
 				}
 
 				// copy times
-				for (l=0; l<keyCount; ++l)
-					myTrack.Times.push_back((f32)readerSet.Animations[a].Keys[k].time[l]);
+				if (keyCount) 
+				{
+					for (l=0; l<keyCount; ++l)
+						myTrack.Times.push_back((f32)readerSet.Animations[a].Keys[k].time[l]);
 
-				if (myTrack.Times.getLast() > LastAnimationTime)
-					LastAnimationTime = myTrack.Times.getLast();
+					if (myTrack.Times.getLast() > LastAnimationTime)
+						LastAnimationTime = myTrack.Times.getLast();
+				}
 			}
 		}
 

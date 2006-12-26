@@ -47,6 +47,9 @@ namespace core
 		bool operator<=(const vector3d<T>&other) const { return X<=other.X && Y<=other.Y && Z<=other.Z;};
 		bool operator>=(const vector3d<T>&other) const { return X>=other.X && Y>=other.Y && Z>=other.Z;};
 
+		bool operator<(const vector3d<T>&other) const { return X<other.X && Y<other.Y && Z<other.Z;};
+		bool operator>(const vector3d<T>&other) const { return X>other.X && Y>other.Y && Z>other.Z;};
+
 		bool operator==(const vector3d<T>& other) const { return other.X==X && other.Y==Y && other.Z==Z; }
 		bool operator!=(const vector3d<T>& other) const { return other.X!=X || other.Y!=Y || other.Z!=Z; }
 

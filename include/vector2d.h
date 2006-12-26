@@ -45,10 +45,23 @@ public:
 	vector2d<T> operator/(const T v) const { return vector2d<T>(X / v, Y / v);	}
 	vector2d<T>& operator/=(const T v) { X/=v; Y/=v; return *this; }
 
+	bool operator<=(const vector2d<T>&other) const { return X<=other.X && Y<=other.Y; }
+	bool operator>=(const vector2d<T>&other) const { return X>=other.X && Y>=other.Y; }
+
+	bool operator<(const vector2d<T>&other) const { return X<other.X && Y<other.Y; }
+	bool operator>(const vector2d<T>&other) const { return X>other.X && Y>other.Y; }
+
 	bool operator==(const vector2d<T>& other) const { return other.X==X && other.Y==Y; }
 	bool operator!=(const vector2d<T>& other) const { return other.X!=X || other.Y!=Y; }
 
 	// functions
+
+	//! returns if this vector equals the other one, taking floating point rounding errors into account
+	bool equals(const vector2d<T>& other) const
+	{
+		return core::equals(X, other.X) &&
+			   core::equals(Y, other.Y);
+	}
 
 	void set(T nx, T ny) {X=nx; Y=ny; }
 	void set(const vector2d<T>& p) { X=p.X; Y=p.Y;}

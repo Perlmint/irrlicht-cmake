@@ -305,8 +305,16 @@ bool CXFileReader::parseDataObject()
 	else
 	if (objectName == "Frame")
 	{
-		RootFrames.push_back(SXFrame());
-		m_pgCurFrame = &RootFrames[ RootFrames.size() - 1 ];
+		if (!m_pgCurFrame)
+		{
+			RootFrames.push_back(SXFrame());
+			m_pgCurFrame = &RootFrames[ RootFrames.size() - 1 ];
+		}
+		else
+		{
+			m_pgCurFrame->ChildFrames.push_back(SXFrame());
+			m_pgCurFrame = &(m_pgCurFrame->ChildFrames[ m_pgCurFrame->ChildFrames.size() - 1 ]);
+		}
 		return parseDataObjectFrame( * m_pgCurFrame );
 	}
 	else
@@ -1132,6 +1140,11 @@ bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
 
 	// read number of keys
 	animkey.numberOfKeys = readInt();
+
+	// eat the semicolon after the "0".  if there are keys present, readInt()
+	// does this for us.  If there aren't, we need to do it explicitly
+	if (!binary && animkey.numberOfKeys == 0)
+		getNextToken(); // skip semicolon
 
 	animkey.init();
 
