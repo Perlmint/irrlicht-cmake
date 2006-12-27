@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="SpecialFx"
+	ProjectGUID="{8553D1C8-6AE6-423E-A2D5-1016804AE67C}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
