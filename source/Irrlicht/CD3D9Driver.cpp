@@ -842,31 +842,21 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture, const core::rect<s32>& d
 	if(!texture)
 		return;
 
-	core::rect<s32> trgRect(destRect);
-
 	const core::dimension2d<s32>& ss = texture->getOriginalSize();
-	f32 ssw=1.0f/ss.Width;
-	f32 ssh=1.0f/ss.Height;
-
 	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = (((f32)sourceRect.UpperLeftCorner.X)+0.5f) * ssw ;
-	tcoords.UpperLeftCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y)+0.5f) * ssh;
-	tcoords.LowerRightCorner.X = (((f32)sourceRect.UpperLeftCorner.X +0.5f + (f32)sourceRect.getWidth())) * ssw;
-	tcoords.LowerRightCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y +0.5f + (f32)sourceRect.getHeight())) * ssh;
+	tcoords.UpperLeftCorner.X = (f32)sourceRect.UpperLeftCorner.X / (f32)ss.Width;
+	tcoords.UpperLeftCorner.Y = (f32)sourceRect.UpperLeftCorner.Y / (f32)ss.Height;
+	tcoords.LowerRightCorner.X = (f32)sourceRect.LowerRightCorner.X / (f32)ss.Width;
+	tcoords.LowerRightCorner.Y = (f32)sourceRect.LowerRightCorner.Y / (f32)ss.Height;
 
-	core::dimension2d<s32> renderTargetSize = getCurrentRenderTargetSize();
-
-	s32 xPlus = -(renderTargetSize.Width>>1);
-	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
-
-	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
-	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
-
+	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
 	core::rect<f32> npos;
-	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X+xPlus+0.5f) * xFact;
-	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact;
-	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X+xPlus+0.5f) * xFact;
-	npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact;
+	f32 xFact = 2.0f / ( renderTargetSize.Width );
+	f32 yFact = 2.0f / ( renderTargetSize.Height );
+	npos.UpperLeftCorner.X = ( destRect.UpperLeftCorner.X * xFact ) - 1.0f;
+	npos.UpperLeftCorner.Y = 1.0f - ( destRect.UpperLeftCorner.Y * yFact );
+	npos.LowerRightCorner.X = ( destRect.LowerRightCorner.X * xFact ) - 1.0f;
+	npos.LowerRightCorner.Y = 1.0f - ( destRect.LowerRightCorner.Y * yFact ); 
 
 	video::SColor temp[4] =
 	{

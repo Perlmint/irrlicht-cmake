@@ -1081,24 +1081,21 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 
 	const core::dimension2d<s32>& ss = texture->getOriginalSize();
 	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = ((f32)sourcePos.X+0.5f) / ss.Width;
-	tcoords.UpperLeftCorner.Y = ((f32)sourcePos.Y+0.5f) / ss.Height;
-	tcoords.LowerRightCorner.X = ((f32)sourcePos.X +0.5f + (f32)sourceSize.Width) / ss.Width;
-	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height) / ss.Height;
+
+	tcoords.UpperLeftCorner.X = (f32)sourcePos.X / (f32)ss.Width;
+	tcoords.UpperLeftCorner.Y = (f32)sourcePos.Y / (f32)ss.Height;
+	tcoords.LowerRightCorner.X = ((f32)sourcePos.X +(f32)sourceSize.Width) / (f32)ss.Width;
+	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y + (f32)sourceSize.Height) / (f32)ss.Height;
 
 	core::rect<s32> poss(targetPos, sourceSize);
 	core::rect<f32> npos;
+	f32 xFact = 2.0f / ( renderTargetSize.Width );
+	f32 yFact = 2.0f / ( renderTargetSize.Height );
 
-	s32 xPlus = renderTargetSize.Width>>1;
-	f32 xFact = 1.0f / xPlus;
-
-	s32 yPlus = renderTargetSize.Height>>1;
-	f32 yFact = 1.0f / yPlus;
-
-	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X-xPlus+0.5f) * xFact;
-	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
-	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X-xPlus+0.5f) * xFact;
-	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
+	npos.UpperLeftCorner.X = ( poss.UpperLeftCorner.X * xFact ) - 1.0f;
+	npos.UpperLeftCorner.Y = 1.0f - ( poss.UpperLeftCorner.Y * yFact );
+	npos.LowerRightCorner.X = ( poss.LowerRightCorner.X * xFact ) - 1.0f;
+	npos.LowerRightCorner.Y = 1.0f - ( poss.LowerRightCorner.Y * yFact );
 
 	setRenderStates2DMode(color.getAlpha()<255, true, useAlphaChannelOfTexture);
 
@@ -1156,11 +1153,8 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 	core::position2d<s32> sourcePos;
 	core::dimension2d<s32> sourceSize;
 	core::rect<f32> tcoords;
-	s32 xPlus = renderTargetSize.Width>>1;
-	f32 xFact = 1.0f / xPlus;
-
-	s32 yPlus = renderTargetSize.Height>>1;
-	f32 yFact = 1.0f / yPlus;
+	f32 xFact = 2.0f / ( renderTargetSize.Width );
+	f32 yFact = 2.0f / ( renderTargetSize.Height );
 
 	for (u32 i=0; i<indices.size(); ++i)
 	{
@@ -1170,35 +1164,36 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture,
 		sourcePos=sourceRects[currentIndex].UpperLeftCorner;
 		sourceSize=sourceRects[currentIndex].getSize();
 
-	tcoords.UpperLeftCorner.X = ((f32)sourcePos.X+0.5f) / ss.Width;
-	tcoords.UpperLeftCorner.Y = ((f32)sourcePos.Y+0.5f) / ss.Height;
-	tcoords.LowerRightCorner.X = ((f32)sourcePos.X +0.5f + (f32)sourceSize.Width) / ss.Width;
-	tcoords.LowerRightCorner.Y = ((f32)sourcePos.Y +0.5f + (f32)sourceSize.Height) / ss.Height;
+		tcoords.UpperLeftCorner.X = (f32)sourceRects[currentIndex].UpperLeftCorner.X / (f32)ss.Width;
+		tcoords.UpperLeftCorner.Y = (f32)sourceRects[currentIndex].UpperLeftCorner.Y / (f32)ss.Height;
+		tcoords.LowerRightCorner.X = (f32)sourceRects[currentIndex].LowerRightCorner.X / (f32)ss.Width;
+		tcoords.LowerRightCorner.Y = (f32)sourceRects[currentIndex].LowerRightCorner.Y / (f32)ss.Height;
 
-	core::rect<s32> poss(targetPos, sourceSize);
-	core::rect<f32> npos;
+		core::rect<s32> poss(targetPos, sourceSize);
+		core::rect<f32> npos;
 
-	npos.UpperLeftCorner.X = (f32)(poss.UpperLeftCorner.X-xPlus+0.5f) * xFact;
-	npos.UpperLeftCorner.Y = (f32)(yPlus-poss.UpperLeftCorner.Y+0.5f) * yFact;
-	npos.LowerRightCorner.X = (f32)(poss.LowerRightCorner.X-xPlus+0.5f) * xFact;
-	npos.LowerRightCorner.Y = (f32)(yPlus-poss.LowerRightCorner.Y+0.5f) * yFact;
+		npos.UpperLeftCorner.X = ( poss.UpperLeftCorner.X * xFact ) - 1.0f;
+		npos.UpperLeftCorner.Y = 1.0f - ( poss.UpperLeftCorner.Y * yFact );
 
-	glBegin(GL_QUADS);
+		npos.LowerRightCorner.X = ( poss.LowerRightCorner.X * xFact ) - 1.0f;
+		npos.LowerRightCorner.Y = 1.0f - ( poss.LowerRightCorner.Y * yFact ); 
 
-	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
-	glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
+		glBegin(GL_QUADS);
 
-	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
-	glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
+		glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.UpperLeftCorner.Y);
+		glVertex2f(npos.UpperLeftCorner.X, npos.UpperLeftCorner.Y);
 
-	glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
-	glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
+		glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.UpperLeftCorner.Y);
+		glVertex2f(npos.LowerRightCorner.X, npos.UpperLeftCorner.Y);
 
-	glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
-	glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
+		glTexCoord2f(tcoords.LowerRightCorner.X, tcoords.LowerRightCorner.Y);
+		glVertex2f(npos.LowerRightCorner.X, npos.LowerRightCorner.Y);
 
-	glEnd();
-	targetPos.X += sourceRects[currentIndex].getWidth();
+		glTexCoord2f(tcoords.UpperLeftCorner.X, tcoords.LowerRightCorner.Y);
+		glVertex2f(npos.UpperLeftCorner.X, npos.LowerRightCorner.Y);
+
+		glEnd();
+		targetPos.X += sourceRects[currentIndex].getWidth();
 	}
 	if (clipRect)
 		glDisable(GL_SCISSOR_TEST);
@@ -1213,30 +1208,21 @@ void COpenGLDriver::draw2DImage(video::ITexture* texture, const core::rect<s32>&
 	if (!texture)
 		return;
 
-	core::rect<s32> trgRect=destRect;
+	const core::dimension2d<s32>& ss = texture->getOriginalSize();
+	core::rect<f32> tcoords;
+	tcoords.UpperLeftCorner.X = (f32)sourceRect.UpperLeftCorner.X / (f32)ss.Width;
+	tcoords.UpperLeftCorner.Y = (f32)sourceRect.UpperLeftCorner.Y / (f32)ss.Height;
+	tcoords.LowerRightCorner.X = (f32)sourceRect.LowerRightCorner.X / (f32)ss.Width;
+	tcoords.LowerRightCorner.Y = (f32)sourceRect.LowerRightCorner.Y / (f32)ss.Height;
 
 	const core::dimension2d<s32>& renderTargetSize = getCurrentRenderTargetSize();
-	const core::dimension2d<s32>& ss = texture->getOriginalSize();
-	f32 ssw=1.0f/ss.Width;
-	f32 ssh=1.0f/ss.Height;
-
-	core::rect<f32> tcoords;
-	tcoords.UpperLeftCorner.X = (((f32)sourceRect.UpperLeftCorner.X)+0.5f) * ssw;
-	tcoords.UpperLeftCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y)+0.5f) * ssh;
-	tcoords.LowerRightCorner.X = (((f32)sourceRect.UpperLeftCorner.X +0.5f + (f32)sourceRect.getWidth())) * ssw;
-	tcoords.LowerRightCorner.Y = (((f32)sourceRect.UpperLeftCorner.Y +0.5f + (f32)sourceRect.getHeight())) * ssh;
-
-	s32 xPlus = renderTargetSize.Width>>1;
-	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
-
-	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
-	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
-
 	core::rect<f32> npos;
-	npos.UpperLeftCorner.X = (f32)(trgRect.UpperLeftCorner.X-xPlus+0.5f) * xFact;
-	npos.UpperLeftCorner.Y = (f32)(yPlus-trgRect.UpperLeftCorner.Y+0.5f) * yFact;
-	npos.LowerRightCorner.X = (f32)(trgRect.LowerRightCorner.X-xPlus+0.5f) * xFact;
-	npos.LowerRightCorner.Y = (f32)(yPlus-trgRect.LowerRightCorner.Y+0.5f) * yFact;
+	f32 xFact = 2.0f / ( renderTargetSize.Width );
+	f32 yFact = 2.0f / ( renderTargetSize.Height );
+	npos.UpperLeftCorner.X = ( destRect.UpperLeftCorner.X * xFact ) - 1.0f;
+	npos.UpperLeftCorner.Y = 1.0f - ( destRect.UpperLeftCorner.Y * yFact );
+	npos.LowerRightCorner.X = ( destRect.LowerRightCorner.X * xFact ) - 1.0f;
+	npos.LowerRightCorner.Y = 1.0f - ( destRect.LowerRightCorner.Y * yFact ); 
 
 	video::SColor temp[4] =
 	{
