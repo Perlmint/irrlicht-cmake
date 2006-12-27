@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="TerrainRendering"
+	ProjectGUID="{D70CD59D-853A-4343-9DE0-A73B3D48914D}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>

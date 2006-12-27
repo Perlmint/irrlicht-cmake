@@ -5,6 +5,8 @@ terrain.
 
 Note that the Terrain Renderer in Irrlicht is based on Spintz' GeoMipMapSceneNode, lots 
 of thanks go to him.
+DeusXL provided a new elegant simple solution for building larger area on small heightmaps
+-> terrain smoothing.
 In the beginning there is nothing special. We include the needed header files and create
 an event listener to listen if the user presses the 'W' key so we can switch to wireframe
 mode and if he presses 'D' we toggle to material between solid and detail mapped.
@@ -108,17 +110,20 @@ int main()
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
 	// add irrlicht logo
-	env->addImage(driver->getTexture("../../media/irrlichtlogoalpha.tga"),
+	env->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(10,10));
+
+	//set other font
+	env->getSkin()->setFont(env->getFont("../../media/fontlucida.png"));
 
 	// add some help text
 	gui::IGUIStaticText* text = env->addStaticText(
 		L"Press 'W' to change wireframe mode\nPress 'D' to toggle detail map",
-		core::rect<s32>(10,453,200,475), true, true, 0, -1, true);
+		core::rect<s32>(10,440,250,475), true, true, 0, -1, true);
 
 	// add camera
 	scene::ICameraSceneNode* camera = 
-		smgr->addCameraSceneNodeFPS(0,100.0f,1200.0f);
+		smgr->addCameraSceneNodeFPS(0,100.0f,1200.f);
 
 	camera->setPosition(core::vector3df(1900*2,255*2,3700*2));
 	camera->setTarget(core::vector3df(2397*2,343*2,2700*2));
@@ -143,9 +148,18 @@ int main()
 
 	// add terrain scene node
 	scene::ITerrainSceneNode* terrain = smgr->addTerrainSceneNode( 
-		"../../media/terrain-heightmap.bmp");
+		"../../media/terrain-heightmap.bmp",
+		0,										// parent node
+		-1,										// node id
+		core::vector3df(0.f, 0.f, 0.f),			// position
+		core::vector3df(0.f, 0.f, 0.f),			// rotation
+		core::vector3df(40.f, 4.4f, 40.f),		// scale
+		video::SColor ( 255, 255, 255, 255 ),	// vertexColor,
+		5,										// maxLOD
+		scene::ETPS_17,							// patchSize
+		4										// smoothFactor
+		);
 
-	terrain->setScale(core::vector3df(40, 4.4f, 40));
 	terrain->setMaterialFlag(video::EMF_LIGHTING, false);
 
 	terrain->setMaterialTexture(0, driver->getTexture("../../media/terrain-texture.jpg"));
@@ -154,6 +168,7 @@ int main()
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
 
 	terrain->scaleTexture(1.0f, 20.0f);
+	//terrain->setDebugDataVisible ( true );
 
 	/*
 	To be able to do collision with the terrain, we create a triangle selector.
@@ -200,6 +215,7 @@ int main()
 		driver->getTexture("../../media/irrlicht2_bk.jpg"));
 
 	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
+
 
 	/*
 	That's it, draw everything. Now you know how to use terrain in Irrlicht.
