@@ -71,6 +71,7 @@ int main()
 		fairy->setMaterialFlag(video::EMF_LIGHTING, true); // enable dynamic lighting
 		fairy->getMaterial(0).Shininess = 20.0f; // set size of specular highlights
 		fairy->setPosition(core::vector3df(-10,0,-100));
+		fairy->setMD2Animation ( scene::EMAT_STAND );
 	}
 	
 	/*
@@ -84,7 +85,7 @@ int main()
 		core::vector3df(-15,5,-105), video::SColorf(1.0f, 1.0f, 1.0f));
 
 	// set ambient light
-	driver->setAmbientLight(video::SColor(0,60,60,60));
+	smgr->setAmbientLight(video::SColor(0,60,60,60));
 	
 	/*
 	The next is just some standard stuff: Add a user controlled camera to the scene, disable

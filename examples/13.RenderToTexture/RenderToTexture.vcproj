@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="RenderToTexture"
+	ProjectGUID="{AFC223BD-4371-4A8B-A90B-0D338BD2DEBB}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
