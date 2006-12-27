@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="PerPixelLighting"
+	ProjectGUID="{EC388ECA-E430-477A-A969-66FE5F84508A}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
