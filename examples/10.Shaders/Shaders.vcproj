@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Shaders"
+	ProjectGUID="{A4F71E8D-4042-4909-9AB8-1BA4CF5B926D}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
