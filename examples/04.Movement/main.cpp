@@ -6,9 +6,8 @@ movement of nodes using the keyboard.
 As always, I include the header files, use the irr namespace,
 and tell the linker to link with the .lib file.
 */
-#include <stdio.h>
-#include <wchar.h>
 #include <irrlicht.h>
+#include <iostream>
 
 using namespace irr;
 
@@ -74,10 +73,38 @@ possibilities to move and animate scene nodes.
 */
 int main()
 {
+	// let user select driver type
+
+	video::E_DRIVER_TYPE driverType = video::EDT_DIRECT3D9;
+
+	printf("Please select the driver you want for this example:\n"\
+		" (a) Direct3D 9.0c\n (b) Direct3D 8.1\n (c) OpenGL 1.5\n"\
+		" (d) Software Renderer\n (e) Burning's Software Renderer\n"\
+		" (f) NullDevice\n (otherKey) exit\n\n");
+
+	char i;
+	std::cin >> i;
+
+	switch(i)
+	{
+		case 'a': driverType = video::EDT_DIRECT3D9;break;
+		case 'b': driverType = video::EDT_DIRECT3D8;break;
+		case 'c': driverType = video::EDT_OPENGL;   break;
+		case 'd': driverType = video::EDT_SOFTWARE; break;
+		case 'e': driverType = video::EDT_SOFTWARE2;break;
+		case 'f': driverType = video::EDT_NULL;     break;
+		default: return 0;
+	}	
+
+	// create device
 	MyEventReceiver receiver;
 
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<s32>(640, 480),
+	IrrlichtDevice* device = createDevice( driverType, core::dimension2d<s32>(640, 480),
 		16, false, false, false, &receiver);
+
+	if (device == 0)
+		return 1; // could not create selected driver.
+
 
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
@@ -139,15 +166,17 @@ int main()
 		call "anms->setMD2Animation(scene::EMAT_RUN)" for the 'run' animation 
 		instead of "setFrameLoop" and "setAnimationSpeed",
 		but this only works with MD2 animations, and so you know how to start other animations.
+		but it a good advice to use not hardcoded frame-numbers...
 		*/
 		anms->setMaterialFlag(video::EMF_LIGHTING, false);
 
-		//anms->setMD2Animation(scene::EMAT_RUN);
-		anms->setFrameLoop(320, 367);
-		anms->setAnimationSpeed(80);
+		anms->setFrameLoop(160, 183);
+		anms->setAnimationSpeed(40);
+		anms->setMD2Animation(scene::EMAT_RUN);
 
 		anms->setRotation(core::vector3df(0,180.0f,0));
 		anms->setMaterialTexture(0, driver->getTexture("../../media/sydney.bmp"));
+
 	}
 
 
@@ -156,14 +185,14 @@ int main()
 	we create a first person shooter style camera and make the 
 	mouse cursor invisible.
 	*/
-	smgr->addCameraSceneNodeFPS(0, 100.0f, 100.0f);
+	scene::ICameraSceneNode * cam = smgr->addCameraSceneNodeFPS(0, 100.0f, 100.0f);
 	device->getCursorControl()->setVisible(false);
 
 	/*
 	Add a colorful irrlicht logo
 	*/
 	device->getGUIEnvironment()->addImage(
-		driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
+		driver->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(10,10));
 
 	/*

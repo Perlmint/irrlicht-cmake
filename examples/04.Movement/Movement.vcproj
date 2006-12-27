@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Movement"
+	ProjectGUID="{735B050B-1AC5-4602-B0BE-D2D2B5893E94}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
