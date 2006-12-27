@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="CustomSceneNode"
+	ProjectGUID="{32078844-1903-47AB-AEAC-FC2E3415DB46}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>

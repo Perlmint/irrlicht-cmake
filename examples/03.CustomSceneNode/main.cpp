@@ -137,12 +137,12 @@ public:
 		return Box;
 	}
 
-	virtual s32 getMaterialCount()
+	virtual u32 getMaterialCount()
 	{
 		return 1;
 	}
 
-	virtual video::SMaterial& getMaterial(s32 i)
+	virtual video::SMaterial& getMaterial(u32 i)
 	{
 		return Material;
 	}	
