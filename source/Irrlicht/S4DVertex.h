@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -8,6 +8,7 @@
 
 #include "SoftwareDriver2_compile_config.h"
 #include "SoftwareDriver2_helper.h"
+#include "irrAllocator.h"
 
 namespace irr
 {
@@ -73,12 +74,36 @@ struct sVec2
 
 };
 
-inline f32 clamp(f32 a, f32 mn, f32 mx)
+// A8R8G8B8
+struct sVec4;
+struct sCompressedVec4
 {
-	if ( a < mn ) return mn;
-	if ( a > mx ) return mx;
-	return a;
-}
+	u32 argb;
+
+	void setA8R8G8B8 ( u32 value )
+	{
+		argb = value;
+	}
+
+	void setColorf ( const irr::video::SColorf & color )
+	{
+		argb = 	core::floor32 ( color.a * 255.f ) << 24 |
+				core::floor32 ( color.r * 255.f ) << 16 |
+				core::floor32 ( color.g * 255.f ) << 8  |
+				core::floor32 ( color.b * 255.f );
+	}
+
+	void setVec4 ( const sVec4 & v );
+
+	// f = a * t + b * ( 1 - t )
+	void interpolate(const sCompressedVec4& a, const sCompressedVec4& b, const f32 t)
+	{
+		argb = PixelBlend32 ( b.argb, a.argb, core::floor32 ( t * 256.f ) );
+	}
+
+
+};
+
 
 struct sVec4
 {
@@ -88,16 +113,6 @@ struct sVec4
 
 	sVec4 ( f32 _x, f32 _y, f32 _z, f32 _w )
 		: x ( _x ), y ( _y ), z( _z ), w ( _w ){}
-
-/*
-	sVec4( u32 argb )
-	{
-		x = ( ( argb & 0xFF000000 ) >> 24 ) / 255.f;
-		y = ( ( argb & 0x00FF0000 ) >> 16 ) / 255.f;
-		z = ( ( argb & 0x0000FF00 ) >>  8 ) / 255.f;
-		w = ( ( argb & 0x000000FF )       ) / 255.f;
-	}
-*/
 
 	void set ( f32 _x, f32 _y, f32 _z, f32 _w )
 	{
@@ -115,6 +130,7 @@ struct sVec4
 		w = ( ( argb & 0x000000FF )       ) * ( 1.f / 255.f );
 	}
 
+
 	void setColorf ( const irr::video::SColorf & color )
 	{
 		x = color.a;
@@ -123,14 +139,13 @@ struct sVec4
 		w = color.b;
 	}
 
-	void clampToOne ()
+	void saturate ()
 	{
-		x = clamp ( x, 0.f, 1.f );
-		y = clamp ( y, 0.f, 1.f );
-		z = clamp ( z, 0.f, 1.f );
-		w = clamp ( w, 0.f, 1.f );
+		x = core::clamp ( x, 0.f, 1.f );
+		y = core::clamp ( y, 0.f, 1.f );
+		z = core::clamp ( z, 0.f, 1.f );
+		w = core::clamp ( w, 0.f, 1.f );
 	}
-
 
 	// f = a * t + b * ( 1 - t )
 	void interpolate(const sVec4& a, const sVec4& b, const f32 t)
@@ -145,6 +160,39 @@ struct sVec4
 	f32 dotProduct(const sVec4& other) const
 	{
 		return x*other.x + y*other.y + z*other.z + w*other.w;
+	}
+
+	f32 dot_xyz( const sVec4& other) const
+	{
+		return x*other.x + y*other.y + z*other.z;
+	}
+
+	f32 get_length_xyz () const
+	{
+		return sqrtf ( x * x + y * y + z * z );
+	}
+
+	f32 get_inverse_length_xyz () const
+	{
+		return core::reciprocal_squareroot ( x * x + y * y + z * z );
+	}
+
+
+	void normalize_xyz ()
+	{
+		const f32 l = core::reciprocal_squareroot ( x * x + y * y + z * z );
+
+		x *= l;
+		y *= l;
+		z *= l;
+	}
+
+	void project_xyz ()
+	{
+		w = core::reciprocal ( w );
+		x *= w;
+		y *= w;
+		z *= w;
 	}
 
 	sVec4 operator-(const sVec4& other) const
@@ -198,33 +246,168 @@ struct sVec4
 		z = other.z;
 		w = other.w;
 	}
-
 };
 
+inline void sCompressedVec4::setVec4 ( const sVec4 & v )
+{
+	argb = 	core::floor32 ( v.x * 255.f ) << 24 |
+			core::floor32 ( v.y * 255.f ) << 16 |
+			core::floor32 ( v.z * 255.f ) << 8  |
+			core::floor32 ( v.w * 255.f );
+}
+
+
+enum e4DVertexFlag
+{
+	VERTEX4D_INSIDE		= 0x0000003F,
+	VERTEX4D_CLIPMASK	= 0x0000003F,
+	VERTEX4D_PROJECTED	= 0x00000100,
+
+	VERTEX4D_FORMAT_MASK	= 0xFFFF0000,
+	VERTEX4D_FORMAT_0		= 0x00010000,
+	VERTEX4D_FORMAT_1		= VERTEX4D_FORMAT_0 | 0x00020000,
+	VERTEX4D_FORMAT_2		= VERTEX4D_FORMAT_1 | 0x00040000,
+};
+
+// dummy Vertex
+struct __s4DVertex
+{
+	sVec4 Pos;
+
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+	sVec4 Color[1];
+#endif
+
+	sVec2 Tex[2];
+	u32 flag;
+};
+
+#define SIZEOF_SVERTEX	64
+#define SIZEOF_SVERTEX_LOG2	6
 
 struct s4DVertex
 {
 	sVec4 Pos;
-	sVec4 Color;
+
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+	sVec4 Color[1];
+#endif
 
 	sVec2 Tex[2];
+
+	u32 flag;
+
+	u8 fill [ SIZEOF_SVERTEX - sizeof (__s4DVertex) ];
 
 	// f = a * t + b * ( 1 - t )
 	void interpolate(const s4DVertex& b, const s4DVertex& a, const f32 t)
 	{
 		Pos.interpolate ( a.Pos, b.Pos, t );
-		Color.interpolate ( a.Color, b.Color, t );
+
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+		Color[0].interpolate ( a.Color[0], b.Color[0], t );
+#endif
+
 		Tex[0].interpolate ( a.Tex[0], b.Tex[0], t );
-		Tex[1].interpolate ( a.Tex[1], b.Tex[1], t );
+
+		if ( (flag & VERTEX4D_FORMAT_1 ) == VERTEX4D_FORMAT_1 )
+		{
+			Tex[1].interpolate ( a.Tex[1], b.Tex[1], t );
+		}
+
+
 	}
 };
 
+// ----------------- Vertex Cache ---------------------------
 
-inline void swapVertices(const s4DVertex** v1, const s4DVertex** v2)
+struct SAlignedVertex
 {
+	SAlignedVertex ( u32 element, u32 aligned )
+		: ElementSize ( element )
+	{
+		u32 byteSize = (ElementSize << SIZEOF_SVERTEX_LOG2 ) + aligned;
+		mem = new u8 [ byteSize ];
+		data = (s4DVertex*) ((PointerAsValue ( mem ) + (aligned-1) ) & ~ ( aligned - 1 ) );
+	}
+
+	virtual ~SAlignedVertex ()
+	{
+		delete [] mem;
+	}
+
+	s4DVertex *data;
+	u8 *mem;
+	u32 ElementSize;
+};
+
+
+// hold info for different Vertex Types
+struct SVSize
+{
+	u32 Format;
+	u32 Pitch;
+	u32 TexSize;
+};
+
+
+// a cache info
+struct SCacheInfo
+{
+	u32 index;
+	u32 hit;
+};
+
+#define VERTEXCACHE_ELEMENT	16
+#define VERTEXCACHE_MISS 0xFFFFFFFF
+struct SVertexCache
+{
+	SVertexCache (): mem ( VERTEXCACHE_ELEMENT * 2, 128 ) {}
+
+	SCacheInfo info[VERTEXCACHE_ELEMENT];
+
+
+	// Transformed and lite, clipping state
+	// + Clipped, Projected
+	SAlignedVertex mem;
+
+	// source
+	const void* vertices;
+	u32 vertexCount;
+
+	const u16* indices;
+	u32 indexCount;
+	u32 indicesIndex;
+
+	u32 indicesRun;
+
+	// primitives consist of x vertices
+	u32 primitivePitch;
+
+	u32 vType;		//E_VERTEX_TYPE
+	u32 pType;		//scene::E_PRIMITIVE_TYPE
+
+};
+
+
+// swap 2 pointer
+inline void swapVertexPointer(const s4DVertex** v1, const s4DVertex** v2)
+{
+#if 0
+	u32 a = PointerAsValue ( *v1 );
+	u32 b = PointerAsValue ( *v2 );
+
+	a ^= b;
+	b ^= a;
+	a ^= b;
+
+	*v1 = (s4DVertex*) a;
+	*v2 = (s4DVertex*) b;
+#else
 	const s4DVertex* b = *v1;
 	*v1 = *v2;
 	*v2 = b;
+#endif
 }
 
 
@@ -244,7 +427,7 @@ struct sScanConvertData
 
 #if defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) || defined ( SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT )
 	f32 w[2];			// w coordinate
-	f32 slopeW[2];		// w slope along edges
+	fp24 slopeW[2];		// w slope along edges
 #else
 	f32 z[2];			// z coordinate
 	f32 slopeZ[2];		// z slope along edges
@@ -273,7 +456,10 @@ struct sScanLineData
 	f32 z[2];			// z start, z end of scanline
 #endif
 
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
 	sVec4 c[2];		// color start, color end of scanline
+#endif
+
 	sVec2 t0[2];		// texture start, texture end of scanline
 	sVec2 t1[2];		// texture start, texture end of scanline
 };
@@ -282,7 +468,7 @@ struct sScanLineData
 /*
 	load a color value
 */
-inline void getSample_plain (	tFixPoint &r, tFixPoint &g, tFixPoint &b, 
+inline void getTexel_plain (	tFixPoint &r, tFixPoint &g, tFixPoint &b, 
 							const sVec4 &v
 							)
 {

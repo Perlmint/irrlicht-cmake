@@ -1,11 +1,11 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include "ITriangleRenderer2.h"
+#include "IBurningShader.h"
 
 // compile flag for this file
-#undef USE_Z
+#undef USE_ZBUFFER
 #undef IPOL_Z
 #undef CMP_Z
 #undef WRITE_Z
@@ -17,7 +17,7 @@
 #undef SUBTEXEL
 #undef INVERSE_W
 
-#undef IPOL_C
+#undef IPOL_C0
 #undef IPOL_T0
 #undef IPOL_T1
 
@@ -25,13 +25,13 @@
 #define SUBTEXEL
 #define INVERSE_W
 
-#define USE_Z
+#define USE_ZBUFFER
 #define IPOL_W
 #define CMP_W
 #define WRITE_W
 
 
-//#define IPOL_C
+//#define IPOL_C0
 #define IPOL_T0
 //#define IPOL_T1
 
@@ -44,7 +44,7 @@
 	#undef SUBTEXEL
 #endif
 
-#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_Z )
+#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_ZBUFFER )
 	#ifndef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 		#undef IPOL_W
 	#endif
@@ -69,12 +69,12 @@ namespace irr
 namespace video
 {
 
-class CTRTextureWire2 : public ITriangleRenderer2
+class CTRTextureWire2 : public IBurningShader
 {
 public:
 
 	//! constructor
-	CTRTextureWire2(IZBuffer2* zbuffer);
+	CTRTextureWire2(IDepthBuffer* zbuffer);
 
 	//! draws an indexed triangle list
 	virtual void drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c );
@@ -89,8 +89,8 @@ private:
 };
 
 //! constructor
-CTRTextureWire2::CTRTextureWire2(IZBuffer2* zbuffer)
-: ITriangleRenderer2(zbuffer)
+CTRTextureWire2::CTRTextureWire2(IDepthBuffer* zbuffer)
+: IBurningShader(zbuffer)
 {
 	#ifdef _DEBUG
 	setDebugName("CTRTextureWire2");
@@ -121,8 +121,8 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 	int run;
 
 	tVideoSample *dst;
-#ifdef USE_Z
-	TZBufferType2 *z;
+#ifdef USE_ZBUFFER
+	fp24 *z;
 #endif
 
 	int xInc0 = 1 << VIDEO_SAMPLE_GRANULARITY;
@@ -132,12 +132,14 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 	int yInc1 = pitch1;
 
 	tVideoSample color;
+
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
 	tFixPoint r0, g0, b0;
-
-	getSample_color ( r0, g0, b0, a->Color );
+	getSample_color ( r0, g0, b0, a->Color[0] );
 	color = fix_to_color ( r0, g0, b0 );
-
-	color = fix_to_color ( r0, g0, b0 );
+#else
+	color = (tVideoSample) 0xFFFFFFFF;
+#endif
 
 	if ( dx < 0 )
 	{
@@ -153,26 +155,25 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 		swap_xor ( xInc1, yInc1 );
 	}
 
+	if ( 0 == dx )
+		return;
+
 	dst = (tVideoSample*) ( (u8*) lockedSurface + ( aposy * pitch0 ) + (aposx << VIDEO_SAMPLE_GRANULARITY ) );
-#ifdef USE_Z
-	z = (TZBufferType2*) ( (u8*) lockedZBuffer + ( aposy * pitch1 ) + (aposx << 2 ) );
+#ifdef USE_ZBUFFER
+	z = (fp24*) ( (u8*) lockedZBuffer + ( aposy * pitch1 ) + (aposx << 2 ) );
 #endif
 
 	c = dx << 1;
 	m = dy << 1;
 
 #ifdef IPOL_Z
-	f32 slopeZ = (b->Pos.z - a->Pos.z);
-	if (dx )
-		slopeZ /= (f32) dx;
+	f32 slopeZ = (b->Pos.z - a->Pos.z) / f32(dx);
 	f32 dataZ = a->Pos.z;
 #endif
 
 #ifdef IPOL_W
-	f32 slopeW = (b->Pos.w - a->Pos.w);
-	if (dx )
-		slopeW /= (f32) dx;
-	f32 dataW = a->Pos.w;
+	fp24 slopeW = (b->Pos.w - a->Pos.w) / f32( dx );
+	fp24 dataW = a->Pos.w;
 #endif
 
 	run = dx;
@@ -182,11 +183,9 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 		if ( *z >= dataZ )
 #endif
 #ifdef CMP_W
-		if ( dataW > *z )
+		if ( dataW >= *z )
 #endif
 		{
-			*dst = color;
-
 #ifdef WRITE_Z
 			*z = dataZ;
 #endif
@@ -194,14 +193,16 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 			*z = dataW;
 #endif
 
+		*dst = color;
+
 		}
 
 		dst = (tVideoSample*) ( (u8*) dst + xInc0 );	// x += xInc
 #ifdef IPOL_Z
-		z = (TZBufferType2*) ( (u8*) z + xInc1 );
+		z = (fp24*) ( (u8*) z + xInc1 );
 #endif
 #ifdef IPOL_W
-		z = (TZBufferType2*) ( (u8*) z + xInc1 );
+		z = (fp24*) ( (u8*) z + xInc1 );
 #endif
 
 		d += m;
@@ -209,10 +210,10 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 		{
 			dst = (tVideoSample*) ( (u8*) dst + yInc0 );	// y += yInc
 #ifdef IPOL_Z
-			z = (TZBufferType2*) ( (u8*) z + yInc1 );
+			z = (fp24*) ( (u8*) z + yInc1 );
 #endif
 #ifdef IPOL_W
-			z = (TZBufferType2*) ( (u8*) z + yInc1 );
+			z = (fp24*) ( (u8*) z + yInc1 );
 #endif
 
 			d -= c;
@@ -233,17 +234,15 @@ void CTRTextureWire2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const
 {
 	sScanLineData line;
 
-	// query access to TexMaps
-
 	// sort on height, y
-	if ( a->Pos.y > b->Pos.y ) swapVertices(&a, &b);
-	if ( a->Pos.y > c->Pos.y ) swapVertices(&a, &c);
-	if ( b->Pos.y > c->Pos.y ) swapVertices(&b, &c);
+	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
+	if ( F32_A_GREATER_B ( a->Pos.y , c->Pos.y ) ) swapVertexPointer(&a, &c);
+	if ( F32_A_GREATER_B ( b->Pos.y , c->Pos.y ) ) swapVertexPointer(&b, &c);
 
 
 	lockedSurface = (tVideoSample*)RenderTarget->lock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	lockedZBuffer = ZBuffer->lock();
 #endif
 
@@ -253,7 +252,7 @@ void CTRTextureWire2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const
 
 	RenderTarget->unlock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	ZBuffer->unlock();
 #endif
 
@@ -266,18 +265,18 @@ void CTRTextureWire2::drawLine ( const s4DVertex *a,const s4DVertex *b)
 	// query access to TexMaps
 
 	// sort on height, y
-	if ( a->Pos.y > b->Pos.y ) swapVertices(&a, &b);
+	if ( a->Pos.y > b->Pos.y ) swapVertexPointer(&a, &b);
 
 	lockedSurface = (tVideoSample*)RenderTarget->lock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	lockedZBuffer = ZBuffer->lock();
 #endif
 
 	renderLine ( a, b );
 	RenderTarget->unlock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	ZBuffer->unlock();
 #endif
 
@@ -287,7 +286,7 @@ void CTRTextureWire2::drawLine ( const s4DVertex *a,const s4DVertex *b)
 
 
 //! creates a flat triangle renderer
-ITriangleRenderer2* createTriangleRendererTextureGouraudWire2(IZBuffer2* zbuffer)
+IBurningShader* createTriangleRendererTextureGouraudWire2(IDepthBuffer* zbuffer)
 {
 	return new CTRTextureWire2(zbuffer);
 }

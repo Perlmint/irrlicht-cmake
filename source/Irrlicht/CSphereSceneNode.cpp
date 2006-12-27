@@ -227,14 +227,14 @@ void CSphereSceneNode::OnPreRender()
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& CSphereSceneNode::getMaterial(s32 i)
+video::SMaterial& CSphereSceneNode::getMaterial(u32 i)
 {
 	return Buffer.Material;
 }
 
 
 //! returns amount of materials used by this scene node.
-s32 CSphereSceneNode::getMaterialCount()
+u32 CSphereSceneNode::getMaterialCount()
 {
 	return 1;
 }

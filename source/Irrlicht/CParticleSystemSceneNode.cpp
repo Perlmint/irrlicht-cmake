@@ -7,7 +7,6 @@
 #include "ISceneManager.h"
 #include "ICameraSceneNode.h"
 #include "IVideoDriver.h"
-#include <string.h>
 
 #include "CParticlePointEmitter.h"
 #include "CParticleBoxEmitter.h"
@@ -90,7 +89,7 @@ void CParticleSystemSceneNode::removeAllAffectors()
 
 
 //! Returns the material based on the zero based index i.
-video::SMaterial& CParticleSystemSceneNode::getMaterial(s32 i)
+video::SMaterial& CParticleSystemSceneNode::getMaterial(u32 i)
 {
 	return Buffer.Material;
 }
@@ -98,7 +97,7 @@ video::SMaterial& CParticleSystemSceneNode::getMaterial(s32 i)
 
 
 //! Returns amount of materials used by this scene node.
-s32 CParticleSystemSceneNode::getMaterialCount()
+u32 CParticleSystemSceneNode::getMaterialCount()
 {
 	return 1;
 }
@@ -172,6 +171,8 @@ void CParticleSystemSceneNode::render()
 	if (!camera || !driver)
 		return;
 
+
+#if 0
 	// calculate vectors for letting particles look to camera
 	core::vector3df view(camera->getTarget() - camera->getAbsolutePosition());
 	view.normalize();
@@ -185,6 +186,22 @@ void CParticleSystemSceneNode::render()
 	vertical *= 0.5f * ParticleSize.Height;
 
 	view *= -1.0f;
+
+#else
+
+	const core::matrix4 &m = camera->getViewFrustum()->Matrices [ video::ETS_VIEW ];
+
+	f32 f;
+
+	f = 0.5f * ParticleSize.Width;
+	const core::vector3df horizontal ( m.M[0] * f, m.M[4] * f, m.M[8] * f );
+
+	f = -0.5f * ParticleSize.Height;
+	const core::vector3df vertical ( m.M[1] * f, m.M[5] * f, m.M[9] * f );
+
+	const core::vector3df view ( -m.M[2], -m.M[6] , -m.M[10] );
+
+#endif
 
 	// reallocate arrays, if they are too small
 	reallocateBuffers();
@@ -346,10 +363,10 @@ void CParticleSystemSceneNode::setParticleSize(const core::dimension2d<f32> &siz
 
 void CParticleSystemSceneNode::reallocateBuffers()
 {
-	if (Particles.size() * 4 > (u32)Buffer.getVertexCount() ||
-			Particles.size() * 6 > (u32)Buffer.getIndexCount())
+	if (Particles.size() * 4 > Buffer.getVertexCount() ||
+			Particles.size() * 6 > Buffer.getIndexCount())
 	{
-		s32 oldSize = Buffer.getVertexCount();
+		u32 oldSize = Buffer.getVertexCount();
 		Buffer.Vertices.set_used(Particles.size() * 4);
 
 		u32 i;
@@ -364,8 +381,8 @@ void CParticleSystemSceneNode::reallocateBuffers()
 		}
 
 		// fill remaining indices
-		s32 oldIdxSize = Buffer.getIndexCount();
-		s32 oldvertices = oldSize;
+		u32 oldIdxSize = Buffer.getIndexCount();
+		u32 oldvertices = oldSize;
 		Buffer.Indices.set_used(Particles.size() * 6);
 
 		for (i=oldIdxSize; i<Buffer.Indices.size(); i+=6)

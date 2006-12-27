@@ -43,10 +43,10 @@ public:
 	virtual void removeAllAffectors();
 
 	//! Returns the material based on the zero based index i.
-	virtual video::SMaterial& getMaterial(s32 i);
+	virtual video::SMaterial& getMaterial(u32 i);
 
 	//! Returns amount of materials used by this scene node.
-	virtual s32 getMaterialCount();
+	virtual u32 getMaterialCount();
 
 	//! pre render event
 	virtual void OnPreRender();

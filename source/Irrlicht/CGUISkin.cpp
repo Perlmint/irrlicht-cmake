@@ -55,26 +55,28 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 	}
 	else
 	{
-		Colors[EGDC_3D_DARK_SHADOW] =	0x80303030;
-		Colors[EGDC_3D_SHADOW] =	0x7023252c;
-		Colors[EGDC_3D_FACE] =		0xc0c9ccd4;
-		Colors[EGDC_3D_HIGH_LIGHT] =	0x50c7ccdc;
-		Colors[EGDC_3D_LIGHT] =		0x802e313a;
-		Colors[EGDC_ACTIVE_BORDER] =	0x80404040;
+		//0x80a6a8af
+		Colors[EGDC_3D_DARK_SHADOW] =	0x60767982;
+		//Colors[EGDC_3D_FACE]		=	0xc0c9ccd4;		// tab background
+		Colors[EGDC_3D_FACE]		=	0xc0cbd2d9;		// tab background
+		Colors[EGDC_3D_SHADOW]		=	0x50e4e8f1;		// tab background, and left-top highlight
+		Colors[EGDC_3D_HIGH_LIGHT]	=	0x40c7ccdc;	
+		Colors[EGDC_3D_LIGHT]		=	0x802e313a;
+		Colors[EGDC_ACTIVE_BORDER]	=	0x80404040;		// fenster titel
 		Colors[EGDC_ACTIVE_CAPTION] =	0xf0d0d0d0;
-		Colors[EGDC_APP_WORKSPACE] =	video::SColor(0xc0,100,100,100);
-		Colors[EGDC_BUTTON_TEXT] =	0xd0161616;
-		Colors[EGDC_GRAY_TEXT] =	video::SColor(60,20,20,20);
-		Colors[EGDC_HIGH_LIGHT] =	0x8cb0b0b0;
-		Colors[EGDC_HIGH_LIGHT_TEXT] =	0xd0646464;
-		Colors[EGDC_INACTIVE_BORDER] =	video::SColor(240,165,165,165);
-		Colors[EGDC_INACTIVE_CAPTION] = video::SColor(240,210,210,210);
-		Colors[EGDC_TOOLTIP]	=	video::SColor(240,255,255,230);
-		Colors[EGDC_SCROLLBAR]	=	0xf0e0e0e0;
-		Colors[EGDC_WINDOW]		=	0xf0f0f0f0;
+		Colors[EGDC_APP_WORKSPACE]	=	0xc0646464;		// unused
+		Colors[EGDC_BUTTON_TEXT]	=	0xd0161616;
+		Colors[EGDC_GRAY_TEXT]		=	0x3c141414;
+		Colors[EGDC_HIGH_LIGHT]		=	0x6c606060;
+		Colors[EGDC_HIGH_LIGHT_TEXT]=	0xd0e0e0e0;
+		Colors[EGDC_INACTIVE_BORDER]=	0xf0a5a5a5;
+		Colors[EGDC_INACTIVE_CAPTION]=	0xf0d2d2d2;
+		Colors[EGDC_TOOLTIP]		=	0xf00f2033;
+		Colors[EGDC_SCROLLBAR]		=	0xf0e0e0e0;
+		Colors[EGDC_WINDOW]			=	0xf0f0f0f0;
 
 		Sizes[EGDS_SCROLLBAR_SIZE] = 14;
-		Sizes[EGDS_MENU_HEIGHT] = 28;
+		Sizes[EGDS_MENU_HEIGHT] = 48;
 		Sizes[EGDS_WINDOW_BUTTON_WIDTH] = 15;
 		Sizes[EGDS_CHECK_BOX_WIDTH] = 18;
 		Sizes[EGDS_MESSAGE_BOX_WIDTH] = 500;

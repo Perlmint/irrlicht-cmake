@@ -15,8 +15,6 @@
 #include "COpenGLParallaxMapRenderer.h"
 #include "CImage.h"
 #include "os.h"
-#include <stdlib.h>
-#include <string.h>
 
 namespace irr
 {
@@ -395,6 +393,9 @@ void COpenGLDriver::createMaterialRenderers()
 	renderer->drop();
 	renderer = new COpenGLParallaxMapRenderer(this, tmp, MaterialRenderers[EMT_TRANSPARENT_VERTEX_ALPHA].Renderer);
 	renderer->drop();
+
+	// add basic 1 texture blending
+	addAndDropMaterialRenderer(new COpenGLMaterialRenderer_ONETEXTURE_BLEND(this));
 }
 
 void COpenGLDriver::loadExtensions()
@@ -791,10 +792,9 @@ const core::matrix4& COpenGLDriver::getTransform(E_TRANSFORMATION_STATE state)
 //! sets transformation
 void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat)
 {
-	Transformation3DChanged = true;
-
 	GLfloat glmat[16];
 	Matrices[state] = mat;
+	Transformation3DChanged = true;
 
 	switch(state)
 	{
@@ -812,15 +812,21 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(glmat);
 		break;
-	default:
-		break;
+	case ETS_TEXTURE_0:
+	case ETS_TEXTURE_1:
+		createGLTextureMatrix(glmat, mat );
+		if (MultiTextureExtension)
+			extGlActiveTextureARB(GL_TEXTURE0_ARB + ( state - ETS_TEXTURE_0 ));
+
+		glMatrixMode(GL_TEXTURE);
+		glLoadMatrixf(glmat);
 	}
 }
 
 
 
 //! draws a vertex primitive list
-void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
+void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
 	if (!primitiveCount || !vertexCount)
 		return;
@@ -833,12 +839,14 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 	// convert colors to gl color format.
 	vertexCount *= 4; //reused as color component count
 	ColorBuffer.set_used(vertexCount);
+	u32 i;
+
 	switch (vType)
 	{
 		case EVT_STANDARD:
 		{
 			const S3DVertex* p = (const S3DVertex*)vertices;
-			for (s32 i=0; i<vertexCount; i+=4)
+			for ( i=0; i<vertexCount; i+=4)
 			{
 				p->Color.toOpenGLColor(&ColorBuffer[i]);
 				++p;
@@ -848,7 +856,7 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 		case EVT_2TCOORDS:
 		{
 			const S3DVertex2TCoords* p = (const S3DVertex2TCoords*)vertices;
-			for (s32 i=0; i<vertexCount; i+=4)
+			for ( i=0; i<vertexCount; i+=4)
 			{
 				p->Color.toOpenGLColor(&ColorBuffer[i]);
 				++p;
@@ -858,7 +866,7 @@ void COpenGLDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCoun
 		case EVT_TANGENTS:
 		{
 			const S3DVertexTangents* p = (const S3DVertexTangents*)vertices;
-			for (s32 i=0; i<vertexCount; i+=4)
+			for ( i=0; i<vertexCount; i+=4)
 			{
 				p->Color.toOpenGLColor(&ColorBuffer[i]);
 				++p;
@@ -1449,11 +1457,6 @@ bool COpenGLDriver::setTexture(s32 stage, video::ITexture* texture)
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,
 			((COpenGLTexture*)texture)->getOpenGLTextureName());
-		GLfloat glmat[16];
-
-		createGLMatrix(glmat, texture->getTransformation());
-		glMatrixMode(GL_TEXTURE);
-		glLoadMatrixf(glmat);
 	}
 	return true;
 }
@@ -1472,15 +1475,36 @@ bool COpenGLDriver::disableTextures(s32 fromStage)
 
 
 
-//! creates a transposed matrix in supplied GLfloat array to pass to OpenGL
+//! creates a matrix in supplied GLfloat array to pass to OpenGL
 inline void COpenGLDriver::createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 {
-	s32 i = 0;
-	for (s32 r=0; r<4; ++r)
-		for (s32 c=0; c<4; ++c)
-			gl_matrix[i++] = m(r,c);
+	memcpy ( gl_matrix, &m.M[0], 16 * sizeof(f32) );
 }
 
+
+//! creates a opengltexturematrix from a D3D style texture matrix
+inline void COpenGLDriver::createGLTextureMatrix(GLfloat *o, const core::matrix4& m)
+{
+	o[0] = m.M[0];
+	o[1] = m.M[1];
+	o[2] = 0.f;
+	o[3] = 0.f;
+
+	o[4] = m.M[4];
+	o[5] = m.M[5];
+	o[6] = 0.f;
+	o[7] = 0.f;
+
+	o[8] = 0.f;
+	o[9] = 0.f;
+	o[10] = 1.f;
+	o[11] = 0.f;
+
+	o[12] = m.M[8];
+	o[13] = m.M[9];
+	o[14] = 0.f;
+	o[15] = 1.f;
+}
 
 
 //! returns a device dependent texture from a software surface (IImage)
@@ -1695,20 +1719,33 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	}
 
 	// zbuffer
-
 	if (resetAllRenderStates || lastmaterial.ZBuffer != material.ZBuffer)
 	{
-		if (material.ZBuffer)
-			glEnable(GL_DEPTH_TEST);
-		else
-			glDisable(GL_DEPTH_TEST);
+		switch (material.ZBuffer)
+		{
+			case 0:
+				glDisable(GL_DEPTH_TEST);
+				break;
+			case 1:
+				glEnable(GL_DEPTH_TEST);
+				glDepthFunc ( GL_LEQUAL );
+				break;
+			case 2:
+				glEnable(GL_DEPTH_TEST);
+				glDepthFunc ( GL_EQUAL );
+				break;
+		}
 	}
+
+
 
 	// zwrite
 	if (resetAllRenderStates || lastmaterial.ZWriteEnable != material.ZWriteEnable)
 	{
 		if (material.ZWriteEnable)
+		{
 			glDepthMask(GL_TRUE);
+		}
 		else
 			glDepthMask(GL_FALSE);
 	}
@@ -1747,6 +1784,17 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		glPointSize(material.Thickness);
 		glLineWidth(material.Thickness);
 	}
+
+	// texture address mode
+	if (resetAllRenderStates || lastmaterial.TextureWrap != material.TextureWrap)
+	{
+		u32 mode = material.TextureWrap ? GL_REPEAT : GL_CLAMP;
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
+	}
+
+
 }
 
 
@@ -1767,6 +1815,9 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+
 		Transformation3DChanged = false;
 
 		glDisable(GL_DEPTH_TEST);
@@ -1785,6 +1836,9 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 	{
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		if (alphaChannel)
 		{
@@ -1935,7 +1989,7 @@ void COpenGLDriver::addDynamicLight(const SLight& light)
 
 
 //! returns the maximal amount of dynamic lights the device can handle
-s32 COpenGLDriver::getMaximalDynamicLightAmount()
+u32 COpenGLDriver::getMaximalDynamicLightAmount()
 {
 	return MaxLights;
 }
@@ -2888,8 +2942,6 @@ IImage* COpenGLDriver::createScreenShot()
 } // end namespace
 } // end namespace
 
-#endif // _IRR_COMPILE_WITH_OPENGL_
-
 
 namespace irr
 {
@@ -2954,4 +3006,6 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 } // end namespace
 } // end namespace
 
+
+#endif // _IRR_COMPILE_WITH_OPENGL_
 

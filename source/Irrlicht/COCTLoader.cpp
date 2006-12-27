@@ -15,7 +15,6 @@
 #include "SAnimatedMesh.h"
 #include "SMeshBufferLightMap.h"
 #include "irrString.h"
-#include <string.h>
 
 namespace irr
 {

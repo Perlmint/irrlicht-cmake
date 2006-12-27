@@ -20,10 +20,10 @@
 #ifndef __DMF_SUPPORT_H_INCLUDED__
 #define __DMF_SUPPORT_H_INCLUDED__
 
-#include <stdlib.h>
-
 using namespace irr;
 using namespace video;
+
+#include <irrstring.h>
 
 /** A structure representing some DeleD infos. 
  This structure contains data about DeleD level file like: version, ambient colour, number of objects etc...*/

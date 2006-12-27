@@ -13,7 +13,6 @@
 #endif // _IRR_COMPILE_WITH_LIBPNG_
 
 #include "CImageLoaderPNG.h"
-#include <string.h>
 #include "CImage.h"
 #include "CReadFile.h"
 #include "os.h"

@@ -10,7 +10,6 @@
 #include "CD3D8Driver.h"
 #include "os.h"
 
-#include <stdio.h>
 
 #ifndef _IRR_COMPILE_WITH_DIRECT3D_9_
 // The D3DXFilterTexture function seems to get linked wrong when
@@ -507,7 +506,7 @@ ECOLOR_FORMAT CD3D8Texture::getColorFormat() const
 
 
 //! returns pitch of texture (in bytes)
-s32 CD3D8Texture::getPitch()
+u32 CD3D8Texture::getPitch() const
 {
 	return Pitch;
 }

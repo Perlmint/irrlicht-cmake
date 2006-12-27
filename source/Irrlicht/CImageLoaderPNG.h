@@ -16,7 +16,7 @@ namespace irr
 namespace video
 {
 
-//!  Surface Loader fow PNG files
+//!  Surface Loader for PNG files
 class CImageLoaderPng : public IImageLoader
 {
 public:

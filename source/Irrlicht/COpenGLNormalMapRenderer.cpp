@@ -11,8 +11,6 @@
 #include "IVideoDriver.h"
 #include "os.h"
 #include "COpenGLDriver.h"
-#include <stdio.h>
-#include <string.h>
 
 namespace irr
 {
@@ -265,9 +263,9 @@ void COpenGLNormalMapRenderer::OnSetConstants(IMaterialRendererServices* service
 	// here we've got to fetch the fixed function lights from the driver
 	// and set them as constants
 
-	int cnt = driver->getDynamicLightCount();
+	u32 cnt = driver->getDynamicLightCount();
 	
-	for (int i=0; i<2; ++i)
+	for (u32 i=0; i<2; ++i)
 	{
 		video::SLight light; 
 

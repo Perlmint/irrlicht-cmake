@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -6,11 +6,11 @@
 #define __C_VIDEO_2_SOFTWARE_H_INCLUDED__
 
 #include "SoftwareDriver2_compile_config.h"
-#include "ITriangleRenderer2.h"
+#include "IBurningShader.h"
 #include "CNullDriver.h"
 #include "CImage.h"
 #include "os.h"
-#include <string.h>
+#include "irrString.h"
 
 namespace irr
 {
@@ -54,7 +54,7 @@ namespace video
 		virtual void addDynamicLight(const SLight& light);
 
 		//! returns the maximal amount of dynamic lights the device can handle
-		virtual s32 getMaximalDynamicLightAmount();
+		virtual u32 getMaximalDynamicLightAmount();
 
 		//! Sets the dynamic ambient light color. The default color is
 		//! (0,0,0,0) which means it is dark.
@@ -62,7 +62,7 @@ namespace video
 		virtual void setAmbientLight(const SColorf& color);
 
 		//! draws a vertex primitive list
-		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+		void drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
@@ -100,7 +100,7 @@ namespace video
 		//! Creates a render target texture.
 		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size);
 	
-		//! Clears the ZBuffer. 
+		//! Clears the DepthBuffer. 
 		virtual void clearZBuffer();
 
 		//! Returns an image created from the last rendered frame.
@@ -108,6 +108,11 @@ namespace video
 
 		//! Enables or disables a texture creation flag.
 		virtual void setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled);
+
+		//! Returns the maximum amount of primitives (mostly vertices) which
+		//! the device is able to render with one drawIndexedTriangleList
+		//! call.
+		virtual s32 getMaximalPrimitiveCount();
 
 	protected:
 
@@ -124,20 +129,17 @@ namespace video
 		video::CImage* BackBuffer;
 		video::IImagePresenter* Presenter;
 
-
-		//! void selects the right triangle renderer based on the render states.
-		void selectRightTriangleRenderer();
-
-
 		video::ITexture* RenderTargetTexture;	
 		video::IImage* RenderTargetSurface;	
 		core::dimension2d<s32> RenderTargetSize;
 
-		ITriangleRenderer2* CurrentTriangleRenderer;
-		ITriangleRenderer2* TriangleRenderer[ETR2_COUNT];
-		ETriangleRenderer2 CurrentRenderer;
+		//! selects the right triangle renderer based on the render states.
+		void setCurrentShader();
 
-		IZBuffer2* ZBuffer;
+		IBurningShader* CurrentShader;
+		IBurningShader* BurningShader[ETR2_COUNT];
+
+		IDepthBuffer* DepthBuffer;
 
 		video::ITexture* Texture[2];
 		sInternalTexture Texmap[2];
@@ -152,26 +154,62 @@ namespace video
 		enum E_TRANSFORMATION_STATE_2
 		{
 			ETS_VIEW_PROJECTION = ETS_COUNT,
+			ETS_WORLD_VIEW,
+			ETS_WORLD_VIEW_INVERSE_TRANSPOSED,
 			ETS_CURRENT,
 			ETS_CLIPSCALE,
 
 			ETS2_COUNT
 		};
 
-		core::matrix4 TransformationMatrix[ETS2_COUNT];
+		struct SMatrixStack
+		{
+			s32 isIdentity;
+			core::matrix4 m;
+		};
+
+		SMatrixStack Transformation[ETS2_COUNT];
+
+		// Vertex Cache
+		static const SVSize vSize[];
+
+		SVertexCache VertexCache;
+
+		void VertexCache_reset (	const void* vertices, u32 vertexCount, 
+									const u16* indices, u32 indexCount, 
+									E_VERTEX_TYPE vType,scene::E_PRIMITIVE_TYPE pType );
+		void VertexCache_get ( s4DVertex ** face );
+		void VertexCache_get2 ( s4DVertex ** face );
+
+		void VertexCache_fill ( const u32 sourceIndex,const u32 destIndex );
+		s4DVertex * VertexCache_getVertex ( const u32 sourceIndex );
+
+
+		// culling & clipping
+		u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane );
+		u32 clipToFrustumTest ( const s4DVertex * v  ) const;
+		u32 clipToFrustum ( s4DVertex *source, s4DVertex * temp, const u32 vIn );
+
+
+#ifdef SOFTWARE_DRIVER_2_LIGHTING
+		void lightVertex ( s4DVertex *dest, const S3DVertex *source );
+#endif
+
 
 		// holds transformed, clipped vertices
-		s4DVertex CurrentOut[10];
-		s4DVertex Temp[10];
+		SAlignedVertex CurrentOut;
+		SAlignedVertex Temp;
 
-		u32 clipToFrustrum_NoStat ( s4DVertex *source, s4DVertex * temp, u32 vIn );
-		void ndc_2_dc_and_project ( s4DVertex *source, u32 vIn ) const;
-		f32 backface ( const s4DVertex *v0 ) const;
+		void ndc_2_dc_and_project ( s4DVertex *dest,s4DVertex *source, u32 vIn ) const;
+		f32 screenarea ( const s4DVertex *v0 ) const;
 		void select_polygon_mipmap ( s4DVertex *source, u32 vIn, s32 tex );
 		f32 texelarea ( const s4DVertex *v0, int tex ) const;
 
 
-		void transform_and_lighting ( s4DVertex *dest, const S3DVertex **face );
+		void ndc_2_dc_and_project2 ( const s4DVertex **v, const u32 size ) const;
+		f32 screenarea2 ( const s4DVertex **v ) const;
+		f32 texelarea2 ( const s4DVertex **v, int tex ) const;
+		void select_polygon_mipmap2 ( s4DVertex **source, s32 tex ) const;
 
 
 		sVec4 Global_AmbientLight;
@@ -180,8 +218,15 @@ namespace video
 		{
 			SLight org;
 
+			sVec4 posEyeSpace;
+
+			f32 constantAttenuation;
+			f32 linearAttenuation;
+			f32 quadraticAttenuation;
+
 			sVec4 AmbientColor;
 			sVec4 DiffuseColor;
+			sVec4 SpecularColor;
 		};
 		core::array<SInternalLight> Light;
 
@@ -191,11 +236,15 @@ namespace video
 
 			sVec4 AmbientColor;
 			sVec4 DiffuseColor;
-			sVec4 EmissiveColor;
 			sVec4 SpecularColor;
+			sVec4 EmissiveColor;
+
+			u32 SpecularEnabled;	// == Power2
 		};
 
 		SInternalMaterial Material;
+
+		static const sVec4 NDCPlane[6];
 
 	};
 

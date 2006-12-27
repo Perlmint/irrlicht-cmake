@@ -74,14 +74,12 @@ Version 1.0 - 29 July 2004
 */
 //////////////////////////////////////////////////////////////////////
 
-#include <string.h>
 #include <SMeshBufferLightMap.h>
 #include <SAnimatedMesh.h>
 #include <SMeshBuffer.h>
 #include <irrString.h>
 #include <IAttributes.h>
 #include <IrrlichtDevice.h>
-#include <stdio.h>
 #include "CLMTSMeshFileLoader.h"
 #if LMTS_INTEGRATED_IN_IRRLICHT
 #include "os.h"
@@ -260,7 +258,7 @@ void CLMTSMeshFileLoader::constructMesh()
 
 		for (u32 sc=0; sc<Subsets[i].Count; sc++) {
 
-			s32 idx = meshBuffer->getVertexCount();
+			u32 idx = meshBuffer->getVertexCount();
 
 			for (s32 vu=0; vu<3; ++vu)
 			{

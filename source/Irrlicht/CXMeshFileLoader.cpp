@@ -3,7 +3,6 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CXMeshFileLoader.h"
-#include <string.h>
 #include "os.h"
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"

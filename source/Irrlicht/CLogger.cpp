@@ -3,7 +3,6 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CLogger.h"
-#include <stdio.h>
 
 namespace irr
 {

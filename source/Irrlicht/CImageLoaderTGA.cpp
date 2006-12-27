@@ -3,10 +3,11 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CImageLoaderTGA.h"
-#include <string.h>
 #include "os.h"
 #include "CColorConverter.h"
 #include "CImage.h"
+#include "irrstring.h"
+
 
 namespace irr
 {

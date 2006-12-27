@@ -1,11 +1,11 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include "ITriangleRenderer2.h"
+#include "IBurningShader.h"
 
 // compile flag for this file
-#undef USE_Z
+#undef USE_ZBUFFER
 #undef IPOL_Z
 #undef CMP_Z
 #undef WRITE_Z
@@ -17,7 +17,7 @@
 #undef SUBTEXEL
 #undef INVERSE_W
 
-#undef IPOL_C
+#undef IPOL_C0
 #undef IPOL_T0
 #undef IPOL_T1
 
@@ -25,12 +25,12 @@
 #define SUBTEXEL
 #define INVERSE_W
 
-#define USE_Z
+#define USE_ZBUFFER
 #define IPOL_W
 #define CMP_W
 #define WRITE_W
 
-#define IPOL_C
+#define IPOL_C0
 //#define IPOL_T0
 //#define IPOL_T1
 
@@ -43,7 +43,11 @@
 	#undef SUBTEXEL
 #endif
 
-#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_Z )
+#ifndef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+	#undef IPOL_C0
+#endif
+
+#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_ZBUFFER )
 	#ifndef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 		#undef IPOL_W
 	#endif
@@ -68,25 +72,27 @@ namespace irr
 namespace video
 {
 
-class CTRGouraud2 : public ITriangleRenderer2
+class CTRGouraud2 : public IBurningShader
 {
 public:
 
 	//! constructor
-	CTRGouraud2(IZBuffer2* zbuffer);
+	CTRGouraud2(IDepthBuffer* zbuffer);
 
 	//! draws an indexed triangle list
 	virtual void drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c );
 
 
 private:
-	void scanline_bilinear ( sScanLineData * data ) const;
+	void scanline_bilinear ();
+	sScanConvertData scan;
+	sScanLineData line;
 
 };
 
 //! constructor
-CTRGouraud2::CTRGouraud2(IZBuffer2* zbuffer)
-: ITriangleRenderer2(zbuffer)
+CTRGouraud2::CTRGouraud2(IDepthBuffer* zbuffer)
+: IBurningShader(zbuffer)
 {
 	#ifdef _DEBUG
 	setDebugName("CTRGouraud2");
@@ -97,19 +103,17 @@ CTRGouraud2::CTRGouraud2(IZBuffer2* zbuffer)
 
 /*!
 */
-void CTRGouraud2::scanline_bilinear ( sScanLineData * data ) const
+void CTRGouraud2::scanline_bilinear ()
 {
 	tVideoSample *dst;
 
-#ifdef USE_Z
-	TZBufferType2 *z;
+#ifdef USE_ZBUFFER
+	fp24 *z;
 #endif
 
 	s32 xStart;
 	s32 xEnd;
 	s32 dx;
-
-	f32 invDeltaX;
 
 #ifdef SUBTEXEL
 	f32 subPixel;
@@ -119,9 +123,9 @@ void CTRGouraud2::scanline_bilinear ( sScanLineData * data ) const
 	f32 slopeZ;
 #endif
 #ifdef IPOL_W
-	f32 slopeW;
+	fp24 slopeW;
 #endif
-#ifdef IPOL_C
+#ifdef IPOL_C0
 	sVec4 slopeC;
 #endif
 #ifdef IPOL_T0
@@ -132,8 +136,8 @@ void CTRGouraud2::scanline_bilinear ( sScanLineData * data ) const
 #endif
 
 	// apply top-left fill-convention, left
-	xStart = irr::core::ceil32( data->x[0] );
-	xEnd = irr::core::ceil32( data->x[1] ) - 1;
+	xStart = irr::core::ceil32( line.x[0] );
+	xEnd = irr::core::ceil32( line.x[1] ) - 1;
 
 	dx = xEnd - xStart;
 
@@ -141,102 +145,107 @@ void CTRGouraud2::scanline_bilinear ( sScanLineData * data ) const
 		return;
 
 	// slopes
-	invDeltaX = data->x[1] - data->x[0];
-	invDeltaX = inverse32 ( invDeltaX );
+	const f32 invDeltaX = core::reciprocal_approxim ( line.x[1] - line.x[0] );
 
 #ifdef IPOL_Z
-	slopeZ = (data->z[1] - data->z[0]) * invDeltaX;
+	slopeZ = (line.z[1] - line.z[0]) * invDeltaX;
 #endif
 #ifdef IPOL_W
-	slopeW = (data->w[1] - data->w[0]) * invDeltaX;
+	slopeW = (line.w[1] - line.w[0]) * invDeltaX;
 #endif
-#ifdef IPOL_C
-	slopeC = (data->c[1] - data->c[0]) * invDeltaX;
+#ifdef IPOL_C0
+	slopeC = (line.c[1] - line.c[0]) * invDeltaX;
 #endif
 #ifdef IPOL_T0
-	slopeT0 = (data->t0[1] - data->t0[0]) * invDeltaX;
+	slopeT0 = (line.t0[1] - line.t0[0]) * invDeltaX;
 #endif
 #ifdef IPOL_T1
-	slopeT1 = (data->t1[1] - data->t1[0]) * invDeltaX;
+	slopeT1 = (line.t1[1] - line.t1[0]) * invDeltaX;
 #endif
 
 #ifdef SUBTEXEL
-	subPixel = ( (f32) xStart ) - data->x[0];
+	subPixel = ( (f32) xStart ) - line.x[0];
 #ifdef IPOL_Z
-	data->z[0] += slopeZ * subPixel;
+	line.z[0] += slopeZ * subPixel;
 #endif
 #ifdef IPOL_W
-	data->w[0] += slopeW * subPixel;
+	line.w[0] += slopeW * subPixel;
 #endif
-#ifdef IPOL_C
-	data->c[0] += slopeC * subPixel;
+#ifdef IPOL_C0
+	line.c[0] += slopeC * subPixel;
 #endif
 #ifdef IPOL_T0
-	data->t0[0] += slopeT0 * subPixel;
+	line.t0[0] += slopeT0 * subPixel;
 #endif
 #ifdef IPOL_T1
-	data->t1[0] += slopeT1 * subPixel;
+	line.t1[0] += slopeT1 * subPixel;
 #endif
 #endif
 
-	dst = lockedSurface + ( data->y * SurfaceWidth ) + xStart;
+	dst = lockedSurface + ( line.y * SurfaceWidth ) + xStart;
 
-#ifdef USE_Z
-	z = lockedZBuffer + ( data->y * SurfaceWidth ) + xStart;
+#ifdef USE_ZBUFFER
+	z = lockedZBuffer + ( line.y * SurfaceWidth ) + xStart;
 #endif
 
+
+
+#ifdef IPOL_C0
+	tFixPoint r0, g0, b0;
 
 #ifdef INVERSE_W
 	f32 inversew;
 #endif
 
-
-	tFixPoint r0, g0, b0;
-
+#endif
 
 	for ( s32 i = 0; i <= dx; ++i )
 	{
 #ifdef CMP_Z
-		if ( data->z[0] < z[i] )
+		if ( line.z[0] < z[i] )
 #endif
 #ifdef CMP_W
-		if ( data->w[0] > z[i] )
+		if ( line.w[0] >= z[i] )
 #endif
 
 		{
+#ifdef IPOL_C0
 #ifdef INVERSE_W
-			inversew = inverse32 ( data->w[0] );
+			inversew = core::reciprocal ( line.w[0] );
 
-			getSample_color ( r0, g0, b0, data->c[0] * inversew );
+			getSample_color ( r0, g0, b0, line.c[0] * inversew );
 #else
-			getSample_color ( r0, g0, b0, data->c[0] );
+			getSample_color ( r0, g0, b0, line.c[0] );
 #endif
 
 			dst[i] = fix_to_color ( r0, g0, b0 );
+#else
+			dst[i] = COLOR_BRIGHT_WHITE;
+#endif
 
 #ifdef WRITE_Z
-			z[i] = data->z[0];
+			z[i] = line.z[0];
 #endif
 #ifdef WRITE_W
-			z[i] = data->w[0];
+			z[i] = line.w[0];
 #endif
 
 		}
 
 #ifdef IPOL_Z
-		data->z[0] += slopeZ;
+		line.z[0] += slopeZ;
 #endif
 #ifdef IPOL_W
-		data->w[0] += slopeW;
+		line.w[0] += slopeW;
 #endif
-#ifdef IPOL_C
-		data->c[0] += slopeC;
+#ifdef IPOL_C0
+		line.c[0] += slopeC;
 #endif
 #ifdef IPOL_T0
-		data->t0[0] += slopeT0;
+		line.t0[0] += slopeT0;
 #endif
 #ifdef IPOL_T1
-		data->t1[0] += slopeT1;
+		line.t1[0] += slopeT1;
 #endif
 	}
 
@@ -244,26 +253,18 @@ void CTRGouraud2::scanline_bilinear ( sScanLineData * data ) const
 
 void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c )
 {
-	sScanConvertData scan;
-	sScanLineData line;
-
-
 	// sort on height, y
-	if ( a->Pos.y > b->Pos.y ) swapVertices(&a, &b);
-	if ( a->Pos.y > c->Pos.y ) swapVertices(&a, &c);
-	if ( b->Pos.y > c->Pos.y ) swapVertices(&b, &c);
+	if ( a->Pos.y > b->Pos.y ) swapVertexPointer(&a, &b);
+	if ( a->Pos.y > c->Pos.y ) swapVertexPointer(&a, &c);
+	if ( b->Pos.y > c->Pos.y ) swapVertexPointer(&b, &c);
 
 
 	// calculate delta y of the edges
-	scan.invDeltaY[0] = c->Pos.y - a->Pos.y;
-	scan.invDeltaY[1] = b->Pos.y - a->Pos.y;
-	scan.invDeltaY[2] = c->Pos.y - b->Pos.y;
+	scan.invDeltaY[0] = core::reciprocal ( c->Pos.y - a->Pos.y );
+	scan.invDeltaY[1] = core::reciprocal ( b->Pos.y - a->Pos.y );
+	scan.invDeltaY[2] = core::reciprocal ( c->Pos.y - b->Pos.y );
 
-	scan.invDeltaY[0] = inverse32 ( scan.invDeltaY[0] );
-	scan.invDeltaY[1] = inverse32 ( scan.invDeltaY[1] );
-	scan.invDeltaY[2] = inverse32 ( scan.invDeltaY[2] );
-
-	if ( (f32) 0.0 == scan.invDeltaY[0] )
+	if ( F32_LOWER_EQUAL_0 ( scan.invDeltaY[0] ) )
 		return;
 
 	// find if the major edge is left or right aligned
@@ -291,9 +292,9 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 	scan.w[0] = a->Pos.w;
 #endif
 
-#ifdef IPOL_C
-	scan.slopeC[0] = (c->Color - a->Color) * scan.invDeltaY[0];
-	scan.c[0] = a->Color;
+#ifdef IPOL_C0
+	scan.slopeC[0] = (c->Color[0] - a->Color[0]) * scan.invDeltaY[0];
+	scan.c[0] = a->Color[0];
 #endif
 
 #ifdef IPOL_T0
@@ -309,7 +310,6 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 	// top left fill convention y run
 	s32 yStart;
 	s32 yEnd;
-	s32 y;
 
 #ifdef SUBTEXEL
 	f32 subPixel;
@@ -317,7 +317,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 
 	lockedSurface = (tVideoSample*)RenderTarget->lock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	lockedZBuffer = ZBuffer->lock();
 #endif
 
@@ -346,9 +346,9 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 		scan.w[1] = a->Pos.w;
 #endif
 
-#ifdef IPOL_C
-		scan.slopeC[1] = (b->Color - a->Color) * scan.invDeltaY[1];
-		scan.c[1] = a->Color;
+#ifdef IPOL_C0
+		scan.slopeC[1] = (b->Color[0] - a->Color[0]) * scan.invDeltaY[1];
+		scan.c[1] = a->Color[0];
 #endif
 
 #ifdef IPOL_T0
@@ -382,7 +382,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 		scan.w[1] += scan.slopeW[1] * subPixel;		
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 		scan.c[0] += scan.slopeC[0] * subPixel;
 		scan.c[1] += scan.slopeC[1] * subPixel;		
 #endif
@@ -400,10 +400,8 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 #endif
 
 		// rasterize the edge scanlines
-		for( y = yStart; y <= yEnd; ++y)
+		for( line.y = yStart; line.y <= yEnd; ++line.y)
 		{
-			line.y = y;
-
 			line.x[scan.left] = scan.x[0];
 			line.x[scan.right] = scan.x[1];
 
@@ -417,7 +415,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 			line.w[scan.right] = scan.w[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			line.c[scan.left] = scan.c[0];
 			line.c[scan.right] = scan.c[1];
 #endif
@@ -433,7 +431,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 #endif
 
 			// render a scanline
-			scanline_bilinear ( &line );
+			scanline_bilinear ();
 
 			scan.x[0] += scan.slopeX[0];
 			scan.x[1] += scan.slopeX[1];
@@ -448,7 +446,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 			scan.w[1] += scan.slopeW[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			scan.c[0] += scan.slopeC[0];
 			scan.c[1] += scan.slopeC[1];
 #endif
@@ -481,8 +479,8 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 #ifdef IPOL_W
 			scan.w[0] = a->Pos.w + scan.slopeW[0] * temp[0];
 #endif
-#ifdef IPOL_C
-			scan.c[0] = a->Color + scan.slopeC[0] * temp[0];
+#ifdef IPOL_C0
+			scan.c[0] = a->Color[0] + scan.slopeC[0] * temp[0];
 #endif
 #ifdef IPOL_T0
 			scan.t0[0] = a->Tex[0] + scan.slopeT0[0] * temp[0];
@@ -507,9 +505,9 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 		scan.w[1] = b->Pos.w;
 #endif
 
-#ifdef IPOL_C
-		scan.slopeC[1] = (c->Color - b->Color) * scan.invDeltaY[2];
-		scan.c[1] = b->Color;
+#ifdef IPOL_C0
+		scan.slopeC[1] = (c->Color[0] - b->Color[0]) * scan.invDeltaY[2];
+		scan.c[1] = b->Color[0];
 #endif
 
 #ifdef IPOL_T0
@@ -544,7 +542,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 		scan.w[1] += scan.slopeW[1] * subPixel;		
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 		scan.c[0] += scan.slopeC[0] * subPixel;
 		scan.c[1] += scan.slopeC[1] * subPixel;		
 #endif
@@ -562,9 +560,8 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 #endif
 
 		// rasterize the edge scanlines
-		for( y = yStart; y <= yEnd; ++y)
+		for( line.y = yStart; line.y <= yEnd; ++line.y)
 		{
-			line.y = y;
 			line.x[scan.left] = scan.x[0];
 			line.x[scan.right] = scan.x[1];
 
@@ -578,7 +575,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 			line.w[scan.right] = scan.w[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			line.c[scan.left] = scan.c[0];
 			line.c[scan.right] = scan.c[1];
 #endif
@@ -594,7 +591,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 #endif
 
 			// render a scanline
-			scanline_bilinear ( &line );
+			scanline_bilinear ();
 
 			scan.x[0] += scan.slopeX[0];
 			scan.x[1] += scan.slopeX[1];
@@ -609,7 +606,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 			scan.w[1] += scan.slopeW[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			scan.c[0] += scan.slopeC[0];
 			scan.c[1] += scan.slopeC[1];
 #endif
@@ -629,7 +626,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 
 	RenderTarget->unlock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	ZBuffer->unlock();
 #endif
 
@@ -649,7 +646,7 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 
 
 //! creates a flat triangle renderer
-ITriangleRenderer2* createTriangleRendererGouraud2(IZBuffer2* zbuffer)
+IBurningShader* createTriangleRendererGouraud2(IDepthBuffer* zbuffer)
 {
 	return new CTRGouraud2(zbuffer);
 }

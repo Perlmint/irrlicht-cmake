@@ -59,9 +59,14 @@ CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* drive
 
 	loadBuiltInFont();
 
-	IGUISkin* skin = createSkin(EGST_WINDOWS_METALLIC);
+	IGUISkin* skin = createSkin(EGST_BURNING_SKIN);
 	setSkin(skin);
 	skin->drop();
+
+	//set tooltip default
+	ToolTip.LastTime = 0;
+	ToolTip.LaunchTime = 1000;
+	ToolTip.Element = 0;
 }
 
 
@@ -136,6 +141,7 @@ void CGUIEnvironment::drawAll()
 	}
 
 	draw();
+	OnPostRender ( os::Timer::getTime () );
 }
 
 
@@ -196,7 +202,39 @@ bool CGUIEnvironment::OnEvent(SEvent event)
 	return false;
 }
 
+/*
+*/
+void CGUIEnvironment::OnPostRender( u32 time )
+{
+	// check tooltip
 
+	// launch tooltip
+	if ( time - ToolTip.LastTime >= ToolTip.LaunchTime &&
+		Hovered && Hovered != this &&
+		ToolTip.Element == 0 &&
+		Hovered != ToolTip.Element &&
+		Hovered->getToolTipText().size()
+		)
+	{
+		core::rect<s32> pos;
+		pos.UpperLeftCorner = Hovered->getAbsolutePosition ().LowerRightCorner;
+		pos.LowerRightCorner = pos.UpperLeftCorner + core::position2d<s32> ( 100, 50 );
+
+		ToolTip.Element = addStaticText (	Hovered->getToolTipText().c_str(), pos, true, true, this, -1, true );
+		ToolTip.Element->setOverrideColor ( getSkin()->getColor ( EGDC_TOOLTIP ) );
+
+		s32 textHeight = ToolTip.Element->getTextHeight();
+		pos = ToolTip.Element->getRelativePosition();
+		pos.LowerRightCorner.Y = pos.UpperLeftCorner.Y + textHeight;
+		ToolTip.Element->setRelativePosition(pos);
+
+	}
+
+	IGUIElement::OnPostRender ( time );
+}
+
+/*
+*/
 void CGUIEnvironment::updateHoveredElement(core::position2d<s32> mousePos)
 {
 	IGUIElement* lastHovered = Hovered;
@@ -205,6 +243,8 @@ void CGUIEnvironment::updateHoveredElement(core::position2d<s32> mousePos)
 
 	if (Hovered)
 	{
+		u32 now = os::Timer::getTime ();
+
 		if (Hovered != this)
 			Hovered->grab();
 
@@ -219,6 +259,25 @@ void CGUIEnvironment::updateHoveredElement(core::position2d<s32> mousePos)
 				event.GUIEvent.EventType = EGET_ELEMENT_LEFT;
 				lastHovered->OnEvent(event);
 			}
+
+			if ( ToolTip.Element )
+			{
+				ToolTip.Element->remove ();
+				ToolTip.Element = 0;
+			}
+			else
+			{
+				// boost tooltip generation for relaunch
+				if ( now - ToolTip.LastTime < ToolTip.LastTime )
+				{
+					ToolTip.LastTime += 100;
+				}
+				else
+				{
+					ToolTip.LastTime = now;
+				}
+			}
+
 
 			event.GUIEvent.Caller = Hovered;
 			event.GUIEvent.EventType = EGET_ELEMENT_HOVERED;
@@ -306,11 +365,15 @@ IGUISkin* CGUIEnvironment::createSkin(EGUI_SKIN_TYPE type)
 
 
 //! adds an button. The returned pointer must not be dropped.
-IGUIButton* CGUIEnvironment::addButton(const core::rect<s32>& rectangle, IGUIElement* parent, s32 id, const wchar_t* text)
+IGUIButton* CGUIEnvironment::addButton(const core::rect<s32>& rectangle, IGUIElement* parent, s32 id, const wchar_t* text, const wchar_t *tooltiptext)
 {
 	IGUIButton* button = new CGUIButton(this, parent ? parent : this, id, rectangle);
 	if (text)
 		button->setText(text);
+
+	if ( tooltiptext )
+		button->setToolTipText ( tooltiptext );
+
 	button->drop();
 	return button;
 }

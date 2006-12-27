@@ -7,7 +7,6 @@
 #include "ISceneManager.h"
 #include "os.h"
 #include "Keycodes.h"
-#include "stdio.h"
 #include "quaternion.h"
 
 namespace irr
@@ -15,15 +14,15 @@ namespace irr
 namespace scene
 {
 
-const f32 MAX_VERTICAL_ANGLE = 89.0f;
+const f32 MAX_VERTICAL_ANGLE = 88.0f;
 
 //! constructor
 CCameraFPSSceneNode::CCameraFPSSceneNode(ISceneNode* parent, ISceneManager* mgr,
-		gui::ICursorControl* cursorControl, s32 id, f32 rotateSpeed , f32 moveSpeed,
+		gui::ICursorControl* cursorControl, s32 id, f32 rotateSpeed , f32 moveSpeed,f32 jumpSpeed,
 		SKeyMap* keyMapArray, s32 keyMapSize, bool noVerticalMovement)
 : CCameraSceneNode(parent, mgr, id), CursorControl(cursorControl),
-	MoveSpeed(moveSpeed), RotateSpeed(rotateSpeed), firstUpdate(true),
-	NoVerticalMovement(noVerticalMovement)
+	MoveSpeed(moveSpeed), RotateSpeed(rotateSpeed), JumpSpeed ( jumpSpeed ), firstUpdate(true),
+	NoVerticalMovement(noVerticalMovement),LastAnimationTime ( 0 )
 {
 	#ifdef _DEBUG
 	setDebugName("CCameraFPSSceneNode");
@@ -46,6 +45,7 @@ CCameraFPSSceneNode::CCameraFPSSceneNode(ISceneNode* parent, ISceneManager* mgr,
 		KeyMap.push_back(SCamKeyMap(1, irr::KEY_DOWN));
 		KeyMap.push_back(SCamKeyMap(2, irr::KEY_LEFT));
 		KeyMap.push_back(SCamKeyMap(3, irr::KEY_RIGHT));
+		KeyMap.push_back(SCamKeyMap(4, irr::KEY_KEY_J));
 	}
 	else
 	{
@@ -62,6 +62,8 @@ CCameraFPSSceneNode::CCameraFPSSceneNode(ISceneNode* parent, ISceneManager* mgr,
 			case EKA_STRAFE_LEFT: KeyMap.push_back(SCamKeyMap(2, keyMapArray[i].KeyCode));
 				break;
 			case EKA_STRAFE_RIGHT: KeyMap.push_back(SCamKeyMap(3, keyMapArray[i].KeyCode));
+				break;
+			case EKA_JUMP_UP: KeyMap.push_back(SCamKeyMap(4, keyMapArray[i].KeyCode));
 				break;
 			default:
 				break;
@@ -86,17 +88,16 @@ CCameraFPSSceneNode::~CCameraFPSSceneNode()
 //! for changing their position, look at target or whatever. 
 bool CCameraFPSSceneNode::OnEvent(SEvent event)
 {
-	if (!InputReceiverEnabled)
-		return false;
-
 	if (event.EventType == EET_KEY_INPUT_EVENT)
 	{
-		s32 cnt = (s32)KeyMap.size();
-		for (s32 i=0; i<cnt; ++i)
+		const u32 cnt = KeyMap.size();
+		for (u32 i=0; i<cnt; ++i)
 			if (KeyMap[i].keycode == event.KeyInput.Key)
 			{
 				CursorKeys[KeyMap[i].action] = event.KeyInput.PressedDown; 
-				return true;
+
+				if ( InputReceiverEnabled )
+					return true;
 			}
 	}
 
@@ -110,7 +111,7 @@ bool CCameraFPSSceneNode::OnEvent(SEvent event)
 //! dependent on what they are.
 void CCameraFPSSceneNode::OnPostRender(u32 timeMs)
 {
-	animate();
+	animate( timeMs );
 
 	core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
 				for (; ait != Animators.end(); ++ait)
@@ -125,115 +126,125 @@ void CCameraFPSSceneNode::OnPostRender(u32 timeMs)
 }
 
 
-
-void CCameraFPSSceneNode::animate()
+void CCameraFPSSceneNode::animate( u32 timeMs )
 {
-	if (SceneManager->getActiveCamera() != this)
-		return;
+	const u32 camIsMe = SceneManager->getActiveCamera() == this;
 
 	if (firstUpdate)
 	{
-		if (CursorControl)
+		if (CursorControl && camIsMe)
+		{
 			CursorControl->setPosition(0.5f, 0.5f);
-		CenterCursor = CursorControl->getRelativePosition();
+			CenterCursor = CursorControl->getRelativePosition();
+		}
 
 		LastAnimationTime = os::Timer::getTime();
 
 		firstUpdate = false;
-		return;
 	}
 
-	// get time
+	// get time. only operate on valid camera
+	f32 timeDiff = 0.f;
 
-	s32 now = os::Timer::getTime();
-	s32 timeDiff = now - LastAnimationTime;
-	LastAnimationTime = now;
-
-	// Update rotation
-
-	Target.set(0,0,1);
-
-	if (!CursorControl)
-		return;
-
-	RelativeRotation.X *= -1.0f;
-	RelativeRotation.Y *= -1.0f;
-
-	if (InputReceiverEnabled)
+	if ( camIsMe )
 	{
-		core::position2d<f32> cursorpos = CursorControl->getRelativePosition();
-
-		if (!core::equals(cursorpos.X, CenterCursor.X) ||
-			!core::equals(cursorpos.Y, CenterCursor.Y))
-		{
-			RelativeRotation.Y += (0.5f - cursorpos.X) * RotateSpeed;
-			RelativeRotation.X += (0.5f - cursorpos.Y) * RotateSpeed;
-			CursorControl->setPosition(0.5f, 0.5f);
-			CenterCursor = CursorControl->getRelativePosition();
-
-			if (RelativeRotation.X > MAX_VERTICAL_ANGLE)
-				RelativeRotation.X = MAX_VERTICAL_ANGLE;
-			if (RelativeRotation.X < -MAX_VERTICAL_ANGLE)
-				RelativeRotation.X = -MAX_VERTICAL_ANGLE;
-		}
+		timeDiff = (f32) ( timeMs - LastAnimationTime );
+		LastAnimationTime = timeMs;
 	}
 
-	// set target
-
-	core::matrix4 mat;
-	mat.setRotationDegrees(core::vector3df(-RelativeRotation.X, -RelativeRotation.Y, 0));
-	mat.transformVect(Target);
 
 	// update position
-
 	core::vector3df pos = getPosition();	
 
-	core::vector3df movedir = Target;
+	// Update rotation
+//	if (InputReceiverEnabled)
+	{
+		Target.set(0,0,1);
 
-	if (NoVerticalMovement)
-		movedir.Y = 0.0f;
 
-	movedir.normalize();
+		if (CursorControl && InputReceiverEnabled && camIsMe )
+		{
+			core::position2d<f32> cursorpos = CursorControl->getRelativePosition();
 
-	if (CursorKeys[0])
-		pos += movedir * (f32)timeDiff * MoveSpeed;
+			if (!core::equals(cursorpos.X, CenterCursor.X) ||
+				!core::equals(cursorpos.Y, CenterCursor.Y))
+			{
+				RelativeRotation.X *= -1.0f;
+				RelativeRotation.Y *= -1.0f;
 
-	if (CursorKeys[1])
-		pos -= movedir * (f32)timeDiff * MoveSpeed;
+				RelativeRotation.Y += (0.5f - cursorpos.X) * RotateSpeed;
+				RelativeRotation.X = core::clamp (	RelativeRotation.X + (0.5f - cursorpos.Y) * RotateSpeed,
+													-MAX_VERTICAL_ANGLE,
+													+MAX_VERTICAL_ANGLE
+												);
 
-	// strafing
+				RelativeRotation.X *= -1.0f;
+				RelativeRotation.Y *= -1.0f;
 
-	core::vector3df strafevect = Target;
-	strafevect = strafevect.crossProduct(UpVector);
+				CursorControl->setPosition(0.5f, 0.5f);
+				CenterCursor = CursorControl->getRelativePosition();
+			}
+		}
 
-	if (NoVerticalMovement)
-		strafevect.Y = 0.0f;
+		// set target
 
-	strafevect.normalize();
+		core::matrix4 mat;
+		mat.setRotationDegrees(core::vector3df( RelativeRotation.X, RelativeRotation.Y, 0));
+		mat.transformVect(Target);
 
-	if (CursorKeys[2])
-		pos += strafevect * (f32)timeDiff * MoveSpeed;
+		core::vector3df movedir = Target;
 
-	if (CursorKeys[3])
-		pos -= strafevect * (f32)timeDiff * MoveSpeed;
+		if (NoVerticalMovement)
+			movedir.Y = 0.f;
 
-	// write translation
+		movedir.normalize();
 
-	setPosition(pos);
+		if (InputReceiverEnabled && camIsMe)
+		{
+			if (CursorKeys[0])
+				pos += movedir * timeDiff * MoveSpeed;
+
+			if (CursorKeys[1])
+				pos -= movedir * timeDiff * MoveSpeed;
+
+			// strafing
+
+			core::vector3df strafevect = Target;
+			strafevect = strafevect.crossProduct(UpVector);
+
+			if (NoVerticalMovement)
+				strafevect.Y = 0.0f;
+
+			strafevect.normalize();
+
+			if (CursorKeys[2])
+				pos += strafevect * timeDiff * MoveSpeed;
+
+			if (CursorKeys[3])
+				pos -= strafevect * timeDiff * MoveSpeed;
+
+			// jumping ( need's a gravity , else it's a fly to the World-UpVector )
+			if (CursorKeys[4])
+			{
+				pos += UpVector * timeDiff * JumpSpeed;
+			}
+		}
+
+		// write translation
+
+		setPosition(pos);
+	}
 
 	// write right target
 
 	TargetVector = Target;
 	Target += pos;
 
-	RelativeRotation.X *= -1.0f;
-	RelativeRotation.Y *= -1.0f;
 }
-
 
 void CCameraFPSSceneNode::allKeysUp()
 {
-	for (s32 i=0; i<4; ++i)
+	for (s32 i=0; i<6; ++i)
 		CursorKeys[i] = false;
 }
 
@@ -252,6 +263,16 @@ void CCameraFPSSceneNode::setTarget(const core::vector3df& tgt)
 		 RelativeRotation.X -= 360.0f;
 }
 
+//! Disables or enables the camera to get key or mouse inputs.
+void CCameraFPSSceneNode::setInputReceiverEnabled(bool enabled)
+{
+   // So we don't skip when we return from a non-enabled mode and the
+   // mouse cursor is now not in the middle of the screen
+   if( !InputReceiverEnabled && enabled )
+      firstUpdate = true;
+
+   InputReceiverEnabled = enabled;
+} 
 
 } // end namespace
 } // end namespace

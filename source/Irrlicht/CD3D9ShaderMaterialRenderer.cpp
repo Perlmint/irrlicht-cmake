@@ -27,7 +27,7 @@ CD3D9ShaderMaterialRenderer::CD3D9ShaderMaterialRenderer(IDirect3DDevice9* d3dde
 		s32& outMaterialTypeNr, const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 		IShaderConstantSetCallBack* callback, IMaterialRenderer* baseMaterial, s32 userData)
 : pID3DDevice(d3ddev), Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
-	VertexShader(0), PixelShader(0), UserData(userData)
+	VertexShader(0), OldVertexShader(0), PixelShader(0), UserData(userData)
 {
 	if (BaseMaterial)
 		BaseMaterial->grab();

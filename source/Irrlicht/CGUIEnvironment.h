@@ -58,7 +58,7 @@ public:
 	virtual IGUIFont* getFont(const c8* filename);
 
 	//! adds an button. The returned pointer must not be dropped.
-	virtual IGUIButton* addButton(const core::rect<s32>& rectangle, IGUIElement* parent=0, s32 id=-1, const wchar_t* text=0);
+	virtual IGUIButton* addButton(const core::rect<s32>& rectangle, IGUIElement* parent=0, s32 id=-1, const wchar_t* text=0,const wchar_t* tooltiptext = 0);
 
 	//! adds a window. The returned pointer must not be dropped.
 	virtual IGUIWindow* addWindow(const core::rect<s32>& rectangle, bool modal = false, 
@@ -142,6 +142,8 @@ public:
 	//! Returns the root gui element. 
     virtual IGUIElement* getRootGUIElement();
 
+	virtual void OnPostRender( u32 time );
+
 private:
 
 	struct SFont
@@ -155,6 +157,13 @@ private:
 		}
 	};
 
+	struct SToolTip
+	{
+		u32 LastTime;
+		u32 LaunchTime;
+		IGUIStaticText* Element;
+	};
+	SToolTip ToolTip;
 	void updateHoveredElement(core::position2d<s32> mousePos);
 
 	void loadBuiltInFont();

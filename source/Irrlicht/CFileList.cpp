@@ -4,6 +4,8 @@
 
 #include "CFileList.h"
 #include "IrrCompileConfig.h"
+#include "irrarray.h"
+#include <stdlib.h>
 
 namespace irr
 {
@@ -22,8 +24,6 @@ namespace io
 #endif
 
 #ifdef _IRR_WINDOWS_
-#include <stdlib.h>
-#include <stdio.h>
 #include <io.h>
 #include <direct.h>
 #endif

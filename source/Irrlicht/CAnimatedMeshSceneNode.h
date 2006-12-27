@@ -31,10 +31,12 @@ namespace scene
 		virtual void setCurrentFrame(s32 frame);
 
 		//! OnPostRender() is called just after rendering the whole scene.
-		virtual void OnPostRender(u32 timeMs);
+		//virtual void OnPostRender(u32 timeMs);
 
 		//! frame
 		virtual void OnPreRender();
+
+		virtual void OnPostRender(u32 timeMs);
 
 		//! renders the node.
 		virtual void render();
@@ -62,10 +64,10 @@ namespace scene
 		//! This function is needed for inserting the node into the scene hirachy on a
 		//! optimal position for minimizing renderstate changes, but can also be used
 		//! to directly modify the material of a scene node.
-		virtual video::SMaterial& getMaterial(s32 i);
+		virtual video::SMaterial& getMaterial(u32 i);
 
 		//! returns amount of materials used by this scene node.
-		virtual s32 getMaterialCount();
+		virtual u32 getMaterialCount();
 
 		//! Creates shadow volume scene node as child of this node
 		//! and returns a pointer to it.
@@ -128,10 +130,14 @@ namespace scene
 		core::aabbox3d<f32> Box;
 		IAnimatedMesh* Mesh;
 
-		s32 BeginFrameTime;
+		u32 BeginFrameTime;
 		s32 StartFrame;
 		s32 EndFrame;
 		s32 FramesPerSecond;
+
+		s32 CurrentFrameNr;
+		u32 buildFrameNr( u32 timeMs);
+
 
 		bool Looping;
 		bool ReadOnlyMaterials;

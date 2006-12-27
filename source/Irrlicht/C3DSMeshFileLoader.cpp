@@ -3,7 +3,6 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "C3DSMeshFileLoader.h"
-#include <string.h>
 #include "os.h"
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"
@@ -175,7 +174,7 @@ IAnimatedMesh* C3DSMeshFileLoader::createMesh(io::IReadFile* file)
 		SAnimatedMesh* am = new SAnimatedMesh();
 		am->Type = EAMT_3DS;
 
-		for (s32 i=0; i<Mesh->getMeshBufferCount(); ++i)
+		for (u32 i=0; i<Mesh->getMeshBufferCount(); ++i)
 		{
 			SMeshBuffer* mb = ((SMeshBuffer*)Mesh->getMeshBuffer(i));
 			// drop empty buffers
@@ -519,7 +518,7 @@ bool C3DSMeshFileLoader::readTrackChunk(io::IReadFile* file, ChunkData& data,
 		video::S3DVertex *vertices=(video::S3DVertex*)mb->getVertices();
 		if (data.header.id==C3DS_POS_TRACK_TAG)
 		{
-			for (s32 i=0; i<mb->getVertexCount(); ++i)
+			for (u32 i=0; i<mb->getVertexCount(); ++i)
 				vertices[i].Pos+=vec;
 		}
 		else if (data.header.id==C3DS_ROT_TRACK_TAG)
@@ -871,7 +870,7 @@ bool C3DSMeshFileLoader::readObjectChunk(io::IReadFile* file, ChunkData* parent)
 
 void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc& name)
 {
-	if (Mesh->getMeshBufferCount() != (s32)Materials.size())
+	if (Mesh->getMeshBufferCount() != Materials.size())
 		loadMaterials(file);
 
 	if (MaterialGroups.empty())

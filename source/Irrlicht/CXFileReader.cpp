@@ -5,11 +5,6 @@
 #include "CXFileReader.h"
 #include "os.h"
 #include "fast_atof.h"
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 
 namespace irr
 {
@@ -1702,7 +1697,7 @@ core::stringc CXFileReader::getNextToken()
 		if (P >= End)
 			return s;
 
-		while(P < End && !isspace(P[0]))
+		while(P < End && !core::isspace(P[0]))
 		{
 			s.append(P[0]);
 			++P;
@@ -1722,7 +1717,7 @@ void CXFileReader::findNextNoneWhiteSpaceNumber()
 	while(true)
 	{
 		while((P < End) && (P[0] != '-') && (P[0] != '.') &&
-				!(isdigit(P[0])))
+			!( core::isdigit(P[0])))
 			++P;
 
 		if (P >= End)

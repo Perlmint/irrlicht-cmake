@@ -23,7 +23,7 @@ namespace scene
 		//! constructor
 		CCameraFPSSceneNode(ISceneNode* parent, ISceneManager* mgr, 
 			gui::ICursorControl* cursorControl, s32 id,
-			f32 rotateSpeed, f32 moveSpeed,
+			f32 rotateSpeed, f32 moveSpeed,f32 jumpSpeed,
 			SKeyMap* keyMapArray, s32 keyMapSize, bool noVerticalMovement = false );
 
 		//! destructor
@@ -48,6 +48,11 @@ namespace scene
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_CAMERA_FPS; }
 
+		//! Disables or enables the camera to get key or mouse inputs.
+		//! If this is set to true, the camera will respond to key inputs
+		//! otherwise not.
+		virtual void setInputReceiverEnabled(bool enabled);
+
 	private:
 
 		struct SCamKeyMap
@@ -60,15 +65,14 @@ namespace scene
 		};
 
 		void allKeysUp();
-		void animate();
+		void animate( u32 timeMs );
 
-		bool CursorKeys[4];
+		bool CursorKeys[6];
 
 		f32 MoveSpeed;
 		f32 RotateSpeed;
+		f32 JumpSpeed;
 
-		//f32 RotationX;
-		//f32 RotationY;
 
 		gui::ICursorControl* CursorControl;
 

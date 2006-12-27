@@ -136,7 +136,7 @@ ECOLOR_FORMAT CSoftwareTexture::getColorFormat() const
 
 
 //! returns pitch of texture (in bytes)
-s32 CSoftwareTexture::getPitch()
+u32 CSoftwareTexture::getPitch() const
 {
 	return Image->getDimension().Width * 2;
 }

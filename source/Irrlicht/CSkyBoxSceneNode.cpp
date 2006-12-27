@@ -23,7 +23,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	setDebugName("CSkyBoxSceneNode");
 	#endif
 
-	setAutomaticCulling(false);
+	setAutomaticCulling(scene::EAC_OFF);
 	Box.MaxEdge.set(0,0,0);
 	Box.MinEdge.set(0,0,0);
 
@@ -229,14 +229,14 @@ void CSkyBoxSceneNode::OnPreRender()
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& CSkyBoxSceneNode::getMaterial(s32 i)
+video::SMaterial& CSkyBoxSceneNode::getMaterial(u32 i)
 {
 	return Material[i];
 }
 
 
 //! returns amount of materials used by this scene node.
-s32 CSkyBoxSceneNode::getMaterialCount()
+u32 CSkyBoxSceneNode::getMaterialCount()
 {
 	return 6;
 }

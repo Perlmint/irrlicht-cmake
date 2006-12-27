@@ -14,8 +14,6 @@
 #include "SMeshBuffer.h"
 #include "IAttributes.h"
 
-#include <stdio.h>
-#include <string.h>
 
 #include "CMY3DStuff.h"
 #include "CMY3DHelper.h"

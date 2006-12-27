@@ -66,12 +66,12 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 	if (!Mesh)
 		return;
 
-	s32 meshBufferCount = Mesh->getMeshBufferCount();
+	u32 meshBufferCount = Mesh->getMeshBufferCount();
 	f32 time = os::Timer::getTime() / WaveSpeed;
 
-	for (s32 b=0; b<meshBufferCount; ++b)
+	for (u32 b=0; b<meshBufferCount; ++b)
 	{
-		s32 vtxCnt = Mesh->getMeshBuffer(b)->getVertexCount();
+		u32 vtxCnt = Mesh->getMeshBuffer(b)->getVertexCount();
 
 		switch(Mesh->getMeshBuffer(b)->getVertexType())
 		{
@@ -83,7 +83,7 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 				video::S3DVertex* v2 =
 					(video::S3DVertex*)OriginalMesh->getMeshBuffer(b)->getVertices();
 
-				for (s32 i=0; i<vtxCnt; ++i)
+				for (u32 i=0; i<vtxCnt; ++i)
 				{
 					v[i].Pos.Y = v2[i].Pos.Y +
 					(sinf(((v2[i].Pos.X/WaveLength) + time)) * WaveHeight) +
@@ -100,7 +100,7 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 				video::S3DVertex2TCoords* v2 =
 					(video::S3DVertex2TCoords*)OriginalMesh->getMeshBuffer(b)->getVertices();
 
-				for (s32 i=0; i<vtxCnt; ++i)
+				for (u32 i=0; i<vtxCnt; ++i)
 				{
 					v[i].Pos.Y = v2[i].Pos.Y +
 					(sinf(((v2[i].Pos.X/WaveLength) + time)) * WaveHeight) +

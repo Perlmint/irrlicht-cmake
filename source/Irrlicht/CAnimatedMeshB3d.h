@@ -53,10 +53,10 @@ namespace scene
 		virtual IMesh* getMesh(s32 frame, s32 detailLevel=255, s32 startFrameLoop=-1, s32 endFrameLoop=-1);
 
 		//! returns amount of mesh buffers.
-		virtual s32 getMeshBufferCount();
+		virtual u32 getMeshBufferCount() const;
 
 		//! returns pointer to a mesh buffer
-		virtual IMeshBuffer* getMeshBuffer(s32 nr);
+		virtual IMeshBuffer* getMeshBuffer(u32 nr) const;
 
 		//! returns an axis aligned bounding box
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
@@ -134,7 +134,7 @@ private:
 				return Vertices.pointer();
 			}
 
-			virtual s32 getVertexCount() const
+			virtual u32 getVertexCount() const
 			{
 				return Vertices.size();
 			}
@@ -149,7 +149,7 @@ private:
 				return Indices.pointer();
 			}
 
-			virtual s32 getIndexCount() const
+			virtual u32 getIndexCount() const
 			{
 				return Indices.size();
 			}
@@ -180,6 +180,13 @@ private:
 			{
 				return video::EVT_2TCOORDS;
 			}
+
+			//! returns the byte size (stride, pitch) of the vertex
+			virtual u32 getVertexPitch() const
+			{
+				return sizeof ( video::S3DVertex2TCoords );
+			}
+
 
 			video::SMaterial Material;
 			core::array<video::S3DVertex2TCoords> Vertices;

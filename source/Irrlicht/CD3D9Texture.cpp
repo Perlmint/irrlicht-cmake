@@ -10,7 +10,6 @@
 #include "CD3D9Driver.h"
 #include "os.h"
 
-#include <stdio.h>
 #include <d3dx9tex.h>
 
 #ifndef _IRR_COMPILE_WITH_DIRECT3D_8_
@@ -678,7 +677,7 @@ ECOLOR_FORMAT CD3D9Texture::getColorFormat() const
 
 
 //! returns pitch of texture (in bytes)
-s32 CD3D9Texture::getPitch()
+u32 CD3D9Texture::getPitch() const
 {
 	return Pitch;
 }

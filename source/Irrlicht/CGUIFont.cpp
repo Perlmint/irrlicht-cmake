@@ -13,7 +13,7 @@ namespace gui
 
 //! constructor
 CGUIFont::CGUIFont(video::IVideoDriver* driver)
-: Driver(driver), Positions(382), Texture(0), WrongCharacter(0)
+: Driver(driver), Positions(382), Texture(0), WrongCharacter(0), GlobalKerningWidth ( 0 )
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIFont");
@@ -53,59 +53,6 @@ bool CGUIFont::load(const c8* filename)
 	return loadTexture(Driver->createImageFromFile( filename ),
 				filename);
 }
-
-
-/*
-
-//! loads a font file
-bool CGUIFont::load(io::IReadFile* file)
-{
-	if (!Driver)
-		return false;
-
-	// turn mip-maps off
-	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
-	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
-	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, false);
-
-	// get a pointer to the texture
-	video::ITexture* tex = Driver->getTexture(file);
-
-	// set previous mip-map state
-	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
-	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, true);
-
-	// load the texture
-	return loadTexture(tex);
-}
-
-
-//! loads a font file
-bool CGUIFont::load(const c8* filename)
-{
-	if (!Driver)
-		return false;
-
-	Environment->getFileSystem ();
-	FileSystem->createAndOpenFile(filename);
-
-	// turn mip-maps off
-	bool mipmap = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
-	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
-	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, false);
-
-	// get a pointer to the texture
-	video::ITexture* tex = Driver->getTexture(filename);
-
-	// set previous mip-map state
-	Driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, mipmap);
-	Driver->setTextureCreationFlag(video::ETCF_FILTER_TEXTURE, true);
-
-	// load the texture
-	return loadTexture(tex);
-}
-*/
-
 
 //! load & prepare font from ITexture
 bool CGUIFont::loadTexture(video::IImage* image, const c8 * name)
@@ -315,10 +262,24 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 			n = WrongCharacter;
 
 		dim.Width += Positions[n].getWidth();
+		dim.Width += GlobalKerningWidth;
 	}
 
 	return dim;
 }
+
+//! set an Pixel Offset on Drawing ( scale position on width )
+void CGUIFont::setKerning ( s32 kerning )
+{
+	GlobalKerningWidth = kerning;
+}
+
+//! set an Pixel Offset on Drawing ( scale position on width )
+s32 CGUIFont::getKerning ()
+{
+	return GlobalKerningWidth;
+}
+
 
 
 
@@ -363,7 +324,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 		indices.push_back(n);
 		++text;
 	}
-	Driver->draw2DImage(Texture, offset, Positions, indices, clip, color, true);
+	Driver->draw2DImage(Texture, offset, Positions, indices, GlobalKerningWidth, clip, color, true);
 }
 
 
@@ -385,6 +346,18 @@ s32 CGUIFont::getCharacterFromPos(const wchar_t* text, s32 pixel_x)
 
 	return -1;
 }
+
+video::ITexture* CGUIFont::getTexture ()
+{
+	return Texture;
+}
+
+//! returns the parsed Symbol Information
+const core::array< core::rect<s32> > & CGUIFont:: getPositions ()
+{
+	return Positions;
+}
+
 
 
 } // end namespace gui

@@ -122,7 +122,7 @@ void CCameraMayaSceneNode::animate()
 	//Alt + LM + MM = Dolly vor/zurück in Kamerablickrichtung (Geschwindigkeit % von Abstand Kamera zu Drehpunkt - Maximalweg zum Kameradrehpunkt)
 	//Alt + MM = Verschieben in Kameraebene (Bildmitte hängt vom Tempo ungefähr am Mauszeiger)
 
-	const SViewFrustrum* va = getViewFrustrum();
+	const SViewFrustum* va = getViewFrustum();
 
 	f32 nRotX = rotX;
 	f32 nRotY = rotY;

@@ -13,7 +13,6 @@
 #include "IAttributes.h"
 #include "SMesh.h"
 #include "IVideoDriver.h"
-#include <string.h>
 #include "SAnimatedMesh.h"
 #include "SMeshBufferLightMap.h"
 
@@ -190,7 +189,7 @@ namespace scene
 		const core::vector2df* getUVScale() const{ return &uvScale; }
 		f32 getUVRotation() const{ return uvRotation; }
 
-		s32 getVertexCount() const{ return vertices.size(); }
+		u32 getVertexCount() const{ return vertices.size(); }
 		const Vertex* getVertexAt(const s32 index) const{ return vertices[index]; }
 
 		s32 getTriangleCount() const{ return triangles.size(); }
@@ -460,7 +459,7 @@ namespace scene
 				buffer->Material.Lighting = false;
 				buffer->Material.MaterialType = video::EMT_LIGHTMAP_M4;
 
-				for(s32 v = 0; v < surface->getVertexCount(); v++)
+				for(u32 v = 0; v < surface->getVertexCount(); v++)
 				{
 					const Vertex *vtxPtr = surface->getVertexAt(v);
 					video::S3DVertex2TCoords vtx;

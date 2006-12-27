@@ -5,11 +5,11 @@
 #ifndef __C_OCT_TREE_H_INCLUDED__
 #define __C_OCT_TREE_H_INCLUDED__
 
-#include "SViewFrustrum.h"
+#include "SViewFrustum.h"
 #include "S3DVertex.h"
 #include "aabbox3d.h"
 #include "irrArray.h"
-#include <string.h>
+#include "irrString.h"
 
 namespace irr
 {
@@ -21,7 +21,7 @@ class OctTree
 {
 public:
 
-	s32 nodeCount;
+	u32 nodeCount;
 
 	struct SMeshChunk
 	{
@@ -85,17 +85,17 @@ public:
 		for (s32 i=0; i<IndexDataCount; ++i)
 			IndexData[i].CurrentSize = 0;
 
-		Root->getPolys(box, IndexData);
+		Root->getPolys(box, IndexData, 0);
 	}
 
 	//! returns all ids of polygons partially or fully enclosed 
-	//! by a view frustrum.
-	void calculatePolys(const scene::SViewFrustrum& frustrum)
+	//! by a view frustum.
+	void calculatePolys(const scene::SViewFrustum& frustum)
 	{
 		for (s32 i=0; i<IndexDataCount; ++i)
 			IndexData[i].CurrentSize = 0;
 
-		Root->getPolys(frustrum, IndexData);
+		Root->getPolys(frustum, IndexData);
 	}
 
 
@@ -134,7 +134,7 @@ private:
 	public:
 
 		// constructor
-		OctTreeNode(s32& nodeCount, s32 currentdepth,
+		OctTreeNode(u32& nodeCount, s32 currentdepth,
 			const core::array<SMeshChunk>& allmeshdata,
 			core::array<SIndexChunk>* indices,
 			s32 minimalPolysPerNode) : IndexData(0)
@@ -254,9 +254,21 @@ private:
 
 		// returns all ids of polygons partially or full enclosed 
 		// by this bounding box.
-		void getPolys(const core::aabbox3d<f32>& box, SIndexData* idxdata)
+		void getPolys(const core::aabbox3d<f32>& box, SIndexData* idxdata, u32 parentTest ) const
 		{
-			if (Box.intersectsWithBox(box))
+			// if not full inside
+			if ( parentTest != 2 )
+			{
+				// partially inside ?
+				parentTest = (u32) Box.intersectsWithBox(box);
+				if ( 0 == parentTest )
+					return;
+
+				// fully inside ?
+				parentTest+= Box.isFullInside(box);
+			}
+
+			//if (Box.intersectsWithBox(box))
 			{
 				s32 cnt = (*IndexData).size();
 				s32 i; // new ISO for scoping problem in some compilers
@@ -275,61 +287,115 @@ private:
 
 				for (i=0; i<8; ++i)
 					if (Children[i])
-						Children[i]->getPolys(box, idxdata);
+						Children[i]->getPolys(box, idxdata,parentTest);
 			}
 		}
 
 
-
+#if 0
 		// returns all ids of polygons partially or full enclosed 
-		// by the view frustrum.
-		void getPolys(const scene::SViewFrustrum& frustrum, SIndexData* idxdata)
+		// by the view frustum.
+		void getPolys(const scene::SViewFrustum& frustum, SIndexData* idxdata,u32 parentTest) const
 		{
-			s32 i; // new ISO for scoping problem in some compilers
-
-			bool visible = true;
-
-			core::vector3df edges[8];
-			Box.getEdges(edges);
-
-			for (i=0; i<scene::SViewFrustrum::VF_PLANE_COUNT; ++i)
+			// not full inside
+			//if ( parentTest != 2 )
 			{
-				bool boxInFrustrum = false;
+				s32 i; // new ISO for scoping problem in some compilers
 
-				for (int j=0; j<8; ++j)
-				if (frustrum.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_BACK)
+				core::vector3df edges[8];
+				Box.getEdges(edges);
+
+				u32 bitTest = 0;
+				for (i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 				{
-					boxInFrustrum = true;
-					break;
+					bool boxInFrustrum = false;
+
+					for (int j=0; j<8; ++j)
+					if (frustum.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_BACK)
+					{
+						boxInFrustrum = true;
+						break;
+					}
+
+					if (!boxInFrustrum)
+					{
+						return;
+					}
 				}
 
-				if (!boxInFrustrum)
-				{
-					visible = false;
-					break;
-				}
 			}
 
-			if (visible)
+			s32 cnt = (*IndexData).size();
+			
+			for (i=0; i<cnt; ++i)
 			{
-				s32 cnt = (*IndexData).size();
-				
-				for (i=0; i<cnt; ++i)
-				{
-					s32 idxcnt = (*IndexData)[i].Indices.size();
+				s32 idxcnt = (*IndexData)[i].Indices.size();
 
-					if (idxcnt)
-					{
-						memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize], 
-							&(*IndexData)[i].Indices[0], idxcnt * sizeof(s16));
-						idxdata[i].CurrentSize += idxcnt;
-					}
+				if (idxcnt)
+				{
+					memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize], 
+						&(*IndexData)[i].Indices[0], idxcnt * sizeof(s16));
+					idxdata[i].CurrentSize += idxcnt;
 				}
 			}
 
 			for (i=0; i<8; ++i)
 				if (Children[i])
-					Children[i]->getPolys(frustrum, idxdata);
+					Children[i]->getPolys(frustum, idxdata,parentTest);
+		}
+#endif
+
+		// returns all ids of polygons partially or full enclosed 
+		// by the view frustum.
+		void getPolys(const scene::SViewFrustum& frustum, SIndexData* idxdata,u32 parentTest) const
+		{
+			u32 totalIn = 0;
+			s32 i; // new ISO for scoping problem in some compilers
+			
+			// not full inside
+			//if ( parentTest != 2 )
+			{
+
+				core::vector3df edges[8];
+				Box.getEdges(edges);
+
+				u32 bitTest = 0;
+				for (i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
+				{
+					bool boxInFrustrum = false;
+
+					for (int j=0; j<8; ++j)
+					if (frustum.planes[i].isFrontFacing(edges[j]) )
+					{
+						boxInFrustrum = true;
+						break;
+					}
+
+					if (!boxInFrustrum)
+					{
+						return;
+					}
+				}
+
+			}
+
+			s32 cnt = (*IndexData).size();
+			
+			for (i=0; i<cnt; ++i)
+			{
+				s32 idxcnt = (*IndexData)[i].Indices.size();
+
+				if (idxcnt)
+				{
+					memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize], 
+						&(*IndexData)[i].Indices[0], idxcnt * sizeof(s16));
+					idxdata[i].CurrentSize += idxcnt;
+				}
+			}
+
+			for (i=0; i<8; ++i)
+				if (Children[i])
+					Children[i]->getPolys(frustum, idxdata,parentTest);
 		}
 
 

@@ -35,6 +35,9 @@ public:
 		video::IVideoDriver* driver, 
 		const core::dimension2d<s32> defaultVertexBlockSize,
 		bool debugBorders=false);
+
+	static IAnimatedMesh* createArrowMesh( u32 tesselation, f32 width, f32 height, video::SColor vtxColor);
+
 };
 
 

@@ -28,7 +28,7 @@ CShadowVolumeSceneNode::CShadowVolumeSceneNode(ISceneNode* parent,
 	setDebugName("CShadowVolumeSceneNode");
 	#endif
 
-	setAutomaticCulling(false);
+	setAutomaticCulling(scene::EAC_OFF);
 }
 
 
@@ -280,10 +280,10 @@ void CShadowVolumeSceneNode::setMeshToRenderFrom(IMesh* mesh)
 
 	// calculate total amount of vertices and indices
 
-	s32 i;
+	u32 i;
 	s32 totalVertices = 0;
 	s32 totalIndices = 0;
-	s32 bufcnt = mesh->getMeshBufferCount();
+	u32 bufcnt = mesh->getMeshBufferCount();
 	IMeshBuffer* b;
 
 	for (i=0; i<bufcnt; ++i)
@@ -363,7 +363,7 @@ void CShadowVolumeSceneNode::setMeshToRenderFrom(IMesh* mesh)
 	// create as much shadow volumes as there are lights but
 	// do not ignore the max light settings.
 
-	s32 lights = SceneManager->getVideoDriver()->getDynamicLightCount();
+	u32 lights = SceneManager->getVideoDriver()->getDynamicLightCount();
 	core::matrix4 mat = Parent->getAbsoluteTransformation();
 	core::vector3df parentpos = Parent->getAbsolutePosition();
 	core::vector3df lpos;
@@ -422,7 +422,7 @@ const core::aabbox3d<f32>& CShadowVolumeSceneNode::getBoundingBox() const
 
 
 //! returns the material based on the zero based index i.
-video::SMaterial& CShadowVolumeSceneNode::getMaterial(s32 i)
+video::SMaterial& CShadowVolumeSceneNode::getMaterial(u32 i)
 {
 	// this should never be called, because a shadow volume has got no
 	// material
@@ -433,7 +433,7 @@ video::SMaterial& CShadowVolumeSceneNode::getMaterial(s32 i)
 
 
 //! returns amount of materials used by this scene node.
-s32 CShadowVolumeSceneNode::getMaterialCount()
+u32 CShadowVolumeSceneNode::getMaterialCount()
 {
 	return 0;
 }

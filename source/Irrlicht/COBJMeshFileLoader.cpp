@@ -2,9 +2,6 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include <string.h>
-#include <ctype.h>
-
 #include "COBJMeshFileLoader.h"
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"
@@ -583,7 +580,7 @@ c8* COBJMeshFileLoader::goFirstWord(c8* buf, const c8* pBufEnd)
 {
 	s32 i = 0;
 	// skip pass non-printable characters
-	while(buf[i] && isspace(buf[i]))
+	while(buf[i] && core::isspace(buf[i]))
 	{
 		if ( &(buf[i]) == pBufEnd )
 		{
@@ -637,7 +634,7 @@ c8* COBJMeshFileLoader::goNextLine(c8* buf, const c8* pBufEnd)
 			break;
 		++buf;
 	}
-	while (isspace((u8)*++buf)) /* skip */ ;
+	while ( core::isspace((u8)*++buf)) /* skip */ ;
 
 	return buf;
 }
@@ -701,7 +698,7 @@ bool COBJMeshFileLoader::retrieveVertexIndices(c8* pVertexData, s32* pIdx, const
 	u32 i = 0;
 	while ( pChar != pBufEnd )
 	{
-		if ( (isdigit(*pChar)) || (*pChar == '-') )
+		if ( ( core::isdigit(*pChar)) || (*pChar == '-') )
 		{
 			// build up the number
 			word[i++] = *pChar;

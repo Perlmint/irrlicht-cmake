@@ -6,7 +6,7 @@
 #define __C_CAMERA_SCENE_NODE_H_INCLUDED__
 
 #include "ICameraSceneNode.h"
-#include "SViewFrustrum.h"
+#include "SViewFrustum.h"
 
 namespace irr
 {
@@ -99,7 +99,7 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 		//! Returns the view area. Sometimes needed by bsp or lod render nodes.
-		virtual const SViewFrustrum* getViewFrustrum();
+		virtual const SViewFrustum* getViewFrustum() const;
 
 		//! Disables or enables the camera to get key or mouse inputs.
 		//! If this is set to true, the camera will respond to key inputs
@@ -118,6 +118,8 @@ namespace scene
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_CAMERA; }
 
+		virtual core::vector3df getAbsolutePosition() const;
+
 	protected:
 
 		void recalculateProjectionMatrix();
@@ -126,19 +128,14 @@ namespace scene
 		core::vector3df Target;
 		core::vector3df UpVector;
 
-		core::matrix4 Projection;
-		core::matrix4 View;
-
-		core::aabbox3d<f32> BBox;
-
 		f32 Fovy;		// Field of view, in radians. 
 		f32 Aspect;	// Aspect ratio. 
 		f32 ZNear;		// value of the near view-plane. 
 		f32 ZFar;		// Z-value of the far view-plane.
 
-		core::dimension2d<f32> screenDim;
+		//core::dimension2d<f32> screenDim;
 
-		SViewFrustrum ViewArea;
+		SViewFrustum ViewArea;
 
 		bool InputReceiverEnabled;
 	};

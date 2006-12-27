@@ -316,7 +316,7 @@ void CSoftwareDriver::setViewPort(const core::rect<s32>& area)
 
 
 //! draws a vertex primitive list
-void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
+void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
 	const u16* indexPointer=0;
 	core::array<u16> newBuffer;
@@ -326,7 +326,7 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCo
 			{
 				// TODO: don't convert fan to list
 				newBuffer.reallocate(primitiveCount*3);
-				for( s32 t=0; t<primitiveCount; ++t )
+				for( u32 t=0; t<primitiveCount; ++t )
 				{
 					newBuffer.push_back(indexList[0]);
 					newBuffer.push_back(indexList[t+1]);
@@ -373,13 +373,13 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 	core::matrix4 worldinv(TransformationMatrix[ETS_WORLD]);
 	worldinv.makeInverse();
 
-	// calculate view frustrum planes
-	scene::SViewFrustrum frustrum(TransformationMatrix[ETS_PROJECTION] * TransformationMatrix[ETS_VIEW]);
+	// calculate view frustum planes
+	scene::SViewFrustum frustum(TransformationMatrix[ETS_PROJECTION] * TransformationMatrix[ETS_VIEW]);
 
 	// copy and transform clipping planes ignoring far plane
 	core::plane3df planes[5]; // ordered by near, left, right, bottom, top
 	for (int p=0; p<5; ++p)
-		worldinv.transformPlane(frustrum.planes[p+1], planes[p]);
+		worldinv.transformPlane(frustum.planes[p+1], planes[p]);
 
 	core::EIntersectionRelation3D inout[3]; // is point in front or back of plane?
 
@@ -619,7 +619,7 @@ void CSoftwareDriver::draw3DLine(const core::vector3df& start,
 
 
 
-//! clips a triangle against the viewing frustrum
+//! clips a triangle against the viewing frustum
 void CSoftwareDriver::clipTriangle(f32* transformedPos)
 {
 }
@@ -629,7 +629,7 @@ void CSoftwareDriver::clipTriangle(f32* transformedPos)
 //! creates the clipping planes from the matrix
 void CSoftwareDriver::createPlanes(const core::matrix4& mat)
 {
-	Frustrum = scene::SViewFrustrum(mat);
+	Frustum = scene::SViewFrustum(mat);
 }
 
 

@@ -86,7 +86,7 @@ namespace scene
 			core::vector3df basePoint;
 
 			bool foundCollision;
-			f64 nearestDistance;
+			f32 nearestDistance;
 			core::vector3df intersectionPoint;
 
 			core::triangle3df intersectionTriangle;

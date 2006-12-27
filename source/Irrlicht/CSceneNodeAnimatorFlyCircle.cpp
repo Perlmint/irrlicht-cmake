@@ -31,16 +31,15 @@ CSceneNodeAnimatorFlyCircle::~CSceneNodeAnimatorFlyCircle()
 //! animates a scene node
 void CSceneNodeAnimatorFlyCircle::animateNode(ISceneNode* node, u32 timeMs)
 {
-	if (node)
-	{
-		f32 t = (timeMs-StartTime) * Speed;
+	if ( 0 == node )
+		return;
 
-		core::vector3df circle(Radius * sinf(t), 0, Radius * cosf(t));
+	const f32 t = (timeMs-StartTime) * Speed;
 
-		circle = circle.crossProduct ( Direction );
+	core::vector3df circle(Radius * sinf(t), 0, Radius * cosf(t));
+	circle = circle.crossProduct ( Direction );
 
-		node->setPosition(Center + circle);
-	}
+	node->setPosition(Center + circle);
 }
 
 

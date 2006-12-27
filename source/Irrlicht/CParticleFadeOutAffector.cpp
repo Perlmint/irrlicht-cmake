@@ -5,7 +5,6 @@
 #include "CParticleFadeOutAffector.h"
 #include "IAttributes.h"
 #include "os.h"
-#include <string.h>
 
 namespace irr
 {

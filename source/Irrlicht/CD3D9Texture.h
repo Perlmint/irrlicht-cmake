@@ -54,7 +54,7 @@ public:
 	virtual ECOLOR_FORMAT getColorFormat() const;
 
 	//! returns pitch of texture (in bytes)
-	virtual s32 getPitch();
+	virtual u32 getPitch() const;
 
 	//! returns the DIRECT3D9 Texture
 	IDirect3DTexture9* getDX9Texture();

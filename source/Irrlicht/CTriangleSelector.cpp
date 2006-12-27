@@ -28,8 +28,8 @@ CTriangleSelector::CTriangleSelector(IMesh* mesh, ISceneNode* node)
 	setDebugName("CTriangleSelector");
 	#endif
 
-	s32 cnt = mesh->getMeshBufferCount();
-	for (s32 i=0; i<cnt; ++i)
+	u32 cnt = mesh->getMeshBufferCount();
+	for (u32 i=0; i<cnt; ++i)
 	{
 		IMeshBuffer* buf = mesh->getMeshBuffer(i);
 

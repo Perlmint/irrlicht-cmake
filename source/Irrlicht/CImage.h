@@ -26,7 +26,7 @@ public:
 	//! directly and own it from now on, which means it will also try to delete [] the
 	//! data when the image will be destructed. If false, the memory will by copied.
 	CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size,
-		void* data, bool ownForeignMemory=true);
+		void* data, bool ownForeignMemory=true, bool deleteMemory = true);
 
 	//! constructor
 	CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size);
@@ -39,10 +39,13 @@ public:
 	virtual ~CImage();
 
 	//! Lock function.
-	virtual void* lock();
+	virtual void* lock()
+	{
+		return Data;
+	};
 
 	//! Unlock function.
-	virtual void unlock();
+	virtual void unlock() {};
 
 	//! Returns width and height of image data.
 	virtual const core::dimension2d<s32>& getDimension();
@@ -105,8 +108,11 @@ public:
 	void fill(const SColor &color);
 
 	//! returns pitch of image
-	virtual u32 getPitch();
-
+	virtual u32 getPitch() const
+	{
+		return Pitch;
+	}
+	
 	
 private:
 
@@ -130,6 +136,7 @@ private:
 
 	inline SColor getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias );
 
+	u32 DeleteMemory;
 };
 
 } // end namespace video

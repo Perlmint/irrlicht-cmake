@@ -8,8 +8,6 @@
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"
 #include "fast_atof.h"
-#include <string.h>
-#include <ctype.h>
 
 namespace irr
 {
@@ -115,7 +113,7 @@ IAnimatedMesh* COgreMeshFileLoader::createMesh(io::IReadFile* file)
 		SAnimatedMesh* am = new SAnimatedMesh();
 		am->Type = EAMT_3DS;
 
-		for (s32 i=0; i<Mesh->getMeshBufferCount(); ++i)
+		for (u32 i=0; i<Mesh->getMeshBufferCount(); ++i)
 			((SMeshBuffer*)Mesh->getMeshBuffer(i))->recalculateBoundingBox();
 
 		Mesh->recalculateBoundingBox();
@@ -594,7 +592,7 @@ void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& t
 	token = "";
 
 	file->read(&c, sizeof(c8));
-	while (isspace(c) && (file->getPos() < file->getSize()))
+	while ( core::isspace(c) && (file->getPos() < file->getSize()))
 	{
 		if (noNewLine && c=='\n')
 		{
@@ -616,14 +614,14 @@ void COgreMeshFileLoader::getMaterialToken(io::IReadFile* file, core::stringc& t
 			else
 			{
 				token.append('/');
-				if (isspace(c))
+				if (core::isspace(c))
 					return;
 			}
 		}
 		token.append(c);
 		file->read(&c, sizeof(c8));
 	}
-	while ((!isspace(c)) && (file->getPos() < file->getSize()));
+	while ((!core::isspace(c)) && (file->getPos() < file->getSize()));
 	if (c == '\n' && noNewLine)
 		file->seek(-1, true);
 }

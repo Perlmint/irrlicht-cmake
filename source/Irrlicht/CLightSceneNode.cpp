@@ -5,6 +5,8 @@
 #include "CLightSceneNode.h"
 #include "IVideoDriver.h"
 #include "ISceneManager.h"
+#include "ICameraSceneNode.h"
+
 #include "os.h"
 
 namespace irr
@@ -21,13 +23,11 @@ CLightSceneNode::CLightSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 	setDebugName("CLightSceneNode");
 	#endif
 
-	setAutomaticCulling(false);
 	LightData.Radius = radius;
 	LightData.DiffuseColor = color;
-	LightData.Position = position;
 
 	// set some useful specular color
-	LightData.SpecularColor = color.getInterpolated(video::SColor(255,255,255,255),0.5f);
+	LightData.SpecularColor = color.getInterpolated(video::SColor(255,255,255,255),0.7f);
 }
 
 CLightSceneNode::~CLightSceneNode()
@@ -38,7 +38,9 @@ CLightSceneNode::~CLightSceneNode()
 //! pre render event
 void CLightSceneNode::OnPreRender()
 {
-	if (IsVisible)
+	doLightRecalc ();
+
+	if (IsVisible  )
 	{
 		SceneManager->registerNodeForRendering(this, ESNRP_LIGHT);
 		ISceneNode::OnPreRender();
@@ -53,43 +55,17 @@ void CLightSceneNode::render()
 	if (!driver)
 		return;
 
-	switch ( LightData.Type )
-	{
-		case video::ELT_POINT:
-			LightData.Position = getAbsolutePosition();
-			break;
-
-		case video::ELT_DIRECTIONAL:
-			// misuse Position as direction..
-			LightData.Position = getAbsolutePosition();
-			LightData.Position.invert();
-			if ( LightData.Position.getLengthSQ() == 0.0 )
-			{
-				LightData.Position.set ( 0.f, -1.f, 0.f );
-				os::Printer::log ( "Invalid Directional Light Direction" );
-			}
-			else
-			{
-				LightData.Position.normalize();
-			}
-			break;
-	}
-
 	if (DebugDataVisible)
 	{
 		driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 		video::SMaterial m;
 		m.Lighting = false;
 		driver->setMaterial(m);
-//		driver->draw3DBox(BBox, LightData.DiffuseColor.toSColor());
 
-		core::aabbox3df radius = BBox;
 		switch ( LightData.Type )
 		{
 			case video::ELT_POINT:
-				radius.MaxEdge *= LightData.Radius;
-				radius.MinEdge *= LightData.Radius;
-				driver->draw3DBox(radius, LightData.DiffuseColor.toSColor());
+				driver->draw3DBox( BBox, LightData.DiffuseColor.toSColor());
 				break;
 
 			case video::ELT_DIRECTIONAL:
@@ -107,10 +83,20 @@ void CLightSceneNode::render()
 
 
 //! returns the light data
-video::SLight& CLightSceneNode::getLightData()
+void CLightSceneNode::setLightData( const video::SLight& light)
 {
-	return LightData;
+	LightData = light;
+	ISceneNode::setPosition ( light.Position );
+	ISceneNode::updateAbsolutePosition ();
+
 }
+
+//! \return Returns the light data.
+void CLightSceneNode::getLightData( video::SLight& light)
+{
+	light = LightData;
+}
+
 
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CLightSceneNode::getBoundingBox() const
@@ -118,6 +104,46 @@ const core::aabbox3d<f32>& CLightSceneNode::getBoundingBox() const
 	return BBox;
 }
 
+
+
+
+void CLightSceneNode::doLightRecalc ()
+{
+
+	switch ( LightData.Type )
+	{
+		case video::ELT_POINT:
+		{
+			f32 r = (LightData.Radius * LightData.Radius ) / 2.f;
+			BBox.MaxEdge.set ( r, r, r );
+			BBox.MinEdge.set ( -r, -r, -r );
+			setAutomaticCulling ( scene::EAC_BOX );
+
+			LightData.Position = getAbsolutePosition();
+
+		} break;
+
+		case video::ELT_DIRECTIONAL:
+			BBox.reset ( 0, 0, 0 );
+			setAutomaticCulling ( scene::EAC_OFF );
+
+			// misuse Position as direction..
+			LightData.Position = getAbsolutePosition();
+			LightData.Position.invert();
+			if ( LightData.Position.getLengthSQ() == 0.0 )
+			{
+				LightData.Position.set ( 0.f, -1.f, 0.f );
+				os::Printer::log ( "Invalid Directional Light Direction" );
+			}
+			else
+			{
+				LightData.Position.normalize();
+			}
+
+			break;
+	}
+
+}
 
 //! Writes attributes of the scene node.
 void CLightSceneNode::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)

@@ -51,7 +51,7 @@ namespace video
 		virtual ITexture* getTexture(io::IReadFile* file);
 
 		//! Returns a texture by index
-		virtual ITexture* getTextureByIndex(s32 index);
+		virtual ITexture* getTextureByIndex(u32 index);
 
 		//! Returns amount of textures currently loaded
 		virtual s32 getTextureCount();
@@ -70,25 +70,25 @@ namespace video
 		virtual const core::rect<s32>& getViewPort() const;
 
 		//! draws a vertex primitive list
-		virtual void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+		virtual void drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+		virtual void drawIndexedTriangleList(const S3DVertex* vertices, u32 vertexCount, const u16* indexList, u32 triangleCount);
 
 		//! draws an indexed triangle list
-		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount);
+		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices, u32 vertexCount, const u16* indexList, u32 triangleCount);
 
 		//! Draws an indexed triangle list.
 		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
+			u32 vertexCount, const u16* indexList, u32 triangleCount);
 
 		//! Draws an indexed triangle fan.
 		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
+			u32 vertexCount, const u16* indexList, u32 triangleCount);
 
 		//! Draws an indexed triangle list.
 		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount);
+			u32 vertexCount, const u16* indexList, u32 triangleCount);
 
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
@@ -115,6 +115,7 @@ namespace video
 		\param pos: Upper left 2d destination position where the image will be drawn.
 		\param sourceRects: Source rectangles of the image.
 		\param indices: List of indices which choose the actual rectangle used each time.
+		\param kerningWidth: offset on position
 		\param clipRect: Pointer to rectangle on the screen where the image is clipped to.
 		This pointer can be 0. Then the image is not clipped.
 		\param color: Color with which the image is colored.
@@ -125,6 +126,7 @@ namespace video
 				const core::position2d<s32>& pos,
 				const core::array<core::rect<s32> >& sourceRects,
 				const core::array<s32>& indices,
+				s32 kerningWidth,
 				const core::rect<s32>* clipRect, SColor color,
 				bool useAlphaChannelOfTexture);
 
@@ -179,7 +181,7 @@ namespace video
 		virtual void addDynamicLight(const SLight& light);
 
 		//! returns the maximal amount of dynamic lights the device can handle
-		virtual s32 getMaximalDynamicLightAmount();
+		virtual u32 getMaximalDynamicLightAmount();
 
 		//! \return Returns the name of the video driver. Example: In case of the DIRECT3D8
 		//! driver, it would return "Direct3D8.1".
@@ -212,13 +214,13 @@ namespace video
 
 		//! Returns current amount of dynamic lights set
 		//! \return Current amount of dynamic lights set
-		virtual s32 getDynamicLightCount();
+		virtual u32 getDynamicLightCount();
 
 		//! Returns light data which was previously set with IVideDriver::addDynamicLight().
 		//! \param idx: Zero based index of the light. Must be greater than 0 and smaller
 		//! than IVideoDriver()::getDynamicLightCount.
 		//! \return Light data.
-		virtual const SLight& getDynamicLight(s32 idx);
+		virtual const SLight& getDynamicLight(u32 idx);
 
 		//! Removes a texture from the texture cache and deletes it, freeing lot of
 		//! memory. 
@@ -263,10 +265,11 @@ namespace video
 		//! directly and own it from now on, which means it will also try to delete [] the
 		//! data when the image will be destructed. If false, the memory will by copied.
 		virtual IImage* createImageFromData(ECOLOR_FORMAT format, 
-			const core::dimension2d<s32>& size, void *data, bool ownForeignMemory=true);
+			const core::dimension2d<s32>& size, void *data,
+			bool ownForeignMemory=true, bool deleteForeignMemory = true);
 
 		//! Draws a mesh buffer
-		virtual void drawMeshBuffer(scene::IMeshBuffer* mb);
+		virtual void drawMeshBuffer(const scene::IMeshBuffer* mb);
 
 		//! Only used by the internal engine. Used to notify the driver that
 		//! the window was resized.
@@ -312,13 +315,13 @@ namespace video
 			s32 userData=0);
 
 		//! Returns pointer to material renderer or null
-		virtual IMaterialRenderer* getMaterialRenderer(s32 idx);
+		virtual IMaterialRenderer* getMaterialRenderer(u32 idx);
 
 		//! Returns amount of currently available material renderers.
-		virtual s32 getMaterialRendererCount();
+		virtual u32 getMaterialRendererCount();
 
 		//! Returns name of the material renderer
-		virtual const char* getMaterialRendererName(s32 idx);
+		virtual const char* getMaterialRendererName(u32 idx);
 
 		//! Adds a new material renderer to the VideoDriver, based on a high level shading 
 		//! language. Currently only HLSL in D3D9 is supported. 
@@ -386,7 +389,7 @@ namespace video
 		video::ITexture* findTexture(const c8* filename);
 
 		//! opens the file and loads it into the surface
-		video::ITexture* loadTextureFromFile(io::IReadFile* file);
+		video::ITexture* loadTextureFromFile(io::IReadFile* file, const c8* hashName = 0);
 
 		//! adds a surface, not loaded or created by the Irrlicht Engine
 		void addTexture(video::ITexture* surface);
@@ -423,7 +426,8 @@ namespace video
 		{
 			if (x < 0) x = pitch-1; if (x >= pitch) x = 0;
 			if (y < 0) y = height-1; if (y >= height) y = 0;
-			return (f32)video::getLuminance(p[(y * pitch) + x]);
+			
+			return (f32) getAverage ( p[(y * pitch) + x] );
 		}
 
 		struct SSurface
@@ -452,7 +456,7 @@ namespace video
 			virtual const core::dimension2d<s32>& getSize() { return size; }
 			virtual E_DRIVER_TYPE getDriverType() { return video::EDT_NULL; }
 			virtual ECOLOR_FORMAT getColorFormat() const { return video::ECF_R5G6B5; };
-			virtual s32 getPitch() { return 0; }
+			virtual u32 getPitch() const { return 0; }
 			virtual void regenerateMipMapLevels() {};
 			core::dimension2d<s32> size;
 		};

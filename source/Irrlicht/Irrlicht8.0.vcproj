@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="Irrlicht"
 	ProjectGUID="{E08E042A-6C45-411B-92BE-3CC31331019F}"
 	RootNamespace="Irrlicht"
@@ -158,6 +158,111 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="0"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="3079"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				OutputFile="..\..\bin\Win32-visualstudio\Irrlicht.dll"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="libci.lib"
+				GenerateDebugInformation="false"
+				ProgramDatabaseFile="..\obj\IrrRelease\Irrlicht.pdb"
+				ImportLibrary="..\..\lib\Win32-visualstudio\Irrlicht.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Fast FPU|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\..\Release/Irrlicht.tlb"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="0"
+				OmitFramePointers="true"
+				AdditionalIncludeDirectories="..\..\include;zlib"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IRRLICHT_EXPORTS;_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
+				ExceptionHandling="0"
+				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
+				FloatingPointModel="2"
+				RuntimeTypeInfo="false"
+				PrecompiledHeaderFile=".\..\obj\IrrRelease/Irrlicht.pch"
+				AssemblerListingLocation=".\..\obj\IrrRelease/"
+				ObjectFile=".\..\obj\IrrRelease/"
+				ProgramDataBaseFileName=".\..\obj\IrrRelease/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="0"
+				CallingConvention="1"
 				CompileAs="0"
 			/>
 			<Tool
@@ -611,7 +716,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\..\..\include\SViewFrustrum.h"
+					RelativePath=".\..\..\include\SViewFrustum.h"
 					>
 				</File>
 			</Filter>
@@ -1296,8 +1401,16 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Software2"
+				Name="Burning Video"
 				>
+				<File
+					RelativePath=".\CDepthBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CDepthBuffer.h"
+					>
+				</File>
 				<File
 					RelativePath=".\CSoftware2MaterialRenderer.h"
 					>
@@ -1331,6 +1444,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CTRTextureBlend.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\CTRTextureDetailMap2.cpp"
 					>
 				</File>
@@ -1344,6 +1461,14 @@
 				</File>
 				<File
 					RelativePath=".\CTRTextureGouraudAddNoZ2.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CTRTextureGouraudAlpha.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CTRTextureGouraudAlphaNoZ.cpp"
 					>
 				</File>
 				<File
@@ -1379,23 +1504,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\CZBuffer2.cpp"
+					RelativePath=".\IBurningShader.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\CZBuffer2.h"
+					RelativePath=".\IBurningShader.h"
 					>
 				</File>
 				<File
-					RelativePath=".\ITriangleRenderer2.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\ITriangleRenderer2.h"
-					>
-				</File>
-				<File
-					RelativePath=".\IZBuffer2.h"
+					RelativePath=".\IDepthBuffer.h"
 					>
 				</File>
 				<File
@@ -1708,6 +1825,14 @@
 				</File>
 				<File
 					RelativePath=".\COctTreeSceneNode.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CQuake3ShaderSceneNode.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CQuake3ShaderSceneNode.h"
 					>
 				</File>
 				<File

@@ -13,6 +13,7 @@
 #include "SMesh.h"
 #include "SMaterial.h"
 #include "IReadFile.h"
+#include "ITextSceneNode.h"
 
 namespace irr
 {
@@ -49,24 +50,24 @@ namespace scene
 
 		//! Initializes the terrain data.  Loads the vertices from the heightMapFile.
 		virtual bool loadHeightMap(io::IReadFile* file, 
-			video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ) );
+			video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ), s32 smoothFactor = 0 );
 
 		//! Initializes the terrain data.  Loads the vertices from the heightMapFile.
 		virtual bool loadHeightMapRAW(io::IReadFile* file, s32 bitsPerPixel = 16,
-			video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ) );
+			video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ), s32 smoothFactor = 0 );
 
 		//! Returns the material based on the zero based index i. This scene node only uses
 		//! 1 material.
 		//! \param i: Zero based index i. UNUSED, left in for virtual purposes.
 		//! \return Returns the single material this scene node uses.
-		virtual video::SMaterial& getMaterial ( s32 i ) 
+		virtual video::SMaterial& getMaterial ( u32 i ) 
 		{ 
 			return Mesh.getMeshBuffer(i)->getMaterial();
 		}
 
 		//! Returns amount of materials used by this scene node ( always 1 )
 		//! \return Returns current count of materials used by this scene node ( always 1 )
-		virtual s32 getMaterialCount()
+		virtual u32 getMaterialCount()
 		{
 			return Mesh.getMeshBufferCount(); 
 		}
@@ -117,7 +118,7 @@ namespace scene
 		//! Updates the scene nodes indices if the camera has moved or rotated by a certain
 		//! threshold, which can be changed using the SetCameraMovementDeltaThreshold and 
 		//! SetCameraRotationDeltaThreshold functions.  This also determines if a given patch
-		//! for the scene node is within the view frustrum and if it's not the indices are not
+		//! for the scene node is within the view frustum and if it's not the indices are not
 		//! generated for that patch.
 		virtual void OnPreRender();
 
@@ -131,7 +132,7 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox(s32 patchX, s32 patchZ) const;
 
 		//! Return the number of indices currently used to draw the scene node.
-		virtual s32 getIndexCount() { return IndicesToRender; }
+		virtual u32 getIndexCount() { return IndicesToRender; }
 
 		//! Returns the mesh
 		virtual IMesh* getMesh() { return &Mesh; }
@@ -216,6 +217,8 @@ namespace scene
 			s32					CurrentLOD;
 			core::aabbox3df		BoundingBox;
 			core::vector3df		Center;
+			scene::ITextSceneNode*		DebugText;
+
 			SPatch*				Top;
 			SPatch*				Bottom;
 			SPatch*				Right;
@@ -227,6 +230,7 @@ namespace scene
 			, Bottom( 0 )
 			, Right( 0 )
 			, Left( 0 )
+			, DebugText ( 0 )
 			{
 			}
 		};
@@ -256,6 +260,7 @@ namespace scene
 		};
 
 		virtual void preRenderLODCalculations();
+		virtual void preRenderLODCalculations_old();
 		virtual void preRenderIndicesCalculations();
 
 		//! get indices when generating index data for patches at varying levels of detail.
@@ -296,6 +301,7 @@ namespace scene
 		core::vector3df	OldCameraRotation;
 		f32 CameraMovementDelta;
 		f32 CameraRotationDelta;
+
 	};
 
 } // end namespace scene

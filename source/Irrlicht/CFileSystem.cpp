@@ -17,7 +17,6 @@
 
 #ifdef _IRR_WINDOWS_
 #include <direct.h> // for _chdir
-#include <stdlib.h>
 #endif
 
 #if (defined(LINUX) || defined(MACOSX))
@@ -98,7 +97,7 @@ IWriteFile* CFileSystem::createAndWriteFile(const c8* filename, bool append)
 }
 
 
-bool CFileSystem::addUnZipFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
+bool CFileSystem::addFolderFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
 {
 	bool ret = false;
 

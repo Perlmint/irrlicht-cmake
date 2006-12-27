@@ -21,7 +21,8 @@ public:
 
 	//! constructor
 	CBillboardSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-		const core::vector3df& position, const core::dimension2d<f32>& size);
+		const core::vector3df& position, const core::dimension2d<f32>& size,
+		video::SColor shade_top,video::SColor shade_down );
 
 	virtual ~CBillboardSceneNode();
 
@@ -40,10 +41,10 @@ public:
 	//! gets the size of the billboard
 	virtual const core::dimension2d<f32>& getSize();
 
-	virtual video::SMaterial& getMaterial(s32 i);
+	virtual video::SMaterial& getMaterial(u32 i);
 	
 	//! returns amount of materials used by this scene node.
-	virtual s32 getMaterialCount();
+	virtual u32 getMaterialCount();
 	
 	//! Writes attributes of the scene node.
 	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0);

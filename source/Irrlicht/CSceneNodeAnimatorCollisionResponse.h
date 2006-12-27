@@ -55,7 +55,7 @@ namespace scene
 		virtual core::vector3df getGravity() const;
 
 		//! Sets the translation of the ellipsoid for collision detection.
-		virtual void setEllipsoidTranslation(core::vector3df translation);
+		virtual void setEllipsoidTranslation(const core::vector3df &translation);
 
 		//! Returns the translation of the ellipsoid for collision detection.
 		virtual core::vector3df getEllipsoidTranslation() const;

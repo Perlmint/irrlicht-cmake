@@ -61,6 +61,105 @@ public:
 };
 
 
+//! Generic Texture Blend
+class COpenGLMaterialRenderer_ONETEXTURE_BLEND : public COpenGLMaterialRenderer
+{
+public:
+
+	COpenGLMaterialRenderer_ONETEXTURE_BLEND(video::COpenGLDriver* d)
+		: COpenGLMaterialRenderer(d) {}
+
+	virtual void OnSetMaterial(SMaterial& material, const SMaterial& lastMaterial,
+		bool resetAllRenderstates, IMaterialRendererServices* services)
+	{
+		Driver->disableTextures(1);
+		Driver->setTexture(0, material.Texture1);
+
+
+//		if (material.MaterialType != lastMaterial.MaterialType || 
+//			material.MaterialTypeParam != lastMaterial.MaterialTypeParam ||
+//			resetAllRenderstates)
+		{
+
+			E_BLEND_FACTOR srcFact,dstFact;
+			E_MODULATE_FUNC modulate;
+			unpack_texureBlendFunc ( srcFact, dstFact, modulate, material.MaterialTypeParam );
+
+
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
+			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
+
+			glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, (f32) modulate );
+
+			glBlendFunc( getGLBlend(srcFact), getGLBlend(dstFact) );
+			glEnable(GL_BLEND);
+
+			if ( getTexelAlpha ( srcFact ) + getTexelAlpha ( dstFact ) )
+			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE);
+
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+
+			}
+		}
+
+		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
+
+	}
+
+	virtual void OnUnsetMaterial()
+	{
+		glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, 1.f );
+		glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
+
+		glDisable(GL_BLEND);
+	}
+
+
+	private:
+
+		u32 getGLBlend ( E_BLEND_FACTOR factor ) const
+		{
+			u32 r = 0;
+    		switch ( factor )
+			{
+				case EBF_ZERO:					r = GL_ZERO; break;
+				case EBF_ONE:					r = GL_ONE; break;
+				case EBF_DST_COLOR:				r = GL_DST_COLOR; break;
+				case EBF_ONE_MINUS_DST_COLOR:	r = GL_ONE_MINUS_DST_COLOR; break;
+				case EBF_SRC_COLOR:				r = GL_SRC_COLOR; break;
+				case EBF_ONE_MINUS_SRC_COLOR:	r = GL_ONE_MINUS_SRC_COLOR; break;
+				case EBF_SRC_ALPHA:				r = GL_SRC_ALPHA; break;
+				case EBF_ONE_MINUS_SRC_ALPHA:	r = GL_ONE_MINUS_SRC_ALPHA; break;
+				case EBF_DST_ALPHA:				r = GL_DST_ALPHA; break;
+				case EBF_ONE_MINUS_DST_ALPHA:	r = GL_ONE_MINUS_DST_ALPHA; break;
+				case EBF_SRC_ALPHA_SATURATE:	r = GL_SRC_ALPHA_SATURATE; break;
+			}
+			return r;
+		}
+
+		u32 getTexelAlpha ( E_BLEND_FACTOR factor ) const
+		{
+			u32 r = 0;
+    		switch ( factor )
+			{
+				case EBF_SRC_ALPHA:				r = 1; break;
+				case EBF_ONE_MINUS_SRC_ALPHA:	r = 1; break;
+				case EBF_DST_ALPHA:				r = 1; break;
+				case EBF_ONE_MINUS_DST_ALPHA:	r = 1; break;
+				case EBF_SRC_ALPHA_SATURATE:	r = 1; break;
+			}
+			return r;
+		}
+
+
+};
+
+
 //! Solid 2 layer material renderer
 class COpenGLMaterialRenderer_SOLID_2_LAYER : public COpenGLMaterialRenderer
 {
@@ -119,8 +218,6 @@ public:
 		}
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
-
-		glDepthMask(GL_FALSE);
 	}
 
 	//! Returns if the material is transparent.

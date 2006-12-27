@@ -8,7 +8,6 @@
 #include "SMesh.h"
 #include "IVideoDriver.h"
 #include "CImage.h"
-#include <stdio.h>
 #include "os.h"
 
 namespace irr
@@ -251,6 +250,193 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 	mesh->drop();
 
 	return animatedMesh;
+}
+
+/*
+	a cylinder and a cone
+	point up on (0,1.f, 0.f )
+*/
+IAnimatedMesh* CGeometryCreator::createArrowMesh ( u32 tesselation, f32 width, f32 height, video::SColor vtxColor)
+{
+	SMeshBuffer* buffer;
+	video::S3DVertex v;
+	u32 i;
+
+	v.Color = vtxColor;
+
+	SMesh* mesh = new SMesh();
+
+	const u32 tesselationCylinder = tesselation / 2;
+	const u32 tesselationCone = tesselation;
+
+	// cylinder
+	buffer = new SMeshBuffer();
+
+	// floor, bottom
+	f32 angleStep = (core::PI * 2.f ) / tesselationCylinder;
+
+	const f32 cylinderHeight = height - (height * 1/5.f );
+
+	for ( i = 0; i != tesselationCylinder; ++i )
+	{
+		f32 angle = angleStep * f32(i);
+		v.Pos.X = width * cosf ( angle );
+		v.Pos.Y = 0.f;
+		v.Pos.Z = width * sinf ( angle );
+		v.Normal = v.Pos;
+		v.Normal.normalize ();
+
+		buffer->Vertices.push_back ( v );
+		v.Pos.Y = cylinderHeight;
+		buffer->Vertices.push_back ( v );
+	}
+
+	u32 nonWrappedSize = (tesselationCylinder - 1 ) * 2;
+	for ( i = 0; i != nonWrappedSize; i += 2 )
+	{
+		buffer->Indices.push_back ( i + 2 );
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( i + 1 );
+
+		buffer->Indices.push_back ( i + 2 );
+		buffer->Indices.push_back ( i + 1 );
+		buffer->Indices.push_back ( i + 3 );
+	}
+
+	buffer->Indices.push_back ( 0 );
+	buffer->Indices.push_back ( i + 0 );
+	buffer->Indices.push_back ( i + 1 );
+
+	buffer->Indices.push_back ( 0 );
+	buffer->Indices.push_back ( i + 1 );
+	buffer->Indices.push_back ( 1 );
+
+	// close down
+	v.Pos.X = 0.f;
+	v.Pos.Y = 0.f;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = -1.f;
+	v.Normal.Z = 0.f;
+	buffer->Vertices.push_back ( v );
+
+	u32 index = buffer->Vertices.size () - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 2 )
+	{
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( i + 2 );
+	}
+
+	buffer->Indices.push_back ( index );
+	buffer->Indices.push_back ( i + 0 );
+	buffer->Indices.push_back ( 0 );
+
+/*
+	// close top
+	v.Pos.X = 0.f;
+	v.Pos.Y = cylinderHeight;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = 1.f;
+	v.Normal.Z = 0.f;
+	buffer->Vertices.push_back ( v );
+
+	index = buffer->Vertices.size () - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 2 )
+	{
+		buffer->Indices.push_back ( i + 1 );
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( i + 3 );
+	}
+
+	buffer->Indices.push_back ( i + 1 );
+	buffer->Indices.push_back ( index );
+	buffer->Indices.push_back ( 1 );
+*/
+	// add to mesh
+	mesh->addMeshBuffer ( buffer );
+	buffer->drop ();
+
+	// cone
+	buffer = new SMeshBuffer();
+
+	angleStep = (core::PI * 2.f ) / tesselationCone;
+
+	for ( i = 0; i != tesselationCone; ++i )
+	{
+		f32 angle = angleStep * f32(i);
+		v.Pos.X = width * 4.f * cosf ( angle );
+		v.Pos.Y = cylinderHeight;
+		v.Pos.Z = width * 4.f * sinf ( angle );
+		v.Normal = v.Pos;
+		v.Normal.normalize ();
+
+		buffer->Vertices.push_back ( v );
+	}
+	nonWrappedSize = buffer->Vertices.size () - 1;
+
+	// close top
+	v.Pos.X = 0.f;
+	v.Pos.Y = height;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = 1.f;
+	v.Normal.Z = 0.f;
+	buffer->Vertices.push_back ( v );
+
+	index = buffer->Vertices.size () - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 1 )
+	{
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( i + 1 );
+	}
+
+	buffer->Indices.push_back ( i + 0 );
+	buffer->Indices.push_back ( index );
+	buffer->Indices.push_back ( 0 );
+
+	// close down
+	v.Pos.X = 0.f;
+	v.Pos.Y = cylinderHeight;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = -1.f;
+	v.Normal.Z = 0.f;
+	buffer->Vertices.push_back ( v );
+
+	index = buffer->Vertices.size () - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 1 )
+	{
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( i + 1 );
+	}
+
+	buffer->Indices.push_back ( index );
+	buffer->Indices.push_back ( i + 0 );
+	buffer->Indices.push_back ( 0 );
+
+	// add to mesh
+	mesh->addMeshBuffer ( buffer );
+	buffer->drop ();
+
+
+	SAnimatedMesh* animatedMesh = new SAnimatedMesh();
+	mesh->recalculateBoundingBox();
+
+	animatedMesh->addMesh(mesh);
+	animatedMesh->recalculateBoundingBox();
+
+	mesh->drop();
+
+	return animatedMesh;
+
 }
 
 

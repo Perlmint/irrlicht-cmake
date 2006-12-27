@@ -7,17 +7,17 @@ Type=3
 Compiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_WINDOWS -D_MBCS -D_USRDLL -DIRRLICHT_EXPORTS_@@_
 CppCompiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_WINDOWS -D_MBCS -D_USRDLL -DIRRLICHT_EXPORTS_@@_
 Includes=..\..\include;zlib
-Linker=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglu32 -lopengl32_@@_
+Linker=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32  -lglu32 -lopengl32_@@_
 Libs=
-UnitCount=497
-Folders=doc,gui_impl,include,include/core,include/gui,include/io,include/scene,include/video,io_impl,other_impl,other_impl/extern,other_impl/extern/jpeglib,other_impl/extern/libpng,other_impl/extern/zlib,scene_impl,video_impl,video_impl/DirectX8,video_impl/DirectX9,video_impl/Null,video_impl/OpenGL,video_impl/Software,video_impl/Software2
+UnitCount=502
+Folders=doc,gui_impl,include,include/core,include/gui,include/io,include/scene,include/video,io_impl,other_impl,other_impl/extern,other_impl/extern/jpeglib,other_impl/extern/libpng,other_impl/extern/zlib,scene_impl,video_impl,"video_impl/Burning Video",video_impl/DirectX8,video_impl/DirectX9,video_impl/Null,video_impl/OpenGL,video_impl/Software
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Icon=
 ExeOutput=..\..\bin\Win32-gcc
-ObjectOutput=
+ObjectOutput=obj
 OverrideOutput=1
 OverrideOutputName=Irrlicht.dll
 HostApplication=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001010000000100
+CompilerSettings=0000000001001000000100
 
 [Unit1]
 FileName=..\..\include\EDriverTypes.h
@@ -4270,16 +4270,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit425]
-FileName=fast_atof.h
-Folder=other_impl
-Compile=1
-CompileCpp=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit426]
 FileName=IImagePresenter.h
 Folder=other_impl
 Compile=1
@@ -4289,7 +4279,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit427]
+[Unit426]
 FileName=Irrlicht.cpp
 Folder=other_impl
 Compile=1
@@ -4299,7 +4289,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit428]
+[Unit427]
 FileName=os.cpp
 Folder=other_impl
 Compile=1
@@ -4309,7 +4299,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit429]
+[Unit428]
 FileName=os.h
 Folder=other_impl
 Compile=1
@@ -4319,7 +4309,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit430]
+[Unit429]
 FileName=..\..\include\IrrCompileConfig.h
 Folder=include
 Compile=1
@@ -4329,7 +4319,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit431]
+[Unit430]
 FileName=CMeshCache.h
 Folder=scene_impl
 Compile=1
@@ -4339,7 +4329,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit432]
+[Unit431]
 FileName=CMeshCache.cpp
 Folder=scene_impl
 Compile=1
@@ -4349,7 +4339,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit433]
+[Unit432]
 FileName=COpenGLSLMaterialRenderer.h
 Folder=video_impl/OpenGL
 Compile=1
@@ -4359,7 +4349,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit434]
+[Unit433]
 FileName=COpenGLSLMaterialRenderer.cpp
 Folder=video_impl/OpenGL
 Compile=1
@@ -4369,9 +4359,19 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit435]
+[Unit434]
 FileName=CSoftwareTexture2.h
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
+Compile=1
+CompileCpp=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit435]
+FileName=S4DVertex.h
+Folder=video_impl/Burning Video
 Compile=1
 CompileCpp=1
 Link=1
@@ -4398,9 +4398,9 @@ ProductVersion=0.1
 AutoIncBuildNr=0
 
 [Unit436]
-FileName=CZBuffer2.cpp
+FileName=SoftwareDriver2_compile_config.h
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4408,9 +4408,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit437]
-FileName=CZBuffer2.h
+FileName=CSoftwareDriver2.h
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4418,9 +4418,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit438]
-FileName=IZBuffer2.h
+FileName=CTRTextureGouraudNoZ2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4428,9 +4428,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit439]
-FileName=S4DVertex.h
+FileName=CTRTextureLightMap2_M2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4438,9 +4438,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit440]
-FileName=SoftwareDriver2_compile_config.h
+FileName=CTRTextureLightMap2_M4.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4448,9 +4448,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit441]
-FileName=CSoftwareDriver2.h
+FileName=CTRTextureLightMap2_M1.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4458,9 +4458,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit442]
-FileName=ITriangleRenderer2.h
+FileName=SoftwareDriver2_helper.h
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4468,9 +4468,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit443]
-FileName=CTRTextureGouraudNoZ2.cpp
+FileName=CSoftwareDriver2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4478,9 +4478,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit444]
-FileName=CTRTextureLightMap2_M2.cpp
+FileName=CSoftwareTexture2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4488,9 +4488,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit445]
-FileName=CTRTextureLightMap2_M4.cpp
+FileName=CTRTextureGouraud2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4498,56 +4498,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit446]
-FileName=CTRTextureLightMap2_M1.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit447]
-FileName=SoftwareDriver2_helper.h
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit448]
-FileName=CSoftwareDriver2.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit449]
-FileName=CSoftwareTexture2.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit450]
-FileName=CTRTextureGouraud2.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit451]
 FileName=COgreMeshFileLoader.h
 CompileCpp=1
 Folder=scene_impl
@@ -4557,7 +4507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit452]
+[Unit447]
 FileName=COgreMeshFileLoader.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4567,7 +4517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit453]
+[Unit448]
 FileName=CDefaultSceneNodeFactory.h
 CompileCpp=1
 Folder=scene_impl
@@ -4577,7 +4527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit454]
+[Unit449]
 FileName=CDefaultSceneNodeAnimatorFactory.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4587,7 +4537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit455]
+[Unit450]
 FileName=CDefaultSceneNodeAnimatorFactory.h
 CompileCpp=1
 Folder=scene_impl
@@ -4597,7 +4547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit456]
+[Unit451]
 FileName=CDefaultSceneNodeFactory.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4607,7 +4557,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit457]
+[Unit452]
 FileName=CAttributes.h
 CompileCpp=1
 Folder=io_impl
@@ -4617,7 +4567,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit458]
+[Unit453]
 FileName=CAttributeImpl.h
 CompileCpp=1
 Folder=io_impl
@@ -4627,7 +4577,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit459]
+[Unit454]
 FileName=CAttributes.cpp
 CompileCpp=1
 Folder=io_impl
@@ -4637,7 +4587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit460]
+[Unit455]
 FileName=CCubeSceneNode.h
 CompileCpp=1
 Folder=scene_impl
@@ -4647,7 +4597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit461]
+[Unit456]
 FileName=CCubeSceneNode.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4657,10 +4607,60 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit462]
+[Unit457]
 FileName=CTRTextureGouraudAddNoZ2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit458]
+FileName=CTRTextureGouraudAdd2.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit459]
+FileName=CTRGouraud2.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit460]
+FileName=CTRGouraudAlpha2.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit461]
+FileName=CTRGouraudAlphaNoZ2.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit462]
+FileName=CTRTextureDetailMap2.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4668,9 +4668,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit463]
-FileName=CTRTextureGouraudAdd2.cpp
+FileName=CTRTextureLightMap2_Add.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4678,9 +4678,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit464]
-FileName=CTRGouraud2.cpp
+FileName=CTRTextureWire2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4688,9 +4688,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit465]
-FileName=CTRGouraudAlpha2.cpp
+FileName=CTRTextureGouraudVertexAlpha2.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4698,74 +4698,26 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit466]
-FileName=CTRGouraudAlphaNoZ2.cpp
+FileName=..\..\changes.txt
 CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
+Folder=doc
+Compile=0
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
 [Unit467]
-FileName=CTRTextureDetailMap2.cpp
+FileName=..\..\readme.txt
 CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
+Folder=doc
+Compile=0
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
 [Unit468]
-FileName=CTRTextureLightMap2_Add.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit469]
-FileName=CTRTextureWire2.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit470]
-FileName=CTRTextureGouraudVertexAlpha2.cpp
-CompileCpp=1
-Folder=video_impl/Software2
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit471]
-FileName=..\..\changes.txt
-Folder=doc
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit472]
-FileName=..\..\readme.txt
-Folder=doc
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit473]
 FileName=CSphereSceneNode.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4775,7 +4727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit474]
+[Unit469]
 FileName=CSphereSceneNode.h
 CompileCpp=1
 Folder=scene_impl
@@ -4785,7 +4737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit475]
+[Unit470]
 FileName=CPakReader.h
 CompileCpp=1
 Folder=io_impl
@@ -4795,27 +4747,27 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit476]
+[Unit471]
 FileName=CPakReader.cpp
-CompileCpp=1
 Folder=io_impl
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
-
-[Unit477]
-FileName=CAnimatedMeshB3d.h
 CompileCpp=1
+
+[Unit472]
+FileName=CAnimatedMeshB3d.h
 Folder=scene_impl
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=1
 
-[Unit478]
+[Unit473]
 FileName=CAnimatedMeshB3d.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4825,7 +4777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit479]
+[Unit474]
 FileName=CSkyDomeSceneNode.h
 CompileCpp=1
 Folder=scene_impl
@@ -4835,7 +4787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit480]
+[Unit475]
 FileName=CSkyDomeSceneNode.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -4845,7 +4797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit481]
+[Unit476]
 FileName=CImageWriterTGA.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4855,7 +4807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit482]
+[Unit477]
 FileName=CImageWriterBMP.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4865,7 +4817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit483]
+[Unit478]
 FileName=CImageWriterBMP.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4875,7 +4827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit484]
+[Unit479]
 FileName=CImageWriterJPG.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4885,7 +4837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit485]
+[Unit480]
 FileName=CImageWriterJPG.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4895,7 +4847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit486]
+[Unit481]
 FileName=CImageWriterPCX.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4905,7 +4857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit487]
+[Unit482]
 FileName=CImageWriterPCX.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4915,7 +4867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit488]
+[Unit483]
 FileName=CImageWriterPNG.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4925,7 +4877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit489]
+[Unit484]
 FileName=CImageWriterPNG.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4935,7 +4887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit490]
+[Unit485]
 FileName=CImageWriterPPM.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4945,7 +4897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit491]
+[Unit486]
 FileName=CImageWriterPPM.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4955,7 +4907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit492]
+[Unit487]
 FileName=CImageWriterPSD.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4965,7 +4917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit493]
+[Unit488]
 FileName=CImageWriterPSD.h
 CompileCpp=1
 Folder=video_impl/Null
@@ -4975,7 +4927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit494]
+[Unit489]
 FileName=CImageWriterTGA.cpp
 CompileCpp=1
 Folder=video_impl/Null
@@ -4985,10 +4937,60 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit495]
-FileName=ITriangleRenderer2.cpp
+[Unit490]
+FileName=CTRTextureLightMapGouraud2_M4.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit491]
+FileName=CGUIColorSelectDialog.cpp
+CompileCpp=1
+Folder=gui_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit492]
+FileName=IBurningShader.h
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit493]
+FileName=IBurningShader.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit494]
+FileName=IDepthBuffer.h
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit495]
+FileName=CDepthBuffer.h
+CompileCpp=1
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -4996,9 +4998,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit496]
-FileName=CTRTextureLightMapGouraud2_M4.cpp
+FileName=CDepthBuffer.cpp
 CompileCpp=1
-Folder=video_impl/Software2
+Folder=video_impl/Burning Video
 Compile=1
 Link=1
 Priority=1000
@@ -5006,10 +5008,60 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit497]
-FileName=CGUIColorSelectDialog.cpp
-Folder=gui_impl
+FileName=CQuake3ShaderSceneNode.h
+Folder=scene_impl
 Compile=1
 CompileCpp=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit498]
+FileName=CQuake3ShaderSceneNode.cpp
+CompileCpp=1
+Folder=scene_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit499]
+FileName=..\..\include\fast_atof.h
+CompileCpp=1
+Folder=include
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit500]
+FileName=CTRTextureBlend.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit501]
+FileName=CTRTextureGouraudAlpha.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit502]
+FileName=CTRTextureGouraudAlphaNoZ.cpp
+CompileCpp=1
+Folder=video_impl/Burning Video
+Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0

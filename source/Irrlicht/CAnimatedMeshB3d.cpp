@@ -1385,7 +1385,7 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 
 
 //! returns amount of mesh buffers.
-s32 CAnimatedMeshB3d::getMeshBufferCount()
+u32 CAnimatedMeshB3d::getMeshBufferCount() const
 {
 	return Buffers.size();
 }
@@ -1393,7 +1393,7 @@ s32 CAnimatedMeshB3d::getMeshBufferCount()
 
 
 //! returns pointer to a mesh buffer
-IMeshBuffer* CAnimatedMeshB3d::getMeshBuffer(s32 nr)
+IMeshBuffer* CAnimatedMeshB3d::getMeshBuffer(u32 nr) const
 {
 	return Buffers[nr];
 }

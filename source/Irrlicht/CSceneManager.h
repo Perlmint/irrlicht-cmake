@@ -32,7 +32,8 @@ namespace scene
 
 		//! constructor
 		CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
-			gui::ICursorControl* cursorControl, CMeshCache* cache = 0);
+			gui::ICursorControl* cursorControl, CMeshCache* cache = 0, 
+			gui::IGUIEnvironment *guiEnvironment = 0);
 
 		//! destructor
 		virtual ~CSceneManager();
@@ -45,6 +46,8 @@ namespace scene
 
 		//! returns the video driver
 		virtual video::IVideoDriver* getVideoDriver();
+
+		virtual gui::IGUIEnvironment* getGUIEnvironment();
 
 		//! adds a cube scene node to the scene. It is a simple cube of (1,1,1) size. 
 		//! the returned pointer must not be dropped.
@@ -85,7 +88,7 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 		//! registers a node for rendering it at a specific time.
-		virtual void registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_RENDER_PASS = ESNRP_AUTOMATIC);
+		virtual u32 registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_RENDER_PASS = ESNRP_AUTOMATIC);
 
 		//! draws all scene nodes
 		virtual void drawAll();
@@ -122,7 +125,8 @@ namespace scene
 		//! like in most first person shooters (FPS): 
 		virtual ICameraSceneNode* addCameraSceneNodeFPS(ISceneNode* parent = 0,
 			f32 rotateSpeed = 1500.0f, f32 moveSpeed = 200.0f, s32 id=-1,
-			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false);
+			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false,
+			f32 jumpSpeed = 0.f);
 
 		//! Adds a dynamic light scene node. The light will cast dynamic light on all
 		//! other scene nodes in the scene, which have the material flag video::MTF_LIGHTING
@@ -136,7 +140,8 @@ namespace scene
 		//! lensflares and things like that.
 		virtual IBillboardSceneNode* addBillboardSceneNode(ISceneNode* parent = 0,
 			const core::dimension2d<f32>& size = core::dimension2d<f32>(10.0f, 10.0f),
-			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1);
+			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1,
+			video::SColor shade_top = 0xFFFFFFFF, video::SColor shade_down = 0xFFFFFFFF);
 
 		//! Adds a skybox scene node. A skybox is a big cube with 6 textures on it and
 		//! is drawn around the camera position. 
@@ -157,6 +162,19 @@ namespace scene
 			ISceneNode* parent = 0,	const core::vector3df& position = core::vector3df(0,0,0),
 			s32 id=-1);
 
+		//! Adds a text scene node, which uses billboards
+		virtual ITextSceneNode* addTextSceneNode2(gui::IGUIFont* font, const wchar_t* text,
+			ISceneNode* parent = 0,
+			const core::dimension2d<f32>& size = core::dimension2d<f32>(10.0f, 10.0f),
+			f32 kerning = 0.5f,
+			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1,
+			video::SColor shade_top = 0xFFFFFFFF, video::SColor shade_down = 0xFFFFFFFF);
+
+		virtual ISceneNode* addQuake3SceneNode(IMeshBuffer* meshBuffer, const quake3::SShader * shader,
+												ISceneNode* parent=0, s32 id=-1
+												);
+
+
 		//! Adds a Hill Plane mesh to the mesh pool. The mesh is generated on the fly
 		//! and looks like a plane with some hills on it. It is uses mostly for quick
 		//! tests of the engine only. You can specify how many hills there should be 
@@ -173,7 +191,10 @@ namespace scene
 		virtual IAnimatedMesh* addTerrainMesh(const c8* meshname,	video::IImage* texture, video::IImage* heightmap,
 			const core::dimension2d<f32>& stretchSize,
 			f32 maxHeight, const core::dimension2d<s32>& defaultVertexBlockSize);
-		
+
+		//! Add a arrow mesh to the mesh pool
+		virtual IAnimatedMesh* addArrowMesh(const c8* name, u32 tesselation, f32 width, f32 height, video::SColor vtxColor);
+
 		//! Adds a particle system scene node. 
 		virtual IParticleSystemSceneNode* addParticleSystemSceneNode(
 			bool withDefaultEmitter=true, ISceneNode* parent=0, s32 id=-1,
@@ -189,7 +210,7 @@ namespace scene
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f),
 			video::SColor vertexColor = video::SColor(255,255,255,255),
-			s32 maxLOD=4, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17);
+			s32 maxLOD=4, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17,s32 smoothFactor=0);
 
 		//! Adds a terrain scene node to the scene graph.
 		virtual ITerrainSceneNode* addTerrainSceneNode(
@@ -199,7 +220,7 @@ namespace scene
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f),
 			video::SColor vertexColor = video::SColor(255,255,255,255),
-			s32 maxLOD=4, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17);
+			s32 maxLOD=4, E_TERRAIN_PATCH_SIZE patchSize=ETPS_17,s32 smoothFactor=0);
 
 		//! Adds a dummy transformation scene node to the scene graph.
 		virtual IDummyTransformationSceneNode* addDummyTransformationSceneNode(
@@ -384,7 +405,7 @@ namespace scene
 		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0);
 
 		//! Sets ambient color of the scene
-		virtual void setAmbientLight(video::SColorf ambientColor);
+		virtual void setAmbientLight(const video::SColorf &ambientColor);
 
 		//! Returns ambient color of the scene
 		virtual video::SColorf getAmbientLight();
@@ -438,12 +459,32 @@ namespace scene
 			}
 		};
 
+		struct ShaderNodeEntry
+		{
+			ShaderNodeEntry() {};
+
+			ShaderNodeEntry(ISceneNode* n, u32 sceneTime )
+			{
+				textureValue = n->getMaterial( sceneTime ).Texture1;
+
+				node = n;
+			}
+
+			ISceneNode* node;
+			void* textureValue;
+
+			bool operator < (const ShaderNodeEntry& other) const
+			{
+				return (textureValue < other.textureValue);
+			}
+		};
+
 
 		struct TransparentNodeEntry
 		{
 			TransparentNodeEntry() {};
 
-			TransparentNodeEntry(ISceneNode* n, core::vector3df camera)
+			TransparentNodeEntry(ISceneNode* n, const core::vector3df &camera)
 			{
 				node = n;
 
@@ -460,11 +501,44 @@ namespace scene
 			}
 		};
 
+		//! sort on distance (sphere) to camera
+		struct DistanceNodeEntry
+		{
+			DistanceNodeEntry() {};
+
+			DistanceNodeEntry(ISceneNode* n, f64 d)
+			{
+				node = n;
+				distance = d;
+			}
+
+			DistanceNodeEntry(ISceneNode* n, const core::vector3df &cameraPos)
+			{
+				node = n;
+				
+				distance = (node->getAbsoluteTransformation().getTranslation().getDistanceFromSQ(cameraPos));
+				distance -= node->getBoundingBox().getExtent().getLengthSQ() / 2.0;
+			}
+
+			ISceneNode* node;
+
+			f64 distance;
+
+			bool operator < (const DistanceNodeEntry& other) const
+			{
+				return distance < other.distance;
+			}
+		};
+
+
 		//! video driver
 		video::IVideoDriver* Driver;
 
 		//! file system
 		io::IFileSystem* FileSystem;
+
+		//! GUI Enviroment ( Debug Purpose )
+		gui::IGUIEnvironment* GUIEnvironment;
 
 		//! cursor control
 		gui::ICursorControl* CursorControl;
@@ -477,11 +551,12 @@ namespace scene
 
 		//! render pass lists
 		core::array<ISceneNode*> CameraList;
-		core::array<ISceneNode*> LightList;
+		core::array<DistanceNodeEntry> LightList;
 		core::array<ISceneNode*> ShadowNodeList;
 		core::array<ISceneNode*> SkyBoxList;
 		core::array<DefaultNodeEntry> SolidNodeList;
 		core::array<TransparentNodeEntry> TransparentNodeList;
+		core::array<ShaderNodeEntry> ShaderNodeList[ ESNRP_SHADER_10 - ESNRP_SHADER_0 + 1];
 
 		core::array<IMeshLoader*> MeshLoaderList;
 		core::array<ISceneNode*> DeletionList;
@@ -490,7 +565,7 @@ namespace scene
 
 		//! current active camera
 		ICameraSceneNode* ActiveCamera;
-		core::vector3df camTransPos; // Position of camera for transparent nodes.
+		core::vector3df camWorldPos; // Position of camera for transparent nodes.
 
 		video::SColor ShadowColor;
 		video::SColorf AmbientLight;

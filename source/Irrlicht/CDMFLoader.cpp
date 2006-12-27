@@ -20,7 +20,6 @@
 #include "SMeshBufferLightMap.h"
 #include "irrString.h"
 #include "irrMath.h"
-#include <string.h>
 #include "dmfsupport.h"
 
 namespace irr
@@ -120,7 +119,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
                     header.numVertices,header.numFaces,header.numLights);*/
 
        //let's set ambient light
-       Driver->setAmbientLight( header.dmfAmbient);
+       SceneMgr->setAmbientLight( header.dmfAmbient);
 
        //let's create the correct number of materials, vertices and faces
        dmfMaterial *materiali=new dmfMaterial[header.numMaterials];

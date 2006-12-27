@@ -3,7 +3,6 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CReadFile.h"
-#include <stdio.h>
 
 namespace irr
 {
@@ -28,14 +27,6 @@ CReadFile::~CReadFile()
 {
 	if (File)
 		fclose(File);
-}
-
-
-
-//! returns if file is open
-inline bool CReadFile::isOpen()
-{
-	return File != 0;
 }
 
 

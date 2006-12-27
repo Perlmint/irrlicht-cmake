@@ -12,6 +12,7 @@
 #include "IVideoDriver.h"
 #include "irrString.h"
 #include "ISceneManager.h"
+#include "os.h"
 
 namespace irr
 {
@@ -38,12 +39,24 @@ namespace scene
 		//! returns the animated mesh based on a detail level. 0 is the lowest, 255 the highest detail. Note, that some Meshes will ignore the detail level.
 		virtual IMesh* getMesh(s32 frameInMs, s32 detailLevel=255, s32 startFrameLoop=-1, s32 endFrameLoop=-1);
 
+		virtual void releaseMesh ( s32 index );
+
 		//! Returns an axis aligned bounding box of the mesh.
 		//! \return A bounding box of this mesh is returned.
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 		//! Returns the type of the animated mesh.
 		virtual E_ANIMATED_MESH_TYPE getMeshType() const;
+
+		//! loads the shader definition
+		virtual const SShader * getShader ( const c8 * filename, s32 fileNameIsValid );
+
+		//! returns a already loaded Shader
+		virtual const SShader * getShader ( u32 index  ) const;
+
+
+		//! get's an interface to the entities
+		virtual const tQ3EntityList & getEntityList ();
 
 	private:
 
@@ -52,6 +65,19 @@ namespace scene
 
 		//! loads the textures
 		void loadTextures();
+
+		void constructMesh2();
+
+		void loadTextures2();
+
+		struct STexShader
+		{
+			video::ITexture* Texture;
+			s32 ShaderID;
+		};
+
+		core::array< STexShader > Tex;
+		core::array<video::ITexture*> Lightmap;
 
 		enum eLumps
 		{
@@ -212,10 +238,73 @@ namespace scene
 		void loadBrushes    (tBSPLump* l, io::IReadFile* file);		// load the brushes of the BSP
 		void loadBrushSides (tBSPLump* l, io::IReadFile* file);		// load the brushsides of the BSP
 		void loadLeafBrushes(tBSPLump* l, io::IReadFile* file);		// load the brushes of the leaf
+		void loadShaders	(tBSPLump* l, io::IReadFile* file);		// load the shaders
 
 		// second parameter i is the zero based index of the current face.
 		void createCurvedSurface(SMeshBufferLightMap* meshBuffer, s32 i);
-		f32 Blend( f32 s[3], f32 t[3], tBSPVertex *v[9], int offset);
+
+		//bi-quadratic bezier patches
+		void createCurvedSurface2 (	SMeshBufferLightMap* meshBuffer,
+									s32 faceIndex,
+									s32 patchTesselation,
+									s32 storevertexcolor
+								);
+
+		void createCurvedSurface3 (	SMeshBufferLightMap* meshBuffer,
+									s32 faceIndex,
+									s32 patchTesselation,
+									s32 storevertexcolor
+								);
+
+		f32 Blend( const f64 s[3], const f64 t[3], const tBSPVertex *v[9], int offset);
+
+		struct S3DVertex2TCoords_64
+		{
+			core::vector3d<f64> Pos;
+			core::vector3d<f64> Normal;
+			video::SColorf Color;
+			core::vector2d<f64> TCoords;
+			core::vector2d<f64> TCoords2;
+
+			void copyto ( video::S3DVertex2TCoords &dest ) const;
+
+			S3DVertex2TCoords_64() {}
+			S3DVertex2TCoords_64(const core::vector3d<f64>& pos, const core::vector3d<f64>& normal, const video::SColorf& color,
+				const core::vector2d<f64>& tcoords, const core::vector2d<f64>& tcoords2)
+				: Pos(pos), Normal(normal), Color(color), TCoords(tcoords), TCoords2(tcoords2) {}
+
+			S3DVertex2TCoords_64 getInterpolated_quadratic(const S3DVertex2TCoords_64& v2, const S3DVertex2TCoords_64& v3, const f64 d) const
+			{
+				return S3DVertex2TCoords_64 (
+						Pos.getInterpolated_quadratic ( v2.Pos, v3.Pos, d  ),
+						Normal.getInterpolated_quadratic ( v2.Normal, v3.Normal, d ),
+						Color.getInterpolated_quadratic ( v2.Color, v3.Color, (f32) d ),
+						TCoords.getInterpolated_quadratic ( v2.TCoords, v3.TCoords, d ),
+						TCoords2.getInterpolated_quadratic ( v2.TCoords2, v3.TCoords2, d )
+					);
+			}
+		};
+
+		void copy ( video::S3DVertex2TCoords * dest, const tBSPVertex * source, s32 vertexcolor ) const;
+		void copy ( S3DVertex2TCoords_64 * dest, const tBSPVertex * source, s32 vertexcolor ) const;
+
+
+		struct SBezier
+		{
+			SMeshBufferLightMap *Patch;
+			S3DVertex2TCoords_64 control[9];
+
+			void tesselate(s32 level);
+
+		private:
+			s32	Level;
+
+			core::array<S3DVertex2TCoords_64> column[3];
+			
+		};
+		SBezier Bezier;
+
+		s32 PatchTesselation;
 
 		tBSPLump Lumps[kMaxLumps];
 
@@ -249,19 +338,26 @@ namespace scene
 		tBSPBrush* Brushes;
 		s32 NumBrushes;
 
-		scene::SMesh* Mesh;
+		scene::SMesh* Mesh[E_Q3_MESH_SIZE];
 		video::IVideoDriver* Driver;
 		core::stringc LevelName;
 		io::IFileSystem* FileSystem; // needs because there are no file extenstions stored in .bsp files.
 
-		// Additional
+		// Additional content
 		scene::ISceneManager* SceneManager;
 		enum eToken
 		{
+			Q3_TOKEN_UNRESOLVED	= 0,
 			Q3_TOKEN_EOF		= 1,
 			Q3_TOKEN_START_LIST,
 			Q3_TOKEN_END_LIST,
-			Q3_TOKEN_IDENTITY,
+			Q3_TOKEN_ENTITY,
+			Q3_TOKEN_TOKEN,
+			Q3_TOKEN_EOL,
+			Q3_TOKEN_COMMENT,
+			Q3_TOKEN_MATH_DIVIDE,
+			Q3_TOKEN_MATH_ADD,
+			Q3_TOKEN_MATH_MULTIPY
 		};
 		struct SQ3Parser
 		{
@@ -273,43 +369,35 @@ namespace scene
 		};
 		SQ3Parser Parser;
 
-		// use plain old c for better memory allocation performance
-		struct SQ3Variable
-		{
-			c8 name[64];
-			c8 content[64];
-			bool operator < ( const SQ3Variable &other ) const
-			{
-				return strcmp ( name, other.name ) < 0;
-			}
-		};
 
-		// optimized for parsing.. ( it's reused heavily)
-		struct SQ3VarGroup
-		{
-			SQ3VarGroup ()
-			{
-				Variable.set_used ( 4 );
-			}
-
-			void clear ()
-			{
-				Variable.set_used ( 0 );
-			}
-			const c8 * get( const char * name ) const;
-			core::array < SQ3Variable > Variable;
-		};
-
-		typedef core::array < SQ3VarGroup > tGroupList;
-
-		void addLightData ( const SQ3VarGroup &group );
-		core::array < video::SLight > LightData;
-
-		void parser_parse ( const void * data, u32 size );
+		typedef void ( CQ3LevelMesh::*tParserCallback ) ( SVarGroupList *& groupList );
+		void parser_parse ( const void * data, u32 size, tParserCallback callback );
 		void parser_nextToken ();
 
-		const c8 * parser_get_float ( f32 &out, const c8* in ) const;
-		void parser_get_vector ( core::vector3df &vector, const c8* string ) const;
+		void dumpVarGroup ( const SVarGroup * group, s32 stack ) const;
+
+		void scriptcallback_entity ( SVarGroupList *& grouplist );
+		tQ3EntityList Entity;
+
+		void scriptcallback_shader ( SVarGroupList *& grouplist );
+		core::array < SShader > Shader;
+		tStringList ShaderFile;
+		void InitShader ();
+		void ReleaseShader ();
+		void ReleaseEntity ();
+
+
+		s32 setShaderMaterial ( video::SMaterial & material, const tBSPFace * face ) const;
+		video::ITexture* loadTexture ( const tStringList &stringList );
+
+		struct SToBuffer
+		{
+			s32 takeVertexColor;
+			u32 index;
+		};
+
+		void cleanMeshes ();
+		void calcBoundingBoxes ();
 
 	};
 

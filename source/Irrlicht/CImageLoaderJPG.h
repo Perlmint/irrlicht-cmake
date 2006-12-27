@@ -7,7 +7,6 @@
 
 #include "IImageLoader.h"
 
-#include <stdio.h>
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_LIBJPEG_
@@ -28,7 +27,7 @@ namespace video
 {
 
 
-//! Surface Loader fow JPG images
+//! Surface Loader for JPG images
 class CImageLoaderJPG : public IImageLoader
 {
 public:

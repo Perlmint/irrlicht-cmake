@@ -53,6 +53,11 @@ public:
 	//! \param scale: 3D Vector, defining the value, for each axis, to scale the mesh by.
 	virtual void scaleMesh(scene::IMesh* mesh, const core::vector3df& scale) const;
 
+	//! Applies a transformation
+	/** \param mesh: Mesh on which the operation is performed.
+		\param m: transformation matrix. */
+	virtual void transformMesh(scene::IMesh* mesh, const core::matrix4& m) const;
+
 	//! Clones a static IMesh into a modifyable SMesh.
 	virtual SMesh* createMeshCopy(scene::IMesh* mesh) const;
 
@@ -82,6 +87,9 @@ public:
 
 	//! Returns amount of polygons in mesh.
 	virtual s32 getPolyCount(scene::IAnimatedMesh* mesh) const;
+
+	//! create a new AnimatedMesh and adds the mesh to it
+	virtual IAnimatedMesh * createAnimatedMesh(scene::IMesh* mesh,scene::E_ANIMATED_MESH_TYPE type) const;
 
 private:
 

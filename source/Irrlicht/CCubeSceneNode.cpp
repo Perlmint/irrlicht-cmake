@@ -124,14 +124,14 @@ void CCubeSceneNode::OnPreRender()
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& CCubeSceneNode::getMaterial(s32 i)
+video::SMaterial& CCubeSceneNode::getMaterial(u32 i)
 {
 	return Buffer.Material;
 }
 
 
 //! returns amount of materials used by this scene node.
-s32 CCubeSceneNode::getMaterialCount()
+u32 CCubeSceneNode::getMaterialCount()
 {
 	return 1;
 }

@@ -4,7 +4,6 @@
 
 #include "CAnimatedMeshMS3D.h"
 #include "os.h"
-#include <string.h>
 #include "IVideoDriver.h"
 
 namespace irr
@@ -635,11 +634,14 @@ void CAnimatedMeshMS3D::animate(s32 frame)
 		for (s32 j=0; j<(s32)Joints[i].VertexIds.size(); ++j)
 		{
 			Joints[i].AbsoluteTransformationAnimated.transformVect(
-			Vertices[Joints[i].VertexIds[j]].Pos, 
-				AnimatedVertices[Joints[i].VertexIds[j]].Pos);
+				AnimatedVertices[Joints[i].VertexIds[j]].Pos,
+				Vertices[Joints[i].VertexIds[j]].Pos
+			);
+
 			Joints[i].AbsoluteTransformationAnimated.transformVect(
-			Vertices[Joints[i].VertexIds[j]].Normal, 
-				AnimatedVertices[Joints[i].VertexIds[j]].Normal);
+				AnimatedVertices[Joints[i].VertexIds[j]].Normal,
+				Vertices[Joints[i].VertexIds[j]].Normal
+			);
 
 			// TODO: this could be done much more faster by 
 			// first getting 8 extreme points and putting them in.
@@ -652,7 +654,7 @@ void CAnimatedMeshMS3D::animate(s32 frame)
 
 
 //! returns amount of mesh buffers.
-s32 CAnimatedMeshMS3D::getMeshBufferCount()
+u32 CAnimatedMeshMS3D::getMeshBufferCount() const
 {
 	return Buffers.size();
 }
@@ -660,9 +662,9 @@ s32 CAnimatedMeshMS3D::getMeshBufferCount()
 
 
 //! returns pointer to a mesh buffer
-IMeshBuffer* CAnimatedMeshMS3D::getMeshBuffer(s32 nr)
+IMeshBuffer* CAnimatedMeshMS3D::getMeshBuffer(u32 nr) const
 {
-	return &Buffers[nr];
+	return (IMeshBuffer*) &Buffers[nr];
 }
 
 
@@ -732,7 +734,7 @@ void* CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertices()
 } 
 
 //! returns amount of vertices 
-s32 CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexCount() const 
+u32 CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexCount() const 
 { 
 	return Vertices->size(); 
 } 
@@ -750,7 +752,7 @@ u16* CAnimatedMeshMS3D::SMS3DMeshBuffer::getIndices()
 } 
 
 //! returns amount of indices 
-s32 CAnimatedMeshMS3D::SMS3DMeshBuffer::getIndexCount() const 
+u32 CAnimatedMeshMS3D::SMS3DMeshBuffer::getIndexCount() const 
 { 
 	return Indices.size(); 
 } 
@@ -772,6 +774,13 @@ video::E_VERTEX_TYPE CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexType() const
 {
 	return video::EVT_STANDARD;
 }
+
+//! returns the byte size (stride, pitch) of the vertex
+u32 CAnimatedMeshMS3D::SMS3DMeshBuffer::getVertexPitch() const
+{
+	return sizeof ( video::S3DVertex );
+}
+
 
 } // end namespace scene
 } // end namespace irr

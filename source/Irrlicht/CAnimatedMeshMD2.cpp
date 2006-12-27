@@ -6,6 +6,7 @@
 #include "os.h"
 #include "SColor.h"
 #include "IReadFile.h"
+#include "irrmath.h"
 
 namespace irr
 {
@@ -27,7 +28,9 @@ namespace scene
 	const s32 MD2_MAGIC_NUMBER = 844121161;
 	const s32 MD2_VERSION		= 8;
 	const s32 MD2_MAX_VERTS		= 2048;
-	const s32 MD2_FRAME_SHIFT	= 3;
+
+	// TA: private
+	const s32 MD2_FRAME_SHIFT	= 2;
 
 	struct SMD2Header
 	{
@@ -338,16 +341,16 @@ IMesh* CAnimatedMeshMD2::getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop,
 
 
 //! returns amount of mesh buffers.
-s32 CAnimatedMeshMD2::getMeshBufferCount()
+u32 CAnimatedMeshMD2::getMeshBufferCount() const
 {
 	return 1;
 }
 
 
 //! returns pointer to a mesh buffer
-IMeshBuffer* CAnimatedMeshMD2::getMeshBuffer(s32 nr)
+IMeshBuffer* CAnimatedMeshMD2::getMeshBuffer(u32 nr) const
 {
-	return this;
+	return (IMeshBuffer*) this;
 }
 
 
@@ -388,10 +391,16 @@ video::E_VERTEX_TYPE CAnimatedMeshMD2::getVertexType() const
 	return video::EVT_STANDARD;
 }
 
+//! returns the byte size (stride, pitch) of the vertex
+u32 CAnimatedMeshMD2::getVertexPitch() const
+{
+	return sizeof ( video::S3DVertex );
+}
+
 
 
 //! returns amount of vertices
-s32 CAnimatedMeshMD2::getVertexCount() const
+u32 CAnimatedMeshMD2::getVertexCount() const
 {
 	return FrameList[0].size();
 }
@@ -415,7 +424,7 @@ u16* CAnimatedMeshMD2::getIndices()
 
 
 //! returns amount of indices
-s32 CAnimatedMeshMD2::getIndexCount() const
+u32 CAnimatedMeshMD2::getIndexCount() const
 {
 	return Indices.size();
 }
@@ -448,8 +457,8 @@ void CAnimatedMeshMD2::updateInterpolationBuffer(s32 frame, s32 startFrameLoop, 
 		if ( secondFrame > e )
 			secondFrame = s;
 
-		firstFrame = min ( FrameCount - 1, firstFrame );
-		secondFrame = min ( FrameCount - 1, secondFrame );
+		firstFrame = irr::core::min_ ( FrameCount - 1, firstFrame );
+		secondFrame = irr::core::min_ ( FrameCount - 1, secondFrame );
 
 		div = (frame % (1<<MD2_FRAME_SHIFT)) / (f32)(1<<MD2_FRAME_SHIFT);
 #else
@@ -487,18 +496,6 @@ void CAnimatedMeshMD2::updateInterpolationBuffer(s32 frame, s32 startFrameLoop, 
 }
 
 
-
-//! returns max element
-inline s32 CAnimatedMeshMD2::max(s32 a, s32 b)
-{
-	return a>b ? a : b;
-}
-
-//! returns min element
-inline s32 CAnimatedMeshMD2::min(s32 a, s32 b)
-{
-	return a<b ? a : b;
-}
 
 
 //! loads an md2 file

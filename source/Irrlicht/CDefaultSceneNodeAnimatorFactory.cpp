@@ -5,7 +5,6 @@
 #include "CDefaultSceneNodeAnimatorFactory.h"
 #include "ISceneNodeAnimatorCollisionResponse.h"
 #include "ISceneManager.h"
-#include <string.h>
 
 namespace irr
 {

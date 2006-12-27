@@ -44,7 +44,8 @@ CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vert
 
 	video::S3DVertex vtx;
 
-	AutomaticCullingEnabled = false;
+	AutomaticCullingState = scene::EAC_OFF;
+
 	Buffer.Material.Lighting = false;
 	Buffer.Material.ZBuffer = false;
 	Buffer.Material.ZWriteEnable = false;
@@ -153,14 +154,14 @@ void CSkyDomeSceneNode::OnPreRender()
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& CSkyDomeSceneNode::getMaterial(s32 i)
+video::SMaterial& CSkyDomeSceneNode::getMaterial(u32 i)
 {
 	return Buffer.Material;
 }
 
 
 //! returns amount of materials used by this scene node.
-s32 CSkyDomeSceneNode::getMaterialCount()
+u32 CSkyDomeSceneNode::getMaterialCount()
 {
 	return 1;
 }

@@ -51,7 +51,7 @@ public:
 	virtual ECOLOR_FORMAT getColorFormat() const;
 
 	//! returns pitch of texture (in bytes)
-	virtual s32 getPitch();
+	virtual u32 getPitch() const;
 
 	//! Regenerates the mip map levels of the texture. Useful after locking and 
 	//! modifying the texture

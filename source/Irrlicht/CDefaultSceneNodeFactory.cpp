@@ -13,7 +13,6 @@
 #include "IParticleSystemSceneNode.h"
 #include "ILightSceneNode.h"
 #include "IMeshSceneNode.h"
-#include <string.h>
 
 namespace irr
 {

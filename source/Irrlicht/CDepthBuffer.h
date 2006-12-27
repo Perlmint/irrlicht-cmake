@@ -1,26 +1,26 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #ifndef __C_Z_BUFFER_H_INCLUDED__
 #define __C_Z_BUFFER_H_INCLUDED__
 
-#include "IZBuffer2.h"
+#include "IDepthBuffer.h"
 
 namespace irr
 {
 namespace video
 {
 
-	class CZBuffer2 : public IZBuffer2
+	class CDepthBuffer : public IDepthBuffer
 	{
 	public:
 
 		//! constructor
-		CZBuffer2(const core::dimension2d<s32>& size);
+		CDepthBuffer(const core::dimension2d<s32>& size);
 
 		//! destructor
-		virtual ~CZBuffer2();
+		virtual ~CDepthBuffer();
 
 		//! clears the zbuffer
 		virtual void clear();
@@ -32,16 +32,16 @@ namespace video
 		virtual const core::dimension2d<s32>& getSize();
 
 		//! locks the zbuffer
-		virtual TZBufferType2* lock();
+		virtual fp24* lock();
 
 		//! unlocks the zbuffer
 		virtual void unlock();
 
 	private:
 
-		TZBufferType2* Buffer;
+		u8* Buffer;
 		core::dimension2d<s32> Size;
-		s32 TotalSize;
+		u32 TotalSize;
 	};
 	
 } // end namespace video

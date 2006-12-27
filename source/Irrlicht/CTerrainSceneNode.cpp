@@ -12,10 +12,10 @@
 #include "ISceneManager.h"
 #include "ICameraSceneNode.h"
 #include "SMeshBufferLightMap.h"
-#include "SViewFrustrum.h"
+#include "SViewFrustum.h"
 #include "irrMath.h"
-#include <stdio.h>
 #include "os.h"
+#include "IGUIFont.h"
 
 namespace irr
 {
@@ -47,7 +47,7 @@ namespace scene
 		CameraMovementDelta = 10.0f;
 		CameraRotationDelta = 1.0f;
 
-		setAutomaticCulling( false );
+		setAutomaticCulling( scene::EAC_OFF );
 	}
 
 	//! destructor
@@ -61,12 +61,12 @@ namespace scene
 	}
 
 	//! Initializes the terrain data.  Loads the vertices from the heightMapFile
-	bool CTerrainSceneNode::loadHeightMap( io::IReadFile* file, video::SColor vertexColor )
+	bool CTerrainSceneNode::loadHeightMap( io::IReadFile* file, video::SColor vertexColor, s32 smoothFactor )
 	{
 		if( !file )
 			return false;
 
-		u32 startTime = os::Timer::getTime();
+		u32 startTime = os::Timer::getRealTime();
 		video::IImage* heightMap = SceneManager->getVideoDriver()->createImageFromFile( file );
 
 		if( !heightMap )
@@ -131,7 +131,7 @@ namespace scene
 
 				vertex.Pos.X = (f32)x;
 				video::SColor pixelColor(heightMap->getPixel(x,z));
-				vertex.Pos.Y = ( pixelColor.getRed() + pixelColor.getGreen() + pixelColor.getBlue() ) / 3.0f;
+				vertex.Pos.Y = (f32) pixelColor.getLuminance();
 				vertex.Pos.Z = (f32)z;
 
 				vertex.TCoords.X = x / (f32)TerrainData.Size;
@@ -146,6 +146,33 @@ namespace scene
 
 		// drop heightMap, no longer needed
 		heightMap->drop();
+
+		//! Terrain smoothing. Applause to DeusXL!
+		// http://irrlicht.sourceforge.net/phpBB2/viewtopic.php?p=91272#91272
+
+		s32 run;
+		s32 index;
+
+		for( run = 0; run < smoothFactor; ++run )
+		{
+			for( index = 2; index < (TerrainData.Size * TerrainData.Size - 2); ++index)
+			{
+				pMeshBuffer->Vertices[index].Pos.Y =
+					(pMeshBuffer->Vertices[index - 2].Pos.Y + pMeshBuffer->Vertices[index - 1].Pos.Y +
+					pMeshBuffer->Vertices[index + 1].Pos.Y + pMeshBuffer->Vertices[index + 2].Pos.Y) / 4.0f;
+			}
+		}
+
+		for( run = 0; run < smoothFactor; ++run)
+		{
+			for( index = TerrainData.Size; index < (TerrainData.Size * (TerrainData.Size - 1)); ++index)
+			{
+				pMeshBuffer->Vertices[index].Pos.Y =
+					(pMeshBuffer->Vertices[index - TerrainData.Size].Pos.Y +
+					pMeshBuffer->Vertices[index + TerrainData.Size].Pos.Y ) / 2.0f;
+			}
+		}
+
 
 		// calculate smooth normals for the vertices
 		calculateNormals( pMeshBuffer );
@@ -184,7 +211,7 @@ namespace scene
 		RenderBuffer.Indices.set_used( TerrainData.PatchCount * TerrainData.PatchCount *
 			TerrainData.CalcPatchSize * TerrainData.CalcPatchSize * 6 );
 
-		u32 endTime = os::Timer::getTime();
+		u32 endTime = os::Timer::getRealTime();
 
 		c8 tmp[255];
 		sprintf(tmp, "Generated terrain data (%dx%d) in %.4f seconds",
@@ -195,7 +222,7 @@ namespace scene
 	}
 
 	//! Initializes the terrain data.  Loads the vertices from the heightMapFile
-	bool CTerrainSceneNode::loadHeightMapRAW( io::IReadFile* file, s32 bitsPerPixel, video::SColor vertexColor )
+	bool CTerrainSceneNode::loadHeightMapRAW( io::IReadFile* file, s32 bitsPerPixel, video::SColor vertexColor, s32 smoothFactor )
 	{
 		if( !file )
 			return false;
@@ -276,6 +303,32 @@ namespace scene
 				vertex.TCoords.Y = vertex.TCoords2.Y = z / tdSize;
 
 				pMeshBuffer->Vertices.push_back( vertex );
+			}
+		}
+
+		//! Terrain smoothing. Applause to DeusXL!
+		// http://irrlicht.sourceforge.net/phpBB2/viewtopic.php?p=91272#91272
+
+		s32 run;
+		s32 index;
+
+		for( run = 0; run < smoothFactor; ++run )
+		{
+			for( index = 2; index < (TerrainData.Size * TerrainData.Size - 2); ++index)
+			{
+				pMeshBuffer->Vertices[index].Pos.Y =
+					(pMeshBuffer->Vertices[index - 2].Pos.Y + pMeshBuffer->Vertices[index - 1].Pos.Y +
+					pMeshBuffer->Vertices[index + 1].Pos.Y + pMeshBuffer->Vertices[index + 2].Pos.Y) / 4.0f;
+			}
+		}
+
+		for( run = 0; run < smoothFactor; ++run)
+		{
+			for( index = TerrainData.Size; index < (TerrainData.Size * (TerrainData.Size - 1)); ++index)
+			{
+				pMeshBuffer->Vertices[index].Pos.Y =
+					(pMeshBuffer->Vertices[index - TerrainData.Size].Pos.Y +
+					pMeshBuffer->Vertices[index + TerrainData.Size].Pos.Y ) / 2.0f;
 			}
 		}
 
@@ -388,7 +441,7 @@ namespace scene
 	//! Updates the scene nodes indices if the camera has moved or rotated by a certain
 	//! threshold, which can be changed using the SetCameraMovementDeltaThreshold and
 	//! SetCameraRotationDeltaThreshold functions.  This also determines if a given patch
-	//! for the scene node is within the view frustrum and if it's not the indices are not
+	//! for the scene node is within the view frustum and if it's not the indices are not
 	//! generated for that patch.
 	void CTerrainSceneNode::OnPreRender()
 	{
@@ -426,13 +479,13 @@ namespace scene
 
 		OldCameraPosition = cameraPosition;
 		OldCameraRotation = cameraRotation;
-		const SViewFrustrum* frustrum = SceneManager->getActiveCamera()->getViewFrustrum();
+		const SViewFrustum* frustum = SceneManager->getActiveCamera()->getViewFrustum();
 
 		// Determine each patches LOD based on distance from camera ( and whether or not they are in
-		// the view frustrum ).
+		// the view frustum ).
 		for( s32 j = 0; j < TerrainData.PatchCount * TerrainData.PatchCount; ++j )
 		{
-			if( frustrum->getBoundingBox().intersectsWithBox( TerrainData.Patches[j].BoundingBox ) )
+			if( frustum->getBoundingBox().intersectsWithBox( TerrainData.Patches[j].BoundingBox ) )
 			{
 				f32 distance = (cameraPosition.X - TerrainData.Patches[j].Center.X) * (cameraPosition.X - TerrainData.Patches[j].Center.X) +
 					(cameraPosition.Y - TerrainData.Patches[j].Center.Y) * (cameraPosition.Y - TerrainData.Patches[j].Center.Y) +
@@ -447,7 +500,7 @@ namespace scene
 					}
 					//else if( i == 0 )
 					{
-						// If we've turned off a patch from viewing, because of the frustrum, and now we turn around and it's
+						// If we've turned off a patch from viewing, because of the frustum, and now we turn around and it's
 						// too close, we need to turn it back on, at the highest LOD.  The if above doesn't catch this.
 						TerrainData.Patches[j].CurrentLOD = 0;
 					}
@@ -459,6 +512,67 @@ namespace scene
 			}
 		}
 	}
+
+	void CTerrainSceneNode::preRenderLODCalculations_old()
+	{
+		SceneManager->registerNodeForRendering( this );
+		// Do Not call ISceneNode::OnPreRender ( ), this node should have no children
+
+		// Determine the camera rotation, based on the camera direction.
+		core::line3d<f32> line;
+		line.start = SceneManager->getActiveCamera()->getAbsolutePosition();
+		line.end = SceneManager->getActiveCamera()->getTarget();
+		core::vector3df cameraRotation = line.getVector().getHorizontalAngle();
+		core::vector3df cameraPosition = SceneManager->getActiveCamera()->getPosition ( );
+
+		// Only check on the Camera's Y Rotation
+		if (( fabs(cameraRotation.X - OldCameraRotation.X) < CameraRotationDelta) &&
+			( fabs(cameraRotation.Y - OldCameraRotation.Y) < CameraRotationDelta))
+		{
+			if ((fabs(cameraPosition.X - OldCameraPosition.X) < CameraMovementDelta) &&
+				(fabs(cameraPosition.Y - OldCameraPosition.Y) < CameraMovementDelta) &&
+				(fabs(cameraPosition.Z - OldCameraPosition.Z) < CameraMovementDelta))
+			{
+				return;
+			}
+		}
+
+		OldCameraPosition = cameraPosition;
+		OldCameraRotation = cameraRotation;
+		const SViewFrustum* frustum = SceneManager->getActiveCamera()->getViewFrustum();
+
+		// Determine each patches LOD based on distance from camera ( and whether or not they are in
+		// the view frustum ).
+		for( s32 j = 0; j < TerrainData.PatchCount * TerrainData.PatchCount; ++j )
+		{
+			if( frustum->getBoundingBox().intersectsWithBox( TerrainData.Patches[j].BoundingBox ) )
+			{
+				f32 distance = (cameraPosition.X - TerrainData.Patches[j].Center.X) * (cameraPosition.X - TerrainData.Patches[j].Center.X) +
+					(cameraPosition.Y - TerrainData.Patches[j].Center.Y) * (cameraPosition.Y - TerrainData.Patches[j].Center.Y) +
+					(cameraPosition.Z - TerrainData.Patches[j].Center.Z) * (cameraPosition.Z - TerrainData.Patches[j].Center.Z);
+
+				for( s32 i = TerrainData.MaxLOD - 1; i >= 0; --i )
+				{
+					if( distance >= TerrainData.LODDistanceThreshold[i] )
+					{
+						TerrainData.Patches[j].CurrentLOD = i;
+						break;
+					}
+					//else if( i == 0 )
+					{
+						// If we've turned off a patch from viewing, because of the frustum, and now we turn around and it's
+						// too close, we need to turn it back on, at the highest LOD.  The if above doesn't catch this.
+						TerrainData.Patches[j].CurrentLOD = 0;
+					}
+				}
+			}
+			else
+			{
+				TerrainData.Patches[j].CurrentLOD = -1;
+			}
+		}
+	}
+
 
 	void CTerrainSceneNode::preRenderIndicesCalculations()
 	{
@@ -524,16 +638,49 @@ namespace scene
 		if (!IsVisible || !SceneManager->getActiveCamera())
 			return;
 
-		core::matrix4 identity;
-		SceneManager->getVideoDriver()->setTransform (video::ETS_WORLD, identity);
+		video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
-		SceneManager->getVideoDriver()->setMaterial(Mesh.getMeshBuffer(0)->getMaterial());
+		core::matrix4 identity;
+		driver->setTransform (video::ETS_WORLD, identity);
+
+		driver->setMaterial(Mesh.getMeshBuffer(0)->getMaterial());
 
 		// For use with geomorphing
-		SceneManager->getVideoDriver()->drawVertexPrimitiveList(
+		driver->drawVertexPrimitiveList(
 			RenderBuffer.getVertices(), RenderBuffer.getVertexCount(),
 			RenderBuffer.getIndices(), IndicesToRender / 3,
 			video::EVT_2TCOORDS, EPT_TRIANGLES);
+
+		// for debug purposes only:
+		if (DebugDataVisible )
+		{
+			video::SMaterial m;
+			m.Lighting = false;
+			driver->setMaterial(m);
+			driver->draw3DBox( TerrainData.BoundingBox, video::SColor(0,255,255,255));
+
+			s32 count = TerrainData.PatchCount * TerrainData.PatchCount;
+			s32 visible = 0;
+			for( s32 j = 0; j < count; ++j )
+			{
+				driver->draw3DBox( TerrainData.Patches[j].BoundingBox, video::SColor(0,255,0,0));
+				visible += ( TerrainData.Patches[j].CurrentLOD >= 0 );
+			}
+
+			static u32 lastTime = 0;
+
+			u32 now = os::Timer::getRealTime ();
+			if ( now - lastTime > 1000 )
+			{
+				char buf[64];
+				sprintf ( buf, "Count: %d, Visible: %d", count, visible );
+				os::Printer::print ( buf );
+
+				lastTime = now;
+			}
+
+		}
+
 	}
 
 	//! Return the bounding box of the entire terrain.
@@ -945,6 +1092,24 @@ namespace scene
 			delete [] TerrainData.Patches;
 
 		TerrainData.Patches = new SPatch[TerrainData.PatchCount * TerrainData.PatchCount];
+
+#if 0
+		gui::IGUIFont* font = SceneManager->getGUIEnvironment()->getFont("../../media/bigfont.png");
+		font->setKerning ( -2 );
+		for( s32 j = 0; j < TerrainData.PatchCount * TerrainData.PatchCount; ++j )
+		{
+			wchar_t buf[64];
+			swprintf ( buf, 64, L"%d", j );
+			TerrainData.Patches[j].DebugText = SceneManager->addTextSceneNode (
+				font,
+				buf,
+				0xFFFFFFFF,
+				0
+				);
+		}
+#endif
+		
+
 	}
 
 	//! used to calculate the internal STerrainData structure both at creation and after scaling/position calls.
@@ -998,6 +1163,12 @@ namespace scene
 					TerrainData.Patches[index].Right = &TerrainData.Patches[x * TerrainData.PatchCount + z + 1];
 				else
 					TerrainData.Patches[index].Right = 0;
+
+				if ( TerrainData.Patches[index].DebugText )
+				{
+					TerrainData.Patches[index].DebugText->setPosition ( TerrainData.Patches[index].Center );
+				}
+				
 			}
 		}
 

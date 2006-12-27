@@ -100,15 +100,19 @@ void CGUIToolBar::updateAbsolutePosition()
 
 
 //! Adds a button to the tool bar
-IGUIButton* CGUIToolBar::addButton(s32 id, const wchar_t* text,
+IGUIButton* CGUIToolBar::addButton(s32 id, const wchar_t* text,const wchar_t* tooltiptext,
 	video::ITexture* img, video::ITexture* pressed, bool isPushButton, 
 	bool useAlphaChannel)
 {
 	ButtonX += 3;
 
 	core::rect<s32> rectangle(ButtonX,2,0,0);
-	rectangle.LowerRightCorner.X = rectangle.UpperLeftCorner.X + 23;
-	rectangle.LowerRightCorner.Y = rectangle.UpperLeftCorner.Y + 22;
+	if ( img )
+	{
+		const core::dimension2di &size = img->getOriginalSize();
+		rectangle.LowerRightCorner.X = rectangle.UpperLeftCorner.X + size.Width + 8;
+		rectangle.LowerRightCorner.Y = rectangle.UpperLeftCorner.Y + size.Height + 6;
+	}
 
 	ButtonX += rectangle.getWidth();
 
@@ -117,6 +121,9 @@ IGUIButton* CGUIToolBar::addButton(s32 id, const wchar_t* text,
 
 	if (text)
 		button->setText(text);
+
+	if (tooltiptext)
+		button->setToolTipText(tooltiptext);
 
 	if (img)
 		button->setImage(img);

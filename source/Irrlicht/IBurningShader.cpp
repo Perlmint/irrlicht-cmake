@@ -1,9 +1,9 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "SoftwareDriver2_compile_config.h"
-#include "ITriangleRenderer2.h"
+#include "IBurningShader.h"
 
 namespace irr
 {
@@ -11,7 +11,15 @@ namespace irr
 namespace video
 {
 
-	ITriangleRenderer2::ITriangleRenderer2(IZBuffer2* zbuffer)
+	const tFixPointu IBurningShader::dithermask[ 4 * 4] =
+		{
+			0x00,0x80,0x20,0xa0,
+			0xc0,0x40,0xe0,0x60,
+			0x30,0xb0,0x10,0x90,
+			0xf0,0x70,0xd0,0x50
+		};
+
+	IBurningShader::IBurningShader(IDepthBuffer* zbuffer)
 		:RenderTarget(0),ZBuffer(zbuffer)
 	{
 		IT[0].Texture = 0;
@@ -27,7 +35,7 @@ namespace video
 
 
 	//! destructor
-	ITriangleRenderer2::~ITriangleRenderer2()
+	IBurningShader::~IBurningShader()
 	{
 		if (RenderTarget)
 			RenderTarget->drop();
@@ -43,7 +51,7 @@ namespace video
 	};
 
 	//! sets a render target
-	void ITriangleRenderer2::setRenderTarget(video::IImage* surface, const core::rect<s32>& viewPort)
+	void IBurningShader::setRenderTarget(video::IImage* surface, const core::rect<s32>& viewPort)
 	{
 		if (RenderTarget)
 			RenderTarget->drop();
@@ -59,7 +67,7 @@ namespace video
 
 
 	//! sets the Texture
-	void ITriangleRenderer2::setTexture( u32 stage, video::CSoftwareTexture2* texture)
+	void IBurningShader::setTexture( u32 stage, video::CSoftwareTexture2* texture, s32 lodLevel)
 	{
 		sInternalTexture *it = &IT[stage];
 
@@ -72,18 +80,18 @@ namespace video
 		{
 			it->Texture->grab();
 
+			// select mignify and magnify ( lodLevel )
+			//SOFTWARE_DRIVER_2_MIPMAPPING_LOD_BIAS
+			it->lodLevel = lodLevel;
+			it->Texture->setCurrentMipMapLOD (
+				s32_clamp ( lodLevel + SOFTWARE_DRIVER_2_MIPMAPPING_LOD_BIAS, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 )
+				);
+
 			// prepare for optimal fixpoint
-			it->pitch = it->Texture->getPitch();
-			it->pitchlog2 = s32_log2 ( it->pitch );
+			it->pitchlog2 = s32_log2_s32 ( it->Texture->getPitch() );
 
-			it->textureXMask = s32_to_fixPoint ( it->Texture->getSize().Width - 1 );
-			it->textureYMask = s32_to_fixPoint ( it->Texture->getSize().Height - 1 );
-
-			//it->textureXMask |= FIX_POINT_FRACT_MASK;
-			//it->textureYMask |= FIX_POINT_FRACT_MASK;
-
-			it->textureXMask &= FIX_POINT_UNSIGNED_MASK;
-			it->textureYMask &= FIX_POINT_UNSIGNED_MASK;
+			it->textureXMask = s32_to_fixPoint ( it->Texture->getSize().Width - 1 ) & FIX_POINT_UNSIGNED_MASK;
+			it->textureYMask = s32_to_fixPoint ( it->Texture->getSize().Height - 1 ) & FIX_POINT_UNSIGNED_MASK;
 		}
 	}
 

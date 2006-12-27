@@ -38,10 +38,10 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 		//! returns the material based on the zero based index i.
-		virtual video::SMaterial& getMaterial(s32 i);
+		virtual video::SMaterial& getMaterial(u32 i);
 		
 		//! returns amount of materials used by this scene node.
-		virtual s32 getMaterialCount();
+		virtual u32 getMaterialCount();
 
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_SHADOW_VOLUME; }

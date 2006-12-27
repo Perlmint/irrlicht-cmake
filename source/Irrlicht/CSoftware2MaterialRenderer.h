@@ -47,6 +47,7 @@ public:
 };
 
 
+
 //! Transparent material renderer
 class CSoftware2MaterialRenderer_TRANSPARENT_ADD_COLOR : public CSoftware2MaterialRenderer
 {

@@ -19,7 +19,7 @@ CEmptySceneNode::CEmptySceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id)
 	setDebugName("CEmptySceneNode");
 	#endif
 
-	setAutomaticCulling(false);
+	setAutomaticCulling(scene::EAC_OFF);
 }
 
 

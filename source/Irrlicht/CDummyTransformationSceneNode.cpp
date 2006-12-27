@@ -18,7 +18,7 @@ CDummyTransformationSceneNode::CDummyTransformationSceneNode(
 	setDebugName("CDummyTransformationSceneNode");
 	#endif
 
-	setAutomaticCulling(false);
+	setAutomaticCulling(scene::EAC_OFF);
 }
 
 

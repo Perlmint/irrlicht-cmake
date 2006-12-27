@@ -1,11 +1,11 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include "ITriangleRenderer2.h"
+#include "IBurningShader.h"
 
 // compile flag for this file
-#undef USE_Z
+#undef USE_ZBUFFER
 #undef IPOL_Z
 #undef CMP_Z
 #undef WRITE_Z
@@ -17,7 +17,7 @@
 #undef SUBTEXEL
 #undef INVERSE_W
 
-#undef IPOL_C
+#undef IPOL_C0
 #undef IPOL_T0
 #undef IPOL_T1
 
@@ -25,16 +25,15 @@
 #define SUBTEXEL
 #define INVERSE_W
 
-#define USE_Z
+#define USE_ZBUFFER
 #define IPOL_W
 #define CMP_W
 #define WRITE_W
 
-//#define IPOL_C
+//#define IPOL_C0
 #define IPOL_T0
 #define IPOL_T1
 
-// apply global override
 // apply global override
 #ifndef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 	#undef INVERSE_W
@@ -44,7 +43,11 @@
 	#undef SUBTEXEL
 #endif
 
-#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_Z )
+#ifndef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+	#undef IPOL_C0
+#endif
+
+#if !defined ( SOFTWARE_DRIVER_2_USE_WBUFFER ) && defined ( USE_ZBUFFER )
 	#ifndef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
 		#undef IPOL_W
 	#endif
@@ -62,228 +65,203 @@
 
 #endif
 
-
-
-
 namespace irr
 {
 
 namespace video
 {
 
-class CTRTextureLightMap2_M2 : public ITriangleRenderer2
+class CTRTextureLightMap2_M2 : public IBurningShader
 {
 public:
 
 	//! constructor
-	CTRTextureLightMap2_M2(IZBuffer2* zbuffer);
+	CTRTextureLightMap2_M2(IDepthBuffer* zbuffer);
 
 	//! draws an indexed triangle list
 	virtual void drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c );
 
 
 private:
-	void scanline_bilinear ( sScanLineData * data ) const;
+	void scanline_bilinear2 ();
+
+	sScanLineData line;
 
 };
 
 //! constructor
-CTRTextureLightMap2_M2::CTRTextureLightMap2_M2(IZBuffer2* zbuffer)
-: ITriangleRenderer2(zbuffer)
+CTRTextureLightMap2_M2::CTRTextureLightMap2_M2(IDepthBuffer* zbuffer)
+: IBurningShader(zbuffer)
 {
 	#ifdef _DEBUG
 	setDebugName("CTRTextureLightMap2_M2");
 	#endif
 }
 
-
-
 /*!
 */
-void CTRTextureLightMap2_M2::scanline_bilinear ( sScanLineData * data ) const
+REALINLINE void CTRTextureLightMap2_M2::scanline_bilinear2 ()
 {
 	tVideoSample *dst;
-
-#ifdef USE_Z
-	TZBufferType2 *z;
-#endif
+	fp24 *z;
 
 	s32 xStart;
 	s32 xEnd;
 	s32 dx;
+	s32 i;
 
-	f32 invDeltaX;
-
-#ifdef SUBTEXEL
-	f32 subPixel;
-#endif
-
-#ifdef IPOL_Z
-	f32 slopeZ;
-#endif
-#ifdef IPOL_W
-	f32 slopeW;
-#endif
-#ifdef IPOL_C
-	sVec4 slopeC;
-#endif
-#ifdef IPOL_T0
-	sVec2 slopeT0;
-#endif
-#ifdef IPOL_T1
-	sVec2 slopeT1;
-#endif
 
 	// apply top-left fill-convention, left
-	xStart = irr::core::ceil32( data->x[0] );
-	xEnd = irr::core::ceil32( data->x[1] ) - 1;
+	xStart = irr::core::ceil32( line.x[0] );
+	xEnd = irr::core::ceil32( line.x[1] ) - 1;
 
 	dx = xEnd - xStart;
-
 	if ( dx < 0 )
 		return;
 
 	// slopes
-	invDeltaX = data->x[1] - data->x[0];
-	invDeltaX = inverse32 ( invDeltaX );
+	const f32 invDeltaX = core::reciprocal_approxim ( line.x[1] - line.x[0] );
 
-#ifdef IPOL_Z
-	slopeZ = (data->z[1] - data->z[0]) * invDeltaX;
-#endif
+	// search z-buffer for first not occulled pixel
+	z = lockedZBuffer + ( line.y * SurfaceWidth ) + xStart;
+
+	// subTexel
+	const f32 subPixel = ( (f32) xStart ) - line.x[0];
+
 #ifdef IPOL_W
-	slopeW = (data->w[1] - data->w[0]) * invDeltaX;
-#endif
-#ifdef IPOL_C
-	slopeC = (data->c[1] - data->c[0]) * invDeltaX;
-#endif
-#ifdef IPOL_T0
-	slopeT0 = (data->t0[1] - data->t0[0]) * invDeltaX;
-#endif
-#ifdef IPOL_T1
-	slopeT1 = (data->t1[1] - data->t1[0]) * invDeltaX;
-#endif
+	const f32 b = (line.w[1] - line.w[0]) * invDeltaX;
+	f32 a = line.w[0] + ( b * subPixel );
 
-#ifdef SUBTEXEL
-	subPixel = ( (f32) xStart ) - data->x[0];
-#ifdef IPOL_Z
-	data->z[0] += slopeZ * subPixel;
-#endif
-#ifdef IPOL_W
-	data->w[0] += slopeW * subPixel;
-#endif
-#ifdef IPOL_C
-	data->c[0] += slopeC * subPixel;
-#endif
-#ifdef IPOL_T0
-	data->t0[0] += slopeT0 * subPixel;
-#endif
-#ifdef IPOL_T1
-	data->t1[0] += slopeT1 * subPixel;
-#endif
-#endif
+	i = 0;
 
-	dst = lockedSurface + ( data->y * SurfaceWidth ) + xStart;
+	while ( a <= z[i] )
+	{
+		a += b;
 
-#ifdef USE_Z
-	z = lockedZBuffer + ( data->y * SurfaceWidth ) + xStart;
+		i += 1;
+		if ( i > dx )
+			return;
+		
+	}
+
+	// lazy setup rest of scanline
+
+	line.w[0] = a;
+	line.w[1] = b;
+#else
+	const f32 b = (line.z[1] - line.z[0]) * invDeltaX;
+	f32 a = line.z[0] + ( b * subPixel );
+
+	i = 0;
+
+	while ( a > z[i] )
+	{
+		a += b;
+
+		i += 1;
+		if ( i > dx )
+			return;
+		
+	}
+
+	// lazy setup rest of scanline
+
+	line.z[0] = a;
+	line.z[1] = b;
 #endif
+	dst = lockedSurface + ( line.y * SurfaceWidth ) + xStart;
+
+	a = (f32) i + subPixel;
+
+	line.t0[1] = (line.t0[1] - line.t0[0]) * invDeltaX;
+	line.t1[1] = (line.t1[1] - line.t1[0]) * invDeltaX;
+
+	line.t0[0] += line.t0[1] * a;
+	line.t1[0] += line.t1[1] * a;
 
 
-#ifdef INVERSE_W
-	f32 inversew;
-#endif
-
-	tFixPoint tx0, tx1;
-	tFixPoint ty0, ty1;
+#ifdef BURNINGVIDEO_RENDERER_FAST
+	u32 dIndex = ( line.y & 3 ) << 2;
 
 	tFixPoint r0, g0, b0;
 	tFixPoint r1, g1, b1;
-	tFixPoint r2, g2, b2;
 
-
-	for ( s32 i = 0; i <= dx; ++i )
-	{
-#ifdef CMP_Z
-		if ( data->z[0] < z[i] )
-#endif
-#ifdef CMP_W
-		if ( data->w[0] > z[i] )
-#endif
-
-		{
-#ifdef INVERSE_W
-			inversew = fix_inverse32 ( data->w[0] );
-
-			tx0 = f32_to_fixPoint ( data->t0[0].x,inversew);
-			ty0 = f32_to_fixPoint ( data->t0[0].y,inversew);
-			tx1 = f32_to_fixPoint ( data->t1[0].x,inversew);
-			ty1 = f32_to_fixPoint ( data->t1[0].y,inversew);
 #else
-			tx0 = f32_to_fixPoint ( data->t0[0].x );
-			ty0 = f32_to_fixPoint ( data->t0[0].y );
-			tx1 = f32_to_fixPoint ( data->t1[0].x );
-			ty1 = f32_to_fixPoint ( data->t1[0].y );
-#endif
-			getSample_texture ( r0, g0, b0, &IT[0], tx0, ty0 );
-			getSample_texture ( r1, g1, b1, &IT[1], tx1, ty1 );
-
-			r2 = clampfix_maxcolor ( imulFix2 ( r0, r1 ) );
-			g2 = clampfix_maxcolor ( imulFix2 ( g0, g1 ) );
-			b2 = clampfix_maxcolor ( imulFix2 ( b0, b1 ) );
-
-			dst[i] = fix_to_color ( r2, g2, b2 );
-
-#ifdef WRITE_Z
-			z[i] = data->z[0];
-#endif
-#ifdef WRITE_W
-			z[i] = data->w[0];
+	// 
+	tFixPoint r0, g0, b0;
+	tFixPoint r1, g1, b1;
 #endif
 
+
+	for ( ;i <= dx; i++ )
+	{
+#ifdef IPOL_W
+		if ( line.w[0] >= z[i] )
+		{
+			z[i] = line.w[0];
+#else
+		if ( line.z[0] < z[i] )
+		{
+			z[i] = line.z[0];
+#endif
+
+#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+			f32 inversew = fix_inverse32 ( line.w[0] );
+#else
+			f32 inversew = FIX_POINT_F32_MUL;
+#endif
+
+
+
+#ifdef BURNINGVIDEO_RENDERER_FAST
+
+			const tFixPointu d = dithermask [ dIndex | ( i ) & 3 ];
+
+			getSample_texture ( r0, g0, b0, &IT[0], d + f32_to_fixPoint ( line.t0[0].x,inversew), d + f32_to_fixPoint ( line.t0[0].y,inversew) );
+			getSample_texture ( r1, g1, b1, &IT[1], d + f32_to_fixPoint ( line.t1[0].x,inversew), d + f32_to_fixPoint ( line.t1[0].y,inversew) );
+#else
+			getSample_texture ( r0, g0, b0, &IT[0], f32_to_fixPoint ( line.t0[0].x,inversew), f32_to_fixPoint ( line.t0[0].y,inversew) );
+			getSample_texture ( r1, g1, b1, &IT[1], f32_to_fixPoint ( line.t1[0].x,inversew), f32_to_fixPoint ( line.t1[0].y,inversew) );
+
+#endif
+
+			dst[i] = fix_to_color ( clampfix_maxcolor ( imulFix_tex2 ( r0, r1 ) ),
+									clampfix_maxcolor ( imulFix_tex2 ( g0, g1 ) ),
+									clampfix_maxcolor ( imulFix_tex2 ( b0, b1 ) )
+								);
 		}
 
-#ifdef IPOL_Z
-		data->z[0] += slopeZ;
-#endif
 #ifdef IPOL_W
-		data->w[0] += slopeW;
+		line.w[0] += line.w[1];
+#else
+		line.z[0] += line.z[1];
 #endif
-#ifdef IPOL_C
-		data->c[0] += slopeC;
-#endif
-#ifdef IPOL_T0
-		data->t0[0] += slopeT0;
-#endif
-#ifdef IPOL_T1
-		data->t1[0] += slopeT1;
-#endif
+		line.t0[0] += line.t0[1];
+		line.t1[0] += line.t1[1];
 	}
 
 }
+	
+
 
 void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4DVertex *c )
 {
 	sScanConvertData scan;
-	sScanLineData line;
-
 
 	// sort on height, y
-	if ( a->Pos.y > b->Pos.y ) swapVertices(&a, &b);
-	if ( a->Pos.y > c->Pos.y ) swapVertices(&a, &c);
-	if ( b->Pos.y > c->Pos.y ) swapVertices(&b, &c);
+	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
+	if ( F32_A_GREATER_B ( a->Pos.y , c->Pos.y ) ) swapVertexPointer(&a, &c);
+	if ( F32_A_GREATER_B ( b->Pos.y , c->Pos.y ) ) swapVertexPointer(&b, &c);
 
 
 	// calculate delta y of the edges
-	scan.invDeltaY[0] = c->Pos.y - a->Pos.y;
-	scan.invDeltaY[1] = b->Pos.y - a->Pos.y;
-	scan.invDeltaY[2] = c->Pos.y - b->Pos.y;
+	scan.invDeltaY[0] = core::reciprocal ( c->Pos.y - a->Pos.y );
+	scan.invDeltaY[1] = core::reciprocal ( b->Pos.y - a->Pos.y );
+	scan.invDeltaY[2] = core::reciprocal ( c->Pos.y - b->Pos.y );
 
-	scan.invDeltaY[0] = inverse32 ( scan.invDeltaY[0] );
-	scan.invDeltaY[1] = inverse32 ( scan.invDeltaY[1] );
-	scan.invDeltaY[2] = inverse32 ( scan.invDeltaY[2] );
-
-	if ( (f32) 0.0 == scan.invDeltaY[0] )
+	if ( F32_LOWER_EQUAL_0 ( scan.invDeltaY[0] )  )
 		return;
+
 
 	// find if the major edge is left or right aligned
 	f32 temp[4];
@@ -310,9 +288,9 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 	scan.w[0] = a->Pos.w;
 #endif
 
-#ifdef IPOL_C
-	scan.slopeC[0] = (c->Color - a->Color) * scan.invDeltaY[0];
-	scan.c[0] = a->Color;
+#ifdef IPOL_C0
+	scan.slopeC[0] = (c->Color[0] - a->Color[0]) * scan.invDeltaY[0];
+	scan.c[0] = a->Color[0];
 #endif
 
 #ifdef IPOL_T0
@@ -328,15 +306,16 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 	// top left fill convention y run
 	s32 yStart;
 	s32 yEnd;
-	s32 y;
 
 #ifdef SUBTEXEL
 	f32 subPixel;
 #endif
 
+	// query access to TexMaps
+
 	lockedSurface = (tVideoSample*)RenderTarget->lock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	lockedZBuffer = ZBuffer->lock();
 #endif
 
@@ -348,8 +327,9 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 	IT[1].data = (tVideoSample*)IT[1].Texture->lock();
 #endif
 
+
 	// rasterize upper sub-triangle
-	if ( (f32) 0.0 != scan.invDeltaY[1]  )
+	if ( F32_GREATER_0 ( scan.invDeltaY[1] ) )
 	{
 		// calculate slopes for top edge
 		scan.slopeX[1] = (b->Pos.x - a->Pos.x) * scan.invDeltaY[1];
@@ -365,9 +345,9 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 		scan.w[1] = a->Pos.w;
 #endif
 
-#ifdef IPOL_C
-		scan.slopeC[1] = (b->Color - a->Color) * scan.invDeltaY[1];
-		scan.c[1] = a->Color;
+#ifdef IPOL_C0
+		scan.slopeC[1] = (b->Color[0] - a->Color[0]) * scan.invDeltaY[1];
+		scan.c[1] = a->Color[0];
 #endif
 
 #ifdef IPOL_T0
@@ -401,7 +381,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 		scan.w[1] += scan.slopeW[1] * subPixel;		
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 		scan.c[0] += scan.slopeC[0] * subPixel;
 		scan.c[1] += scan.slopeC[1] * subPixel;		
 #endif
@@ -419,10 +399,8 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 #endif
 
 		// rasterize the edge scanlines
-		for( y = yStart; y <= yEnd; ++y)
+		for( line.y = yStart; line.y <= yEnd; ++line.y)
 		{
-			line.y = y;
-
 			line.x[scan.left] = scan.x[0];
 			line.x[scan.right] = scan.x[1];
 
@@ -436,7 +414,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 			line.w[scan.right] = scan.w[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			line.c[scan.left] = scan.c[0];
 			line.c[scan.right] = scan.c[1];
 #endif
@@ -452,7 +430,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 #endif
 
 			// render a scanline
-			scanline_bilinear ( &line );
+			scanline_bilinear2 ();
 
 			scan.x[0] += scan.slopeX[0];
 			scan.x[1] += scan.slopeX[1];
@@ -467,7 +445,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 			scan.w[1] += scan.slopeW[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			scan.c[0] += scan.slopeC[0];
 			scan.c[1] += scan.slopeC[1];
 #endif
@@ -486,10 +464,11 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 	}
 
 	// rasterize lower sub-triangle
-	if ( (f32) 0.0 != scan.invDeltaY[2] )
+	//if ( (f32) 0.0 != scan.invDeltaY[2] )
+	if ( F32_GREATER_0 ( scan.invDeltaY[2] ) )
 	{
 		// advance to middle point
-		if( (f32) 0.0 != scan.invDeltaY[1] )
+		if ( F32_GREATER_0 ( scan.invDeltaY[1] )  )
 		{
 			temp[0] = b->Pos.y - a->Pos.y;	// dy
 
@@ -500,8 +479,8 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 #ifdef IPOL_W
 			scan.w[0] = a->Pos.w + scan.slopeW[0] * temp[0];
 #endif
-#ifdef IPOL_C
-			scan.c[0] = a->Color + scan.slopeC[0] * temp[0];
+#ifdef IPOL_C0
+			scan.c[0] = a->Color[0] + scan.slopeC[0] * temp[0];
 #endif
 #ifdef IPOL_T0
 			scan.t0[0] = a->Tex[0] + scan.slopeT0[0] * temp[0];
@@ -526,9 +505,9 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 		scan.w[1] = b->Pos.w;
 #endif
 
-#ifdef IPOL_C
-		scan.slopeC[1] = (c->Color - b->Color) * scan.invDeltaY[2];
-		scan.c[1] = b->Color;
+#ifdef IPOL_C0
+		scan.slopeC[1] = (c->Color[0] - b->Color[0]) * scan.invDeltaY[2];
+		scan.c[1] = b->Color[0];
 #endif
 
 #ifdef IPOL_T0
@@ -563,7 +542,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 		scan.w[1] += scan.slopeW[1] * subPixel;		
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 		scan.c[0] += scan.slopeC[0] * subPixel;
 		scan.c[1] += scan.slopeC[1] * subPixel;		
 #endif
@@ -581,9 +560,8 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 #endif
 
 		// rasterize the edge scanlines
-		for( y = yStart; y <= yEnd; ++y)
+		for( line.y = yStart; line.y <= yEnd; ++line.y)
 		{
-			line.y = y;
 			line.x[scan.left] = scan.x[0];
 			line.x[scan.right] = scan.x[1];
 
@@ -597,7 +575,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 			line.w[scan.right] = scan.w[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			line.c[scan.left] = scan.c[0];
 			line.c[scan.right] = scan.c[1];
 #endif
@@ -613,7 +591,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 #endif
 
 			// render a scanline
-			scanline_bilinear ( &line );
+			scanline_bilinear2 ();
 
 			scan.x[0] += scan.slopeX[0];
 			scan.x[1] += scan.slopeX[1];
@@ -628,7 +606,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 			scan.w[1] += scan.slopeW[1];
 #endif
 
-#ifdef IPOL_C
+#ifdef IPOL_C0
 			scan.c[0] += scan.slopeC[0];
 			scan.c[1] += scan.slopeC[1];
 #endif
@@ -648,7 +626,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 
 	RenderTarget->unlock();
 
-#ifdef USE_Z
+#ifdef USE_ZBUFFER
 	ZBuffer->unlock();
 #endif
 
@@ -668,7 +646,7 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 
 
 //! creates a flat triangle renderer
-ITriangleRenderer2* createTriangleRendererTextureLightMap2_M2(IZBuffer2* zbuffer)
+IBurningShader* createTriangleRendererTextureLightMap2_M2(IDepthBuffer* zbuffer)
 {
 	return new CTRTextureLightMap2_M2(zbuffer);
 }

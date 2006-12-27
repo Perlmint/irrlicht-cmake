@@ -6,7 +6,6 @@
 #include "ISceneNode.h"
 
 #include "os.h"
-#include <stdio.h>
 
 namespace irr
 {
@@ -110,13 +109,14 @@ void COctTreeTriangleSelector::getTriangles(core::triangle3df* triangles,
 									const core::matrix4* transform)
 {
 	core::matrix4 mat;
+	core::aabbox3d<f32> invbox = box;
 
 	if (SceneNode)
+	{
 		mat = SceneNode->getAbsoluteTransformation();
-
-	mat.makeInverse();
-	core::aabbox3d<f32> invbox = box;
-	mat.transformBox(invbox);
+		mat.makeInverse();
+		mat.transformBox(invbox);
+	}
 
 	mat.makeIdentity();
 

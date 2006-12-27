@@ -4,7 +4,6 @@
 
 #include "CColladaFileLoader.h"
 #include "os.h"
-#include <string.h>
 #include "IXMLReader.h"
 #include "IDummyTransformationSceneNode.h"
 #include "SAnimatedMesh.h"
@@ -112,7 +111,7 @@ namespace scene
 			#endif
 
 			scene::ILightSceneNode* l = mgr->addLightSceneNode(parent);
-			l->getLightData() = LightData;
+			l->setLightData ( LightData );
 			return l;
 		}
 	};

@@ -81,6 +81,103 @@ public:
 	}
 };
 
+//! Generic Texture Blend
+class CD3D9MaterialRenderer_ONETEXTURE_BLEND : public CD3D9MaterialRenderer
+{
+public:
+
+	CD3D9MaterialRenderer_ONETEXTURE_BLEND(IDirect3DDevice9* p, video::IVideoDriver* d)
+		: CD3D9MaterialRenderer(p, d) {}
+
+	virtual void OnSetMaterial(SMaterial& material, const SMaterial& lastMaterial,
+		bool resetAllRenderstates, IMaterialRendererServices* services)
+	{
+		if (material.MaterialType != lastMaterial.MaterialType || 
+			material.MaterialTypeParam != lastMaterial.MaterialTypeParam ||
+			resetAllRenderstates)
+		{
+
+			E_BLEND_FACTOR srcFact,dstFact;
+			E_MODULATE_FUNC modulate;
+			unpack_texureBlendFunc ( srcFact, dstFact, modulate, material.MaterialTypeParam );
+
+			pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			pID3DDevice->SetRenderState(D3DRS_SRCBLEND, getD3DBlend ( srcFact ) );
+			pID3DDevice->SetRenderState(D3DRS_DESTBLEND, getD3DBlend ( dstFact ) );
+
+			pID3DDevice->SetTextureStageState (0, D3DTSS_COLOROP, getD3DModulate ( modulate ) );
+			pID3DDevice->SetTextureStageState (0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+			pID3DDevice->SetTextureStageState (0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+
+			if ( getTexelAlpha ( srcFact ) + getTexelAlpha ( dstFact ) )
+			{
+				pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG1 );
+				pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+			}
+			else
+			{
+				pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
+			}
+
+			pID3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
+
+		}
+
+		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+
+	}
+
+	private:
+
+		u32 getD3DBlend ( E_BLEND_FACTOR factor ) const
+		{
+			u32 r = 0;
+    		switch ( factor )
+			{
+				case EBF_ZERO:					r = D3DBLEND_ZERO; break;
+				case EBF_ONE:					r = D3DBLEND_ONE; break;
+				case EBF_DST_COLOR:				r = D3DBLEND_DESTCOLOR; break;
+				case EBF_ONE_MINUS_DST_COLOR:	r = D3DBLEND_INVDESTCOLOR; break;
+				case EBF_SRC_COLOR:				r = D3DBLEND_SRCCOLOR; break;
+				case EBF_ONE_MINUS_SRC_COLOR:	r = D3DBLEND_INVSRCCOLOR; break;
+				case EBF_SRC_ALPHA:				r = D3DBLEND_SRCALPHA; break;
+				case EBF_ONE_MINUS_SRC_ALPHA:	r = D3DBLEND_INVSRCALPHA; break;
+				case EBF_DST_ALPHA:				r = D3DBLEND_DESTALPHA; break;
+				case EBF_ONE_MINUS_DST_ALPHA:	r = D3DBLEND_INVDESTALPHA; break;
+				case EBF_SRC_ALPHA_SATURATE:	r = D3DBLEND_SRCALPHASAT; break;
+			}
+			return r;
+		}
+
+		u32 getTexelAlpha ( E_BLEND_FACTOR factor ) const
+		{
+			u32 r = 0;
+    		switch ( factor )
+			{
+				case EBF_SRC_ALPHA:				r = 1; break;
+				case EBF_ONE_MINUS_SRC_ALPHA:	r = 1; break;
+				case EBF_DST_ALPHA:				r = 1; break;
+				case EBF_ONE_MINUS_DST_ALPHA:	r = 1; break;
+				case EBF_SRC_ALPHA_SATURATE:	r = 1; break;
+			}
+			return r;
+		}
+
+		u32 getD3DModulate ( E_MODULATE_FUNC func ) const
+		{
+			u32 r = D3DTOP_MODULATE;
+			switch ( func )
+			{
+				case EMF_MODULATE_1X: r = D3DTOP_MODULATE; break;
+				case EMF_MODULATE_2X: r = D3DTOP_MODULATE2X; break;
+				case EMF_MODULATE_4X: r = D3DTOP_MODULATE4X; break;
+			}
+			return r;
+		}
+
+};
+
+
 
 //! Solid 2 layer material renderer
 class CD3D9MaterialRenderer_SOLID_2_LAYER : public CD3D9MaterialRenderer
@@ -214,13 +311,14 @@ public:
 			pID3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pID3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
-			s32 refValue = (s32)(material.MaterialTypeParam * 255);
+			s32 refValue = core::floor32(material.MaterialTypeParam * 255.f);
 			if ( !refValue )
 				refValue = 127; // default value
 
 			pID3DDevice->SetRenderState(D3DRS_ALPHAREF, refValue);
 			pID3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 			pID3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+
 		}
 
 		//material.ZWriteEnable = false;
@@ -266,7 +364,11 @@ public:
 
 			pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-			pID3DDevice->SetRenderState(D3DRS_ALPHAREF,127);
+			s32 refValue = core::floor32(material.MaterialTypeParam * 255);
+			if ( !refValue )
+				refValue = 127; // default value
+
+			pID3DDevice->SetRenderState(D3DRS_ALPHAREF,refValue);
 			pID3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 			pID3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 		}

@@ -1,35 +1,13 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Thomas Alten
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CImage.h"
-#include "os.h"
-#include <string.h>
-#include <stdio.h>
+#include "irrString.h"
 #include "SoftwareDriver2_helper.h"
 
 namespace irr
 {
-	struct AbsRectangle
-	{
-		s32 x0;
-		s32 y0;
-		s32 x1;
-		s32 y1;
-	};
-
-	inline void intersect ( AbsRectangle &dest, const AbsRectangle& a, const AbsRectangle& b)
-	{
-		dest.x0 = s32_max( a.x0, b.x0 );
-		dest.y0 = s32_max( a.y0, b.y0 );
-		dest.x1 = s32_min( a.x1, b.x1 );
-		dest.y1 = s32_min( a.y1, b.y1 );
-	}
-
-	inline bool isValid (const AbsRectangle& a)
-	{
-		return a.x0 < a.x1 && a.y0 < a.y1;
-	}
 
 
 	struct SBlitJob
@@ -810,10 +788,11 @@ static tExecuteBlit getBlitter ( eBlitter operation,const video::IImage * dest,c
 		} break;
 
 	}
-
+/*
 	char buf[64];
 	sprintf ( buf, "Blit: %d %d->%d unsupported",operation,sourceFormat,destFormat );
 	os::Printer::log (buf );
+*/
 	return 0;
 
 }
@@ -932,7 +911,7 @@ namespace video
 
 //! constructor
 CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size)
-: Format(format), Size(size), Data(0)
+: Format(format), Size(size), Data(0),DeleteMemory ( 1 )
 {
 	initData();	
 }
@@ -940,8 +919,8 @@ CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size)
 
 //! constructor
 CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size, void* data,
-			   bool ownForeignMemory)
-: Format(format), Size(size), Data(0)
+			   bool ownForeignMemory, bool deleteForeignMemory)
+: Format(format), Size(size), Data(0), DeleteMemory ( deleteForeignMemory )
 {
 	if (ownForeignMemory)
 	{
@@ -961,7 +940,7 @@ CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size, void* d
 
 //! constructor 
 CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
-: Format(format), Data(0)
+: Format(format), Data(0),DeleteMemory ( 1 )
 {
 	if (!imageToCopy)
 		return;
@@ -979,7 +958,7 @@ CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
 //! constructor
 CImage::CImage(IImage* imageToCopy, const core::position2d<s32>& pos,
 		   const core::dimension2d<s32>& size)
- : Data(0), Size(0,0)
+ : Data(0), Size(0,0),DeleteMemory ( 1 )
 {
 	if (!imageToCopy)
 		return;
@@ -1012,24 +991,9 @@ void CImage::initData()
 //! destructor
 CImage::~CImage()
 {
-	delete [] (s8*)Data;
+	if ( DeleteMemory )
+		delete [] (s8*)Data;
 }
-
-
-
-//! Lock function.
-void* CImage::lock()
-{
-	return Data;
-}
-
-
-
-//! Unlock function.
-void CImage::unlock()
-{
-}
-
 
 
 //! Returns width and height of image data.
@@ -1132,7 +1096,7 @@ s32 CImage::getBitsPerPixelFromFormat()
 		return 32;
 	}
 
-	os::Printer::log("CImage: Unknown color format.", ELL_ERROR);
+//	os::Printer::log("CImage: Unknown color format.", ELL_ERROR);
 	return 0;
 }
 
@@ -1271,7 +1235,7 @@ void CImage::copyToScaling(CImage* target)
 {
 	if (Format != target->getColorFormat() )
 	{
-		os::Printer::log("Format not equal", ELL_ERROR);
+//		os::Printer::log("Format not equal", ELL_ERROR);
 		return;
 	}
 
@@ -1325,17 +1289,11 @@ void CImage::fill(const SColor &color)
 			c = color.color;
 			break;
 		default:
-			os::Printer::log("CImage::Format not supported", ELL_ERROR);
+//			os::Printer::log("CImage::Format not supported", ELL_ERROR);
 			return;
 	}
 
 	memset32 ( Data, c, getImageDataSizeInBytes () );
-}
-
-//! returns pitch of image
-u32 CImage::getPitch()
-{
-	return Pitch;
 }
 
 
@@ -1358,7 +1316,7 @@ inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias )
 		}
 	}
 
-	s32 sdiv = s32_log2(fx * fy);
+	s32 sdiv = s32_log2_s32(fx * fy);
 
 	a = s32_clamp ( ( a >> sdiv ) + bias, 0, 255 );
 	r = s32_clamp ( ( r >> sdiv ) + bias, 0, 255 );
@@ -1377,7 +1335,7 @@ void CImage::copyToScalingBoxFilter(CImage* target, s32 bias)
 
 	if (Format != destFormat )
 	{
-		os::Printer::log("Format not equal", ELL_ERROR);
+		//os::Printer::log("Format not equal", ELL_ERROR);
 		return;
 	}
 

@@ -7,7 +7,6 @@
 #include "CAnimatedMeshMS3D.h"
 #include "CQ3LevelMesh.h"
 #include "CAnimatedMeshB3d.h"
-#include <string.h>
 
 namespace irr
 {

@@ -74,7 +74,7 @@ public:
 	virtual ECOLOR_FORMAT getColorFormat() const;
 
 	//! returns pitch of texture (in bytes)
-	virtual s32 getPitch();
+	virtual u32 getPitch() const;
 
 	//! return open gl texture name
 	GLuint getOpenGLTextureName();

@@ -2,14 +2,13 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include <stdio.h>
-#include <string.h>
 #include "CNullDriver.h"
 #include "CSoftwareTexture.h"
 #include "os.h"
 #include "CImage.h"
 #include "CAttributes.h"
 #include "IWriteFile.h"
+
 
 namespace irr
 {
@@ -192,6 +191,7 @@ void CNullDriver::deleteAllTextures()
 //! applications must call this method before performing any rendering. returns false if failed.
 bool CNullDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 {
+	core::clearFPUException ();
 	PrimitivesDrawn = 0;
 	return true;
 }
@@ -201,7 +201,7 @@ bool CNullDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 //! applications must call this method after performing any rendering. returns false if failed.
 bool CNullDriver::endScene( s32 windowId, core::rect<s32>* sourceRect )
 {
-	FPSCounter.registerFrame(os::Timer::getRealTime());
+	FPSCounter.registerFrame(os::Timer::getRealTime(), PrimitivesDrawn);
 	return true;
 }
 
@@ -258,9 +258,9 @@ void CNullDriver::removeAllTextures()
 
 
 //! Returns a texture by index
-ITexture* CNullDriver::getTextureByIndex(s32 i)
+ITexture* CNullDriver::getTextureByIndex(u32 i)
 {
-	if (i>=0 && i<(int)Textures.size())
+	if ( i < Textures.size() )
 		return Textures[i].Surface;
 
 	return 0;
@@ -287,7 +287,7 @@ ITexture* CNullDriver::getTexture(const c8* filename)
 
 	if (file)
 	{
-		texture = loadTextureFromFile(file);
+		texture = loadTextureFromFile(file, filename);
 		file->drop();
 
 		if (texture)
@@ -322,7 +322,7 @@ ITexture* CNullDriver::getTexture(io::IReadFile* file)
 		if (texture)
 			return texture;
 
-		texture = loadTextureFromFile(file);
+		texture = loadTextureFromFile(file );
 
 		if (texture)
 		{
@@ -340,7 +340,7 @@ ITexture* CNullDriver::getTexture(io::IReadFile* file)
 
 
 //! opens the file and loads it into the surface
-video::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file)
+video::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file, const c8 *hashName )
 {
 	ITexture* texture = 0;
 	IImage* image = createImageFromFile(file);
@@ -348,7 +348,7 @@ video::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file)
 	if (image)
 	{
 		// create texture from surface
-		texture = createDeviceDependentTexture(image, file->getFileName());
+		texture = createDeviceDependentTexture(image, hashName ? hashName : file->getFileName() );
 		os::Printer::log("Loaded texture", file->getFileName());
 		image->drop();
 	}
@@ -467,7 +467,7 @@ const core::rect<s32>& CNullDriver::getViewPort() const
 
 
 //! draws a vertex primitive list
-void CNullDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
+void CNullDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
 	PrimitivesDrawn += primitiveCount;
 }
@@ -475,7 +475,7 @@ void CNullDriver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount,
 
 
 //! draws an indexed triangle list
-inline void CNullDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
+inline void CNullDriver::drawIndexedTriangleList(const S3DVertex* vertices, u32 vertexCount, const u16* indexList, u32 triangleCount)
 {
 	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_STANDARD, scene::EPT_TRIANGLES);
 }
@@ -483,7 +483,7 @@ inline void CNullDriver::drawIndexedTriangleList(const S3DVertex* vertices, s32 
 
 
 //! draws an indexed triangle list
-inline void CNullDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount)
+inline void CNullDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertices, u32 vertexCount, const u16* indexList, u32 triangleCount)
 {
 	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_2TCOORDS, scene::EPT_TRIANGLES);
 }
@@ -491,7 +491,7 @@ inline void CNullDriver::drawIndexedTriangleList(const S3DVertex2TCoords* vertic
 
 //! Draws an indexed triangle list.
 inline void CNullDriver::drawIndexedTriangleList(const S3DVertexTangents* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
+	u32 vertexCount, const u16* indexList, u32 triangleCount)
 {
 	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_TANGENTS, scene::EPT_TRIANGLES);
 }
@@ -500,7 +500,7 @@ inline void CNullDriver::drawIndexedTriangleList(const S3DVertexTangents* vertic
 
 //! Draws an indexed triangle fan.
 inline void CNullDriver::drawIndexedTriangleFan(const S3DVertex* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
+	u32 vertexCount, const u16* indexList, u32 triangleCount)
 {
 	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_STANDARD, scene::EPT_TRIANGLE_FAN);
 }
@@ -509,7 +509,7 @@ inline void CNullDriver::drawIndexedTriangleFan(const S3DVertex* vertices,
 
 //! Draws an indexed triangle fan.
 inline void CNullDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-	s32 vertexCount, const u16* indexList, s32 triangleCount)
+	u32 vertexCount, const u16* indexList, u32 triangleCount)
 {
 	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_2TCOORDS, scene::EPT_TRIANGLE_FAN);
 }
@@ -578,6 +578,7 @@ void CNullDriver::draw2DImage(video::ITexture* texture,
 				const core::position2d<s32>& pos,
 				const core::array<core::rect<s32> >& sourceRects,
 				const core::array<s32>& indices,
+				s32 kerningWidth,
 				const core::rect<s32>* clipRect, SColor color,
 				bool useAlphaChannelOfTexture)
 {
@@ -588,6 +589,7 @@ void CNullDriver::draw2DImage(video::ITexture* texture,
 		draw2DImage(texture, target, sourceRects[indices[i]],
 				clipRect, color, useAlphaChannelOfTexture);
 		target.X += sourceRects[indices[i]].getWidth();
+		target.X += kerningWidth;
 	}
 }
 
@@ -692,7 +694,7 @@ s32 CNullDriver::getFPS()
 //! very useful method for statistics.
 u32 CNullDriver::getPrimitiveCountDrawn()
 {
-	return PrimitivesDrawn;
+	return FPSCounter.getPrimitve();
 }
 
 
@@ -749,14 +751,14 @@ void CNullDriver::addDynamicLight(const SLight& light)
 
 
 //! returns the maximal amount of dynamic lights the device can handle
-s32 CNullDriver::getMaximalDynamicLightAmount()
+u32 CNullDriver::getMaximalDynamicLightAmount()
 {
 	return 0;
 }
 
 //! Returns current amount of dynamic lights set
 //! \return Current amount of dynamic lights set
-s32 CNullDriver::getDynamicLightCount()
+u32 CNullDriver::getDynamicLightCount()
 {
 	return Lights.size();
 }
@@ -765,12 +767,12 @@ s32 CNullDriver::getDynamicLightCount()
 //! \param idx: Zero based index of the light. Must be greater than 0 and smaller
 //! than IVideoDriver()::getDynamicLightCount.
 //! \return Light data.
-const SLight& CNullDriver::getDynamicLight(s32 idx)
+const SLight& CNullDriver::getDynamicLight(u32 idx)
 {
-	if (idx<0 || idx>=(s32)Lights.size())
-		return *((SLight*)0);
-
-	return Lights[idx];
+	if ( idx < Lights.size() )
+ 	   return Lights[idx];
+ 	   
+	return *((SLight*)0);
 }
 
 
@@ -1045,6 +1047,7 @@ s32 CNullDriver::getMaximalPrimitiveCount()
 bool CNullDriver::checkPrimitiveCount(s32 prmCount)
 {
 	s32 m = getMaximalPrimitiveCount();
+
 	if ((prmCount-1) > m)
 	{
 		char tmp[1024];
@@ -1164,9 +1167,10 @@ bool CNullDriver::writeImageToFile(IImage* image, const char* filename)
 //! Creates a software image from a byte array.
 IImage* CNullDriver::createImageFromData(ECOLOR_FORMAT format,
 										const core::dimension2d<s32>& size, void *data,
-										bool ownForeignMemory)
+										bool ownForeignMemory,
+										bool deleteMemory)
 {
-	return new CImage(format, size, data, ownForeignMemory);
+	return new CImage(format, size, data, ownForeignMemory, deleteMemory);
 }
 
 
@@ -1185,7 +1189,7 @@ void CNullDriver::setFog(SColor color, bool linearFog, f32 start, f32 end, f32 d
 
 
 //! Draws a mesh buffer
-void CNullDriver::drawMeshBuffer(scene::IMeshBuffer* mb)
+void CNullDriver::drawMeshBuffer( const scene::IMeshBuffer* mb)
 {
 	if (!mb)
 		return;
@@ -1259,7 +1263,8 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	io::CAttributes* attr = new io::CAttributes(this);
 
 	const char** materialNames = new const char*[MaterialRenderers.size()+1];
-	for (int i=0; i<(int)MaterialRenderers.size(); ++i)
+	u32 i;
+	for ( i=0; i < MaterialRenderers.size(); ++i)
 		materialNames[i] = MaterialRenderers[i].Name.c_str();
 
 	materialNames[MaterialRenderers.size()] = 0;
@@ -1285,7 +1290,6 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	attr->addBool("Wireframe", material.Wireframe);
 	attr->addBool("GouraudShading", material.GouraudShading);
 	attr->addBool("Lighting", material.Lighting);
-	attr->addBool("ZBuffer", material.ZBuffer);
 	attr->addBool("ZWriteEnable", material.ZWriteEnable);
 	attr->addBool("BackfaceCulling", material.BackfaceCulling);
 	attr->addBool("BilinearFilter", material.BilinearFilter);
@@ -1293,6 +1297,9 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	attr->addBool("AnisotropicFilter", material.AnisotropicFilter);
 	attr->addBool("FogEnable", material.FogEnable);
 	attr->addBool("NormalizeNormals", material.NormalizeNormals);
+
+	attr->addInt("ZBuffer", material.ZBuffer);
+	attr->addInt("TextureWrap", material.TextureWrap);
 
 	return attr;
 }
@@ -1305,7 +1312,9 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 
 	core::stringc name = attr->getAttributeAsString("Type");
 
-	for (int i=0; i<(int)MaterialRenderers.size(); ++i)
+	u32 i;
+
+	for ( i=0; i < MaterialRenderers.size(); ++i)
 		if ( name == MaterialRenderers[i].Name )
 		{
 			outMaterial.MaterialType = (video::E_MATERIAL_TYPE)i;
@@ -1329,7 +1338,6 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 	outMaterial.Wireframe = attr->getAttributeAsBool("Wireframe");
 	outMaterial.GouraudShading = attr->getAttributeAsBool("GouraudShading");
 	outMaterial.Lighting = attr->getAttributeAsBool("Lighting");
-	outMaterial.ZBuffer = attr->getAttributeAsBool("ZBuffer");
 	outMaterial.ZWriteEnable = attr->getAttributeAsBool("ZWriteEnable");
 	outMaterial.BackfaceCulling = attr->getAttributeAsBool("BackfaceCulling");
 	outMaterial.BilinearFilter = attr->getAttributeAsBool("BilinearFilter");
@@ -1337,6 +1345,10 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 	outMaterial.AnisotropicFilter = attr->getAttributeAsBool("AnisotropicFilter");
 	outMaterial.FogEnable = attr->getAttributeAsBool("FogEnable");
 	outMaterial.NormalizeNormals = attr->getAttributeAsBool("NormalizeNormals");
+
+	outMaterial.ZBuffer = attr->getAttributeAsInt("ZBuffer");
+	outMaterial.TextureWrap = attr->getAttributeAsInt("TextureWrap");
+
 }
 
 
@@ -1365,30 +1377,30 @@ void CNullDriver::deleteMaterialRenders()
 }
 
 //! Returns pointer to material renderer or null
-IMaterialRenderer* CNullDriver::getMaterialRenderer(s32 idx)
+IMaterialRenderer* CNullDriver::getMaterialRenderer(u32 idx)
 {
-	if (idx < 0 || idx >= (s32)MaterialRenderers.size())
-		return 0;
+	if ( idx < MaterialRenderers.size() )
+		return MaterialRenderers[idx].Renderer;
 
-	return MaterialRenderers[idx].Renderer;
+	return 0;
 }
 
 
 
 //! Returns amount of currently available material renderers.
-s32 CNullDriver::getMaterialRendererCount()
+u32 CNullDriver::getMaterialRendererCount()
 {
 	return MaterialRenderers.size();
 }
 
 
 //! Returns name of the material renderer
-const char* CNullDriver::getMaterialRendererName(s32 idx)
+const char* CNullDriver::getMaterialRendererName(u32 idx)
 {
-	if (idx < 0 || idx >= (s32)MaterialRenderers.size())
-		return 0;
+	if ( idx < MaterialRenderers.size() )
+		return MaterialRenderers[idx].Name.c_str();
 
-	return MaterialRenderers[idx].Name.c_str();
+	return 0;
 }
 
 

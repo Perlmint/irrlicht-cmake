@@ -63,7 +63,7 @@ void CMeshSceneNode::OnPreRender()
 		{
 			// count mesh materials 
 
-			for (s32 i=0; i<Mesh->getMeshBufferCount(); ++i)
+			for (u32 i=0; i<Mesh->getMeshBufferCount(); ++i)
 			{
 				scene::IMeshBuffer* mb = Mesh->getMeshBuffer(i);
 				video::IMaterialRenderer* rnd = mb ? driver->getMaterialRenderer(mb->getMaterial().MaterialType) : 0;
@@ -135,25 +135,13 @@ void CMeshSceneNode::render()
 		driver->draw3DBox(Box, video::SColor(0,255,255,255));
 
 #if 0 // draw normals
-		for (s32 g=0; g<Mesh->getMeshBufferCount(); ++g)
+		for (u32 g=0; g<Mesh->getMeshBufferCount(); ++g)
 		{
 			scene::IMeshBuffer* mb = Mesh->getMeshBuffer(g);
 
 			u32 vSize;
 			u32 i;
-			vSize = 0;
-			switch( mb->getVertexType() )
-			{
-				case video::EVT_STANDARD:
-					vSize = sizeof ( video::S3DVertex );
-					break;
-				case video::EVT_2TCOORDS:
-					vSize = sizeof ( video::S3DVertex2TCoords );
-					break;
-				case video::EVT_TANGENTS:
-					vSize = sizeof ( video::S3DVertexTangents );
-					break;
-			}
+			vSize = mb->getVertexPitch ();
 
 			const video::S3DVertex* v = ( const video::S3DVertex*)mb->getVertices();
 			video::SColor c ( 255, 128 ,0, 0 );
@@ -172,7 +160,7 @@ void CMeshSceneNode::render()
 #endif // Draw normals
 	}
 
-	for (s32 i=0; i<Mesh->getMeshBufferCount(); ++i)
+	for (u32 i=0; i<Mesh->getMeshBufferCount(); ++i)
 	{
 		scene::IMeshBuffer* mb = Mesh->getMeshBuffer(i);
 		if (mb)
@@ -206,15 +194,15 @@ const core::aabbox3d<f32>& CMeshSceneNode::getBoundingBox() const
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& CMeshSceneNode::getMaterial(s32 i)
+video::SMaterial& CMeshSceneNode::getMaterial(u32 i)
 {
-	if (Mesh && ReadOnlyMaterials && i>=0 && i<Mesh->getMeshBufferCount())
+	if (Mesh && ReadOnlyMaterials && i<Mesh->getMeshBufferCount())
 	{
 		tmpReadOnlyMaterial = Mesh->getMeshBuffer(i)->getMaterial();
 		return tmpReadOnlyMaterial;
 	}
 
-	if (i < 0 || i >= (s32)Materials.size())
+	if ( i >= Materials.size())
 		return ISceneNode::getMaterial(i);
 
 	return Materials[i];
@@ -223,7 +211,7 @@ video::SMaterial& CMeshSceneNode::getMaterial(s32 i)
 
 
 //! returns amount of materials used by this scene node.
-s32 CMeshSceneNode::getMaterialCount()
+u32 CMeshSceneNode::getMaterialCount()
 {
 	if (Mesh && ReadOnlyMaterials)
 		return Mesh->getMeshBufferCount();
@@ -258,7 +246,7 @@ void CMeshSceneNode::copyMaterials()
 	{
 		video::SMaterial mat;
 
-		for (s32 i=0; i<Mesh->getMeshBufferCount(); ++i)
+		for (u32 i=0; i<Mesh->getMeshBufferCount(); ++i)
 		{
 			IMeshBuffer* mb = Mesh->getMeshBuffer(i);
 			if (mb)

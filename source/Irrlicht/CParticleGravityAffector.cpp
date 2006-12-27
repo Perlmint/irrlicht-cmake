@@ -5,7 +5,6 @@
 #include "CParticleGravityAffector.h"
 #include "os.h"
 #include "IAttributes.h"
-#include <string.h>
 
 namespace irr
 {

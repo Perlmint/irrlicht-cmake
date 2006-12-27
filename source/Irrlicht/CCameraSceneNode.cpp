@@ -23,8 +23,6 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 	setDebugName("CCameraSceneNode");
 	#endif
 
-	BBox.reset(0,0,0);
-
 	// set default view
 
 	UpVector.set(0.0f, 1.0f, 0.0f);
@@ -40,6 +38,7 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 	video::IVideoDriver* d = mgr->getVideoDriver();
 	if (d)
 	{
+		core::dimension2d<f32> screenDim;
 		screenDim.Width = (f32)d->getCurrentRenderTargetSize().Width;
 		screenDim.Height = (f32)d->getCurrentRenderTargetSize().Height;
 		Aspect = screenDim.Width / screenDim.Height;
@@ -77,7 +76,8 @@ bool CCameraSceneNode::isInputReceiverEnabled()
 //! \param projection: The new projection matrix of the camera. 
 void CCameraSceneNode::setProjectionMatrix(const core::matrix4& projection)
 {
-	Projection = projection;
+	ViewArea.Matrices [ video::ETS_PROJECTION ] = projection;
+	ViewArea.setTransformState ( video::ETS_PROJECTION );
 }
 
 
@@ -86,7 +86,7 @@ void CCameraSceneNode::setProjectionMatrix(const core::matrix4& projection)
 //! \return Returns the current projection matrix of the camera.
 const core::matrix4& CCameraSceneNode::getProjectionMatrix()
 {
-	return Projection;
+	return ViewArea.Matrices [ video::ETS_PROJECTION ];
 }
 
 
@@ -95,7 +95,7 @@ const core::matrix4& CCameraSceneNode::getProjectionMatrix()
 //! \return Returns the current view matrix of the camera.
 const core::matrix4& CCameraSceneNode::getViewMatrix()
 {
-	return View;
+	return ViewArea.Matrices [ video::ETS_VIEW ];
 }
 
 
@@ -193,84 +193,87 @@ void CCameraSceneNode::setFOV(f32 f)
 
 void CCameraSceneNode::recalculateProjectionMatrix()
 {
-	Projection.buildProjectionMatrixPerspectiveFovLH(Fovy, Aspect, ZNear, ZFar);
-	//recalculateViewArea();
+	ViewArea.Matrices [ video::ETS_PROJECTION ].buildProjectionMatrixPerspectiveFovLH(Fovy, Aspect, ZNear, ZFar);
+	ViewArea.setTransformState ( video::ETS_PROJECTION );
 }
 
 
 //! prerender
 void CCameraSceneNode::OnPreRender()
 {
-	video::IVideoDriver* driver = SceneManager->getVideoDriver();
-	if (!driver)
-		return;
+	// if upvector and vector to the target are the same, we have a
+	// problem. so solve this problem:
 
-	if (SceneManager->getActiveCamera() == this)
+	core::vector3df pos = getAbsolutePosition();
+	core::vector3df tgtv = Target - pos;
+	tgtv.normalize();
+
+	core::vector3df up = UpVector;
+	up.normalize();
+
+	f32 dp = tgtv.dotProduct(up);
+
+	if ( core::equals ( fabs ( dp ), 1.f ) )
 	{
-		screenDim.Width = (f32)driver->getCurrentRenderTargetSize().Width;
-		screenDim.Height = (f32)driver->getCurrentRenderTargetSize().Height;
-
-		driver->setTransform(video::ETS_PROJECTION, Projection);
-
-		// if upvector and vector to the target are the same, we have a
-		// problem. so solve this problem:
-
-		core::vector3df pos = getAbsolutePosition();
-		core::vector3df tgtv = Target - pos;
-		tgtv.normalize();
-
-		core::vector3df up = UpVector;
-		up.normalize();
-
-		f32 dp = tgtv.dotProduct(up);
-		if ((dp > -1.0001f && dp < -0.9999f) ||
-			(dp < 1.0001f && dp > 0.9999f))
-			up.X += 1.0f;
-
-		View.buildCameraLookAtMatrixLH(pos, Target, up);
-		recalculateViewArea();
-
-		SceneManager->registerNodeForRendering(this, ESNRP_CAMERA);
+		up.X += 0.5f;
 	}
+
+	ViewArea.Matrices [ video::ETS_VIEW ].buildCameraLookAtMatrixLH(pos, Target, up);
+	ViewArea.setTransformState ( video::ETS_VIEW );
+	recalculateViewArea();
+
+	if ( SceneManager->getActiveCamera () == this )
+		SceneManager->registerNodeForRendering(this, ESNRP_CAMERA);
 
 	if (IsVisible)
 		ISceneNode::OnPreRender();
 }
 
 
+
 //! render
 void CCameraSceneNode::render()
 {	
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
-	if (!driver)
-		return;
-
-	driver->setTransform(video::ETS_VIEW, View);
+	if ( driver)
+	{
+		driver->setTransform(video::ETS_PROJECTION, ViewArea.Matrices [ video::ETS_PROJECTION ] );
+		driver->setTransform(video::ETS_VIEW, ViewArea.Matrices [ video::ETS_VIEW ] );
+	}
 }
 
 
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CCameraSceneNode::getBoundingBox() const
 {
-	return BBox;
+	return ViewArea.getBoundingBox();
 }
 
 
 
-//! returns the view frustrum. needed sometimes by bsp or lod render nodes.
-const SViewFrustrum* CCameraSceneNode::getViewFrustrum()
+//! returns the view frustum. needed sometimes by bsp or lod render nodes.
+const SViewFrustum* CCameraSceneNode::getViewFrustum() const
 {
 	return &ViewArea;
 }
 
+core::vector3df CCameraSceneNode::getAbsolutePosition() const
+{
+	return AbsoluteTransformation.getTranslation();
+}
 
 void CCameraSceneNode::recalculateViewArea()
 {
-	core::matrix4 mat = Projection * View;
-	ViewArea = SViewFrustrum(mat);
-
 	ViewArea.cameraPosition = getAbsolutePosition();
-	ViewArea.recalculateBoundingBox();
+	ViewArea.setFrom ( ViewArea.Matrices [ SViewFrustum::ETS_VIEW_PROJECTION_3 ] );
+/*
+	video::IVideoDriver* driver = SceneManager->getVideoDriver();
+	if ( driver)
+	{
+		driver->setTransform(video::ETS_PROJECTION, ViewArea.Matrices [ video::ETS_PROJECTION ] );
+		driver->setTransform(video::ETS_VIEW, ViewArea.Matrices [ video::ETS_VIEW ] );
+	}
+*/
 }
 
 

@@ -3,9 +3,9 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CImageLoaderJPG.h"
-#include <string.h>
 #include "CImage.h"
 #include "os.h"
+#include "irrstring.h"
 
 namespace irr
 {

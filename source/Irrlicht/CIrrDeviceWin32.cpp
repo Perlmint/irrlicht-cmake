@@ -12,7 +12,6 @@
 #include "os.h"
 
 #include "CTimer.h"
-#include <stdio.h>
 #include "irrString.h"
 #include "COSOperator.h"
 #include "dimension2d.h"
@@ -310,7 +309,7 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 		wcex.hIconSm		= 0;
 
 		// if there is an icon, load it
-		wcex.hIcon = (HICON)LoadImage(hInstance, "irr.ico", IMAGE_ICON, 0,0, LR_LOADFROMFILE);
+		wcex.hIcon = (HICON)LoadImage(hInstance, "irrlicht.ico", IMAGE_ICON, 0,0, LR_LOADFROMFILE); 
 
 		RegisterClassEx(&wcex);
 

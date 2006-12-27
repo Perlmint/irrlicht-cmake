@@ -30,8 +30,12 @@ public:
 	//! render
 	virtual void render();
 
-	//! returns the light data
-	virtual video::SLight& getLightData();
+	//! set node light data from light info
+	virtual void setLightData( const video::SLight& light);
+
+	//! \return Returns the light data.
+	virtual void getLightData( video::SLight& light);
+
 
 	//! returns the axis aligned bounding box of this node
 	virtual const core::aabbox3d<f32>& getBoundingBox() const;
@@ -49,6 +53,7 @@ private:
 
 	video::SLight LightData;
 	core::aabbox3d<f32> BBox;
+	void doLightRecalc ();
 };
 
 

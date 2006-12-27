@@ -7,7 +7,7 @@
 
 #include "ITriangleRenderer.h"
 #include "CNullDriver.h"
-#include "SViewFrustrum.h"
+#include "SViewFrustum.h"
 #include "CImage.h"
 
 namespace irr
@@ -46,7 +46,7 @@ namespace video
 		virtual bool beginScene(bool backBuffer, bool zBuffer, SColor color);
 
 		//! draws a vertex primitive list
-		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+		void drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
@@ -113,7 +113,7 @@ namespace video
 		//! void selects the right triangle renderer based on the render states.
 		void selectRightTriangleRenderer();
 
-		//! clips a triangle agains the viewing frustrum
+		//! clips a triangle agains the viewing frustum
 		void clipTriangle(f32* transformedPos);
 
 		//! creates the clipping planes from the view matrix
@@ -140,11 +140,11 @@ namespace video
 		IZBuffer* ZBuffer;
 
 		video::ITexture* Texture;
-		scene::SViewFrustrum Frustrum;
+		scene::SViewFrustum Frustum;
 		
 		SMaterial Material;
 
-		splane planes[6]; // current planes of the view frustrum
+		splane planes[6]; // current planes of the view frustum
 	};
 
 } // end namespace video

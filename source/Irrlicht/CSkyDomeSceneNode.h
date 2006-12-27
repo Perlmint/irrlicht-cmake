@@ -24,8 +24,8 @@ class CSkyDomeSceneNode : public ISceneNode
 		virtual void OnPreRender();
 		virtual void render();
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
-		virtual video::SMaterial& getMaterial(s32 i);
-		virtual s32 getMaterialCount();
+		virtual video::SMaterial& getMaterial(u32 i);
+		virtual u32 getMaterialCount();
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_SKY_BOX; }
 
 	private:

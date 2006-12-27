@@ -11,8 +11,6 @@
 #include "IVideoDriver.h"
 #include "os.h"
 #include "COpenGLDriver.h"
-#include <stdio.h>
-#include <string.h>
 
 namespace irr
 {

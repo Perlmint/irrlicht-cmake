@@ -2,9 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#include <string.h>
 #include "CZipReader.h"
 #include "CFileList.h"
+#include "CReadFile.h"
 #include "os.h"
 
 #include "IrrCompileConfig.h"
@@ -263,7 +263,11 @@ IReadFile* CZipReader::openFile(s32 index)
 				return 0;
 			}
 			else
-				return io::createMemoryReadFile ( pBuf, uncompressedSize, FileList[index].simpleFileName.c_str(), true);
+				return io::createMemoryReadFile (	pBuf,
+													uncompressedSize,
+													FileList[index].zipFileName.c_str(),
+													true
+												);
 			
 			#else
 			return 0; // zlib not compiled, we cannot decompress the data.
@@ -347,6 +351,25 @@ s32 CZipReader::findFile(const c8* simpleFilename)
 
 // ------------------------------------------------------------------------------------------
 #if 1
+
+class CUnzipReadFile : public CReadFile
+{
+	public:
+		CUnzipReadFile ( const core::stringc &realName, const c8 * hashName )
+			: CReadFile( realName.c_str ())
+		{
+			CallFileName = hashName;
+		}
+		virtual ~CUnzipReadFile () {}
+
+		virtual const c8* getFileName()
+		{
+			return CallFileName.c_str ();
+		}
+
+		core::stringc CallFileName;
+};
+
 CUnZipReader::CUnZipReader( IFileSystem * parent, const c8* basename, bool ignoreCase, bool ignorePaths)
 :CZipReader ( 0, ignoreCase, ignorePaths ), Parent ( parent )
 {
@@ -367,13 +390,18 @@ void CUnZipReader::buildDirectory ( )
 //! opens a file by file name
 IReadFile* CUnZipReader::openFile(const c8* filename)
 {
-	IReadFile *file;
 	core::stringc fname;
 	fname = Base;
 	fname += filename;
 
-	file = createReadFile( fname.c_str() );
-	return file;
+
+	CUnzipReadFile* file = new CUnzipReadFile( fname, filename);
+	if (file->isOpen())
+		return file;
+
+	file->drop();
+	return 0;
+
 }
 
 //! returns fileindex

@@ -11,7 +11,6 @@
 #include "IAnimatedMesh.h"
 
 #include "os.h"
-#include <stdio.h>
 
 namespace irr
 {
@@ -23,7 +22,8 @@ namespace scene
 COctTreeSceneNode::COctTreeSceneNode(ISceneNode* parent, ISceneManager* mgr,
 					 s32 id, s32 minimalPolysPerNode)
 : ISceneNode(parent, mgr, id), StdOctTree(0), LightMapOctTree(0),
-	MinimalPolysPerNode(minimalPolysPerNode), Mesh(0)
+	MinimalPolysPerNode(minimalPolysPerNode)
+	//,Mesh(0)
 {
 #ifdef _DEBUG
 	setDebugName("COctTreeSceneNode");
@@ -37,8 +37,8 @@ COctTreeSceneNode::COctTreeSceneNode(ISceneNode* parent, ISceneManager* mgr,
 //! destructor
 COctTreeSceneNode::~COctTreeSceneNode()
 {
-	if (Mesh)
-		Mesh->drop();
+	//if (Mesh)
+	//	Mesh->drop();
 
 	deleteTree();
 }
@@ -107,28 +107,29 @@ void COctTreeSceneNode::render()
 
 	driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 
-	SViewFrustrum frust = *camera->getViewFrustrum();
+	SViewFrustum frust = *camera->getViewFrustum();
 
-	//transform the frustrum to the current absolute transformation
-
+	//transform the frustum to the current absolute transformation
 	core::matrix4 invTrans(AbsoluteTransformation);
 	invTrans.makeInverse();
-
 	frust.transform(invTrans);
 
-	core::aabbox3d<f32> box = frust.getBoundingBox();
+	const core::aabbox3d<float> &box = frust.getBoundingBox();
 
 	switch(vertexType)
 	{
 	case video::EVT_STANDARD:
 		{
-			//StdOctTree->calculatePolys(box);
-			StdOctTree->calculatePolys(frust);
+			StdOctTree->calculatePolys(box);
+			//StdOctTree->calculatePolys(frust);
 
 			OctTree<video::S3DVertex>::SIndexData* d =  StdOctTree->getIndexData();
 
 			for (u32 i=0; i<Materials.size(); ++i)
 			{
+				if ( 0 == d[i].CurrentSize )
+					continue;
+
 				video::IMaterialRenderer* rnd = driver->getMaterialRenderer(Materials[i].MaterialType);
 				bool transparent = (rnd && rnd->isTransparent());
 
@@ -146,6 +147,7 @@ void COctTreeSceneNode::render()
 			// for debug purposes only
 			if (DebugDataVisible && !Materials.empty() && PassCount==1)
 			{
+				const core::aabbox3d<float> &box = frust.getBoundingBox();
 				core::array< core::aabbox3d<f32> > boxes;
 				video::SMaterial m;
 				m.Lighting = false;
@@ -161,13 +163,16 @@ void COctTreeSceneNode::render()
 		}
 	case video::EVT_2TCOORDS:
 		{
-			//LightMapOctTree->calculatePolys(box);
-			LightMapOctTree->calculatePolys(frust);
+			LightMapOctTree->calculatePolys(box);
+			//LightMapOctTree->calculatePolys(frust);
 
 			OctTree<video::S3DVertex2TCoords>::SIndexData* d =  LightMapOctTree->getIndexData();
 
 			for (u32 i=0; i<Materials.size(); ++i)
 			{
+				if ( 0 == d[i].CurrentSize )
+					continue;
+
 				video::IMaterialRenderer* rnd = driver->getMaterialRenderer(Materials[i].MaterialType);
 				bool transparent = (rnd && rnd->isTransparent());
 
@@ -185,6 +190,7 @@ void COctTreeSceneNode::render()
 			// for debug purposes only
 			if (DebugDataVisible && !Materials.empty() && PassCount==1)
 			{
+				const core::aabbox3d<float> &box = frust.getBoundingBox();
 				core::array< core::aabbox3d<f32> > boxes;
 				video::SMaterial m;
 				m.Lighting = false;
@@ -214,18 +220,19 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 	if (!mesh)
 		return false;
 
-	if (Mesh)
-		Mesh->drop();
+	//if (Mesh)
+//		Mesh->drop();
 
-	Mesh = mesh;
-	Mesh->grab();
+	MeshName = SceneManager->getMeshCache()->getMeshFilename( mesh );
+//	Mesh = mesh;
+//	Mesh->grab();
 
 	deleteTree();
 
 	u32 beginTime = os::Timer::getRealTime();
 
-	s32 nodeCount = 0;
-	s32 polyCount = 0;
+	u32 nodeCount = 0;
+	u32 polyCount = 0;
 
 	Box = mesh->getBoundingBox();
 
@@ -237,7 +244,7 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 		{
 		case video::EVT_STANDARD:
 			{
-				for (s32 i=0; i<mesh->getMeshBufferCount(); ++i)
+				for (u32 i=0; i<mesh->getMeshBufferCount(); ++i)
 				{
 					IMeshBuffer* b = mesh->getMeshBuffer(i);
 					if (b->getVertexCount() && b->getIndexCount()) 
@@ -249,7 +256,7 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 						StdMeshes.push_back(chunk);
 						OctTree<video::S3DVertex>::SMeshChunk &nchunk = StdMeshes[StdMeshes.size()-1];
 
-						s32 v;
+						u32 v;
 
 						for (v=0; v<b->getVertexCount(); ++v)
 							nchunk.Vertices.push_back(((video::S3DVertex*)b->getVertices())[v]);
@@ -267,7 +274,7 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 			break;
 		case video::EVT_2TCOORDS:
 			{
-				for (s32 i=0; i<mesh->getMeshBufferCount(); ++i)
+				for (u32 i=0; i<mesh->getMeshBufferCount(); ++i)
 				{
 					IMeshBuffer* b = mesh->getMeshBuffer(i);
 
@@ -281,7 +288,7 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 						OctTree<video::S3DVertex2TCoords>::SMeshChunk& nchunk =
 							LightMapMeshes[LightMapMeshes.size()-1];
 
-						s32 v;
+						u32 v;
 
 						for (v=0; v<b->getVertexCount(); ++v)
 							nchunk.Vertices.push_back(((video::S3DVertex2TCoords*)b->getVertices())[v]);
@@ -315,16 +322,16 @@ bool COctTreeSceneNode::createTree(IMesh* mesh)
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& COctTreeSceneNode::getMaterial(s32 i)
+video::SMaterial& COctTreeSceneNode::getMaterial(u32 i)
 {
-	if (i < 0 || i >= (s32)Materials.size())
+	if ( i >= Materials.size() )
 		return ISceneNode::getMaterial(i);
 
 	return Materials[i];
 }
 
 //! returns amount of materials used by this scene node.
-s32 COctTreeSceneNode::getMaterialCount()
+u32 COctTreeSceneNode::getMaterialCount()
 {
 	return Materials.size();
 }
@@ -336,23 +343,26 @@ void COctTreeSceneNode::serializeAttributes(io::IAttributes* out, io::SAttribute
 	ISceneNode::serializeAttributes(out, options);
 
 	out->addInt	("MinimalPolysPerNode", MinimalPolysPerNode);
-	out->addString("Mesh", SceneManager->getMeshCache()->getMeshFilename(Mesh));
+	//out->addString("Mesh", SceneManager->getMeshCache()->getMeshFilename(Mesh));
+	out->addString("Mesh", MeshName.c_str());
 }
 
 //! Reads attributes of the scene node.
 void COctTreeSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
 {
 	int oldMinimal = MinimalPolysPerNode;
-	core::stringc oldMeshStr = SceneManager->getMeshCache()->getMeshFilename(Mesh);
+	//core::stringc oldMeshStr = SceneManager->getMeshCache()->getMeshFilename(Mesh);
+	core::stringc oldMeshStr = MeshName;
 
 	MinimalPolysPerNode = in->getAttributeAsInt("MinimalPolysPerNode");
 	core::stringc newMeshStr = in->getAttributeAsString("Mesh");
 
 	bool loadedNewMesh = false;
 
+	IMesh* newMesh = 0;
+
 	if (newMeshStr != "" && oldMeshStr != newMeshStr)
 	{
-		IMesh* newMesh = 0;
 		IAnimatedMesh* newAnimatedMesh = SceneManager->getMesh(newMeshStr.c_str());
 
 		if (newAnimatedMesh)
@@ -360,11 +370,13 @@ void COctTreeSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttribut
 
 		if (newMesh)
 		{
+/*
 			if (Mesh)
 				Mesh->drop();
 
 			Mesh = newMesh;
 			Mesh->grab();
+*/
 			loadedNewMesh = true;
 		}
 	}
@@ -372,8 +384,9 @@ void COctTreeSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttribut
 	if (loadedNewMesh || MinimalPolysPerNode != oldMinimal)
 	{
 		// recalculate tree
-
-		createTree(Mesh);
+		//createTree(Mesh);
+		createTree ( newMesh );
+		newMesh->drop ();
 	}
 
 	ISceneNode::deserializeAttributes(in, options);

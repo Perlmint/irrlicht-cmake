@@ -3,6 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CFPSCounter.h"
+#include "irrmath.h"
 
 namespace irr
 {
@@ -11,7 +12,8 @@ namespace video
 
 
 CFPSCounter::CFPSCounter()
-: fps(0), startTime(0), framesCounted(100)
+:	fps(60), startTime(0), framesCounted(0),
+	primitive(0), primitivesCounted ( 0 )
 {
 
 }
@@ -24,21 +26,32 @@ s32 CFPSCounter::getFPS()
 	return fps;
 }
 
+//! returns current primitive count
+u32 CFPSCounter::getPrimitve()
+{
+	return primitive;
+}
+
 
 
 //! to be called every frame
-void CFPSCounter::registerFrame(u32 now)
+void CFPSCounter::registerFrame(u32 now, u32 primitivesDrawn )
 {
-	framesCounted++;
+	framesCounted += 1;
+	primitivesCounted += primitivesDrawn;
 
 	u32 milliseconds = now - startTime;
 
-	if (milliseconds > 2000)
+	if (milliseconds >= 1500 )
 	{
-		fps = (s32)((f32)framesCounted / ((f32)milliseconds / 1000.0f));
+		f32 invMilli = core::reciprocal ( (f32) milliseconds );
+		
+		fps = core::ceil32 ( ( 1000.f * (f32) framesCounted ) * invMilli );
+		primitive = primitivesCounted;
 
-		startTime = now;
 		framesCounted = 0;
+		primitivesCounted = 0;
+		startTime = now;
 	}
 }
 

@@ -86,7 +86,7 @@ namespace video
 		virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat);
 
 		//! draws a vertex primitive list
-		void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+		void drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
 
 		//! queries the features of the driver, returns true if feature is available
 		bool queryFeature(E_VIDEO_DRIVER_FEATURE feature);
@@ -159,7 +159,7 @@ namespace video
 		virtual void addDynamicLight(const SLight& light);
 
 		//! returns the maximal amount of dynamic lights the device can handle
-		virtual s32 getMaximalDynamicLightAmount();
+		virtual u32 getMaximalDynamicLightAmount();
 
 		//! Sets the dynamic ambient light color. The default color is
 		//! (0,0,0,0) which means it is dark.
@@ -311,6 +311,8 @@ namespace video
 
 		//! creates a transposed matrix in supplied GLfloat array to pass to OpenGL
 		void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
+		void createGLTextureMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
+
 
 		//! sets the needed renderstates
 		void setRenderStates3DMode();

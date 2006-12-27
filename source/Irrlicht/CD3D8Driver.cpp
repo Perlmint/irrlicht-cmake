@@ -8,7 +8,6 @@
 #include "S3DVertex.h"
 #include "CD3D8Texture.h"
 #include "CImage.h"
-#include <stdio.h>
 
 #include "IrrCompileConfig.h"
 
@@ -143,6 +142,10 @@ void CD3D8Driver::createMaterialRenderers()
 		renderer = new CD3D8ParallaxMapRenderer(pID3DDevice, this, tmp,
 		MaterialRenderers[EMT_TRANSPARENT_VERTEX_ALPHA].Renderer);
 	renderer->drop();
+
+	// add basic 1 texture blending
+	addAndDropMaterialRenderer(new CD3D8MaterialRenderer_ONETEXTURE_BLEND(pID3DDevice, this));
+
 }
 
 
@@ -376,8 +379,8 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	setRenderStates3DMode();
 
 	// set max anisotropy
-	pID3DDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
-	pID3DDevice->SetTextureStageState(1, D3DTSS_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
+	pID3DDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, irr::core::min_( (DWORD) 16, Caps.MaxAnisotropy));
+	pID3DDevice->SetTextureStageState(1, D3DTSS_MAXANISOTROPY, irr::core::min_( (DWORD) 16, Caps.MaxAnisotropy));
 	pID3DDevice->SetTextureStageState(2, D3DTSS_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
 	pID3DDevice->SetTextureStageState(3, D3DTSS_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
 
@@ -562,18 +565,25 @@ bool CD3D8Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 //! sets transformation
 void CD3D8Driver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat)
 {
-	Transformation3DChanged = true;
-
 	switch(state)
 	{
 	case ETS_VIEW:
 		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)&mat));
+		Transformation3DChanged = true;
 		break;
 	case ETS_WORLD:
 		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)&mat));
+		Transformation3DChanged = true;
 		break;
 	case ETS_PROJECTION:
 		pID3DDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)((void*)&mat));
+		Transformation3DChanged = true;
+		break;
+	case ETS_TEXTURE_0:
+	case ETS_TEXTURE_1:
+		pID3DDevice->SetTextureStageState( state - ETS_TEXTURE_0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
+		pID3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+ ( state - ETS_TEXTURE_0 )),
+			(D3DMATRIX*)((void*)&mat));
 		break;
 	}
 
@@ -600,13 +610,14 @@ bool CD3D8Driver::setTexture(s32 stage, video::ITexture* texture)
 	CurrentTexture[stage] = texture;
 
 	if (!texture)
+	{
 		pID3DDevice->SetTexture(stage, 0);
+		pID3DDevice->SetTextureStageState( stage, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE );
+	}
 	else
 	{
 		pID3DDevice->SetTexture(stage, ((CD3D8Texture*)texture)->getDX8Texture());
 		texture->grab();
-		pID3DDevice->SetTextureStageState( stage, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
-		pID3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+stage), (D3DMATRIX*)((void*)&texture->getTransformation()));
 	}
 	return true;
 }
@@ -635,6 +646,7 @@ void CD3D8Driver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enab
 {
 	if (flag == video::ETCF_CREATE_MIP_MAPS && !queryFeature(EVDF_MIP_MAP))
 		enabled = false;
+
 
 	CNullDriver::setTextureCreationFlag(flag, enabled);
 }
@@ -784,7 +796,7 @@ const core::rect<s32>& CD3D8Driver::getViewPort() const
 
 
 //! draws a vertex primitive list
-void CD3D8Driver::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
+void CD3D8Driver::drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
 	if (!checkPrimitiveCount(primitiveCount))
 		return;
@@ -1304,15 +1316,27 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 			pID3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	}
 
+
 	// zbuffer
 
 	if (resetAllRenderstates || lastmaterial.ZBuffer != material.ZBuffer)
 	{
-		if (material.ZBuffer)
-			pID3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-		else
-			pID3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+		switch (material.ZBuffer)
+		{
+			case 0:
+				pID3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+				break;
+			case 1:
+				pID3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+				pID3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+				break;
+			case 2:
+				pID3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+				pID3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
+				break;
+		}
 	}
+
 
 	// zwrite
 	if (resetAllRenderstates || lastmaterial.ZWriteEnable != material.ZWriteEnable)
@@ -1354,6 +1378,20 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	{
 		pID3DDevice->SetRenderState(D3DRS_NORMALIZENORMALS,  material.NormalizeNormals);
 	}
+
+	// texture address mode
+	if (resetAllRenderstates || lastmaterial.TextureWrap != material.TextureWrap)
+	{
+		u32 mode = material.TextureWrap ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
+
+		pID3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, mode );
+		pID3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, mode );
+		pID3DDevice->SetTextureStageState(1, D3DTSS_ADDRESSU, mode );
+		pID3DDevice->SetTextureStageState(1, D3DTSS_ADDRESSV, mode );
+
+	}
+
+
 }
 
 
@@ -1670,7 +1708,7 @@ void CD3D8Driver::addDynamicLight(const SLight& dl)
 
 
 //! returns the maximal amount of dynamic lights the device can handle
-s32 CD3D8Driver::getMaximalDynamicLightAmount()
+u32 CD3D8Driver::getMaximalDynamicLightAmount()
 {
 	return Caps.MaxActiveLights;
 }

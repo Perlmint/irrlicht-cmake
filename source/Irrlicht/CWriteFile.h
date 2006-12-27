@@ -40,7 +40,7 @@ namespace io
 		virtual const c8* getFileName();
 
 		//! returns if file is open
-		bool isOpen();
+		bool isOpen() const;
 
 	private:
 

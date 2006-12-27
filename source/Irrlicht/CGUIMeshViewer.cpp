@@ -147,7 +147,7 @@ void CGUIMeshViewer::draw()
 		driver->setMaterial(Material);
 
 		scene::IMesh* m = Mesh->getMesh(os::Timer::getTime()/20);
-		for (s32 i=0; i<m->getMeshBufferCount(); ++i)
+		for (u32 i=0; i<m->getMeshBufferCount(); ++i)
 		{
 			scene::IMeshBuffer* mb = m->getMeshBuffer(i);
 

@@ -30,7 +30,8 @@ namespace gui
 		virtual video::SColor getColor() const;
 
 		//! Sets the color to fade out to or to fade in from.
-		virtual void setColor(video::SColor color);
+		virtual void setColor(video::SColor color );
+		virtual void setColor(video::SColor source, video::SColor dest);
 
 		//! Starts the fade in process.
 		virtual void fadeIn(u32 time);
@@ -54,7 +55,7 @@ namespace gui
 		u32 EndTime;
 		EFadeAction Action;		
 
-		video::SColor Color;
+		video::SColor Color[2];
 		video::SColor FullColor;
 		video::SColor TransColor;
 

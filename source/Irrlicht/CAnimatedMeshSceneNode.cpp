@@ -16,6 +16,7 @@
 #include "IMaterialRenderer.h"
 #include "IMeshCache.h"
 #include "IAnimatedMesh.h"
+#include "quaternion.h"
 
 namespace irr
 {
@@ -29,7 +30,7 @@ CAnimatedMeshSceneNode::CAnimatedMeshSceneNode(IAnimatedMesh* mesh, ISceneNode* 
 			const core::vector3df& position, const core::vector3df& rotation,	const core::vector3df& scale)
 : IAnimatedMeshSceneNode(parent, mgr, id, position, rotation, scale), Mesh(0),
 	BeginFrameTime(0), StartFrame(0), EndFrame(0), FramesPerSecond(100),
-	Shadow(0), Looping(true), LoopCallBack(0), ReadOnlyMaterials(false)
+	Shadow(0), Looping(true), LoopCallBack(0), ReadOnlyMaterials(false),CurrentFrameNr(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CAnimatedMeshSceneNode");
@@ -70,8 +71,7 @@ void CAnimatedMeshSceneNode::setCurrentFrame(s32 frame)
 	else if (EndFrame < frame)
 		frame = EndFrame;
 
-	BeginFrameTime = BeginFrameTime =
-		os::Timer::getTime() - (s32)((frame - StartFrame) / (FramesPerSecond / 1000.f));
+	BeginFrameTime = os::Timer::getTime() - (s32)((frame - StartFrame) / (FramesPerSecond / 1000.f));
 }
 
 
@@ -124,7 +124,12 @@ void CAnimatedMeshSceneNode::OnPreRender()
 }
 
 
-inline s32 CAnimatedMeshSceneNode::getFrameNr()
+s32 CAnimatedMeshSceneNode::getFrameNr()
+{
+	return CurrentFrameNr;
+}
+
+u32 CAnimatedMeshSceneNode::buildFrameNr( u32 timeMs)
 {
 	s32 frame = 0;
 
@@ -133,17 +138,19 @@ inline s32 CAnimatedMeshSceneNode::getFrameNr()
 	if (!len)
 		return StartFrame;
 
+	s32 deltaFrame = core::floor32 ( f32 ( timeMs - BeginFrameTime )
+									* (FramesPerSecond * 0.001f)
+								);
+
 	if (Looping)
 	{
 		// play animation looped
-		frame = StartFrame + ((s32)((os::Timer::getTime() - BeginFrameTime)
-			* (FramesPerSecond/1000.0f)) % len);
+		frame = StartFrame + ( deltaFrame % len );
 	}
 	else
 	{
 		// play animation non looped
-		frame = StartFrame + ((s32)((os::Timer::getTime() - BeginFrameTime)
-			* (FramesPerSecond/1000.0f)));
+		frame = StartFrame + deltaFrame;
 
 		if (frame > EndFrame)
 		{
@@ -158,28 +165,34 @@ inline s32 CAnimatedMeshSceneNode::getFrameNr()
 }
 
 
-
 //! OnPostRender() is called just after rendering the whole scene.
 void CAnimatedMeshSceneNode::OnPostRender(u32 timeMs)
 {
-	getFrameNr();
+	CurrentFrameNr = buildFrameNr ( timeMs );
 
-	if (IsVisible)
+	if ( Mesh )
 	{
-		// animate this node with all animators
-
-		core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
-		for (; ait != Animators.end(); ++ait)
-			(*ait)->animateNode(this, timeMs);
-
-		// update absolute position
-		updateAbsolutePosition();
-
-		core::list<ISceneNode*>::Iterator it = Children.begin();
-		for (; it != Children.end(); ++it)
-			(*it)->OnPostRender(timeMs);
+		scene::IMesh* m = Mesh->getMesh(CurrentFrameNr, 255, StartFrame, EndFrame);
+		if ( m )
+		{
+			Box = m->getBoundingBox();
+		}
 	}
+
+
+	IAnimatedMeshSceneNode::OnPostRender ( timeMs );
 }
+
+/*
+	angle = dotproduct ( v(0,1,0), up )
+	axis = crossproduct ( v(0,1,0), up )
+*/
+inline void AlignToUpVector(irr::core::matrix4 &m, const irr::core::vector3df &up )
+{
+	core::quaternion quatRot( up.Z, 0.f, -up.X, 1 + up.Y );
+	quatRot.normalize();
+	m = quatRot.getMatrix_transposed();
+} 
 
 
 //! renders the node.
@@ -203,8 +216,6 @@ void CAnimatedMeshSceneNode::render()
 
 	if (m)
 	{
-		Box = m->getBoundingBox();
-
 		// update all dummy transformation nodes
 		if (!JointChildSceneNodes.empty() && Mesh &&
 			(Mesh->getMeshType() == EAMT_MS3D || Mesh->getMeshType() == EAMT_X  || Mesh->getMeshType() == EAMT_B3D ))
@@ -227,61 +238,86 @@ void CAnimatedMeshSceneNode::render()
 			video::SMaterial mat;
 			mat.Lighting = false;
 			driver->setMaterial(mat);
-			driver->draw3DBox(Box, video::SColor(0,255,255,255));
 
-			if (Mesh->getMeshType() == EAMT_X)
+			// show bounding box
+			if ( DebugDataVisible & scene::EDS_BBOX )
 			{
-				// draw skeleton
-				const core::array<core::vector3df>* ds =
-					((IAnimatedMeshX*)Mesh)->getDrawableSkeleton(frame);
-
-				for (s32 s=0; s<(s32)ds->size(); s+=2)
-					driver->draw3DLine((*ds)[s], (*ds)[s+1],  video::SColor(0,255,255,255));
+				driver->draw3DBox(Box, video::SColor(0,255,255,255));
 			}
 
-			#if 0
-			// draw normals
-			for (s32 g=0; g<m->getMeshBufferCount(); ++g)
+			// show skeleton
+			if ( DebugDataVisible & scene::EDS_SKELETON )
 			{
-				scene::IMeshBuffer* mb = m->getMeshBuffer(g);
-
-				u32 vSize;
-				u32 i;
-				vSize = 0;
-				switch( mb->getVertexType() )
+				if (Mesh->getMeshType() == EAMT_X)
 				{
-					case video::EVT_STANDARD:
-						vSize = sizeof ( video::S3DVertex );
-						break;
-					case video::EVT_2TCOORDS:
-						vSize = sizeof ( video::S3DVertex2TCoords );
-						break;
-					case video::EVT_TANGENTS:
-						vSize = sizeof ( video::S3DVertexTangents );
-						break;
-				}
+					// draw skeleton
+					const core::array<core::vector3df>* ds =
+						((IAnimatedMeshX*)Mesh)->getDrawableSkeleton(frame);
 
-				const video::S3DVertex* v = ( const video::S3DVertex*)mb->getVertices();
-				video::SColor c ( 255, 128 ,0, 0 );
-				video::SColor c1 ( 255, 255 ,0, 0 );
-				for ( i = 0; i != mb->getVertexCount(); ++i )
-				{
-					core::vector3df h = v->Normal * 5.f;
-					core::vector3df h1 = h.crossProduct ( core::vector3df ( 0.f, 1.f, 0.f ) );
-
-					driver->draw3DLine ( v->Pos, v->Pos + h, c );
-					driver->draw3DLine ( v->Pos + h, v->Pos + h + h1, c );
-					v = (const video::S3DVertex*) ( (u8*) v + vSize );
+					for (s32 s=0; s<(s32)ds->size(); s+=2)
+						driver->draw3DLine((*ds)[s], (*ds)[s+1],  video::SColor(0,51,66,255));
 				}
 			}
-			#endif
+
+			// show normals
+			if ( DebugDataVisible & scene::EDS_NORMALS )
+			{
+				IAnimatedMesh * arrow = SceneManager->addArrowMesh ( "__debugnormal", 8, 0.05f, 1.f, 0xFFECEC00 );
+				if ( 0 == arrow )
+				{
+					arrow = SceneManager->getMesh ( "__debugnormal" );
+				}
+				IMesh *mesh = arrow->getMesh ( 0 );
+
+				// find a good scaling factor
+
+				core::matrix4 m2;
+
+				// draw normals
+				for (u32 g=0; g<m->getMeshBufferCount(); ++g)
+				{
+					scene::IMeshBuffer* mb = m->getMeshBuffer(g);
+
+					u32 i;
+					const u32 vSize = mb->getVertexPitch();
+
+					const video::S3DVertex* v = ( const video::S3DVertex*)mb->getVertices();
+					for ( i = 0; i != mb->getVertexCount(); ++i )
+					{
+						AlignToUpVector ( m2, v->Normal );
+						AbsoluteTransformation.transformVect ( &m2.M[12], v->Pos );
+
+
+						driver->setTransform(video::ETS_WORLD, m2 );
+						for ( u32 a = 0; a != mesh->getMeshBufferCount(); ++a )
+							driver->drawMeshBuffer ( mesh->getMeshBuffer ( a ) );
+						v = (const video::S3DVertex*) ( (u8*) v + vSize );
+					}
+				}
+
+				driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
+			}
+
+			// show mesh
+			if ( DebugDataVisible & scene::EDS_MESH )
+			{
+				mat.Lighting = false;
+				mat.Wireframe = true;
+				driver->setMaterial(mat);
+
+				for (u32 g=0; g<m->getMeshBufferCount(); ++g)
+				{
+					driver->drawMeshBuffer ( m->getMeshBuffer ( g ) );
+				}
+
+			}
 
 		}
 
 		if (Shadow && PassCount==1)
 			Shadow->setMeshToRenderFrom(m);
 
-		for (s32 i=0; i<m->getMeshBufferCount(); ++i)
+		for (u32 i=0; i<m->getMeshBufferCount(); ++i)
 		{
 			video::IMaterialRenderer* rnd = driver->getMaterialRenderer(Materials[i].MaterialType);
 			bool transparent = (rnd && rnd->isTransparent());
@@ -313,7 +349,7 @@ bool CAnimatedMeshSceneNode::setFrameLoop(s32 begin, s32 end)
 
 	s32 frameCount = Mesh->getFrameCount();
 
-	if (!(begin <= end && begin >= 0 && end <= frameCount))
+	if (!(begin <= end && 0 <= begin && end <= frameCount))
 		return false;
 
 	StartFrame = begin;
@@ -336,7 +372,7 @@ void CAnimatedMeshSceneNode::setAnimationSpeed(s32 framesPerSecond)
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CAnimatedMeshSceneNode::getBoundingBox() const
 {
-	return Box;//Mesh ? Mesh->getBoundingBox() : Box;
+	return Box;
 }
 
 
@@ -346,9 +382,9 @@ const core::aabbox3d<f32>& CAnimatedMeshSceneNode::getBoundingBox() const
 //! This function is needed for inserting the node into the scene hirachy on a
 //! optimal position for minimizing renderstate changes, but can also be used
 //! to directly modify the material of a scene node.
-video::SMaterial& CAnimatedMeshSceneNode::getMaterial(s32 i)
+video::SMaterial& CAnimatedMeshSceneNode::getMaterial(u32  i)
 {
-	if (i < 0 || i >= (s32)Materials.size())
+	if ( i >= Materials.size() )
 		return ISceneNode::getMaterial(i);
 
 	return Materials[i];
@@ -357,7 +393,7 @@ video::SMaterial& CAnimatedMeshSceneNode::getMaterial(s32 i)
 
 
 //! returns amount of materials used by this scene node.
-s32 CAnimatedMeshSceneNode::getMaterialCount()
+u32 CAnimatedMeshSceneNode::getMaterialCount()
 {
 	return Materials.size();
 }
@@ -649,7 +685,7 @@ void CAnimatedMeshSceneNode::setMesh(IAnimatedMesh* mesh)
 		Materials.clear();
 
 		video::SMaterial mat;
-		for (s32 i=0; i<m->getMeshBufferCount(); ++i)
+		for (u32 i=0; i<m->getMeshBufferCount(); ++i)
 		{
 			IMeshBuffer* mb = m->getMeshBuffer(i);
 			if (mb)

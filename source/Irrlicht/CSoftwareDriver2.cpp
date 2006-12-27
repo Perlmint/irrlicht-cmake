@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt/Alten Thomas
+// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -16,8 +16,9 @@ namespace video
 
 //! constructor
 CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
-: CNullDriver(io, windowSize), CurrentTriangleRenderer(0),
-	 ZBuffer(0), RenderTargetTexture(0), RenderTargetSurface(0)
+: CNullDriver(io, windowSize), CurrentShader(0),
+	 DepthBuffer(0), RenderTargetTexture(0), RenderTargetSurface(0),
+	 CurrentOut ( 12 * 2, 128 ), Temp ( 12 * 2, 128 )
 {
 	#ifdef _DEBUG
 	setDebugName("CSoftwareDriver2");
@@ -38,32 +39,37 @@ CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, boo
 
 	// create z buffer
 
-	ZBuffer = irr::video::createZBuffer2(BackBuffer->getDimension());
+	DepthBuffer = irr::video::createDepthBuffer(BackBuffer->getDimension());
 
 	// create triangle renderers
 
-	memset32 ( TriangleRenderer, 0, sizeof ( TriangleRenderer ) );
-	//TriangleRenderer[ETR_FLAT] = createTRFlat2(ZBuffer);
-	//TriangleRenderer[ETR_FLAT_WIRE] = createTRFlatWire2(ZBuffer);
-	TriangleRenderer[ETR_GOURAUD] = createTriangleRendererGouraud2(ZBuffer);
-	TriangleRenderer[ETR_GOURAUD_ALPHA] = createTriangleRendererGouraudAlpha2(ZBuffer );
-	TriangleRenderer[ETR_GOURAUD_ALPHA_NOZ] = createTriangleRendererGouraudAlphaNoZ2(ZBuffer );
-	//TriangleRenderer[ETR_GOURAUD_WIRE] = createTriangleRendererGouraudWire2(ZBuffer);
-	//TriangleRenderer[ETR_TEXTURE_FLAT] = createTriangleRendererTextureFlat2(ZBuffer);
-	//TriangleRenderer[ETR_TEXTURE_FLAT_WIRE] = createTriangleRendererTextureFlatWire2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD] = createTriangleRendererTextureGouraud2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP] = createTriangleRendererTextureLightMap2_M1(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_M2] = createTriangleRendererTextureLightMap2_M2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_M4] = createTriangleRendererGTextureLightMap2_M4(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_LIGHTMAP_M4] = createTriangleRendererTextureLightMap2_M4(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD] = createTriangleRendererTextureLightMap2_Add(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_DETAIL_MAP] = createTriangleRendererTextureDetailMap2(ZBuffer);
+	memset32 ( BurningShader, 0, sizeof ( BurningShader ) );
+	//BurningShader[ETR_FLAT] = createTRFlat2(DepthBuffer);
+	//BurningShader[ETR_FLAT_WIRE] = createTRFlatWire2(DepthBuffer);
+	BurningShader[ETR_GOURAUD] = createTriangleRendererGouraud2(DepthBuffer);
+	BurningShader[ETR_GOURAUD_ALPHA] = createTriangleRendererGouraudAlpha2(DepthBuffer );
+	BurningShader[ETR_GOURAUD_ALPHA_NOZ] = createTRGouraudAlphaNoZ2(DepthBuffer );
+	//BurningShader[ETR_GOURAUD_WIRE] = createTriangleRendererGouraudWire2(DepthBuffer);
+	//BurningShader[ETR_TEXTURE_FLAT] = createTriangleRendererTextureFlat2(DepthBuffer);
+	//BurningShader[ETR_TEXTURE_FLAT_WIRE] = createTriangleRendererTextureFlatWire2(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD] = createTriangleRendererTextureGouraud2(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_LIGHTMAP] = createTriangleRendererTextureLightMap2_M1(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_LIGHTMAP_M2] = createTriangleRendererTextureLightMap2_M2(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_LIGHTMAP_M4] = createTriangleRendererGTextureLightMap2_M4(DepthBuffer);
+	BurningShader[ETR_TEXTURE_LIGHTMAP_M4] = createTriangleRendererTextureLightMap2_M4(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD] = createTriangleRendererTextureLightMap2_Add(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_DETAIL_MAP] = createTriangleRendererTextureDetailMap2(DepthBuffer);
 
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_WIRE] = createTriangleRendererTextureGouraudWire2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_NOZ] = createTRTextureGouraudNoZ2();
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_ADD] = createTRTextureGouraudAdd2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_ADD_NO_Z] = createTRTextureGouraudAddNoZ2(ZBuffer);
-	TriangleRenderer[ETR_TEXTURE_GOURAUD_VERTEX_ALPHA] = createTriangleRendererTextureVertexAlpha2 ( ZBuffer );
+	BurningShader[ETR_TEXTURE_GOURAUD_WIRE] = createTriangleRendererTextureGouraudWire2(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_NOZ] = createTRTextureGouraudNoZ2();
+	BurningShader[ETR_TEXTURE_GOURAUD_ADD] = createTRTextureGouraudAdd2(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_ADD_NO_Z] = createTRTextureGouraudAddNoZ2(DepthBuffer);
+	BurningShader[ETR_TEXTURE_GOURAUD_VERTEX_ALPHA] = createTriangleRendererTextureVertexAlpha2 ( DepthBuffer );
+
+	BurningShader[ETR_TEXTURE_GOURAUD_ALPHA] = createTRTextureGouraudAlpha(DepthBuffer );
+	BurningShader[ETR_TEXTURE_GOURAUD_ALPHA_NOZ] = createTRTextureGouraudAlphaNoZ( DepthBuffer );
+
+	BurningShader[ETR_TEXTURE_BLEND] = createTRTextureBlend( DepthBuffer );
 
 
 	// add the same renderer for all solid types
@@ -95,6 +101,7 @@ CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, boo
 	addMaterialRenderer ( umr ); // EMT_PARALLAX_MAP_SOLID,
 	addMaterialRenderer ( umr ); // EMT_PARALLAX_MAP_TRANSPARENT_ADD_COLOR,
 	addMaterialRenderer ( umr ); // EMT_PARALLAX_MAP_TRANSPARENT_VERTEX_ALPHA,
+	addMaterialRenderer ( tmr ); // EMT_ONETEXTURE_BLEND
 
 	smr->drop ();
 	tmr->drop ();
@@ -109,7 +116,7 @@ CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, boo
 	Global_AmbientLight.set ( 0.f, 0.f, 0.f, 0.f );
 
 	// select the right renderer
-	selectRightTriangleRenderer();
+	setCurrentShader();
 
 }
 
@@ -124,13 +131,13 @@ CSoftwareDriver2::~CSoftwareDriver2()
 	// delete triangle renderers
 
 	for (s32 i=0; i<ETR2_COUNT; ++i)
-		if (TriangleRenderer[i])
-			TriangleRenderer[i]->drop();
+		if (BurningShader[i])
+			BurningShader[i]->drop();
 
 	// delete zbuffer
 
-	if (ZBuffer)
-		ZBuffer->drop();
+	if (DepthBuffer)
+		DepthBuffer->drop();
 
 	// delete current texture
 
@@ -150,55 +157,73 @@ CSoftwareDriver2::~CSoftwareDriver2()
 
 
 //! void selects the right triangle renderer based on the render states.
-void CSoftwareDriver2::selectRightTriangleRenderer()
+void CSoftwareDriver2::setCurrentShader()
 {
-	ETriangleRenderer2 renderer = ETR_TEXTURE_GOURAUD;
+	EBurningFFShader shader = ETR_TEXTURE_GOURAUD;
 
-	bool zTest = true;
+	bool zMaterialTest = true;
 	switch ( Material.org.MaterialType )
 	{
 
+		case EMT_ONETEXTURE_BLEND:
+			shader = ETR_TEXTURE_BLEND;
+			zMaterialTest = false;
+			break;
+
+		case EMT_TRANSPARENT_ALPHA_CHANNEL_REF:
 		case EMT_TRANSPARENT_ALPHA_CHANNEL:
-		case EMT_TRANSPARENT_ADD_COLOR:
 			if ( Material.org.ZBuffer )
 			{
-				renderer = ETR_TEXTURE_GOURAUD_ADD;
+				shader = ETR_TEXTURE_GOURAUD_ALPHA;
 			}
 			else
 			{
-				renderer = ETR_TEXTURE_GOURAUD_ADD_NO_Z;
+				shader = ETR_TEXTURE_GOURAUD_ALPHA_NOZ;
 			}
-			zTest = false;
+			zMaterialTest = false;
+			break;
+
+		case EMT_TRANSPARENT_ADD_COLOR:
+			if ( Material.org.ZBuffer )
+			{
+				shader = ETR_TEXTURE_GOURAUD_ADD;
+			}
+			else
+			{
+				shader = ETR_TEXTURE_GOURAUD_ADD_NO_Z;
+			}
+			zMaterialTest = false;
 			break;
 
 		case EMT_TRANSPARENT_VERTEX_ALPHA:
-			renderer = ETR_TEXTURE_GOURAUD_VERTEX_ALPHA;
+			shader = ETR_TEXTURE_GOURAUD_VERTEX_ALPHA;
 			break;
 
 		case EMT_LIGHTMAP:
 		case EMT_LIGHTMAP_LIGHTING:
-			renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP;
+			shader = ETR_TEXTURE_GOURAUD_LIGHTMAP;
 			break;
 
 		case EMT_LIGHTMAP_M2:
 		case EMT_LIGHTMAP_LIGHTING_M2:
-			renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP_M2;
+			shader = ETR_TEXTURE_GOURAUD_LIGHTMAP_M2;
 			break;
 
 		case EMT_LIGHTMAP_LIGHTING_M4:
-			renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP_M4;
+			if ( Material.org.Texture2 )
+				shader = ETR_TEXTURE_GOURAUD_LIGHTMAP_M4;
 			break;
 		case EMT_LIGHTMAP_M4:
-			renderer = ETR_TEXTURE_LIGHTMAP_M4;
+			shader = ETR_TEXTURE_LIGHTMAP_M4;
 			break;
 
 		case EMT_LIGHTMAP_ADD:
 			if ( Material.org.Texture2 )
-				renderer = ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD;
+				shader = ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD;
 			break;
 
 		case EMT_DETAIL_MAP:
-			renderer = ETR_TEXTURE_GOURAUD_DETAIL_MAP;
+			shader = ETR_TEXTURE_GOURAUD_DETAIL_MAP;
 			break;
 
 		default:
@@ -206,28 +231,43 @@ void CSoftwareDriver2::selectRightTriangleRenderer()
 
 	}
 
-	if ( zTest && !Material.org.ZBuffer && !Material.org.ZWriteEnable)
+	if ( zMaterialTest && !Material.org.ZBuffer && !Material.org.ZWriteEnable)
 	{
-		renderer = ETR_TEXTURE_GOURAUD_NOZ;
+		shader = ETR_TEXTURE_GOURAUD_NOZ;
 	}
 
 	if ( 0 == Material.org.Texture1 )
 	{
-		renderer = ETR_GOURAUD;
+		shader = ETR_GOURAUD;
 	}
 
 	if ( Material.org.Wireframe )
 	{
-		renderer = ETR_TEXTURE_GOURAUD_WIRE;
+		shader = ETR_TEXTURE_GOURAUD_WIRE;
 	}
 
 	// switchToTriangleRenderer
-	CurrentTriangleRenderer = TriangleRenderer[renderer];
-	if ( CurrentTriangleRenderer )
+	CurrentShader = BurningShader[shader];
+	if ( CurrentShader )
 	{
-		//CurrentTriangleRenderer->setTexture(0, Texmap[0].Texture);
-		//CurrentTriangleRenderer->setTexture(1, Texmap[1].Texture);
-		CurrentTriangleRenderer->setRenderTarget(RenderTargetSurface, ViewPort);
+		CurrentShader->setZCompareFunc ( Material.org.ZBuffer );
+		switch ( shader )
+		{
+			case ETR_TEXTURE_GOURAUD_ALPHA:
+			case ETR_TEXTURE_GOURAUD_ALPHA_NOZ:
+				CurrentShader->setParam ( 0, Material.org.MaterialTypeParam );
+				break;
+
+			case EMT_ONETEXTURE_BLEND:
+			{
+				E_BLEND_FACTOR srcFact,dstFact;
+				E_MODULATE_FUNC modulate;
+				unpack_texureBlendFunc ( srcFact, dstFact, modulate, Material.org.MaterialTypeParam );
+				CurrentShader->setParam ( 0, Material.org.MaterialTypeParam );
+			} break;
+		}
+
+		CurrentShader->setRenderTarget(RenderTargetSurface, ViewPort);
 	}
 
 }
@@ -247,9 +287,9 @@ bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	case EVDF_MIP_MAP:
 		return true;
 #endif
-
 	case EVDF_RENDER_TO_TARGET:
 	case EVDF_MULTITEXTURE:
+	case EVDF_HARDWARE_TL:
 		return true;
 
 	default:
@@ -262,18 +302,54 @@ bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 //! sets transformation
 void CSoftwareDriver2::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat)
 {
-	TransformationMatrix[state] = mat;
+	Transformation[state].m = mat;
+	Transformation[state].isIdentity = mat.isIdentity();
 
 	switch ( state )
 	{
-		case ETS_WORLD:
-			TransformationMatrix[ETS_CURRENT] = TransformationMatrix[ETS_VIEW_PROJECTION];
-			TransformationMatrix[ETS_CURRENT] *= TransformationMatrix[ETS_WORLD];
-
 		case ETS_VIEW:
-			TransformationMatrix[ETS_VIEW_PROJECTION] = TransformationMatrix[ETS_PROJECTION];
-			TransformationMatrix[ETS_VIEW_PROJECTION] *= TransformationMatrix[ETS_VIEW];
+			Transformation[ETS_VIEW_PROJECTION].m.setbyproduct_nocheck (
+				Transformation[ETS_PROJECTION].m,
+				Transformation[ETS_VIEW].m
+			);
 			break;
+
+		case ETS_WORLD:
+			if ( Transformation[state].isIdentity )
+			{
+				Transformation[ETS_CURRENT] = Transformation[ETS_VIEW_PROJECTION];
+			}
+			else
+			{
+				Transformation[ETS_CURRENT].m.setbyproduct_nocheck (
+					Transformation[ETS_VIEW_PROJECTION].m,
+					Transformation[ETS_WORLD].m
+				);
+			}
+			Transformation[ETS_CURRENT].isIdentity = 0;
+
+#ifdef SOFTWARE_DRIVER_2_LIGHTING
+			if ( Material.org.Lighting )
+			{
+				if ( Transformation[state].isIdentity )
+				{
+					Transformation[ETS_WORLD_VIEW] = Transformation[ETS_VIEW];
+				}
+				else
+				{
+					Transformation[ETS_WORLD_VIEW].m.setbyproduct_nocheck (
+						Transformation[ETS_VIEW].m,
+						Transformation[ETS_WORLD].m
+					);
+				}
+
+				core::matrix4 m2 ( Transformation[ETS_WORLD_VIEW].m );
+				m2.makeInverse ();
+				m2.getTransposed ( Transformation[ETS_WORLD_VIEW_INVERSE_TRANSPOSED].m.M );
+			}
+#endif
+			break;
+
 	}
 }
 
@@ -302,7 +378,7 @@ bool CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
 		Texmap[stage].Texture = (video::CSoftwareTexture2*) Texture[stage];
 	}
 
-	selectRightTriangleRenderer();
+	setCurrentShader();
 	return true;
 }
 
@@ -317,6 +393,12 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 	Material.DiffuseColor.setA8R8G8B8 ( Material.org.DiffuseColor.color );
 	Material.EmissiveColor.setA8R8G8B8 ( Material.org.EmissiveColor.color );
 	Material.SpecularColor.setA8R8G8B8 ( Material.org.SpecularColor.color );
+
+	Material.SpecularEnabled = Material.org.Shininess != 0.f;
+	if (Material.SpecularEnabled )
+		Material.org.NormalizeNormals = true;
+
+
 	setTexture( 0, Material.org.Texture1 );
 	setTexture( 1, Material.org.Texture2 );
 }
@@ -332,8 +414,8 @@ bool CSoftwareDriver2::beginScene(bool backBuffer, bool zBuffer, SColor color)
 	if (backBuffer)
 		BackBuffer->fill( color );
 
-	if (ZBuffer && zBuffer)
-		ZBuffer->clear();
+	if (DepthBuffer && zBuffer)
+		DepthBuffer->clear();
 
 	return true;
 }
@@ -380,7 +462,7 @@ bool CSoftwareDriver2::setRenderTarget(video::ITexture* texture, bool clearBackB
 	if (RenderTargetSurface && (clearBackBuffer || clearZBuffer))
 	{
 		if (clearZBuffer)
-			ZBuffer->clear();
+			DepthBuffer->clear();
 
 		if (clearBackBuffer)
 			((video::CImage*)RenderTargetSurface)->fill( color );
@@ -408,8 +490,8 @@ void CSoftwareDriver2::setRenderTarget(video::CImage* image)
 
 	setViewPort(core::rect<s32>(0,0,RenderTargetSize.Width,RenderTargetSize.Height));
 
-	if (ZBuffer)
-		ZBuffer->setSize(RenderTargetSize);
+	if (DepthBuffer)
+		DepthBuffer->setSize(RenderTargetSize);
 }
 
 
@@ -419,17 +501,14 @@ void CSoftwareDriver2::setViewPort(const core::rect<s32>& area)
 {
 	ViewPort = area;
 
-
-	//TODO: the clipping is not correct, because the projection is affected.
-	// to correct this, ViewPortSize and Render2DTranslation will have to be corrected.
 	core::rect<s32> rendert(0,0,RenderTargetSize.Width,RenderTargetSize.Height);
 	ViewPort.clipAgainst(rendert);
 
-	TransformationMatrix [ ETS_CLIPSCALE ].buildNDCToDCMatrix ( ViewPort, 1 );
+	Transformation [ ETS_CLIPSCALE ].m.buildNDCToDCMatrix ( ViewPort, 1 );
 
 
-	if (CurrentTriangleRenderer)
-		CurrentTriangleRenderer->setRenderTarget(RenderTargetSurface, ViewPort);
+	if (CurrentShader)
+		CurrentShader->setRenderTarget(RenderTargetSurface, ViewPort);
 }
 
 /*
@@ -438,75 +517,126 @@ void CSoftwareDriver2::setViewPort(const core::rect<s32>& area)
 	can be rewritten with compares e.q near plane, a.z < -a.w and b.z < -b.w
 */
 
-static const sVec4 NDCPlane[6] =
+const sVec4 CSoftwareDriver2::NDCPlane[6] =
 {
-	sVec4(  0.f,  0.f,  1.f, -1.f ),	// near
+	sVec4(  0.f,  0.f, -1.f, -1.f ),	// near
+	sVec4(  0.f,  0.f,  1.f, -1.f ),	// far
 	sVec4(  1.f,  0.f,  0.f, -1.f ),	// left
 	sVec4( -1.f,  0.f,  0.f, -1.f ),	// right
 	sVec4(  0.f,  1.f,  0.f, -1.f ),	// bottom
-	sVec4(  0.f, -1.f,  0.f, -1.f ),	// top
-	sVec4(  0.f,  0.f, -1.f, -1.f )		// far
+	sVec4(  0.f, -1.f,  0.f, -1.f )		// top
 };
 
 
-static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane )
+
+/*
+	test a vertex if it's inside the standard frustum
+
+	this is the generic one..
+
+	f32 dotPlane;
+	for ( u32 i = 0; i!= 6; ++i )
+	{
+		dotPlane = v->Pos.dotProduct ( NDCPlane[i] );
+		setbit ( flag, dotPlane <= 0.f, 1 << i );
+	}
+
+	// this is the base for ndc frustum <-w,w>,<-w,w>,<-w,w>
+	setbits ( flag, ( v->Pos.z - v->Pos.w ) <= 0.f, 1 );
+	setbits ( flag, (-v->Pos.z - v->Pos.w ) <= 0.f, 2 );
+	setbits ( flag, ( v->Pos.x - v->Pos.w ) <= 0.f, 4 );
+	setbits ( flag, (-v->Pos.x - v->Pos.w ) <= 0.f, 8 );
+	setbits ( flag, ( v->Pos.y - v->Pos.w ) <= 0.f, 16 );
+	setbits ( flag, (-v->Pos.y - v->Pos.w ) <= 0.f, 32 );
+
+*/
+inline u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) const
 {
-	u32 outCount;
-	s4DVertex * out;
+	f32 test[6];
+	u32 flag;
+	const f32 w = - v->Pos.w;
+
+	// a conditional move is needed....FCOMI ( but we don't have it )
+	// so let the fpu calculate and write it back.
+	// cpu makes the compare, interleaving
+
+	test[0] =  v->Pos.z + w;
+	test[1] = -v->Pos.z + w;
+	test[2] =  v->Pos.x + w;
+	test[3] = -v->Pos.x + w;
+	test[4] =  v->Pos.y + w;
+	test[5] = -v->Pos.y + w;
+
+	flag  = (IR ( test[0] )              ) >> 31;
+	flag |= (IR ( test[1] ) & 0x80000000 ) >> 30;
+	flag |= (IR ( test[2] ) & 0x80000000 ) >> 29;
+	flag |= (IR ( test[3] ) & 0x80000000 ) >> 28;
+	flag |= (IR ( test[4] ) & 0x80000000 ) >> 27;
+	flag |= (IR ( test[5] ) & 0x80000000 ) >> 26;
+
+/*
+	flag  = F32_LOWER_EQUAL_0 ( test[0] );
+	flag |= F32_LOWER_EQUAL_0 ( test[1] ) << 1;
+	flag |= F32_LOWER_EQUAL_0 ( test[2] ) << 2;
+	flag |= F32_LOWER_EQUAL_0 ( test[3] ) << 3;
+	flag |= F32_LOWER_EQUAL_0 ( test[4] ) << 4;
+	flag |= F32_LOWER_EQUAL_0 ( test[5] ) << 5;
+*/
+	return flag;
+}
+
+u32 CSoftwareDriver2::clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane )
+{
+	u32 outCount = 0;
+	s4DVertex * out = dest;
 
 	const s4DVertex * a;
-	const s4DVertex * b;
+	const s4DVertex * b = source;
 
-	f32 aDotPlane;
 	f32 bDotPlane;
 
-	out = dest;
-	outCount = 0;
-	b = source;
 	bDotPlane = b->Pos.dotProduct ( plane );
 
 	for( u32 i = 1; i < inCount + 1; ++i)
 	{
-		//a = &source[ i%inCount];
-
 		const s32 condition = i - inCount;
-		const s32 index = ( ( condition >> 31 ) & ( i ^ condition ) ) ^ condition;
+		const s32 index = (( ( condition >> 31 ) & ( i ^ condition ) ) ^ condition ) << 1;
 
 		a = &source[ index ];
 
-		aDotPlane = a->Pos.dotProduct ( plane );
-
 		// current point inside
-		if ( aDotPlane <= 0.f )
+		if ( a->Pos.dotProduct ( plane ) <= 0.f )
 		{
 			// last point outside
-			if ( bDotPlane > 0.f )
+			if ( F32_GREATER_0 ( bDotPlane ) )
 			{
 				// intersect line segment with plane
 				out->interpolate ( *b, *a, bDotPlane / (b->Pos - a->Pos).dotProduct ( plane ) );
-				out += 1;
+				out += 2;
 				outCount += 1;
 			}
+
 			// copy current to out
-			*out = *a;
+			//*out = *a;
+			memcpy32_small ( out, a, SIZEOF_SVERTEX * 2 );
 			b = out;
 
-			out += 1;
+			out += 2;
 			outCount += 1;
 		}
 		else
 		{
 			// current point outside
 
-			if ( bDotPlane <= 0.f )
+			if ( F32_LOWER_EQUAL_0 (  bDotPlane ) )
 			{
 				// previous was inside
 				// intersect line segment with plane
 				out->interpolate ( *b, *a, bDotPlane / (b->Pos - a->Pos).dotProduct ( plane ) );
-
-				out += 1;
+				out += 2;
 				outCount += 1;
 			}
+			// pointer
 			b = a;
 		}
 
@@ -518,35 +648,16 @@ static u32 clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 in
 }
 
 
-u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * v1, u32 vIn )
+u32 CSoftwareDriver2::clipToFrustum ( s4DVertex *v0, s4DVertex * v1, const u32 vIn )
 {
-	u32 vOut;
+	u32 vOut = vIn;
 
-	vOut = vIn;
-
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[0] );		// near
-	if ( vOut < vIn )
-		return vOut;
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[5] );		// far
-	if ( vOut < vIn )
-		return vOut;
-
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[2] );		// right
-	if ( vOut < vIn )
-		return vOut;
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[1] );		// left
-	if ( vOut < vIn )
-		return vOut;
-
-	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[4] );		// top
-	if ( vOut < vIn )
-		return vOut;
-
-	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[3] );		// bottom
-
-
+	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[0] ); if ( vOut < vIn ) return vOut;
+	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[1] ); if ( vOut < vIn ) return vOut;
+	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[2] ); if ( vOut < vIn ) return vOut;
+	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[3] ); if ( vOut < vIn ) return vOut;
+	vOut = clipToHyperPlane ( v1, v0, vOut, NDCPlane[4] ); if ( vOut < vIn ) return vOut;
+	vOut = clipToHyperPlane ( v0, v1, vOut, NDCPlane[5] );
 	return vOut;
 }
 
@@ -565,34 +676,78 @@ u32 CSoftwareDriver2::clipToFrustrum_NoStat ( s4DVertex *v0, s4DVertex * v1, u32
 
 	replace w/w by 1/w
 */
-inline void CSoftwareDriver2::ndc_2_dc_and_project ( s4DVertex *source, u32 vIn ) const
+inline void CSoftwareDriver2::ndc_2_dc_and_project ( s4DVertex *dest,s4DVertex *source, u32 vIn ) const
 {
-	s4DVertex *v0;
 	u32 g;
-	f32 rhw;
 
-
-	v0 = source;
-
-	for ( g = 0; g != vIn; ++g,++v0 )
+	for ( g = 0; g != vIn; g += 2 )
 	{
+		if ( (dest[g].flag & VERTEX4D_PROJECTED ) == VERTEX4D_PROJECTED )
+			continue;
+
+		dest[g].flag = source[g].flag | VERTEX4D_PROJECTED;
+
+		const f32 w = source[g].Pos.w;
+		const f32 iw = core::reciprocal ( w );
+
 		// to device coordinates
-		v0->Pos.x = v0->Pos.x * TransformationMatrix [ ETS_CLIPSCALE ].M[ 0] + v0->Pos.w * TransformationMatrix [ ETS_CLIPSCALE ].M[12];
-		v0->Pos.y = v0->Pos.y * TransformationMatrix [ ETS_CLIPSCALE ].M[ 5] + v0->Pos.w * TransformationMatrix [ ETS_CLIPSCALE ].M[13];
+		dest[g].Pos.x = iw * ( source[g].Pos.x * Transformation [ ETS_CLIPSCALE ].m.M[ 0] + w * Transformation [ ETS_CLIPSCALE ].m.M[12] );
+		dest[g].Pos.y = iw * ( source[g].Pos.y * Transformation [ ETS_CLIPSCALE ].m.M[ 5] + w * Transformation [ ETS_CLIPSCALE ].m.M[13] );
+
+#ifndef SOFTWARE_DRIVER_2_USE_WBUFFER
+		dest[g].Pos.z = iw * source[g].Pos.z;
+#endif
+
+	#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+		#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+			dest[g].Color[0] = source[g].Color[0] * iw;
+		#else
+			dest[g].Color[0] = source[g].Color[0];
+		#endif
+
+	#endif
+
+		dest[g].Pos.w = iw;
+
+	}
+
+}
+
+
+inline void CSoftwareDriver2::ndc_2_dc_and_project2 ( const s4DVertex **v, const u32 size ) const
+{
+	u32 g;
+
+	for ( g = 0; g != size; g += 1 )
+	{
+		s4DVertex * a = (s4DVertex*) v[g];
+
+		if ( (a[1].flag & VERTEX4D_PROJECTED ) == VERTEX4D_PROJECTED )
+			continue;
+
+		a[1].flag = a->flag | VERTEX4D_PROJECTED;
 
 		// project homogenous vertex, store 1/w
-		rhw = inverse32 ( v0->Pos.w );
+		const f32 w = a->Pos.w;
+		const f32 iw = core::reciprocal ( w );
 
-		v0->Pos.x *= rhw;
-		v0->Pos.y *= rhw;
-		v0->Pos.z *= rhw;
-		v0->Pos.w = rhw;
+		// to device coordinates
+		a[1].Pos.x = iw * ( a->Pos.x * Transformation [ ETS_CLIPSCALE ].m.M[ 0] + w * Transformation [ ETS_CLIPSCALE ].m.M[12] );
+		a[1].Pos.y = iw * ( a->Pos.y * Transformation [ ETS_CLIPSCALE ].m.M[ 5] + w * Transformation [ ETS_CLIPSCALE ].m.M[13] );
 
-#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
-		v0->Color *= rhw;
-		//v0->Tex[0] *= rhw;
-		//v0->Tex[1] *= rhw;
+#ifndef SOFTWARE_DRIVER_2_USE_WBUFFER
+		a[1].Pos.z = a->Pos.z * iw;
 #endif
+
+	#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+		#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+			a[1].Color[0] = a->Color[0] * iw;
+		#else
+			a[1].Color[0] = a->Color[0];
+		#endif
+	#endif
+
+		a[1].Pos.w = iw;
 
 	}
 
@@ -600,24 +755,25 @@ inline void CSoftwareDriver2::ndc_2_dc_and_project ( s4DVertex *source, u32 vIn 
 
 
 /*!
-	crossproduct in projcteded 2D
+	crossproduct in projected 2D -> screen area triangle
 */
-inline f32 CSoftwareDriver2::backface ( const s4DVertex *v0 ) const
+inline f32 CSoftwareDriver2::screenarea ( const s4DVertex *v ) const
 {
-	return	( ( v0[1].Pos.x - v0[0].Pos.x ) * ( v0[2].Pos.y - v0[0].Pos.y ) ) -
-			( ( v0[1].Pos.y - v0[0].Pos.y ) * ( v0[2].Pos.x - v0[0].Pos.x ) );
+	return	( ( v[3].Pos.x - v[1].Pos.x ) * ( v[5].Pos.y - v[1].Pos.y ) ) -
+			( ( v[3].Pos.y - v[1].Pos.y ) * ( v[5].Pos.x - v[1].Pos.x ) );
 }
+
 
 /*!
 */
-inline f32 CSoftwareDriver2::texelarea ( const s4DVertex *v0, int tex ) const
+inline f32 CSoftwareDriver2::texelarea ( const s4DVertex *v, int tex ) const
 {
 	f32 x0,y0, x1,y1, z;
 
-	x0 = v0[1].Tex[tex].x - v0[0].Tex[tex].x;
-	y0 = v0[1].Tex[tex].y - v0[0].Tex[tex].y;
-	x1 = v0[2].Tex[tex].x - v0[0].Tex[tex].x;
-	y1 = v0[2].Tex[tex].y - v0[0].Tex[tex].y;
+	x0 = v[2].Tex[tex].x - v[0].Tex[tex].x;
+	y0 = v[2].Tex[tex].y - v[0].Tex[tex].y;
+	x1 = v[4].Tex[tex].x - v[0].Tex[tex].x;
+	y1 = v[4].Tex[tex].y - v[0].Tex[tex].y;
 
 	z = x0*y1 - x1*y0;
 
@@ -625,6 +781,551 @@ inline f32 CSoftwareDriver2::texelarea ( const s4DVertex *v0, int tex ) const
 	z *= d.Height;
 	z *= d.Width;
 	return z;
+}
+
+/*!
+	crossproduct in projected 2D
+*/
+inline f32 CSoftwareDriver2::screenarea2 ( const s4DVertex **v ) const
+{
+	return	( (( v[1] + 1 )->Pos.x - (v[0] + 1 )->Pos.x ) * ( (v[2] + 1 )->Pos.y - (v[0] + 1 )->Pos.y ) ) -
+			( (( v[1] + 1 )->Pos.y - (v[0] + 1 )->Pos.y ) * ( (v[2] + 1 )->Pos.x - (v[0] + 1 )->Pos.x ) );
+}
+
+/*!
+*/
+inline f32 CSoftwareDriver2::texelarea2 ( const s4DVertex **v, s32 tex ) const
+{
+	f32 z;
+
+	z =		(v[1]->Tex[tex].x - v[0]->Tex[tex].x ) *
+			(v[2]->Tex[tex].y - v[0]->Tex[tex].y )
+		 -	(v[2]->Tex[tex].x - v[0]->Tex[tex].x ) *
+			(v[1]->Tex[tex].y - v[0]->Tex[tex].y )
+		;
+
+	const core::dimension2d<s32> &d = Texmap[tex].Texture->getOriginalSize();
+	z *= d.Height;
+	z *= d.Width;
+	return z;
+}
+
+
+
+
+/*!
+*/
+inline void CSoftwareDriver2::select_polygon_mipmap ( s4DVertex *v, u32 vIn, s32 tex )
+{
+	f32 f[2];
+	const core::dimension2d<s32>& dim = Texmap[tex].Texture->getSize();
+
+	f[0] = (f32) dim.Width;
+	f[1] = (f32) dim.Height;
+
+#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+	for ( u32 g = 0; g != vIn; g += 2 )
+	{
+		(v + g + 1 )->Tex[tex].x	= (v + g + 0)->Tex[tex].x * ( v + g + 1 )->Pos.w * f[0];
+		(v + g + 1 )->Tex[tex].y	= (v + g + 0)->Tex[tex].y * ( v + g + 1 )->Pos.w * f[1];
+	}
+#else
+	for ( u32 g = 0; g != vIn; g += 2 )
+	{
+		(v + g + 1 )->Tex[tex].x	= (v + g + 0)->Tex[tex].x * f[0];
+		(v + g + 1 )->Tex[tex].y	= (v + g + 0)->Tex[tex].y * f[1];
+	}
+#endif
+}
+
+inline void CSoftwareDriver2::select_polygon_mipmap2 ( s4DVertex **v, s32 tex ) const
+{
+	f32 f[2];
+	const core::dimension2d<s32>& dim = Texmap[tex].Texture->getSize();
+
+	f[0] = (f32) dim.Width;
+	f[1] = (f32) dim.Height;
+
+#ifdef SOFTWARE_DRIVER_2_PERSPECTIVE_CORRECT
+	(v[0] + 1 )->Tex[tex].x	= v[0]->Tex[tex].x * ( v[0] + 1 )->Pos.w * f[0];
+	(v[0] + 1 )->Tex[tex].y	= v[0]->Tex[tex].y * ( v[0] + 1 )->Pos.w * f[1];
+
+	(v[1] + 1 )->Tex[tex].x	= v[1]->Tex[tex].x * ( v[1] + 1 )->Pos.w * f[0];
+	(v[1] + 1 )->Tex[tex].y	= v[1]->Tex[tex].y * ( v[1] + 1 )->Pos.w * f[1];
+
+	(v[2] + 1 )->Tex[tex].x	= v[2]->Tex[tex].x * ( v[2] + 1 )->Pos.w * f[0];
+	(v[2] + 1 )->Tex[tex].y	= v[2]->Tex[tex].y * ( v[2] + 1 )->Pos.w * f[1];
+
+#else
+	(v[0] + 1 )->Tex[tex].x	= v[0]->Tex[tex].x * f[0];
+	(v[0] + 1 )->Tex[tex].y	= v[0]->Tex[tex].y * f[1];
+
+	(v[1] + 1 )->Tex[tex].x	= v[1]->Tex[tex].x * f[0];
+	(v[1] + 1 )->Tex[tex].y	= v[1]->Tex[tex].y * f[1];
+
+	(v[2] + 1 )->Tex[tex].x	= v[2]->Tex[tex].x * f[0];
+	(v[2] + 1 )->Tex[tex].y	= v[2]->Tex[tex].y * f[1];
+#endif
+}
+
+// Vertex Cache
+const SVSize CSoftwareDriver2::vSize[] =
+{
+	{ VERTEX4D_FORMAT_0, sizeof(S3DVertex),1 },
+	{ VERTEX4D_FORMAT_1, sizeof(S3DVertex2TCoords),2 },
+	{ VERTEX4D_FORMAT_2, sizeof(S3DVertexTangents),2 }
+};
+
+
+
+/*!
+	fill a cache line with transformed, light and clipp test triangles
+*/
+void CSoftwareDriver2::VertexCache_fill ( const u32 sourceIndex,
+												const u32 destIndex
+											)
+{
+	u8 * source;
+	s4DVertex *dest;
+
+	source = (u8*) VertexCache.vertices + ( sourceIndex * vSize[VertexCache.vType].Pitch );
+
+	// it's a look ahead so we never hit it..
+	// but give priority...
+	//VertexCache.info[ destIndex ].hit = hitCount;
+
+	// store info
+	VertexCache.info[ destIndex ].index = sourceIndex;
+	VertexCache.info[ destIndex ].hit = 0;
+
+	// destination Vertex
+	dest = (s4DVertex *) ( (u8*) VertexCache.mem.data + ( destIndex << ( SIZEOF_SVERTEX_LOG2 + 1  ) ) );
+
+	// transform Model * World * Camera * Projection * NDCSpace matrix
+	Transformation [ ETS_CURRENT].m.transformVect ( &dest->Pos.x, ((S3DVertex*) source )->Pos );
+
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+
+	// light Vertex
+	#ifdef SOFTWARE_DRIVER_2_LIGHTING
+		lightVertex ( dest, ((S3DVertex*) source ) );
+	#else
+		dest->Color[0].setA8R8G8B8 ( ((S3DVertex*) source )->Color.color );
+	#endif
+#endif
+
+	// transfer texture coordinates
+	if ( Transformation [ ETS_TEXTURE_0 ].isIdentity )
+	{
+		// only look on first transform
+		memcpy32_small ( &dest->Tex[0],
+						&((S3DVertex*) source )->TCoords,
+						vSize[VertexCache.vType].TexSize * ( sizeof ( f32 ) * 2 )
+					);
+	}
+	else
+	{
+	/*
+			Generate texture coordinates as linear functions so that:
+				u = Ux*x + Uy*y + Uz*z + Uw 
+				v = Vx*x + Vy*y + Vz*z + Vw
+			The matrix M for this case is:
+				Ux  Vx  0  0 
+				Uy  Vy  0  0 
+				Uz  Vz  0  0 
+				Uw  Vw  0  0 
+	*/
+
+		const core::vector2d<f32> *src = &((S3DVertex*) source )->TCoords;
+		u32 t;
+
+		for ( t = 0; t != vSize[VertexCache.vType].TexSize; ++t )
+		{
+			const f32 *M =  Transformation [ ETS_TEXTURE_0 + t ].m.M;
+			if ( Material.org.TextureWrap )
+			{
+				dest->Tex[t].x = M[0] * src[t].X + M[4] * src[t].Y + M[8];
+				dest->Tex[t].y = M[1] * src[t].X + M[5] * src[t].Y + M[9];
+			}
+			else
+			{
+				f32 tx1, ty1;
+
+				tx1 = M[0] * src[t].X + M[4] * src[t].Y + M[8];
+				ty1 = M[1] * src[t].X + M[5] * src[t].Y + M[9];
+
+				dest->Tex[t].x = tx1 <= 0.f ? 0.f : tx1 >= 1.f ? 1.f : tx1;
+				dest->Tex[t].y = ty1 <= 0.f ? 0.f : ty1 >= 1.f ? 1.f : ty1;
+
+				//dest->Tex[t].x = core::clamp ( M[0] * src[t].X + M[4] * src[t].Y + M[8], 0.f, 1.f );
+				//dest->Tex[t].y = core::clamp ( M[1] * src[t].X + M[5] * src[t].Y + M[9], 0.f, 1.f );
+			}
+		}
+
+	}
+
+	dest[0].flag = dest[1].flag = vSize[VertexCache.vType].Format;
+
+	// test vertex 
+	dest[0].flag |= clipToFrustumTest ( dest);
+
+	// to DC Space, project homogenous vertex
+	if ( (dest[0].flag & VERTEX4D_CLIPMASK ) == VERTEX4D_INSIDE )
+	{
+		ndc_2_dc_and_project2 ( (const s4DVertex**) &dest, 1 );
+	}
+
+	//return dest;
+}
+
+//
+
+REALINLINE s4DVertex * CSoftwareDriver2::VertexCache_getVertex ( const u32 sourceIndex )
+{
+	for ( s32 i = 0; i < VERTEXCACHE_ELEMENT; ++i )
+	{
+		if ( VertexCache.info[ i ].index == sourceIndex )
+		{
+			return (s4DVertex *) ( (u8*) VertexCache.mem.data + ( i << ( SIZEOF_SVERTEX_LOG2 + 1  ) ) );
+		}
+	}
+	return 0;
+}
+
+
+/*
+	Cache based on linear walk indices
+	fill blockwise on the next 16(Cache_Size) unique vertices in indexlist
+	merge the next 16 vertices with the current
+*/
+REALINLINE void CSoftwareDriver2::VertexCache_get ( s4DVertex ** face )
+{
+	SCacheInfo info[VERTEXCACHE_ELEMENT];
+
+	// next primitive must be complete in cache
+	if (	VertexCache.indicesIndex - VertexCache.indicesRun < 3 &&
+			VertexCache.indicesIndex < VertexCache.indexCount
+		)
+	{
+		// rewind to start of primitive
+		VertexCache.indicesIndex = VertexCache.indicesRun;
+
+		memset32 ( info, VERTEXCACHE_MISS, sizeof ( info ) );
+
+		// get the next unique vertices cache line
+		u32 fillIndex = 0;
+		u32 dIndex;
+		u32 i;
+
+		while ( VertexCache.indicesIndex < VertexCache.indexCount &&
+				fillIndex < VERTEXCACHE_ELEMENT
+				)
+		{
+			u32 sourceIndex = VertexCache.indices [ VertexCache.indicesIndex++ ];
+
+			// if not exist, push back
+			s32 exist = 0;
+			for ( dIndex = 0;  dIndex < fillIndex; ++dIndex )
+			{
+				if ( info[ dIndex ].index == sourceIndex )
+				{
+					exist = 1;
+					break;
+				}
+			}
+
+			if ( 0 == exist )
+			{
+				info[fillIndex++].index = sourceIndex;
+			}
+		}
+
+		// clear marks
+		for ( i = 0; i!= VERTEXCACHE_ELEMENT; ++i )
+		{
+			VertexCache.info[i].hit = 0;
+		}
+
+		// mark all exisiting
+		for ( i = 0; i!= fillIndex; ++i )
+		{
+			for ( dIndex = 0;  dIndex < VERTEXCACHE_ELEMENT; ++dIndex )
+			{
+				if ( VertexCache.info[ dIndex ].index == info[i].index )
+				{
+					info[i].hit = dIndex;
+					VertexCache.info[ dIndex ].hit = 1;
+					break;
+				}
+			}
+		}
+
+		// fill new
+		for ( i = 0; i!= fillIndex; ++i )
+		{
+			if ( info[i].hit != VERTEXCACHE_MISS )
+				continue;
+
+			for ( dIndex = 0;  dIndex < VERTEXCACHE_ELEMENT; ++dIndex )
+			{
+				if ( 0 == VertexCache.info[dIndex].hit )
+				{
+					VertexCache_fill ( info[i].index, dIndex );
+					VertexCache.info[dIndex].hit += 1;
+					info[i].hit = dIndex;
+					break;
+				}
+			}
+		}
+	}
+
+	const u32 i0 = if_c_a_else_0 ( VertexCache.pType != scene::EPT_TRIANGLE_FAN, VertexCache.indicesRun );
+
+	face[0] = VertexCache_getVertex ( VertexCache.indices[ i0    ] );
+	face[1] = VertexCache_getVertex ( VertexCache.indices[ VertexCache.indicesRun + 1] );
+	face[2] = VertexCache_getVertex ( VertexCache.indices[ VertexCache.indicesRun + 2] );
+
+	VertexCache.indicesRun += VertexCache.primitivePitch;
+}
+
+REALINLINE void CSoftwareDriver2::VertexCache_get2 ( s4DVertex ** face )
+{
+	const u32 i0 = if_c_a_else_0 ( VertexCache.pType != scene::EPT_TRIANGLE_FAN, VertexCache.indicesRun );
+
+	VertexCache_fill ( VertexCache.indices[ i0    ], 0 );
+	VertexCache_fill ( VertexCache.indices[ VertexCache.indicesRun + 1], 1 );
+	VertexCache_fill ( VertexCache.indices[ VertexCache.indicesRun + 2], 2 );
+
+	VertexCache.indicesRun += VertexCache.primitivePitch;
+
+	face[0] = (s4DVertex *) ( (u8*) VertexCache.mem.data + ( 0 << ( SIZEOF_SVERTEX_LOG2 + 1  ) ) );
+	face[1] = (s4DVertex *) ( (u8*) VertexCache.mem.data + ( 1 << ( SIZEOF_SVERTEX_LOG2 + 1  ) ) );
+	face[2] = (s4DVertex *) ( (u8*) VertexCache.mem.data + ( 2 << ( SIZEOF_SVERTEX_LOG2 + 1  ) ) );
+
+}
+
+void CSoftwareDriver2::VertexCache_reset ( const void* vertices, u32 vertexCount, 
+											const u16* indices, u32 primitiveCount, 
+											E_VERTEX_TYPE vType,scene::E_PRIMITIVE_TYPE pType )
+{
+	VertexCache.vertices = vertices;
+	VertexCache.vertexCount = vertexCount;
+
+	VertexCache.indices = indices;
+	VertexCache.indicesIndex = 0;
+	VertexCache.indicesRun = 0;
+
+	VertexCache.vType = vType;
+	VertexCache.pType = pType;
+
+	switch ( VertexCache.pType )
+	{
+		case scene::EPT_TRIANGLES:
+			VertexCache.indexCount = primitiveCount + primitiveCount + primitiveCount;
+			VertexCache.primitivePitch = 3;
+			break;
+		case scene::EPT_TRIANGLE_FAN:
+			VertexCache.indexCount = primitiveCount + 2;
+			VertexCache.primitivePitch = 1;
+			break;
+	}
+
+	memset32 ( VertexCache.info, VERTEXCACHE_MISS, sizeof ( VertexCache.info ) );
+
+}
+
+
+//! draws a vertex primitive list
+void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
+{
+	if (!checkPrimitiveCount(primitiveCount))
+		return;
+
+	CNullDriver::drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount, vType, pType);
+
+	if ( 0 == CurrentShader )
+		return;
+
+
+	VertexCache_reset ( vertices, vertexCount, indexList, primitiveCount, vType, pType );
+
+	const s4DVertex * face[3];
+
+	f32 dc_area;
+	s32 lodLevel;
+	u32 i;
+	u32 g;
+
+	for ( i = 0; i < (u32) primitiveCount; ++i )
+	{
+		VertexCache_get ( (s4DVertex**) face );
+
+		// if fully outside or outside on same side
+		if ( ( (face[0]->flag | face[1]->flag | face[2]->flag) & VERTEX4D_CLIPMASK )
+				!= VERTEX4D_INSIDE
+			)
+			continue;
+
+		// if fully inside
+		if ( ( face[0]->flag & face[1]->flag & face[2]->flag & VERTEX4D_CLIPMASK ) == VERTEX4D_INSIDE )
+		{
+			dc_area = screenarea2 ( face );
+			if ( Material.org.BackfaceCulling && F32_LOWER_EQUAL_0 ( dc_area ) )
+			{
+				continue;
+			}
+
+			dc_area = core::reciprocal ( dc_area );
+			// select mipmap
+			for ( g = 0; g != 2; ++g )
+			{
+				if ( 0 == Texmap[g].Texture )
+				{
+					CurrentShader->setTexture(g, 0, 0);
+					continue;
+				}
+
+				lodLevel = s32_log2_f32 ( texelarea2 ( face, g ) * dc_area );
+
+				CurrentShader->setTexture(g, Texmap[g].Texture, lodLevel);
+				select_polygon_mipmap2 ( (s4DVertex**) face, g );
+
+			}
+
+			// rasterize
+			CurrentShader->drawTriangle ( face[0] + 1, face[1] + 1, face[2] + 1 );
+			continue;
+		}
+
+		// else if not complete inside clipping necessary
+		memcpy32_small ( ( (u8*) CurrentOut.data + ( 0 << ( SIZEOF_SVERTEX_LOG2 + 1 ) ) ), face[0], SIZEOF_SVERTEX * 2 );
+		memcpy32_small ( ( (u8*) CurrentOut.data + ( 1 << ( SIZEOF_SVERTEX_LOG2 + 1 ) ) ), face[1], SIZEOF_SVERTEX * 2 );
+		memcpy32_small ( ( (u8*) CurrentOut.data + ( 2 << ( SIZEOF_SVERTEX_LOG2 + 1 ) ) ), face[2], SIZEOF_SVERTEX * 2 );
+
+		u32 flag = CurrentOut.data->flag & VERTEX4D_FORMAT_MASK;
+
+		for ( g = 0; g != CurrentOut.ElementSize; ++g )
+		{
+			CurrentOut.data[g].flag = flag;
+			Temp.data[g].flag = flag;
+		}
+
+		u32 vOut;
+		vOut = clipToFrustum ( CurrentOut.data, Temp.data, 3 );
+/*
+		if ( vOut < 3 )
+		{
+			char buf[256];
+			struct SCheck
+			{
+				u32 flag;
+				const char * name;
+			};
+			
+			SCheck check[5];
+			check[0].flag = face[0]->flag;
+			check[0].name = "face0";
+			check[1].flag = face[1]->flag;
+			check[1].name = "face1";
+			check[2].flag = face[2]->flag;
+			check[2].name = "face2";
+			check[3].flag = (face[0]->flag & face[1]->flag & face[2]->flag);
+			check[3].name = "AND  ";
+			check[4].flag = (face[0]->flag | face[1]->flag | face[2]->flag);
+			check[4].name = "OR   ";
+
+			for ( s32 h = 0; h!= 5; ++h )
+			{
+				sprintf ( buf, "%s: %d %d %d %d %d %d",
+								check[h].name,
+								( check[h].flag & 1 ),
+								( check[h].flag & 2 ) >> 1,
+								( check[h].flag & 4 ) >> 2,
+								( check[h].flag & 8 ) >> 3,
+								( check[h].flag & 16 ) >> 4,
+								( check[h].flag & 32 ) >> 5
+							);
+				os::Printer::print ( buf );
+			}
+
+			sprintf ( buf, "Vout: %d\n", vOut );
+			os::Printer::print ( buf );
+
+			int hold = 1;
+		}
+*/
+		if ( vOut < 3 )
+			continue;
+
+		vOut <<= 1;
+
+		// to DC Space, project homogenous vertex
+		ndc_2_dc_and_project ( CurrentOut.data + 1, CurrentOut.data, vOut );
+
+/*
+		// if not complete inside clipping necessary
+		if ( ( test & VERTEX4D_INSIDE ) != VERTEX4D_INSIDE )
+		{
+			u32 v[2] = { PointerAsValue ( Temp ) , PointerAsValue ( CurrentOut ) };
+			for ( g = 0; g != 6; ++g )
+			{
+				vOut = clipToHyperPlane ( (s4DVertex*) v[0], (s4DVertex*) v[1], vOut, NDCPlane[g] );
+				if ( vOut < 3 )
+					break;
+
+				v[0] ^= v[1];
+				v[1] ^= v[0];
+				v[0] ^= v[1];
+
+			}
+
+			if ( vOut < 3 )
+				continue;
+
+		}
+*/
+
+		// check 2d backface culling on first
+		dc_area = screenarea ( CurrentOut.data );
+		if ( Material.org.BackfaceCulling && F32_LOWER_EQUAL_0 ( dc_area ) )
+			continue;
+
+		// select mipmap
+		for ( g = 0; g != 2; ++g )
+		{
+			if ( 0 == Texmap[g].Texture )
+			{
+				CurrentShader->setTexture(g, 0, 0);
+				continue;
+			}
+
+			lodLevel = s32_log2_f32 ( texelarea ( CurrentOut.data, g ) / dc_area );
+
+			CurrentShader->setTexture(g, Texmap[g].Texture, lodLevel);
+			select_polygon_mipmap ( CurrentOut.data, vOut, g );
+		}
+
+		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
+		for ( g = 0; g <= vOut - 6; g += 2 )
+		{
+			// rasterize
+			CurrentShader->drawTriangle ( CurrentOut.data + 0 + 1,
+													CurrentOut.data + g + 3,
+													CurrentOut.data + g + 5
+												);
+		}
+
+	}
+
+	// dump statistics
+/*
+	char buf [64];
+	sprintf ( buf,"VCount:%d PCount:%d CacheMiss: %d",
+					vertexCount, primitiveCount,
+					VertexCache.CacheMiss
+				);
+	os::Printer::print ( buf );
+*/
 }
 
 //! Sets the dynamic ambient light color. The default color is
@@ -639,87 +1340,97 @@ void CSoftwareDriver2::setAmbientLight(const SColorf& color)
 //! adds a dynamic light
 void CSoftwareDriver2::addDynamicLight(const SLight& dl)
 {
-	SInternalLight l;
+	if ( Light.size () >= getMaximalDynamicLightAmount () )
+		return;
 
+	SInternalLight l;
 	l.org = dl;
+
+	// light in eye space
+	Transformation[ETS_VIEW].m.transformVect ( &l.posEyeSpace.x, l.org.Position );
+
+	l.constantAttenuation = 0.f;
+	l.linearAttenuation = core::reciprocal ( l.org.Radius );
+	l.quadraticAttenuation = 0.f;
 
 	l.AmbientColor.setColorf ( l.org.AmbientColor );
 	l.DiffuseColor.setColorf ( l.org.DiffuseColor );
+	l.SpecularColor.setColorf ( l.org.SpecularColor );
+
+	switch ( dl.Type )
+	{
+		case video::ELT_DIRECTIONAL:
+		{
+			l.posEyeSpace.normalize_xyz ();
+		} break;
+	}
 
 	Light.push_back ( l );
+	CNullDriver::addDynamicLight( l.org );
 }
 
 //! deletes all dynamic lights there are
 void CSoftwareDriver2::deleteAllDynamicLights()
 {
 	Light.set_used ( 0 );
+	CNullDriver::deleteAllDynamicLights();
+
 }
 
 //! returns the maximal amount of dynamic lights the device can handle
-s32 CSoftwareDriver2::getMaximalDynamicLightAmount()
+u32 CSoftwareDriver2::getMaximalDynamicLightAmount()
 {
-	return 4096;	// i'm dreaming;-)
+	return 8;
 }
 
 
 
+#ifdef SOFTWARE_DRIVER_2_LIGHTING
+
 /*!
 */
-void CSoftwareDriver2::transform_and_lighting ( s4DVertex *dest, const S3DVertex ** face )
+void CSoftwareDriver2::lightVertex ( s4DVertex *dest, const S3DVertex *source )
 {
-	//	- transform Model * World * Camera * Projection * NDCSpace matrix
-	//	- store homogenous
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &dest[0].Pos.x, face[0]->Pos );
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &dest[1].Pos.x, face[1]->Pos );
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &dest[2].Pos.x, face[2]->Pos );
-
-#ifndef SOFTWARE_DRIVER_2_LIGHTING
-	dest[0].Color.setA8R8G8B8 ( face[0]->Color.color );
-	dest[1].Color.setA8R8G8B8 ( face[1]->Color.color );
-	dest[2].Color.setA8R8G8B8 ( face[2]->Color.color );
-#else
-
 	// apply lighting model
 	if ( false == Material.org.Lighting )
 	{
 		// should use the DiffuseColor but using pre-lit vertex color
-		dest[0].Color.setA8R8G8B8 ( face[0]->Color.color );
-		dest[1].Color.setA8R8G8B8 ( face[1]->Color.color );
-		dest[2].Color.setA8R8G8B8 ( face[2]->Color.color );
+		dest->Color[0].setA8R8G8B8 ( source->Color.color );
 		return;
 	}
 
-	u32 i,v;
-
-	// mhmm. i need to study some lighting
-
-	irr::core::vector3df n[3];
-
-	// TODO: don't transform normals. Inverse Transform light
-	for ( v = 0; v!= 3; ++v )
+	if ( Lights.size () == 0 )
 	{
-		n[v] = face[v]->Normal;
-		TransformationMatrix[ETS_WORLD].rotateVect ( n[v] );
-		n[v].normalize ();
-
+		dest->Color[0] = Material.EmissiveColor;
+		return;
 	}
 
-	irr::core::vector3df vpos[3];
-	bool needPos = false;
-	for ( i = 0; i!= Light.size (); ++i )
-	{
-		if ( Light[i].org.Type == video::ELT_POINT )
-		{
-			needPos = true;
-			break;
-		}
-	}
+	// eyespace
+/*
+	core::matrix4 modelview = Transformation[ETS_WORLD].m * Transformation[ETS_VIEW].m;
 
-	if ( needPos )
+	core::matrix4 m2 ( modelview );
+	m2.makeInverse ();
+	core::matrix4 modelviewinversetransposed ( m2.getTransposed() );
+*/
+
+	sVec4 vertexEyeSpace;
+	sVec4 normalEyeSpace;
+	sVec4 vertexEyeSpaceUnit;
+
+	// vertex in eye space
+	Transformation[ETS_WORLD_VIEW].m.transformVect ( &vertexEyeSpace.x, source->Pos );
+	vertexEyeSpace.project_xyz ();
+
+	vertexEyeSpaceUnit = vertexEyeSpace;
+	vertexEyeSpaceUnit.normalize_xyz();
+
+	// vertex normal in eye-space
+	//modelviewinversetransposed.transformVect ( &normalEyeSpace.x, source->Normal );
+	Transformation[ETS_WORLD_VIEW_INVERSE_TRANSPOSED].m.rotateVect ( &normalEyeSpace.x, source->Normal );
+	if ( Material.org.NormalizeNormals )
 	{
-		TransformationMatrix[ETS_WORLD].transformVect ( face[0]->Pos,vpos[0] );
-		TransformationMatrix[ETS_WORLD].transformVect ( face[1]->Pos,vpos[1] );
-		TransformationMatrix[ETS_WORLD].transformVect ( face[2]->Pos,vpos[2] );
+		normalEyeSpace.normalize_xyz();
 	}
 
 
@@ -728,245 +1439,107 @@ void CSoftwareDriver2::transform_and_lighting ( s4DVertex *dest, const S3DVertex
 	sVec4 specular;
 
 
-	f32 dot;
-	core::vector3df light;
-	for ( v = 0; v!= 3; ++v )
+	// the universe started in darkness..
+	ambient.set ( 0.f, 0.f, 0.f, 0.f );
+	diffuse.set ( 0.f, 0.f, 0.f, 0.f );
+	specular.set ( 0.f, 0.f, 0.f, 0.f );
+
+	f32 attenuation;
+
+	u32 i;
+	for ( i = 0; i!= Light.size (); ++i )
 	{
-		ambient = Global_AmbientLight;
+		const SInternalLight &light = Light[i];
 
-		// the universe started in darkness..
-		diffuse.set ( 0.f, 0.f, 0.f, 0.f );
-		specular.set ( 0.f, 0.f, 0.f, 0.f );
-		f32 attenuation = 0;
+		sVec4 vp;				// unit vector vertex to light
+		sVec4 lightHalf;		// blinn-phong reflection
 
-		for ( i = 0; i!= Light.size (); ++i )
+
+		switch ( light.org.Type )
 		{
-			switch ( Light[i].org.Type )
+			case video::ELT_POINT:
 			{
-				case video::ELT_POINT:
-				{
-					core::vector3df d;
+				// surface to light
+				vp.x = light.posEyeSpace.x - vertexEyeSpace.x;
+				vp.y = light.posEyeSpace.y - vertexEyeSpace.y;
+				vp.z = light.posEyeSpace.z - vertexEyeSpace.z;
 
-					d = vpos[v] - Light[i].org.Position;
+				// irrlicht attenuation model
+#if 1
+				const f32 d = vp.get_inverse_length_xyz();
 
-					f32 dist = (f32) d.getLength();
+				vp.x *= d;
+				vp.y *= d;
+				vp.z *= d;
+				attenuation = light.org.Radius * d;
 
-					attenuation = 1.f / ( ( 1.f / Light[i].org.Radius ) * dist );
+#else
+				const f32 d = vp.get_length_xyz();
+				attenuation = 1.f / (light.constantAttenuation +
+									light.linearAttenuation * d +
+									light.quadraticAttenuation * d * d
+								);
 
-					light = d;
-					light.normalize ();
-				} break;
+				// normalize surface to light
+				vp.normalize_xyz();
+#endif
 
-				case video::ELT_DIRECTIONAL:
-				{
-					attenuation = 1.f;
-					light = Light[i].org.Position;
-					light.normalize ();
-				} break;
-			}
+				lightHalf.x = vp.x - vertexEyeSpaceUnit.x;
+				lightHalf.y = vp.y - vertexEyeSpaceUnit.y;
+				lightHalf.z = vp.z - vertexEyeSpaceUnit.z;
+				lightHalf.normalize_xyz();
+		
+			} break;
 
-			// accumulate ambient
-			ambient += Light[i].AmbientColor * attenuation;
-
-			// build diffuse reflection
-			dot = n[v].dotProduct ( light );
-			if ( dot < 0.f )
+			case video::ELT_DIRECTIONAL:
 			{
-				diffuse += Light[i].DiffuseColor * ( -dot * attenuation );
-			}
+				attenuation = 1.f;
+				vp = light.posEyeSpace;
 
-			// specular
-
-
+				// half angle = lightvector + eye vector ( 0, 0, 1 )
+				lightHalf.x = vp.x;
+				lightHalf.y = vp.y;
+				lightHalf.z = vp.z - 1.f;
+				lightHalf.normalize_xyz();
+			} break;
 		}
 
-		sVec4 final;
+		// build diffuse reflection
 
-		final = Material.EmissiveColor;
-		final += ambient * Material.AmbientColor;
-		final += diffuse * Material.DiffuseColor;
-		final += specular * Material.SpecularColor;
+		//angle between normal and light vector
+		f32 dotVP = core::max_ ( 0.f, normalEyeSpace.dot_xyz ( vp ) );
+		f32 dotHV = core::max_ ( 0.f, normalEyeSpace.dot_xyz ( lightHalf ) );
 
-		final.clampToOne ();
-		dest[v].Color = final;
+		f32 pf;
+		if ( dotVP == 0.0 )
+		{
+			pf = 0.f;
+		}
+		else
+		{
+			pf = powf(dotHV, Material.org.Shininess );
+		}
+
+		// accumulate ambient
+		ambient += light.AmbientColor * attenuation;
+		diffuse += light.DiffuseColor * ( dotVP * attenuation );
+		specular += light.SpecularColor * ( pf * attenuation );
+
 	}
+
+	sVec4 dColor;
+
+	dColor = Global_AmbientLight;
+	dColor += Material.EmissiveColor;
+	dColor += ambient * Material.AmbientColor;
+	dColor += diffuse * Material.DiffuseColor;
+	dColor += specular * Material.SpecularColor;
+	dColor.saturate();
+
+	dest->Color[0] = dColor;
+}
 
 #endif
-}
-
-
-/*!
-*/
-inline void CSoftwareDriver2::select_polygon_mipmap ( s4DVertex *source, u32 vIn, s32 tex )
-{
-	s4DVertex *v0;
-	u32 g;
-
-
-	v0 = source;
-
-	core::dimension2d<f32> d;
-
-	d.Width = (f32) Texmap[tex].Texture->getSize().Width;
-	d.Height = (f32) Texmap[tex].Texture->getSize().Height;
-
-	for ( g = 0; g != vIn; ++g,++v0 )
-	{
-		v0->Tex[tex].x *= v0->Pos.w * d.Width;
-		v0->Tex[tex].y *= v0->Pos.w * d.Height;
-	}
-
-}
-
-//! draws a vertex primitive list
-void CSoftwareDriver2::drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
-{
-	if (!checkPrimitiveCount(primitiveCount))
-		return;
-
-	CNullDriver::drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount, vType, pType);
-
-	if ( 0 == CurrentTriangleRenderer )
-		return;
-
-	s32 stride=0;
-	switch (vType)
-	{
-		case EVT_STANDARD:
-			stride=sizeof(S3DVertex);
-			break;
-		case EVT_2TCOORDS:
-			stride=sizeof(S3DVertex2TCoords);
-			break;
-		case EVT_TANGENTS:
-			stride=sizeof(S3DVertexTangents);
-			break;
-	}
-
-	// triangle face
-	const S3DVertex * face[3];
-	const S3DVertex2TCoords * face2[3];
-	const S3DVertexTangents * faceT[3];
-
-	if (pType == scene::EPT_TRIANGLE_FAN)
-	{
-		// select root vertex
-		switch (vType)
-		{
-			case EVT_STANDARD:
-				face[0] = &((S3DVertex*)vertices)[ indexList [0] ];
-				break;
-			case EVT_2TCOORDS:
-				face2[0] = &((S3DVertex2TCoords*)vertices)[ indexList [0] ];
-				break;
-			case EVT_TANGENTS:
-				// select face
-				faceT[0] = &((S3DVertexTangents*)vertices)[ indexList [0] ];
-				break;
-		}
-	}
-
-	s32 pitch = 1;
-	switch (pType)
-	{
-		case scene::EPT_TRIANGLES:
-			primitiveCount = ( primitiveCount << 1 ) + primitiveCount;
-			pitch=3;
-			break;
-	}
-
-	u32 g;
-	for ( s32 i = 0; i!= primitiveCount; i+=pitch )
-	{
-		switch (vType)
-		{
-			case EVT_STANDARD:
-				// select face
-				if (pType != scene::EPT_TRIANGLE_FAN)
-					face[0] = &((S3DVertex*)vertices)[ indexList [ i + 0 ] ];
-				face[1] = &((S3DVertex*)vertices)[ indexList [ i + 1 ] ];
-				face[2] = &((S3DVertex*)vertices)[ indexList [ i + 2 ] ];
-
-				transform_and_lighting ( CurrentOut, face );
-
-				CurrentOut[0].Tex[0].set ( face[0]->TCoords.X, face[0]->TCoords.Y );
-				CurrentOut[1].Tex[0].set ( face[1]->TCoords.X, face[1]->TCoords.Y );
-				CurrentOut[2].Tex[0].set ( face[2]->TCoords.X, face[2]->TCoords.Y );
-
-				break;
-			case EVT_2TCOORDS:
-				// select face
-				if (pType != scene::EPT_TRIANGLE_FAN)
-					face2[0] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 0 ] ];
-				face2[1] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 1 ] ];
-				face2[2] = &((S3DVertex2TCoords*)vertices)[ indexList [ i + 2 ] ];
-
-				transform_and_lighting ( CurrentOut, (const S3DVertex**) face2 );
-
-				CurrentOut[0].Tex[0].set ( face2[0]->TCoords.X, face2[0]->TCoords.Y );
-				CurrentOut[1].Tex[0].set ( face2[1]->TCoords.X, face2[1]->TCoords.Y );
-				CurrentOut[2].Tex[0].set ( face2[2]->TCoords.X, face2[2]->TCoords.Y );
-
-				CurrentOut[0].Tex[1].set ( face2[0]->TCoords2.X, face2[0]->TCoords2.Y );
-				CurrentOut[1].Tex[1].set ( face2[1]->TCoords2.X, face2[1]->TCoords2.Y );
-				CurrentOut[2].Tex[1].set ( face2[2]->TCoords2.X, face2[2]->TCoords2.Y );
-
-				break;
-			case EVT_TANGENTS:
-				// select face
-				if (pType != scene::EPT_TRIANGLE_FAN)
-					faceT[0] = &((S3DVertexTangents*)vertices)[ indexList [ i + 0 ] ];
-				faceT[1] = &((S3DVertexTangents*)vertices)[ indexList [ i + 1 ] ];
-				faceT[2] = &((S3DVertexTangents*)vertices)[ indexList [ i + 2 ] ];
-
-				transform_and_lighting ( CurrentOut, (const S3DVertex**) faceT );
-				CurrentOut[0].Tex[0].set ( faceT[0]->TCoords.X, faceT[0]->TCoords.Y );
-				CurrentOut[1].Tex[0].set ( faceT[1]->TCoords.X, faceT[1]->TCoords.Y );
-				CurrentOut[2].Tex[0].set ( faceT[2]->TCoords.X, faceT[2]->TCoords.Y );
-		}
-
-		// vertices count per triangle
-		u32 vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 3 );
-		if ( vOut < 3 )
-			continue;
-
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
-
-		// check 2d backface culling on first
-		f32 cross = backface ( CurrentOut );
-
-		if ( Material.org.BackfaceCulling && cross <= 0.f )
-			continue;
-
-		// select mipmap
-
-		f32 texarea;
-		s32 lodLevel;
-
-		for ( g = 0; g != 2; ++g )
-		{
-			if ( Texmap[g].Texture )
-			{
-				texarea = texelarea ( CurrentOut, g );
-				lodLevel = s32_log2_f32 ( texarea / cross );
-				lodLevel = s32_clamp ( lodLevel, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 );
-
-				Texmap[g].Texture->setCurrentMipMapLOD ( lodLevel );
-				select_polygon_mipmap ( CurrentOut, vOut, g );
-			}
-			CurrentTriangleRenderer->setTexture(g, Texmap[g].Texture);
-		}
-
-		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
-		{
-			// rasterize
-			CurrentTriangleRenderer->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
-		}
-	}
-}
-
 
 
 //! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
@@ -1035,8 +1608,7 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 	SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 	const core::rect<s32>* clip)
 {
-	//draw2DRectangle(colorLeftUp, position, clip);
-	//return;
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
 
 	core::rect<s32> pos = position;
 
@@ -1048,56 +1620,99 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 
 	const core::dimension2d<s32> renderTargetSize ( ViewPort.getSize() );
 
-	s32 xPlus = -(renderTargetSize.Width>>1);
-	f32 xFact = 1.0f / (renderTargetSize.Width>>1);
+	const s32 xPlus = -(renderTargetSize.Width>>1);
+	const f32 xFact = 1.0f / (renderTargetSize.Width>>1);
 
-	s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
-	f32 yFact = 1.0f / (renderTargetSize.Height>>1);
+	const s32 yPlus = renderTargetSize.Height-(renderTargetSize.Height>>1);
+	const f32 yFact = 1.0f / (renderTargetSize.Height>>1);
 
-	s4DVertex v[4];
+	// fill VertexCache direct
+	s4DVertex *v;
+
+	VertexCache.vertexCount = 4;
+
+	VertexCache.info[0].index = 0;
+	VertexCache.info[1].index = 1;
+	VertexCache.info[2].index = 2;
+	VertexCache.info[3].index = 3;
+
+	v = &VertexCache.mem.data [ 0 ];
 
 	v[0].Pos.set ( (f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.UpperLeftCorner.Y) * yFact, 0.f, 1.f );
-	v[1].Pos.set ( (f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- pos.UpperLeftCorner.Y) * yFact, 0.f, 1.f );
-	v[2].Pos.set ( (f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.f ,1.f );
-	v[3].Pos.set ( (f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.f, 1.f );
+	v[0].Color[0].setA8R8G8B8 ( colorLeftUp.color );
 
+	v[2].Pos.set ( (f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus- pos.UpperLeftCorner.Y) * yFact, 0.f, 1.f );
+	v[2].Color[0].setA8R8G8B8 ( colorRightUp.color );
 
-	v[0].Color.setA8R8G8B8 ( colorLeftUp.color );
-	v[1].Color.setA8R8G8B8 ( colorRightUp.color );
-	v[2].Color.setA8R8G8B8 ( colorRightDown.color );
-	v[3].Color.setA8R8G8B8 ( colorLeftDown.color );
+	v[4].Pos.set ( (f32)(pos.LowerRightCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.f ,1.f );
+	v[4].Color[0].setA8R8G8B8 ( colorRightDown.color );
 
-
-	ITriangleRenderer2 * render;
-
-	render = TriangleRenderer [ ETR_GOURAUD_ALPHA_NOZ ];
-	render->setRenderTarget(RenderTargetSurface, ViewPort);
-
-	s16 indices[6] = {0,1,2,0,2,3};
+	v[6].Pos.set ( (f32)(pos.UpperLeftCorner.X+xPlus) * xFact, (f32)(yPlus-pos.LowerRightCorner.Y) * yFact, 0.f, 1.f );
+	v[6].Color[0].setA8R8G8B8 ( colorLeftDown.color );
 
 	s32 i;
 	u32 g;
+
+	for ( i = 0; i!= 8; i += 2 )
+	{
+		v[i + 0].flag = clipToFrustumTest ( v + i );
+		v[i + 1].flag = 0;
+		if ( (v[i].flag & VERTEX4D_INSIDE ) == VERTEX4D_INSIDE )
+		{
+			ndc_2_dc_and_project ( v + i + 1, v + i, 2 );
+		}
+	}
+
+
+	IBurningShader * render;
+
+	render = BurningShader [ ETR_GOURAUD_ALPHA_NOZ ];
+	render->setRenderTarget(RenderTargetSurface, ViewPort);
+
+	static const s16 indexList[6] = {0,1,2,0,2,3};
+
+	s4DVertex * face[3];
+
 	for ( i = 0; i!= 6; i += 3 )
 	{
-		// select face
-		CurrentOut[0] = v[ indices [ i + 0 ] ];
-		CurrentOut[1] = v[ indices [ i + 1 ] ];
-		CurrentOut[2] = v[ indices [ i + 2 ] ];
+		face[0] = VertexCache_getVertex ( indexList [ i + 0 ] );
+		face[1] = VertexCache_getVertex ( indexList [ i + 1 ] );
+		face[2] = VertexCache_getVertex ( indexList [ i + 2 ] );
 
-		// vertices count per triangle
-		u32 vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 3 );
+		// test clipping
+		u32 test = face[0]->flag & face[1]->flag & face[2]->flag & VERTEX4D_INSIDE;
+
+		if ( test == VERTEX4D_INSIDE )
+		{
+			render->drawTriangle ( face[0] + 1, face[1] + 1, face[2] + 1 );
+			continue;
+		}
+		// Todo: all vertices are clipped in 2d..
+		// is this true ?
+		u32 vOut = 6;
+		memcpy ( CurrentOut.data + 0, face[0], sizeof ( s4DVertex ) * 2 );
+		memcpy ( CurrentOut.data + 2, face[1], sizeof ( s4DVertex ) * 2 );
+		memcpy ( CurrentOut.data + 4, face[2], sizeof ( s4DVertex ) * 2 );
+
+		vOut = clipToFrustum ( CurrentOut.data, Temp.data, 3 );
 		if ( vOut < 3 )
 			continue;
 
+		vOut <<= 1;
 		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
+		ndc_2_dc_and_project ( CurrentOut.data + 1, CurrentOut.data, vOut );
 
 		// re-tesselate ( triangle-fan, 0-1-2,0-2-3.. )
-		for ( g = 0; g <= vOut - 3; ++g )
+		for ( g = 0; g <= vOut - 6; g += 2 )
 		{
-			render->drawTriangle ( CurrentOut, &CurrentOut[g + 1], &CurrentOut[g + 2] );
+			// rasterize
+			render->drawTriangle ( CurrentOut.data + 1, &CurrentOut.data[g + 3], &CurrentOut.data[g + 5] );
 		}
+
 	}
+#else
+	draw2DRectangle ( colorLeftUp, position, clip );
+#endif
 }
 
 
@@ -1106,38 +1721,46 @@ void CSoftwareDriver2::draw2DRectangle(const core::rect<s32>& position,
 void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
 	const core::vector3df& end, SColor color)
 {
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &CurrentOut[0].Pos.x, start );
-	TransformationMatrix [ ETS_CURRENT].transformVect ( &CurrentOut[1].Pos.x, end );
+	Transformation [ ETS_CURRENT].m.transformVect ( &CurrentOut.data[0].Pos.x, start );
+	Transformation [ ETS_CURRENT].m.transformVect ( &CurrentOut.data[2].Pos.x, end );
 
 	u32 g;
 	u32 vOut;
 
-	// don't lite
-	CurrentOut[0].Color.setA8R8G8B8 ( color.color );
-	CurrentOut[1].Color.setA8R8G8B8 ( color.color );
+	// no clipping flags
+	for ( g = 0; g != CurrentOut.ElementSize; ++g )
+	{
+		CurrentOut.data[g].flag = 0;
+		Temp.data[g].flag = 0;
+	}
 
 	// vertices count per line
-	vOut = clipToFrustrum_NoStat ( CurrentOut, Temp, 2 );
-	if ( vOut >= 2 )
+	vOut = clipToFrustum ( CurrentOut.data, Temp.data, 2 );
+	if ( vOut < 2 )
+		return;
+
+	vOut <<= 1;
+
+	IBurningShader * line;
+	line = BurningShader [ ETR_TEXTURE_GOURAUD_WIRE ];
+	line->setRenderTarget(RenderTargetSurface, ViewPort);
+
+	// to DC Space, project homogenous vertex
+	ndc_2_dc_and_project ( CurrentOut.data + 1, CurrentOut.data, vOut );
+
+	// unproject vertex color
+#ifdef SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+	for ( g = 0; g != vOut; g+= 2 )
 	{
-		ITriangleRenderer2 * line;
-		line = TriangleRenderer [ ETR_TEXTURE_GOURAUD_WIRE ];
-		line->setRenderTarget(RenderTargetSurface, ViewPort);
+		CurrentOut.data[ g + 1].Color[0].setA8R8G8B8 ( color.color );
+	}
+#endif
 
-		// to DC Space, project homogenous vertex
-		ndc_2_dc_and_project ( CurrentOut, vOut );
 
-		// don't lite
-		for ( g = 0; g != vOut; ++g )
-		{
-			CurrentOut[g].Color.setA8R8G8B8 ( color.color );
-		}
-
-		for ( g = 0; g <= vOut - 2; ++g )
-		{
-			// rasterize
-			line->drawLine ( CurrentOut, CurrentOut + g + 1 );
-		}
+	for ( g = 0; g <= vOut - 4; g += 2 )
+	{
+		// rasterize
+		line->drawLine ( CurrentOut.data + 1, CurrentOut.data + g + 3 );
 	}
 }
 
@@ -1147,12 +1770,15 @@ void CSoftwareDriver2::draw3DLine(const core::vector3df& start,
 //! driver, it would return "Direct3D8.1".
 const wchar_t* CSoftwareDriver2::getName()
 {
-#ifdef SOFTWARE_DRIVER_2_32BIT
-	return L"burning's video 0.2 32Bit";
+#ifdef BURNINGVIDEO_RENDERER_BEAUTIFUL
+	return L"burnings video 0.38b";
+#elif defined ( BURNINGVIDEO_RENDERER_ULTRA_FAST )
+	return L"burnings video 0.38uf";
+#elif defined ( BURNINGVIDEO_RENDERER_FAST )
+	return L"burnings video 0.38f";
 #else
-	return L"burning's video 0.2 15Bit";
+	return L"burnings video 0.38";
 #endif
-
 }
 
 //! Returns type of video driver
@@ -1164,7 +1790,7 @@ E_DRIVER_TYPE CSoftwareDriver2::getDriverType()
 //! Returns the transformation set by setTransform
 const core::matrix4& CSoftwareDriver2::getTransform(E_TRANSFORMATION_STATE state)
 {
-	return TransformationMatrix[state];
+	return Transformation[state].m;
 }
 
 //! Creates a render target texture.
@@ -1178,11 +1804,11 @@ ITexture* CSoftwareDriver2::createRenderTargetTexture(const core::dimension2d<s3
 }
 
 
-//! Clears the ZBuffer. 
+//! Clears the DepthBuffer. 
 void CSoftwareDriver2::clearZBuffer()
 {
-	if (ZBuffer)
-		ZBuffer->clear();
+	if (DepthBuffer)
+		DepthBuffer->clear();
 }
 
 
@@ -1206,6 +1832,14 @@ ITexture* CSoftwareDriver2::createDeviceDependentTexture(IImage* surface, const 
 	return new CSoftwareTexture2(surface, name, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS)
 					);
 
+}
+
+//! Returns the maximum amount of primitives (mostly vertices) which
+//! the device is able to render with one drawIndexedTriangleList
+//! call.
+s32 CSoftwareDriver2::getMaximalPrimitiveCount()
+{
+	return 0x00800000;
 }
 
 

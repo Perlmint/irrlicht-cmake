@@ -39,7 +39,10 @@ namespace io
 		virtual s32 getSize();
 
 		//! returns if file is open
-		bool isOpen();
+		virtual bool isOpen() const
+		{
+			return File != 0;
+		}
 
 		//! returns where in the file we are.
 		virtual s32 getPos();

@@ -3,7 +3,6 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 // Code contributed by skreamz
 
-#include <string.h>
 #include "CPakReader.h"
 #include "os.h"
 

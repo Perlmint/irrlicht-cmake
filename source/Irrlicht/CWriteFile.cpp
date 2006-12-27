@@ -33,7 +33,7 @@ CWriteFile::~CWriteFile()
 
 
 //! returns if file is open
-inline bool CWriteFile::isOpen()
+inline bool CWriteFile::isOpen() const
 {
 	return File != 0;
 }

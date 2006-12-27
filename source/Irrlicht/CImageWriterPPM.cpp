@@ -3,8 +3,7 @@
 #include "IWriteFile.h"
 #include "IImage.h"
 #include "dimension2d.h"
-#include <string.h>
-#include <stdio.h>
+#include "irrstring.h"
 
 #include "IrrCompileConfig.h"
 // this should really go into the compile config header.

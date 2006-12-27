@@ -4,8 +4,8 @@
 
 #include "os.h"
 #include "irrString.h"
-#include <stdio.h>
 #include "IrrCompileConfig.h"
+#include "irrmath.h"
 
 #ifdef _IRR_WINDOWS_
 	#if defined(__GNUC__) || (defined(_MSC_VER) && (_MSC_VER < 1299))
