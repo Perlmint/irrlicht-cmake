@@ -83,7 +83,7 @@ int main()
 	
 	if (q3node)
 	{		
-		q3node->setPosition(core::vector3df(-1370,-130,-1400));
+		q3node->setPosition(core::vector3df(-1350,-130,-1400));
 
 		selector = smgr->createOctTreeTriangleSelector(q3levelmesh->getMesh(0), q3node, 128);
 		q3node->setTriangleSelector(selector);

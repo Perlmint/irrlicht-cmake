@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Collision"
+	ProjectGUID="{EB92287F-CBA1-4FF9-801E-89091F0B6D10}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
