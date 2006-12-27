@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="LoadIrrFile"
+	ProjectGUID="{1AD3DB5E-D751-42D5-8F3E-7C3010539F5C}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
