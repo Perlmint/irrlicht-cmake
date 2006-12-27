@@ -130,7 +130,7 @@ int main()
 	/*
 	We add a hello world label to the window, using the GUI environment.
 	*/
-	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
+	guienv->addStaticText(L"Hello World! This is the Irrlicht BurningsVideo renderer!",
 		rect<int>(10,10,260,22), true);
 
 	/*
