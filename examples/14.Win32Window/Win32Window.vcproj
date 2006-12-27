@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Win32Window"
+	ProjectGUID="{3A73BAFE-60DE-4E40-9E37-710760BC25C6}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
