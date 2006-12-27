@@ -39,8 +39,8 @@ namespace scene
 					const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
 			: RelativeTranslation(position), RelativeRotation(rotation), RelativeScale(scale),
 				Parent(parent), ID(id), SceneManager(mgr), TriangleSelector(0),
-				AutomaticCullingEnabled(true), IsVisible(true),
-				DebugDataVisible(false), IsDebugObject(false)
+				AutomaticCullingState(EAC_OFF), IsVisible(true),
+				DebugDataVisible(EDS_OFF), IsDebugObject(false)
 		{
 			if (Parent)
 				Parent->addChild(this);
@@ -139,7 +139,7 @@ namespace scene
 
 		//! Returns the axis aligned, transformed and animated absolute bounding box
 		//! of this node.
-		core::aabbox3d<f32> getTransformedBoundingBox()
+		virtual const core::aabbox3d<f32> getTransformedBoundingBox() const
 		{
 			core::aabbox3d<f32> box = getBoundingBox();
 			AbsoluteTransformation.transformBox(box);
@@ -148,7 +148,7 @@ namespace scene
 
 
 		//! returns the absolute transformation of the node. Is recalculated every OnPostRender()-call.
-		core::matrix4& getAbsoluteTransformation()
+		const core::matrix4& getAbsoluteTransformation() const
 		{
 			return AbsoluteTransformation;
 		}
@@ -311,7 +311,7 @@ namespace scene
 		//! to directly modify the material of a scene node.
 		//! \param num: Zero based index. The maximal value is getMaterialCount() - 1.
 		//! \return Returns the material of that index.
-		virtual video::SMaterial& getMaterial(s32 num)
+		virtual video::SMaterial& getMaterial(u32 num)
 		{
 			return *((video::SMaterial*)0);
 		}
@@ -319,7 +319,7 @@ namespace scene
 
 		//! Returns amount of materials used by this scene node.
 		//! \return Returns current count of materials used by this scene node.
-		virtual s32 getMaterialCount()
+		virtual u32 getMaterialCount()
 		{
 			return 0;
 		}
@@ -331,7 +331,7 @@ namespace scene
 		//! \param newvalue: New value of the flag.
 		void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 		{
-			for (s32 i=0; i<getMaterialCount(); ++i)
+			for (u32 i=0; i<getMaterialCount(); ++i)
 				getMaterial(i).Flags[flag] = newvalue;
 		}
 
@@ -346,7 +346,7 @@ namespace scene
 			if (textureLayer<0 || textureLayer>= video::MATERIAL_MAX_TEXTURES)
 				return;
 
-			for (s32 i=0; i<getMaterialCount(); ++i)
+			for (u32 i=0; i<getMaterialCount(); ++i)
 				getMaterial(i).Textures[textureLayer] = texture;
 		}
 
@@ -356,7 +356,7 @@ namespace scene
 		//! \param newType: New type of material to be set.
 		void setMaterialType(video::E_MATERIAL_TYPE newType)
 		{
-			for (s32 i=0; i<getMaterialCount(); ++i)
+			for (u32 i=0; i<getMaterialCount(); ++i)
 				getMaterial(i).MaterialType = newType;
 		}
 
@@ -429,31 +429,31 @@ namespace scene
 		only reason for existance, for example the OctreeSceneNode.
 		\param enabled: If true, automatic culling is enabled.
 		If false, it is disabled. */
-		void setAutomaticCulling(bool enabled)
+		void setAutomaticCulling( E_CULLING_TYPE state)
 		{
-			AutomaticCullingEnabled = enabled;
+			AutomaticCullingState = state;
 		}
 
 
 		//! Gets the automatic culling state.
 		/** \return The node is culled based on its bounding box if this method
 		 returns true, otherwise no culling is performed. */
-		bool getAutomaticCulling() const
+		E_CULLING_TYPE getAutomaticCulling() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return AutomaticCullingEnabled;
+			return AutomaticCullingState;
 		}
 
 
 		//! Sets if debug data like bounding boxes should be drawn.
 		/** Please note that not all scene nodes support this feature. */
-		void setDebugDataVisible(bool visible)
+		void setDebugDataVisible(E_DEBUG_SCENE_TYPE visible)
 		{
 			DebugDataVisible = visible;
 		}
 
 		//! Returns if debug data like bounding boxes are drawed.
-		bool isDebugDataVisible()
+		E_DEBUG_SCENE_TYPE isDebugDataVisible()
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return DebugDataVisible;
@@ -537,8 +537,15 @@ namespace scene
 		virtual void updateAbsolutePosition()
 		{
 			if (Parent && SceneManager && (Parent != SceneManager->getRootSceneNode()))
+			{
+				AbsoluteTransformation.setbyproduct (	Parent->getAbsoluteTransformation(),
+														getRelativeTransformation()
+													);
+/*														
 				AbsoluteTransformation =
 					Parent->getAbsoluteTransformation() * getRelativeTransformation();
+*/
+			}
 			else
 				AbsoluteTransformation = getRelativeTransformation();
 		}
@@ -566,8 +573,8 @@ namespace scene
 			out->addVector3d("Rotation", RelativeRotation );
 			out->addVector3d("Scale", RelativeScale );
 			out->addBool	("Visible", IsVisible );
-			out->addBool	("AutomaticCulling", AutomaticCullingEnabled);
-			out->addBool	("DebugDataVisible", DebugDataVisible );
+			out->addEnum	("AutomaticCulling", AutomaticCullingState, AutomaticCullingNames);
+			out->addInt		("DebugDataVisible", DebugDataVisible );
 			out->addBool	("IsDebugObject", IsDebugObject );
 		}
 
@@ -582,8 +589,9 @@ namespace scene
 			RelativeRotation = in->getAttributeAsVector3d("Rotation");
 			RelativeScale = in->getAttributeAsVector3d("Scale");
 			IsVisible = in->getAttributeAsBool("Visible");
-			AutomaticCullingEnabled = in->getAttributeAsBool("AutomaticCulling");
-			DebugDataVisible = in->getAttributeAsBool("DebugDataVisible");
+			AutomaticCullingState = (scene::E_CULLING_TYPE ) in->getAttributeAsEnumeration("AutomaticCulling", scene::AutomaticCullingNames);
+
+			DebugDataVisible = (scene::E_DEBUG_SCENE_TYPE ) in->getAttributeAsInt("DebugDataVisible");
 			IsDebugObject = in->getAttributeAsBool("IsDebugObject");
 
 			updateAbsolutePosition();
@@ -625,13 +633,13 @@ namespace scene
 		ITriangleSelector* TriangleSelector;
 
 		//! automatic culling
-		bool AutomaticCullingEnabled;
+		E_CULLING_TYPE AutomaticCullingState;
 
 		//! is the node visible?
 		bool IsVisible;
 
 		//! flag if debug data should be drawn, such as Bounding Boxes.
-		bool DebugDataVisible;
+		E_DEBUG_SCENE_TYPE DebugDataVisible;
 
 		//! is debug object?
 		bool IsDebugObject;

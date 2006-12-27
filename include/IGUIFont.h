@@ -9,6 +9,8 @@
 #include "rect.h"
 #include "irrTypes.h"
 #include "SColor.h"
+#include "irrArray.h"
+#include <ITexture.h>
 
 namespace irr
 {
@@ -46,6 +48,18 @@ public:
 	\return Returns zero based index of the character in the text, and -1 if no no character
 	is on this position. (=the text is too short). */
 	virtual s32 getCharacterFromPos(const wchar_t* text, s32 pixel_x) = 0;
+
+	//! set an Pixel Offset on Drawing ( scale position on width )
+	virtual void setKerning ( s32 kerning ) = 0;
+	//! set an Pixel Offset on Drawing ( scale position on width )
+	virtual s32 getKerning () = 0;
+
+	//! get the Font Texture
+	virtual video::ITexture* getTexture () = 0;
+	//! returns the parsed Symbol Information
+	virtual const core::array< core::rect<s32> > & getPositions () = 0;
+
+
 };
 
 } // end namespace gui

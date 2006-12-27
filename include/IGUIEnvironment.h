@@ -120,7 +120,7 @@ public:
 	 Returns a pointer to the created button. Returns 0 if an error occured.
 	 This pointer should not be dropped. See IUnknown::drop() for more information. */
 	virtual IGUIButton* addButton(const core::rect<s32>& rectangle,
-		IGUIElement* parent=0, s32 id=-1, const wchar_t* text=0) = 0;
+		IGUIElement* parent=0, s32 id=-1, const wchar_t* text=0, const wchar_t* tooltiptext = 0) = 0;
 
 	//! Adds an empty window element. 
 	/** \param modal: Defines if the dialog is modal. This means, that all other

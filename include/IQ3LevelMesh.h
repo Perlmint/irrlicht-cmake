@@ -6,11 +6,13 @@
 #define __I_Q3_LEVEL_MESH_H_INCLUDED__
 
 #include "IAnimatedMesh.h"
+#include "IQ3Shader.h"
 
 namespace irr
 {
 namespace scene
 {
+	using namespace quake3;
 
 	//! Interface for a Mesh wich can be loaded directly from a Quake3 .bsp-file.
 	/** The Mesh tries to load all textures of the map. There are currently 
@@ -22,6 +24,20 @@ namespace scene
 
 		//! destructor
 		virtual ~IQ3LevelMesh() {};
+
+		//! releases a Mesh from the Q3 Loader
+		virtual void releaseMesh ( s32 index ) = 0;
+
+		//! loads the shader definition
+		//  either from file ( we assume /scripts on fileNameIsValid == 0 )
+		virtual const SShader * getShader ( const c8 * filename, s32 fileNameIsValid ) = 0;
+
+		//! returns a already loaded Shader
+		virtual const SShader * getShader ( u32 index  ) const = 0;
+
+		//! get's an interface to the entities
+		virtual const tQ3EntityList & getEntityList () = 0;
+
 	};
 
 } // end namespace scene

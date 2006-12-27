@@ -96,7 +96,10 @@ class ITexture : public virtual IUnknown
 public:
 
 	//! constructor
-	ITexture(const c8* name) : Name(name) { Name.make_lower(); }
+	ITexture(const c8* name) : Name(name)
+	{
+		Name.make_lower();
+	}
 
 	//! destructor
 	virtual ~ITexture() {};
@@ -144,7 +147,7 @@ public:
 	/** The pitch is the amount of bytes
 	used for a row of pixels in a texture.
 	\return Returns pitch of texture in bytes. */
-	virtual s32 getPitch() = 0;
+	virtual u32 getPitch() const = 0;
 
 	//! Returns whether the texture has MipMaps
 	/** \return Returns true if texture has MipMaps, else false. */
@@ -157,13 +160,9 @@ public:
 	//! Returns name of texture (in most cases this is the filename)
 	const core::stringc& getName() { return Name; }
 
-	//! Returns texture transformation matrix
-	core::matrix4& getTransformation() { return Transformation; }
-
 protected:
 
 	core::stringc Name;
-	core::matrix4 Transformation;
 };
 
 

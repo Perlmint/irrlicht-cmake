@@ -30,19 +30,34 @@ namespace scene
 		{
 			// drop buffers
 			for (u32 i=0; i<MeshBuffers.size(); ++i)
+			{
 				MeshBuffers[i]->drop();
+			}
 		};
 
 		//! returns amount of mesh buffers.
-		virtual s32 getMeshBufferCount()
+		virtual u32 getMeshBufferCount() const
 		{
 			return MeshBuffers.size();
 		}
 
 		//! returns pointer to a mesh buffer
-		virtual IMeshBuffer* getMeshBuffer(s32 nr)
+		virtual IMeshBuffer* getMeshBuffer(u32 nr) const
 		{
 			return MeshBuffers[nr];
+		}
+
+		//! returns a meshbuffer which fits a material
+		// reverse search
+		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial & material) const
+		{
+			for (s32 i = (s32) MeshBuffers.size(); --i >= 0; )
+			{
+				if ( !(material != MeshBuffers[i]->getMaterial()) )
+					return MeshBuffers[i];
+			}
+
+			return 0;
 		}
 
 		//! returns an axis aligned bounding box

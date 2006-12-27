@@ -6,7 +6,7 @@
 #define __IRR_COMPILE_CONFIG_H_INCLUDED__
 
 //! Irrlicht SDK Version
-#define IRRLICHT_SDK_VERSION "1.2"
+#define IRRLICHT_SDK_VERSION "1.2b"
 
 //! The defines for different operating system are:
 //! _XBOX for XBox
@@ -156,6 +156,37 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 #undef _IRR_COMPILE_WITH_DIRECT3D_9_
 #pragma message("Compiling Irrlicht with Visual Studio 6.0, support for DX9 is disabled.")
 #endif
+#endif
+
+//! Define one of the three setting for Burning's Video Software Rasterizer
+/** So if we were marketing guys we could says Irrlicht has 4 Software-Rasterizers.
+	In a Nutshell:
+		All Burnings Rasterizers use 32 Bit Backbuffer, 32Bit Texture & 32 Bit Z or WBuffer,
+		16 Bit/32 Bit can be adjusted on a global flag.
+
+		BURNINGVIDEO_RENDERER_BEAUTIFUL 
+			Vertexcolor + Lighting + Per Pixel Perspective Correct + SubPixel/SubTexel Correct + 
+			Bilinear Texturefiltering + WBuffer
+
+		BURNINGVIDEO_RENDERER_FAST
+			Per Pixel Perspective Correct + SubPixel/SubTexel Correct + WBuffer +
+			Bilinear Dithering TextureFilterung + WBuffer
+
+		BURNINGVIDEO_RENDERER_ULTRA_FAST
+			SubPixel/SubTexel Correct + ZBuffer
+*/
+
+#define BURNINGVIDEO_RENDERER_BEAUTIFUL
+//#define BURNINGVIDEO_RENDERER_FAST
+//#define BURNINGVIDEO_RENDERER_ULTRA_FAST
+
+
+//! Set FPU settings
+/** Irrlicht should use approximate float and integer fpu techniques
+precision will be lower but speed higher. currently X86 only
+*/
+#if !defined(MACOSX) && !defined(__sun__)
+	//#define IRRLICHT_FAST_MATH
 #endif
 
 #endif

@@ -81,7 +81,7 @@ public:
 
 
 	//! Returns the absolute rectangle of element.
-	core::rect<s32> getAbsolutePosition()
+	core::rect<s32> getAbsolutePosition() const
 	{
 		return AbsoluteRect;
 	}
@@ -187,6 +187,18 @@ public:
 			(*it)->draw();
 	}
 
+	//! animate the element and its children.
+	virtual void OnPostRender(u32 timeMs)
+	{
+		if (!IsVisible)
+			return;
+
+		core::list<IGUIElement*>::Iterator it = Children.begin();
+		for (; it != Children.end(); ++it)
+			(*it)->OnPostRender( timeMs );
+	}
+
+
 
 	//! Moves this element.
 	virtual void move(core::position2d<s32> absoluteMovement)
@@ -238,6 +250,19 @@ public:
 	virtual const wchar_t* getText()
 	{
 		return Text.c_str();
+	}
+
+	//! Sets the new caption of this element.
+	virtual void setToolTipText(const wchar_t* text)
+	{
+		ToolTipText = text;
+	}
+
+
+	//! Returns caption of this element.
+	virtual core::stringw &getToolTipText()
+	{
+		return ToolTipText;
 	}
 
 
@@ -351,6 +376,9 @@ protected:
 
 	//! caption
 	core::stringw Text;
+
+	//! tooltip
+	core::stringw ToolTipText;
 
 	//! id
 	s32 ID;

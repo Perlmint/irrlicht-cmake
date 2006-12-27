@@ -19,6 +19,7 @@ namespace video
 		//! supposed to be the diffuse material.
 		EMT_SOLID = 0,
 
+
 		//! Solid material with 2 texture layers. The second is blended onto the
 		//! first using the alpha value of the vertex colors.
 		//! This material is currently not implemented in OpenGL, but it
@@ -179,9 +180,54 @@ namespace video
 		//! EMT_TRANSPARENT_VERTEX_ALPHA as base material.
 		EMT_PARALLAX_MAP_TRANSPARENT_VERTEX_ALPHA,
 
+		//! BlendFunc = source * sourceFactor + dest * destFactor ( E_BLEND_FUNC )
+		//! Using only Texture1. generic Blender
+		EMT_ONETEXTURE_BLEND,
+
 		//! This value is not used. It only forces this enumeration to compile in 32 bit.
 		EMT_FORCE_32BIT = 0x7fffffff
 	};
+
+	//! Flag for EMT_ONETEXTURE_BLEND, ( BlendFactor )
+	//! BlendFunc = source * sourceFactor + dest * destFactor
+	enum E_BLEND_FACTOR
+	{
+		EBF_ZERO	= 0,			// src & dest	(0, 0, 0, 0)
+		EBF_ONE,					// src & dest	(1, 1, 1, 1)
+		EBF_DST_COLOR, 				// src			(destR, destG, destB, destA)
+		EBF_ONE_MINUS_DST_COLOR, 	// src			(1-destR, 1-destG, 1-destB, 1-destA)
+		EBF_SRC_COLOR,			 	// dest			(srcR, srcG, srcB, srcA)
+		EBF_ONE_MINUS_SRC_COLOR, 	// dest			(1-srcR, 1-srcG, 1-srcB, 1-srcA)
+		EBF_SRC_ALPHA,				// src & dest	(srcA, srcA, srcA, srcA)
+		EBF_ONE_MINUS_SRC_ALPHA,	// src & dest	(1-srcA, 1-srcA, 1-srcA, 1-srcA)
+		EBF_DST_ALPHA,				// src & dest	(destA, destA, destA, destA)
+		EBF_ONE_MINUS_DST_ALPHA,	// src & dest	(1-destA, 1-destA, 1-destA, 1-destA)
+		EBF_SRC_ALPHA_SATURATE,		// src			(min(srcA, 1-destA), idem, ...)
+	};
+
+	//! MaterialTypeParam: eg. DirectX: D3DTOP_MODULATE, D3DTOP_MODULATE2X, D3DTOP_MODULATE4X
+	enum E_MODULATE_FUNC
+	{
+		EMF_MODULATE_1X	= 1,
+		EMF_MODULATE_2X	= 2,
+		EMF_MODULATE_4X	= 4,
+	};
+
+	//! EMT_ONETEXTURE_BLEND: pack srcFact & dstFact and Modulo to MaterialTypeParam
+	inline f32 pack_texureBlendFunc ( const E_BLEND_FACTOR srcFact, const E_BLEND_FACTOR dstFact, const E_MODULATE_FUNC modulate )
+	{
+		u32 state = modulate << 16 | srcFact << 8 | dstFact;
+		return (f32&) state;
+	}
+
+	//! EMT_ONETEXTURE_BLEND: unpack srcFact & dstFact and Modulo to MaterialTypeParam
+	inline void unpack_texureBlendFunc ( E_BLEND_FACTOR &srcFact, E_BLEND_FACTOR &dstFact, E_MODULATE_FUNC &modulo, const f32 param )
+	{
+		u32 state = (u32&)(param);
+		modulo	= E_MODULATE_FUNC  ( ( state & 0x00FF0000 ) >> 16 );
+		srcFact = E_BLEND_FACTOR   ( ( state & 0x0000FF00 ) >> 8  );
+		dstFact = E_BLEND_FACTOR   ( ( state & 0x000000FF )       );
+	}
 
 
 	//! Material flags
@@ -253,7 +299,7 @@ namespace video
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
 			BilinearFilter(true), TrilinearFilter(true), AnisotropicFilter(true),
-			FogEnable(false), NormalizeNormals(false)
+			FogEnable(false), NormalizeNormals(false),TextureWrap(true)
 		{}
 
 		//! Type of the material. Specifies how everything is blended together
@@ -362,10 +408,12 @@ namespace video
 				bool Lighting;
 
 				//! Is the ZBuffer enabled? Default: true
-				bool ZBuffer;
+				//! Changed from Bool to Integer
+				// ( 0 == ZBuffer Off, 1 == ZBuffer LessEqual, 2 == ZBuffer Equal )
+				u32 ZBuffer;
 
 				//! May be written to the zbuffer or is it readonly.
-				/** Default: true This flag is ignored, if the MaterialType
+				/** Default: 1 This flag is ignored, if the MaterialType
 				is a transparent type. */
 				bool ZWriteEnable;
 
@@ -391,6 +439,9 @@ namespace video
 
 				//! Should normals be normalized? Default: false
 				bool NormalizeNormals;
+
+				//! Texture Address Mode ( Wrap == Default, Clamp == false )
+				u32 TextureWrap;
 			};
 
 			//! Array representing all flags.
@@ -399,9 +450,12 @@ namespace video
 
 
 		//! Compare operator
-		inline bool operator!=(const SMaterial& b)
+		inline bool operator!=(const SMaterial& b) const
 		{
-			return MaterialType != b.MaterialType ||
+			return 
+				Texture1 != b.Texture1 ||
+				Texture2 != b.Texture2 ||
+				MaterialType != b.MaterialType ||
 				AmbientColor != b.AmbientColor ||
 				DiffuseColor != b.DiffuseColor ||
 				EmissiveColor != b.EmissiveColor ||
@@ -422,10 +476,9 @@ namespace video
 				AnisotropicFilter != b.AnisotropicFilter ||
 				FogEnable != b.FogEnable ||
 				NormalizeNormals != b.NormalizeNormals ||
-				Texture1 != b.Texture1 ||
-				Texture2 != b.Texture2 ||
 				Texture3 != b.Texture3 ||
-				Texture4 != b.Texture4;
+				Texture4 != b.Texture4 ||
+				TextureWrap != b.TextureWrap;
 		}
 	};
 

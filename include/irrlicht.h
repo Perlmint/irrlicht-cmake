@@ -32,7 +32,7 @@
 #include "IrrCompileConfig.h"
 #include "aabbox3d.h"
 #include "irrArray.h"
-#include "irrMap.h"
+//#include "irrMap.h"
 #include "SColor.h"
 #include "SLight.h"
 #include "dimension2d.h"
@@ -43,6 +43,8 @@
 #include "IAnimatedMesh.h"
 #include "IAnimatedMeshMD2.h"
 #include "IAnimatedMeshMS3D.h"
+#include "IAnimatedMeshMS3D.h"
+#include "IQ3LevelMesh.h"
 #include "IAnimatedMeshX.h"
 #include "IAnimatedMeshB3d.h"
 #include "IAnimatedMeshSceneNode.h"
@@ -130,7 +132,7 @@
 #include "SMeshBuffer.h"
 #include "SMeshBufferLightMap.h"
 #include "SMeshBufferTangents.h"
-#include "SViewFrustrum.h"
+#include "SViewFrustum.h"
 #include "irrTypes.h"
 
 

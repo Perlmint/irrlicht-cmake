@@ -7,10 +7,11 @@
 
 #include "irrTypes.h"
 #include "vector3d.h"
+#include "vector2d.h"
 #include "plane3d.h"
 #include "aabbox3d.h"
 #include "rect.h"
-#include <string.h>
+#include "irrstring.h"
 
 namespace irr
 {
@@ -26,14 +27,25 @@ namespace core
 	{
 		public:
 
-			//! Constructor
-			matrix4();
+			//! Constructor Flags
+			enum eConstructor
+			{
+				EM4CONST_NOTHING = 0,
+				EM4CONST_COPY,
+				EM4CONST_IDENTITY,
+				EM4CONST_TRANSPOSED,
+				EM4CONST_INVERSE,
+				EM4CONST_INVERSE_TRANSPOSED,
+			};
+
+			matrix4( eConstructor constructor = EM4CONST_IDENTITY );
+			matrix4( const matrix4& other,eConstructor constructor = EM4CONST_COPY);
 
 			//! Simple operator for directly accessing every element of the matrix.
-			f32& operator()(s32 row, s32 col) { return M[row * 4 + col]; }
+			f32& operator()(const s32 row, const s32 col) { return M[ (row << 2 ) | col ]; }
 
 			//! Simple operator for directly accessing every element of the matrix.
-			const f32& operator()(s32 row, s32 col) const { return M[row * 4 + col]; }
+			const f32& operator()(const s32 row, const s32 col) const { return M[(row << 2 ) | col]; }
 
 			//! Sets this matrix equal to the other matrix.
 			inline matrix4& operator=(const matrix4 &other);
@@ -44,17 +56,27 @@ namespace core
 			//! Returns true if other matrix is not equal to this matrix.
 			bool operator!=(const matrix4 &other) const;
 
-			//! Multiply by another matrix.
-			matrix4& operator*=(const matrix4& other);
+			//! set this matrix to the product of two matrices
+			void setbyproduct(const matrix4& other_a,const matrix4& other_b );
+
+			//! set this matrix to the product of two matrices, no logical optimation
+			//! use it if you know you never have a identity matrix
+			void setbyproduct_nocheck(const matrix4& other_a,const matrix4& other_b );
 
 			//! Multiply by another matrix.
 			matrix4 operator*(const matrix4& other) const;
+
+			//! Multiply by another matrix.
+			void operator*=(const matrix4& other);
 
 			//! Set matrix to identity.
 			inline void makeIdentity();
 
 			//! Returns true if the matrix is the identity matrix
 			bool isIdentity() const;
+
+			//! Returns true if the matrix is the identity matrix
+			bool isIdentity_integer_base () const;
 
 			//! Set the translation of the current matrix. Will erase any previous values.
 			void setTranslation( const vector3df& translation );
@@ -99,16 +121,22 @@ namespace core
 			void transformVect( vector3df& vect) const;
 
 			//! Transforms input vector by this matrix and stores result in output vector
-			void transformVect( const vector3df& in, vector3df& out) const;
+			void transformVect( vector3df& out, const vector3df& in ) const;
 
 			//! An alternate transform vector method, writing into an array of 4 floats
 			void transformVect(f32 *out,const core::vector3df &in) const;
+
+			//! An alternate transform vector method, writing into an array of 4 floats
+			void rotateVect(f32 *out,const core::vector3df &in) const;
 
 			//! Translate a vector by the translation part of this matrix.
 			void translateVect( vector3df& vect ) const;
 
 			//! Transforms a plane by this matrix
 			void transformPlane( core::plane3d<f32> &plane) const;
+
+			//! Transforms a plane by this matrix ( some problems to solve..)
+			void transformPlane_new( core::plane3d<f32> &plane) const;
 
 			//! Transforms a plane by this matrix
 			void transformPlane( const core::plane3d<f32> &in, core::plane3d<f32> &out) const;
@@ -129,6 +157,11 @@ namespace core
 			//! Calculates inverse of matrix. Slow.
 			//! \return Returns false if there is no inverse matrix.
 			bool makeInverse();
+
+
+			//! Inverts a primitive matrix which only contains a tranlation and a rotation
+			//! \param out: where result matrix is written to.
+			bool getInversePrimitive ( matrix4& out ) const;
 
 			//! returns the inversed matrix of this one
 			//! \param out: where result matrix is written to.
@@ -178,55 +211,149 @@ namespace core
 			//! returns transposed matrix
 			matrix4 getTransposed() const;
 
+			//! returns transposed matrix to a plain 4x4 float matrix
+			void getTransposed( f32 * dest ) const;
+
+			/*!
+				construct 2D Texture transformations
+				rotate about center, scale, and transform.
+			*/
+			void setTextureScale ( f32 sx, f32 sy );
+
+			void setTextureRotationCenter( f32 radAngle );
+			void setTextureScaleCenter( f32 sx, f32 sy );
+
+			void setTextureTranslate ( f32 x, f32 y );
+
+			void buildTextureTransform( f32 rotateRad,
+														const core::vector2df &rotatecenter,
+														const core::vector2df &translate,
+														const core::vector2df &scale
+													);
+
 			//! Matrix data, stored in row-major order
 			f32 M[16];
 	};
 
-
-	inline matrix4::matrix4()
+	inline matrix4::matrix4( matrix4::eConstructor constructor )
 	{
-		makeIdentity();
+		switch ( constructor )
+		{
+			case EM4CONST_IDENTITY:
+				makeIdentity();
+				break;
+		}
+		
 	}
 
+	inline matrix4::matrix4( const matrix4& other,matrix4::eConstructor constructor)
+	{
+		*this = other;
+	}
+
+
+	//! Multiply by another matrix.
+	inline void matrix4::operator*=(const matrix4& other)
+	{
+		matrix4 temp ( *this );
+		setbyproduct ( temp, other );
+	}
 
 	//! multiply by another matrix
-	inline matrix4& matrix4::operator*=(const matrix4& other)
+	// set this matrix to the product of two other matrices
+	// goal is to reduce stack use and copy
+	inline void matrix4::setbyproduct(const matrix4& other_a,const matrix4& other_b )
 	{
-		f32 newMatrix[16];
-		const f32 *m1 = M, *m2 = other.M;
+		if ( other_b.isIdentity () )
+		{
+			*this = other_a;
+			return;
+		}
+		else
+		if ( other_a.isIdentity () )
+		{
+			*this = other_b;
+			return;
+		}
 
-		newMatrix[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
-		newMatrix[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
-		newMatrix[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
-		newMatrix[3] = m1[3]*m2[0] + m1[7]*m2[1] + m1[11]*m2[2] + m1[15]*m2[3];
+		const f32 *m1 = other_a.M;
+		const f32 *m2 = other_b.M;
 
-		newMatrix[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7];
-		newMatrix[5] = m1[1]*m2[4] + m1[5]*m2[5] + m1[9]*m2[6] + m1[13]*m2[7];
-		newMatrix[6] = m1[2]*m2[4] + m1[6]*m2[5] + m1[10]*m2[6] + m1[14]*m2[7];
-		newMatrix[7] = m1[3]*m2[4] + m1[7]*m2[5] + m1[11]*m2[6] + m1[15]*m2[7];
 
-		newMatrix[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11];
-		newMatrix[9] = m1[1]*m2[8] + m1[5]*m2[9] + m1[9]*m2[10] + m1[13]*m2[11];
-		newMatrix[10] = m1[2]*m2[8] + m1[6]*m2[9] + m1[10]*m2[10] + m1[14]*m2[11];
-		newMatrix[11] = m1[3]*m2[8] + m1[7]*m2[9] + m1[11]*m2[10] + m1[15]*m2[11];
+		M[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
+		M[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
+		M[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
+		M[3] = m1[3]*m2[0] + m1[7]*m2[1] + m1[11]*m2[2] + m1[15]*m2[3];
 
-		newMatrix[12] = m1[0]*m2[12] + m1[4]*m2[13] + m1[8]*m2[14] + m1[12]*m2[15];
-		newMatrix[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
-		newMatrix[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
-		newMatrix[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
+		M[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7];
+		M[5] = m1[1]*m2[4] + m1[5]*m2[5] + m1[9]*m2[6] + m1[13]*m2[7];
+		M[6] = m1[2]*m2[4] + m1[6]*m2[5] + m1[10]*m2[6] + m1[14]*m2[7];
+		M[7] = m1[3]*m2[4] + m1[7]*m2[5] + m1[11]*m2[6] + m1[15]*m2[7];
 
-		memcpy(M, newMatrix, 16*sizeof(f32));
+		M[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11];
+		M[9] = m1[1]*m2[8] + m1[5]*m2[9] + m1[9]*m2[10] + m1[13]*m2[11];
+		M[10] = m1[2]*m2[8] + m1[6]*m2[9] + m1[10]*m2[10] + m1[14]*m2[11];
+		M[11] = m1[3]*m2[8] + m1[7]*m2[9] + m1[11]*m2[10] + m1[15]*m2[11];
 
-		return *this;
+		M[12] = m1[0]*m2[12] + m1[4]*m2[13] + m1[8]*m2[14] + m1[12]*m2[15];
+		M[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
+		M[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
+		M[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
 	}
 
+	//! multiply by another matrix
+	// set this matrix to the product of two other matrices
+	// goal is to reduce stack use and copy
+	inline void matrix4::setbyproduct_nocheck(const matrix4& other_a,const matrix4& other_b )
+	{
+		const f32 *m1 = other_a.M;
+		const f32 *m2 = other_b.M;
+
+
+		M[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
+		M[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
+		M[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
+		M[3] = m1[3]*m2[0] + m1[7]*m2[1] + m1[11]*m2[2] + m1[15]*m2[3];
+
+		M[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7];
+		M[5] = m1[1]*m2[4] + m1[5]*m2[5] + m1[9]*m2[6] + m1[13]*m2[7];
+		M[6] = m1[2]*m2[4] + m1[6]*m2[5] + m1[10]*m2[6] + m1[14]*m2[7];
+		M[7] = m1[3]*m2[4] + m1[7]*m2[5] + m1[11]*m2[6] + m1[15]*m2[7];
+
+		M[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11];
+		M[9] = m1[1]*m2[8] + m1[5]*m2[9] + m1[9]*m2[10] + m1[13]*m2[11];
+		M[10] = m1[2]*m2[8] + m1[6]*m2[9] + m1[10]*m2[10] + m1[14]*m2[11];
+		M[11] = m1[3]*m2[8] + m1[7]*m2[9] + m1[11]*m2[10] + m1[15]*m2[11];
+
+		M[12] = m1[0]*m2[12] + m1[4]*m2[13] + m1[8]*m2[14] + m1[12]*m2[15];
+		M[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
+		M[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
+		M[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
+
+
+	}
 
 
 	//! multiply by another matrix
 	inline matrix4 matrix4::operator*(const matrix4& other) const
 	{
-		matrix4 tmtrx;
-		const f32 *m1 = M, *m2 = other.M;
+		matrix4 tmtrx ( EM4CONST_NOTHING );
+
+		// Testing purpose.. 
+		if ( this->isIdentity () )
+		{
+			tmtrx = other;
+			return tmtrx;
+		}
+
+		if ( other.isIdentity () )
+		{
+			tmtrx = *this;
+			return tmtrx;
+		}
+
+		const f32 *m1 = M;
+		const f32 *m2 = other.M;
 		f32 *m3 = tmtrx.M;
 
 		m3[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
@@ -321,6 +448,8 @@ namespace core
 		M[10] = (f32)( cr*cp );
 	}
 
+
+
 	//! Returns the rotation, as set by setRotation(). This code was sent
 	//! in by Chev.
 	inline core::vector3df matrix4::getRotationDegrees() const
@@ -329,7 +458,7 @@ namespace core
 
 		f64 Y = -asin(mat(0,2));
 		f64 C = cos(Y);
-		Y *= GRAD_PI;
+		Y *= RADTODEG64;
 
 		f64 rotx, roty, X, Z;
 
@@ -337,17 +466,17 @@ namespace core
 		{
 			rotx = mat(2,2) / C;
 			roty = mat(1,2) / C;
-			X = atan2( roty, rotx ) * GRAD_PI;
+			X = atan2( roty, rotx ) * RADTODEG64;
 			rotx = mat(0,0) / C;
 			roty = mat(0,1) / C;
-			Z = atan2( roty, rotx ) * GRAD_PI;
+			Z = atan2( roty, rotx ) * RADTODEG64;
 		}
 		else
 		{
 			X = 0.0f;
 			rotx = mat(1,1);
 			roty = -mat(1,0);
-			Z = atan2( roty, rotx ) * GRAD_PI;
+			Z = atan2( roty, rotx ) * RADTODEG64;
 		}
 
 		// fix values that get below zero
@@ -386,6 +515,8 @@ namespace core
 	}
 
 
+	/*!
+	*/
 	inline void matrix4::makeIdentity()
 	{
 		memset(M, 0, 16*sizeof(f32));
@@ -393,8 +524,19 @@ namespace core
 	}
 
 
+	/*
+		check identiy with epsilon
+		solve floating range problems..
+	*/
 	inline bool matrix4::isIdentity() const
 	{
+		if (	!equals ( M[ 0], 1.f ) ||
+				!equals ( M[ 5], 1.f ) ||
+				!equals ( M[10], 1.f ) ||
+				!equals ( M[15], 1.f )
+			)
+			return false;
+
 		for (s32 i=0; i<4; ++i)
 			for (s32 j=0; j<4; ++j)
 			if (j != i)
@@ -403,15 +545,49 @@ namespace core
 					(*this)(i,j) > 0.0000001f)
 					return false;
 			}
+/*
 			else
 			{
 				if ((*this)(i,j) < 0.9999999f ||
 					(*this)(i,j) > 1.0000001f)
 					return false;
 			}
-
+*/
 		return true;
 	}
+
+	/*
+		doesn't solve floating range problems..
+		but takes care on +/- 0 on translation because we are changing it..
+		reducing floating point branches
+		but it need's the floats in memory..
+	*/
+	inline bool matrix4::isIdentity_integer_base() const
+	{
+		if(IR(M[0])!=F32_VALUE_1)	return false;
+		if(IR(M[1])!=0)				return false;
+		if(IR(M[2])!=0)				return false;
+		if(IR(M[3])!=0)				return false;
+
+		if(IR(M[4])!=0)				return false;
+		if(IR(M[5])!=F32_VALUE_1)	return false;
+		if(IR(M[6])!=0)				return false;
+		if(IR(M[7])!=0)				return false;
+
+		if(IR(M[8])!=0)				return false;
+		if(IR(M[9])!=0)				return false;
+		if(IR(M[10])!=F32_VALUE_1)	return false;
+		if(IR(M[11])!=0)			return false;
+
+		if(IR(M[12])!=0)			return false;
+		if(IR(M[13])!=0)			return false;
+		if(IR(M[13])!=0)			return false;
+		if(IR(M[15])!=F32_VALUE_1)	return false;
+		return true;
+
+	}
+
+
 
 	inline void matrix4::rotateVect( vector3df& vect ) const
 	{
@@ -419,6 +595,14 @@ namespace core
 		vect.X = tmp.X*M[0] + tmp.Y*M[4] + tmp.Z*M[8];
 		vect.Y = tmp.X*M[1] + tmp.Y*M[5] + tmp.Z*M[9];
 		vect.Z = tmp.X*M[2] + tmp.Y*M[6] + tmp.Z*M[10];
+	}
+
+	//! An alternate transform vector method, writing into an array of 4 floats
+	inline void matrix4::rotateVect(f32 *out,const core::vector3df &in) const
+	{
+		out[0] = in.X*M[0] + in.Y*M[4] + in.Z*M[8];
+		out[1] = in.X*M[1] + in.Y*M[5] + in.Z*M[9];
+		out[2] = in.X*M[2] + in.Y*M[6] + in.Z*M[10];
 	}
 
 	inline void matrix4::inverseRotateVect( vector3df& vect ) const
@@ -442,19 +626,18 @@ namespace core
 		vect.Z = vector[2];
 	}
 
-	inline void matrix4::transformVect( const vector3df& in, vector3df& out) const
+	inline void matrix4::transformVect( vector3df& out,const vector3df& in) const
 	{
 		out.X = in.X*M[0] + in.Y*M[4] + in.Z*M[8] + M[12];
 		out.Y = in.X*M[1] + in.Y*M[5] + in.Z*M[9] + M[13];
 		out.Z = in.X*M[2] + in.Y*M[6] + in.Z*M[10] + M[14];
 	}
 
-
 	//! Transforms a plane by this matrix
 	inline void matrix4::transformPlane( core::plane3d<f32> &plane) const
 	{
 		vector3df member;
-		transformVect(plane.getMemberPoint(), member);
+		transformVect(member, plane.getMemberPoint());
 
 		vector3df origin(0,0,0);
 		transformVect(plane.Normal);
@@ -462,6 +645,22 @@ namespace core
 
 		plane.Normal -= origin;
 		plane.D = - member.dotProduct(plane.Normal);
+	}
+
+	//! Transforms a plane by this matrix
+	inline void matrix4::transformPlane_new( core::plane3d<f32> &plane) const
+	{
+		// rotate normal -> rotateVect ( plane.n );
+		vector3df n;
+		n.X = plane.Normal.X*M[0] + plane.Normal.Y*M[4] + plane.Normal.Z*M[8];
+		n.Y = plane.Normal.X*M[1] + plane.Normal.Y*M[5] + plane.Normal.Z*M[9];
+		n.Z = plane.Normal.X*M[2] + plane.Normal.Y*M[6] + plane.Normal.Z*M[10];
+
+		// compute new d. -> getTranslation(). dotproduct ( plane.n )
+		plane.D -= M[12] * n.X + M[13] * n.Y + M[14] * n.Z;
+		plane.Normal.X = n.X;
+		plane.Normal.Y = n.Y;
+		plane.Normal.Z = n.Z;
 	}
 
 	//! Transforms a plane by this matrix
@@ -474,6 +673,9 @@ namespace core
 	//! Transforms a axis aligned bounding box
 	inline void matrix4::transformBox(core::aabbox3d<f32>& box) const
 	{
+		if (isIdentity() )
+			return;
+
 		transformVect(box.MinEdge);
 		transformVect(box.MaxEdge);
 		box.repair();
@@ -585,10 +787,10 @@ namespace core
 			(m(0, 1) * m(1, 3) - m(0, 3) * m(1, 1)) * (m(2, 0) * m(3, 2) - m(2, 2) * m(3, 0)) +
 			(m(0, 2) * m(1, 3) - m(0, 3) * m(1, 2)) * (m(2, 0) * m(3, 1) - m(2, 1) * m(3, 0));
 
-		if (d == 0.f)
+		if( core::iszero ( d ) )
 			return false;
 
-		d = 1.f / d;
+		d = core::reciprocal ( d );
 
 		out(0, 0) = d * (m(1, 1) * (m(2, 2) * m(3, 3) - m(2, 3) * m(3, 2)) + m(1, 2) * (m(2, 3) * m(3, 1) - m(2, 1) * m(3, 3)) + m(1, 3) * (m(2, 1) * m(3, 2) - m(2, 2) * m(3, 1)));
 		out(0, 1) = d * (m(2, 1) * (m(0, 2) * m(3, 3) - m(0, 3) * m(3, 2)) + m(2, 2) * (m(0, 3) * m(3, 1) - m(0, 1) * m(3, 3)) + m(2, 3) * (m(0, 1) * m(3, 2) - m(0, 2) * m(3, 1)));
@@ -611,9 +813,37 @@ namespace core
 	}
 
 
+	//! Inverts a primitive matrix which only contains a translation and a rotation
+	//! \param out: where result matrix is written to.
+	inline bool matrix4::getInversePrimitive ( matrix4& out ) const
+	{
+		out.M[0 ]	= M[0];
+		out.M[1 ]	= M[4];
+		out.M[2 ]	= M[8];
+		out.M[3 ]	= 0.0f;
+
+		out.M[4 ]	= M[1];
+		out.M[5 ]	= M[5];
+		out.M[6 ]	= M[9];
+		out.M[7 ]	= 0.0f;
+
+		out.M[8 ]	= M[2];
+		out.M[9 ]	= M[6];
+		out.M[10]	= M[10];
+		out.M[11]	= 0.0f;
+
+		out.M[12]	= -(M[12]*M[0] + M[13]*M[1] + M[14]*M[2]);
+		out.M[13]	= -(M[12]*M[4] + M[13]*M[5] + M[14]*M[6]);
+		out.M[14]	= -(M[12]*M[8] + M[13]*M[9] + M[14]*M[10]);
+		out.M[15]	= 1.0f;
+		return true;
+	}
+
+	/*!
+	*/
 	inline bool matrix4::makeInverse()
 	{
-		matrix4 temp;
+		matrix4 temp ( EM4CONST_NOTHING );
 
 		if (getInverse(temp))
 		{
@@ -917,23 +1147,59 @@ namespace core
 	//! \param time: Must be a value between 0 and 1.
 	inline matrix4 matrix4::interpolate(const core::matrix4& b, f32 time) const
 	{
+		matrix4 mat ( EM4CONST_NOTHING );
+
+		for (s32 i=0; i < 16; i += 4)
+		{
+			mat.M[i+0] = M[i+0] + ( b.M[i+0] - M[i+0] ) * time;
+			mat.M[i+1] = M[i+1] + ( b.M[i+1] - M[i+1] ) * time;
+			mat.M[i+2] = M[i+2] + ( b.M[i+2] - M[i+2] ) * time;
+			mat.M[i+3] = M[i+3] + ( b.M[i+3] - M[i+3] ) * time;
+		}
+		return mat;
+
+/*
 		f32 ntime = 1.0f - time;
 		matrix4 mat;
 		for (s32 i=0; i<16; ++i)
 			mat.M[i] = M[i]*ntime + b.M[i]*time;
 
 		return mat;
+*/
 	}
 
 	//! returns transposed matrix
 	inline matrix4 matrix4::getTransposed() const
 	{
-		matrix4 t;
-		for (s32 c=0; c<4; ++c)
-			for (s32 r=0; r<4; ++r)
-				t(r,c) = (*this)(c,r);
+		matrix4 t ( EM4CONST_NOTHING );
+		getTransposed ( t.M );
 		return t;
 	}
+
+	//! returns transposed matrix
+	inline void matrix4::getTransposed( f32 * o ) const
+	{
+		o[ 0] = M[ 0];
+		o[ 1] = M[ 4];
+		o[ 2] = M[ 8];
+		o[ 3] = M[12];
+
+		o[ 4] = M[ 1];
+		o[ 5] = M[ 5];
+		o[ 6] = M[ 9];
+		o[ 7] = M[13];
+
+		o[ 8] = M[ 2];
+		o[ 9] = M[ 6];
+		o[10] = M[10];
+		o[11] = M[14];
+
+		o[12] = M[ 3];
+		o[13] = M[ 7];
+		o[14] = M[11];
+		o[15] = M[15];
+	}
+
 
 
 	// transform (x,y,z,1)
@@ -944,6 +1210,7 @@ namespace core
 		out[2] = in.X*M[2] + in.Y*M[6] + in.Z*M[10] + M[14];
 		out[3] = in.X*M[3] + in.Y*M[7] + in.Z*M[11] + M[15];
 	}
+
 
 	// used to scale <-1,-1><1,1> to viewport
 	inline void matrix4::buildNDCToDCMatrix( const core::rect<s32>& viewport, f32 zScale)
@@ -961,6 +1228,84 @@ namespace core
 		M[12] = dx;
 		M[13] = dy;
 	}
+
+	/*!
+		Generate texture coordinates as linear functions so that:
+			u = Ux*x + Uy*y + Uz*z + Uw 
+			v = Vx*x + Vy*y + Vz*z + Vw
+		The matrix M for this case is:
+			Ux  Vx  0  0 
+			Uy  Vy  0  0 
+			Uz  Vz  0  0 
+			Uw  Vw  0  0 
+	*/
+
+	inline void matrix4::buildTextureTransform( f32 rotateRad,
+												const core::vector2df &rotatecenter,
+												const core::vector2df &translate,
+												const core::vector2df &scale
+											)
+	{
+		f32 c = cosf(rotateRad);
+		f32 s = sinf(rotateRad);
+
+		M[0] = c * scale.X;
+		M[1] = s * scale.Y;
+		M[2] = 0.f;
+		M[3] = 0.f;
+
+		M[4] = -s * scale.X;
+		M[5] = c * scale.Y;
+		M[6] = 0.f;
+		M[7] = 0.f;
+
+		M[8] = c * scale.X * rotatecenter.X + -s * rotatecenter.Y + translate.X;
+		M[9] = s * scale.Y * rotatecenter.X +  c * rotatecenter.Y + translate.Y;
+		M[10] = 1.f;
+		M[11] = 0.f;
+
+		M[12] = 0.f;
+		M[13] = 0.f;
+		M[14] = 0.f;
+		M[15] = 1.f;
+	}
+
+	//! rotate about z axis, center ( 0.5, 0.5 )
+	inline void matrix4::setTextureRotationCenter( f32 rotateRad )
+	{
+		f32 c = cosf(rotateRad);
+		f32 s = sinf(rotateRad);
+		M[0] = c;
+		M[1] = s;
+		M[2] = -0.5f * ( c + s) + 0.5f;
+
+		M[4] = -s;
+		M[5] = c;
+		M[6] = -0.5f * (-s + c) + 0.5f;
+
+	}
+
+	inline void matrix4::setTextureTranslate ( f32 x, f32 y )
+	{
+		M[2] = x;
+		M[6] = y;
+	}
+
+	inline void matrix4::setTextureScale ( f32 sx, f32 sy )
+	{
+		M[0] = sx;
+		M[5] = sy;
+	}
+
+	inline void matrix4::setTextureScaleCenter( f32 sx, f32 sy )
+	{
+		M[0] = sx;
+		M[2] = -0.5f * sx + 0.5f;
+		M[5] = sy;
+		M[6] = -0.5f * sy + 0.5f;
+	}
+
+
 } // end namespace core
 } // end namespace irr
 

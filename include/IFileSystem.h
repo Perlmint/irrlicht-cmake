@@ -75,7 +75,7 @@ public:
 	\param ignorePaths: If set to true, files in the added archive can be accessed
 	without its complete path.
 	\return Returns true if the archive was added successful, false if not. */
-	virtual bool addUnZipFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
+	virtual bool addFolderFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
 	
 	//! Adds an pak archive to the file system.
 	/** After calling this, the Irrlicht Engine will search and open files directly from this archive too. 

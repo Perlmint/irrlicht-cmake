@@ -97,7 +97,7 @@ public:
 	//! rotates the point around a center by an amount of degrees.
 	void rotateBy(f64 degrees, const vector2d<T>& center)
 	{
-		degrees *= GRAD_PI2;
+		degrees *= DEGTORAD64;
 		T cs = (T)cos(degrees);
 		T sn = (T)sin(degrees);
 
@@ -113,11 +113,14 @@ public:
 	//! normalizes the vector.
 	vector2d<T>& normalize()
 	{
+		T l = core::reciprocal_squareroot ( X*X + Y*Y );
+/*
 		T l = (T)getLength();
 		if (l == 0)
 			return *this;
 
 		l = (T)1.0 / l;
+*/
 		X *= l;
 		Y *= l;
 		return *this;
@@ -136,14 +139,14 @@ public:
 
 		if ( Y > 0.0)
 			if (X > 0.0)
-				return atan(Y/X) * GRAD_PI;
+				return atan(Y/X) * RADTODEG64;
 			else
-				return 180.0-atan(Y/-X) * GRAD_PI;
+				return 180.0-atan(Y/-X) * RADTODEG64;
 		else
 			if (X > 0.0)
-				return 360.0-atan(-Y/X) * GRAD_PI;
+				return 360.0-atan(-Y/X) * RADTODEG64;
 			else
-				return 180.0+atan(-Y/-X) * GRAD_PI;
+				return 180.0+atan(-Y/-X) * RADTODEG64;
 	} 
 
 	//! Calculates the angle of this vector in grad in the counter trigonometric sense.
@@ -156,7 +159,7 @@ public:
 			return Y < 0.0 ? 90.0 : 270.0;
 
 		f64 tmp = Y / getLength();
-		tmp = atan(sqrt(1 - tmp*tmp) / tmp) * GRAD_PI;
+		tmp = atan(sqrt(1 - tmp*tmp) / tmp) * RADTODEG64;
 
 		if (X>0.0 && Y>0.0)
 			return tmp + 270;
@@ -185,7 +188,7 @@ public:
 		tmp = tmp / sqrt((X*X + Y*Y) * (b.X*b.X + b.Y*b.Y));
 		if (tmp < 0.0) tmp = -tmp;
 
-		return atan(sqrt(1 - tmp*tmp) / tmp) * GRAD_PI;
+		return atan(sqrt(1 - tmp*tmp) / tmp) * RADTODEG64;
 	}
 
 	//! Returns if this vector interpreted as a point is on a line between two other points.
@@ -205,8 +208,25 @@ public:
 	//! \param d: value between 0.0f and 1.0f.
 	vector2d<T> getInterpolated(const vector2d<T>& other, f32 d) const
 	{
-		f32 inv = 1.0f - d;
+		T inv = (T) 1.0 - d;
 		return vector2d<T>(other.X*inv + X*d, other.Y*inv + Y*d);
+	}
+
+	//! Returns interpolated vector. ( quadratic )
+	/** \param other0: other vector to interpolate between
+		\param other1: other vector to interpolate between
+	\param factor: value between 0.0f and 1.0f. */
+	vector2d<T> getInterpolated_quadratic(const vector2d<T>& v2, const vector2d<T>& v3, const T d) const
+	{
+		// this*(1-d)*(1-d) + 2 * v2 * (1-d) + v3 * d * d;
+		const T inv = (T) 1.0 - d;
+		const T mul0 = inv * inv;
+		const T mul1 = (T) 2.0 * d * inv;
+		const T mul2 = d * d;
+
+		return vector2d<T> ( X * mul0 + v2.X * mul1 + v3.X * mul2,
+							 Y * mul0 + v2.Y * mul1 + v3.Y * mul2
+							);
 	}
 
 	//! sets this vector to the interpolated vector between a and b. 

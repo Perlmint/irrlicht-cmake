@@ -7,13 +7,14 @@
 
 #include "ISceneNode.h"
 #include "IEventReceiver.h"
+#include "SViewFrustum.h"
 
 namespace irr
 {
 namespace scene
 {
 
-	struct SViewFrustrum;
+	struct SViewFrustum;
 
 	//! Scene Node which is a (controlable) camera.
 	/** The whole scene will be
@@ -107,10 +108,10 @@ namespace scene
 		/** \param fovy: New field of view in radiants. */
 		virtual void setFOV(f32 fovy) = 0;
 
-		//! Returns the view frustrum. 
+		//! Returns the view frustum. 
 		/** Needed sometimes by bspTree or LOD render nodes.
-		\return Returns the current view frustrum. */
-		virtual const SViewFrustrum* getViewFrustrum() = 0;
+		\return Returns the current view frustum. */
+		virtual const SViewFrustum* getViewFrustum() const = 0;
 
 		//! Disables or enables the camera to get key or mouse inputs.
 		/** If this is set to true, the camera will respond to key inputs

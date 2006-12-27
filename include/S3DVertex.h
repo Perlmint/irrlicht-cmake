@@ -88,6 +88,11 @@ struct S3DVertex2TCoords
 		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2)
 		: Pos(pos), Color(color), TCoords(tcoords), TCoords2(tcoords2) {}
 
+	//! constructor 
+	S3DVertex2TCoords(const core::vector3df& pos, const core::vector3df& normal, const SColor& color,
+		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2)
+		: Pos(pos), Normal(normal), Color(color), TCoords(tcoords), TCoords2(tcoords2) {}
+
 	//! constructor with the same texture coords and normal
 	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv)
 		: Pos(x,y,z), Normal(nx,ny,nz), Color(c), TCoords(tu,tv), TCoords2(tu,tv) {}
@@ -125,6 +130,7 @@ struct S3DVertex2TCoords
 			Color != other.Color || TCoords != other.TCoords ||
 			TCoords2 != other.TCoords2);
 	}
+
 };
 
 

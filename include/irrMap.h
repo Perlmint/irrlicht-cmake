@@ -52,8 +52,8 @@ class map
 		unsigned int getLevel() const	{ if (isRoot()) return 1; else return getParent()->getLevel() + 1; }
 
 
-		bool isRed()	const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return  mIsRed; };
-		bool isBlack()	const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return !mIsRed; };
+		bool isRed()	const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return  mIsRed; }
+		bool isBlack()	const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return !mIsRed; }
 
 	private:
 
@@ -892,3 +892,4 @@ class map
 } // end namespace irr
 
 #endif // __IRR_MAP_H_INCLUDED__
+

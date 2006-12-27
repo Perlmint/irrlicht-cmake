@@ -94,7 +94,7 @@ public:
 	virtual u32 getAlphaMask() = 0;
 
 	//! returns pitch of image
-	virtual u32 getPitch() = 0;
+	virtual u32 getPitch() const = 0;
 
 };
 

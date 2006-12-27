@@ -73,6 +73,9 @@ class quaternion
 		//! Creates a matrix from this quaternion
 		matrix4 getMatrix() const;
 
+		//! Creates a matrix from this quaternion
+		matrix4 getMatrix_transposed() const;
+
 		//! Inverts this quaternion
 		void makeInverse();
 
@@ -85,6 +88,9 @@ class quaternion
 		void fromAngleAxis (f32 angle, const vector3df& axis);
 
 		void toEuler(vector3df& euler) const;
+
+		//! set quaternion to identity
+		void makeIdentity();
 
 		f32 X, Y, Z, W;
 };
@@ -273,6 +279,34 @@ inline matrix4 quaternion::getMatrix() const
 	return m;
 }
 
+//! Creates a matrix from this quaternion
+inline matrix4 quaternion::getMatrix_transposed() const
+{
+	core::matrix4 m;
+
+	m.M[0] = 1.0f - 2.0f*Y*Y - 2.0f*Z*Z;
+	m.M[1] = 2.0f*X*Y + 2.0f*Z*W;
+	m.M[2] = 2.0f*X*Z - 2.0f*Y*W;
+	m.M[3] = 0.0f;
+
+	m.M[4] = 2.0f*X*Y - 2.0f*Z*W;
+	m.M[5] = 1.0f - 2.0f*X*X - 2.0f*Z*Z;
+	m.M[6] = 2.0f*Z*Y + 2.0f*X*W;
+	m.M[7] = 0.0f;
+
+	m.M[8] = 2.0f*X*Z + 2.0f*Y*W;
+	m.M[9] = 2.0f*Z*Y - 2.0f*X*W;
+	m.M[10] = 1.0f - 2.0f*X*X - 2.0f*Y*Y;
+	m.M[11] = 0.0f;
+
+	m.M[12] = 0.0f;
+	m.M[13] = 0.0f;
+	m.M[14] = 0.0f;
+	m.M[15] = 1.0f;
+
+	return m;
+}
+
 
 //! Inverts this quaternion
 inline void quaternion::makeInverse()
@@ -327,7 +361,8 @@ inline quaternion& quaternion::normalize()
 	if (n == 1)
 		return *this;
 
-	n = 1.0f / sqrtf(n);
+	//n = 1.0f / sqrtf(n);
+	n = reciprocal_squareroot ( n );
 	X *= n;
 	Y *= n;
 	Z *= n;
@@ -425,6 +460,16 @@ inline vector3df quaternion::operator* (const vector3df& v) const
 
 	return v + uv + uuv;
 }
+
+//! set quaterion to identity
+inline void quaternion::makeIdentity()
+{
+	W = 1.f;
+	X = 0.f;
+	Y = 0.f;
+	Z = 0.f;
+}
+
 
 } // end namespace core
 } // end namespace irr

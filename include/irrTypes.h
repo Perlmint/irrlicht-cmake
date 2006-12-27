@@ -127,5 +127,14 @@ Compiler version defines: VC6.0 : 1200, VC7.0 : 1300, VC7.1 : 1310, VC8.0 : 1400
 #pragma warning( disable: 4786)
 #endif // _MSC
 
+//! ignore VC8 warning deprecated
+/** The microsoft compiler */
+#if defined(_IRR_WINDOWS_) && defined(_MSC_VER) && (_MSC_VER >= 1400)
+	//#pragma warning( disable: 4996)
+	//#define _CRT_SECURE_NO_DEPRECATE 1
+	//#define _CRT_NONSTDC_NO_DEPRECATE 1
+#endif
+
+
 #endif // __IRR_TYPES_H_INCLUDED__
 

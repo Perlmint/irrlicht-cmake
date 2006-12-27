@@ -62,7 +62,7 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox (s32 patchX, s32 patchZ) const = 0;
 
 		//! Returns the number of indices currently in the meshbuffer for this scene node.
-		virtual s32 getIndexCount() = 0;
+		virtual u32 getIndexCount() = 0;
 
 		//! Returns pointer to the mesh
 		virtual IMesh* getMesh() = 0;

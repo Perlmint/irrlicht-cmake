@@ -67,7 +67,7 @@ namespace scene
 		//! for the ellipsoid.
 		//! \param translation: Translation of the ellipsoid relative 
 		//! to the position of the scene node.
-		virtual void setEllipsoidTranslation(core::vector3df translation) = 0;
+		virtual void setEllipsoidTranslation(const core::vector3df &translation) = 0;
 
 		//! Returns the translation of the ellipsoid for collision detection. See
 		//! ISceneNodeAnimatorCollisionResponse::setEllipsoidTranslation() for

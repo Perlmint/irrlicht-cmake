@@ -7,6 +7,7 @@
 
 #include "irrTypes.h"
 #include <new>
+#include <memory.h>
 
 namespace irr
 {

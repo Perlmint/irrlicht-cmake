@@ -41,6 +41,7 @@ namespace gui
 		//! Sets the color to fade out to or to fade in from.
 		//! \param color: Color to where it is faded out od from it is faded in.
 		virtual void setColor(video::SColor color) = 0;
+		virtual void setColor(video::SColor source, video::SColor dest) = 0;
 
 		//! Starts the fade in process. In the beginning the whole rect is drawn by
 		//! the set color (black by default) and at the end of the overgiven

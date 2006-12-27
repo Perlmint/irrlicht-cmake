@@ -25,14 +25,23 @@ namespace scene
 
 		//! Returns the amount of mesh buffers.
 		/** \return Returns the amount of mesh buffers (IMeshBuffer) in this mesh. */
-		virtual s32 getMeshBufferCount() = 0;
+		virtual u32 getMeshBufferCount() const = 0;
 
 		//! Returns pointer to a mesh buffer.
  		/** \param nr: Zero based index of the mesh buffer. The maximum value is
 		getMeshBufferCount() - 1;
 		\return Returns the pointer to the mesh buffer or 
 		NULL if there is no such mesh buffer. */
-		virtual IMeshBuffer* getMeshBuffer(s32 nr) = 0;
+		virtual IMeshBuffer* getMeshBuffer(u32 nr) const = 0;
+
+		//! Returns pointer to a mesh buffer which fits a material
+ 		/** \param material: material to search for
+		\return Returns the pointer to the mesh buffer or 
+		NULL if there is no such mesh buffer. */
+		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const
+		{
+			return 0;
+		}
 
 		//! Returns an axis aligned bounding box of the mesh.
 		/** \return A bounding box of this mesh is returned. */
@@ -46,6 +55,7 @@ namespace scene
 		/** \param flag: Flag to set in all materials.
 		 \param newvalue: New value to set in all materials. */
 		virtual void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue) = 0;
+
 	};
 
 } // end namespace scene

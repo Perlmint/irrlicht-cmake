@@ -51,7 +51,7 @@ namespace scene
 		} 
 
 		//! returns amount of vertices
-		virtual s32 getVertexCount() const
+		virtual u32 getVertexCount() const
 		{
 			return Vertices.size();
 		}
@@ -69,7 +69,7 @@ namespace scene
 		}
 
 		//! returns amount of indices
-		virtual s32 getIndexCount() const
+		virtual u32 getIndexCount() const
 		{
 			return Indices.size();
 		}
@@ -104,6 +104,13 @@ namespace scene
 		{
 			return video::EVT_STANDARD;
 		}
+
+		//! returns the byte size (stride, pitch) of the vertex
+		virtual u32 getVertexPitch() const
+		{
+			return sizeof ( video::S3DVertex );
+		}
+
 
 		video::SMaterial Material; //! material for this meshBuffer.
 		core::array<video::S3DVertex> Vertices; //! Array of vertices

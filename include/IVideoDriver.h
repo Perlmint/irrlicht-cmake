@@ -120,6 +120,10 @@ namespace video
 		ETS_WORLD,
 		//! Projection transformation
 		ETS_PROJECTION,
+		//! Texture transformation
+		ETS_TEXTURE_0,
+		//! Texture transformation
+		ETS_TEXTURE_1,
 		//! Not used
 		ETS_COUNT
 	};
@@ -223,7 +227,7 @@ namespace video
 		/** \param index: Index of the texture, must be smaller than getTextureCount()
 		Please note that this index would change when adding or removing textures
 		*/
-		virtual ITexture* getTextureByIndex(s32 index) = 0;
+		virtual ITexture* getTextureByIndex(u32 index) = 0;
 
 		//! Returns amount of textures currently loaded
 		virtual s32 getTextureCount() = 0;
@@ -360,7 +364,7 @@ namespace video
 		\param triangleCount: amount of Triangles.
 		\param vType: Vertex type, e.g. EVT_STANDARD for S3DVertex.
 		\param pType: Primitive type, e.g. EPT_TRIANGLE_FAN for a triangle fan. */
-		virtual void drawVertexPrimitiveList(const void* vertices, s32 vertexCount, const u16* indexList, s32 triangleCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType) = 0;
+		virtual void drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 triangleCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType) = 0;
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because the
@@ -372,7 +376,7 @@ namespace video
 		\param indexList: Pointer to array of indizes.
 		\param triangleCount: amount of Triangles. Usually amount of indizes / 3. */
 		virtual void drawIndexedTriangleList(const S3DVertex* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount) = 0;
+			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because the
@@ -384,7 +388,7 @@ namespace video
 		\param indexList: Pointer to array of indizes.
 		\param triangleCount: amount of Triangles. Usually amount of indizes / 3.*/
 		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount) = 0;
+			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because the
@@ -396,7 +400,7 @@ namespace video
 		\param indexList: Pointer to array of indizes.
 		\param triangleCount: amount of Triangles. Usually amount of indizes / 3. */
 		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount) = 0;
+			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
 		//! Draws an indexed triangle fan.
 		/** Note that there may be at maximum 65536 vertices, because the
@@ -410,7 +414,7 @@ namespace video
 		\param indexList: Pointer to array of indizes.
 		\param triangleCount: amount of Triangles. Usually amount of indizes - 2. */
 		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount) = 0;
+			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
 		//! Draws an indexed triangle fan.
 		/** Note that there may be at maximum 65536 vertices, because the
@@ -424,7 +428,7 @@ namespace video
 		\param indexList: Pointer to array of indizes.
 		\param triangleCount: amount of Triangles. Usually amount of indizes - 2. */
 		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
-			s32 vertexCount, const u16* indexList, s32 triangleCount) = 0;
+			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
 		//! Draws a 3d line.
 		/** For some implementations, this method simply calls drawIndexedTriangles with some
@@ -499,6 +503,7 @@ namespace video
 		\param pos: Upper left 2d destination position where the image will be drawn.
 		\param sourceRects: Source rectangles of the image.
 		\param indices: List of indices which choose the actual rectangle used each time.
+		\param kerningWidth: Offset to Position on X
 		\param clipRect: Pointer to rectangle on the screen where the image is clipped to.
 		This pointer can be 0. Then the image is not clipped.
 		\param color: Color with which the image is colored.
@@ -509,6 +514,7 @@ namespace video
 				const core::position2d<s32>& pos,
 				const core::array<core::rect<s32> >& sourceRects,
 				const core::array<s32>& indices,
+				s32 kerningWidth,
 				const core::rect<s32>* clipRect, SColor color,
 				bool useAlphaChannelOfTexture) = 0;
 
@@ -604,7 +610,7 @@ namespace video
 
 		//! Draws a mesh buffer
 		/** \param mb: Buffer to draw; */
-		virtual void drawMeshBuffer(scene::IMeshBuffer* mb) = 0;
+		virtual void drawMeshBuffer( const scene::IMeshBuffer* mb) = 0;
 
 		//! Sets the fog mode.
 		/** These are global values attached to each 3d object
@@ -655,17 +661,17 @@ namespace video
 
 		//! Returns the maximal amount of dynamic lights the device can handle
 		/** \return Maximal amount of dynamic lights. */
-		virtual s32 getMaximalDynamicLightAmount() = 0;
+		virtual u32 getMaximalDynamicLightAmount() = 0;
 
 		//! Returns current amount of dynamic lights set
 		/** \return Current amount of dynamic lights set */
-		virtual s32 getDynamicLightCount() = 0;
+		virtual u32 getDynamicLightCount() = 0;
 
 		//! Returns light data which was previously set with IVideDriver::addDynamicLight().
 		/** \param idx: Zero based index of the light. Must be greater than 0 and smaller
 		than IVideoDriver()::getDynamicLightCount.
 		\return Light data. */
-		virtual const SLight& getDynamicLight(s32 idx) = 0;
+		virtual const SLight& getDynamicLight(u32 idx) = 0;
 
 		//! Gets name of this video driver.
 		/** \return Returns the name of the video driver. Example: In case of the Direct3D8
@@ -757,7 +763,8 @@ namespace video
 		See IUnknown::drop() for more information. */
 		virtual IImage* createImageFromData(ECOLOR_FORMAT format,
 			const core::dimension2d<s32>& size, void *data,
-			bool ownForeignMemory=false) = 0;
+			bool ownForeignMemory=false,
+			bool deleteMemory = true) = 0;
 
 		//! Only used by the internal engine.
 		/** Used to notify the driver that
@@ -787,10 +794,10 @@ namespace video
 		//! Returns pointer to material renderer or null if not existing.
 		/** \param idx: Id of the material renderer. Can be a value of the E_MATERIAL_TYPE enum or a
 		value which was returned by addMaterialRenderer(). */
-		virtual IMaterialRenderer* getMaterialRenderer(s32 idx) = 0;
+		virtual IMaterialRenderer* getMaterialRenderer(u32 idx) = 0;
 
 		//! Returns amount of currently available material renderers.
-		virtual s32 getMaterialRendererCount() = 0;
+		virtual u32 getMaterialRendererCount() = 0;
 
 		//! Returns name of the material renderer
 		/** This string can for example be used to test if a specific renderer already has
@@ -798,7 +805,7 @@ namespace video
 		returned name will be also used when serializing Materials.
 		\param idx: Id of the material renderer. Can be a value of the E_MATERIAL_TYPE enum or a
 		value which was returned by addMaterialRenderer(). */
-		virtual const c8* getMaterialRendererName(s32 idx) = 0;
+		virtual const c8* getMaterialRendererName(u32 idx) = 0;
 
 		//! Sets the name of a material renderer.
 		/** Will have no effect on built-in material renderers.

@@ -7,8 +7,10 @@
 
 #include "irrTypes.h"
 #include "irrAllocator.h"
+#include "irrmath.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 namespace irr
 {
@@ -300,8 +302,15 @@ public:
 	bool operator <(const string<T>& other) const
 	{
 		for(s32 i=0; array[i] && other.array[i]; ++i)
+		{
+			s32 diff = array[i] - other.array[i];
+			if ( diff )
+				return diff < 0;
+/*
 			if (array[i] != other.array[i])
 				return (array[i] < other.array[i]);
+*/
+		}
 
 		return used < other.used;
 	}
@@ -345,14 +354,9 @@ public:
 	//! Makes the string lower case.
 	void make_lower()
 	{
-		const T A = (T)'A';
-		const T Z = (T)'Z';
-		const T diff = (T)'a' - A;
-
 		for (s32 i=0; i<used; ++i)
 		{
-			if (array[i]>=A && array[i]<=Z)
-				array[i] += diff;
+			array[i] = ansi_lower ( array[i] );
 		}
 	}
 
@@ -370,6 +374,7 @@ public:
 			if (array[i]>=a && array[i]<=z)
 				array[i] += diff;
 		}
+
 	}
 
 
@@ -380,11 +385,28 @@ public:
 	bool equals_ignore_case(const string<T>& other) const
 	{
 		for(s32 i=0; array[i] && other[i]; ++i)
-			if (toLower(array[i]) != toLower(other[i]))
+			if (ansi_lower(array[i]) != ansi_lower(other[i]))
 				return false;
 
 		return used == other.used;
 	}
+
+	//! Compares the string ignoring case.
+	/** \param other: Other string to compare.
+	\return Returns true if the string is smaller ignoring case. */
+	bool lower_ignore_case(const string<T>& other) const
+	{
+		for(s32 i=0; array[i] && other.array[i]; ++i)
+		{
+			s32 diff = (s32) ansi_lower ( array[i] ) - (s32) ansi_lower ( other.array[i] );
+			if ( diff )
+				return diff < 0;
+		}
+
+		return used < other.used;
+	}
+
+
 
 
 	//! compares the first n characters of the strings
@@ -611,11 +633,13 @@ public:
 
 	//! finds last occurrence of character in string
 	//! \param c: Character to search for.
+	//! \param start: start to search reverse ( default = -1, on end )
 	//! \return Returns position where the character has been found,
 	//! or -1 if not found.
-	s32 findLast(T c) const
+	s32 findLast(T c, s32 start = -1) const
 	{
-		for (s32 i=used-1; i>=0; --i)
+		start = core::clamp ( start < 0 ? used - 1 : start, 0, used - 1 );
+		for (s32 i=start; i>=0; --i)
 			if (array[i] == c)
 				return i;
 
@@ -742,8 +766,7 @@ public:
 
 
 private:
-
-	//! Returns a character converted to lower case
+/*
 	T toLower(const T& t) const
 	{
 		if (t>=(T)'A' && t<=(T)'Z')
@@ -751,6 +774,13 @@ private:
 		else
 			return t;
 	}
+*/
+	//! Returns a character converted to lower case
+	inline T ansi_lower ( u32 x ) const
+	{
+		return x >= 'A' && x <= 'Z' ? (T) x + 0x20 : (T) x;
+	}
+
 
 	//! Reallocate the array, make it bigger or smaller
 	void reallocate(s32 new_size)
@@ -785,6 +815,45 @@ typedef string<irr::c8> stringc;
 
 //! Typedef for wide character strings
 typedef string<wchar_t> stringw;
+
+// ----------------------------- some basic quite often used string function --------------------------
+
+//! a "Null" String
+static const core::stringc IrrEmptyStringc;
+static const core::stringw IrrEmptyStringw;
+
+
+// basic ascii to unicode conversion ( no locale )
+inline void stringc_to_stringw ( stringw &dest, const stringc & source )
+{
+	dest = IrrEmptyStringw;
+	for ( s32 i = 0; i!= source.size(); ++i )
+	{
+		dest.append ( (wchar_t) source[i] );
+	}
+}
+
+inline core::stringc &cutExtension ( core::stringc &dest, const core::stringc &source )
+{
+	s32 endPos = source.findLast ( '.' );
+	dest = source.subString ( 0, endPos < 0 ? source.size () : endPos );
+	return dest;
+}
+
+inline core::stringc &getExtension ( core::stringc &dest, const core::stringc &source )
+{
+	s32 endPos = source.findLast ( '.' );
+	if ( endPos < 0 )
+		dest = IrrEmptyStringc;
+	else
+		dest = source.subString ( endPos, source.size () );
+	return dest;
+}
+
+//! some standard function ( to remove dependencies )
+inline s32 isdigit(s32 c) { return c >= '0' && c <= '9'; }
+inline s32 isspace(s32 c) { return	c ==  ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v';	}
+inline s32 isupper(s32 c) { return c >= 'A' && c <= 'Z'; }
 
 } // end namespace core
 } // end namespace irr
