@@ -28,6 +28,22 @@ core::stringw Caption;
 scene::IAnimatedMeshSceneNode* Model = 0;
 scene::ISceneNode* SkyBox = 0;
 
+scene::ICameraSceneNode* Camera[2] = { 0, 0};
+
+/*
+	toggles between various cameras
+*/
+void setActiveCamera ( scene::ICameraSceneNode* newActive )
+{
+	if ( 0 == Device )
+		return;
+
+	scene::ICameraSceneNode* active = Device->getSceneManager()->getActiveCamera ();
+
+	newActive->setInputReceiverEnabled ( true );
+	Device->getSceneManager()->setActiveCamera ( newActive );
+}
+
 /*
 	The three following functions do several stuff used by the mesh viewer. 
 	The first function showAboutText() simply displays a messagebox with a caption
@@ -52,15 +68,56 @@ void loadModel(const c8* fn)
 {
 	// modify the name if it a .pk3 file
 
-	c8 filename[1024];
-	strcpy(filename, fn);
+	core::stringc filename ( fn );
+
+	core::stringc extension;
+	getExtension ( extension, filename );
+	extension.make_lower();
+
+	// if a texture is loaded apply it to the current model..
+	if (	extension == ".jpg" ||
+			extension == ".png" ||
+			extension == ".tga" ||
+			extension == ".pcx" ||
+			extension == ".psd" ||
+			extension == ".bmp"
+		)
+	{
+		video::ITexture * texture = Device->getVideoDriver()->getTexture( filename.c_str() );
+		if ( texture && Model )
+		{
+			// always reload texture
+			Device->getVideoDriver()->removeTexture ( texture );
+			texture = Device->getVideoDriver()->getTexture( filename.c_str() );
+
+			Model->setMaterialTexture ( 0, texture );
+		}
+		return;
+	}
+
+	// if a archive is loaded add it to the FileSystems..
+	if (	extension == ".pk3" ||
+			extension == ".zip"
+		)
+	{
+		Device->getFileSystem()->addZipFileArchive( filename.c_str () );
+		return;
+	}
+
+/*
+
+	//c8 filename[1024];
+	//strcpy(filename, fn);
 	c8* found = 0;
 
-	if (found = strstr(filename, ".pk3"))
+	if (found = strstr(filename.c_str(), ".pk3"))
 	{
-		Device->getFileSystem()->addZipFileArchive(filename);
+		Device->getFileSystem()->addZipFileArchive( filename.c_str () );
 		strcpy(found +1, "bsp");
 	}
+*/
+	// if file is a texture apply it to a current model
+
 
 	// load a model into the engine
 
@@ -69,7 +126,7 @@ void loadModel(const c8* fn)
 
 	Model = 0;
 
-	scene::IAnimatedMesh* m = Device->getSceneManager()->getMesh(filename);
+	scene::IAnimatedMesh* m = Device->getSceneManager()->getMesh( filename.c_str() );
 
 	if (!m) 
 	{
@@ -86,7 +143,7 @@ void loadModel(const c8* fn)
 
 	Model = Device->getSceneManager()->addAnimatedMeshSceneNode(m);
 	Model->setMaterialFlag(video::EMF_LIGHTING, false);
-	Model->setDebugDataVisible(true);
+	Model->setDebugDataVisible(scene::EDS_FULL);
 	Model->setAnimationSpeed(30);
 }
 
@@ -105,12 +162,12 @@ void createToolBox()
 	if (e) e->remove();
 
 	// create the toolbox window
-	IGUIWindow* wnd = env->addWindow(core::rect<s32>(450,25,640,480),
+	IGUIWindow* wnd = env->addWindow(core::rect<s32>(600,25,800,480),
 		false, L"Toolset", 0, 5000);
 
 	// create tab control and tabs
 	IGUITabControl* tab = env->addTabControl(
-		core::rect<s32>(2,20,640-452,480-7), wnd, true, true);
+		core::rect<s32>(2,20,800-602,480-7), wnd, true, true);
 
 	IGUITab* t1 = tab->addTab(L"Scale");
 	IGUITab* t2 = tab->addTab(L"Empty Tab");
@@ -147,6 +204,22 @@ class MyEventReceiver : public IEventReceiver
 public:
 	virtual bool OnEvent(SEvent event)
 	{
+		// Escape swaps Camera Input
+		if (event.EventType == EET_KEY_INPUT_EVENT &&
+			event.KeyInput.Key == irr::KEY_ESCAPE &&
+			event.KeyInput.PressedDown == false)
+		{
+			if ( Device )
+			{
+				scene::ICameraSceneNode * camera = Device->getSceneManager()->getActiveCamera ();
+				if ( camera )
+				{
+					camera->setInputReceiverEnabled ( !camera->isInputReceiverEnabled() );
+				}
+				return true;
+			}
+		}
+
 		if (event.EventType == EET_GUI_EVENT)
 		{
 			s32 id = event.GUIEvent.Caller->getID();
@@ -166,6 +239,9 @@ public:
 					case 100: // File -> Open Model
 						env->addFileOpenDialog(L"Please select a model file to open");
 						break;
+					case 101: // File -> Set Model Archive
+						env->addFileOpenDialog(L"Please select your game archive/directory");
+						break;
 					case 200: // File -> Quit
 						Device->closeDevice();
 						break;
@@ -174,7 +250,7 @@ public:
 						break;
 					case 400: // View -> Debug Information
 						if (Model)
-							Model->setDebugDataVisible(!Model->isDebugDataVisible());
+							Model->setDebugDataVisible(Model->isDebugDataVisible() ? scene::EDS_OFF : scene::EDS_FULL);
 						break;
 					case 500: // Help->About
 						showAboutText();
@@ -191,6 +267,14 @@ public:
 						if (Model)
 							Model->setMaterialType(video::EMT_SPHERE_MAP);
 						break;
+
+					case 1000:
+						setActiveCamera ( Camera[0] );
+						break;
+					case 1100:
+						setActiveCamera ( Camera[1] );
+						break;
+
 					}
                     break;
 				}
@@ -294,6 +378,9 @@ public:
 				case 1104:
 					createToolBox();
 					break;
+				case 1105:
+					env->addFileOpenDialog(L"Please select your game archive/directory");
+					break;
 				}
 
 				break;
@@ -343,7 +430,7 @@ int main()
 	// create device and exit if creation failed
 
 	MyEventReceiver receiver;
-	Device = createDevice(driverType, core::dimension2d<s32>(640, 480),
+	Device = createDevice(driverType, core::dimension2d<s32>(800, 600),
 		16, false, false, false, &receiver);
 
 	if (Device == 0)
@@ -358,6 +445,10 @@ int main()
 	scene::ISceneManager* smgr = Device->getSceneManager();
 
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
+
+	// add our media directory as "search path"
+	Device->getFileSystem()->addFolderFileArchive ( "../../media/" );
+
 
 	/*
 		The next step is to read the configuration file. It is stored in the xml 
@@ -379,7 +470,7 @@ int main()
 	// read configuration from xml file
 
 	io::IXMLReader* xml = Device->getFileSystem()->createXMLReader(
-		"../../media/config.xml");
+		"config.xml");
 
 	while(xml && xml->read())
 	{
@@ -418,7 +509,7 @@ int main()
 	// set a nicer font
 
 	IGUISkin* skin = env->getSkin();
-	IGUIFont* font = env->getFont("../../media/fonthaettenschweiler.bmp");
+	IGUIFont* font = env->getFont("fontlucida.png");
 	if (font)
 		skin->setFont(font);
 
@@ -426,11 +517,13 @@ int main()
 	gui::IGUIContextMenu* menu = env->addMenu();
 	menu->addItem(L"File", -1, true, true);
 	menu->addItem(L"View", -1, true, true);
+	menu->addItem(L"Camera", -1, true, true);
 	menu->addItem(L"Help", -1, true, true);
 
 	gui::IGUIContextMenu* submenu;
 	submenu = menu->getSubMenu(0);
-	submenu->addItem(L"Open Model File...", 100);
+	submenu->addItem(L"Open Model File & Texture...", 100);
+	submenu->addItem(L"Set Model Archive...", 101);
 	submenu->addSeparator();
 	submenu->addItem(L"Quit", 200);
 
@@ -445,6 +538,10 @@ int main()
 	submenu->addItem(L"Reflection", 630);
 
 	submenu = menu->getSubMenu(2);
+	submenu->addItem(L"Maya Style", 1000);
+	submenu->addItem(L"First Person", 1100);
+
+	submenu = menu->getSubMenu(3);
 	submenu->addItem(L"About", 500);
 
 	/*
@@ -456,7 +553,7 @@ int main()
 	// create toolbar
 
 	gui::IGUIToolBar* bar = env->addToolBar();
-
+/*
 	video::ITexture* image = driver->getTexture("../../media/open.bmp");
 	driver->makeColorKeyTexture(image, core::position2d<s32>(0,0));
 	bar->addButton(1102, 0, image, 0, false, true);
@@ -468,10 +565,24 @@ int main()
 	image = driver->getTexture("../../media/tools.bmp");
 	driver->makeColorKeyTexture(image, core::position2d<s32>(0,0));
 	bar->addButton(1104, 0, image, 0, false, true);
+*/
+
+	video::ITexture* image = driver->getTexture("open.png");
+	bar->addButton(1102, 0, L"Open a model",image, 0, false, true);
+
+	image = driver->getTexture("tools.png");
+	bar->addButton(1104, 0, L"Open Toolset",image, 0, false, true);
+
+	image = driver->getTexture("zip.png");
+	bar->addButton(1105, 0, L"Set Model Archive",image, 0, false, true);
+
+
+	image = driver->getTexture("help.png");
+	bar->addButton(1103, 0, L"Open Help", image, 0, false, true);
 
 	// create a combobox with some senseless texts
 
-	gui::IGUIComboBox* box = env->addComboBox(core::rect<s32>(100,5,200,25), bar, 108);
+	gui::IGUIComboBox* box = env->addComboBox(core::rect<s32>(250,4,350,23), bar, 108);
 	box->addItem(L"No filtering");
 	box->addItem(L"Bilinear");
 	box->addItem(L"Trilinear");
@@ -486,21 +597,21 @@ int main()
 	*/
 
 	// disable alpha
-
+/*
 	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
 	{
 		video::SColor col = env->getSkin()->getColor((gui::EGUI_DEFAULT_COLOR)i);
 		col.setAlpha(255);
 		env->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
 	}
-
+*/
 	// add a tabcontrol
 
 	createToolBox();
 
 	// create fps text 
 
-	IGUIStaticText* fpstext = env->addStaticText(L"", core::rect<s32>(210,26,270,41), true);
+	IGUIStaticText* fpstext = env->addStaticText(L"", core::rect<s32>(400,4,470,23), true, false, bar);
 
 	// set window caption
 
@@ -524,21 +635,22 @@ int main()
 	// add skybox 
 
 	SkyBox = smgr->addSkyBoxSceneNode(
-		driver->getTexture("../../media/irrlicht2_up.jpg"),
-		driver->getTexture("../../media/irrlicht2_dn.jpg"),
-		driver->getTexture("../../media/irrlicht2_lf.jpg"),
-		driver->getTexture("../../media/irrlicht2_rt.jpg"),
-		driver->getTexture("../../media/irrlicht2_ft.jpg"),
-		driver->getTexture("../../media/irrlicht2_bk.jpg"));
+		driver->getTexture("irrlicht2_up.jpg"),
+		driver->getTexture("irrlicht2_dn.jpg"),
+		driver->getTexture("irrlicht2_lf.jpg"),
+		driver->getTexture("irrlicht2_rt.jpg"),
+		driver->getTexture("irrlicht2_ft.jpg"),
+		driver->getTexture("irrlicht2_bk.jpg"));
 
 	// add a camera scene node 
+	Camera[0] = smgr->addCameraSceneNodeMaya();
+	Camera[1] = smgr->addCameraSceneNodeFPS();
 
-	smgr->addCameraSceneNodeMaya();
+	setActiveCamera ( Camera[0] );
 
 	// load the irrlicht engine logo
-
-	video::ITexture* irrLogo = 
-		driver->getTexture("../../media/irrlichtlogoaligned.jpg");
+	env->addImage(driver->getTexture("irrlichtlogo2.png"),
+		core::position2d<s32>(10, driver->getScreenSize().Height - 64));
 
 	// draw everything
 
@@ -550,11 +662,6 @@ int main()
 			smgr->drawAll();
 			env->drawAll();
 
-			// draw irrlicht engine logo
-			driver->draw2DImage(irrLogo,
-				core::position2d<s32>(10, driver->getScreenSize().Height - 50),
-				core::rect<s32>(0,0,108-20,460-429));
-		
 			driver->endScene();
 
 			core::stringw str = L"FPS: ";

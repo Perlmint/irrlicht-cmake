@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="MeshViewer"
+	ProjectGUID="{EF198BF9-7446-443D-961E-E617E1BD3AFB}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
