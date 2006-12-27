@@ -183,9 +183,10 @@ int main()
 	the button in the event receiver.
 	*/	
 
-	env->addButton(rect<s32>(10,210,100,240), 0, 101, L"Quit");
-	env->addButton(rect<s32>(10,250,100,290), 0, 102, L"New Window");
-	env->addButton(rect<s32>(10,300,100,340), 0, 103, L"File Open");
+	env->addButton(rect<s32>(10,210,110,210 + 32), 0, 101, L"Quit", L"Exits Programm");
+	env->addButton(rect<s32>(10,250,110,250 + 32), 0, 102, L"New Window", L"Launches a new Window");
+	env->addButton(rect<s32>(10,290,110,290 + 32), 0, 103, L"File Open", L"Opens a file");
+	env->addButton(rect<s32>(10,330,110,330 + 32), 0, 104, L"Color Select", L"Select's a color");
 
 	/*
 	To make the font a little bit nicer, we load an external font
@@ -194,12 +195,12 @@ int main()
 	*/
 
 	IGUISkin* skin = env->getSkin();
-	IGUIFont* font = env->getFont("../../media/fonthaettenschweiler.bmp");
+	IGUIFont* font = env->getFont("../../media/fontlucida.png");
 	if (font)
 		skin->setFont(font);
 
 	IGUIImage* img = env->addImage(
-		driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
+		driver->getTexture("../../media/irrlichtlogo2.png"),
 		position2d<int>(10,10));
 
 	/*
