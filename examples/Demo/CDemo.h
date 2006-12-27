@@ -4,7 +4,7 @@
 #ifndef __C_DEMO_H_INCLUDED__
 #define __C_DEMO_H_INCLUDED__
 
-#define USE_IRRKLANG
+//#define USE_IRRKLANG
 //#define USE_SDL_MIXER
 
 #include <irrlicht.h>
@@ -99,8 +99,8 @@ private:
 	scene::IMetaTriangleSelector* metaSelector;
 	scene::ITriangleSelector* mapSelector;
 
-	u32 sceneStartTime;
-	u32 timeForThisScene;
+	s32 sceneStartTime;
+	s32 timeForThisScene;
 
 	core::array<SParticleImpact> Impacts;
 };

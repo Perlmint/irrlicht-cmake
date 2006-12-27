@@ -10,30 +10,51 @@ class CSceneNodeAnimatorFollowBoundingBox : public irr::scene::ISceneNodeAnimato
 public:
 
 	//! constructor
-	CSceneNodeAnimatorFollowBoundingBox( irr::scene::ISceneNode* tofollow, const core::vector3df &offset )
+	CSceneNodeAnimatorFollowBoundingBox( irr::scene::ISceneNode* tofollow, const core::vector3df &offset, u32 frequency, s32 phase )
 	{
+		Frequency = frequency;
+		Phase = phase;
 		Offset = offset;
 		ToFollow = tofollow;
-		ToFollow->grab ();
+		if ( ToFollow )
+			ToFollow->grab ();
 	}
 
 	//! destructor
 	virtual ~CSceneNodeAnimatorFollowBoundingBox()
 	{
-		ToFollow->drop ();
+		if ( ToFollow )
+			ToFollow->drop ();
 	}
 
 	//! animates a scene node
 	virtual void animateNode(irr::scene::ISceneNode* node, u32 timeMs)
 	{
-		if ( 0 == node )
+		if ( 0 == node || node->getType () != irr::scene::ESNT_LIGHT)
 			return;
 
-		core::vector3df now = node->getPosition();
+		irr::scene::ILightSceneNode* l = (irr::scene::ILightSceneNode*) node;
 
-		now += ToFollow->getBoundingBox().getCenter();
-		now += Offset;
-		node->setPosition ( now );
+		core::vector3df now = l->getPosition();
+
+		if ( ToFollow )
+		{
+			now += ToFollow->getBoundingBox().getCenter();
+			now += Offset;
+		}
+
+		irr::video::SColorHSL color;
+		irr::video::SColor rgb;
+		color.Hue = ( ( timeMs + Phase ) % Frequency  ) * ( 2.f * irr::core::PI / Frequency );
+		color.Saturation = 1.f;
+		color.Luminance = 0.5f;
+		color.settoRGB ( rgb );
+
+		video::SLight light;
+		l->getLightData ( light );
+		light.DiffuseColor = rgb;
+		light.Position = now;
+		l->setLightData ( light );
 	}
 
 
@@ -41,7 +62,10 @@ private:
 
 	core::vector3df Offset;
 	irr::scene::ISceneNode* ToFollow;
+	s32 Frequency;
+	s32 Phase;
 };
+
 
 
 
@@ -56,7 +80,7 @@ CMainMenu::CMainMenu()
 bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 					bool& outAdditive, bool &outVSync, video::E_DRIVER_TYPE& outDriver)
 {
-	device = createDevice(video::EDT_SOFTWARE2,
+	device = createDevice( video::EDT_SOFTWARE2,
 		core::dimension2d<s32>(512, 384), 16, false, false, false, this);
 
 	device->getFileSystem()->addZipFileArchive("irrlicht.dat");
@@ -72,7 +96,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// load font
 
-	gui::IGUIFont* font = guienv->getFont("../../media/fonthaettenschweiler.bmp");
+	gui::IGUIFont* font = guienv->getFont("../../media/fontlucida.png");
 	if (font)
 		guienv->getSkin()->setFont(font);
 
@@ -89,11 +113,11 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 	// add list box
 
-	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,220,105), optTab, 1);
+	gui::IGUIListBox* box = guienv->addListBox(core::rect<int>(10,10,220,120), optTab, 1);
 	box->addItem(L"OpenGL 1.5");
 	box->addItem(L"Direct3D 8.1");
 	box->addItem(L"Direct3D 9.0c");
-	box->addItem(L"Burning's Video 0.2");
+	box->addItem(L"Burning's Video 0.38");
 	box->addItem(L"Irrlicht Software Renderer 1.0");
 	box->setSelected(selected);
 
@@ -132,10 +156,10 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 		L"What you currently see is displayed using the Burning Software Renderer (Thomas Alten). "\
 		L"The Irrlicht Engine was written by me, Nikolaus Gebhardt. The models, "\
 		L"maps and textures were placed at my disposal by B.Collins, M.Cook and J.Marton. The music was created by "\
-		L"M.Rohde and is played back by Audiere.\n"\
+		L"M.Rohde and is played back by Audiere."\
 		L"For more informations, please visit the homepage of the Irrlicht engine:\nhttp://www.irrlicht.sourceforge.net";
 
-	guienv->addStaticText(text2, core::rect<int>(20, 40, 220, 300),
+	guienv->addStaticText(text2, core::rect<int>(10, 10, 230, 320),
 		true, true, aboutTab);
 
 
@@ -145,24 +169,25 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	scene::IAnimatedMeshSceneNode* modelNode = smgr->addAnimatedMeshSceneNode(mesh);
 	if (modelNode)
 	{
+		modelNode->setPosition ( core::vector3df ( 0.f, 0.f, -5.f ) );
 		modelNode->setMaterialTexture(0, driver->getTexture("../../media/faerie2.bmp"));
 		modelNode->setMaterialFlag(video::EMF_LIGHTING, true);
+		modelNode->getMaterial(0).Shininess = 28.f;
+		modelNode->getMaterial(0).NormalizeNormals = true;
 		modelNode->setMD2Animation ( scene::EMAT_STAND );
+		//modelNode->setFrameLoop ( 0, 0 );
 	}
 
-	// set ambient light
-	driver->setAmbientLight ( video::SColorf ( 0x00bdcb26 ) );
+	// set ambient light ( no sun light in the catacombs )
+	smgr->setAmbientLight ( video::SColorf ( 0.f, 0.f, 0.f ) );
 
 	scene::ISceneNodeAnimator* anim;
 	scene::ISceneNode* bill;
 
-	// add light 1 (nearly red)
+	// add light 1 (sunset orange)
 	scene::ILightSceneNode* light1 =
-		smgr->addLightSceneNode(0, core::vector3df(0,1,0),
-		video::SColorf(0.9f, 10.0f, 0.f, 0.0f), 200.0f);
-
-	light1->getLightData().Type = video::ELT_DIRECTIONAL;
-
+		smgr->addLightSceneNode(0, core::vector3df(10.f,10.f,0),
+		video::SColorf(0.86f, 0.38f, 0.05f), 200.0f);
 
 	// add fly circle animator to light 1
 	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),30.0f, -0.004f, core::vector3df ( 0.41f, 0.4f, 0.0f ) );
@@ -170,8 +195,8 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	anim->drop();
 
 	// let the lights follow the model...
-	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,16,0) );
-	light1->addAnimator(anim);
+	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,16,0), 4000, 0 );
+	//light1->addAnimator(anim);
 	anim->drop();
 
 
@@ -181,65 +206,70 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	bill->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	bill->setMaterialTexture(0, driver->getTexture("../../media/particlered.bmp"));
 
-
-	// add light 3 (nearly red)
-	scene::ILightSceneNode* light3 =
+#if 1
+	// add light 2 (nearly red)
+	scene::ILightSceneNode* light2 =
 		smgr->addLightSceneNode(0, core::vector3df(0,1,0),
-		video::SColorf(0.9f, 10.0f, 0.f, 0.0f), 200.0f);
-
-	light3->getLightData().Type = video::ELT_DIRECTIONAL;
-
+		video::SColorf(0.9f, 1.0f, 0.f, 0.0f), 200.0f);
 
 	// add fly circle animator to light 1
 	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),30.0f, 0.004f, core::vector3df ( 0.41f, 0.4f, 0.0f ) );
-	light3->addAnimator(anim);
+	light2->addAnimator(anim);
 	anim->drop();
 
 	// let the lights follow the model...
-	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,-8,0) );
-	light3->addAnimator(anim);
+	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,-8,0), 2000, 0 );
+	//light2->addAnimator(anim);
 	anim->drop();
 
 
 	// attach billboard to the light
-	bill = smgr->addBillboardSceneNode(light3, core::dimension2d<f32>(10, 10));
+	bill = smgr->addBillboardSceneNode(light2, core::dimension2d<f32>(10, 10));
 	bill->setMaterialFlag(video::EMF_LIGHTING, false);
 	bill->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	bill->setMaterialTexture(0, driver->getTexture("../../media/particlered.bmp"));
 
-	// add light 2 (nearly blue)
-	scene::ILightSceneNode* light2 =
+	// add light 3 (nearly blue)
+	scene::ILightSceneNode* light3 =
 		smgr->addLightSceneNode(0, core::vector3df(0,-1,0),
 		video::SColorf(0.f, 0.0f, 0.9f, 0.0f), 40.0f);
 
-	light2->getLightData().Type = video::ELT_DIRECTIONAL;
-
 	// add fly circle animator to light 2
-	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),30.0f, 0.004f, core::vector3df ( -0.41f, -0.4f, 0.0f ) );
-	light2->addAnimator(anim);
+	anim = smgr->createFlyCircleAnimator (core::vector3df(0,0,0),40.0f, 0.004f, core::vector3df ( -0.41f, -0.4f, 0.0f ) );
+	light3->addAnimator(anim);
 	anim->drop();
 
 	// let the lights follow the model...
-	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,8,0) );
-	light2->addAnimator(anim);
+	anim = new CSceneNodeAnimatorFollowBoundingBox ( modelNode, core::vector3df(0,8,0), 8000, 0 );
+	//light3->addAnimator(anim);
 	anim->drop();
 
 	// attach billboard to the light
-	bill = smgr->addBillboardSceneNode(light2, core::dimension2d<f32>(10, 10));
+	bill = smgr->addBillboardSceneNode(light3, core::dimension2d<f32>(10, 10));
 
 	bill->setMaterialFlag(video::EMF_LIGHTING, false);
 	bill->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	bill->setMaterialTexture(0, driver->getTexture("../../media/portal1.bmp"));
+#endif
 
+	// create a fixed camera
 	smgr->addCameraSceneNode(0, core::vector3df(45,0,0), core::vector3df(0,0,10));
 
 	// irrlicht logo and background
 	// add irrlicht logo
-	guienv->addImage(driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
+	bool oldMipMapState = driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
+	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+
+	guienv->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(5,5));
 
-	video::ITexture* irrlichtBack = driver->getTexture("../../media/demoback.bmp");
+	video::ITexture* irrlichtBack = driver->getTexture("../../media/demoback.jpg");
 
+	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, oldMipMapState);
+
+
+	// query original skin color
+	getOriginalSkinColor ();
 
 	// set transparency
 	setTransparency();
@@ -287,6 +317,18 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 
 bool CMainMenu::OnEvent(SEvent event)
 {
+	if (event.EventType == EET_KEY_INPUT_EVENT &&
+		event.KeyInput.Key == KEY_F9 &&
+		event.KeyInput.PressedDown == false)
+	{
+		video::IImage* image = device->getVideoDriver()->createScreenShot();
+		if (image)
+		{
+			device->getVideoDriver()->writeImageToFile(image, "\\screenshot.bmp");
+			image->drop();
+		}
+	}
+	else
 	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT &&
 		event.MouseInput.Event == EMIE_RMOUSE_LEFT_UP )
 	{
@@ -319,7 +361,8 @@ bool CMainMenu::OnEvent(SEvent event)
 				event.GUIEvent.EventType == gui::EGET_LISTBOX_SELECTED_AGAIN)
 			{
 				selected = ((gui::IGUIListBox*)event.GUIEvent.Caller)->getSelected();
-				startButton->setEnabled(selected != 4);
+				//startButton->setEnabled(selected != 4);
+				startButton->setEnabled( true );
 			}
 			break;
 		case 2:
@@ -355,13 +398,28 @@ bool CMainMenu::OnEvent(SEvent event)
 }
 
 
-void CMainMenu::setTransparency()
+void CMainMenu::getOriginalSkinColor()
 {
+	irr::gui::IGUISkin * skin = device->getGUIEnvironment()->getSkin();
 	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
 	{
-		video::SColor col = device->getGUIEnvironment()->getSkin()->
-			getColor((gui::EGUI_DEFAULT_COLOR)i);
-		col.setAlpha(transparent ? 201 : 255);
-		device->getGUIEnvironment()->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
+		SkinColor [ i ] = skin->getColor ( (gui::EGUI_DEFAULT_COLOR)i );
+	}
+
+}
+
+void CMainMenu::setTransparency()
+{
+	irr::gui::IGUISkin * skin = device->getGUIEnvironment()->getSkin();
+
+	u32 i;
+	for ( i=0; i<gui::EGDC_COUNT ; ++i)
+	{
+		video::SColor col = SkinColor [ i ];
+
+		if ( false == transparent )
+			col.setAlpha( 255);
+
+		skin->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
 	}
 }
