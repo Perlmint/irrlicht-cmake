@@ -1,6 +1,167 @@
 -------------------------------------------
 Changes in version 1.2 (29 Nov 2006)
 
+- Material TextureWrap:
+	Enable Irrlicht to change TextureAddress Mode (Wrapping=Default, and Clamping)
+- Material ZBuffer to u32
+	Resaon: change ( off or on ) to , off, lequal, equal
+	Necessary for multi-pass if previous stage has had transparency
+- Attention!: Changed SceneManager:drawAll to
+	-> OnPostRender all
+	-> Active Camera->OnPreRender
+	-> OnPreRender All
+	reason: 
+		- incorrect Transformation was always one frame off
+- DebugDataVisible is now a enum of flags
+	show normals is supported ( uses the new build in arrowmesh )
+- New Function: GeometryCreator
+	addArrowMesh. build a closed cylinder and a cone
+	used to show normals as debug feature
+- New Function:
+		CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m) const
+		
+		transform VertexPosition and VertexNormal
+
+- BUGFIX:	CGUIButton notified Pressed whene Mous was clicked Inside ( correct )
+	but also left up outside rectangle ( incorrect)
+
+- BUGFIX: Octree:getPolys(const scene::SViewFrustum& frustum, SIndexData* idxdata)
+	was recursive calling invisible children
+
+- CFileList
+	Changed FileListEntry sorting to
+	a) Directory comes first
+	b) sorting ignores case
+	so it feel's more like common browers
+- texture transformation
+	in my opionion ITexture is the wrong place to hold a texture transformation
+	a) a texture can have multiple different transformations..
+	b) not every ( in fact usually no texture ) has a transformationen
+	c) it belongs to a material...
+	
+	so i removed it, and added a Texture transform to IVideoDriver::setTransform
+	
+- quaternion::getmatrix
+	in fact the getmatrix version is returning the transposed...
+	i'm quite sure that this is the wrong implementation...
+	so this should be verified... to remove the getmatrix_transposed version...
+- Quake3 Map Loader:
+	added new loading method ( the old one still exists )
+	- Bezier Patches with LOD more than 3
+	- Multiple Meshes, stay compatible with the previous version
+	- Indexed Triangle List
+	- initial support for quake3 Shaders and Entities
+	- Shaders are parsed. When it's possible to resolve a 2 Texture Scheme it's taken
+		Shaders exist in namespace scene::quake3
+	- The Example Quake3Map shows how to continue applying the Q3Shaders with SceneNodes
+	   ( for example animmap converts to TetxureAnimator.)
+	   TODO: use the Irrlicht Variable Syntax to remove redundant code..
+	   
+- added getVertexPitch () to IMeshBuffer interface
+	
+- added 3d TextSceneNode2. to view a Text in real 3D Space
+	- in fact it is a combination of Billboard & TextSceneNode
+- added generic isupper, isspace.. functions to irrstring to remove dependencies for ctype.h
+	( future: it's possibly to use binary comparison test..)
+	removed 1000's include of string.h and moved one to irrstring.h
+	in preparing of complete removing the MSVC...
+- moved fast_of.h to the public include
+	added strtol10 to remove dependicies for stdlib.h
+	anyway math.h is needed for powf
+	
+- core::vector3d
+	added getInterpolated_quadratic.
+	vector3d<T> getInterpolated_quadratic(const vector3d<T>& v2, const vector3d<T>& v3, const T d) const
+	// this*(1-d)*(1-d) + 2 * v2 * (1-d) + v3 * d * d;
+	
+- irrstring: added param start to findLast(T c,  s32 start = -1 )
+	reason: to continue searching reverse on a specific position
+	(parameter is checked against boundaries )
+
+
+- added operation reciprocal_squareroot to irrmath.
+
+	core::reciprocal_squareroot = 1.f / sqrtf ( x )
+	changed the core::vector3df normalize vector...
+	are specialized templates allowed in irrlicht?.. ( maybe not )
+	so it's only for f32 for now...
+	
+	a C function and a NVidia Version are in irrmath.h
+	or we use the famous Quake3 version...
+	
+- add Primitives to CFPSCounter 
+	and changed interpolation to 1500ms instead of 2000ms
+	and rounding to ceiling..
+- add Interface setAmbientLight to ISceneManager
+	it was a Bug, because SceneManager always calls Driver
+	therefore AmbientLight has to be set in SceneManager...
+
+- Burning Video
+	- New Compile Config BURNINGVIDEO_RENDERER_ULTRA_FAST
+	- New Compile Config BURNINGVIDEO_RENDERER_FAST
+		touching the 20fps border in the demo ( P4 mobile 2Ghz ). 15fps average.
+		( Compile config Release Fast-FPU )
+		
+		people in the forum complain that burning video is slow...
+		BURNINGVIDEO_RENDERER_ULTRA_FAST has at least double speed as software renderer1
+		but with clipping, 32 Bit Z-Buffer, 2 Texture Stage + mipmapping + 32 Bit Texture and subpixel..
+		that means.. twice data load, ca. 1/4 more triangles, more division..
+		
+		you can compare it when now clipping is involved..
+		the movement example is a good candidate..
+		
+		Hey!, i need honour;-)
+		and the competition is not over...
+
+	- VertexCache for Tansformred & Light Vertices
+		boost small drawPrimitive Calls ( 2DRectangle, Billboard ) and Real Index Triangles
+		
+	- Bilinear Dither
+	- clipping test ( compare instead of generic plane normal )
+	- support for NOT using vertexcolor
+		#define SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+
+- changed GUIFont & FontTool to support kerning.. ( on a global basis )
+	
+	very basic mode.. apply an offset for position
+	usefully for example if you want to apply an outline stroke in your favorite
+	and therefore let the texture grow..
+	and to correct the border back on drawing, specify the parameter in IGUIFont..
+	this is quite useful if you want to use more artistic fonts.
+	default = 0
+	
+	better kerning would need a seperate coordinate set for each symbol..
+	
+- added vertex to color to billboard.
+	shade top & shade down.
+	to support some static lighting effect on billboards
+	
+- changed MD2_FRAME_SHIFT to lower framerate
+	-> lower IPol
+	problems can accure if somebody uses hardcoded frame-numbers instead
+	of Animation name...
+- changed spelling "frustrum" to "frustum"
+	-> changed also SViewFrustrum.h to SViewFrustum.h
+	
+- changed Parameter AutomaticCulling from bool to enum E_CULLING_TYPE
+	to supported more than two culling modes.
+	
+	added Frustum culling ( it's a copy & paste from the octree )
+	added initial bounding sphere
+		used for culling point lights..
+	
+	
+- The ISceneManager::addCameraSceneNodeFPS() has a new parameter named 'jumpSpeed'
+  and a Key Map Entry.
+  
+  
+- testing matrix44 to identity before multiply
+	mhmm. i remember this was inserted in long time previous versions..
+	anyway. it's enabled again.
+	
+	
+=======
+=======
 - Added Solaris/Sparc port (basically some compiler define statements). Irrlicht and the examples should compile out-of-the-box on Suns with the usual Makefiles and gnumake.
 
 - Added texture matrix support for hardware accelerated drivers. This allows for efficient texture coord manipulations for complete meshes at once.
@@ -19,6 +180,7 @@ Changes in version 1.2 (29 Nov 2006)
 
 - OpenGL now uses frame buffer objects for render targets larger than the screen, supplied by Mandrav
 
+>>>>>>> .r314
 - Split ESNRP_LIGHT_AND_CAMERA passes into ESNRP_LIGHT and ESNRP_CAMERA to fix a problem with lights being rendered before cameras in OpenGL (thanks again to Vitek for finding this). ESNRP_LIGHT_AND_CAMERA is now deprecated.
 
 - Fixed many OpenGL render state problems which were related to wrong texture states. The textures are now enabled and disabled by the material renderers in OnSetMaterial. Also enabled the texture state cache which helps preventing texture changes just as the one for D3Dx. Thanks to hey_i_am_real for some good hints on where the problem was located. 
@@ -36,6 +198,8 @@ Changes in version 1.2 (29 Nov 2006)
 - Color selection dialog added.
 
 - New GUI skin "Burning Skin".
+	it's a black & white skin. look elegant on true-color.
+	and looks ok on 1-Bit ( e.g. no vertex color in burnings video )
 
 - GUIStatic text is correctly grayed out if disabled.
 
@@ -1455,7 +1619,7 @@ Changes in version 0.5: (17 Feb 2004)
   in Win95/98.
 
 - Optimized the Octree-Scene node a little bit for getting more rendering speed.
-  Culling is now done with the real frustrum, not the bounding box around it.
+  Culling is now done with the real frustum, not the bounding box around it.
   Speed increase is about 5%, it's not much but ok.
 
 - Bug fixed in the Quake 3 .bsp file loader, which caused holes to appear in
@@ -1985,7 +2149,7 @@ Changes in version 0.2: (19 May 2003)
   addShadowVolumeSceneNode(). Please note that shadows are currently just experimental,
   there are some bugs, and they only only in Direct3D mode.
 
-- A small bug in the view frustrum and the octree fixed.
+- A small bug in the view frustum and the octree fixed.
 
 - The default aspect ratio in all camera scene nodes was changed.
 
