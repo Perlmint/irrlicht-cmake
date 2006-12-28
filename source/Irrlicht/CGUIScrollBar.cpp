@@ -254,6 +254,7 @@ void CGUIScrollBar::refreshControls()
 		if (!UpButton)
 		{
 			UpButton = new CGUIButton(Environment, this, -1, core::rect<s32>(0,0, h, h), NoClip);
+			UpButton->setSubElement(true);
 			UpButton->setOverrideFont(Environment->getBuiltInFont());
 		}
 		UpButton->setText(GUI_ICON_CURSOR_LEFT);
@@ -261,6 +262,7 @@ void CGUIScrollBar::refreshControls()
 		if (!DownButton)
 		{
 			DownButton = new CGUIButton(Environment, this, -1, core::rect<s32>(RelativeRect.getWidth()-h, 0, RelativeRect.getWidth(), h), NoClip);
+			DownButton->setSubElement(true);
 			DownButton->setOverrideFont(Environment->getBuiltInFont());
 		}
 		DownButton->setRelativePosition(core::rect<s32>(RelativeRect.getWidth()-h, 0, RelativeRect.getWidth(), h));
@@ -272,6 +274,7 @@ void CGUIScrollBar::refreshControls()
 		if (!UpButton)
 		{
 			UpButton = new CGUIButton(Environment, this, -1, core::rect<s32>(0,0, w, w), NoClip);
+			UpButton->setSubElement(true);
 			UpButton->setOverrideFont(Environment->getBuiltInFont());
 		}
 		UpButton->setText(GUI_ICON_CURSOR_UP);
@@ -279,12 +282,40 @@ void CGUIScrollBar::refreshControls()
 		if (!DownButton)
 		{
 			DownButton = new CGUIButton(Environment, this, -1, core::rect<s32>(0,RelativeRect.getHeight()-w, w, RelativeRect.getHeight()), NoClip);
+			DownButton->setSubElement(true);
 			DownButton->setOverrideFont(Environment->getBuiltInFont());
 		}
 		DownButton->setText(GUI_ICON_CURSOR_DOWN);
 		DownButton->setRelativePosition(core::rect<s32>(0,RelativeRect.getHeight()-w, w, RelativeRect.getHeight()));
 	}
 }
+
+//! Writes attributes of the element.
+void CGUIScrollBar::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIScrollBar::serializeAttributes(out,options);
+
+	out->addBool	("Horizontal",	Horizontal);
+	out->addInt		("Value",		Pos);
+	out->addInt		("Max",			Max);
+	out->addInt		("SmallStep",	SmallStep);
+	out->addBool	("NoClip",		NoClip);
+}
+
+//! Reads attributes of the element
+void CGUIScrollBar::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIScrollBar::deserializeAttributes(in,options);
+
+	Horizontal = in->getAttributeAsBool("Horizontal");
+	setMax(in->getAttributeAsInt("Max"));
+	setPos(in->getAttributeAsInt("Value"));
+	setSmallStep(in->getAttributeAsInt("SmallStep"));
+	NoClip = in->getAttributeAsBool("NoClip");
+
+	refreshControls();
+}
+
 
 
 } // end namespace gui

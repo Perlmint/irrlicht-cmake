@@ -77,6 +77,28 @@ void CGUIImage::setUseAlphaChannel(bool use)
 }
 
 
+//! Writes attributes of the element.
+void CGUIImage::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIImage::serializeAttributes(out,options);
+
+	out->addTexture	("Texture",			Texture);
+	out->addBool	("UseAlphaChannel",	UseAlphaChannel);
+
+}
+
+//! Reads attributes of the element
+void CGUIImage::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIImage::deserializeAttributes(in,options);
+
+	setImage(in->getAttributeAsTexture("Texture"));
+	setUseAlphaChannel(in->getAttributeAsBool("UseAlphaChannel"));
+
+}
+
+
+
 
 } // end namespace gui
 } // end namespace irr

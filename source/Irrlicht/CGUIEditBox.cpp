@@ -692,6 +692,27 @@ s32 CGUIEditBox::getCursorPos(s32 x)
 	return Text.size();
 }
 
+//! Writes attributes of the element.
+void CGUIEditBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIEditBox::serializeAttributes(out,options);
+	out->addBool	("OverrideColorEnabled",		OverrideColorEnabled );
+	out->addColor	("OverrideColor",				OverrideColor);
+	// out->addFont("OverrideFont",OverrideFont);
+	out->addInt		("MaxChars",					Max);
+}
+
+//! Reads attributes of the element
+void CGUIEditBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIEditBox::deserializeAttributes(in,options);
+	setOverrideColor(in->getAttributeAsColor("OverrideColor"));
+	enableOverrideColor(in->getAttributeAsBool("OverrideColorEnabled"));
+	setMax(in->getAttributeAsInt("MaxChars"));
+
+	// setOverrideFont(in->getAttributeAsFont("OverrideFont"));
+}
+
 
 } // end namespace gui
 } // end namespace irr

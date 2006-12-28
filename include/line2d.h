@@ -87,10 +87,10 @@ class line2d
 			out.Y = a1 + b1*out.X;
 
 			// did the lines cross?
-			if ( (start.X-out.X) *(out.X-end.X)  >= -ROUNDING_ERROR &&
-				(l.start.X-out.X)*(out.X-l.end.X)>= -ROUNDING_ERROR &&
-				(start.Y-out.Y)  *(out.Y-end.Y)  >= -ROUNDING_ERROR &&
-				(l.start.Y-out.Y)*(out.Y-l.end.Y)>= -ROUNDING_ERROR )
+			if (	(start.X-out.X) *(out.X-end.X)	 >= -ROUNDING_ERROR_32 &&
+				(l.start.X-out.X)*(out.X-l.end.X)>= -ROUNDING_ERROR_32 &&
+				(start.Y-out.Y)  *(out.Y-end.Y)  >= -ROUNDING_ERROR_32 &&
+				(l.start.Y-out.Y)*(out.Y-l.end.Y)>= -ROUNDING_ERROR_32 )
 			{
 				found = true;
 			}

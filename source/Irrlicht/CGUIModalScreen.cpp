@@ -101,7 +101,17 @@ void CGUIModalScreen::updateAbsolutePosition()
 	IGUIElement::updateAbsolutePosition();
 }
 
+//! Writes attributes of the element.
+void CGUIModalScreen::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	// these don't get serialized, their status is added to their children.
+}
 
+//! Reads attributes of the element
+void CGUIModalScreen::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	// these don't get deserialized. children create them if required
+}
 
 
 } // end namespace gui

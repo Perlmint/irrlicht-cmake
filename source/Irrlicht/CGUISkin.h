@@ -158,6 +158,9 @@ namespace gui
 						const core::rect<s32>& rect,
 						const core::rect<s32>* clip=0);
 
+		//! get the type of this skin
+		virtual EGUI_SKIN_TYPE getType();
+
 	private:
 
 		video::SColor Colors[EGDC_COUNT];

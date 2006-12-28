@@ -52,6 +52,12 @@ namespace gui
 		//! Returns maximum amount of characters, previously set by setMax();
 		virtual s32 getMax();
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
 	protected:
 
 		bool processKey(const SEvent& event);

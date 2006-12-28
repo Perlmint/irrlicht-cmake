@@ -13,7 +13,8 @@ namespace irr
 namespace io
 {
 
-char CAttributes::tmpBuffer[1024];
+c8		CAttributes::tmpBuffer [1024];
+wchar_t CAttributes::tmpBufferW[1024];
 
 CAttributes::CAttributes(video::IVideoDriver* driver)
 : Driver(driver)
@@ -41,7 +42,7 @@ void CAttributes::clear()
 }
 
 
-//! Sets a string attribute. 
+//! Sets a string attribute.
 //! \param attributeName: Name for the attribute
 //! \param value: Value for the attribute. Set this to 0 to delete the attribute
 void CAttributes::setAttribute(const c8* attributeName, const c8* value)
@@ -68,7 +69,7 @@ void CAttributes::setAttribute(const c8* attributeName, const c8* value)
 
 //! Gets a string attribute.
 //! \param attributeName: Name of the attribute to get.
-//! \return Returns value of the attribute previously set by setStringAttribute() 
+//! \return Returns value of the attribute previously set by setStringAttribute()
 //! or 0 if attribute is not set.
 core::stringc CAttributes::getAttributeAsString(const c8* attributeName)
 {
@@ -96,7 +97,7 @@ void CAttributes::getAttributeAsString(const c8* attributeName, char* target)
 		target[0] = 0;
 }
 
-//! Returns string attribute value by index. 
+//! Returns string attribute value by index.
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 core::stringc CAttributes::getAttributeAsString(s32 index)
 {
@@ -110,6 +111,128 @@ core::stringc CAttributes::getAttributeAsString(s32 index)
 
 	return str;
 }
+
+
+//! Sets a string attribute.
+//! \param attributeName: Name for the attribute
+//! \param value: Value for the attribute. Set this to 0 to delete the attribute
+void CAttributes::setAttribute(const c8* attributeName, const wchar_t* value)
+{
+	for (int i=0; i<(int)Attributes.size(); ++i)
+		if (Attributes[i]->Name == attributeName)
+		{
+			if (!value)
+			{
+				Attributes[i]->drop();
+				Attributes.erase(i);
+			}
+			else
+				Attributes[i]->setString(value);
+
+			return;
+		}
+
+	if (value)
+	{
+		Attributes.push_back(new CStringAttribute(attributeName, value));
+	}
+}
+
+//! Gets a string attribute.
+//! \param attributeName: Name of the attribute to get.
+//! \return Returns value of the attribute previously set by setStringAttribute()
+//! or 0 if attribute is not set.
+core::stringw CAttributes::getAttributeAsStringW(const c8* attributeName)
+{
+	core::stringw str;
+
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+	{
+		att->getString(tmpBufferW);
+		str = tmpBufferW;
+	}
+
+	return str;
+}
+
+//! Gets a string attribute.
+//! \param attributeName: Name of the attribute to get.
+//! \param target: Buffer where the string is copied to.
+void CAttributes::getAttributeAsStringW(const c8* attributeName, wchar_t* target)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		att->getString(target);
+	else
+		target[0] = 0;
+}
+
+//! Returns string attribute value by index.
+//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+core::stringw CAttributes::getAttributeAsStringW(s32 index)
+{
+	core::stringw str;
+
+	if (index >= 0 && index < (int)Attributes.size())
+	{
+		Attributes[index]->getString(tmpBufferW);
+		str = tmpBufferW;
+	}
+
+	return str;
+}
+
+
+//! Adds an attribute as an array of wide strings
+void CAttributes::addArray(const c8* attributeName, core::array<core::stringw> value)
+{
+	Attributes.push_back(new CStringWArrayAttribute(attributeName, value));
+}
+
+//! Sets an attribute value as an array of wide strings.
+void CAttributes::setAttribute(const c8* attributeName, const core::array<core::stringw> value)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		att->setArray(value);
+	else
+	{
+		Attributes.push_back(new CStringWArrayAttribute(attributeName, value));
+	}
+}
+
+//! Gets an attribute as an array of wide strings.
+core::array<core::stringw> CAttributes::getAttributeAsArray(const c8* attributeName)
+{
+	core::array<core::stringw> ret;
+
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		ret = att->getArray();
+
+	return ret;
+}
+
+//! Returns attribute value as an array of wide strings by index.
+core::array<core::stringw> CAttributes::getAttributeAsArray(s32 index)
+{
+	core::array<core::stringw> ret;
+
+	if (index >= 0 && index < (s32)Attributes.size())
+		ret = Attributes[index]->getArray();
+
+	return ret;
+}
+
+//! Sets an attribute as an array of wide strings
+void CAttributes::setAttribute(s32 index, core::array<core::stringw> value)
+{
+	if (index >= 0 && index < (s32)Attributes.size() )
+		Attributes[index]->setArray(value);
+}
+
+
 
 
 //! Returns attribute index from name, -1 if not found
@@ -268,7 +391,7 @@ video::SColorf CAttributes::getAttributeAsColorf(const c8* attributeName)
 }
 
 //! Sets a attribute as 2d position
-void CAttributes::setAttribute(const c8* attributeName, core::position2df value)
+void CAttributes::setAttribute(const c8* attributeName, core::position2di value)
 {
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
@@ -282,13 +405,39 @@ void CAttributes::setAttribute(const c8* attributeName, core::position2df value)
 //! Gets an attribute as 2d position
 //! \param attributeName: Name of the attribute to get.
 //! \return Returns value of the attribute previously set by setAttribute()
-core::position2df CAttributes::getAttributeAsPosition2d(const c8* attributeName)
+core::position2di CAttributes::getAttributeAsPosition2d(const c8* attributeName)
 {
-	core::position2df ret;
+	core::position2di ret;
 
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
 		ret = att->getPosition();
+
+	return ret;
+}
+
+//! Sets a attribute as rectangle
+void CAttributes::setAttribute(const c8* attributeName, core::rect<s32> value)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		att->setRect(value);
+	else
+	{
+		Attributes.push_back(new CRectAttribute(attributeName, value));
+	}
+}
+
+//! Gets an attribute as rectangle
+//! \param attributeName: Name of the attribute to get.
+//! \return Returns value of the attribute previously set by setAttribute()
+core::rect<s32> CAttributes::getAttributeAsRect(const c8* attributeName)
+{
+	core::rect<s32> ret;
+
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		ret = att->getRect();
 
 	return ret;
 }
@@ -378,7 +527,7 @@ s32 CAttributes::getAttributeAsEnumeration(const c8* attributeName, const char* 
 		const char* value = att->getEnum();
 		if (value)
 		{
-			for (s32 i=0; enumerationLiteralsToUse[i]; ++i) 
+			for (s32 i=0; enumerationLiteralsToUse[i]; ++i)
 				if (!strcmp(value, enumerationLiteralsToUse[i]))
 					return i;
 		}
@@ -387,7 +536,7 @@ s32 CAttributes::getAttributeAsEnumeration(const c8* attributeName, const char* 
 	return ret;
 }
 
-//! Gets the list of enumeration literals of an enumeration attribute 
+//! Gets the list of enumeration literals of an enumeration attribute
 //! \param attributeName: Name of the attribute to get.
 void CAttributes::getAttributeEnumerationLiteralsOfEnumeration(const c8* attributeName, core::array<core::stringc>& outLiterals)
 {
@@ -442,7 +591,7 @@ s32 CAttributes::getAttributeCount()
 	return Attributes.size();
 }
 
-//! Returns string attribute name by index. 
+//! Returns string attribute name by index.
 //! \param index: Index value, must be between 0 and getStringAttributeCount()-1.
 const c8* CAttributes::getAttributeName(s32 index)
 {
@@ -464,7 +613,7 @@ E_ATTRIBUTE_TYPE CAttributes::getAttributeType(const c8* attributeName)
 	return ret;
 }
 
-//! Returns attribute type by index. 
+//! Returns attribute type by index.
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 E_ATTRIBUTE_TYPE CAttributes::getAttributeType(s32 index)
 {
@@ -547,14 +696,26 @@ core::vector3df CAttributes::getAttributeAsVector3d(s32 index)
 	return ret;
 }
 
-//! Gets an attribute as 3d vector
+//! Gets an attribute as rectangle
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
-core::position2df CAttributes::getAttributeAsPosition2d(s32 index)
+core::position2di CAttributes::getAttributeAsPosition2d(s32 index)
 {
-	core::position2df ret;
+	core::position2di ret;
 
 	if (index >= 0 && index < (s32)Attributes.size())
 		ret = Attributes[index]->getPosition();
+
+	return ret;
+}
+
+//! Gets an attribute as rectangle
+//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+core::rect<s32>  CAttributes::getAttributeAsRect(s32 index)
+{
+	core::rect<s32> ret;
+
+	if (index >= 0 && index < (s32)Attributes.size())
+		ret = Attributes[index]->getRect();
 
 	return ret;
 }
@@ -593,7 +754,7 @@ s32 CAttributes::getAttributeAsEnumeration(s32 index, const char* const* enumera
 			const char* value = att->getEnum();
 			if (value)
 			{
-				for (s32 i=0; enumerationLiteralsToUse[i]; ++i) 
+				for (s32 i=0; enumerationLiteralsToUse[i]; ++i)
 					if (!strcmp(value, enumerationLiteralsToUse[i]))
 						return i;
 			}
@@ -603,7 +764,7 @@ s32 CAttributes::getAttributeAsEnumeration(s32 index, const char* const* enumera
 	return -1;
 }
 
-//! Gets the list of enumeration literals of an enumeration attribute 
+//! Gets the list of enumeration literals of an enumeration attribute
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 void CAttributes::getAttributeEnumerationLiteralsOfEnumeration(s32 index, core::array<core::stringc>& outLiterals)
 {
@@ -626,6 +787,12 @@ void CAttributes::addFloat(const c8* attributeName, f32 value)
 
 //! Adds an attribute as string
 void CAttributes::addString(const c8* attributeName, const char* value)
+{
+	Attributes.push_back(new CStringAttribute(attributeName, value));
+}
+
+//! Adds an attribute as wchar string
+void CAttributes::addString(const c8* attributeName, const wchar_t* value)
 {
 	Attributes.push_back(new CStringAttribute(attributeName, value));
 }
@@ -668,9 +835,15 @@ void CAttributes::addVector3d(const c8* attributeName, core::vector3df value)
 }
 
 //! Adds an attribute as 2d position
-void CAttributes::addPosition2d(const c8* attributeName, core::position2df value)
+void CAttributes::addPosition2d(const c8* attributeName, core::position2di value)
 {
 	Attributes.push_back(new CPosition2DAttribute(attributeName, value));
+}
+
+//! Adds an attribute as rectangle
+void CAttributes::addRect(const c8* attributeName, core::rect<s32> value)
+{
+	Attributes.push_back(new CRectAttribute(attributeName, value));
 }
 
 //! Adds an attribute as binary data
@@ -688,12 +861,20 @@ void CAttributes::addTexture(const c8* attributeName, video::ITexture* texture)
 //! Returns if an attribute with a name exists
 bool CAttributes::existsAttribute(const c8* attributeName)
 {
-	return getAttributeP(attributeName) != 0;  
+	return getAttributeP(attributeName) != 0;
 }
 
-//! Sets an attribute value as string. 
+//! Sets an attribute value as string.
 //! \param attributeName: Name for the attribute
 void CAttributes::setAttribute(s32 index, const c8* value)
+{
+	if (index >= 0 && index < (s32)Attributes.size() )
+		Attributes[index]->setString(value);
+}
+
+//! Sets an attribute value as string.
+//! \param attributeName: Name for the attribute
+void CAttributes::setAttribute(s32 index, const wchar_t* value)
 {
 	if (index >= 0 && index < (s32)Attributes.size() )
 		Attributes[index]->setString(value);
@@ -739,6 +920,20 @@ void CAttributes::setAttribute(s32 index, core::vector3df v)
 {
 	if (index >= 0 && index < (s32)Attributes.size() )
 		Attributes[index]->setVector(v);
+}
+
+//! Sets a attribute as position
+void CAttributes::setAttribute(s32 index, core::position2di v)
+{
+	if (index >= 0 && index < (s32)Attributes.size() )
+		Attributes[index]->setPosition(v);
+}
+
+//! Sets a attribute as rectangle
+void CAttributes::setAttribute(s32 index, core::rect<s32> v)
+{
+	if (index >= 0 && index < (s32)Attributes.size() )
+		Attributes[index]->setRect(v);
 }
 
 //! Sets an attribute as binary data
@@ -808,55 +1003,82 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 	if (element == L"enum")
 	{
 		addEnum(name.c_str(), 0, 0);
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"color")
 	{
 		addColor(name.c_str(), video::SColor());
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"colorf")
 	{
 		addColorf(name.c_str(), video::SColorf());
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"float")
 	{
 		addFloat(name.c_str(), 0);
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"int")
 	{
 		addInt(name.c_str(), 0);
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"string")
 	{
 		addString(name.c_str(), "");
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"texture")
 	{
 		addTexture(name.c_str(), 0);
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"vector3d")
 	{
 		addVector3d(name.c_str(), core::vector3df());
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
+	}
+	else
+	if (element == L"position")
+	{
+		addPosition2d(name.c_str(), core::position2di());
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
+	}
+	else
+	if (element == L"rect")
+	{
+		addRect(name.c_str(), core::rect<s32>());
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
 	if (element == L"bool")
 	{
 		addBool(name.c_str(), 0);
-		Attributes.getLast()->setStringW(reader->getAttributeValue(L"value"));
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
+	}
+	else
+	if (element == L"array")
+	{
+		wchar_t tmpName[20];
+		core::array<core::stringw> tmpArray;
+
+		s32 count = reader->getAttributeValueAsInt(L"count");
+		s32 n=0;
+		for (; n<count; ++n)
+		{
+			swprintf(tmpName,L"value%d",n);
+			tmpArray.push_back(reader->getAttributeValue(tmpName));
+		}
+		addArray(name.c_str(),tmpArray);
 	}
 }
 
@@ -869,14 +1091,47 @@ bool CAttributes::write(io::IXMLWriter* writer)
 	writer->writeElement(L"attributes", false);
 	writer->writeLineBreak();
 
-	for (s32 i=0; i<(s32)Attributes.size(); ++i)
+	s32 i=0;
+	for (; i<(s32)Attributes.size(); ++i)
 	{
-		Attributes[i]->getString(tmpBuffer);
+		// Special case for writing arrays
+		if ( Attributes[i]->getType() == EAT_ARRAY )
+		{
+			wchar_t tmpName[20];
+			core::array<core::stringw> arraynames, arrayvalues;
+			core::array<core::stringw> arrayinput = Attributes[i]->getArray();
 
-		writer->writeElement(
-			Attributes[i]->getTypeString(), true, 
-			L"name", core::stringw(Attributes[i]->Name.c_str()).c_str(),
-			L"value", core::stringw(tmpBuffer).c_str());
+			// build arrays
+
+			// name
+			arraynames.push_back(core::stringw(L"name"));
+			arrayvalues.push_back(core::stringw(Attributes[i]->Name.c_str()) );
+
+			// count
+			arraynames.push_back(core::stringw(L"count"));
+			arrayvalues.push_back(core::stringw((s32)arrayinput.size()));
+
+			// array...
+			u32 n=0;
+			for (; n < arrayinput.size(); ++n)
+			{
+				swprintf(tmpName,L"value%d",n);
+				arraynames.push_back(core::stringw(tmpName));
+				arrayvalues.push_back(arrayinput[n]);
+			}
+
+			// write them
+			writer->writeElement( Attributes[i]->getTypeString(), true, arraynames, arrayvalues);
+		}
+		else
+		{
+			Attributes[i]->getString(tmpBuffer);
+
+			writer->writeElement(
+				Attributes[i]->getTypeString(), true,
+				L"name", core::stringw(Attributes[i]->Name.c_str()).c_str(),
+				L"value", core::stringw(tmpBuffer).c_str() );
+		}
 
 		writer->writeLineBreak();
 	}

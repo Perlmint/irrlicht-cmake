@@ -259,7 +259,7 @@ ITextSceneNode* CSceneManager::addTextSceneNode(gui::IGUIFont* font, const wchar
 }
 
 //! Adds a text scene node, which uses billboards
-ITextSceneNode* CSceneManager::addTextSceneNode2(gui::IGUIFont* font, const wchar_t* text,
+ITextSceneNode* CSceneManager::addTextSceneNode2(gui::IGUIFontASCII* font, const wchar_t* text,
 			ISceneNode* parent,
 			const core::dimension2d<f32>& size,f32 kerning,
 			const core::vector3df& position, s32 id,

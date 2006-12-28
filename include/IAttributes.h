@@ -9,8 +9,10 @@
 #include "SColor.h"
 #include "vector3d.h"
 #include "position2d.h"
+#include "rect.h"
 #include "irrString.h"
 #include "irrArray.h"
+#include "IGUIFont.h"
 #include "IXMLReader.h"
 
 namespace irr
@@ -53,11 +55,20 @@ enum E_ATTRIBUTE_TYPE
 	// 2d position attribute
 	EAT_POSITION2D,
 
+	// rectangle attribute
+	EAT_RECT,
+
+	// array of stringws attribute
+	EAT_ARRAY,
+
 	// binary data attribute
 	EAT_BINARY,
 
 	// texture reference attribute
 	EAT_TEXTURE,
+
+	// gui font reference attribute
+	EAT_FONT,
 
 	// unknown attribute
 	EAT_UNKNOWN
@@ -67,45 +78,6 @@ enum E_ATTRIBUTE_TYPE
 class IAttributes : public virtual IUnknown
 {
 public:
-
-	//! Removes all attributes
-	virtual void clear() = 0;
-
-	//! Adds an attribute as integer
-	virtual void addInt(const c8* attributeName, s32 value) = 0;
-
-	//! Adds an attribute as float
-	virtual void addFloat(const c8* attributeName, f32 value) = 0;
-
-	//! Adds an attribute as string
-	virtual void addString(const c8* attributeName, const c8* value) = 0;
-
-	//! Adds an attribute as bool
-	virtual void addBool(const c8* attributeName, bool value) = 0;
-
-	//! Adds an attribute as enum
-	virtual void addEnum(const c8* attributeName, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
-
-	//! Adds an attribute as enum
-	virtual void addEnum(const c8* attributeName, s32 enumValue, const c8* const* enumerationLiterals) = 0;
-
-	//! Adds an attribute as color
-	virtual void addColor(const c8* attributeName, video::SColor value) = 0;
-
-	//! Adds an attribute as floating point color
-	virtual void addColorf(const c8* attributeName, video::SColorf value) = 0;
-
-	//! Adds an attribute as 3d vector
-	virtual void addVector3d(const c8* attributeName, core::vector3df value) = 0;
-
-	//! Adds an attribute as position
-	virtual void addPosition2d(const c8* attributeName, core::position2df value) = 0;
-
-	//! Adds an attribute as binary data
-	virtual void addBinary(const c8* attributeName, void* data, s32 dataSizeInBytes) = 0;
-
-	//! Adds an attribute as texture reference
-	virtual void addTexture(const c8* attributeName, video::ITexture* texture) = 0;
 
 	//! Returns amount of attributes in this collection of attributes.
 	virtual s32 getAttributeCount() = 0;
@@ -121,6 +93,81 @@ public:
 	//! Returns attribute type by index. 
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual E_ATTRIBUTE_TYPE getAttributeType(s32 index) = 0;
+
+	//! Returns if an attribute with a name exists
+	virtual bool existsAttribute(const c8* attributeName) = 0;
+
+	//! Returns attribute index from name, -1 if not found
+	virtual s32 findAttribute(const c8* attributeName) = 0;
+
+	//! Removes all attributes
+	virtual void clear() = 0;
+
+	//! Reads attributes from a xml file.
+	//! \param readCurrentElementOnly: If set to true, reading only works if current element has the name 'attributes'.
+	//! IF set to false, the first appearing list attributes are read.
+	virtual bool read(irr::io::IXMLReader* reader, bool readCurrentElementOnly=false) = 0;
+
+	//! Write these attributes into a xml file
+	virtual bool write(io::IXMLWriter* writer) = 0;
+
+
+	/*
+
+		Integer Attribute
+
+	*/
+
+	//! Adds an attribute as integer
+	virtual void addInt(const c8* attributeName, s32 value) = 0;
+
+	//! Sets an attribute as integer value
+	virtual void setAttribute(const c8* attributeName, s32 value) = 0;
+
+	//! Gets an attribute as integer value
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual s32 getAttributeAsInt(const c8* attributeName) = 0;
+
+	//! Gets an attribute as integer value
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual s32 getAttributeAsInt(s32 index) = 0;
+
+	//! Sets an attribute as integer value
+	virtual void setAttribute(s32 index, s32 value) = 0;
+
+	/*
+
+		Float Attribute
+
+	*/
+
+	//! Adds an attribute as float
+	virtual void addFloat(const c8* attributeName, f32 value) = 0;
+
+	//! Sets a attribute as float value
+	virtual void setAttribute(const c8* attributeName, f32 value) = 0;
+
+	//! Gets an attribute as float value
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual f32 getAttributeAsFloat(const c8* attributeName) = 0;
+
+	//! Gets an attribute as float value
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual f32 getAttributeAsFloat(s32 index) = 0;
+
+	//! Sets an attribute as float value
+	virtual void setAttribute(s32 index, f32 value) = 0;
+
+	/*
+
+		String Attribute
+
+	*/
+
+	//! Adds an attribute as string
+	virtual void addString(const c8* attributeName, const c8* value) = 0;
 
 	//! Sets an attribute value as string. 
 	//! \param attributeName: Name for the attribute
@@ -140,7 +187,78 @@ public:
 
 	//! Returns attribute value as string by index. 
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual core::stringc getAttributeAsString(s32 index) = 0;	
+	virtual core::stringc getAttributeAsString(s32 index) = 0;
+
+	//! Sets an attribute value as string. 
+	//! \param attributeName: Name for the attribute
+	virtual void setAttribute(s32 index, const c8* value) = 0;
+
+	// wide strings
+
+	//! Adds an attribute as string
+	virtual void addString(const c8* attributeName, const wchar_t* value) = 0;
+
+	//! Sets an attribute value as string. 
+	//! \param attributeName: Name for the attribute
+	//! \param value: Value for the attribute. Set this to 0 to delete the attribute
+	virtual void setAttribute(const c8* attributeName, const wchar_t* value) = 0;
+
+	//! Gets an attribute as string.
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute() 
+	//! or 0 if attribute is not set.
+	virtual core::stringw getAttributeAsStringW(const c8* attributeName) = 0;
+
+	//! Gets an attribute as string.
+	//! \param attributeName: Name of the attribute to get.
+	//! \param target: Buffer where the string is copied to.
+	virtual void getAttributeAsStringW(const c8* attributeName, wchar_t* target) = 0;
+
+	//! Returns attribute value as string by index. 
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::stringw getAttributeAsStringW(s32 index) = 0;
+
+	//! Sets an attribute value as string. 
+	//! \param attributeName: Name for the attribute
+	virtual void setAttribute(s32 index, const wchar_t* value) = 0;
+
+
+	/*
+
+		Array Attribute
+
+	*/
+
+	//! Adds an attribute as wide string array
+	virtual void addArray(const c8* attributeName, core::array<core::stringw> value) = 0;
+
+	//! Sets an attribute value as a wide string array. 
+	//! \param attributeName: Name for the attribute
+	//! \param value: Value for the attribute. Set this to 0 to delete the attribute
+	virtual void setAttribute(const c8* attributeName, const core::array<core::stringw> value) = 0;
+
+	//! Gets an attribute as an array of wide strings.
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute() 
+	//! or 0 if attribute is not set.
+	virtual core::array<core::stringw> getAttributeAsArray(const c8* attributeName) = 0;
+
+	//! Returns attribute value as an array of wide strings by index. 
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::array<core::stringw> getAttributeAsArray(s32 index) = 0;
+
+	//! Sets an attribute as an array of wide strings
+	virtual void setAttribute(s32 index, core::array<core::stringw> value) = 0;
+
+
+	/*
+
+		Bool Attribute
+
+	*/
+
+	//! Adds an attribute as bool
+	virtual void addBool(const c8* attributeName, bool value) = 0;
 
 	//! Sets an attribute as boolean value
 	virtual void setAttribute(const c8* attributeName, bool value) = 0;
@@ -154,88 +272,20 @@ public:
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual bool getAttributeAsBool(s32 index) = 0;
 
-	//! Sets an attribute as integer value
-	virtual void setAttribute(const c8* attributeName, s32 value) = 0;
+	//! Sets an attribute as boolean value
+	virtual void setAttribute(s32 index, bool value) = 0;
 
-	//! Gets an attribute as integer value
-	//! \param attributeName: Name of the attribute to get.
-	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual s32 getAttributeAsInt(const c8* attributeName) = 0;
+	/*
 
-	//! Gets an attribute as integer value
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual s32 getAttributeAsInt(s32 index) = 0;
+		Enumeration Attribute
 
-	//! Sets a attribute as float value
-	virtual void setAttribute(const c8* attributeName, f32 value) = 0;
+	*/
 
-	//! Gets an attribute as float value
-	//! \param attributeName: Name of the attribute to get.
-	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual f32 getAttributeAsFloat(const c8* attributeName) = 0;
+	//! Adds an attribute as enum
+	virtual void addEnum(const c8* attributeName, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
 
-	//! Gets an attribute as float value
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual f32 getAttributeAsFloat(s32 index) = 0;
-
-	//! Sets a attribute as color
-	virtual void setAttribute(const c8* attributeName, video::SColor color) = 0;
-
-	//! Gets an attribute as color
-	//! \param attributeName: Name of the attribute to get.
-	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual video::SColor getAttributeAsColor(const c8* attributeName) = 0;
-
-	//! Gets an attribute as color
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual video::SColor getAttributeAsColor(s32 index) = 0;
-
-	//! Sets a attribute as floating point color
-	virtual void setAttribute(const c8* attributeName, video::SColorf color) = 0;
-
-	//! Gets an attribute as floating point color
-	//! \param attributeName: Name of the attribute to get.
-	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual video::SColorf getAttributeAsColorf(const c8* attributeName) = 0;
-
-	//! Gets an attribute as floating point color
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual video::SColorf getAttributeAsColorf(s32 index) = 0;
-
-	//! Sets a attribute as 3d vector
-	virtual void setAttribute(const c8* attributeName, core::vector3df v) = 0;
-
-	//! Gets an attribute as 3d vector
-	//! \param attributeName: Name of the attribute to get.
-	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual core::vector3df getAttributeAsVector3d(const c8* attributeName) = 0;
-
-	//! Gets an attribute as 3d vector
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual core::vector3df getAttributeAsVector3d(s32 index) = 0;
-
-	//! Sets a attribute as 2d position
-	virtual void setAttribute(const c8* attributeName, core::position2df v) = 0;
-
-	//! Gets an attribute as position
-	//! \param attributeName: Name of the attribute to get.
-	//! \return Returns value of the attribute previously set by setAttribute()
-	virtual core::position2df getAttributeAsPosition2d(const c8* attributeName) = 0;
-
-	//! Gets an attribute as position
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual core::position2df getAttributeAsPosition2d(s32 index) = 0;
-
-	//! Sets an attribute as binary data
-	virtual void setAttribute(const c8* attributeName, void* data, s32 dataSizeInBytes ) = 0;
-
-	//! Gets an attribute as binary data
-	//! \param attributeName: Name of the attribute to get.
-	virtual void getAttributeAsBinaryData(const c8* attributeName, void* outData, s32 maxSizeInBytes) = 0;
-
-	//! Gets an attribute as binary data
-	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual void getAttributeAsBinaryData(s32 index, void* outData, s32 maxSizeInBytes) = 0;
+	//! Adds an attribute as enum
+	virtual void addEnum(const c8* attributeName, s32 enumValue, const c8* const* enumerationLiterals) = 0;
 
 	//! Sets an attribute as enumeration
 	virtual void setAttribute(const c8* attributeName, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
@@ -269,6 +319,164 @@ public:
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual void getAttributeEnumerationLiteralsOfEnumeration(s32 index, core::array<core::stringc>& outLiterals) = 0;
 
+	//! Sets an attribute as enumeration
+	virtual void setAttribute(s32 index, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
+
+
+	/*
+
+		SColor Attribute
+
+	*/
+
+	//! Adds an attribute as color
+	virtual void addColor(const c8* attributeName, video::SColor value) = 0;
+
+
+	//! Sets a attribute as color
+	virtual void setAttribute(const c8* attributeName, video::SColor color) = 0;
+
+	//! Gets an attribute as color
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual video::SColor getAttributeAsColor(const c8* attributeName) = 0;
+
+	//! Gets an attribute as color
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual video::SColor getAttributeAsColor(s32 index) = 0;
+
+	//! Sets an attribute as color
+	virtual void setAttribute(s32 index, video::SColor color) = 0;
+
+	/*
+
+		SColorf Attribute
+
+	*/
+
+	//! Adds an attribute as floating point color
+	virtual void addColorf(const c8* attributeName, video::SColorf value) = 0;
+
+	//! Sets a attribute as floating point color
+	virtual void setAttribute(const c8* attributeName, video::SColorf color) = 0;
+
+	//! Gets an attribute as floating point color
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual video::SColorf getAttributeAsColorf(const c8* attributeName) = 0;
+
+	//! Gets an attribute as floating point color
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual video::SColorf getAttributeAsColorf(s32 index) = 0;
+
+	//! Sets an attribute as floating point color
+	virtual void setAttribute(s32 index, video::SColorf color) = 0;
+
+
+	/*
+
+		Vector3d Attribute
+
+	*/
+
+	//! Adds an attribute as 3d vector
+	virtual void addVector3d(const c8* attributeName, core::vector3df value) = 0;
+
+	//! Sets a attribute as 3d vector
+	virtual void setAttribute(const c8* attributeName, core::vector3df v) = 0;
+
+	//! Gets an attribute as 3d vector
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::vector3df getAttributeAsVector3d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as 3d vector
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::vector3df getAttributeAsVector3d(s32 index) = 0;
+	
+	//! Sets an attribute as vector
+	virtual void setAttribute(s32 index, core::vector3df v) = 0;
+
+	/*
+
+		Position2d Attribute
+
+	*/
+
+	//! Adds an attribute as 2d position
+	virtual void addPosition2d(const c8* attributeName, core::position2di value) = 0;
+
+	//! Sets a attribute as 2d position
+	virtual void setAttribute(const c8* attributeName, core::position2di v) = 0;
+
+	//! Gets an attribute as position
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::position2di getAttributeAsPosition2d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as position
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::position2di getAttributeAsPosition2d(s32 index) = 0;
+
+	//! Sets an attribute as 2d position
+	virtual void setAttribute(s32 index, core::position2di v) = 0;
+
+	/*
+
+		Rectangle Attribute
+
+	*/
+
+	//! Adds an attribute as rectangle
+	virtual void addRect(const c8* attributeName, core::rect<s32> value) = 0;
+
+	//! Sets an attribute as rectangle
+	virtual void setAttribute(const c8* attributeName, core::rect<s32> v) = 0;
+
+	//! Gets an attribute as rectangle
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::rect<s32> getAttributeAsRect(const c8* attributeName) = 0;
+
+	//! Gets an attribute as rectangle
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::rect<s32> getAttributeAsRect(s32 index) = 0;
+
+	//! Sets an attribute as rectangle
+	virtual void setAttribute(s32 index, core::rect<s32> v) = 0;
+
+	/*
+
+		Binary Data Attribute
+
+	*/
+
+	//! Adds an attribute as binary data
+	virtual void addBinary(const c8* attributeName, void* data, s32 dataSizeInBytes) = 0;
+
+	//! Sets an attribute as binary data
+	virtual void setAttribute(const c8* attributeName, void* data, s32 dataSizeInBytes ) = 0;
+
+	//! Gets an attribute as binary data
+	//! \param attributeName: Name of the attribute to get.
+	virtual void getAttributeAsBinaryData(const c8* attributeName, void* outData, s32 maxSizeInBytes) = 0;
+
+	//! Gets an attribute as binary data
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual void getAttributeAsBinaryData(s32 index, void* outData, s32 maxSizeInBytes) = 0;
+
+	//! Sets an attribute as binary data
+	virtual void setAttribute(s32 index, void* data, s32 dataSizeInBytes ) = 0;
+
+	/*
+
+		Texture Attribute
+
+	*/
+
+	//! Adds an attribute as texture reference
+	virtual void addTexture(const c8* attributeName, video::ITexture* texture) = 0;
+
 	//! Sets an attribute as texture reference
 	virtual void setAttribute(const c8* attributeName, video::ITexture* texture ) = 0;
 
@@ -280,50 +488,9 @@ public:
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual video::ITexture* getAttributeAsTexture(s32 index) = 0;
 
-	//! Returns if an attribute with a name exists
-	virtual bool existsAttribute(const c8* attributeName) = 0;
-
-	//! Returns attribute index from name, -1 if not found
-	virtual s32 findAttribute(const c8* attributeName) = 0;
-
-	//! Sets an attribute value as string. 
-	//! \param attributeName: Name for the attribute
-	virtual void setAttribute(s32 index, const c8* value) = 0;
-
-	//! Sets an attribute as boolean value
-	virtual void setAttribute(s32 index, bool value) = 0;
-
-	//! Sets an attribute as integer value
-	virtual void setAttribute(s32 index, s32 value) = 0;
-
-	//! Sets an attribute as float value
-	virtual void setAttribute(s32 index, f32 value) = 0;
-
-	//! Sets an attribute as color
-	virtual void setAttribute(s32 index, video::SColor color) = 0;
-
-	//! Sets an attribute as floating point color
-	virtual void setAttribute(s32 index, video::SColorf color) = 0;
-
-	//! Sets an attribute as vector
-	virtual void setAttribute(s32 index, core::vector3df v) = 0;
-
-	//! Sets an attribute as binary data
-	virtual void setAttribute(s32 index, void* data, s32 dataSizeInBytes ) = 0;
-
-	//! Sets an attribute as enumeration
-	virtual void setAttribute(s32 index, const c8* enumValue, const c8* const* enumerationLiterals) = 0;
-
 	//! Sets an attribute as texture reference
 	virtual void setAttribute(s32 index, video::ITexture* texture) = 0;
 
-	//! Reads attributes from a xml file.
-	//! \param readCurrentElementOnly: If set to true, reading only works if current element has the name 'attributes'.
-	//! IF set to false, the first appearing list attributes are read.
-	virtual bool read(irr::io::IXMLReader* reader, bool readCurrentElementOnly=false) = 0;
-
-	//! Write these attributes into a xml file
-	virtual bool write(io::IXMLWriter* writer) = 0;
 };
 
 } // end namespace io

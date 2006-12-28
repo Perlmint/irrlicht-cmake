@@ -18,11 +18,14 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 	const wchar_t* text, s32 flags,
 	IGUIElement* parent, s32 id, core::rect<s32> rectangle)
 : CGUIWindow(environment, parent, id, rectangle), StaticText(0),
-  OkButton(0), YesButton(0), NoButton(0), CancelButton(0)
+  OkButton(0), YesButton(0), NoButton(0), CancelButton(0), Flags(flags), MessageText(text)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIMessageBox");
 	#endif
+
+	// set element type
+	Type = EGUIET_MESSAGE_BOX;
 
 	// remove focus
 	Environment->setFocus(0);
@@ -34,6 +37,13 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 
 	if (caption)
 		setText(caption);
+
+	refreshControls();
+
+}
+
+void CGUIMessageBox::refreshControls()
+{
 
 	IGUISkin* skin = Environment->getSkin();
 
@@ -49,10 +59,19 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 	core::position2d<s32> pos((AbsoluteClippingRect.getWidth() - dim.Width) / 2,
 		buttonHeight / 2 + titleHeight);
 
-	StaticText = Environment->addStaticText(text, 
-		core::rect<s32>(pos, dim), false, false, this);
-	StaticText->setWordWrap(true);
-	StaticText->grab();
+	if (!StaticText)
+	{
+		StaticText = Environment->addStaticText(MessageText.c_str(), 
+						core::rect<s32>(pos, dim), false, false, this);
+		StaticText->setWordWrap(true);
+		StaticText->setSubElement(true);
+		StaticText->grab();
+	}
+	else
+	{
+		StaticText->setRelativePosition( core::rect<s32>(pos, dim));
+		StaticText->setText(MessageText.c_str());
+	}
 
 	// adjust static text height
 
@@ -69,18 +88,17 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 
 	// adjust message box position
 
-	tmp.UpperLeftCorner.Y = (parent->getAbsolutePosition().getHeight() - msgBoxHeight) / 2;
+	tmp.UpperLeftCorner.Y = (Parent->getAbsolutePosition().getHeight() - msgBoxHeight) / 2;
 	tmp.LowerRightCorner.Y = tmp.UpperLeftCorner.Y + msgBoxHeight;
 	setRelativePosition(tmp);
-	
 
 	// add buttons
 
 	s32 countButtons = 0;
-	if (flags & EMBF_OK) ++countButtons;
-	if (flags & EMBF_CANCEL) ++countButtons;
-	if (flags & EMBF_YES) ++countButtons;
-	if (flags & EMBF_NO) ++countButtons;
+	if (Flags & EMBF_OK) ++countButtons;
+	if (Flags & EMBF_CANCEL) ++countButtons;
+	if (Flags & EMBF_YES) ++countButtons;
+	if (Flags & EMBF_NO) ++countButtons;
 
 	core::rect<s32> btnRect;
 	btnRect.UpperLeftCorner.Y = pos.Y + dim.Height + buttonHeight / 2;
@@ -89,53 +107,106 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 		((buttonWidth + buttonDistance)*countButtons)) / 2;
 	btnRect.LowerRightCorner.X = btnRect.UpperLeftCorner.X + buttonWidth;
 
-	// add ok button
-	if (flags & EMBF_OK)
+	// add/remove ok button
+	if (Flags & EMBF_OK)
 	{
-		OkButton = Environment->addButton(btnRect, this);
+		if (!OkButton)
+		{
+			OkButton = Environment->addButton(btnRect, this);
+			OkButton->setSubElement(true);
+			OkButton->grab();
+		}
+		else
+			OkButton->setRelativePosition(btnRect);
+
 		OkButton->setText(skin->getDefaultText(EGDT_MSG_BOX_OK));
-		OkButton->grab();
 
 		btnRect.LowerRightCorner.X += buttonWidth + buttonDistance;
 		btnRect.UpperLeftCorner.X += buttonWidth + buttonDistance;
 
 		Environment->setFocus(OkButton);
 	}
-
-	// add yes button
-	if (flags & EMBF_YES)
+	else if (OkButton)
 	{
-		YesButton = Environment->addButton(btnRect, this);
+		OkButton->drop();
+		OkButton->remove();
+		OkButton =0;
+	}
+
+
+	// add/remove yes button
+	if (Flags & EMBF_YES)
+	{
+		if (!YesButton)
+		{
+			YesButton = Environment->addButton(btnRect, this);
+			YesButton->setSubElement(true);
+			YesButton->grab();
+		}
+		else
+			YesButton->setRelativePosition(btnRect);
+
 		YesButton->setText(skin->getDefaultText(EGDT_MSG_BOX_YES));
-		YesButton->grab();
 
 		btnRect.LowerRightCorner.X += buttonWidth + buttonDistance;
 		btnRect.UpperLeftCorner.X += buttonWidth + buttonDistance;
 	}
+	else if (YesButton)
+	{
+		YesButton->drop();
+		YesButton->remove();
+		YesButton = 0;
+	}
+
 
 	// add no button
-	if (flags & EMBF_NO)
+	if (Flags & EMBF_NO)
 	{
-		NoButton = Environment->addButton(btnRect, this);
+		if (!NoButton)
+		{
+			NoButton = Environment->addButton(btnRect, this);
+			NoButton->setSubElement(true);
+			NoButton->grab();
+		}
+		else
+			NoButton->setRelativePosition(btnRect);
+
 		NoButton->setText(skin->getDefaultText(EGDT_MSG_BOX_NO));
-		NoButton->grab();
 
 		btnRect.LowerRightCorner.X += buttonWidth + buttonDistance;
 		btnRect.UpperLeftCorner.X += buttonWidth + buttonDistance;
+	}
+	else if (NoButton)
+	{
+		NoButton->drop();
+		NoButton->remove();
+		NoButton = 0;
 	}
 
 	// add cancel button
-	if (flags & EMBF_CANCEL)
+	if (Flags & EMBF_CANCEL)
 	{
-		CancelButton = Environment->addButton(btnRect, this);
+		if (!CancelButton)
+		{
+			CancelButton = Environment->addButton(btnRect, this);
+			CancelButton->setSubElement(true);
+			CancelButton->grab();
+		}
+		else
+			CancelButton->setRelativePosition(btnRect);
+
 		CancelButton->setText(skin->getDefaultText(EGDT_MSG_BOX_CANCEL));
 		CancelButton->grab();
 
 		btnRect.LowerRightCorner.X += buttonWidth + buttonDistance;
 		btnRect.UpperLeftCorner.X += buttonWidth + buttonDistance;
 	}
-
-
+	else if (CancelButton)
+	{
+		CancelButton->drop();
+		CancelButton->remove();
+		CancelButton = 0;
+	}
 }
 
 
@@ -208,6 +279,37 @@ bool CGUIMessageBox::OnEvent(SEvent event)
 	}
 
 	return CGUIWindow::OnEvent(event);
+}
+
+//! Writes attributes of the element.
+void CGUIMessageBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	CGUIWindow::serializeAttributes(out,options);
+
+	out->addBool	("OkayButton",		(Flags & EMBF_OK)	 != 0 );
+	out->addBool	("CancelButton",	(Flags & EMBF_CANCEL)!= 0 );
+	out->addBool	("YesButton",		(Flags & EMBF_YES)	 != 0 );
+	out->addBool	("NoButton",		(Flags & EMBF_NO)	 != 0 );
+
+	out->addString	("MessageText",		MessageText.c_str() );
+}
+
+//! Reads attributes of the element
+void CGUIMessageBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	Flags = 0;
+
+	Flags  = in->getAttributeAsBool("OkayButton")   ? EMBF_OK		: 0;
+	Flags |= in->getAttributeAsBool("CancelButton")	? EMBF_CANCEL		: 0;
+	Flags |= in->getAttributeAsBool("YesButton")	? EMBF_YES		: 0;
+	Flags |= in->getAttributeAsBool("NoButton")	? EMBF_NO		: 0;
+
+	MessageText = in->getAttributeAsStringW("MessageText").c_str();
+
+	CGUIWindow::deserializeAttributes(in,options);
+
+	refreshControls();
+
 }
 
 

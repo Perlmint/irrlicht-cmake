@@ -38,8 +38,11 @@ CGUIListBox::CGUIListBox(IGUIEnvironment* environment, IGUIElement* parent,
 	ScrollBar = new CGUIScrollBar(false, Environment, this, 0,
 		core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()),
 		!clip);
+	ScrollBar->setSubElement(true);
+	ScrollBar->drop();
 
 	ScrollBar->setPos(0);
+	ScrollBar->grab();
 	
 	recalculateItemHeight();
 }
@@ -293,6 +296,7 @@ void CGUIListBox::draw()
 	clientClip.UpperLeftCorner.X += 1;
 	clientClip.LowerRightCorner.X = AbsoluteRect.LowerRightCorner.X - skin->getSize(EGDS_SCROLLBAR_SIZE);
 	clientClip.LowerRightCorner.Y -= 1;
+	clientClip.clipAgainst(AbsoluteClippingRect);
 
 	if (clipRect)
 		clientClip.clipAgainst(*clipRect);
@@ -379,6 +383,60 @@ void CGUIListBox::setIconFont(IGUIFont* font)
 	if (IconFont)
 		IconFont->grab();
 }
+
+
+//! Writes attributes of the element.
+void CGUIListBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+
+	IGUIListBox::serializeAttributes(out,options);
+
+	//out->addFont	("IconFont",		IconFont);
+
+	out->addBool	("Clip",			Clip);
+	out->addBool	("DrawBack",		DrawBack);
+	out->addBool	("MoveOverSelect",	MoveOverSelect);
+
+	// save list of items as two arrays
+	core::array<core::stringw> tmpText;
+	core::array<core::stringw> tmpIcons;
+	u32 i;
+	for (i=0;i<Items.size(); ++i)
+	{
+		tmpText.push_back(Items[i].text);
+		tmpIcons.push_back(Items[i].icon);
+	}
+
+	out->addArray	("ItemText",		tmpText);
+	out->addArray	("ItemIcons",		tmpIcons);
+
+	out->addInt		("Selected",		Selected);
+
+}
+
+//! Reads attributes of the element
+void CGUIListBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	Clip			= in->getAttributeAsBool("Clip");
+	DrawBack		= in->getAttributeAsBool("DrawBack");
+	MoveOverSelect	= in->getAttributeAsBool("MoveOverSelect");
+
+	IGUIListBox::deserializeAttributes(in,options);
+
+	// read arrays
+	core::array<core::stringw> tmpText;
+	core::array<core::stringw> tmpIcons;
+
+	tmpText			= in->getAttributeAsArray("ItemText");
+	tmpIcons		= in->getAttributeAsArray("ItemIcons");
+	u32 i;
+	for (i=0; i<Items.size(); ++i)
+		addItem(tmpText[i].c_str(), tmpIcons[i].c_str());
+
+	this->setSelected(in->getAttributeAsInt("Selected"));
+
+}
+
 
 
 } // end namespace gui

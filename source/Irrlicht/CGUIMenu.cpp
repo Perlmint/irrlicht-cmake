@@ -25,6 +25,8 @@ CGUIMenu::CGUIMenu(IGUIEnvironment* environment, IGUIElement* parent,
 	setDebugName("CGUIMenu");
 	#endif
 
+	Type = EGUIET_MENU;
+
 	recalculateSize();
 }
 

@@ -29,70 +29,93 @@ namespace gui
 	enum EGUI_SKIN_TYPE
 	{
 		//! Default windows look and feel
-		EGST_WINDOWS_CLASSIC,
+		EGST_WINDOWS_CLASSIC=0,
 
 		//! Like EGST_WINDOWS_CLASSIC, but with metallic shaded windows and buttons
 		EGST_WINDOWS_METALLIC,
 
-		//! Some other nice looking built-in skin
-		EGST_BURNING_SKIN
+		//! Burning's skin
+		EGST_BURNING_SKIN,
+
+		//! Count to say how many skins are available
+		EGST_COUNT,
+
+		//! An unknown skin, not serializable at present
+		EGST_UNKNOWN
 	};
+
+	//! Names for gui element types
+	const c8* const GUISkinTypeNames[] =
+	{
+		"windowsClassic",
+		"windowsMetallic",
+		"burning",
+		0,
+		0,
+	};
+
 
 	//! Enumeration for skin colors
 	enum EGUI_DEFAULT_COLOR
 	{
 		//! Dark shadow for three-dimensional display elements.
 		EGDC_3D_DARK_SHADOW = 0,
-
 		//! Shadow color for three-dimensional display elements (for edges facing away from the light source).
 		EGDC_3D_SHADOW,
-
 		//! Face color for three-dimensional display elements and for dialog box backgrounds.
 		EGDC_3D_FACE,
-
 		//! Highlight color for three-dimensional display elements (for edges facing the light source.)
 		EGDC_3D_HIGH_LIGHT,
-
 		//! Light color for three-dimensional display elements (for edges facing the light source.)
 		EGDC_3D_LIGHT,
-
 		//! Active window border.
 		EGDC_ACTIVE_BORDER,
-
 		//! Active window title bar text.
 		EGDC_ACTIVE_CAPTION,
-
 		//! Background color of multiple document interface (MDI) applications.
 		EGDC_APP_WORKSPACE,
-
 		//! Text on a button
 		EGDC_BUTTON_TEXT,
-
 		//! Grayed (disabled) text.
 		EGDC_GRAY_TEXT,
-
 		//! Item(s) selected in a control.
 		EGDC_HIGH_LIGHT,
-
 		//! Text of item(s) selected in a control.
 		EGDC_HIGH_LIGHT_TEXT,
-
 		//! Inactive window border.
 		EGDC_INACTIVE_BORDER,
-
 		//! Inactive window caption.
 		EGDC_INACTIVE_CAPTION,
-
 		//! Tool tip color
 		EGDC_TOOLTIP,
-
 		//! Scrollbar gray area
 		EGDC_SCROLLBAR,
-
 		//! Window background
 		EGDC_WINDOW,
 
 		EGDC_COUNT
+	};
+
+	//! Names for default skin colors
+	const c8* const GUISkinColorNames[] =
+	{
+		"3DDarkShadow",
+		"3DShadow",
+		"3DFace",
+		"3DHighlight",
+		"ActiveBorder",
+		"ActiveCaption",
+		"AppWorkspace",
+		"ButtonText",
+		"GrayText",
+		"Highlight",
+		"HighlightText",
+		"InactiveBorder",
+		"InactiveCaption",
+		"ToolTip",
+		"ScrollBar",
+		"Window",
+		0,
 	};
 
 	//! Enumeration for default sizes.
@@ -134,10 +157,27 @@ namespace gui
 	};
 
 
+	//! Names for default skin sizes
+	const c8* const GUISkinSizeNames[] =
+	{
+		"ScrollBarSize",
+		"MenuHeight",
+		"WindowButtonWidth",
+		"CheckBoxWidth",
+		"MessageBoxWidth",
+		"MessageBoxHeight",
+		"ButtonWidth",
+		"ButtonHeight",
+		"TextDistanceX",
+		"TextDistanceY",
+		0,
+	};
+
+
 	enum EGUI_DEFAULT_TEXT
 	{
 		//! Text for the OK button on a message box
-		EGDT_MSG_BOX_OK,
+		EGDT_MSG_BOX_OK = 0,
 
 		//! Text for the Cancel button on a message box
 		EGDT_MSG_BOX_CANCEL,
@@ -151,6 +191,16 @@ namespace gui
 		//! this value is not used, it only specifies the amount of default texts
 		//! available.
 		EGDT_COUNT
+	};
+
+	//! Names for default skin sizes
+	const c8* const GUISkinTextNames[] =
+	{
+		"MessageBoxOkay",
+		"MessageBoxCancel",
+		"MessageBoxYes",
+		"MessageBoxNo",
+		0,
 	};
 
 
@@ -195,7 +245,7 @@ namespace gui
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
 		\param clip: Clip area.	*/
@@ -208,7 +258,7 @@ namespace gui
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
 		\param clip: Clip area.	*/
@@ -219,7 +269,7 @@ namespace gui
 		//! draws a sunken 3d pane
 		/** Used for drawing the background of edit, combo or check boxes.
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param bgcolor: Background color.
 		\param flat: Specifies if the sunken pane should be flat or displayed as sunken 
@@ -236,7 +286,7 @@ namespace gui
 		//! draws a window background
 		/** Used for drawing the background of dialogs and windows.
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param titleBarColor: Title color.
 		\param drawTitleBar: True to enable title drawing.
@@ -253,7 +303,7 @@ namespace gui
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
 		\param clip: Clip area.	*/
@@ -264,7 +314,7 @@ namespace gui
 		//! draws a standard 3d tool bar
 		/**	Used for drawing for toolbars and menus.
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
 		\param clip: Clip area.	*/
@@ -275,7 +325,7 @@ namespace gui
 		//! draws a tab button
 		/**	Used for drawing for tab buttons on top of tabs.
 		\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param active: Specifies if the tab is currently active.
 		\param rect: Defining area where to draw.
@@ -285,7 +335,7 @@ namespace gui
 
 		//! draws a tab control body
 		/**	\param element: Pointer to the element which whiches to draw this. This parameter
-		is usually not used by ISkin, but can be used for example by more complex 
+		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param border: Specifies if the border should be drawn.
 		\param background: Specifies if the background should be drawn.
@@ -293,6 +343,10 @@ namespace gui
 		\param clip: Clip area.	*/
 		virtual void draw3DTabBody(IGUIElement* element, bool border, bool background,
 			const core::rect<s32>& rect, const core::rect<s32>* clip=0) = 0;
+
+		//! get the type of this skin
+		virtual EGUI_SKIN_TYPE getType() { return EGST_UNKNOWN; };
+
 	};
 
 

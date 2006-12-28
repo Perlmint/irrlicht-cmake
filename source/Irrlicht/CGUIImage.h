@@ -31,6 +31,13 @@ namespace gui
 		//! sets if the image should use its alpha channel to draw itself
 		virtual void setUseAlphaChannel(bool use);
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
+
 	private:
 
 		video::ITexture* Texture;

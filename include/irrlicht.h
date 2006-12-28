@@ -63,6 +63,7 @@
 #include "IGUIFileOpenDialog.h"
 #include "IGUIColorSelectDialog.h"
 #include "IGUIFont.h"
+#include "IGUIFontASCII.h"
 #include "IGUIImage.h"
 #include "IGUIInOutFader.h"
 #include "IGUIListBox.h"

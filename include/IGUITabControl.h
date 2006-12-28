@@ -64,6 +64,11 @@ namespace gui
 		 \return Returns true if successful. */
 		virtual bool setActiveTab(s32 idx) = 0;
 
+		//! Brings a tab to front.
+		/** \param idx: pointer to the tab.
+		 \return Returns true if successful. */
+		virtual bool setActiveTab(IGUIElement *tab) = 0;
+
 		//! Returns which tab is currently active
 		virtual s32 getActiveTab() = 0;
 	};

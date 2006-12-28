@@ -47,6 +47,12 @@ namespace gui
 		//! Returns the height of the text in pixels when it is drawn.
 		virtual s32 getTextHeight();
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
 	private:
 
 		//! Breaks the single text line.

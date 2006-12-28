@@ -10,6 +10,8 @@
 #include "CGUIWindow.h"
 #include "CGUIScrollBar.h"
 #include "CGUIFont.h"
+#include "CGUIFontMultiTexture.h"
+//#include "CGUIFontVector.h"
 #include "CGUIImage.h"
 #include "CGUIMeshViewer.h"
 #include "CGUICheckBox.h"
@@ -27,6 +29,10 @@
 #include "CGUIMenu.h"
 #include "CGUIToolBar.h"
 
+#include "CDefaultGUIElementFactory.h"
+#include "IWriteFile.h"
+#include "IXMLWriter.h"
+
 #include "CGUISkin.h"
 
 #include "BuiltInFont.h"
@@ -36,6 +42,10 @@ namespace irr
 {
 namespace gui
 {
+
+const wchar_t* IRR_XML_FORMAT_GUI_ENV				= L"irr_gui";
+const wchar_t* IRR_XML_FORMAT_GUI_ELEMENT			= L"element";
+const wchar_t* IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE	= L"type";
 
 //! constructor
 CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* driver, IOSOperator* op)
@@ -56,6 +66,11 @@ CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* drive
 	#ifdef _DEBUG
 	IGUIEnvironment::setDebugName("CGUIEnvironment");
 	#endif
+
+	// gui factory
+	IGUIElementFactory* factory = new CDefaultGUIElementFactory(this);
+	registerGUIElementFactory(factory);
+	factory->drop();
 
 	loadBuiltInFont();
 
@@ -95,6 +110,11 @@ CGUIEnvironment::~CGUIEnvironment()
 
 	for (u32 i=0; i<Fonts.size(); ++i)
 		Fonts[i].Font->drop();
+
+	// remove all factories
+	for (u32 i=0; i<GUIElementFactoryList.size(); ++i)
+		GUIElementFactoryList[i]->drop();
+
 }
 
 
@@ -158,6 +178,12 @@ void CGUIEnvironment::setFocus(IGUIElement* element)
 		Focus->grab();
 }
 
+//! returns the element with the focus
+IGUIElement* CGUIEnvironment::getFocus()
+{
+	return Focus;
+}
+
 
 //! removes the focus from an element
 void CGUIEnvironment::removeFocus(IGUIElement* element)
@@ -184,13 +210,21 @@ bool CGUIEnvironment::hasFocus(IGUIElement* element)
 }
 
 
-
 //! returns the current video driver
 video::IVideoDriver* CGUIEnvironment::getVideoDriver()
 {
 	return Driver;
 }
 
+//! clear all GUI elements
+void CGUIEnvironment::clear()
+{
+	// get the root's children in case the root changes in future
+	const core::list<IGUIElement*>& children = getRootGUIElement()->getChildren();
+
+	while (!children.empty())
+		(*children.getLast())->remove();
+}
 
 
 //! called by ui if an event happened.
@@ -354,7 +388,7 @@ void CGUIEnvironment::setSkin(IGUISkin* skin)
 
 //! Creates a new GUI Skin based on a template.
 /** \return Returns a pointer to the created skin.
-If you no longer need the image, you should call IGUISkin::drop().
+If you no longer need the skin, you should call IGUISkin::drop().
 See IUnknown::drop() for more information. */
 IGUISkin* CGUIEnvironment::createSkin(EGUI_SKIN_TYPE type)
 {
@@ -362,6 +396,294 @@ IGUISkin* CGUIEnvironment::createSkin(EGUI_SKIN_TYPE type)
 	skin->setFont(getBuiltInFont());
 	return skin;
 }
+
+
+//! Returns the default element factory which can create all built in elements
+IGUIElementFactory* CGUIEnvironment::getDefaultGUIElementFactory()
+{
+	return getGUIElementFactory(0);
+}
+
+//! Adds an element factory to the gui environment.
+/** Use this to extend the gui environment with new element types which it should be
+able to create automaticly, for example when loading data from xml files. */
+void CGUIEnvironment::registerGUIElementFactory(IGUIElementFactory* factoryToAdd)
+{
+	if (factoryToAdd)
+	{
+		factoryToAdd->grab();
+		GUIElementFactoryList.push_back(factoryToAdd);
+	}
+}
+
+//! Returns amount of registered scene node factories.
+s32 CGUIEnvironment::getRegisteredGUIElementFactoryCount()
+{
+	return GUIElementFactoryList.size();
+}
+
+//! Returns a scene node factory by index
+IGUIElementFactory* CGUIEnvironment::getGUIElementFactory(s32 index)
+{
+	if (index>=0 && index<(int)GUIElementFactoryList.size())
+		return GUIElementFactoryList[index];
+
+	return 0;
+}
+
+
+//! Saves the current gui into a file.
+//! \param filename: Name of the file .
+bool CGUIEnvironment::saveGUI(const c8* filename)
+{
+	io::IWriteFile* file = FileSystem->createAndWriteFile(filename);
+	if (!file)
+		return false;
+
+	bool ret = saveGUI(file);
+	file->drop();
+	return ret;
+}
+
+
+//! Saves the current gui into a file.
+bool CGUIEnvironment::saveGUI(io::IWriteFile* file)
+{
+	if (!file)
+		return false;
+
+	io::IXMLWriter* writer = FileSystem->createXMLWriter(file);
+	if (!writer)
+		return false;
+
+	writer->writeXMLHeader();
+	writeGUIElement(writer, this);
+	writer->drop();
+
+	return true;
+}
+
+
+//! Loads the gui. Note that the current gui is not cleared before.
+//! \param filename: Name of the file .
+bool CGUIEnvironment::loadGUI(const c8* filename)
+{
+	io::IReadFile* read = FileSystem->createAndOpenFile(filename);
+	if (!read)
+	{
+		os::Printer::log("Unable to open gui file", filename, ELL_ERROR);
+		return false;
+	}
+
+	bool ret = loadGUI(read);
+	read->drop();
+
+	return ret;
+}
+
+
+//! Loads the gui. Note that the current gui is not cleared before.
+bool CGUIEnvironment::loadGUI(io::IReadFile* file)
+{
+	
+	if (!file)
+	{
+		os::Printer::log("Unable to open gui file", ELL_ERROR);
+		return false;
+	}
+
+	io::IXMLReader* reader = FileSystem->createXMLReader(file);
+	if (!reader)
+	{
+		os::Printer::log("GUI is not a valid XML file", file->getFileName(), ELL_ERROR);
+		return false;
+	}
+	
+	// read file
+	while(reader->read())
+	{
+		readGUIElement(reader, 0);
+	}
+
+	// finish up
+
+	reader->drop(); 
+	return true; 
+
+}
+
+
+
+//! reads an element
+void CGUIEnvironment::readGUIElement(io::IXMLReader* reader, IGUIElement* parent)
+{
+	if (!reader)
+		return;
+
+	gui::IGUIElement* node = 0;
+
+	if ((!parent && !wcscmp(IRR_XML_FORMAT_GUI_ENV, reader->getNodeName())) ||
+		( parent && !wcscmp(IRR_XML_FORMAT_GUI_ELEMENT, reader->getNodeName())))
+	{
+		if (parent)
+		{
+			// find node type and create it
+			core::stringc attrName = reader->getAttributeValue(IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE);
+
+			for (int i=0; i<(int)GUIElementFactoryList.size() && !node; ++i)
+				node = GUIElementFactoryList[i]->addGUIElement(attrName.c_str(), parent);
+
+			if (!node)
+				os::Printer::log("Could not create GUI element of unknown type", attrName.c_str());
+		}
+		else
+			node = this; // root
+	}
+
+	// read attributes
+
+	while(reader->read())
+	{
+		bool endreached = false;
+
+		switch (reader->getNodeType())
+		{
+		case io::EXN_ELEMENT_END:
+			if (!wcscmp(IRR_XML_FORMAT_GUI_ELEMENT,  reader->getNodeName()) ||
+				!wcscmp(IRR_XML_FORMAT_GUI_ENV, reader->getNodeName()))
+			{
+				endreached = true;
+			}
+			break;
+		case io::EXN_ELEMENT:
+			if (!wcscmp(L"attributes", reader->getNodeName()))
+			{
+				// read attributes
+				io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
+				attr->read(reader, true);
+
+				if (node)
+					node->deserializeAttributes(attr);
+
+				attr->drop();
+			}
+			else
+			if (!wcscmp(IRR_XML_FORMAT_GUI_ELEMENT, reader->getNodeName()) ||
+				!wcscmp(IRR_XML_FORMAT_GUI_ENV, reader->getNodeName()))
+			{
+				readGUIElement(reader, node);
+			}
+			else
+			{
+				os::Printer::log("Found unknown element in irrlicht GUI file",
+								 core::stringc(reader->getNodeName()).c_str());
+			}
+
+			break;
+		}
+
+		if (endreached)
+			break;
+	}
+}
+
+
+
+//! writes an element
+void CGUIEnvironment::writeGUIElement(io::IXMLWriter* writer, IGUIElement* node)
+{
+	if (!writer || !node )
+		return;
+
+	const wchar_t* name = 0;
+
+	// write properties
+
+	io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
+	node->serializeAttributes(attr);
+
+	// all gui elements must have at least one attribute
+	// if they have nothing then we ignore them.
+	if (attr->getAttributeCount() > 0)
+	{
+		if (node == this)
+		{
+			name = IRR_XML_FORMAT_GUI_ENV;
+			writer->writeElement(name, false);
+		}
+		else
+		{
+			name = IRR_XML_FORMAT_GUI_ELEMENT;
+			writer->writeElement(name, false, IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE,
+				core::stringw(getGUIElementTypeName(node->getType())).c_str());
+		}
+
+		writer->writeLineBreak();
+		writer->writeLineBreak();
+
+		attr->write(writer);
+		writer->writeLineBreak();
+	}
+
+	// write children
+
+	core::list<IGUIElement*>::Iterator it = node->getChildren().begin();
+	for (; it != node->getChildren().end(); ++it)
+	{
+		if (!(*it)->isSubElement())
+			writeGUIElement(writer, (*it));
+	}
+
+	// write closing brace if required
+	if (attr->getAttributeCount() > 0)
+	{
+		writer->writeClosingTag(name);
+		writer->writeLineBreak();
+		writer->writeLineBreak();
+	}
+
+	attr->drop();
+
+}
+
+
+//! Returns a typename from a scene node type or null if not found
+const c8* CGUIEnvironment::getGUIElementTypeName(EGUI_ELEMENT_TYPE type)
+{
+	const c8* name = 0;
+
+	for (int i=0; !name && i<(int)GUIElementFactoryList.size(); ++i)
+		name = GUIElementFactoryList[i]->getCreateableGUIElementTypeName(type);
+
+	return name;
+}
+
+
+//! Writes attributes of the scene node.
+void CGUIEnvironment::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
+{
+	if (getSkin())
+		out->addEnum("Skin",getSkin()->getType(),GUISkinTypeNames);
+}
+
+//! Reads attributes of the scene node.
+void CGUIEnvironment::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
+{
+
+	if (in->existsAttribute("Skin"))
+	{
+		EGUI_SKIN_TYPE t = (EGUI_SKIN_TYPE) in->getAttributeAsEnumeration("Skin",GUISkinTypeNames);
+		if ( !getSkin() || t != getSkin()->getType())
+			setSkin(createSkin(t));
+	}
+
+	RelativeRect = AbsoluteRect = 
+			core::rect<s32>(core::position2d<s32>(0,0), 
+					Driver ? Driver->getScreenSize() : core::dimension2d<s32>(0,0));
+
+}
+
+
 
 
 //! adds an button. The returned pointer must not be dropped.
@@ -398,7 +720,16 @@ IGUIWindow* CGUIEnvironment::addWindow(const core::rect<s32>& rectangle, bool mo
 
 	return win;
 }
+//! adds a modal screen. The returned pointer must not be dropped.
+IGUIElement* CGUIEnvironment::addModalScreen(IGUIElement* parent)
+{
+	parent = parent ? parent : this;
 
+	IGUIElement *win = new CGUIModalScreen(this, parent, -1);
+	win->drop();
+
+	return win;
+}
 
 //! Adds a message box.
 IGUIWindow* CGUIEnvironment::addMessageBox(const wchar_t* caption, const wchar_t* text,
@@ -449,10 +780,10 @@ IGUIScrollBar* CGUIEnvironment::addScrollBar(bool horizontal, const core::rect<s
 IGUIImage* CGUIEnvironment::addImage(video::ITexture* image, core::position2d<s32> pos,
 	bool useAlphaChannel, IGUIElement* parent, s32 id, const wchar_t* text)
 {
-	if (!image)
-		return 0;
+	core::dimension2d<s32> sz(0,0);
+	if (image)
+		sz = image->getOriginalSize();
 
-	core::dimension2d<s32> sz = image->getOriginalSize();
 	IGUIImage* img = new CGUIImage(this, parent ? parent : this,
 		id, core::rect<s32>(pos, sz));
 
@@ -462,7 +793,8 @@ IGUIImage* CGUIEnvironment::addImage(video::ITexture* image, core::position2d<s3
 	if (useAlphaChannel)
 		img->setUseAlphaChannel(true);
 
-	img->setImage(image);
+	if (image)
+		img->setImage(image);
 
 	img->drop();
 	return img;
@@ -540,7 +872,7 @@ IGUIFileOpenDialog* CGUIEnvironment::addFileOpenDialog(const wchar_t* title,
 		parent->drop();
 	}
 
-    IGUIFileOpenDialog* d = new CGUIFileOpenDialog(FileSystem, title,
+	IGUIFileOpenDialog* d = new CGUIFileOpenDialog(FileSystem, title,
 			this, parent, id);
 
 	d->drop();
@@ -561,7 +893,7 @@ IGUIColorSelectDialog* CGUIEnvironment::addColorSelectDialog(const wchar_t* titl
 		parent->drop();
 	}
 
-    IGUIColorSelectDialog* d = new CGUIColorSelectDialog( title,
+	IGUIColorSelectDialog* d = new CGUIColorSelectDialog( title,
 			this, parent, id);
 
 	d->drop();
@@ -629,7 +961,7 @@ IGUIContextMenu* CGUIEnvironment::addContextMenu(const core::rect<s32>& rectangl
 	IGUIElement* parent, s32 id)
 {
 	IGUIContextMenu* c = new CGUIContextMenu(this, 
-		parent ? parent : this, id, rectangle);
+		parent ? parent : this, id, rectangle, false);
 	c->drop();
 	return c;
 }
@@ -703,6 +1035,7 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 	// search existing font
 
 	SFont f;
+	IGUIFont* ifont=0;
 	if (!filename)
 		filename = "";
 
@@ -713,21 +1046,85 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 	if (index != -1)
 		return Fonts[index].Font;
 
-    // not existing yet. try to load font.
+	// font doesn't exist, attempt to load it
 
-	CGUIFont* font = new CGUIFont(Driver);
-	if (!font->load(filename))
+	io::IXMLReader *xml = FileSystem->createXMLReader(filename);
+	if (xml)
 	{
-		font->drop();
-		return 0;
+		// this is an XML font, but we need to know what type
+		bool found=false;
+		EGUI_FONT_TYPE t = EGFT_CUSTOM;
+
+		while(xml->read() && !found)
+		{
+			if (xml->getNodeType() == io::EXN_ELEMENT)
+			{
+				if (core::stringw(L"font") == xml->getNodeName())
+				{
+					if (core::stringw(L"vector") == xml->getAttributeValue(L"type"))
+					{
+						t = EGFT_XML_VECTOR;
+						found=true;
+					}
+					else if (core::stringw(L"bitmap") == xml->getAttributeValue(L"type"))
+					{
+						t = EGFT_XML_BITMAP;
+						found=true;
+					}
+					else found=true;
+				}
+			}
+		}
+
+		if (t==EGFT_XML_BITMAP)
+		{
+			CGUIFontMultiTexture* font = new CGUIFontMultiTexture(Driver);
+			ifont = (IGUIFont*)font;
+			if (!font->load(xml))
+			{
+				font->drop();
+				xml->drop();
+				return 0;
+			}
+		}
+		else if (t==EGFT_XML_VECTOR)
+		{
+			// todo: vector fonts
+
+			//CGUIFontVector* font = new CGUIFontVector(Driver);
+			//ifont = (IGUIFont*)font;
+			//if (!font->load(xml))
+			if (1)
+			{
+				xml->drop();
+				return 0;
+			}
+		}
+		else
+		{
+			xml->drop();
+			return 0;
+		}
+		xml->drop();
+	}
+	else
+	{
+
+		CGUIFont* font = new CGUIFont(Driver);
+		ifont = (IGUIFont*)font;
+		if (!font->load(filename))
+		{
+			font->drop();
+			return 0;
+		}
 	}
 
 	// add to fonts.
 
-	f.Font = font;
+	f.Font = ifont;
 	Fonts.push_back(f);
 
-	return font;
+	return ifont;
 }
 
 

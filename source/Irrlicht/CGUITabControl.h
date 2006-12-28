@@ -41,6 +41,13 @@ namespace gui
 		//! sets the color of the background, if it should be drawn.
 		virtual void setBackgroundColor(video::SColor c);
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
+
 	private:
 
 		s32 Number;
@@ -66,6 +73,9 @@ namespace gui
 		//! Adds a tab
 		virtual IGUITab* addTab(const wchar_t* caption, s32 id=-1);
 
+		//! Adds a tab that has already been created
+		virtual void addTab(CGUITab* tab);
+
 		//! Returns amount of tabs in the tabcontrol
 		virtual s32 getTabcount();
 
@@ -74,6 +84,9 @@ namespace gui
 
 		//! Brings a tab to front.
 		virtual bool setActiveTab(s32 idx);
+
+		//! Brings a tab to front.
+		virtual bool setActiveTab(IGUIElement *tab);
 
 		//! Returns which tab is currently active
 		virtual s32 getActiveTab();
@@ -86,6 +99,12 @@ namespace gui
 
 		//! Removes a child.
 		virtual void removeChild(IGUIElement* child);
+
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
 
 	private:
 

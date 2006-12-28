@@ -7,6 +7,7 @@
 
 #include "ITextSceneNode.h"
 #include "IGUIFont.h"
+#include "IGUIFontASCII.h"
 #include "ISceneCollisionManager.h"
 #include "S3DVertex.h"
 
@@ -63,7 +64,7 @@ namespace scene
 	public:
 
 		CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-			gui::IGUIFont* font,const wchar_t* text,
+			gui::IGUIFontASCII* font,const wchar_t* text,
 			const core::vector3df& position, const core::dimension2d<f32>& size,
 			f32 kerning,
 			video::SColor shade_top,video::SColor shade_down );
@@ -104,7 +105,7 @@ namespace scene
 
 		core::stringw Text;
 		video::SColor Color;
-		gui::IGUIFont* Font;
+		gui::IGUIFontASCII* Font;
 
 		core::dimension2d<f32> Size;
 		core::aabbox3d<f32> BBox;

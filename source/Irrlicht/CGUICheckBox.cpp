@@ -133,6 +133,20 @@ bool CGUICheckBox::isChecked()
 	return Checked;
 }
 
+//! Writes attributes of the element.
+void CGUICheckBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUICheckBox::serializeAttributes(out,options);
+	out->addBool	("Checked",			Checked );
+}
+
+//! Reads attributes of the element
+void CGUICheckBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	Checked = in->getAttributeAsBool ("Checked");
+
+	IGUICheckBox::deserializeAttributes(in,options);
+}
 
 
 } // end namespace gui

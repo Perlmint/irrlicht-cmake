@@ -69,6 +69,12 @@ namespace gui
 		//! Update the position and size of the listbox, and update the scrollbar
 		virtual void updateAbsolutePosition();
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
 	private:
 
 		struct ListItem

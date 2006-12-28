@@ -40,6 +40,7 @@ CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 	r.LowerRightCorner.Y = rectangle.getHeight() - 2;
 
 	ListButton = Environment->addButton(r, this, -1, GUI_ICON_CURSOR_DOWN);
+	ListButton->setSubElement(true);
 	ListButton->setOverrideFont(Environment->getBuiltInFont());
 }
 
@@ -105,6 +106,15 @@ void CGUIComboBox::setSelected(s32 id)
 	Selected = id;
 }
 
+void CGUIComboBox::updateAbsolutePosition()
+{
+	IGUIElement::updateAbsolutePosition();
+
+	s32 width = Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
+
+	ListButton->setRelativePosition(core::rect<s32>(RelativeRect.getWidth() - width - 2, 2,
+													RelativeRect.getWidth() - 2, RelativeRect.getHeight() - 2));
+}
 
 
 //! called if an event happened.
@@ -263,6 +273,7 @@ void CGUIComboBox::openCloseMenu()
 			AbsoluteRect.getWidth(), AbsoluteRect.getHeight() + h);
 
 		ListBox = new CGUIListBox(Environment, this, -1, r, false, true, true);
+		ListBox->setSubElement(true);
 		ListBox->drop();
 
 		for (s32 i=0; i<(s32)Items.size(); ++i)
@@ -273,6 +284,24 @@ void CGUIComboBox::openCloseMenu()
 		// set focus
 		Environment->setFocus(ListBox);
 	}
+}
+
+//! Writes attributes of the element.
+void CGUIComboBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIComboBox::serializeAttributes(out,options);
+
+	out->addInt		("Selected",		Selected );
+	out->addArray	("Items",			Items);
+}
+
+//! Reads attributes of the element
+void CGUIComboBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	Items = in->getAttributeAsArray("Items");
+	IGUIComboBox::deserializeAttributes(in,options);
+
+	setSelected(in->getAttributeAsInt("Selected"));
 }
 
 } // end namespace gui

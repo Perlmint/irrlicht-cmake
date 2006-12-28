@@ -28,16 +28,19 @@ CGUIWindow::CGUIWindow(IGUIEnvironment* environment, IGUIElement* parent, s32 id
 
 	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_CLOSE);
 	CloseButton->setOverrideFont(Environment->getBuiltInFont());
+	CloseButton->setSubElement(true);
 	posx -= buttonw + 2;
 
 	RestoreButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_RESTORE);
 	RestoreButton->setOverrideFont(Environment->getBuiltInFont());
 	RestoreButton->setVisible(false);
+	RestoreButton->setSubElement(true);
 	posx -= buttonw + 2;
 
 	MinButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_MINIMIZE);
 	MinButton->setOverrideFont(Environment->getBuiltInFont());
 	MinButton->setVisible(false);
+	MinButton->setSubElement(true);
 
 	MinButton->grab();
 	RestoreButton->grab();
@@ -113,6 +116,22 @@ bool CGUIWindow::OnEvent(SEvent event)
 	}
 
 	return Parent ? Parent->OnEvent(event) : false;
+}
+
+//! Updates the absolute position.
+void CGUIWindow::updateAbsolutePosition()
+{
+	IGUIElement::updateAbsolutePosition();
+
+	s32 buttonw = Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
+	s32 posx = RelativeRect.getWidth() - buttonw - 4;
+
+	CloseButton->setRelativePosition(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw));
+	posx -= buttonw + 2;
+	RestoreButton->setRelativePosition(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw));
+	posx -= buttonw + 2;
+	MinButton->setRelativePosition(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw));
+
 }
 
 

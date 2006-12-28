@@ -325,5 +325,58 @@ bool CGUIButton::getUseAlphaChannel()
 	return UseAlphaChannel;
 }
 
+//! Writes attributes of the element.
+void CGUIButton::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+
+	IGUIButton::serializeAttributes(out,options);
+
+	out->addBool		("PushButton",		IsPushButton );
+	if (IsPushButton)
+		out->addBool	("Pressed",			Pressed);
+
+	if (Image)
+	{
+		out->addTexture	("Image",			Image);
+		out->addRect	("ImageRect",		ImageRect);
+	}
+	if (PressedImage)
+	{
+		out->addTexture	("PressedImage",	PressedImage);
+		out->addRect	("PressedImageRect",PressedImageRect);
+	}
+
+	out->addBool		("UseAlphaChannel",	UseAlphaChannel);
+	out->addBool		("NoClip",			NoClip);
+
+	// if (OverrideFont)
+	//   out->addFont  ("OverrideFont",	OverrideFont);
+}
+
+//! Reads attributes of the element
+void CGUIButton::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+
+	IGUIButton::deserializeAttributes(in,options);
+
+	IsPushButton	= in->getAttributeAsBool("PushButton");
+	if (IsPushButton)
+		Pressed		= in->getAttributeAsBool("Pressed");
+
+	if (in->existsAttribute("Image"))
+		setImage( in->getAttributeAsTexture("Image"), in->getAttributeAsRect("ImageRect") );
+	if (in->existsAttribute("PressedImage"))
+		setPressedImage(in->getAttributeAsTexture("PressedImage"),
+						in->getAttributeAsRect("PressedImageRect"));
+
+	NoClip			= in->getAttributeAsBool("NoClip");
+	UseAlphaChannel = in->getAttributeAsBool("UseAlphaChannel");
+
+	// if (in->existsAttribute("OverrideFont"))
+	//   setOverrideFont(in->getAttributeAsFont("OverrideFont"));
+
+	updateAbsolutePosition();
+}
+
 } // end namespace gui
 } // end namespace irr

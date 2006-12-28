@@ -12,7 +12,7 @@ namespace irr
 namespace gui
 {
 
-	//! in the build in font, there are 13 additional window gui symbols.
+	//! in the built in font, there are 13 additional window gui symbols.
 	const wchar_t GUI_ICON_WINDOW_MAXIMIZE[] =		{257, 0};
 	const wchar_t GUI_ICON_WINDOW_RESTORE[] =		{258, 0};
 	const wchar_t GUI_ICON_WINDOW_CLOSE[] =			{259, 0};

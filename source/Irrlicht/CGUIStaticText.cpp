@@ -275,6 +275,40 @@ s32 CGUIStaticText::getTextHeight()
 
 
 
+//! Writes attributes of the element.
+//! Implement this to expose the attributes of your element for
+//! scripting languages, editors, debuggers or xml serialization purposes.
+void CGUIStaticText::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+
+	out->addBool	("Border",					Border);
+	out->addBool	("OverrideColorEnabled",	OverrideColorEnabled);
+	out->addBool	("WordWrap",				WordWrap);
+	out->addBool	("Background",				Background);
+	out->addColor	("OverrideColor",			OverrideColor);
+
+	// out->addFont ("OverrideFont",			OverrideFont);
+
+	IGUIStaticText::serializeAttributes(out,options);
+}
+
+//! Reads attributes of the element
+void CGUIStaticText::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+
+	IGUIStaticText::deserializeAttributes(in,options);
+
+	Border = in->getAttributeAsBool	("Border");
+	OverrideColor = in->getAttributeAsBool("OverrideColor");
+
+	enableOverrideColor(in->getAttributeAsBool("OverrideColorEnabled"));
+	setWordWrap(in->getAttributeAsBool("WordWrap"));
+	Background = in->getAttributeAsBool("Background");
+
+	// OverrideFont = in->getAttributeAsFont("OverrideFont");
+}
+
+
 } // end namespace gui
 } // end namespace irr
 

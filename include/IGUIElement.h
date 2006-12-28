@@ -11,6 +11,8 @@
 #include "irrString.h"
 #include "IEventReceiver.h"
 #include "EGUIElementTypes.h"
+#include "IAttributes.h"
+#include "IAttributeExchangingObject.h"
 
 namespace irr
 {
@@ -20,14 +22,14 @@ namespace gui
 class IGUIEnvironment;
 
 //! Base class of all GUI elements.
-class IGUIElement : public virtual IUnknown, public IEventReceiver
+class IGUIElement : public virtual io::IAttributeExchangingObject, public IEventReceiver
 {
 public:
 
 	//! Constructor
 	IGUIElement(EGUI_ELEMENT_TYPE type, IGUIEnvironment* environment, IGUIElement* parent,
 		s32 id, core::rect<s32> rectangle)
-		: Parent(0), RelativeRect(rectangle), IsVisible(true), IsEnabled(true),
+		: Parent(0), RelativeRect(rectangle), IsVisible(true), IsEnabled(true), IsSubElement(false),
 			ID(id), Environment(environment), Type(type)
 	{
 		AbsoluteRect = RelativeRect;
@@ -110,7 +112,9 @@ public:
 		// update all children
 		core::list<IGUIElement*>::Iterator it = Children.begin();
 		for (; it != Children.end(); ++it)
+		{
 			(*it)->updateAbsolutePosition();
+		}
 	}
 
 
@@ -223,6 +227,21 @@ public:
 		IsVisible = visible;
 	}
 
+
+	//! Returns true if this element was created as part of its parent control
+	virtual bool isSubElement()
+	{
+		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+		return IsSubElement;
+	}
+
+	//! Sets whether this control was created as part of its parent, 
+	//! for example when a scrollbar is part of a listbox. 
+	//! SubElements are not saved to disk when calling guiEnvironment->saveGUI()
+	virtual void setSubElement(bool subElement)
+	{
+		IsSubElement = subElement;
+	}
 
 	//! Returns true if element is enabled.
 	virtual bool isEnabled()
@@ -351,6 +370,35 @@ public:
 		return Type;
 	}
 
+	//! Writes attributes of the scene node.
+	//! Implement this to expose the attributes of your scene node for
+	//! scripting languages, editors, debuggers or xml serialization purposes.
+	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+	{
+		out->addInt	("Id", ID );
+		// TODO: stringw serialization
+		out->addString	("Caption", Text.c_str());
+		out->addRect    ("Rect",     RelativeRect);
+		out->addBool	("Visible",  IsVisible );
+		out->addBool	("Enabled",  IsEnabled );
+	}
+
+	//! Reads attributes of the scene node.
+	//! Implement this to set the attributes of your scene node for
+	//! scripting languages, editors, debuggers or xml deserialization purposes.
+	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+	{
+
+		//! relative rect of element
+		ID = in->getAttributeAsInt("Id");
+		Text = in->getAttributeAsStringW("Caption").c_str();
+		RelativeRect = in->getAttributeAsRect("Rect");
+		IsVisible = in->getAttributeAsBool("Visible");
+		IsEnabled = in->getAttributeAsBool("Enabled");
+
+		updateAbsolutePosition();
+	}
+
 protected:
 
 	//! List of all children of this element
@@ -373,6 +421,9 @@ protected:
 
 	//! is enabled?
 	bool IsEnabled;
+
+	//! is a part of a larger whole and should not be serialized?
+	bool IsSubElement;
 
 	//! caption
 	core::stringw Text;

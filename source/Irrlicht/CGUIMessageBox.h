@@ -28,13 +28,24 @@ namespace gui
 		//! called if an event happened.
 		virtual bool OnEvent(SEvent event);
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
 	private:
+
+		void refreshControls();
 
 		IGUIButton* OkButton;
 		IGUIButton* CancelButton;
 		IGUIButton* YesButton;
 		IGUIButton* NoButton;
 		IGUIStaticText* StaticText;
+
+		s32 Flags;
+		core::stringw MessageText;
 	};
 
 } // end namespace gui

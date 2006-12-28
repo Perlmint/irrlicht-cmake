@@ -41,20 +41,25 @@ CGUIFileOpenDialog::CGUIFileOpenDialog(io::IFileSystem* fs, const wchar_t* title
 	s32 posx = RelativeRect.getWidth() - buttonw - 4;
 
 	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_CLOSE);
+	CloseButton->setSubElement(true);
 	CloseButton->setOverrideFont(Environment->getBuiltInFont());
 	CloseButton->grab();
 
 	OKButton = Environment->addButton(core::rect<s32>(RelativeRect.getWidth()-80, 30, RelativeRect.getWidth()-10, 50), this, -1, L"OK");
+	OKButton->setSubElement(true);
 	OKButton->grab();
 
 	CancelButton = Environment->addButton(core::rect<s32>(RelativeRect.getWidth()-80, 55, RelativeRect.getWidth()-10, 75), this, -1, L"Cancel");
+	CancelButton->setSubElement(true);
 	CancelButton->grab();
 
 	FileBox = Environment->addListBox(core::rect<s32>(10, 55, RelativeRect.getWidth()-90, 230), this, -1, true);
+	FileBox->setSubElement(true);
 	FileBox->grab();
 	//Environment->setFocus(FileBox);
 
 	FileNameText = Environment->addStaticText(0, core::rect<s32>(10, 30, RelativeRect.getWidth()-90, 50), true, false, this);
+	FileNameText->setSubElement(true);
 	FileNameText->grab();
 
 	if (FileSystem)

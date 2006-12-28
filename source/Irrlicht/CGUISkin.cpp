@@ -673,6 +673,11 @@ void CGUISkin::draw3DTabBody(IGUIElement* element, bool border, bool background,
 	}
 }
 
+EGUI_SKIN_TYPE CGUISkin::getType()
+{
+	return Type;
+}
+
 
 } // end namespace gui
 } // end namespace irr

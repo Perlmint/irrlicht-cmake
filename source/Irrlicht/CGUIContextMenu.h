@@ -77,6 +77,9 @@ namespace gui
 		//! Sets the command id of a menu item
 		virtual void setItemCommandId(s32 idx, s32 id);
 
+		//! Adds a sub menu from an element that already exists.
+		virtual void setSubMenu(s32 index, CGUIContextMenu* menu);
+
 	protected:
 
 		struct SItem
@@ -106,6 +109,12 @@ namespace gui
 
 		//! Gets drawing rect of Item
 		virtual core::rect<s32> getRect(const SItem& i, const core::rect<s32>& absolute);
+
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
 
 		s32 HighLighted;
 		core::array<SItem> Items;

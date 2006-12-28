@@ -73,6 +73,24 @@ s32 CGUIContextMenu::addItem(const wchar_t* text, s32 id, bool enabled, bool has
 	return Items.size() - 1;
 }
 
+//! Adds a sub menu from an element that already exists.
+void CGUIContextMenu::setSubMenu(s32 index, CGUIContextMenu* menu)
+{
+	if (index >= (s32)Items.size() || index < 0)
+		return;
+
+	if (Items[index].SubMenu)
+		Items[index].SubMenu->drop();
+
+	Items[index].SubMenu = menu;
+	menu->setVisible(false);
+	
+	if (Items[index].SubMenu)
+		menu->grab();
+
+	recalculateSize();
+}
+
 
 //! Adds a separator item to the menu
 void CGUIContextMenu::addSeparator()
@@ -176,9 +194,12 @@ bool CGUIContextMenu::OnEvent(SEvent event)
 		{
 		case EMIE_LMOUSE_LEFT_UP:
 			{
+				// menu might be removed if it loses focus in sendClick, so grab a reference
+				grab();
 				s32 t = sendClick(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y));
 				if ((t==0 || t==1) && Environment->hasFocus(this))
 					Environment->removeFocus(this);
+				drop();
 			}
 			return true;
 		case EMIE_LMOUSE_PRESSED_DOWN:
@@ -445,7 +466,9 @@ void CGUIContextMenu::recalculateSize()
 
 	rect.LowerRightCorner.X = RelativeRect.UpperLeftCorner.X + width;
 	rect.LowerRightCorner.Y = RelativeRect.UpperLeftCorner.Y + height;
+
 	RelativeRect = rect;
+
 	updateAbsolutePosition();
 
 	// recalculate submenus
@@ -496,6 +519,95 @@ void CGUIContextMenu::setItemCommandId(s32 idx, s32 id)
 		return;
 
 	Items[idx].CommandId = id;
+}
+
+//! Writes attributes of the element.
+void CGUIContextMenu::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIElement::serializeAttributes(out,options);
+	out->addPosition2d	("Position",		Pos);
+
+	if (Parent->getType() == EGUIET_CONTEXT_MENU || Parent->getType() == EGUIET_MENU )
+	{
+		IGUIContextMenu* ptr = (IGUIContextMenu*)Parent;
+		s32 i=0;
+		// find the position of this item in its parent's list
+		for (; i<(s32)ptr->getItemCount() && ptr->getSubMenu(i) != this; ++i);
+
+		out->addInt("ParentItem",	i);
+	}
+	
+	// write out the item list
+	out->addInt("ItemCount", Items.size());
+
+	core::stringc tmp;
+
+	s32 i=0;
+	for (; i < (s32)Items.size(); ++i)
+	{
+		if (Items[i].IsSeparator)
+		{
+			tmp = "IsSeparator"; tmp += i;
+			out->addBool(tmp.c_str(), Items[i].IsSeparator);
+		}
+		else
+		{
+			tmp = "Text"; tmp += i;
+			out->addString(tmp.c_str(), Items[i].Text.c_str());
+			tmp = "CommandID"; tmp += i;
+			out->addInt(tmp.c_str(), Items[i].CommandId);
+			tmp = "Enabled"; tmp += i;
+			out->addBool(tmp.c_str(), Items[i].Enabled);
+		}
+	}
+}
+
+//! Reads attributes of the element
+void CGUIContextMenu::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
+{
+	IGUIElement::deserializeAttributes(in,options);
+
+	Pos = in->getAttributeAsPosition2d("Position");
+
+	// link to this item's parent
+	if (Parent && ( Parent->getType() == EGUIET_CONTEXT_MENU || Parent->getType() == EGUIET_MENU ) )
+		((CGUIContextMenu*)Parent)->setSubMenu(in->getAttributeAsInt("ParentItem"),this);
+
+
+	removeAllItems();
+
+	// read the item list
+	s32 count = in->getAttributeAsInt("ItemCount");
+
+	s32 i=0;
+	for (; i<(s32)count; ++i)
+	{
+		core::stringc tmp;
+		core::stringw txt;
+		s32 commandid;
+		bool enabled;
+
+		tmp = "IsSeparator"; tmp += i;
+		if ( in->existsAttribute(tmp.c_str()) )
+			addSeparator();
+		else
+		{
+			tmp = "Text"; tmp += i;
+			txt = in->getAttributeAsStringW(tmp.c_str());
+
+			tmp = "CommandID"; tmp += i;
+			commandid = in->getAttributeAsInt(tmp.c_str());
+
+			tmp = "Enabled"; tmp += i;
+			enabled = in->getAttributeAsBool(tmp.c_str());
+			
+			addItem(core::stringw(txt.c_str()).c_str(), commandid, enabled);
+		}
+	}
+
+
+	recalculateSize();
+
 }
 
 

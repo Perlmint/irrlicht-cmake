@@ -5,7 +5,7 @@
 #ifndef __C_GUI_FONT_H_INCLUDED__
 #define __C_GUI_FONT_H_INCLUDED__
 
-#include "IGUIFont.h"
+#include "IGUIFontASCII.h"
 #include "irrString.h"
 #include "IVideoDriver.h"
 
@@ -14,7 +14,7 @@ namespace irr
 namespace gui
 {
 
-class CGUIFont : public IGUIFont
+class CGUIFont : public IGUIFontASCII
 {
 public:
 
@@ -38,6 +38,9 @@ public:
 
 	//! Calculates the index of the character in the text which is on a specific position.
 	virtual s32 getCharacterFromPos(const wchar_t* text, s32 pixel_x);
+
+	//! Returns the type of this font
+	virtual EGUI_FONT_TYPE getType() { return EGFT_BITMAP; }
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
 	virtual void setKerning ( s32 kerning );

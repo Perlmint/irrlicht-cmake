@@ -91,11 +91,11 @@ void CTextSceneNode::setTextColor(video::SColor color)
 
 //! constructor
 CTextSceneNode2::CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-	gui::IGUIFont* font,const wchar_t* text,
+	gui::IGUIFontASCII* font,const wchar_t* text,
 	const core::vector3df& position, const core::dimension2d<f32>& size,f32 kerning,
 	video::SColor shade_top,video::SColor shade_down )
 : ITextSceneNode(parent, mgr, id, position),
-	Font(font),Shade_top ( shade_top ), Shade_down ( shade_down ),	Kerning ( kerning )
+	Font(0),Shade_top ( shade_top ), Shade_down ( shade_down ),	Kerning ( kerning )
 {
 	#ifdef _DEBUG
 	setDebugName("CTextSceneNode2");
@@ -105,10 +105,15 @@ CTextSceneNode2::CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,
 
 	setSize(size);
 
-	if (Font)
+	if (font)
 	{
-		Font->grab();
-		Material.Texture1 = Font->getTexture ();
+		// doesn't support other font types
+		if (Font->getType() == gui::EGFT_BITMAP)
+		{
+			Font = font;
+			Font->grab();
+			Material.Texture1 = Font->getTexture ();
+		}
 	}
 
 	Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;

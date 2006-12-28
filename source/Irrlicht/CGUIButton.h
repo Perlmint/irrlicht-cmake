@@ -61,6 +61,12 @@ namespace gui
 		//! Returns if the alpha channel should be used for drawing images on the button
 		virtual bool getUseAlphaChannel();
 
+		//! Writes attributes of the element.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options);
+
+		//! Reads attributes of the element
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
 	private:
 
 		bool Pressed;
