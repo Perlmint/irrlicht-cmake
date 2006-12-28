@@ -214,7 +214,8 @@ void CSoftwareDriver2::setCurrentShader()
 				shader = ETR_TEXTURE_GOURAUD_LIGHTMAP_M4;
 			break;
 		case EMT_LIGHTMAP_M4:
-			shader = ETR_TEXTURE_LIGHTMAP_M4;
+			if ( Material.org.Texture2 )
+				shader = ETR_TEXTURE_LIGHTMAP_M4;
 			break;
 
 		case EMT_LIGHTMAP_ADD:

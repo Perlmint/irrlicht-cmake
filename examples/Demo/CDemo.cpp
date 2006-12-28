@@ -83,7 +83,6 @@ void CDemo::run()
 			createParticleImpacts();
 
 			driver->beginScene(timeForThisScene != -1, true, backColor);
-			//driver->beginScene( true, true, backColor);
 
 			smgr->drawAll();
 			guienv->drawAll();
@@ -91,7 +90,6 @@ void CDemo::run()
 			driver->endScene();
 
 			// write statistics
-			//swprintf(tmp, 255, L"%ls fps:%d", driver->getName(),	driver->getFPS());
 			static s32 lastfps = 0;
 			s32 nowfps = driver->getFPS();
 
@@ -330,15 +328,24 @@ void CDemo::loadSceneData()
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* sm = device->getSceneManager();
 
-	quakeLevelMesh = sm->getMesh("maps/20kdm2.bsp");
+	quakeLevelMesh = (scene::IQ3LevelMesh*) sm->getMesh("maps/20kdm2.bsp");
 	
 	if (quakeLevelMesh)
 	{
+		u32 i;
+
+		//move all quake level meshes (non-realtime)
 		core::matrix4 m;
 		m.setTranslation ( core::vector3df(-1300,-70,-1249) );
-		sm->getMeshManipulator()->transformMesh ( quakeLevelMesh->getMesh(0), m );
 
-		quakeLevelNode = sm->addOctTreeSceneNode( quakeLevelMesh->getMesh(0) );
+		for ( i = 0; i!= scene::quake3::E_Q3_MESH_SIZE; ++i )
+		{
+			sm->getMeshManipulator()->transformMesh ( quakeLevelMesh->getMesh(i), m );
+		}
+
+		quakeLevelNode = sm->addOctTreeSceneNode( 
+			quakeLevelMesh->getMesh( scene::quake3::E_Q3_MESH_GEOMETRY)
+									);
 		if (quakeLevelNode)
 		{
 			//quakeLevelNode->setPosition(core::vector3df(-1300,-70,-1249));
@@ -348,10 +355,39 @@ void CDemo::loadSceneData()
 			mapSelector = sm->createOctTreeTriangleSelector(quakeLevelMesh->getMesh(0),
 				quakeLevelNode, 128);
 
+			// if not using shader and no gamma it's better to use more lighting, because
+			// quake3 level are dark
+			quakeLevelNode->setMaterialType ( video::EMT_LIGHTMAP_M4 );
+
 			// set additive blending if wanted
 			if (additive)
 				quakeLevelNode->setMaterialType(video::EMT_LIGHTMAP_ADD);
 		}
+
+		// the additional mesh can be quite huge and is unoptimized
+		scene::IMesh * additional_mesh = quakeLevelMesh->getMesh ( scene::E_Q3_MESH_ITEMS );
+
+		for ( i = 0; i!= additional_mesh->getMeshBufferCount (); ++i )
+		{
+			scene::IMeshBuffer *meshBuffer = additional_mesh->getMeshBuffer ( i );
+			const video::SMaterial &material = meshBuffer->getMaterial();
+
+			//! The ShaderIndex is stored in the material parameter
+			s32 shaderIndex = (s32) material.MaterialTypeParam2;
+
+			// the meshbuffer can be rendered without additional support, or it has no shader
+			const scene::quake3::SShader *shader = quakeLevelMesh->getShader ( shaderIndex );
+			if ( 0 == shader )
+			{
+				continue;
+			}
+			// Now add the MeshBuffer(s) with the current Shader to the Manager
+			sm->addQuake3SceneNode ( meshBuffer, shader );
+		}
+
+		// original mesh is not needed anymore
+		quakeLevelMesh->releaseMesh ( scene::E_Q3_MESH_ITEMS );
+
 	}
 
 	// load sydney model and create 2 instances
