@@ -551,7 +551,9 @@ const sVec4 CSoftwareDriver2::NDCPlane[6] =
 	setbits ( flag, (-v->Pos.y - v->Pos.w ) <= 0.f, 32 );
 
 */
-inline u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) const
+#ifdef _MSC_VER
+
+REALINLINE u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) const
 {
 	f32 test[6];
 	u32 flag;
@@ -585,6 +587,32 @@ inline u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) const
 */
 	return flag;
 }
+
+#else
+
+/*
+	if (condition) state |= m; else state &= ~m; 
+*/
+inline void setbit ( u32 &state, s32 condition, u32 mask )
+{
+	// 0, or any postive to mask
+	//s32 conmask = -condition >> 31;
+	state ^= ( ( -condition >> 31 ) ^ state ) & mask;
+}
+
+REALINLINE u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) const
+{
+	u32 flag = 0;
+	f32 dotPlane;
+	for ( u32 i = 0; i!= 6; ++i )
+	{
+		dotPlane = v->Pos.dotProduct ( NDCPlane[i] );
+		setbit ( flag, dotPlane <= 0.f, 1 << i );
+	}
+	return flag;
+}
+
+#endif // _MSC_VER 
 
 u32 CSoftwareDriver2::clipToHyperPlane ( s4DVertex * dest, const s4DVertex * source, u32 inCount, const sVec4 &plane )
 {
@@ -1445,7 +1473,7 @@ void CSoftwareDriver2::lightVertex ( s4DVertex *dest, const S3DVertex *source )
 	diffuse.set ( 0.f, 0.f, 0.f, 0.f );
 	specular.set ( 0.f, 0.f, 0.f, 0.f );
 
-	f32 attenuation;
+	f32 attenuation = 1.f;
 
 	u32 i;
 	for ( i = 0; i!= Light.size (); ++i )

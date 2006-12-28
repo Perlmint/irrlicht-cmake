@@ -158,7 +158,8 @@ void CTextSceneNode2::setText(const wchar_t* text)
 	dim[0] = core::reciprocal ( (f32) Font->getTexture ()->getOriginalSize().Width );
 	dim[1] = core::reciprocal ( (f32) Font->getTexture ()->getOriginalSize().Height );
 
-	for ( u32 i = 0; i!= Text.size (); ++i )
+	u32 i;
+	for ( i = 0; i != Text.size (); ++i )
 	{
 		s32 symbol = Text[i] - 32;
 		if ( symbol < 0 )
