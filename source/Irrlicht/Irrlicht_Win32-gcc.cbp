@@ -2416,16 +2416,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="CZBuffer2.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="CZBuffer2.h">
-			<Option compilerVar="CPP"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="CZipReader.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -2466,16 +2456,6 @@
 		</Unit>
 		<Unit filename="ITriangleRenderer.h">
 			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="ITriangleRenderer2.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="ITriangleRenderer2.h">
-			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>

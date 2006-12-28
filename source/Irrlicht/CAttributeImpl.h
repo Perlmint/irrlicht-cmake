@@ -309,7 +309,6 @@ public:
 	virtual bool getBool()
 	{
 		// return true if any number is nonzero
-		// keeps 
 		bool ret=false;
 		
 		for (u32 i=0; i < Count; ++i)
@@ -412,19 +411,45 @@ public:
 			r.UpperLeftCorner.X  = (s32)(Count > 0 ? ValueF[0] : 0);
 			r.UpperLeftCorner.Y  = (s32)(Count > 1 ? ValueF[1] : 0);
 			r.LowerRightCorner.X = (s32)(Count > 2 ? ValueF[2] : r.UpperLeftCorner.X);
-			r.LowerRightCorner.Y = (s32)(Count > 2 ? ValueF[2] : r.UpperLeftCorner.Y);
+			r.LowerRightCorner.Y = (s32)(Count > 3 ? ValueF[3] : r.UpperLeftCorner.Y);
 		}
 		else
 		{
 			r.UpperLeftCorner.X  = Count > 0 ? ValueI[0] : 0;
 			r.UpperLeftCorner.Y  = Count > 1 ? ValueI[1] : 0;
 			r.LowerRightCorner.X = Count > 2 ? ValueI[2] : r.UpperLeftCorner.X;
-			r.LowerRightCorner.Y = Count > 2 ? ValueI[2] : r.UpperLeftCorner.Y;
+			r.LowerRightCorner.Y = Count > 3 ? ValueI[3] : r.UpperLeftCorner.Y;
 		}
 		return r;
 	}
 
+	//! get float array
+	virtual core::array<f32> getFloatArray()
+	{
+
+		if (!IsFloat)
+		{
+			ValueF.clear();
+			for (u32 i=0; i<Count; ++i)
+				ValueF.push_back( (f32) ValueI[i] );
+		}
+		return ValueF;
+	}
+
+	//! get int array
+	virtual core::array<s32> getIntArray()
+	{
+		if (IsFloat)
+		{
+			ValueI.clear();
+			for (u32 i=0; i<Count; ++i)
+				ValueI.push_back( (s32) ValueF[i] );
+		}
+		return ValueI;
+	}
+
 	// setting values
+
 	virtual void setInt(s32 intValue)
 	{
 		// set all values
@@ -449,6 +474,7 @@ public:
 	{
 		setInt( boolValue ? 1 : 0);
 	}
+
 	virtual void setString(const char* text)
 	{
 		// parse text
@@ -475,16 +501,19 @@ public:
 				}
 				else
 				{
-					// read int
+					// todo: fix this to read ints properly
+					f32 c = 0;
+					P = core::fast_atof_move(P, c);
+					ValueI[i] = (s32)c;
 					
 				}
 			}
 		}
-		// warning message
-		if (i < Count-1)
-		{
-			
-		}
+		// todo: warning message
+		//if (i < Count-1)
+		//{
+		//	
+		//}
 	}
 
 	virtual void setPosition(core::position2di v)
@@ -575,6 +604,48 @@ public:
 		}
 	}
 
+	//! set float array
+	virtual void setFloatArray(core::array<f32> &vals)
+	{
+		reset();
+
+		for (u32 i=0; i<vals.size() && i<Count; ++i)
+		{
+			if (IsFloat)
+				ValueF[i] = vals[i];
+			else
+				ValueI[i] = (s32)vals[i];
+		}
+	}
+
+	//! set int array
+	virtual void setIntArray(core::array<s32> &vals)
+	{
+		reset();
+
+		for (u32 i=0; i<vals.size() && i<Count; ++i)
+		{
+			if (IsFloat)
+				ValueF[i] = (f32)vals[i];
+			else
+				ValueI[i] = vals[i];
+		}
+	}
+
+	//! is it a number list?
+	virtual bool isNumberList()
+	{
+		return true;
+	}
+
+	//! is it a float list?
+	virtual bool isFloat()
+	{
+		return IsFloat;
+	}
+
+protected:
+
 	//! clear all values
 	void reset()
 	{
@@ -585,7 +656,6 @@ public:
 			else
 				ValueI[i]=0;
 	}
-
 
 	core::array<f32> ValueF;
 	core::array<s32> ValueI;
