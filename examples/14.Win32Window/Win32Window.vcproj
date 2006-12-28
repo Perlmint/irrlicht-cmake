@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Win32Window"
+	Name="14.Win32Window"
 	ProjectGUID="{3A73BAFE-60DE-4E40-9E37-710760BC25C6}"
 	SccProjectName=""
 	SccLocalPath="">
@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\Win32Window.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\14.Win32Window.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -101,7 +101,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\Win32Window.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\14.Win32Window.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"

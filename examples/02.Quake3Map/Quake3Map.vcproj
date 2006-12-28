@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Quake3Map"
+	Name="02.Quake3Map"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\Quake3Map.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\02.Quake3Map.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\Quake3Map.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\02.Quake3Map.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="MeshViewer"
+	Name="09.MeshViewer"
 	ProjectGUID="{EF198BF9-7446-443D-961E-E617E1BD3AFB}"
 	SccProjectName=""
 	SccLocalPath="">
@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\MeshViewer.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\09.MeshViewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\MeshViewer.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\09.MeshViewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"

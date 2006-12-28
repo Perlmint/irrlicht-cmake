@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="RenderToTexture"
+	Name="13.RenderToTexture"
 	ProjectGUID="{AFC223BD-4371-4A8B-A90B-0D338BD2DEBB}"
 	SccProjectName=""
 	SccLocalPath="">
@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\RenderToTexture.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\13.RenderToTexture.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\RenderToTexture.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\13.RenderToTexture.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="HelloWorld"
+	Name="01.HelloWorld"
 	ProjectGUID="{265B57DD-0C6D-4CFD-A95E-0FCC3ECD0E90}"
 	SccProjectName=""
 	SccLocalPath="">
@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\HelloWorld.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\01.HelloWorld.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -101,7 +101,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\HelloWorld.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\01.HelloWorld.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="SpecialFx"
+	Name="08.SpecialFx"
 	ProjectGUID="{8553D1C8-6AE6-423E-A2D5-1016804AE67C}"
 	SccProjectName=""
 	SccLocalPath="">
@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\SpecialFx.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\08.SpecialFx.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\SpecialFx.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\08.SpecialFx.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
