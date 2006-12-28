@@ -48,8 +48,6 @@ void CDemo::run()
 	device->getFileSystem()->addZipFileArchive("map-20kdm2.pk3");
 	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
 
-	//device->getFileSystem()->addFolderFileArchive ( "/baseq3" );
-
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 	gui::IGUIEnvironment* guienv = device->getGUIEnvironment();

@@ -1048,13 +1048,14 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 
 	// font doesn't exist, attempt to load it
 
+
 	io::IXMLReader *xml = FileSystem->createXMLReader(filename);
 	if (xml)
 	{
 		// this is an XML font, but we need to know what type
-		bool found=false;
 		EGUI_FONT_TYPE t = EGFT_CUSTOM;
 
+		bool found=false;
 		while(xml->read() && !found)
 		{
 			if (xml->getNodeType() == io::EXN_ELEMENT)
@@ -1083,8 +1084,6 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 			if (!font->load(xml))
 			{
 				font->drop();
-				xml->drop();
-				return 0;
 			}
 		}
 		else if (t==EGFT_XML_VECTOR)
@@ -1096,18 +1095,13 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 			//if (!font->load(xml))
 			if (1)
 			{
-				xml->drop();
-				return 0;
 			}
-		}
-		else
-		{
-			xml->drop();
-			return 0;
 		}
 		xml->drop();
 	}
-	else
+
+
+	if ( 0 == ifont )
 	{
 
 		CGUIFont* font = new CGUIFont(Driver);

@@ -706,6 +706,12 @@
 				RelativePath=".\BuiltInFont.h">
 			</File>
 			<File
+				RelativePath=".\CDefaultGUIElementFactory.cpp">
+			</File>
+			<File
+				RelativePath=".\CDefaultGUIElementFactory.h">
+			</File>
+			<File
 				RelativePath=".\CGUIButton.cpp">
 			</File>
 			<File
@@ -758,6 +764,12 @@
 			</File>
 			<File
 				RelativePath=".\CGUIFont.h">
+			</File>
+			<File
+				RelativePath=".\CGUIFontMultiTexture.cpp">
+			</File>
+			<File
+				RelativePath=".\CGUIFontMultiTexture.h">
 			</File>
 			<File
 				RelativePath=".\CGUIImage.cpp">
