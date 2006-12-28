@@ -131,6 +131,8 @@ bool CD3D9HLSLMaterialRenderer::createHLSLVertexShader(const char* vertexShaderP
 		{
 			os::Printer::log((c8*)errors->GetBufferPointer());
 			errors->Release();
+			if (buffer)
+				buffer->Release();
 		}
 		return false;
 	}
@@ -185,6 +187,8 @@ bool CD3D9HLSLMaterialRenderer::createHLSLPixelShader(const char* pixelShaderPro
 		{
 			os::Printer::log((c8*)errors->GetBufferPointer());
 			errors->Release();
+			if (buffer)
+				buffer->Release();
 		}
 		return false;
 	}

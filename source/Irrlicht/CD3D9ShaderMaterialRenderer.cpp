@@ -189,7 +189,10 @@ bool CD3D9ShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 	{
 		// print out compilation errors.
 		os::Printer::log("Pixel shader compilation failed:");
-		os::Printer::log((c8*)errors->GetBufferPointer());			
+		os::Printer::log((c8*)errors->GetBufferPointer());
+
+		if (code)
+			code->Release();
 
 		errors->Release();
 		return false;
@@ -248,6 +251,9 @@ bool CD3D9ShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 		// print out compilation errors.
 		os::Printer::log("Vertex shader compilation failed:");
 		os::Printer::log((c8*)errors->GetBufferPointer());
+
+		if (code)
+			code->Release();
 
 		errors->Release();
 		return false;
