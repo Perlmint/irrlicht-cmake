@@ -8,38 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Irrlicht", "..\..\source\Ir
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Movement", "..\04.Movement\Movement.vcproj", "{735B050B-1AC5-4602-B0BE-D2D2B5893E94}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E08E042A-6C45-411B-92BE-3CC31331019F} = {E08E042A-6C45-411B-92BE-3CC31331019F}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PerPixelLighting", "..\11.PerPixelLighting\PerPixelLighting.vcproj", "{EC388ECA-E430-477A-A969-66FE5F84508A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E08E042A-6C45-411B-92BE-3CC31331019F} = {E08E042A-6C45-411B-92BE-3CC31331019F}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MeshViewer", "..\09.Meshviewer\Meshviewer.vcproj", "{EF198BF9-7446-443D-961E-E617E1BD3AFB}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Quake3Map", "..\02.Quake3Map\Quake3Map.vcproj", "{4DC646F0-D34A-4EA6-8EDF-7109F0DFBC09}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E08E042A-6C45-411B-92BE-3CC31331019F} = {E08E042A-6C45-411B-92BE-3CC31331019F}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "downhill", "..\..\private\downhill\downhill.vcproj", "{1C3142F5-1205-4EBE-9DE8-52252B610E06}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E08E042A-6C45-411B-92BE-3CC31331019F} = {E08E042A-6C45-411B-92BE-3CC31331019F}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Collision", "..\07.Collision\Collision.vcproj", "{EB92287F-CBA1-4FF9-801E-89091F0B6D10}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TerrainRendering", "..\12.TerrainRendering\TerrainRendering.vcproj", "{D70CD59D-853A-4343-9DE0-A73B3D48914D}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -54,34 +22,6 @@ Global
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug.Build.0 = Debug|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release.ActiveCfg = Relase - Fast FPU|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release.Build.0 = Relase - Fast FPU|Win32
-		{735B050B-1AC5-4602-B0BE-D2D2B5893E94}.Debug.ActiveCfg = Debug|Win32
-		{735B050B-1AC5-4602-B0BE-D2D2B5893E94}.Debug.Build.0 = Debug|Win32
-		{735B050B-1AC5-4602-B0BE-D2D2B5893E94}.Release.ActiveCfg = Release|Win32
-		{735B050B-1AC5-4602-B0BE-D2D2B5893E94}.Release.Build.0 = Release|Win32
-		{EC388ECA-E430-477A-A969-66FE5F84508A}.Debug.ActiveCfg = Debug|Win32
-		{EC388ECA-E430-477A-A969-66FE5F84508A}.Debug.Build.0 = Debug|Win32
-		{EC388ECA-E430-477A-A969-66FE5F84508A}.Release.ActiveCfg = Release|Win32
-		{EC388ECA-E430-477A-A969-66FE5F84508A}.Release.Build.0 = Release|Win32
-		{EF198BF9-7446-443D-961E-E617E1BD3AFB}.Debug.ActiveCfg = Debug|Win32
-		{EF198BF9-7446-443D-961E-E617E1BD3AFB}.Debug.Build.0 = Debug|Win32
-		{EF198BF9-7446-443D-961E-E617E1BD3AFB}.Release.ActiveCfg = Release|Win32
-		{EF198BF9-7446-443D-961E-E617E1BD3AFB}.Release.Build.0 = Release|Win32
-		{4DC646F0-D34A-4EA6-8EDF-7109F0DFBC09}.Debug.ActiveCfg = Debug|Win32
-		{4DC646F0-D34A-4EA6-8EDF-7109F0DFBC09}.Debug.Build.0 = Debug|Win32
-		{4DC646F0-D34A-4EA6-8EDF-7109F0DFBC09}.Release.ActiveCfg = Release|Win32
-		{4DC646F0-D34A-4EA6-8EDF-7109F0DFBC09}.Release.Build.0 = Release|Win32
-		{1C3142F5-1205-4EBE-9DE8-52252B610E06}.Debug.ActiveCfg = Debug|Win32
-		{1C3142F5-1205-4EBE-9DE8-52252B610E06}.Debug.Build.0 = Debug|Win32
-		{1C3142F5-1205-4EBE-9DE8-52252B610E06}.Release.ActiveCfg = Release|Win32
-		{1C3142F5-1205-4EBE-9DE8-52252B610E06}.Release.Build.0 = Release|Win32
-		{EB92287F-CBA1-4FF9-801E-89091F0B6D10}.Debug.ActiveCfg = Debug|Win32
-		{EB92287F-CBA1-4FF9-801E-89091F0B6D10}.Debug.Build.0 = Debug|Win32
-		{EB92287F-CBA1-4FF9-801E-89091F0B6D10}.Release.ActiveCfg = Release|Win32
-		{EB92287F-CBA1-4FF9-801E-89091F0B6D10}.Release.Build.0 = Release|Win32
-		{D70CD59D-853A-4343-9DE0-A73B3D48914D}.Debug.ActiveCfg = Debug|Win32
-		{D70CD59D-853A-4343-9DE0-A73B3D48914D}.Debug.Build.0 = Debug|Win32
-		{D70CD59D-853A-4343-9DE0-A73B3D48914D}.Release.ActiveCfg = Release|Win32
-		{D70CD59D-853A-4343-9DE0-A73B3D48914D}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
