@@ -1049,25 +1049,25 @@ namespace core
 		plane.Normal.normalize();
 		f32 d = plane.Normal.dotProduct(light);
 
-		M[0] = plane.Normal.X * light.X + d;
-		M[1] = plane.Normal.X * light.Y;
-		M[2] = plane.Normal.X * light.Z;
-		M[3] = plane.Normal.X * point;
+		M[ 0] = -plane.Normal.X * light.X + d;
+		M[ 1] = -plane.Normal.X * light.Y;
+		M[ 2] = -plane.Normal.X * light.Z;
+		M[ 3] = -plane.Normal.X * point;
 
-		M[4] = plane.Normal.Y * light.X;
-		M[5] = plane.Normal.Y * light.Y + d;
-		M[6] = plane.Normal.Y * light.Z;
-		M[7] = plane.Normal.Y * point;
+		M[ 4] = -plane.Normal.Y * light.X;
+		M[ 5] = -plane.Normal.Y * light.Y + d;
+		M[ 6] = -plane.Normal.Y * light.Z;
+		M[ 7] = -plane.Normal.Y * point;
 
-		M[8] = plane.Normal.Z * light.X;
-		M[9] = plane.Normal.Z * light.Y;
-		M[10] = plane.Normal.Z * light.Z + d;
-		M[11] = plane.Normal.Z * point;
+		M[ 8] = -plane.Normal.Z * light.X;
+		M[ 9] = -plane.Normal.Z * light.Y;
+		M[10] = -plane.Normal.Z * light.Z + d;
+		M[11] = -plane.Normal.Z * point;
 
-		M[12] = plane.D * light.X + d;
-		M[13] = plane.D * light.Y;
-		M[14] = plane.D * light.Z;
-		M[15] = plane.D * point;
+		M[12] = -plane.D * light.X;
+		M[13] = -plane.D * light.Y;
+		M[14] = -plane.D * light.Z;
+		M[15] = -plane.D * point + d; 
 	}
 
 	//! Builds a left-handed look-at matrix.
