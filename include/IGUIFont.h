@@ -83,6 +83,7 @@ public:
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
 	virtual void setKerning ( s32 kerning ) = 0;
+
 	//! set an Pixel Offset on Drawing ( scale position on width )
 	virtual s32 getKerning () = 0;
 

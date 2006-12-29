@@ -41,19 +41,63 @@ class map
 		RBTree* getRightChild() const	{ return mRightChild; }
 		RBTree* getParent() const		{ return mParent; }
 
-		ValueTypeRB getValue() const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return mValue; }
-		KeyTypeRB getKey() const		{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return mKey; }
+		ValueTypeRB getValue() const	
+		{ 
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return mValue; 
+		}
+
+		KeyTypeRB getKey() const		
+		{ 
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return mKey; 
+		}
 
 
-		bool isRoot() const				{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return mParent==0; }
-		bool isLeftChild() const		{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return mParent!=0 && mParent->getLeftChild()==this; }
-		bool isRightChild() const		{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return mParent!=0 && mParent->getRightChild()==this; }
-		bool isLeaf() const				{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return mLeftChild==0 && mRightChild==0; }
-		unsigned int getLevel() const	{ if (isRoot()) return 1; else return getParent()->getLevel() + 1; }
+		bool isRoot() const				
+		{ 
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return mParent==0;
+		}
+
+		bool isLeftChild() const
+		{
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return mParent!=0 && mParent->getLeftChild()==this;
+		}
+
+		bool isRightChild() const		
+		{
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return mParent!=0 && mParent->getRightChild()==this;
+		}
+
+		bool isLeaf() const				
+		{ 
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return mLeftChild==0 && mRightChild==0;
+		}
+
+		unsigned int getLevel() const	
+		{ 
+			if (isRoot()) 
+				return 1;
+			else 
+				return getParent()->getLevel() + 1;
+		}
 
 
-		bool isRed()	const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return  mIsRed; }
-		bool isBlack()	const	{ _IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX; return !mIsRed; }
+		bool isRed()	const	
+		{ 
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return  mIsRed;
+		}
+
+		bool isBlack()	const
+		{ 
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			return !mIsRed;
+		}
 
 	private:
 
