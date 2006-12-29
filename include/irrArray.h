@@ -72,7 +72,7 @@ public:
 		data = allocator.allocate(new_size); //new T[new_size];
 		allocated = new_size;
 
-        // copy old data
+		// copy old data
 		s32 end = used < new_size ? used : new_size;
 		
 		for (s32 i=0; i<end; ++i)
@@ -80,8 +80,8 @@ public:
 			// data[i] = old_data[i];
 			allocator.construct(&data[i], old_data[i]);
 		}
-		
-        // destruct old data
+
+		// destruct old data
 		for (u32 j=0; j<used; ++j)
 			allocator.destruct(&old_data[j]);
 

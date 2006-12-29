@@ -29,7 +29,7 @@ namespace io
 		//! \param finalPos: Destination position in the file.
 		//! \param relativeMovement: If set to true, the position in the file is
 		//! changed relative to current position. Otherwise the position is changed 
-		//! from begin of file.		
+		//! from beginning of file.
 		//! \return Returns true if successful, otherwise false.
 		virtual bool seek(s32 finalPos, bool relativeMovement = false) = 0;
 
