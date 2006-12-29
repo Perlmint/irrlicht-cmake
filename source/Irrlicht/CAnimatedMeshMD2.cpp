@@ -6,7 +6,7 @@
 #include "os.h"
 #include "SColor.h"
 #include "IReadFile.h"
-#include "irrmath.h"
+#include "irrMath.h"
 
 namespace irr
 {

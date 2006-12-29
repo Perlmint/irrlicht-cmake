@@ -127,7 +127,7 @@ bool COSOperator::getProcessorSpeedMHz(irr::u32* MHz)
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return true;
 
-#elif defined(LINUX)
+#elif defined(LINUX) && !defined(__sun__)
 	// could probably read from "/proc/cpuinfo" or "/proc/cpufreq" also
 	struct clockinfo CpuClock;
 	size_t Size = sizeof(clockinfo);
@@ -162,7 +162,7 @@ bool COSOperator::getSystemMemory(irr::u32* Total, irr::u32* Avail)
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return true;
 
-#elif defined(LINUX)
+#elif defined(LINUX) && !defined(__sun__)
 	// could probably read from "/proc/meminfo"
 	struct sysinfo SystemStatus;
 	if (sysinfo(&SystemStatus) != 0)

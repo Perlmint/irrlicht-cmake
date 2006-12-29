@@ -3,7 +3,7 @@
 #include "CImageLoaderBMP.h"
 #include "IWriteFile.h"
 #include "CColorConverter.h"
-#include "irrstring.h"
+#include "irrString.h"
 
 namespace irr
 {

@@ -7,7 +7,7 @@
 
 #include "irrTypes.h"
 #include "irrAllocator.h"
-#include "irrmath.h"
+#include "irrMath.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -851,6 +851,9 @@ inline core::stringc &getExtension ( core::stringc &dest, const core::stringc &s
 }
 
 //! some standard function ( to remove dependencies )
+#undef isdigit
+#undef isspace
+#undef isupper
 inline s32 isdigit(s32 c) { return c >= '0' && c <= '9'; }
 inline s32 isspace(s32 c) { return	c ==  ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v';	}
 inline s32 isupper(s32 c) { return c >= 'A' && c <= 'Z'; }

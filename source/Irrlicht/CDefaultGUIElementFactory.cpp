@@ -18,7 +18,7 @@
 #include "IGUIScrollBar.h"
 #include "IGUIStaticText.h"
 #include "IGUITabControl.h"
-#include "IGUIToolBar.h"
+#include "IGUIToolbar.h"
 #include "IGUIWindow.h"
 
 #include <string.h>

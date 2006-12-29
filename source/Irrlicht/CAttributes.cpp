@@ -1075,7 +1075,7 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 		s32 n=0;
 		for (; n<count; ++n)
 		{
-			swprintf(tmpName,L"value%d",n);
+			swprintf(tmpName,20,L"value%d",n);
 			tmpArray.push_back(reader->getAttributeValue(tmpName));
 		}
 		addArray(name.c_str(),tmpArray);
@@ -1115,7 +1115,7 @@ bool CAttributes::write(io::IXMLWriter* writer)
 			u32 n=0;
 			for (; n < arrayinput.size(); ++n)
 			{
-				swprintf(tmpName,L"value%d",n);
+				swprintf(tmpName,20,L"value%d",n);
 				arraynames.push_back(core::stringw(tmpName));
 				arrayvalues.push_back(arrayinput[n]);
 			}

@@ -5,7 +5,7 @@
 #ifndef __I_Q3_LEVEL_SHADER_H_INCLUDED__
 #define __I_Q3_LEVEL_SHADER_H_INCLUDED__
 
-#include "irrarray.h"
+#include "irrArray.h"
 #include "fast_atof.h"
 
 namespace irr

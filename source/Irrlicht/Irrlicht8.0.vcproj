@@ -465,11 +465,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\..\..\include\irrmath.h"
+					RelativePath=".\..\..\include\irrMath.h"
 					>
 				</File>
 				<File
-					RelativePath=".\..\..\include\irrstring.h"
+					RelativePath=".\..\..\include\irrString.h"
 					>
 				</File>
 				<File

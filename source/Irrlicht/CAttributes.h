@@ -469,7 +469,7 @@ public:
 	{ 
 		c8 tmp[1024];
 		getString(tmp);
-		swprintf(target, L"%s", core::stringw(tmp).c_str());
+		wcscpy(target,core::stringw(tmp).c_str());
 	}
 	virtual core::array<core::stringw> getArray()	{ return core::array<core::stringw>(); };
 	virtual bool getBool()					{ return false; }

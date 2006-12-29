@@ -150,7 +150,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=..\..\include\irrmath.h
+FileName=..\..\include\irrMath.h
 Folder=include/core
 Compile=1
 CompileCpp=1
@@ -160,7 +160,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=..\..\include\irrstring.h
+FileName=..\..\include\irrString.h
 Folder=include/core
 Compile=1
 CompileCpp=1

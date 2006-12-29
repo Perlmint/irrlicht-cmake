@@ -84,8 +84,8 @@ void CGUIInOutFader::setColor(video::SColor color)
 	video::SColor s = color;
 	video::SColor d = color;
 
-	d.setAlpha ( 255 );
-	s.setAlpha ( 0 );
+	s.setAlpha ( 255 );
+	d.setAlpha ( 0 );
 	setColor ( s,d );
 
 /*
@@ -102,7 +102,7 @@ void CGUIInOutFader::setColor(video::SColor color)
 	else
 	if (Action == EFA_FADE_IN)
 	{
-		FullColor.setAlpha(255);	
+		FullColor.setAlpha(255);
 		TransColor.setAlpha(0);
 	}
 */
@@ -145,8 +145,7 @@ void CGUIInOutFader::fadeIn(u32 time)
 	StartTime = os::Timer::getTime();
 	EndTime = StartTime + time;
 	Action = EFA_FADE_IN;
-
-	setColor(Color[0],Color[1] );
+	setColor(Color[0],Color[1]);
 }
 
 
@@ -156,7 +155,7 @@ void CGUIInOutFader::fadeOut(u32 time)
 	StartTime = os::Timer::getTime();
 	EndTime = StartTime + time;
 	Action = EFA_FADE_OUT;
-	setColor(Color[0],Color[1] );
+	setColor(Color[0],Color[1]);
 }
 
 //! Writes attributes of the element.

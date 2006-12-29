@@ -5,7 +5,7 @@
 #include "CImageLoaderPSD.h"
 #include "os.h"
 #include "CImage.h"
-#include "irrstring.h"
+#include "irrString.h"
 
 
 namespace irr

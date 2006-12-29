@@ -11,7 +11,7 @@
 #include "plane3d.h"
 #include "aabbox3d.h"
 #include "rect.h"
-#include "irrstring.h"
+#include "irrString.h"
 
 namespace irr
 {

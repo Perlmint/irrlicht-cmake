@@ -3,7 +3,7 @@
 #include "CImageLoaderPCX.h"
 #include "IWriteFile.h"
 #include "os.h" // for logging
-#include "irrstring.h"
+#include "irrString.h"
 
 namespace irr
 {

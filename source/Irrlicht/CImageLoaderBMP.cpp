@@ -7,7 +7,7 @@
 #include "CColorConverter.h"
 #include "CImage.h"
 #include "os.h"
-#include "irrstring.h"
+#include "irrString.h"
 
 namespace irr
 {

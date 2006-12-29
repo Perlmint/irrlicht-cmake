@@ -3,7 +3,7 @@
 #include "CColorConverter.h"
 #include "IWriteFile.h"
 #include "os.h" // for logging
-#include "irrstring.h"
+#include "irrString.h"
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_LIBJPEG_

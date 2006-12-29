@@ -1001,9 +1001,9 @@ public:
 	virtual void getString(wchar_t* target)
 	{
 		if (IsStringW)
-			swprintf(target, L"%s", ValueW.c_str() );
+			wcscpy(target, ValueW.c_str() );
 		else
-			swprintf(target, L"%s", core::stringw(Value.c_str()).c_str());
+			wcscpy(target, core::stringw(Value.c_str()).c_str());
 	}
 
 	virtual void setInt(s32 intValue)
@@ -1019,7 +1019,7 @@ public:
 		if (IsStringW)
 		{
 			wchar_t tmp[32];
-			swprintf(tmp, L"%f", floatValue);
+			swprintf(tmp, 32, L"%f", floatValue);
 			ValueW = tmp;
 		}
 		else

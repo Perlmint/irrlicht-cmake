@@ -4,7 +4,7 @@
 
 #include "CFileList.h"
 #include "IrrCompileConfig.h"
-#include "irrarray.h"
+#include "irrArray.h"
 #include <stdlib.h>
 
 namespace irr

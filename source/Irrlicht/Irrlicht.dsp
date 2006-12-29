@@ -157,11 +157,11 @@ SOURCE=..\..\include\irrList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\irrmath.h
+SOURCE=..\..\include\irrMath.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\irrstring.h
+SOURCE=..\..\include\irrString.h
 # End Source File
 # Begin Source File
 

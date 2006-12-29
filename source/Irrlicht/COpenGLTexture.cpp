@@ -12,7 +12,7 @@
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-#include "irrstring.h"
+#include "irrString.h"
 
 namespace irr
 {
