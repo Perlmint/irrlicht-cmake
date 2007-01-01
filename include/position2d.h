@@ -66,6 +66,14 @@ namespace core
 			{
 				return position2d<T>(X+other.X, Y+other.Y);
 			}
+			position2d<T> operator*(const position2d<T>& other) 
+			{
+				return position2d<T>(X*other.X, Y*other.Y);
+			}
+			position2d<T> operator*(const T& scalar) 
+			{
+				return position2d<T>(X*scalar, Y*scalar);
+			}
 
 			const position2d<T>& operator=(const position2d<T>& other) 
 			{
