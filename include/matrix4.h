@@ -240,15 +240,31 @@ namespace core
 		switch ( constructor )
 		{
 			case EM4CONST_IDENTITY:
+			case EM4CONST_INVERSE:
 				makeIdentity();
 				break;
+			case EM4CONST_NOTHING:
+			case EM4CONST_COPY:
+				break;
 		}
-		
 	}
 
 	inline matrix4::matrix4( const matrix4& other,matrix4::eConstructor constructor)
 	{
-		*this = other;
+		switch ( constructor )
+		{
+			case EM4CONST_IDENTITY:
+				makeIdentity();
+				break;
+			case EM4CONST_NOTHING:
+				break;
+			case EM4CONST_COPY:
+				*this = other;
+				break;
+			case EM4CONST_TRANSPOSED:
+				other.getTransposed(M);
+				break;
+		}
 	}
 
 

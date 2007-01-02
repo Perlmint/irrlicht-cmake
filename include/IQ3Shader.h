@@ -30,7 +30,7 @@ namespace quake3
 	const video::E_MODULATE_FUNC defaultModulate = video::EMF_MODULATE_2X;
 
 	// some useful typedefs
-	typedef core::array < core::stringc > tStringList;
+	typedef core::array< core::stringc > tStringList;
 	typedef core::array< video::ITexture* > tTexArray;
 
 	// name = "a b c .."
@@ -61,8 +61,7 @@ namespace quake3
 	{
 		const char * in = string.c_str () + pos;
 
-        u32 i;
-		for ( i = 0; i != listSize; ++i )
+		for ( u32 i = 0; i != listSize; ++i )
 		{
 			u32 len = (u32) strlen ( list[i] );
 			if ( in [len] != 0 && in [len] != ' ' )
@@ -237,7 +236,7 @@ namespace quake3
 				switch ( dstFact )
 				{
 					// gl_src_alpha gl_one_minus_src_alpha
-					case video::EBF_ONE_MINUS_SRC_ALPHA:	
+					case video::EBF_ONE_MINUS_SRC_ALPHA:
 						blendfunc.type = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
 						blendfunc.param = 1.f / 255.f;
 						resolved = 1;
@@ -279,10 +278,10 @@ namespace quake3
 		if ( 0 == resolved )
 		{
 			blendfunc.type = video::EMT_ONETEXTURE_BLEND;
-			blendfunc.param = pack_texureBlendFunc (	(video::E_BLEND_FACTOR) srcFact, 
-														(video::E_BLEND_FACTOR) dstFact,
-														defaultModulate
-													);
+			blendfunc.param = pack_texureBlendFunc (
+					(video::E_BLEND_FACTOR) srcFact,
+					(video::E_BLEND_FACTOR) dstFact,
+					defaultModulate);
 		}
 	}
 
@@ -370,7 +369,7 @@ namespace quake3
 			return;
 
 		static const c8 * funclist[] =
-		{ 
+		{
 			"sin","cos","square", "triangle", "sawtooth","inversesawtooth"
 		};
 
@@ -410,8 +409,7 @@ namespace quake3
 
 		bool isDefined ( const c8 * name, const c8 * content = 0 ) const
 		{
-            u32 i;
-			for ( i = 0; i != Variable.size (); ++i )
+			for ( u32 i = 0; i != Variable.size (); ++i )
 			{
 				if ( 0 == strcmp ( Variable[i].name.c_str(), name ) )
 				{
@@ -452,12 +450,12 @@ namespace quake3
 				return &VarGroup->VariableGroup [ stage ];
 			}
 
-			// id 
+			// id
 			s32 id;
 
 			// Shader: shader name ( also first variable in first Vargroup )
 			// Entity: classname ( variable in Group(1) )
-			core::stringc name;			
+			core::stringc name;
 			SVarGroupList *VarGroup;	// reference
 	};
 

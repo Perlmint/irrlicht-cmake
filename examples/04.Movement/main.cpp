@@ -215,11 +215,12 @@ int main()
 
 		if (lastFPS != fps)
 		{
-			wchar_t tmp[1024];
-			_snwprintf(tmp, 1024, L"Movement Example - Irrlicht Engine [%ls] fps: %d", 
-				driver->getName(), fps);
+			core::stringw tmp(L"Movement Example - Irrlicht Engine [");
+			tmp += driver->getName();
+			tmp += L"] fps: "; 
+			tmp += fps;
 
-			device->setWindowCaption(tmp);
+			device->setWindowCaption(tmp.c_str());
 			lastFPS = fps;
 		}
 	}

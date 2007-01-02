@@ -286,7 +286,7 @@ void CMeshManipulator::recalculateNormals(scene::IMesh* mesh, bool smooth) const
 
 //! Applies a transformation
 /** \param mesh: Mesh on which the operation is performed.
-	\param scale: matrix. */
+	\param m: matrix. */
 void CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m) const
 {
 	if (!mesh)
@@ -303,7 +303,6 @@ void CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m)
 
 		const u32 vtxcnt = buffer->getVertexCount();
 		const u32 vtxPitch = buffer->getVertexPitch ();
-		const video::E_VERTEX_TYPE vType = buffer->getVertexType();
 
 		video::S3DVertex* v = (video::S3DVertex*) buffer->getVertices();
 
@@ -333,7 +332,6 @@ void CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m)
 			meshbox.reset(buffer->getBoundingBox());
 		else
 			meshbox.addInternalBox(buffer->getBoundingBox());
-
 	}
 
 	mesh->getBoundingBox() = meshbox;

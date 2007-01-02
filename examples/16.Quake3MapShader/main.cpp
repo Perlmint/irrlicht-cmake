@@ -41,7 +41,7 @@ WinMain(), because its shorter to write.
 */
 
 
-int __cdecl main()
+int main(int argc, char* argv[])
 {
 	/*
 	Like in the HelloWorld example, we create an IrrlichtDevice with

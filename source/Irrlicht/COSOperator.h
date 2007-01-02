@@ -37,7 +37,7 @@ public:
 	//! \return Returns true if successful, false if not
 	virtual bool getProcessorSpeedMHz(irr::u32* MHz);
 
-	//! gets the total and available system RAM
+	//! gets the total and available system RAM in kB
 	//! \param Total: will contain the total system memory
 	//! \param Avail: will contain the available memory
 	//! \return Returns true if successful, false if not

@@ -173,8 +173,6 @@ s32 CGUIFontMultiTexture::getKerning ()
 core::dimension2d<s32> CGUIFontMultiTexture::getDimension(const wchar_t* text)
 {
 	core::dimension2d<s32> dim(0, 0);
-	int p = Areas[0].rectangle.LowerRightCorner.Y;
-	int q=0;
 
 	s32 h;
 	for(const wchar_t* p = text; *p; ++p)

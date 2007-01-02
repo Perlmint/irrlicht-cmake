@@ -656,8 +656,8 @@ bool CIrrDeviceLinux::run()
 			{
 			case ConfigureNotify:
 				// check for changed window size
-				if ((event.xconfigure.width != Width) ||
-					(event.xconfigure.height != Height))
+				if ((event.xconfigure.width != (int) Width) ||
+					(event.xconfigure.height != (int) Height))
 				{
 					Width = event.xconfigure.width;
 					Height = event.xconfigure.height;

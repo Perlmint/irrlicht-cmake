@@ -7,9 +7,8 @@
 #include "os.h"
 #include "SMeshBufferLightMap.h"
 #include "irrString.h"
-#include "CColorConverter.h"
 #include "ILightSceneNode.h"
-#include "fast_atof.h"
+#include "IQ3Shader.h"
 
 namespace irr
 {

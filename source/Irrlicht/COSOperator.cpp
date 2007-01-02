@@ -11,8 +11,13 @@
 #include <string.h>
 #endif
 
+#ifdef LINUX
+#include <unistd.h>
+#endif
+
 #ifdef MACOSX
 #include "OSXClipboard.h"
+#include <unistd.h>
 #endif
 
 namespace irr
@@ -127,8 +132,7 @@ bool COSOperator::getProcessorSpeedMHz(irr::u32* MHz)
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return true;
 
-#elif defined(LINUX) && !defined(__sun__)
-	// could probably read from "/proc/cpuinfo" or "/proc/cpufreq" also
+#elif defined(MACOSX)
 	struct clockinfo CpuClock;
 	size_t Size = sizeof(clockinfo);
 
@@ -138,8 +142,7 @@ bool COSOperator::getProcessorSpeedMHz(irr::u32* MHz)
 		*MHz = CpuClock.hz;
 	return true;
 #else
-
-// todo: MacOSX version
+	// could probably be read from "/proc/cpuinfo" or "/proc/cpufreq"
 
 	return false;
 #endif
@@ -155,30 +158,26 @@ bool COSOperator::getSystemMemory(irr::u32* Total, irr::u32* Avail)
 	GlobalMemoryStatus(&MemoryStatus);
 
 	if (Total)
-		*Total = (irr::u32)MemoryStatus.dwTotalPhys;
+		*Total = (irr::u32)(MemoryStatus.dwTotalPhys>>10);
 	if (Avail)
-		*Avail = (irr::u32)MemoryStatus.dwAvailPhys;
+		*Avail = (irr::u32)(MemoryStatus.dwAvailPhys>>10);
 	
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return true;
 
-#elif defined(LINUX) && !defined(__sun__)
-	// could probably read from "/proc/meminfo"
-	struct sysinfo SystemStatus;
-	if (sysinfo(&SystemStatus) != 0)
+#elif defined(LINUX) || defined(MACOSX)
+        long ps = sysconf(_SC_PAGESIZE);
+        long pp = sysconf(_SC_PHYS_PAGES);
+        long ap = sysconf(_SC_AVPHYS_PAGES);
+ 
+	if ((ps==-1)||(pp==-1)||(ap==-1))
 		return false;
 
 	if (Total)
-		*Total = SystemStatus.totalram;
+		*Total = ((ps*(long long)pp)>>10);
 	if (Avail)
-		*Avail = SystemStatus.freeram;
+		*Avail = ((ps*(long long)ap)>>10);
 	return true;
-
-#else
-
-// todo: MacOSX version
-
-	return false;
 #endif
 }
 
