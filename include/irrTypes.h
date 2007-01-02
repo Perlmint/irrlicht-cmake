@@ -5,7 +5,7 @@
 #ifndef __IRR_TYPES_H_INCLUDED__
 #define __IRR_TYPES_H_INCLUDED__
 
-#include "irrCompileConfig.h"
+#include "IrrCompileConfig.h"
 
 namespace irr
 {
