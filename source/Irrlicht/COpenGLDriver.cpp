@@ -555,9 +555,26 @@ void COpenGLDriver::loadExtensions()
 		#elif defined(LINUX)
 			#ifdef _IRR_OPENGL_USE_EXTPOINTER_
 
+			// Accessing the correct function is quite complex
+			// All libraries should support the ARB version, however
+			// since GLX 1.4 the non-ARB version is the official one
+			// So we have to check the runtime environment and
+			// choose the proper symbol
+			// In case you still have problems please enable the
+			// next line by uncommenting it
+			// #define _IRR_GETPROCADDRESS_WORKAROUND_
+
+			#ifndef _IRR_GETPROCADDRESS_WORKAROUND_
+			__GLXextFuncPtr (*IRR_OGL_LOAD_EXTENSION)(const GLubyte*)=0;
 			#ifdef GLX_VERSION_1_4
-				#define IRR_OGL_LOAD_EXTENSION glXGetProcAddress
-				#else
+				int major,minor;
+				glXQueryVersion(XDisplay, &major, &minor);
+				if ((major>1) || (minor>3))
+					IRR_OGL_LOAD_EXTENSION=glXGetProcAddress;
+				else
+			#endif
+					IRR_OGL_LOAD_EXTENSION=glXGetProcAddressARB;
+			#else
 				#define IRR_OGL_LOAD_EXTENSION glXGetProcAddressARB
 			#endif
 
