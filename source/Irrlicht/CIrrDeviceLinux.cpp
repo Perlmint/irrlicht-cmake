@@ -26,8 +26,6 @@ namespace irr
 		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 			bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
 	}
-
-
 } // end namespace irr
 
 
@@ -44,11 +42,13 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	bool sbuffer, bool vsync, bool antiAlias,
 	IEventReceiver* receiver,
 	const char* version)
- : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), WindowMinimized(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
+ : CIrrDeviceStub(version, receiver),
 #ifdef _IRR_COMPILE_WITH_X11_
-	SoftwareImage(0),
+	display(0), screennr(0), window(0), SoftwareImage(0),
 #endif
-	DriverType(driverType), Fullscreen(fullscreen), StencilBuffer(sbuffer), AntiAlias(antiAlias)
+	Fullscreen(fullscreen), StencilBuffer(sbuffer), AntiAlias(antiAlias), DriverType(driverType),
+	Width(windowSize.Width), Height(windowSize.Height), Depth(24),
+	Close(false), WindowActive(false), WindowMinimized(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false)
 {
 	#ifdef _DEBUG
 	setDebugName("CIrrDeviceLinux");

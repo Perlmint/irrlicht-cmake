@@ -18,7 +18,6 @@
 
 namespace irr
 {
-
 	class CIrrDeviceWin32 : public CIrrDeviceStub, video::IImagePresenter
 	{
 	public:
@@ -66,7 +65,7 @@ namespace irr
 		public:
 
 			CCursorControl(const core::dimension2d<s32>& wsize, HWND hwnd, bool fullscreen)
-				: WindowSize(wsize), IsVisible(true), InvWindowSize(0.0f, 0.0f),
+				: WindowSize(wsize), InvWindowSize(0.0f, 0.0f), IsVisible(true),
 					HWnd(hwnd), BorderX(0), BorderY(0)
 			{
 				if (WindowSize.Width!=0)
@@ -166,8 +165,6 @@ namespace irr
 		CCursorControl* getWin32CursorControl();
 
 	private:
-
-
 
 		//! create the driver
 		void createDriver(video::E_DRIVER_TYPE driverType,

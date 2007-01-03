@@ -48,7 +48,7 @@ namespace irr
 	public:
 
 		//! constructor
-		CIrrDeviceLinux(video::E_DRIVER_TYPE deviceType, 
+		CIrrDeviceLinux(video::E_DRIVER_TYPE deviceType,
 			const core::dimension2d<s32>& windowSize, u32 bits,
 			bool fullscreen, bool stencilbuffer, bool vsync, bool antiAlias, IEventReceiver* receiver,
 			const char* version);
@@ -124,7 +124,7 @@ namespace irr
 
 			~CCursorControl()
 			{
-				XFreeGC(Device->display, gc);	
+				XFreeGC(Device->display, gc);
 				Device->drop();
 			}
 
@@ -205,7 +205,7 @@ namespace irr
 #ifdef _IRR_COMPILE_WITH_X11_
 				if (Null)
 					return;
-					
+
 				Window tmp;
 				int itmp1, itmp2;
 				unsigned  int maskreturn;
@@ -243,28 +243,9 @@ namespace irr
 		Display *display;
 		int screennr;
 		Window window;
-		#ifdef _IRR_COMPILE_WITH_OPENGL_
-		GLXWindow glxWin;
-		GLXContext Context;
-		#endif
 		XSetWindowAttributes attributes;
 		XEvent event;
 		XImage* SoftwareImage;
-#endif
-		bool Fullscreen;
-		bool StencilBuffer;
-		bool AntiAlias;
-		video::E_DRIVER_TYPE DriverType;
-
-		s32 x,y;
-		u32 Width, Height, Depth;
-		bool Close;
-		bool WindowActive;
-		bool WindowMinimized;
-		bool UseXVidMode;
-		bool UseXRandR;
-		bool UseGLXWindow;
-#ifdef _IRR_COMPILE_WITH_X11_
 		#ifdef _IRR_LINUX_X11_VIDMODE_
 		XF86VidModeModeInfo oldVideoMode;
 		#endif
@@ -272,7 +253,23 @@ namespace irr
 		SizeID oldRandrMode;
 		Rotation oldRandrRotation;
 		#endif
+		#ifdef _IRR_COMPILE_WITH_OPENGL_
+		GLXWindow glxWin;
+		GLXContext Context;
+		#endif
 #endif
+		bool Fullscreen;
+		bool StencilBuffer;
+		bool AntiAlias;
+		video::E_DRIVER_TYPE DriverType;
+
+		u32 Width, Height, Depth;
+		bool Close;
+		bool WindowActive;
+		bool WindowMinimized;
+		bool UseXVidMode;
+		bool UseXRandR;
+		bool UseGLXWindow;
 
 		struct SKeyMap
 		{

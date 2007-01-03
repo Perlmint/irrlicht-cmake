@@ -16,12 +16,9 @@ namespace irr
 {
 
 //! constructor
-CIrrDeviceStub::CIrrDeviceStub(const char* version, irr::IEventReceiver* resv)
-: VideoDriver(0), GUIEnvironment(0), SceneManager(0), CursorControl(0), UserReceiver(0), Operator(0)
+CIrrDeviceStub::CIrrDeviceStub(const char* version, irr::IEventReceiver* recv)
+: IrrlichtDevice(), VideoDriver(0), GUIEnvironment(0), SceneManager(0), Timer(new irr::CTimer()), CursorControl(0), UserReceiver(recv), Logger(new CLogger(UserReceiver)), Operator(0), FileSystem(io::createFileSystem())
 {
-	UserReceiver = resv;
-
-	Logger = new CLogger(UserReceiver);
 	os::Printer::Logger = Logger;
 
 	core::stringc s = "Irrlicht Engine version ";
@@ -29,12 +26,6 @@ CIrrDeviceStub::CIrrDeviceStub(const char* version, irr::IEventReceiver* resv)
 	os::Printer::log(s.c_str(), ELL_NONE);
 
 	checkVersion(version);
-
-	// create timer
-	Timer = new irr::CTimer();
-
-	// create filesystem
-	FileSystem = io::createFileSystem();
 }
 
 
@@ -211,3 +202,4 @@ void CIrrDeviceStub::setResizeAble(bool resize)
 
 
 } // end namespace irr
+

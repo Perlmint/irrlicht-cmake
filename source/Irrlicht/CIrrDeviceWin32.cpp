@@ -34,7 +34,6 @@ namespace irr
 			u32 bits, bool fullscreen, bool stencilBuffer, io::IFileSystem* io,
 			bool vsync, bool antiAlias);
 	}
-
 } // end namespace irr
 
 
@@ -86,7 +85,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
+// Seems to be unused
+//			HDC hdc = BeginPaint(hWnd, &ps);
 			EndPaint(hWnd, &ps);
 		}
 		return 0;
@@ -270,8 +270,8 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 				 HWND externalWindow,
 				 const char* version)
 : CIrrDeviceStub(version, receiver), HWnd(0), ChangedToFullScreen(false),
-	Win32CursorControl(0), IsNonNTWindows(false), Resized(false),
-	FullScreen(fullscreen), ExternalWindow(false)
+	FullScreen(fullscreen), IsNonNTWindows(false), Resized(false),
+	ExternalWindow(false), Win32CursorControl(0)
 {
 	core::stringc winversion;
 	getWindowsVersion(winversion);
@@ -286,14 +286,12 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 	setDebugName("CIrrDeviceWin32");
 	#endif
 
+	// create the window, only if we do not use the null device
 	if (driverType != video::EDT_NULL && externalWindow==0)
 	{
-		// create the window, only if we do not use the null device
-
 		const c8* ClassName = "CIrrDeviceWin32";
 
 		// Register Class
-
 		WNDCLASSEX wcex;
 		wcex.cbSize		= sizeof(WNDCLASSEX);
 		wcex.style		= CS_HREDRAW | CS_VREDRAW;
@@ -707,7 +705,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 	BOOL bOsVersionInfoEx;
 
 	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-	osvi.dwOSVersionInfoSize	= sizeof(OSVERSIONINFOEX);
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
 	if(!(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO*) &osvi)))
 	{
