@@ -260,6 +260,7 @@ namespace irr
 		u32 Width, Height, Depth;
 		bool Close;
 		bool WindowActive;
+		bool WindowMinimized;
 		bool UseXVidMode;
 		bool UseXRandR;
 		bool UseGLXWindow;

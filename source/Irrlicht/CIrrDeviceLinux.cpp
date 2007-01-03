@@ -44,7 +44,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	bool sbuffer, bool vsync, bool antiAlias,
 	IEventReceiver* receiver,
 	const char* version)
- : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
+ : CIrrDeviceStub(version, receiver), Close(false), WindowActive(false), WindowMinimized(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
 #ifdef _IRR_COMPILE_WITH_X11_
 	SoftwareImage(0),
 #endif
@@ -502,9 +502,9 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 			GrabModeAsync, GrabModeAsync, window, None, CurrentTime);
 	}
 	else
-	{
-		// we want windowed mode
+	{ // we want windowed mode
 		attributes.event_mask |= ExposureMask;
+		attributes.event_mask |= FocusChangeMask;
 
 		window = XCreateWindow(display,
 				RootWindow(display, visual->screen),
@@ -667,10 +667,18 @@ bool CIrrDeviceLinux::run()
 				break;
 
 			case MapNotify:
-				WindowActive=true;
+				WindowMinimized=false;
 				break;
 
 			case UnmapNotify:
+				WindowMinimized=true;
+				break;
+
+			case FocusIn:
+				WindowActive=true;
+				break;
+
+			case FocusOut:
 				WindowActive=false;
 				break;
 
