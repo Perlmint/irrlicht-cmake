@@ -85,8 +85,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
-// Seems to be unused
-//			HDC hdc = BeginPaint(hWnd, &ps);
+			BeginPaint(hWnd, &ps);
 			EndPaint(hWnd, &ps);
 		}
 		return 0;
