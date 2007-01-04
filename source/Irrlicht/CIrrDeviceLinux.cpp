@@ -569,6 +569,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	Window tmp;
 	u32 borderWidth;
+	int x,y;
 
 	XGetGeometry(display, window, &tmp, &x, &y, &Width, &Height, &borderWidth, &Depth);
 
