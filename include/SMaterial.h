@@ -202,7 +202,7 @@ namespace video
 		EBF_ONE_MINUS_SRC_ALPHA,	// src & dest	(1-srcA, 1-srcA, 1-srcA, 1-srcA)
 		EBF_DST_ALPHA,				// src & dest	(destA, destA, destA, destA)
 		EBF_ONE_MINUS_DST_ALPHA,	// src & dest	(1-destA, 1-destA, 1-destA, 1-destA)
-		EBF_SRC_ALPHA_SATURATE,		// src			(min(srcA, 1-destA), idem, ...)
+		EBF_SRC_ALPHA_SATURATE		// src			(min(srcA, 1-destA), idem, ...)
 	};
 
 	//! MaterialTypeParam: eg. DirectX: D3DTOP_MODULATE, D3DTOP_MODULATE2X, D3DTOP_MODULATE4X
@@ -210,7 +210,7 @@ namespace video
 	{
 		EMF_MODULATE_1X	= 1,
 		EMF_MODULATE_2X	= 2,
-		EMF_MODULATE_4X	= 4,
+		EMF_MODULATE_4X	= 4
 	};
 
 	//! EMT_ONETEXTURE_BLEND: pack srcFact & dstFact and Modulo to MaterialTypeParam
