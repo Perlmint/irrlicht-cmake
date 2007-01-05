@@ -35,7 +35,7 @@ public:
 	}
 
 	//! unlock function
-	virtual void CSoftwareTexture2::unlock()
+	virtual void unlock()
 	{
 		MipMap[MipMapLOD]->unlock();
 	}
@@ -96,7 +96,7 @@ public:
 	}
 	
 	//! support mipmaps
-	virtual s32 CSoftwareTexture2::hasMipMaps() const
+	virtual s32 hasMipMaps() const
 	{
 		return HasMipMaps;
 	}

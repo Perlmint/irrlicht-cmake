@@ -106,7 +106,7 @@ This function converts an hex string (i.e. FF) to its int value (i.e. 255).
 \return An int representing the hex input value.*/
 int axtoi(const char *hexStg)
 {
-  int intValue = 0;  // integer value of hex string
+  unsigned int intValue = 0;  // integer value of hex string
 
   sscanf(hexStg, "%x", &intValue);
   return (intValue);

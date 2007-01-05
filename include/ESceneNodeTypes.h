@@ -84,7 +84,7 @@ namespace scene
 		EAC_OFF = 0,
 		EAC_BOX,
 		EAC_FRUSTUM_BOX,
-		EAC_FRUSTUM_SPHERE,
+		EAC_FRUSTUM_SPHERE
 	};
 
 	//! Names for culling type

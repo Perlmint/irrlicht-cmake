@@ -296,10 +296,10 @@ void CGUIScrollBar::serializeAttributes(io::IAttributes* out, io::SAttributeRead
 	IGUIScrollBar::serializeAttributes(out,options);
 
 	out->addBool	("Horizontal",	Horizontal);
-	out->addInt		("Value",		Pos);
-	out->addInt		("Max",			Max);
-	out->addInt		("SmallStep",	SmallStep);
-	out->addBool	("NoClip",		NoClip);
+	out->addInt	("Value",	Pos);
+	out->addInt	("Max",		Max);
+	out->addInt	("SmallStep",	SmallStep);
+	out->addBool	("NoClip",	NoClip);
 }
 
 //! Reads attributes of the element
@@ -315,7 +315,6 @@ void CGUIScrollBar::deserializeAttributes(io::IAttributes* in, io::SAttributeRea
 
 	refreshControls();
 }
-
 
 
 } // end namespace gui
