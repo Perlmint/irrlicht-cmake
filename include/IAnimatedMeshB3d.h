@@ -70,19 +70,19 @@ namespace scene
 		//!Sets Interpolation Mode
 		//!0- Constant
 		//!1- Linear (default)
-		virtual void SetInterpolationMode(s32 mode) = 0;
+		virtual void setInterpolationMode(s32 mode) = 0;
 
 		//!Want should happen on when animating
 		//!0-Nothing
 		//!1-Update nodes only
 		//!2-Update skin only
 		//!3-Update both nodes and skin (default)
-		virtual void SetAnimateMode(s32 mode) = 0;
+		virtual void setAnimateMode(s32 mode) = 0;
 
-		virtual void StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes) = 0;
-		virtual void RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes) = 0;
+		virtual void storeAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes) = 0;
+		virtual void recoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes) = 0;
 
-		virtual void CreateAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager) = 0;
+		virtual void createAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager) = 0;
 
 	};
 

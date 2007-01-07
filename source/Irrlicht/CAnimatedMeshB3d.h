@@ -108,14 +108,14 @@ namespace scene
 		//!Sets Interpolation Mode
 		//!0- Constant
 		//!1- Linear (default)
-		virtual void SetInterpolationMode(s32 mode);
+		virtual void setInterpolationMode(s32 mode);
 
 		//!Want should happen on when animating
 		//!0-Nothing
 		//!1-Update nodes only
 		//!2-Update skin only
 		//!3-Update both nodes and skin (default)
-		virtual void SetAnimateMode(s32 mode);
+		virtual void setAnimateMode(s32 mode);
 
 
 private:
@@ -410,18 +410,18 @@ private:
 		//This stuff is WIP...
 
 
-	virtual void CreateAnimationSkelton_Helper(ISceneManager* SceneManager ,core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
+	virtual void createAnimationSkelton_Helper(ISceneManager* SceneManager ,core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
 
 	public:
 
-		virtual void StoreAnimationSkelton(core::array<core::matrix4> &Matrixs);
-		virtual void RecoverAnimationSkelton(core::array<core::matrix4> &Matrixs);
+		virtual void storeAnimationSkelton(core::array<core::matrix4> &Matrixs);
+		virtual void recoverAnimationSkelton(core::array<core::matrix4> &Matrixs);
 
 
-		virtual void StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
-		virtual void RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
+		virtual void storeAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
+		virtual void recoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
 
-		virtual void CreateAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager);
+		virtual void createAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager);
 
 
 

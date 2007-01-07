@@ -1760,7 +1760,7 @@ void CAnimatedMeshB3d::updateNormalsWhenAnimating(bool on)
 //!Sets Interpolation Mode
 //!0- Constant
 //!1- Linear (default)
-void CAnimatedMeshB3d::SetInterpolationMode(s32 mode)
+void CAnimatedMeshB3d::setInterpolationMode(s32 mode)
 {
 	InterpolationMode=mode;
 }
@@ -1773,7 +1773,7 @@ void CAnimatedMeshB3d::SetInterpolationMode(s32 mode)
 //!1-Update nodes only
 //!2-Update skin only
 //!3-Update both nodes and skin (default)
-void CAnimatedMeshB3d::SetAnimateMode(s32 mode)
+void CAnimatedMeshB3d::setAnimateMode(s32 mode)
 {
 	AnimateMode=mode;
 }
@@ -1782,7 +1782,7 @@ void CAnimatedMeshB3d::SetAnimateMode(s32 mode)
 
 
 
-void CAnimatedMeshB3d::StoreAnimationSkelton(core::array<core::matrix4> &Matrixs)
+void CAnimatedMeshB3d::storeAnimationSkelton(core::array<core::matrix4> &Matrixs)
 {
 	for (s32 i=0;i<(s32)Nodes.size();++i)
 		Matrixs[i]=Nodes[i]->LocalAnimatedMatrix;
@@ -1790,7 +1790,7 @@ void CAnimatedMeshB3d::StoreAnimationSkelton(core::array<core::matrix4> &Matrixs
 
 
 
-void CAnimatedMeshB3d::RecoverAnimationSkelton(core::array<core::matrix4> &Matrixs)
+void CAnimatedMeshB3d::recoverAnimationSkelton(core::array<core::matrix4> &Matrixs)
 {
 	for (s32 i=0;i<(s32)Nodes.size();++i)
 		Nodes[i]->LocalAnimatedMatrix=Matrixs[i];
@@ -1798,7 +1798,7 @@ void CAnimatedMeshB3d::RecoverAnimationSkelton(core::array<core::matrix4> &Matri
 }
 
 
-void CAnimatedMeshB3d::StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes)
+void CAnimatedMeshB3d::storeAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes)
 {
 	//Note: This function works because of the way the b3d fomat nests nodes, other mesh loaders may need a different function
 	for (s32 i=0;i<(s32)Nodes.size();++i)
@@ -1817,7 +1817,7 @@ void CAnimatedMeshB3d::StoreAnimationSkelton(core::array<ISceneNode*> &JointChil
 
 
 
-void CAnimatedMeshB3d::RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes)
+void CAnimatedMeshB3d::recoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes)
 {
 	for (s32 i=0;i<(s32)Nodes.size();++i)
 	{
@@ -1836,15 +1836,15 @@ void CAnimatedMeshB3d::RecoverAnimationSkelton(core::array<ISceneNode*> &JointCh
 
 
 
-void CAnimatedMeshB3d::CreateAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager)
+void CAnimatedMeshB3d::createAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager)
 {
 	//Note: This function works because of the way the b3d fomat nests nodes, other mesh loaders may need a different function
-	CreateAnimationSkelton_Helper(SceneManager,JointChildSceneNodes,Parent,0,0,0);
+	createAnimationSkelton_Helper(SceneManager,JointChildSceneNodes,Parent,0,0,0);
 }
 
 
 
-void CAnimatedMeshB3d::CreateAnimationSkelton_Helper(ISceneManager* SceneManager, core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode,SB3dNode *B3dNode)
+void CAnimatedMeshB3d::createAnimationSkelton_Helper(ISceneManager* SceneManager, core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode,SB3dNode *B3dNode)
 {
 	//Note: This function works because of the way the b3d fomat nests nodes, other mesh loaders may need a different function
 
@@ -1863,7 +1863,7 @@ void CAnimatedMeshB3d::CreateAnimationSkelton_Helper(ISceneManager* SceneManager
 			JointChildSceneNodes.push_back(node);
 
 			for (s32 j=0;j<(s32)B3dNode->Nodes.size();++j)
-				CreateAnimationSkelton_Helper(SceneManager, JointChildSceneNodes,AnimatedMeshSceneNode,node,B3dNode,B3dNode->Nodes[j]);
+				createAnimationSkelton_Helper(SceneManager, JointChildSceneNodes,AnimatedMeshSceneNode,node,B3dNode,B3dNode->Nodes[j]);
 		}
 	}
 	else
@@ -1873,7 +1873,7 @@ void CAnimatedMeshB3d::CreateAnimationSkelton_Helper(ISceneManager* SceneManager
 		JointChildSceneNodes.push_back(node);
 
 		for (s32 j=0;j<(s32)B3dNode->Nodes.size();++j)
-			CreateAnimationSkelton_Helper(SceneManager, JointChildSceneNodes,AnimatedMeshSceneNode,node,B3dNode,B3dNode->Nodes[j]);
+			createAnimationSkelton_Helper(SceneManager, JointChildSceneNodes,AnimatedMeshSceneNode,node,B3dNode,B3dNode->Nodes[j]);
 	}
 
 }
