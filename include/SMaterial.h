@@ -279,6 +279,9 @@ namespace video
 		//! the normals will be normalized again, and the model will look as bright as it should.
 		EMF_NORMALIZE_NORMALS,
 
+		//! Texture wrap or texture clamp
+		EMF_TEXTURE_WRAP,
+
 		//! This is not a flag, but a value indicating how much flags there are.
 		EMF_MATERIAL_FLAG_COUNT
 	};
