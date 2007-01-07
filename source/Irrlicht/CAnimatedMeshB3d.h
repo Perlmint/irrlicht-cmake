@@ -12,9 +12,17 @@
 
 #include "IAnimatedMeshB3d.h"
 #include "IReadFile.h"
+
+
+
 #include "CEmptySceneNode.h"
+
 #include "CAnimatedMeshSceneNode.h"
+
+
+
 //#include "IAnimatedMeshSceneNode.h"
+
 #include "S3DVertex.h"
 #include "irrString.h"
 #include "matrix4.h"
@@ -32,6 +40,7 @@ namespace video
 }
 namespace scene
 {
+
 
 	class CAnimatedMeshB3d : public IAnimatedMeshB3d, public IMesh
 	{
@@ -83,11 +92,18 @@ namespace scene
 		//! Gets a joint number from its name
 		virtual s32 getJointNumber(const c8* name) const;
 
+
 		virtual core::matrix4* getLocalMatrixOfJoint(s32 jointNumber);
 
 		virtual core::matrix4* getMatrixOfJointUnanimated(s32 jointNumber);
 
 		virtual void setJointAnimation(s32 jointNumber, bool On);
+
+		//!Update Normals when Animating
+		//!False= Don't (default)
+		//!True= Update normals, slower
+		virtual void updateNormalsWhenAnimating(bool on);
+
 
 		//!Sets Interpolation Mode
 		//!0- Constant
@@ -101,7 +117,13 @@ namespace scene
 		//!3-Update both nodes and skin (default)
 		virtual void SetAnimateMode(s32 mode);
 
+
 private:
+
+
+
+
+
 
 		struct SB3DMeshBuffer : public IMeshBuffer
 		{
@@ -179,6 +201,7 @@ private:
 			virtual video::E_VERTEX_TYPE getVertexType() const
 			{
 				return video::EVT_2TCOORDS;
+				//return video::EVT_STANDARD;
 			}
 
 			//! returns the byte size (stride, pitch) of the vertex
@@ -190,8 +213,14 @@ private:
 
 			video::SMaterial Material;
 			core::array<video::S3DVertex2TCoords> Vertices;
+
+			//core::array<video::S3DVertex> Vertices;
+
 			core::array<u16> Indices;
 			core::aabbox3d<f32> BoundingBox;
+
+
+
 		};
 
 		struct B3dChunk
@@ -272,6 +301,7 @@ private:
 			f32 shininess;
 			s32 blend,fx;
 			SB3dTexture *Textures[2];
+
 		};
 
 		bool ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
@@ -293,6 +323,8 @@ private:
 
 		bool ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
 
+		void normaliseWeights();
+
 		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
 
 
@@ -306,15 +338,27 @@ private:
 
 		void animateNodes(f32 frame,f32 startFrame, f32 endFrame);
 
+
 		void slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
 
 		f32 totalTime;
 		bool HasAnimation;
+		bool HasScaleAnimation;
+
+
+		bool HasBones;
 		s32 lastCalculatedFrame;
+
+		s32 lastAnimateMode;
+
+		bool AnimateNormals;
+
 
 		//0- Constant
 		//1- Linear
 		s32 InterpolationMode;
+
+
 
 		//0-None
 		//1-Update nodes only
@@ -322,7 +366,10 @@ private:
 		//3-Update both nodes and skin
 		s32 AnimateMode;
 
+
+
 		bool NormalsInFile;
+
 
 		core::stringc readString(io::IReadFile* file);
 		core::stringc stripPathString(core::stringc oldstring, bool keepPath);
@@ -330,12 +377,22 @@ private:
 		void readFloats(io::IReadFile* file, f32* vec, u32 count);
 
 		core::aabbox3d<f32> BoundingBox;
+
+
 		core::array<SB3dMaterial> Materials;
+
+
 		core::array<SB3dTexture> Textures;
 
 		core::array<video::S3DVertex2TCoords*> Vertices;
+		//core::array<video::S3DVertex*> Vertices;
+
+		//core::array<core::vector3df> Vertices_GlobalPos;
+
 		core::array<core::matrix4> Vertices_GlobalMatrix;
 		core::array<bool> Vertices_Moved;
+
+		core::array<f32> Vertices_Alpha;
 
 		core::array<s32> AnimatedVertices_VertexID;
 
@@ -346,20 +403,29 @@ private:
 		video::IVideoDriver* Driver;
 
 
+
+
+
+
 		//This stuff is WIP...
 
 
-	virtual void CreateAnimationSkelton_Helper(ISceneManager* SceneManager ,core::array<ISceneNode*> &JointChildSceneNodes, CAnimatedMeshSceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
+	virtual void CreateAnimationSkelton_Helper(ISceneManager* SceneManager ,core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
 
 	public:
-
-		virtual void StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
-		virtual void RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
 
 		virtual void StoreAnimationSkelton(core::array<core::matrix4> &Matrixs);
 		virtual void RecoverAnimationSkelton(core::array<core::matrix4> &Matrixs);
 
-		virtual void CreateAnimationSkelton(ISceneManager* SceneManager, core::array<ISceneNode*> &JointChildSceneNodes, CAnimatedMeshSceneNode *AnimatedMeshSceneNode);
+
+		virtual void StoreAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
+		virtual void RecoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
+
+		virtual void CreateAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager);
+
+
+
+
 
 	};
 
@@ -367,4 +433,5 @@ private:
 } // end namespace irr
 
 #endif
+
 
