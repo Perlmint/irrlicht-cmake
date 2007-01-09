@@ -327,6 +327,24 @@ void CColorConverter::convert_A8R8G8B8toR5G6B5(const void* sP, s32 sN, void* dP)
 	}
 }
 
+void CColorConverter::convert_A8R8G8B8toR3G3B2(const void* sP, s32 sN, void* dP)
+{
+	u8* sB = (u8*)sP;
+	u8* dB = (u8*)dP;
+
+	for (s32 x = 0; x < sN; ++x)
+	{
+		u8 r = sB[2] & 0xe0;
+		u8 g = (sB[1] & 0xe0) >> 3;
+		u8 b = (sB[0] & 0xc0) >> 6;
+
+		dB[0] = (r | g | b);
+
+		sB += 4;
+		dB += 1;
+	}
+}
+
 void CColorConverter::convert_R8G8B8toR8G8B8(const void* sP, s32 sN, void* dP)
 {
 	memcpy(dP, sP, sN * 3);

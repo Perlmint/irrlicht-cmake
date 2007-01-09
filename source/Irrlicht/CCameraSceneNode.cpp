@@ -37,12 +37,8 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 
 	video::IVideoDriver* d = mgr->getVideoDriver();
 	if (d)
-	{
-		core::dimension2d<f32> screenDim;
-		screenDim.Width = (f32)d->getCurrentRenderTargetSize().Width;
-		screenDim.Height = (f32)d->getCurrentRenderTargetSize().Height;
-		Aspect = screenDim.Width / screenDim.Height;
-	}
+		Aspect = (f32)d->getCurrentRenderTargetSize().Width /
+			(f32)d->getCurrentRenderTargetSize().Height;
 
 	recalculateProjectionMatrix();
 	recalculateViewArea();
