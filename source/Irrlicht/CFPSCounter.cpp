@@ -37,7 +37,8 @@ u32 CFPSCounter::getPrimitve()
 //! to be called every frame
 void CFPSCounter::registerFrame(u32 now, u32 primitivesDrawn )
 {
-	framesCounted += 1;
+	++framesCounted;
+	primitive = primitivesDrawn;
 	primitivesCounted += primitivesDrawn;
 
 	u32 milliseconds = now - startTime;
@@ -46,8 +47,7 @@ void CFPSCounter::registerFrame(u32 now, u32 primitivesDrawn )
 	{
 		f32 invMilli = core::reciprocal ( (f32) milliseconds );
 		
-		fps = core::ceil32 ( ( 1000.f * (f32) framesCounted ) * invMilli );
-		primitive = primitivesCounted;
+		fps = core::ceil32 ( ( 1000 * framesCounted ) * invMilli );
 
 		framesCounted = 0;
 		primitivesCounted = 0;
