@@ -143,7 +143,7 @@ void loadModel(const c8* fn)
 
 	Model = Device->getSceneManager()->addAnimatedMeshSceneNode(m);
 	Model->setMaterialFlag(video::EMF_LIGHTING, false);
-	Model->setDebugDataVisible(scene::EDS_FULL);
+	Model->setDebugDataVisible(scene::EDS_OFF);
 	Model->setAnimationSpeed(30);
 }
 
