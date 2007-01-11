@@ -681,6 +681,8 @@ public:
 	//! \param length: Length of substring.
 	string<T> subString(s32 begin, s32 length) const
 	{
+		if ((length+begin) > size())
+			length = size()-begin;
 		if (length <= 0)
 			return string<T>("");
 
