@@ -22,7 +22,7 @@ namespace scene
 {
 	//! A scene node for displaying terrain using the geo mip map algorithm.
 	/** The code for the TerrainSceneNode is based on the Terrain renderer by Soconne and 
-	 * the GeoMipMapSceneNode developed by Spinz. They made their code available for Irrlicht 
+	 * the GeoMipMapSceneNode developed by Spintz. They made their code available for Irrlicht 
 	 * and allowed it to be  distributed under this licence. I only modified some parts.
 	 * A lot of thanks go to them. 
 	 *

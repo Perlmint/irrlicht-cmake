@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 // The code for the TerrainSceneNode is based on the GeoMipMapSceneNode
-// developed by Spinz. He made it available for Irrlicht and allowed it to be 
+// developed by Spintz. He made it available for Irrlicht and allowed it to be 
 // distributed under this licence. I only modified some parts. A lot of thanks go to him. 
 
 #ifndef __C_TERRAIN_SCENE_NODE_H__
@@ -21,7 +21,7 @@ namespace scene
 {
 	//! A scene node for displaying terrain using the geo mip map algorithm.
 	/** The code for the TerrainSceneNode is based on the GeoMipMapSceneNode
-	 * developed by Spinz. He made it available for Irrlicht and allowed it to be 
+	 * developed by Spintz. He made it available for Irrlicht and allowed it to be 
 	 * distributed under this licence. I only modified some parts. A lot of thanks go to him. 
 	 **/
 	class CTerrainSceneNode : public ITerrainSceneNode
@@ -214,15 +214,14 @@ namespace scene
 
 		struct SPatch
 		{
-			s32					CurrentLOD;
+			s32			CurrentLOD;
 			core::aabbox3df		BoundingBox;
 			core::vector3df		Center;
-			scene::ITextSceneNode*		DebugText;
-
-			SPatch*				Top;
-			SPatch*				Bottom;
-			SPatch*				Right;
-			SPatch*				Left;
+			scene::ITextSceneNode*	DebugText;
+			SPatch*			Top;
+			SPatch*			Bottom;
+			SPatch*			Right;
+			SPatch*			Left;
 
 			SPatch()
 			: CurrentLOD( -1 )

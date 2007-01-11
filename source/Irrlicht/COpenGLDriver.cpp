@@ -2165,7 +2165,7 @@ void COpenGLDriver::setFog(SColor c, bool linearFog, f32 start,
 	CNullDriver::setFog(c, linearFog, start, end, density, pixelFog, rangeFog);
 
 	glFogi(GL_FOG_MODE, linearFog ? GL_LINEAR : GL_EXP);
-#ifdef GL_VERSION_1_4
+#ifdef GL_EXT_fog_coord
 	glFogi(GL_FOG_COORDINATE_SOURCE, GL_FRAGMENT_DEPTH);
 #endif
 
@@ -2822,6 +2822,17 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 	return rtt;
 }
 
+
+//! Returns the maximum amount of primitives (mostly vertices) which
+//! the device is able to render with one drawIndexedTriangleList
+//! call.
+s32 COpenGLDriver::getMaximalPrimitiveCount()
+{
+	return (1<<16)-1;
+}
+
+
+//! checks triangle count and print warning if wrong
 bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
 								 bool clearZBuffer, SColor color)
 {

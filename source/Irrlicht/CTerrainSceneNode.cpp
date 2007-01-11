@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 // The code for the TerrainSceneNode is based on the GeoMipMapSceneNode
-// developed by Spinz. He made it available for Irrlicht and allowed it to be
+// developed by Spintz. He made it available for Irrlicht and allowed it to be
 // distributed under this licence. I only modified some parts. A lot of thanks go to him.
 
 #include "CTerrainSceneNode.h"
@@ -123,6 +123,7 @@ namespace scene
 
 		// Read the heightmap to get the vertex data
 		// Apply positions changes, scaling changes
+		const f32 tdSize = 1.0f/(f32)(TerrainData.Size-1);
 		for( s32 x = 0; x < TerrainData.Size; ++x )
 		{
 			for( s32 z = 0; z < TerrainData.Size; ++z )
@@ -134,11 +135,8 @@ namespace scene
 				vertex.Pos.Y = (f32) pixelColor.getLuminance();
 				vertex.Pos.Z = (f32)z;
 
-				vertex.TCoords.X = x / (f32)TerrainData.Size;
-				vertex.TCoords.Y = z / (f32)TerrainData.Size;
-
-				vertex.TCoords2.X = x / (f32)TerrainData.Size;
-				vertex.TCoords2.Y = z / (f32)TerrainData.Size;
+				vertex.TCoords.X = vertex.TCoords2.X = x * tdSize;
+				vertex.TCoords.Y = vertex.TCoords2.Y = z * tdSize;
 
 				pMeshBuffer->Vertices[index] = vertex;
 			}
@@ -283,7 +281,7 @@ namespace scene
 
 		// Read the heightmap to get the vertex data
 		// Apply positions changes, scaling changes
-		f32 tdSize = (f32)TerrainData.Size;
+		const f32 tdSize = 1.0f/(f32)(TerrainData.Size-1);
 		for( s32 x = 0; x < TerrainData.Size; ++x )
 		{
 			for( s32 z = 0; z < TerrainData.Size; ++z )
@@ -299,8 +297,8 @@ namespace scene
 
 				vertex.Pos.Z = (f32)z;
 
-				vertex.TCoords.X = vertex.TCoords2.X = x / tdSize;
-				vertex.TCoords.Y = vertex.TCoords2.Y = z / tdSize;
+				vertex.TCoords.X = vertex.TCoords2.X = x * tdSize;
+				vertex.TCoords.Y = vertex.TCoords2.Y = z * tdSize;
 
 				pMeshBuffer->Vertices.push_back( vertex );
 			}
@@ -882,8 +880,8 @@ namespace scene
 	//! specifying the relation between world space and texture coordinate space.
 	void CTerrainSceneNode::scaleTexture(f32 resolution, f32 resolution2)
 	{
-		f32 resBySize = resolution / (f32)TerrainData.Size;
-		f32 res2BySize = resolution2 / (f32)TerrainData.Size;
+		const f32 resBySize = resolution / (f32)(TerrainData.Size-1);
+		const f32 res2BySize = resolution2 / (f32)(TerrainData.Size-1);
 		u32 index = 0;
 		for (s32 x=0; x<TerrainData.Size; ++x)
 		{

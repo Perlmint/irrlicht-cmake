@@ -903,16 +903,19 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 	{
 		SMeshBuffer* mb = 0;
 		video::SMaterial* mat=0;
+		u32 mbPos;
 
 		// find mesh buffer for this group
-		for (u32 j=0; j<Materials.size(); ++j)
-			if (MaterialGroups[i].MaterialName == Materials[j].Name)
+		for (mbPos=0; mbPos<Materials.size(); ++mbPos)
+		{
+			if (MaterialGroups[i].MaterialName == Materials[mbPos].Name)
 			{
-				mb = (SMeshBuffer*)Mesh->getMeshBuffer(j);
-				mat=&Materials[j].Material;
-				MeshBufferNames[j]=name;
+				mb = (SMeshBuffer*)Mesh->getMeshBuffer(mbPos);
+				mat=&Materials[mbPos].Material;
+				MeshBufferNames[mbPos]=name;
 				break;
 			}
+		}
 
 		if (mb != 0)
 		{
@@ -930,6 +933,15 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 			for (s32 f=0; f<MaterialGroups[i].faceCount; ++f)
 			{
 				s32 vtxCount = mb->Vertices.size();
+				if (vtxCount>Driver->getMaximalPrimitiveCount()-4)
+				{
+					Mesh->addMeshBuffer(new SMeshBuffer());
+					IMeshBuffer* tmp = mb;
+					mb=(SMeshBuffer*)(Mesh->MeshBuffers[mbPos]=Mesh->MeshBuffers.getLast());
+					Mesh->MeshBuffers[Mesh->MeshBuffers.size()-1]=tmp;
+					mb->Material=*mat;
+					vtxCount=0;
+				}
 
 				for (s32 v=0; v<3; ++v)
 				{

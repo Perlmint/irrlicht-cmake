@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 // The code for the TerrainTriangleSelector is based on the GeoMipMapSelector
-// developed by Spinz. He made it available for Irrlicht and allowed it to be 
+// developed by Spintz. He made it available for Irrlicht and allowed it to be 
 // distributed under this licence. I only modified some parts. A lot of thanks go to him. 
 
 #ifndef __C_TERRAIN_TRIANGLE_SELECTOR_H__
@@ -22,7 +22,7 @@ class ITerrainSceneNode;
 
 //! Triangle Selector for the TerrainSceneNode
 //! The code for the TerrainTriangleSelector is based on the GeoMipMapSelector
-//! developed by Spinz. He made it available for Irrlicht and allowed it to be 
+//! developed by Spintz. He made it available for Irrlicht and allowed it to be 
 //! distributed under this licence. I only modified some parts. A lot of thanks go to him. 
 class CTerrainTriangleSelector : public ITriangleSelector
 {

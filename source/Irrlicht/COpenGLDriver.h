@@ -288,6 +288,11 @@ namespace video
 		//! IMaterialRendererServices)
 		virtual IVideoDriver* getVideoDriver();
 
+		//! Returns the maximum amount of primitives (mostly vertices) which
+		//! the device is able to render with one drawIndexedTriangleList
+		//! call.
+		virtual s32 getMaximalPrimitiveCount();
+
 		ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size);
 
 		bool setRenderTarget(video::ITexture* texture, bool clearBackBuffer,

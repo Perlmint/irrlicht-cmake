@@ -71,8 +71,8 @@ CD3D9HLSLMaterialRenderer::~CD3D9HLSLMaterialRenderer()
 
 
 bool CD3D9HLSLMaterialRenderer::createHLSLVertexShader(const char* vertexShaderProgram,
-													   const char* shaderEntryPointName,
-													   const char* shaderTargetName)
+			   const char* shaderEntryPointName,
+			   const char* shaderTargetName)
 {
 	if (!vertexShaderProgram)
 		return true;

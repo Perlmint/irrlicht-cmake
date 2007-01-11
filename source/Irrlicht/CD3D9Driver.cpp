@@ -260,6 +260,16 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 
 		if (SUCCEEDED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
 		           devtype, present.BackBufferFormat, !fullScreen,
+		           D3DMULTISAMPLE_4_SAMPLES, &qualityLevels)))
+		{
+			// enable multi sampling
+			present.MultiSampleType    = D3DMULTISAMPLE_4_SAMPLES;
+			present.MultiSampleQuality = qualityLevels-1;
+			present.SwapEffect         = D3DSWAPEFFECT_DISCARD;
+		}
+		else
+		if (SUCCEEDED(pID3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+		           devtype, present.BackBufferFormat, !fullScreen,
 		           D3DMULTISAMPLE_2_SAMPLES, &qualityLevels)))
 		{
 			// enable multi sampling
