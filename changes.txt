@@ -39,7 +39,7 @@ Changes in version 1.3 (?? ??? 2007)
 		
 		transform VertexPosition and VertexNormal
 
-- BUGFIX:	CGUIButton notified Pressed whene Mous was clicked Inside ( correct )
+- BUGFIX:	CGUIButton notified Pressed when Mouse was clicked Inside ( correct )
 	but also left up outside rectangle ( incorrect)
 
 - BUGFIX: Octree:getPolys(const scene::SViewFrustum& frustum, SIndexData* idxdata)
@@ -71,7 +71,7 @@ Changes in version 1.3 (?? ??? 2007)
 	- Shaders are parsed. When it's possible to resolve a 2 Texture Scheme it's taken
 		Shaders exist in namespace scene::quake3
 	- The Example Quake3Map shows how to continue applying the Q3Shaders with SceneNodes
-	   ( for example animmap converts to TetxureAnimator.)
+	   ( for example animmap converts to TextureAnimator.)
 	   TODO: use the Irrlicht Variable Syntax to remove redundant code..
 	   
 - added getVertexPitch () to IMeshBuffer interface
@@ -82,7 +82,7 @@ Changes in version 1.3 (?? ??? 2007)
 	( future: it's possibly to use binary comparison test..)
 	removed 1000's include of string.h and moved one to irrstring.h
 	in preparing of complete removing the MSVC...
-- moved fast_of.h to the public include
+- moved fast_atof.h to the public include
 	added strtol10 to remove dependicies for stdlib.h
 	anyway math.h is needed for powf
 	
@@ -127,10 +127,7 @@ Changes in version 1.3 (?? ??? 2007)
 		you can compare it when now clipping is involved..
 		the movement example is a good candidate..
 		
-		Hey!, i need honour;-)
-		and the competition is not over...
-
-	- VertexCache for Tansformred & Light Vertices
+	- VertexCache for Tansformed & Light Vertices
 		boost small drawPrimitive Calls ( 2DRectangle, Billboard ) and Real Index Triangles
 		
 	- Bilinear Dither
@@ -141,7 +138,7 @@ Changes in version 1.3 (?? ??? 2007)
 - changed GUIFont & FontTool to support kerning.. ( on a global basis )
 	
 	very basic mode.. apply an offset for position
-	usefully for example if you want to apply an outline stroke in your favorite
+	useful for example if you want to apply an outline stroke in your favorite
 	and therefore let the texture grow..
 	and to correct the border back on drawing, specify the parameter in IGUIFont..
 	this is quite useful if you want to use more artistic fonts.
@@ -155,24 +152,24 @@ Changes in version 1.3 (?? ??? 2007)
 	
 - changed MD2_FRAME_SHIFT to lower framerate
 	-> lower IPol
-	problems can accure if somebody uses hardcoded frame-numbers instead
+	problems can occur if somebody uses hardcoded frame-numbers instead
 	of Animation name...
 - changed spelling "frustrum" to "frustum"
 	-> changed also SViewFrustrum.h to SViewFrustum.h
 	
 - changed Parameter AutomaticCulling from bool to enum E_CULLING_TYPE
-	to supported more than two culling modes.
+	to support more than two culling modes.
 	
 	added Frustum culling ( it's a copy & paste from the octree )
 	added initial bounding sphere
 		used for culling point lights..
 	
-	
+
 - The ISceneManager::addCameraSceneNodeFPS() has a new parameter named 'jumpSpeed'
   and a Key Map Entry.
   
   
-- testing matrix44 to identity before multiply
+- testing matrix4 for identity before multiply
 	mhmm. i remember this was inserted in long time previous versions..
 	anyway. it's enabled again.
 

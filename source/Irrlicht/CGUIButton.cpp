@@ -51,7 +51,7 @@ bool CGUIButton::OnEvent(SEvent event)
 	switch(event.EventType)
 	{
 	case EET_KEY_INPUT_EVENT:
-		if (event.KeyInput.PressedDown && isEnabled() &&
+		if (event.KeyInput.PressedDown &&
 			(event.KeyInput.Key == KEY_RETURN || 
 			 event.KeyInput.Key == KEY_SPACE))
 		{
@@ -63,7 +63,7 @@ bool CGUIButton::OnEvent(SEvent event)
 			return true;
 		}
 		else
-		if (!event.KeyInput.PressedDown && isEnabled() && Pressed &&
+		if (!event.KeyInput.PressedDown && Pressed &&
 			(event.KeyInput.Key == KEY_RETURN || 
 			 event.KeyInput.Key == KEY_SPACE))
 		{
@@ -82,6 +82,7 @@ bool CGUIButton::OnEvent(SEvent event)
 			}
 			return true;
 		}
+		break;
 	case EET_GUI_EVENT:
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
@@ -107,8 +108,7 @@ bool CGUIButton::OnEvent(SEvent event)
 			return true;
 		}
 		else
-		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP
-			)
+		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 		{
 			bool wasPressed = Pressed;
 			Environment->removeFocus(this);
@@ -119,7 +119,6 @@ bool CGUIButton::OnEvent(SEvent event)
 					Pressed = false;
 				return true;
 			}
-
 
 			if (!IsPushButton)
 				Pressed = false;

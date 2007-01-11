@@ -42,6 +42,7 @@ namespace video
 
 	struct STGAFooter
 	{
+		STGAFooter() : ExtensionOffset(0), DeveloperOffset(0) {Signature[0]=0;}
 		u32 ExtensionOffset;
 		u32 DeveloperOffset;
 		c8  Signature[18];

@@ -1088,6 +1088,9 @@ bool CNullDriver::getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag)
 //! Creates a software image from a file.
 IImage* CNullDriver::createImageFromFile(const char* filename)
 {
+	if (!filename)
+		return 0;
+
 	IImage* image = 0;
 	io::IReadFile* file = FileSystem->createAndOpenFile(filename);
 
@@ -1106,6 +1109,9 @@ IImage* CNullDriver::createImageFromFile(const char* filename)
 //! Creates a software image from a file.
 IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 {
+	if (!file)
+		return 0;
+
 	IImage* image = 0;
 
 	u32 i;
