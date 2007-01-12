@@ -6,6 +6,7 @@
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"
 #include "fast_atof.h"
+#include "irrString.h"
 
 namespace irr
 {
@@ -409,10 +410,10 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				}	// end switch(pBufPtr[1])
 			}	// end case 'K': if ( 0 != pCurrMaterial )...
 			break;
-		case 'm':			// map_Kd - diffuse texture map
+		case 'm': // texture maps
 			if (0 != pCurrMaterial)
 			{
-				char type=0;
+				char type=0; // map_Kd - diffuse texture map
 				if (!strncmp(pBufPtr,"map_bump",8))
 					type=1;
 				else if (!strncmp(pBufPtr,"map_d",5))
@@ -422,9 +423,62 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				// extract new material's name
 				c8 textureNameBuf[WORD_BUFFER_LENGTH];
 				pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+				// handle options
+				while (textureNameBuf[0]=='-')
+				{
+					if (!strncmp(pBufPtr,"-blendu",7))
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+					if (!strncmp(pBufPtr,"-blendv",7))
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+					if (!strncmp(pBufPtr,"-cc",3))
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+					if (!strncmp(pBufPtr,"-clamp",6))
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+					if (!strncmp(pBufPtr,"-texres",7))
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+					if (!strncmp(pBufPtr,"-mm",3))
+					{
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+					}
+					if (!strncmp(pBufPtr,"-o",2))
+					{
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						// next parameters are optional, so skip rest of loop if no number is found
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						if (!core::isdigit(textureNameBuf[0]))
+							continue;
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						if (!core::isdigit(textureNameBuf[0]))
+							continue;
+					}
+					if (!strncmp(pBufPtr,"-s",2))
+					{
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						// next parameters are optional, so skip rest of loop if no number is found
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						if (!core::isdigit(textureNameBuf[0]))
+							continue;
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						if (!core::isdigit(textureNameBuf[0]))
+							continue;
+					}
+					if (!strncmp(pBufPtr,"-t",2))
+					{
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						// next parameters are optional, so skip rest of loop if no number is found
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						if (!core::isdigit(textureNameBuf[0]))
+							continue;
+						pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+						if (!core::isdigit(textureNameBuf[0]))
+							continue;
+					}
+					// get next word
+					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+				}
 				if (type==1) 
 				{
-					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
 					pCurrMaterial->pMeshbuffer->Material.MaterialTypeParam=core::fast_atof(textureNameBuf);
 					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
 				}
