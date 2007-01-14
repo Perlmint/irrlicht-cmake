@@ -86,9 +86,8 @@ bool CGUIButton::OnEvent(SEvent event)
 	case EET_GUI_EVENT:
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
-			if (!IsPushButton)
+			if (event.GUIEvent.Caller == (IGUIElement*) this && !IsPushButton)
 				Pressed = false;
-			return true;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:
@@ -334,21 +333,14 @@ void CGUIButton::serializeAttributes(io::IAttributes* out, io::SAttributeReadWri
 	if (IsPushButton)
 		out->addBool	("Pressed",			Pressed);
 
-	if (Image)
-	{
-		out->addTexture	("Image",			Image);
-		out->addRect	("ImageRect",		ImageRect);
-	}
-	if (PressedImage)
-	{
-		out->addTexture	("PressedImage",	PressedImage);
-		out->addRect	("PressedImageRect",PressedImageRect);
-	}
+	out->addTexture	("Image",			Image);
+	out->addRect	("ImageRect",		ImageRect);
+	out->addTexture	("PressedImage",	PressedImage);
+	out->addRect	("PressedImageRect",PressedImageRect);
 
 	out->addBool		("UseAlphaChannel",	UseAlphaChannel);
 	out->addBool		("NoClip",			NoClip);
 
-	// if (OverrideFont)
 	//   out->addFont  ("OverrideFont",	OverrideFont);
 }
 
@@ -362,16 +354,12 @@ void CGUIButton::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWr
 	if (IsPushButton)
 		Pressed		= in->getAttributeAsBool("Pressed");
 
-	if (in->existsAttribute("Image"))
-		setImage( in->getAttributeAsTexture("Image"), in->getAttributeAsRect("ImageRect") );
-	if (in->existsAttribute("PressedImage"))
-		setPressedImage(in->getAttributeAsTexture("PressedImage"),
-						in->getAttributeAsRect("PressedImageRect"));
+	setImage( in->getAttributeAsTexture("Image"), in->getAttributeAsRect("ImageRect") );
+	setPressedImage(in->getAttributeAsTexture("PressedImage"), in->getAttributeAsRect("PressedImageRect"));
 
 	NoClip			= in->getAttributeAsBool("NoClip");
 	UseAlphaChannel = in->getAttributeAsBool("UseAlphaChannel");
 
-	// if (in->existsAttribute("OverrideFont"))
 	//   setOverrideFont(in->getAttributeAsFont("OverrideFont"));
 
 	updateAbsolutePosition();

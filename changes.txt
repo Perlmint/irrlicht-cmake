@@ -12,9 +12,17 @@ Changes in version 1.3 (?? ??? 2007)
 
 - GUI:
 	GUI Serialization with loadGUI and saveGUI, and serializable custom GUI elements via factories
+
 	Started a GUI Editor as a GUI element factory example (work in progress)
+
 	New IGUIElement functions: isSubElement & setSubElement for child elements created by their parents 
 	(eg. a scrollbar on a list box). Set it if you don't want an element to be serialized
+
+	New GUI event, EGET_ELEMENT_FOCUSED
+
+	GUI environment ELEMENT_FOCUS_LOST event now sets the element as the caller, focus_lost events 
+	are now usually passed to parent elements, so elements now check if they are the caller before 
+	updating (so users can catch focus lost events without them being eaten by the elements)
 
 - ROUNDING_ERROR is now ROUNDING_ERROR_32 or ROUNDING_ERROR_64
 

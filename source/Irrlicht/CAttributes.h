@@ -42,6 +42,14 @@ public:
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual E_ATTRIBUTE_TYPE getAttributeType(s32 index);
 
+	//! Returns the type string of the attribute
+	//! \param attributeName: String for the attribute type
+	virtual const wchar_t* getAttributeTypeString(const c8* attributeName);
+
+	//! Returns the type string of the attribute by index. 
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual const wchar_t* getAttributeTypeString(s32 index);
+
 	//! Returns if an attribute with a name exists
 	virtual bool existsAttribute(const c8* attributeName);
 
@@ -477,6 +485,19 @@ public:
 	virtual core::vector3df getVector()		{ return core::vector3df(); }
 	virtual core::position2di getPosition()	{ return core::position2di(); }
 	virtual core::rect<s32> getRect()		{ return core::rect<s32>(); }
+	virtual core::quaternion getQuaternion(){ return core::quaternion(); }
+	virtual core::matrix4 getMatrix()		{ return core::matrix4(); }
+	virtual core::triangle3df getTriangle() { return core::triangle3df(); }
+	virtual core::vector2df getVector2d()	{ return core::vector2df(); }
+	virtual core::vector2di getVector2di()	{ return core::vector2di(); }
+	virtual core::line2df getLine2d()		{ return core::line2df(); }
+	virtual core::line2di getLine2di()		{ return core::line2di(); }
+	virtual core::line3df getLine3d()		{ return core::line3df(); }
+	virtual core::line3di getLine3di()		{ return core::line3di(); }
+	virtual core::dimension2di getDimension2d() { return core::dimension2di(); }
+	virtual core::aabbox3d<f32> getBoundingBox() { return core::aabbox3d<f32>(); }
+	virtual core::plane3df getPlane()		{ return core::plane3df(); }
+
 	virtual video::ITexture* getTexture()	{ return 0; }
 	virtual gui::IGUIFont*	getFont()		{ return 0; }
 	virtual const char* getEnum()			{ return 0; }
@@ -493,6 +514,19 @@ public:
 	virtual void setVector(core::vector3df v)	{};
 	virtual void setPosition(core::position2di v)	{};
 	virtual void setRect(core::rect<s32> v)		{};
+	virtual void setQuaternion(core::quaternion v) {};
+	virtual void setMatrix(core::matrix4 v) {};
+	virtual void setTriangle(core::triangle3df v) {};
+	virtual void setVector2d(core::vector2df v) {};
+	virtual void setVector2d(core::vector2di v) {};
+	virtual void setLine2d(core::line2df v) {};
+	virtual void setLine2d(core::line2di v) {};
+	virtual void setLine3d(core::line3df v) {};
+	virtual void setLine3d(core::line3di v) {};
+	virtual void setDimension2d(core::dimension2di v) {};
+	virtual void setBoundingBox(core::aabbox3d<f32> v) {};
+	virtual void setPlane(core::plane3df v) {};
+
 	virtual void setEnum(const char* enumValue, const char* const* enumerationLiterals) {};
 	virtual void setTexture(video::ITexture*)	{};
 	virtual void setFont(gui::IGUIFont*)		{};

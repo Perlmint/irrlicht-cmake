@@ -179,7 +179,7 @@ public:
 	virtual void setFloat(f32 floatValue)
 	{
 		Value = floatValue;
-	};
+	}
 
 	virtual void setString(const char* text)
 	{
@@ -280,8 +280,128 @@ public:
 		ValueF.push_back(value.LowerRightCorner.Y);
 	}
 
-	// todo: matrix4, quaternion, aabbox3d, plane, triangle3d, vector2df, 
-	//		vector2di, line2di, line2df, line3df, dimension2di, dimension2df
+	CNumbersAttribute(const char* name, core::matrix4 value) : 
+		IsFloat(true), Count(16), ValueI(), ValueF()
+	{
+		Name = name;
+		for (s32 r=0; r<4; ++r)
+			for (s32 c=0; c<4; ++c)
+				ValueF.push_back(value(r,c));
+	}
+
+	CNumbersAttribute(const char* name, core::quaternion value) : 
+		IsFloat(true), Count(4), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.X);
+		ValueF.push_back(value.Y);
+		ValueF.push_back(value.Z);
+		ValueF.push_back(value.W);
+	}
+
+	CNumbersAttribute(const char* name, core::aabbox3d<f32> value) : 
+		IsFloat(true), Count(6), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.MinEdge.X);
+		ValueF.push_back(value.MinEdge.Y);
+		ValueF.push_back(value.MinEdge.Z);
+		ValueF.push_back(value.MaxEdge.X);
+		ValueF.push_back(value.MaxEdge.Y);
+		ValueF.push_back(value.MaxEdge.Z);
+	}
+
+	CNumbersAttribute(const char* name, core::plane3df value) : 
+		IsFloat(true), Count(4), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.Normal.X);
+		ValueF.push_back(value.Normal.Y);
+		ValueF.push_back(value.Normal.Z);
+		ValueF.push_back(value.D);
+	}
+
+	CNumbersAttribute(const char* name, core::triangle3df value) : 
+		IsFloat(true), Count(9), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.pointA.X);
+		ValueF.push_back(value.pointA.Y);
+		ValueF.push_back(value.pointA.Z);
+		ValueF.push_back(value.pointB.X);
+		ValueF.push_back(value.pointB.Y);
+		ValueF.push_back(value.pointB.Z);
+		ValueF.push_back(value.pointC.X);
+		ValueF.push_back(value.pointC.Y);
+		ValueF.push_back(value.pointC.Z);
+	}
+
+	CNumbersAttribute(const char* name, core::vector2df value) : 
+		IsFloat(true), Count(2), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.X);
+		ValueF.push_back(value.Y);
+	}
+
+	CNumbersAttribute(const char* name, core::vector2di value) : 
+		IsFloat(false), Count(2), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueI.push_back(value.X);
+		ValueI.push_back(value.Y);
+	}
+
+	CNumbersAttribute(const char* name, core::line2di value) : 
+		IsFloat(false), Count(4), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueI.push_back(value.start.X);
+		ValueI.push_back(value.start.Y);
+		ValueI.push_back(value.end.X);
+		ValueI.push_back(value.end.Y);
+	}
+
+	CNumbersAttribute(const char* name, core::line2df value) : 
+		IsFloat(true), Count(4), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.start.X);
+		ValueF.push_back(value.start.Y);
+		ValueF.push_back(value.end.X);
+		ValueF.push_back(value.end.Y);
+	}
+
+	CNumbersAttribute(const char* name, core::line3df value) : 
+		IsFloat(true), Count(6), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.start.X);
+		ValueF.push_back(value.start.Y);
+		ValueF.push_back(value.start.Z);
+		ValueF.push_back(value.end.X);
+		ValueF.push_back(value.end.Y);
+		ValueF.push_back(value.end.Z);
+	}
+
+	CNumbersAttribute(const char* name, core::dimension2di value) : 
+		IsFloat(false), Count(2), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueI.push_back(value.Width);
+		ValueI.push_back(value.Height);
+	}
+
+
+	CNumbersAttribute(const char* name, core::dimension2df value) : 
+		IsFloat(true), Count(2), ValueI(), ValueF()
+	{
+		Name = name;
+		ValueF.push_back(value.Width);
+		ValueF.push_back(value.Height);
+	}
+
+
 	
 	// getting values
 	virtual s32 getInt()
@@ -426,7 +546,6 @@ public:
 	//! get float array
 	virtual core::array<f32> getFloatArray()
 	{
-
 		if (!IsFloat)
 		{
 			ValueF.clear();
@@ -448,8 +567,8 @@ public:
 		return ValueI;
 	}
 
+	
 	// setting values
-
 	virtual void setInt(s32 intValue)
 	{
 		// set all values
@@ -603,6 +722,194 @@ public:
 			if (Count > 3) ValueI[3] = value.LowerRightCorner.Y;
 		}
 	}
+	virtual void setMatrix(core::matrix4 value)
+	{
+		reset();
+		if (IsFloat)
+		{
+			for (u32 r=0; r<4; ++r)
+				for (u32 c=0; c<4; ++c)
+					if (Count > c+r*4) 
+						ValueF[c+r*4] = value(r,c);
+		}
+		else
+		{
+			for (u32 r=0; r<4; ++r)
+				for (u32 c=0; c<4; ++c)
+					if (Count > c+r*4) 
+						ValueI[c+r*4] = (s32)value(r,c);
+		}
+	}
+	virtual void setQuaternion(core::quaternion value)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = value.X;
+			if (Count > 1) ValueF[1] = value.Y;
+			if (Count > 2) ValueF[2] = value.Z;
+			if (Count > 3) ValueF[3] = value.W;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = (s32)value.X;
+			if (Count > 1) ValueI[1] = (s32)value.Y;
+			if (Count > 2) ValueI[2] = (s32)value.Z;
+			if (Count > 3) ValueI[3] = (s32)value.W;
+		}
+	}
+
+	virtual void setBoundingBox(core::aabbox3d<f32> value)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = value.MinEdge.X;
+			if (Count > 1) ValueF[1] = value.MinEdge.Y;
+			if (Count > 2) ValueF[2] = value.MinEdge.Z;
+			if (Count > 3) ValueF[3] = value.MaxEdge.X;
+			if (Count > 4) ValueF[4] = value.MaxEdge.Y;
+			if (Count > 5) ValueF[5] = value.MaxEdge.Z;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = (s32)value.MinEdge.X;
+			if (Count > 1) ValueI[1] = (s32)value.MinEdge.Y;
+			if (Count > 2) ValueI[2] = (s32)value.MinEdge.Z;
+			if (Count > 3) ValueI[3] = (s32)value.MaxEdge.X;
+			if (Count > 4) ValueI[4] = (s32)value.MaxEdge.Y;
+			if (Count > 5) ValueI[5] = (s32)value.MaxEdge.Z;
+		}
+	}
+	virtual void setPlane(core::plane3df value)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = value.Normal.X;
+			if (Count > 1) ValueF[1] = value.Normal.Y;
+			if (Count > 2) ValueF[2] = value.Normal.Z;
+			if (Count > 3) ValueF[3] = value.D;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = (s32)value.Normal.X;
+			if (Count > 1) ValueI[1] = (s32)value.Normal.Y;
+			if (Count > 2) ValueI[2] = (s32)value.Normal.Z;
+			if (Count > 3) ValueI[3] = (s32)value.D;
+		}
+	}
+
+
+	virtual void setTriangle3d(core::triangle3df value)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = value.pointA.X;
+			if (Count > 1) ValueF[1] = value.pointA.Y;
+			if (Count > 2) ValueF[2] = value.pointA.Z;
+			if (Count > 3) ValueF[3] = value.pointB.X;
+			if (Count > 4) ValueF[4] = value.pointB.Y;
+			if (Count > 5) ValueF[5] = value.pointB.Z;
+			if (Count > 6) ValueF[6] = value.pointC.X;
+			if (Count > 7) ValueF[7] = value.pointC.Y;
+			if (Count > 8) ValueF[8] = value.pointC.Z;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = (s32)value.pointA.X;
+			if (Count > 1) ValueI[1] = (s32)value.pointA.Y;
+			if (Count > 2) ValueI[2] = (s32)value.pointA.Z;
+			if (Count > 3) ValueI[3] = (s32)value.pointB.X;
+			if (Count > 4) ValueI[4] = (s32)value.pointB.Y;
+			if (Count > 5) ValueI[5] = (s32)value.pointB.Z;
+			if (Count > 6) ValueI[6] = (s32)value.pointC.X;
+			if (Count > 7) ValueI[7] = (s32)value.pointC.Y;
+			if (Count > 8) ValueI[8] = (s32)value.pointC.Z;
+		}
+	}
+
+	virtual void setVector2d(core::vector2df v)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = v.X;
+			if (Count > 1) ValueF[1] = v.Y;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = (s32)v.X;
+			if (Count > 1) ValueI[1] = (s32)v.Y;
+		}
+	}
+
+	virtual void setVector2d(core::vector2di v)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = (f32)v.X;
+			if (Count > 1) ValueF[1] = (f32)v.Y;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = v.X;
+			if (Count > 1) ValueI[1] = v.Y;
+		}
+	}
+	virtual void setLine2d(core::line2di v)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = (f32)v.start.X;
+			if (Count > 1) ValueF[1] = (f32)v.start.Y;
+			if (Count > 2) ValueF[2] = (f32)v.end.X;
+			if (Count > 3) ValueF[3] = (f32)v.end.Y;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = v.start.X;
+			if (Count > 1) ValueI[1] = v.start.Y;
+			if (Count > 2) ValueI[2] = v.end.X;
+			if (Count > 3) ValueI[3] = v.end.Y;
+		}
+	}
+
+	virtual void setLine2d(core::line2df v)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = v.start.X;
+			if (Count > 1) ValueF[1] = v.start.Y;
+			if (Count > 2) ValueF[2] = v.end.X;
+			if (Count > 3) ValueF[3] = v.end.Y;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = (s32)v.start.X;
+			if (Count > 1) ValueI[1] = (s32)v.start.Y;
+			if (Count > 2) ValueI[2] = (s32)v.end.X;
+			if (Count > 3) ValueI[3] = (s32)v.end.Y;
+		}
+	}
+	virtual void setDimension2d(core::dimension2di v)
+	{
+		reset();
+		if (IsFloat)
+		{
+			if (Count > 0) ValueF[0] = (f32)v.Width;
+			if (Count > 1) ValueF[1] = (f32)v.Height;
+		}
+		else
+		{
+			if (Count > 0) ValueI[0] = v.Width;
+			if (Count > 1) ValueI[1] = v.Height;
+		}
+	}
 
 	//! set float array
 	virtual void setFloatArray(core::array<f32> &vals)
@@ -632,6 +939,8 @@ public:
 		}
 	}
 
+
+
 	//! is it a number list?
 	virtual bool isNumberList()
 	{
@@ -644,17 +953,33 @@ public:
 		return IsFloat;
 	}
 
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		if (IsFloat)
+			return EAT_FLOATARRAY;
+		else
+			return EAT_INTARRAY;
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		if (IsFloat)
+			return L"floatlist";
+		else
+			return L"intlist";
+	}
+
 protected:
 
 	//! clear all values
 	void reset()
 	{
-		
-		for (u32 i=0; i < Count ; ++i)
-			if (IsFloat)
-				ValueF[i]=0.0f;
-			else
-				ValueI[i]=0;
+		if (IsFloat)
+			for (u32 i=0; i < Count ; ++i)
+				ValueF[i] = 0.0f;
+		else
+			for (u32 i=0; i < Count ; ++i)
+				ValueI[i] = 0;
 	}
 
 	core::array<f32> ValueF;
@@ -1256,12 +1581,12 @@ public:
 
 	virtual E_ATTRIBUTE_TYPE getType()
 	{
-		return EAT_ARRAY;
+		return EAT_STRINGWARRAY;
 	}
 
 	virtual const wchar_t* getTypeString()
 	{
-		return L"array";
+		return L"stringwarray";
 	}
 
 	core::array<core::stringw> Value;

@@ -1,3 +1,4 @@
+
 // Copyright (C) 2002-2006 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
@@ -107,7 +108,6 @@ CGUIEnvironment::~CGUIEnvironment()
 		Operator->drop();
 
 	// delete all fonts
-
 	for (u32 i=0; i<Fonts.size(); ++i)
 		Fonts[i].Font->drop();
 
@@ -174,8 +174,18 @@ void CGUIEnvironment::setFocus(IGUIElement* element)
 	removeFocus(Focus);
 
 	Focus = element;
+
 	if (Focus)
+	{
 		Focus->grab();
+
+		// send focused event
+		SEvent e;
+		e.EventType = EET_GUI_EVENT;
+		e.GUIEvent.Caller = Focus;
+		e.GUIEvent.EventType = EGET_ELEMENT_FOCUSED;
+		Focus->OnEvent(e);
+	}
 }
 
 //! returns the element with the focus
@@ -192,7 +202,7 @@ void CGUIEnvironment::removeFocus(IGUIElement* element)
 	{
 		SEvent e;
 		e.EventType = EET_GUI_EVENT;
-		e.GUIEvent.Caller = this;
+		e.GUIEvent.Caller = Focus;
 		e.GUIEvent.EventType = EGET_ELEMENT_FOCUS_LOST;
 		Focus->OnEvent(e);
 		Focus->drop();
@@ -251,7 +261,7 @@ void CGUIEnvironment::OnPostRender( u32 time )
 		)
 	{
 		core::rect<s32> pos;
-		pos.UpperLeftCorner = Hovered->getAbsolutePosition ().LowerRightCorner;
+		pos.UpperLeftCorner = Hovered->getAbsolutePosition().LowerRightCorner;
 		pos.LowerRightCorner = pos.UpperLeftCorner + core::position2d<s32> ( 100, 50 );
 
 		ToolTip.Element = addStaticText (	Hovered->getToolTipText().c_str(), pos, true, true, this, -1, true );
@@ -431,6 +441,20 @@ IGUIElementFactory* CGUIEnvironment::getGUIElementFactory(s32 index)
 	return 0;
 }
 
+//! adds a GUI Element using its name
+IGUIElement* CGUIEnvironment::addGUIElement(const c8* elementName, IGUIElement* parent)
+{
+	IGUIElement* node=0;
+
+	if (!parent)
+		parent = this;
+
+	for (s32 i=0; i<(int)GUIElementFactoryList.size() && !node; ++i)
+		node = GUIElementFactoryList[i]->addGUIElement(elementName, parent);
+
+	return node;
+}
+
 
 //! Saves the current gui into a file.
 //! \param filename: Name of the file .
@@ -530,8 +554,7 @@ void CGUIEnvironment::readGUIElement(io::IXMLReader* reader, IGUIElement* parent
 			// find node type and create it
 			core::stringc attrName = reader->getAttributeValue(IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE);
 
-			for (int i=0; i<(int)GUIElementFactoryList.size() && !node; ++i)
-				node = GUIElementFactoryList[i]->addGUIElement(attrName.c_str(), parent);
+			addGUIElement(attrName.c_str(), parent);
 
 			if (!node)
 				os::Printer::log("Could not create GUI element of unknown type", attrName.c_str());
@@ -659,14 +682,14 @@ const c8* CGUIEnvironment::getGUIElementTypeName(EGUI_ELEMENT_TYPE type)
 }
 
 
-//! Writes attributes of the scene node.
+//! Writes attributes of the environment
 void CGUIEnvironment::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
 {
 	if (getSkin())
 		out->addEnum("Skin",getSkin()->getType(),GUISkinTypeNames);
 }
 
-//! Reads attributes of the scene node.
+//! Reads attributes of the environment
 void CGUIEnvironment::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
 {
 

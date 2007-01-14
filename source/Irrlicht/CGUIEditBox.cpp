@@ -84,10 +84,12 @@ bool CGUIEditBox::OnEvent(SEvent event)
 	case EET_GUI_EVENT:
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
-			MouseMarking = false;
-			MarkBegin = 0;
-			MarkEnd = 0;
-			return true;
+			if (event.GUIEvent.Caller == (IGUIElement*)this)
+			{
+				MouseMarking = false;
+				MarkBegin = 0;
+				MarkEnd = 0;
+			}
 		}
 		break;
 	case EET_KEY_INPUT_EVENT:

@@ -164,7 +164,7 @@ IGUITab* CGUITabControl::addTab(const wchar_t* caption, s32 id)
 	return tab;
 }
 
-//! adds an already existing tab
+//! adds a tab which has been created elsewhere
 void CGUITabControl::addTab(CGUITab* tab)
 {
 	if (!tab)
@@ -176,9 +176,18 @@ void CGUITabControl::addTab(CGUITab* tab)
 			return;
 
 	tab->grab();
+
+	if (tab->getNumber() == -1)
+		tab->setNumber((s32)Tabs.size());
+
 	while (tab->getNumber() >= (s32)Tabs.size())
 		Tabs.push_back(0);
 
+	if (Tabs[tab->getNumber()])
+	{
+		Tabs.push_back(Tabs[tab->getNumber()]);
+		Tabs[Tabs.size()-1]->setNumber(Tabs.size());
+	}
 	Tabs[tab->getNumber()] = tab;
 
 	if (ActiveTab == -1)
@@ -222,7 +231,8 @@ bool CGUITabControl::OnEvent(SEvent event)
 		switch(event.GUIEvent.EventType)
 		{
 			case gui::EGET_ELEMENT_FOCUS_LOST:
-				return true;
+				if (event.GUIEvent.Caller == (IGUIElement*)this)
+					return true;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:

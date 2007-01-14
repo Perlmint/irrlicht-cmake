@@ -200,7 +200,7 @@ void CGUISkin::draw3DButtonPaneStandard(IGUIElement* element,
 		rect.LowerRightCorner.Y += 1;
 		draw3DSunkenPane(element,
 						getColor( EGDC_WINDOW ).getInterpolated( 0xFFFFFFFF, 0.9f )
-						,false, true, rect, 0);
+						,false, true, rect, clip);
 		return;
 	}
 

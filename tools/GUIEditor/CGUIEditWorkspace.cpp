@@ -27,10 +27,17 @@ CGUIEditWorkspace::CGUIEditWorkspace(IGUIEnvironment* environment, s32 id, IGUIE
 	setDebugName("CGUIEditWorkspace");
 	#endif
 
-	EditorWindow = new CGUIEditWindow(environment, core::rect<s32>(0,0,100,100), this);
-	EditorWindow->setSubElement(true);
+	// this element is never serialized.
+	setSubElement(true);
 
-	environment->setFocus(EditorWindow);
+	EditorWindow = (CGUIEditWindow*) Environment->addGUIElement("GUIEditWindow", this);
+	if (EditorWindow)
+	{
+		EditorWindow->grab();
+		EditorWindow->setSubElement(true);
+
+		environment->setFocus(EditorWindow);
+	}
 	
 }
 
@@ -38,7 +45,8 @@ CGUIEditWorkspace::CGUIEditWorkspace(IGUIEnvironment* environment, s32 id, IGUIE
 //! destructor
 CGUIEditWorkspace::~CGUIEditWorkspace()
 {
-	EditorWindow->drop();
+	if (EditorWindow)
+		EditorWindow->drop();
 }
 
 
@@ -139,7 +147,7 @@ void CGUIEditWorkspace::setSelectedElement(IGUIElement *sel)
 
 	if (SelectedElement != Parent)
 	{
-		if (SelectedElement != sel)
+		if (SelectedElement != sel && EditorWindow)
 		{
 			EditorWindow->setSelectedElement(sel);
 			SelectedElement = sel;
@@ -181,7 +189,8 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			break;
 		case EMIE_LMOUSE_PRESSED_DOWN:
 			// hide the gui editor
-			EditorWindow->setVisible(false);
+			if (EditorWindow)
+				EditorWindow->setVisible(false);
 
 			if (CurrentMode== EGUIEDM_SELECT)
 			{
@@ -254,8 +263,8 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 					sub2->addItem( UseGrid  ? L"Don't snap" : L"Snap",		MenuCommandStart + EGUIEDMC_TOGGLE_SNAP_GRID);
 					sub2->addItem(L"Set size",								MenuCommandStart + EGUIEDMC_SET_GRID_SIZE);
 
-				sub->addItem(EditorWindow->isVisible() ? L"Hide property editor" : L"Show property editor", MenuCommandStart + EGUIEDMC_TOGGLE_EDITOR);
-				
+				if (EditorWindow)
+					sub->addItem(EditorWindow->isVisible() ? L"Hide property editor" : L"Show property editor", MenuCommandStart + EGUIEDMC_TOGGLE_EDITOR);
 
 				sub = mnu->getSubMenu(3);
 
@@ -296,7 +305,8 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 		case EMIE_LMOUSE_LEFT_UP:
 
 			// make window visible again
-			EditorWindow->setVisible(true);
+			if (EditorWindow)
+				EditorWindow->setVisible(true);
 
 			if (CurrentMode >= EGUIEDM_MOVE)
 			{

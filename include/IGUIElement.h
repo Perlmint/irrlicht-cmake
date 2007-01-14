@@ -376,7 +376,6 @@ public:
 	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
 	{
 		out->addInt	("Id", ID );
-		// TODO: stringw serialization
 		out->addString	("Caption", Text.c_str());
 		out->addRect    ("Rect",     RelativeRect);
 		out->addBool	("Visible",  IsVisible );

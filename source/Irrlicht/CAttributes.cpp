@@ -623,6 +623,28 @@ E_ATTRIBUTE_TYPE CAttributes::getAttributeType(s32 index)
 	return Attributes[index]->getType();
 }
 
+//! Returns the type of an attribute
+const wchar_t* CAttributes::getAttributeTypeString(const c8* attributeName)
+{
+	const wchar_t* ret = L"unknown";
+
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		ret = att->getTypeString();
+
+	return ret;
+}
+
+//! Returns attribute type string by index.
+//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+const wchar_t* CAttributes::getAttributeTypeString(s32 index)
+{
+	if (index < 0 || index >= (int)Attributes.size())
+		return L"unknown";
+
+	return Attributes[index]->getTypeString();
+}
+
 //! Gets an attribute as boolean value
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 bool CAttributes::getAttributeAsBool(s32 index)
@@ -1066,7 +1088,7 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
-	if (element == L"array")
+	if (element == L"stringwarray")
 	{
 		wchar_t tmpName[20];
 		core::array<core::stringw> tmpArray;
@@ -1095,7 +1117,7 @@ bool CAttributes::write(io::IXMLWriter* writer)
 	for (; i<(s32)Attributes.size(); ++i)
 	{
 		// Special case for writing arrays
-		if ( Attributes[i]->getType() == EAT_ARRAY )
+		if ( Attributes[i]->getType() == EAT_STRINGWARRAY )
 		{
 			wchar_t tmpName[20];
 			core::array<core::stringw> arraynames, arrayvalues;

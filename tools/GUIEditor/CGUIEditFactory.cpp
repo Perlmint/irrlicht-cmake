@@ -3,21 +3,27 @@
 #include "irrString.h"
 
 #include "CGUIEditWorkspace.h"
+#include "CGUIEditWindow.h"
+#include "CGUIAttributeEditor.h"
 
 namespace irr
 {
 namespace gui
 {
 
-enum EGUIEdit_ELEMENT_TYPES
+enum EGUIEDIT_ELEMENT_TYPES
 {
-	EGUIEditT_GUIEdit=0,
-	EGUIEditT_COUNT
+	EGUIEDIT_GUIEDIT=0,
+	EGUIEDIT_GUIEDITWINDOW,
+	EGUIEDIT_ATTRIBUTEEDITOR,
+	EGUIEDIT_COUNT
 };
 
 const c8* const GUIEditElementTypeNames[] =
 {
 	"GUIEditor",
+	"GUIEditWindow",
+	"attributeEditor",
 	0
 };
 
@@ -26,6 +32,10 @@ const c8* const GUIEditElementTypeNames[] =
 CGUIEditFactory::CGUIEditFactory(IGUIEnvironment* env)
 : Environment(env)
 {
+	#ifdef _DEBUG
+	setDebugName("CGUIEditFactory");
+	#endif
+
 	// don't grab the gui environment here to prevent cyclic references
 }
 
@@ -43,19 +53,25 @@ IGUIElement* CGUIEditFactory::addGUIElement(const c8* typeName, IGUIElement* par
 	*/
 
 	core::stringc elementType(typeName);
-	IGUIElement *ret=0;
+	IGUIElement* ret=0;
 	if (parent == 0)
 	{
 		parent = Environment->getRootGUIElement();
 	}
 
-	if (elementType == core::stringc("GUIEditor"))
-	{
-		// create it
+	// editor workspace
+	if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_GUIEDIT]))
 		ret = new CGUIEditWorkspace(Environment, -1, parent);
-		// drop it
+	// editor window
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_GUIEDITWINDOW]))
+		ret = new CGUIEditWindow(Environment, core::rect<s32>(0,0,100,100), parent);
+	// attribute editor
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_ATTRIBUTEEDITOR]))
+		ret = new CGUIAttributeEditor(Environment, -1, parent);
+
+	// the environment now has the reference, so we can drop the element
+	if (ret)
 		ret->drop();
-	}
 
 	return ret;
 }
@@ -64,14 +80,14 @@ IGUIElement* CGUIEditFactory::addGUIElement(const c8* typeName, IGUIElement* par
 //! returns amount of element types this factory is able to create
 s32 CGUIEditFactory::getCreatableGUIElementTypeCount()
 {
-	return EGUIEditT_COUNT;
+	return EGUIEDIT_COUNT;
 }
 
 
 //! returns type name of a createable element type 
 const c8* CGUIEditFactory::getCreateableGUIElementTypeName(s32 idx)
 {
-	if (idx>=0 && idx<EGUIEditT_COUNT)
+	if (idx>=0 && idx<EGUIEDIT_COUNT)
 		return GUIEditElementTypeNames[idx];
 
 	return 0;

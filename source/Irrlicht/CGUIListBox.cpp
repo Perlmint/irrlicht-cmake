@@ -171,8 +171,8 @@ bool CGUIListBox::OnEvent(SEvent event)
 			break;
 		case gui::EGET_ELEMENT_FOCUS_LOST:
 			{
-				Selecting = false;
-				return true;
+				if (event.GUIEvent.Caller == (IGUIElement*)this)
+					Selecting = false;
 			}
 		}
 		break;

@@ -153,7 +153,7 @@ public:
 	virtual IGUIInOutFader* addInOutFader(const core::rect<s32>* rectangle=0, IGUIElement* parent=0, s32 id=-1);
 
 	//! Returns the root gui element. 
-    virtual IGUIElement* getRootGUIElement();
+	virtual IGUIElement* getRootGUIElement();
 
 	virtual void OnPostRender( u32 time );
 
@@ -171,6 +171,8 @@ public:
 	//! Returns a scene node factory by index
 	virtual IGUIElementFactory* getGUIElementFactory(s32 index);
 
+	//! Adds a GUI Element by its name
+	virtual IGUIElement* addGUIElement(const c8* elementName, IGUIElement* parent=0);
 
 	//! Saves the current gui into a file.
 	//! \param filename: Name of the file.

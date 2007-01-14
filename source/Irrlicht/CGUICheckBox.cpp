@@ -40,8 +40,8 @@ bool CGUICheckBox::OnEvent(SEvent event)
 	case EET_GUI_EVENT:
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
-			Pressed = false;
-			return true;
+			if (event.GUIEvent.Caller == (IGUIElement*)this)
+				Pressed = false;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:

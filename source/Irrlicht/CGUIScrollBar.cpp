@@ -72,8 +72,8 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 		else
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
-			Dragging = false;
-			return true;
+			if (event.GUIEvent.Caller == (IGUIElement*)this)
+				Dragging = false;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:

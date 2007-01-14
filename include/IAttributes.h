@@ -8,6 +8,11 @@
 #include "IUnknown.h"
 #include "SColor.h"
 #include "vector3d.h"
+#include "vector2d.h"
+#include "line2d.h"
+#include "line3d.h"
+#include "triangle3d.h"
+#include "quaternion.h"
 #include "position2d.h"
 #include "rect.h"
 #include "irrString.h"
@@ -55,11 +60,41 @@ enum E_ATTRIBUTE_TYPE
 	// 2d position attribute
 	EAT_POSITION2D,
 
+	// vector 2d
+	EAT_VECTOR2D,
+
 	// rectangle attribute
 	EAT_RECT,
 
+	// matrix attribute
+	EAT_MATRIX,
+
+	// quaternion attribute
+	EAT_QUATERNION,
+
+	// 3d bounding box
+	EAT_BBOX,
+
+	// plane
+	EAT_PLANE,
+
+	// 3d triangle
+	EAT_TRIANGLE3D,
+
+	// line 2d
+	EAT_LINE2D,
+
+	// line 3d
+	EAT_LINE3D,
+
 	// array of stringws attribute
-	EAT_ARRAY,
+	EAT_STRINGWARRAY,
+
+	// array of float
+	EAT_FLOATARRAY,
+
+	// array of int
+	EAT_INTARRAY,
 
 	// binary data attribute
 	EAT_BINARY,
@@ -69,6 +104,9 @@ enum E_ATTRIBUTE_TYPE
 
 	// gui font reference attribute
 	EAT_FONT,
+
+	// known attribute type count
+	EAT_COUNT,
 
 	// unknown attribute
 	EAT_UNKNOWN
@@ -93,6 +131,14 @@ public:
 	//! Returns attribute type by index. 
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual E_ATTRIBUTE_TYPE getAttributeType(s32 index) = 0;
+
+	//! Returns the type string of the attribute
+	//! \param attributeName: String for the attribute type
+	virtual const wchar_t* getAttributeTypeString(const c8* attributeName) = 0;
+
+	//! Returns the type string of the attribute by index. 
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual const wchar_t* getAttributeTypeString(s32 index) = 0;
 
 	//! Returns if an attribute with a name exists
 	virtual bool existsAttribute(const c8* attributeName) = 0;
@@ -490,6 +536,10 @@ public:
 
 	//! Sets an attribute as texture reference
 	virtual void setAttribute(s32 index, video::ITexture* texture) = 0;
+
+	/*
+		todo: Font Attribute
+	*/
 
 };
 

@@ -100,7 +100,8 @@ bool CGUIMenu::OnEvent(SEvent event)
 		switch(event.GUIEvent.EventType)
 		{
 		case gui::EGET_ELEMENT_FOCUS_LOST:
-			closeAllSubMenus();
+			if (event.GUIEvent.Caller == (IGUIElement*)this)
+				closeAllSubMenus();
             return true;
 		}
 		break;

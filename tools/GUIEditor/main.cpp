@@ -30,8 +30,13 @@ int main()
 		now we add the GUI Editor Workspace
 	*/
 	
+	env->addGUIElement("GUIEditor");
 
-	factory->addGUIElement("GUIEditor");
+	/*
+	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
+	env->setSkin(skin);
+	skin->drop();
+	*/
 
 	
 	while(device->run()) 

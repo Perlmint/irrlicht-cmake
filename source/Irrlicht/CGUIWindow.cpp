@@ -72,7 +72,8 @@ bool CGUIWindow::OnEvent(SEvent event)
 	case EET_GUI_EVENT:
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
-			Dragging = false;
+			if (event.GUIEvent.Caller == (IGUIElement*)this)
+				Dragging = false;
 			return true;
 		}
 		else

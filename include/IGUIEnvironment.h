@@ -341,6 +341,9 @@ public:
 	//! Returns a scene node factory by index
 	virtual IGUIElementFactory* getGUIElementFactory(s32 index) = 0;
 
+	//! Adds a GUI Element by its name
+	virtual IGUIElement* addGUIElement(const c8* elementName, IGUIElement* parent=0) = 0;
+
 	//! Saves the current gui into a file.
 	//! \param filename: Name of the file.
 	virtual bool saveGUI(const c8* filename)=0;

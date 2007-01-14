@@ -185,8 +185,12 @@ bool CGUIContextMenu::OnEvent(SEvent event)
 		switch(event.GUIEvent.EventType)
 		{
 		case gui::EGET_ELEMENT_FOCUS_LOST:
-			remove();
-			return true;
+			if (event.GUIEvent.Caller == (IGUIElement*)this)
+			{
+				remove();
+				return true;
+			}
+			break;
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:
@@ -545,12 +549,10 @@ void CGUIContextMenu::serializeAttributes(io::IAttributes* out, io::SAttributeRe
 	s32 i=0;
 	for (; i < (s32)Items.size(); ++i)
 	{
-		if (Items[i].IsSeparator)
-		{
-			tmp = "IsSeparator"; tmp += i;
-			out->addBool(tmp.c_str(), Items[i].IsSeparator);
-		}
-		else
+		tmp = "IsSeparator"; tmp += i;
+		out->addBool(tmp.c_str(), Items[i].IsSeparator);
+
+		if (!Items[i].IsSeparator)
 		{
 			tmp = "Text"; tmp += i;
 			out->addString(tmp.c_str(), Items[i].Text.c_str());
@@ -588,7 +590,7 @@ void CGUIContextMenu::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 		bool enabled;
 
 		tmp = "IsSeparator"; tmp += i;
-		if ( in->existsAttribute(tmp.c_str()) )
+		if ( in->getAttributeAsBool(tmp.c_str()) )
 			addSeparator();
 		else
 		{
