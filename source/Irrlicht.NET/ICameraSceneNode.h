@@ -13,7 +13,7 @@ using namespace System;
 
 #include "Event.h"
 #include "ISceneNode.h"
-#include "ViewFrustrum.h"
+#include "ViewFrustum.h"
 
 namespace Irrlicht
 {
@@ -125,9 +125,9 @@ public:
 	__property void set_FOV(float value);
 
 	/// <summary>
-	/// Returns the current view frustrum. Needed sometimes by bspTree or LOD render nodes.
+	/// Returns the current view frustum. Needed sometimes by bspTree or LOD render nodes.
 	/// </summary>
-	__property ViewFrustrum get_ViewFrustrum();
+	__property ViewFrustum get_ViewFrustum();
 
 	/// <summary>
 	/// Disables or enables the camera to get key or mouse inputs.

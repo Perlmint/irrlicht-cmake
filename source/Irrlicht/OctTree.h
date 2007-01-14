@@ -308,16 +308,16 @@ private:
 				u32 bitTest = 0;
 				for (i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 				{
-					bool boxInFrustrum = false;
+					bool boxInFrustum = false;
 
 					for (int j=0; j<8; ++j)
 					if (frustum.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_BACK)
 					{
-						boxInFrustrum = true;
+						boxInFrustum = true;
 						break;
 					}
 
-					if (!boxInFrustrum)
+					if (!boxInFrustum)
 					{
 						return;
 					}
@@ -362,16 +362,16 @@ private:
 				u32 bitTest = 0;
 				for (i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 				{
-					bool boxInFrustrum = false;
+					bool boxInFrustum = false;
 
 					for (int j=0; j<8; ++j)
 					if (frustum.planes[i].isFrontFacing(edges[j]) )
 					{
-						boxInFrustrum = true;
+						boxInFrustum = true;
 						break;
 					}
 
-					if (!boxInFrustrum)
+					if (!boxInFrustum)
 					{
 						return;
 					}

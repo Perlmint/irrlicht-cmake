@@ -17,7 +17,7 @@
 #include "Matrix4.h"
 #include "Material.h"
 #include "Event.h"
-#include "ViewFrustrum.h"
+#include "ViewFrustum.h"
 #include "Triangle3D.h"
 
 //   \\param {.*}\:
@@ -179,10 +179,10 @@ namespace irr
 			return irr::SEvent();
 		}
 
-		inline static Irrlicht::Scene::ViewFrustrum getNETFrustrum(const irr::scene::SViewFrustrum& fr)
+		inline static Irrlicht::Scene::ViewFrustum getNETFrustum(const irr::scene::SViewFrustum& fr)
 		{
 			//TODO: implement
-			return Irrlicht::Scene::ViewFrustrum( fr );
+			return Irrlicht::Scene::ViewFrustum( fr );
 		}
 
 		inline static Irrlicht::Core::Dimension2Df getNETDim(irr::core::dimension2d<f32> dim)

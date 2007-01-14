@@ -18,17 +18,17 @@ namespace Scene
 	
 
 	/// <summary>
-	/// Defines the view frustrum. Thats the space viewed by the camera.
-	/// The view frustrum is enclosed by 6 planes. These six planes share
+	/// Defines the view frustum. Thats the space viewed by the camera.
+	/// The view frustum is enclosed by 6 planes. These six planes share
 	/// four points. A bounding box around these four points is also stored in
 	/// this structure.
 	/// </summary>
-	public __value class ViewFrustrum
+	public __value class ViewFrustum
 	{
 	public:
 
 		/// <summary>
-		/// An enum for all types view frustrum planes
+		/// An enum for all types view frustum planes
 		/// </summary>
 		__value enum PlaneType
 		{
@@ -42,7 +42,7 @@ namespace Scene
 			PlaneCount = 6
 		};
 
-		ViewFrustrum( const irr::scene::SViewFrustrum& orig );
+		ViewFrustum( const irr::scene::SViewFrustum& orig );
 		
 		__property Core::Vector3D get_FarLeftUp()
 		{

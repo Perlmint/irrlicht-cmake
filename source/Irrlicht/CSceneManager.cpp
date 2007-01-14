@@ -827,18 +827,18 @@ bool CSceneManager::isCulled(ISceneNode* node)
 			s32 i;
 			for (i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 			{
-				bool boxInFrustrum = false;
+				bool boxInFrustum = false;
 
 				for (int j=0; j<8; ++j)
 				{
 					if (frust.planes[i].isFrontFacing(edges[j]) )
 					{
-						boxInFrustrum = true;
+						boxInFrustum = true;
 						break;
 					}
 				}
 
-				if (!boxInFrustrum)
+				if (!boxInFrustum)
 				{
 					visible = false;
 					break;

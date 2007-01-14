@@ -102,10 +102,10 @@ namespace Scene
 		get_NativeCameraSceneNode()->setFOV(value);
 	}
 
-	ViewFrustrum ICameraSceneNode::get_ViewFrustrum()
+	ViewFrustum ICameraSceneNode::get_ViewFrustum()
 	{
-		return irr::NativeConverter::getNETFrustrum(
-			*get_NativeCameraSceneNode()->getViewFrustrum());
+		return irr::NativeConverter::getNETFrustum(
+			*get_NativeCameraSceneNode()->getViewFrustum());
 	}
 
 	void ICameraSceneNode::set_InputReceiverEnabled(bool enabled)
@@ -118,7 +118,7 @@ namespace Scene
 		return get_NativeCameraSceneNode()->isInputReceiverEnabled();
 	}
 
-	ViewFrustrum::ViewFrustrum( const irr::scene::SViewFrustrum& orig )
+	ViewFrustum::ViewFrustum( const irr::scene::SViewFrustum& orig )
 	{
 		CameraPosition = irr::NativeConverter::getNETVector( orig.cameraPosition );
 
