@@ -58,8 +58,10 @@ namespace gui
 		//! returns the first editable element under the mouse
 		virtual IGUIElement* getEditableElementFromPoint(IGUIElement *start, core::position2di &point, s32 index=0 );
 
-		//! selects an element
+		//! selecting elements
 		virtual void setSelectedElement(IGUIElement *sel);
+		virtual void selectNextSibling();
+		virtual void selectPreviousSibling();
 
 		//! returns the selected element
 		virtual IGUIElement* getSelectedElement();

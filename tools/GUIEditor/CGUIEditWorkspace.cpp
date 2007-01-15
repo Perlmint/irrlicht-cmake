@@ -95,13 +95,13 @@ IGUIElement* CGUIEditWorkspace::getEditableElementFromPoint(IGUIElement *start, 
 
 	core::list<IGUIElement*>::Iterator it = start->getChildren().getLast();
 	s32 count=0;
-	if (start->isVisible() && !start->isSubElement())
+	if (!start->isSubElement())
 		while(it != start->getChildren().end())
 		{
 			target = getEditableElementFromPoint((*it),point);
 			if (target)
 			{
-				if (!target->isSubElement() && target->isVisible() && !isMyChild(target) && target != this)
+				if (!target->isSubElement() && !isMyChild(target) && target != this)
 				{
 					if (index == count)
 						return target;
@@ -163,7 +163,55 @@ IGUIElement* CGUIEditWorkspace::getSelectedElement()
 {
 	return SelectedElement;
 }
+void CGUIEditWorkspace::selectNextSibling()
+{
+	IGUIElement* p=0;
+	core::list<IGUIElement*>::Iterator it;
 
+	if (!SelectedElement)
+		p = Parent;
+	else 
+		p = SelectedElement->getParent();
+	
+	
+	it = p->getChildren().begin();
+	// find selected element
+	if (SelectedElement)
+		while (*it != SelectedElement) 
+			++it;
+	if (it !=p->getChildren().end())
+		++it;
+	// find next non sub-element
+	while (it != p->getChildren().end() && (*it)->isSubElement())
+		++it;
+
+	if (it != p->getChildren().end())
+		setSelectedElement(*it);
+}
+void CGUIEditWorkspace::selectPreviousSibling()
+{
+	IGUIElement* p=0;
+	core::list<IGUIElement*>::Iterator it;
+
+	if (!SelectedElement)
+		p = Parent;
+	else 
+		p = SelectedElement->getParent();
+	
+	it = p->getChildren().getLast();
+	// find selected element
+	if (SelectedElement)
+		while (*it != SelectedElement) 
+			--it;
+	if (it != p->getChildren().end())
+		--it;
+	// find next non sub-element
+	while (it != p->getChildren().end() && (*it)->isSubElement())
+		--it;
+
+	if (it != p->getChildren().end())
+		setSelectedElement(*it);
+}
 
 //! called if an event happened.
 bool CGUIEditWorkspace::OnEvent(SEvent event)
@@ -177,14 +225,12 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 		case EMIE_MOUSE_WHEEL:
 			{
 				f32 wheel = event.MouseInput.Wheel;
+
 				if (wheel > 0)
-				{
-					// select next element
-				}
+					selectPreviousSibling();
 				else
-				{
-					// select previous element
-				}
+					selectNextSibling();
+
 			}
 			break;
 		case EMIE_LMOUSE_PRESSED_DOWN:
@@ -192,7 +238,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			if (EditorWindow)
 				EditorWindow->setVisible(false);
 
-			if (CurrentMode== EGUIEDM_SELECT)
+			if (CurrentMode == EGUIEDM_SELECT)
 			{
 				// selecting an element...
 				MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(event.MouseInput.X,event.MouseInput.Y));
@@ -220,7 +266,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 
 			break;
 		case EMIE_RMOUSE_PRESSED_DOWN:
-			if (CurrentMode >= EGUIEDM_MOVE)
+			if (CurrentMode == EGUIEDM_SELECT_NEW_PARENT || CurrentMode >= EGUIEDM_MOVE)
 			{
 				// cancel dragging
 				CurrentMode = EGUIEDM_SELECT;
@@ -307,8 +353,21 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			// make window visible again
 			if (EditorWindow)
 				EditorWindow->setVisible(true);
-
-			if (CurrentMode >= EGUIEDM_MOVE)
+			if (CurrentMode == EGUIEDM_SELECT_NEW_PARENT)
+			{
+				if (SelectedElement)
+				{
+					MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(event.MouseInput.X,event.MouseInput.Y));
+					if (MouseOverElement)
+					{
+						MouseOverElement->addChild(SelectedElement);
+						setSelectedElement(0);
+						setSelectedElement(SelectedElement);
+					}
+				}
+				CurrentMode = EGUIEDM_SELECT;
+			}
+			else if (CurrentMode >= EGUIEDM_MOVE)
 			{
 				IGUIElement *sel = SelectedElement;
 				// unselect
@@ -330,7 +389,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			Parent->bringToFront(this);
 
 			// if selecting
-			if (CurrentMode == EGUIEDM_SELECT)
+			if (CurrentMode == EGUIEDM_SELECT || CurrentMode == EGUIEDM_SELECT_NEW_PARENT)
 			{
 				// highlight the element that the mouse is over
 				MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(event.MouseInput.X,event.MouseInput.Y));
@@ -338,8 +397,8 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 						MouseOverElement = 0;
 
 				core::position2di p = core::position2di(event.MouseInput.X,event.MouseInput.Y);
-				MouseOverMode = getModeFromPos(p);
-
+				if (CurrentMode == EGUIEDM_SELECT)
+					MouseOverMode = getModeFromPos(p);
 			}
 			else if (CurrentMode == EGUIEDM_MOVE)
 			{

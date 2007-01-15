@@ -235,9 +235,11 @@ void CGUIComboBox::draw()
 		frameRect = AbsoluteRect;
 		frameRect.UpperLeftCorner.X += 2;
 
-		skin->getFont()->draw(Items[Selected].c_str(), frameRect, 
-			skin->getColor(EGDC_BUTTON_TEXT),
-			false, true, &AbsoluteClippingRect);
+		IGUIFont* font = skin->getFont();
+		if (font)
+			font->draw(Items[Selected].c_str(), frameRect, 
+				skin->getColor(EGDC_BUTTON_TEXT),
+				false, true, &AbsoluteClippingRect);
 	}
 
 	// draw buttons
@@ -266,7 +268,9 @@ void CGUIComboBox::openCloseMenu()
 		if (h == 0)
 			h = 1;
 
-		h *= (skin->getFont()->getDimension(L"A").Height + 4);
+		IGUIFont* font = skin->getFont();
+		if (font)
+			h *= (font->getDimension(L"A").Height + 4);
 
 		// open list box
 		core::rect<s32> r(0, AbsoluteRect.getHeight(),

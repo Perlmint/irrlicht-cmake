@@ -409,8 +409,9 @@ void CGUIContextMenu::draw()
 			if (!Items[i].Enabled)
 				c = EGDC_GRAY_TEXT;
 
-			font->draw(Items[i].Text.c_str(), rect,
-				skin->getColor(c), false, true, clip);
+			if (font)
+				font->draw(Items[i].Text.c_str(), rect,
+					skin->getColor(c), false, true, clip);
 
 			// draw submenu symbol
 			if (Items[i].SubMenu && defaultFont)

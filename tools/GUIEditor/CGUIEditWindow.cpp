@@ -11,7 +11,7 @@ using namespace gui;
 //! constructor
 CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rectangle, IGUIElement *parent)
 		 : IGUIWindow(environment, parent, -1, rectangle),
-		 Dragging(false), SelectedElement(0), AttribEditor()
+		 Dragging(false), SelectedElement(0), AttribEditor(0)
 
 {
 
@@ -34,14 +34,15 @@ CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rec
 	AttribEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor",this);
 	AttribEditor->grab();
 	AttribEditor->setRelativePosition(core::rect<s32>(1,th+5,200,450-th-5));
-	//AttribEditor->setSubElement(true);
+	AttribEditor->setSubElement(true);
 }
 
 //! destructor
 CGUIEditWindow::~CGUIEditWindow()
 {
 	// drop everything
-	AttribEditor->drop();
+	if (AttribEditor)
+		AttribEditor->drop();
 }
 
 void CGUIEditWindow::setSelectedElement(IGUIElement *sel)
@@ -61,7 +62,7 @@ void CGUIEditWindow::setSelectedElement(IGUIElement *sel)
 	Attribs->clear();
 	SelectedElement = sel;
 
-	// get the new attributes 
+	// get the new attributes
 	if (SelectedElement)
 		SelectedElement->serializeAttributes(Attribs);
 

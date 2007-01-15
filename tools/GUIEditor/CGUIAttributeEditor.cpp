@@ -22,8 +22,9 @@ CGUIAttributeEditor::CGUIAttributeEditor(IGUIEnvironment* environment, s32 id, I
 	// create attributes
 	Attribs = new irr::io::CAttributes(environment->getVideoDriver());
 	// add scrollbar
-	ScrollBar = environment->addScrollBar(false, rect<s32>( 0, 0,100,100), this); 
+	ScrollBar = environment->addScrollBar(false, rect<s32>(0, 0,100,100), this); 
 	ScrollBar->grab();
+	ScrollBar->setSubElement(true);
 
 	refreshAttribs();
 }

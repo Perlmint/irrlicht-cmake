@@ -272,7 +272,10 @@ void CGUITabControl::selectTab(core::position2d<s32> p)
 			text = Tabs[i]->getText();
 
 		// get text length
-		s32 len = font->getDimension(text).Width + 20;
+		s32 len = 20;
+		if (font)
+			len += font->getDimension(text).Width;
+
 		frameRect.UpperLeftCorner.X = pos;
 		frameRect.LowerRightCorner.X = frameRect.UpperLeftCorner.X + len;
 		pos += len;

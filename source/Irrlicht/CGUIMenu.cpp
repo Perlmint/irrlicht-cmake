@@ -79,8 +79,9 @@ void CGUIMenu::draw()
 			if (!Items[i].Enabled)
 				c = EGDC_GRAY_TEXT;
 
-			font->draw(Items[i].Text.c_str(), rect, 
-				skin->getColor(c), true, true, clip);
+			if (font)
+				font->draw(Items[i].Text.c_str(), rect, 
+					skin->getColor(c), true, true, clip);
 		}
 	}
 
@@ -152,12 +153,20 @@ void CGUIMenu::recalculateSize()
 	IGUIFont* font = skin->getFont();
 
 	if (!font)
+	{
+		if (Parent && skin)
+			RelativeRect = core::rect<s32>(0,0,
+								Parent->getAbsolutePosition().LowerRightCorner.X,
+								skin->getSize(EGDS_MENU_HEIGHT));
 		return;
+	}
 
 	core::rect<s32> rect;
 	rect.UpperLeftCorner.X = 0;
 	rect.UpperLeftCorner.Y = 0;
 	s32 height = font->getDimension(L"A").Height + 5;
+	//if (skin && height < skin->getSize ( EGDS_MENU_HEIGHT ))
+	//	height = skin->getSize(EGDS_MENU_HEIGHT);
 	s32 width = 0;
 	s32 i;
 

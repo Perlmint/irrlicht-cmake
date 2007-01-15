@@ -216,18 +216,22 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\source\Irrlicht\CAttributeImpl.h"
+		<Filter
+			Name="attribs (ugly hack)"
 			>
-		</File>
-		<File
-			RelativePath="..\..\source\Irrlicht\CAttributes.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\source\Irrlicht\CAttributes.h"
-			>
-		</File>
+			<File
+				RelativePath="..\..\source\Irrlicht\CAttributeImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\source\Irrlicht\CAttributes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\source\Irrlicht\CAttributes.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>

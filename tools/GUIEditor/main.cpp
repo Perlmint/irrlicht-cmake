@@ -35,6 +35,7 @@ int main()
 	/*
 	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
 	env->setSkin(skin);
+	//skin->setFont(0);
 	skin->drop();
 	*/
 
