@@ -94,6 +94,7 @@ bool CImageLoaderTGA::isALoadableFileFormat(irr::io::IReadFile* file)
 		return false;
 
 	STGAFooter footer;
+	memset(&footer, 0, sizeof(STGAFooter));
 	file->seek(file->getSize()-sizeof(STGAFooter));
 	file->read(&footer, sizeof(STGAFooter));
 	return (!strcmp(footer.Signature,"TRUEVISION-XFILE.")); // very old tgas are refused.

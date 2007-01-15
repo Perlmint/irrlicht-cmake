@@ -22,27 +22,27 @@ namespace video
 #elif defined( __GNUC__ )
 #	define PACK_STRUCT	__attribute__((packed))
 #else
-#	error compiler not supported
+#	define PACK_STRUCT
 #endif
 
-	 struct STGAHeader{
-	    u8 IdLength;
-	    u8 ColorMapType;
-	    u8 ImageType;
-	    u8 FirstEntryIndex[2];
-	    u16 ColorMapLength;
-	    u8 ColorMapEntrySize;
-	    u8 XOrigin[2];
-	    u8 YOrigin[2];
-	    u16 ImageWidth;
-	    u16 ImageHeight;
-	    u8 PixelDepth;
-	    u8 ImageDescriptor;
-    } PACK_STRUCT;
+	// these structs are also used in the TGA writer
+	struct STGAHeader{
+		u8 IdLength;
+		u8 ColorMapType;
+		u8 ImageType;
+		u8 FirstEntryIndex[2];
+		u16 ColorMapLength;
+		u8 ColorMapEntrySize;
+		u8 XOrigin[2];
+		u8 YOrigin[2];
+		u16 ImageWidth;
+		u16 ImageHeight;
+		u8 PixelDepth;
+		u8 ImageDescriptor;
+	} PACK_STRUCT;
 
 	struct STGAFooter
 	{
-		STGAFooter() : ExtensionOffset(0), DeveloperOffset(0) {Signature[0]=0;}
 		u32 ExtensionOffset;
 		u32 DeveloperOffset;
 		c8  Signature[18];
