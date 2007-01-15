@@ -88,7 +88,7 @@ public:
 
 
 	//! copy constructor
-	list(const list<T>& other)
+	list(const list<T>& other) : root(0), last(0), size(0)
 	{
 		*this = other;
 	}
