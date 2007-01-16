@@ -17,8 +17,8 @@ namespace gui
 	class CGUIAttribute : public IGUIElement
 	{
 	public:
-		// 
-		CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent, 
+		//
+		CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 				io::IAttributes *attribs, u32 attribIndex, core::rect<s32> r);
 		//
 		~CGUIAttribute();
@@ -30,10 +30,10 @@ namespace gui
 
 	private:
 		io::IAttributes*	Attribs;
-		u32				Index;
-		IGUIStaticText*	AttribName;
-		IGUIEditBox*	AttribEditBox;
-		IGUICheckBox*	AttribCheckBox;
+		u32			Index;
+		IGUIStaticText*		AttribName;
+		IGUIEditBox*		AttribEditBox;
+		IGUICheckBox*		AttribCheckBox;
 	};
 
 	class CGUIAttributeEditor : public IGUIElement

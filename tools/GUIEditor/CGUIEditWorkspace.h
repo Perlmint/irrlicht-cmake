@@ -56,7 +56,7 @@ namespace gui
 		virtual void setUseGrid(bool useGrid);
 
 		//! returns the first editable element under the mouse
-		virtual IGUIElement* getEditableElementFromPoint(IGUIElement *start, core::position2di &point, s32 index=0 );
+		virtual IGUIElement* getEditableElementFromPoint(IGUIElement *start, const core::position2di &point, s32 index=0 );
 
 		//! selecting elements
 		virtual void setSelectedElement(IGUIElement *sel);

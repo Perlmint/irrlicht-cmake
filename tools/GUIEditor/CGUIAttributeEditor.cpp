@@ -22,7 +22,7 @@ CGUIAttributeEditor::CGUIAttributeEditor(IGUIEnvironment* environment, s32 id, I
 	// create attributes
 	Attribs = new irr::io::CAttributes(environment->getVideoDriver());
 	// add scrollbar
-	ScrollBar = environment->addScrollBar(false, rect<s32>(0, 0,100,100), this); 
+	ScrollBar = environment->addScrollBar(false, rect<s32>(0, 0,100,100), this);
 	ScrollBar->grab();
 	ScrollBar->setSubElement(true);
 
@@ -47,7 +47,7 @@ void CGUIAttributeEditor::setRelativePosition(const rect<s32>& r)
 {
 	IGUIElement::setRelativePosition(r);
 	s32 w = Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
-	ScrollBar->setRelativePosition(rect<s32>( r.getWidth() - w * 1.5, 10, r.getWidth() - w * 0.5, r.getHeight() - 1));
+	ScrollBar->setRelativePosition(rect<s32>( r.getWidth() - (s32)(w * 1.5f), 10, r.getWidth() - (s32)(w * 0.5f), r.getHeight() - 1));
 }
 
 bool CGUIAttributeEditor::OnEvent(SEvent e)
@@ -128,10 +128,10 @@ void CGUIAttributeEditor::updateAttribs()
 		AttribList[i]->updateAttrib();
 }
 
-CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent, 
+CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 							io::IAttributes *attribs, u32 attribIndex, rect<s32> r) :
-	IGUIElement(EGUIET_ELEMENT, environment, parent, -1, r), 
-		Attribs(attribs), Index(attribIndex), 
+	IGUIElement(EGUIET_ELEMENT, environment, parent, -1, r),
+		Attribs(attribs), Index(attribIndex),
 		AttribName(0), AttribEditBox(0), AttribCheckBox(0)
 {
 	#ifdef _DEBUG
@@ -146,8 +146,8 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 	name += L")";
 
 	AttribName = environment->addStaticText(
-			name.c_str(), 
-			rect<s32>(0, 0, r.getWidth(), r.getHeight()/2), 
+			name.c_str(),
+			rect<s32>(0, 0, r.getWidth(), r.getHeight()/2),
 			false, false, this, -1, false);
 	AttribName->grab();
 

@@ -38,7 +38,6 @@ CGUIEditWorkspace::CGUIEditWorkspace(IGUIEnvironment* environment, s32 id, IGUIE
 
 		environment->setFocus(EditorWindow);
 	}
-	
 }
 
 
@@ -82,12 +81,12 @@ CGUIEditWorkspace::EGUIEDIT_MODE CGUIEditWorkspace::getModeFromPos(core::positio
 		else
 			return EGUIEDM_MOVE;
 	}
-	
+
 	return EGUIEDM_SELECT;
 
 }
 
-IGUIElement* CGUIEditWorkspace::getEditableElementFromPoint(IGUIElement *start, core::position2di &point, s32 index )
+IGUIElement* CGUIEditWorkspace::getEditableElementFromPoint(IGUIElement *start, const core::position2di &point, s32 index )
 {
 	IGUIElement* target = 0;
 
@@ -96,6 +95,7 @@ IGUIElement* CGUIEditWorkspace::getEditableElementFromPoint(IGUIElement *start, 
 	core::list<IGUIElement*>::Iterator it = start->getChildren().getLast();
 	s32 count=0;
 	if (!start->isSubElement())
+	{
 		while(it != start->getChildren().end())
 		{
 			target = getEditableElementFromPoint((*it),point);
@@ -111,15 +111,14 @@ IGUIElement* CGUIEditWorkspace::getEditableElementFromPoint(IGUIElement *start, 
 				else
 					target = 0;
 			}
-
 			--it;
 		}
+	}
 
 	if (start->getAbsolutePosition().isPointInside(point))
 		target = start;
-	
-	return target;
 
+	return target;
 }
 
 bool CGUIEditWorkspace::isMyChild(IGUIElement* target)
@@ -170,14 +169,13 @@ void CGUIEditWorkspace::selectNextSibling()
 
 	if (!SelectedElement)
 		p = Parent;
-	else 
+	else
 		p = SelectedElement->getParent();
-	
-	
+
 	it = p->getChildren().begin();
 	// find selected element
 	if (SelectedElement)
-		while (*it != SelectedElement) 
+		while (*it != SelectedElement)
 			++it;
 	if (it !=p->getChildren().end())
 		++it;
@@ -195,13 +193,13 @@ void CGUIEditWorkspace::selectPreviousSibling()
 
 	if (!SelectedElement)
 		p = Parent;
-	else 
+	else
 		p = SelectedElement->getParent();
-	
+
 	it = p->getChildren().getLast();
 	// find selected element
 	if (SelectedElement)
-		while (*it != SelectedElement) 
+		while (*it != SelectedElement)
 			--it;
 	if (it != p->getChildren().end())
 		--it;
@@ -217,7 +215,7 @@ void CGUIEditWorkspace::selectPreviousSibling()
 bool CGUIEditWorkspace::OnEvent(SEvent event)
 {
 	IGUIFileOpenDialog* dialog=0;
-    switch(event.EventType)
+	switch(event.EventType)
 	{
 	case EET_MOUSE_INPUT_EVENT:
 		switch(event.MouseInput.Event)
@@ -257,7 +255,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 					if (CurrentMode == EGUIEDM_MOVE)
 						StartMovePos = SelectedElement->getAbsolutePosition().UpperLeftCorner;
 
-					DragStart	 = p;
+					DragStart = p;
 					SelectedArea = SelectedElement->getAbsolutePosition();
 				}
 
@@ -283,17 +281,17 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 
 				// file menu
 				IGUIContextMenu* sub = mnu->getSubMenu(0);
-				
+
 				sub->addItem(L"New",	MenuCommandStart + EGUIEDMC_FILE_NEW );
 				sub->addItem(L"Load...",MenuCommandStart + EGUIEDMC_FILE_LOAD);
 				sub->addItem(L"Save...",MenuCommandStart + EGUIEDMC_FILE_SAVE);
 
 				// edit menu
 				sub = mnu->getSubMenu(1);
-				sub->addItem(L"Cut (ctrl+x)",   MenuCommandStart + EGUIEDMC_CUT_ELEMENT,	(SelectedElement != 0));
-				sub->addItem(L"Copy (ctrl+x)",  MenuCommandStart + EGUIEDMC_COPY_ELEMENT,	(SelectedElement != 0));
+				sub->addItem(L"Cut (ctrl+x)", MenuCommandStart + EGUIEDMC_CUT_ELEMENT,	(SelectedElement != 0));
+				sub->addItem(L"Copy (ctrl+x)", MenuCommandStart + EGUIEDMC_COPY_ELEMENT,	(SelectedElement != 0));
 				sub->addItem(L"Paste (ctrl+x)", MenuCommandStart + EGUIEDMC_PASTE_ELEMENT,	(CopyBuffer != ""));
-				sub->addItem(L"Delete (del)",   MenuCommandStart + EGUIEDMC_DELETE_ELEMENT, (SelectedElement != 0));
+				sub->addItem(L"Delete (del)", MenuCommandStart + EGUIEDMC_DELETE_ELEMENT, (SelectedElement != 0));
 				sub->addSeparator();
 				sub->addItem(L"Set parent",		MenuCommandStart + EGUIEDMC_SET_PARENT,		(SelectedElement != 0));
 				sub->addItem(L"Bring to front", MenuCommandStart + EGUIEDMC_BRING_TO_FRONT, (SelectedElement != 0));
@@ -306,7 +304,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				sub->addItem(L"Grid",-1,true,true);
 					IGUIContextMenu* sub2 = sub->getSubMenu(0);
 					sub2->addItem( DrawGrid ? L"Hide grid" : L"Draw grid",	MenuCommandStart + EGUIEDMC_TOGGLE_GRID);
-					sub2->addItem( UseGrid  ? L"Don't snap" : L"Snap",		MenuCommandStart + EGUIEDMC_TOGGLE_SNAP_GRID);
+					sub2->addItem( UseGrid ? L"Don't snap" : L"Snap",		MenuCommandStart + EGUIEDMC_TOGGLE_SNAP_GRID);
 					sub2->addItem(L"Set size",								MenuCommandStart + EGUIEDMC_SET_GRID_SIZE);
 
 				if (EditorWindow)
@@ -316,7 +314,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 
 				s32 i,j,c=0;
 				sub->addItem(L"Default factory",-1,true, true);
-				
+
 				// add elements from each factory
 				for (i=0; i < Environment->getRegisteredGUIElementFactoryCount(); ++i)
 				{
@@ -372,7 +370,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				IGUIElement *sel = SelectedElement;
 				// unselect
 				setSelectedElement(0);
-				
+
 				// move
 				core::position2d<s32> p = sel->getParent()->getAbsolutePosition().UpperLeftCorner;
 				sel->setRelativePosition(SelectedArea - p);
@@ -405,7 +403,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				// get difference
 				core::position2di p = core::position2di(event.MouseInput.X,event.MouseInput.Y);
 				p -= DragStart;
-				
+
 				// apply to top corner
 				p = StartMovePos + p;
 				if (UseGrid)
@@ -415,7 +413,6 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				}
 
 				SelectedArea += p - SelectedArea.UpperLeftCorner;
-				
 			}
 			else if (CurrentMode > EGUIEDM_MOVE)
 			{
@@ -461,7 +458,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			break;
 		}
 		break;
-		
+
 	case EET_GUI_EVENT:
 		switch(event.GUIEvent.EventType)
 		{
@@ -539,7 +536,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 					break;
 				case EGUIEDMC_TOGGLE_EDITOR:
 					break;
-				// 
+				//
 				case EGUIEDMC_INSERT_XML:
 					// TODO
 					//Environment->loadGUI("d:\\GUITest.xml", SelectedElement );
@@ -574,14 +571,12 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 					break;
 			}
 			return true;
-		
-		}	
+		}
 		break;
-		
 	}
 
 	return true;
-	//return IGUIElement::OnEvent(event);	
+	//return IGUIElement::OnEvent(event);
 }
 
 
@@ -608,8 +603,8 @@ void CGUIEditWorkspace::draw()
 			cy += GridSize.Height;
 		}
 	}
-	if (MouseOverElement && 
-		MouseOverElement != SelectedElement && 
+	if (MouseOverElement &&
+		MouseOverElement != SelectedElement &&
 		MouseOverElement != Parent)
 	{
 		core::rect<s32> r = MouseOverElement->getAbsolutePosition();
@@ -625,12 +620,12 @@ void CGUIEditWorkspace::draw()
 		driver->draw2DRectangle(video::SColor(100,255,0,0),SelectedArea);
 	}
 
-	if ( (SelectedElement  && CurrentMode   >= EGUIEDM_MOVE) ||
-		 (SelectedElement  && MouseOverElement == SelectedElement && MouseOverMode >= EGUIEDM_MOVE) )
+	if ( (SelectedElement && CurrentMode >= EGUIEDM_MOVE) ||
+		(SelectedElement && MouseOverElement == SelectedElement && MouseOverMode >= EGUIEDM_MOVE) )
 	{
 		// draw handles for moving
 		EGUIEDIT_MODE m = CurrentMode;
-		core::rect<s32>   r = SelectedArea;
+		core::rect<s32> r = SelectedArea;
 		if (m < EGUIEDM_MOVE)
 		{
 			m = MouseOverMode;
@@ -638,38 +633,38 @@ void CGUIEditWorkspace::draw()
 		}
 
 		core::position2di d = core::position2di(4,4);
-		
+
 		// top left
 		if (m == EGUIEDM_RESIZE_T || m == EGUIEDM_RESIZE_L || m == EGUIEDM_RESIZE_TL || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 									core::rect<s32>(r.UpperLeftCorner, r.UpperLeftCorner + d ) );
 
 		if (m == EGUIEDM_RESIZE_T || m == EGUIEDM_RESIZE_R || m == EGUIEDM_RESIZE_TR || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 							core::rect<s32>(r.LowerRightCorner.X-4, r.UpperLeftCorner.Y, r.LowerRightCorner.X, r.UpperLeftCorner.Y+4) );
 
 		if (m == EGUIEDM_RESIZE_T || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 				core::rect<s32>(r.getCenter().X-2, r.UpperLeftCorner.Y,r.getCenter().X+2, r.UpperLeftCorner.Y+4 ) );
 
 		if (m == EGUIEDM_RESIZE_L || m == EGUIEDM_RESIZE_BL || m == EGUIEDM_RESIZE_B || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 									core::rect<s32>(r.UpperLeftCorner.X, r.LowerRightCorner.Y-4, r.UpperLeftCorner.X+4, r.LowerRightCorner.Y) );
 
 		if (m == EGUIEDM_RESIZE_L || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 				core::rect<s32>(r.UpperLeftCorner.X,r.getCenter().Y-2, r.UpperLeftCorner.X+4, r.getCenter().Y+2 ) );
 
 		if (m == EGUIEDM_RESIZE_R || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 				core::rect<s32>(r.LowerRightCorner.X-4,r.getCenter().Y-2, r.LowerRightCorner.X, r.getCenter().Y+2 ) );
 
 		if (m == EGUIEDM_RESIZE_R || m == EGUIEDM_RESIZE_BR || m == EGUIEDM_RESIZE_B || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 							core::rect<s32>(r.LowerRightCorner-d, r.LowerRightCorner) );
 
 		if (m == EGUIEDM_RESIZE_B || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255), 
+			driver->draw2DRectangle(video::SColor(100,255,255,255),
 				core::rect<s32>(r.getCenter().X-2, r.LowerRightCorner.Y-4,r.getCenter().X+2, r.LowerRightCorner.Y ) );
 
 
