@@ -163,6 +163,8 @@ int main()
 	That's, wasn't quite complicated I hope. :)
 	*/
 
+	int lastFPS = -1;
+
 	while(device->run())
 	if (device->isWindowActive())
 	{
@@ -195,6 +197,18 @@ int main()
 		env->drawAll();
 
 		driver->endScene();
+
+		// display frames per second in window title
+		int fps = driver->getFPS();
+		if (lastFPS != fps)
+		{
+			core::stringw str = L"Irrlicht Engine - Render to Texture and Specular Highlights example";
+			str += " FPS:";
+			str += fps;
+
+			device->setWindowCaption(str.c_str());
+			lastFPS = fps;
+		}
 	}
 
 	if (rt)
