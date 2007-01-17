@@ -6,9 +6,9 @@ Changes in version 1.3 (?? ??? 2007)
 
 - Fonts:
 	Changed original IGUIFont to IGUIFontASCII and added options for more fonts
-	Added CGUIFontMultiTexture for fonts which must span many textures, loads from XML
+	Added CGUIFontMultiTexture for UTF16 fonts which must span many textures, loads from XML
 	Started a font tool for creating the new XML fonts, including generating vector fonts
-	(currently not backward compatible with old fonts, only works for Windows, some bugs still)
+	(currently not backward compatible with old fonts, only works for Win2K+, some bugs still)
 
 - GUI:
 	GUI Serialization with loadGUI and saveGUI, and serializable custom GUI elements via factories
@@ -23,6 +23,11 @@ Changes in version 1.3 (?? ??? 2007)
 	GUI environment ELEMENT_FOCUS_LOST event now sets the element as the caller, focus_lost events 
 	are now usually passed to parent elements, so elements now check if they are the caller before 
 	updating (so users can catch focus lost events without them being eaten by the elements)
+
+	Buttons and checkboxes now only activate when the mouse is released over them.
+
+	Windows mouse-up events are now caught outside the window, so mouse coords may now be negative.
+	Could cause problems with draggable user windows, as they may now be dragged off screen.
 
 - ROUNDING_ERROR is now ROUNDING_ERROR_32 or ROUNDING_ERROR_64
 

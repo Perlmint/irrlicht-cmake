@@ -100,7 +100,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetCursor(NULL);
 			return 0;
 		}
-        break;
+		break;
 
 	case WM_MOUSEWHEEL:
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
@@ -119,60 +119,66 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_LBUTTONDOWN:
-        event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+		SetCapture(hWnd);
+		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_LMOUSE_PRESSED_DOWN;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
 
 	case WM_LBUTTONUP:
+		ReleaseCapture();
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_LMOUSE_LEFT_UP;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
 
 	case WM_RBUTTONDOWN:
+		SetCapture(hWnd);
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_RMOUSE_PRESSED_DOWN;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
 
 	case WM_RBUTTONUP:
+		ReleaseCapture();
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_RMOUSE_LEFT_UP;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
 
 	case WM_MBUTTONDOWN:
+		SetCapture(hWnd);
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_MMOUSE_PRESSED_DOWN;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
 
 	case WM_MBUTTONUP:
+		ReleaseCapture();
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_MMOUSE_LEFT_UP;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
@@ -181,8 +187,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_MOUSE_MOVED;
-		event.MouseInput.X = LOWORD(lParam);
-		event.MouseInput.Y = HIWORD(lParam);
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
 		dev = getDeviceFromHWnd(hWnd);
 		if (dev)
 			dev->postEventFromUser(event);
@@ -737,10 +743,10 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 			{
 				if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
 					out.append("DataCenter Server ");
-			   else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-				   out.append("Advanced Server ");
-			   else
-				   out.append("Server ");
+				else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
+					out.append("Advanced Server ");
+				else
+					out.append("Server ");
 			}
 			#endif
 		}
@@ -763,7 +769,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 				out.append("Server " );
 			if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
 				out.append("Advanced Server ");
-         	}
+		}
 
 		// Display version, service pack (if any), and build number.
 
@@ -802,7 +808,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 			out.append("Microsoft Windows 98 ");
 			if ( osvi.szCSDVersion[1] == 'A' )
 				out.append( "SE " );
-        }
+		}
 
 		if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
 			out.append("Microsoft Windows Me ");
@@ -814,7 +820,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 		IsNonNTWindows = true;
 		out.append("Microsoft Win32s ");
 		break;
-   }
+	}
 }
 
 //! Notifies the device, that it has been resized

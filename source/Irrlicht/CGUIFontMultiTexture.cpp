@@ -193,7 +193,7 @@ core::dimension2d<s32> CGUIFontMultiTexture::getDimension(const wchar_t* text)
 s32 CGUIFontMultiTexture::getWidthFromCharacter(const wchar_t c)
 {
 	SFontArea &a = Areas[getAreaFromCharacter(c)];
-	return a.rectangle.getWidth() + a.overhang;
+	return a.rectangle.getWidth() + a.overhang + a.underhang;
 }
 
 s32 CGUIFontMultiTexture::getAreaFromCharacter(const wchar_t c)

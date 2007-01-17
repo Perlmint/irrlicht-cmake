@@ -60,6 +60,12 @@ bool CGUICheckBox::OnEvent(SEvent event)
 
 			if (wasPressed && Parent)
 			{
+				if ( !AbsoluteRect.isPointInside( core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y) ) )
+				{
+					Pressed = false;
+					return true;
+				}
+
 				SEvent newEvent;
 				newEvent.EventType = EET_GUI_EVENT;
 				newEvent.GUIEvent.Caller = this;
