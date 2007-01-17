@@ -75,7 +75,6 @@ void CLightSceneNode::render()
 									);
 				break;
 		}
-							
 	}
 
 	driver->addDynamicLight(LightData);
@@ -83,18 +82,18 @@ void CLightSceneNode::render()
 
 
 //! returns the light data
-void CLightSceneNode::setLightData( const video::SLight& light)
+void CLightSceneNode::setLightData(const video::SLight& light)
 {
 	LightData = light;
-	ISceneNode::setPosition ( light.Position );
+	ISceneNode::setPosition(light.Position);
 	ISceneNode::updateAbsolutePosition ();
-
 }
 
+
 //! \return Returns the light data.
-void CLightSceneNode::getLightData( video::SLight& light)
+const video::SLight& CLightSceneNode::getLightData() const
 {
-	light = LightData;
+	return LightData;
 }
 
 
@@ -105,22 +104,18 @@ const core::aabbox3d<f32>& CLightSceneNode::getBoundingBox() const
 }
 
 
-
-
-void CLightSceneNode::doLightRecalc ()
+void CLightSceneNode::doLightRecalc()
 {
-
 	switch ( LightData.Type )
 	{
 		case video::ELT_POINT:
 		{
-			f32 r = (LightData.Radius * LightData.Radius ) / 2.f;
+			f32 r = LightData.Radius * LightData.Radius * 0.5f;
 			BBox.MaxEdge.set ( r, r, r );
 			BBox.MinEdge.set ( -r, -r, -r );
 			setAutomaticCulling ( scene::EAC_BOX );
 
 			LightData.Position = getAbsolutePosition();
-
 		} break;
 
 		case video::ELT_DIRECTIONAL:
@@ -139,7 +134,6 @@ void CLightSceneNode::doLightRecalc ()
 			{
 				LightData.Position.normalize();
 			}
-
 			break;
 	}
 
@@ -164,12 +158,13 @@ void CLightSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 	LightData.AmbientColor =	in->getAttributeAsColorf("AmbientColor");
 	LightData.DiffuseColor =	in->getAttributeAsColorf("DiffuseColor");
 	LightData.SpecularColor =	in->getAttributeAsColorf("SpecularColor");
-	LightData.Radius =			in->getAttributeAsFloat("Radius");
+	LightData.Radius =		in->getAttributeAsFloat("Radius");
 	LightData.CastShadows =		in->getAttributeAsBool("CastShadows");
-	LightData.Type =			(video::E_LIGHT_TYPE)in->getAttributeAsEnumeration("LightType", video::LightTypeNames);
+	LightData.Type =		(video::E_LIGHT_TYPE)in->getAttributeAsEnumeration("LightType", video::LightTypeNames);
 
 	ILightSceneNode::deserializeAttributes(in, options);
 }
 
 } // end namespace scene
 } // end namespace irr
+

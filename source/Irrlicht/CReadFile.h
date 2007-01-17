@@ -53,7 +53,7 @@ namespace io
 	private:
 
 		//! opens the file
-		void openFile();	
+		void openFile();
 
 		core::stringc Filename;
 		FILE* File;

@@ -100,7 +100,7 @@ namespace scene
 			#endif
 		}
 
-		video::SLight LightData; // public accessible
+		video::SLight LightData; // publically accessible
 
 		//! creates an instance of this prefab
 		virtual scene::ISceneNode* addInstance(scene::ISceneNode* parent,

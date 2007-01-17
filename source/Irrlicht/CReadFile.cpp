@@ -11,7 +11,7 @@ namespace io
 
 
 CReadFile::CReadFile(const c8* fileName)
-: FileSize(0)
+: File(0), FileSize(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CReadFile");
@@ -77,7 +77,7 @@ void CReadFile::openFile()
 	if (Filename.size() == 0) // bugfix posted by rt
 	{
 		File = 0;
-		return; 
+		return;
 	}
 
 	File = fopen(Filename.c_str(), "rb");

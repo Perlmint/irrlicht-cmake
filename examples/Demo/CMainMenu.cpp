@@ -50,11 +50,10 @@ public:
 		color.Luminance = 0.5f;
 		color.settoRGB ( rgb );
 
-		video::SLight light;
-		l->getLightData ( light );
+		video::SLight light = l->getLightData();
 		light.DiffuseColor = rgb;
 		light.Position = now;
-		l->setLightData ( light );
+		l->setLightData(light);
 	}
 
 

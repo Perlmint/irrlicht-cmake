@@ -19,6 +19,7 @@
 #include "COSOperator.h"
 #include "irrlicht.h"
 #import <wchar.h>
+#import <time.h>
 #import "AppDelegate.h"
 
 namespace irr
@@ -363,6 +364,14 @@ bool	CIrrDeviceMacOSX::run()
 	}
 	
 	return (![[NSApp delegate] isQuit] && _active);
+}
+
+//! Pause the current process for the minimum time allowed only to allow other processes to execute
+void	CIrrDeviceMacOSX::yield()
+{
+	// TODO: Does this work or maybe is there a better way?
+	struct timespec ts = {0,0};
+	nanosleep(&ts, NULL);
 }
 
 void	CIrrDeviceMacOSX::present(video::IImage* image, s32 windowId, core::rect<s32>* src )

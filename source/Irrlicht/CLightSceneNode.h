@@ -19,8 +19,8 @@ class CLightSceneNode : public ILightSceneNode
 public:
 
 	//! constructor
-	CLightSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-		const core::vector3df& position, video::SColorf color,f32 range);
+	CLightSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
+		const core::vector3df& position, video::SColorf color, f32 range);
 
 	virtual ~CLightSceneNode();
 
@@ -34,8 +34,7 @@ public:
 	virtual void setLightData( const video::SLight& light);
 
 	//! \return Returns the light data.
-	virtual void getLightData( video::SLight& light);
-
+	virtual const video::SLight& getLightData() const;
 
 	//! returns the axis aligned bounding box of this node
 	virtual const core::aabbox3d<f32>& getBoundingBox() const;
@@ -53,13 +52,12 @@ private:
 
 	video::SLight LightData;
 	core::aabbox3d<f32> BBox;
-	void doLightRecalc ();
+	void doLightRecalc();
 };
 
 
 } // end namespace scene
 } // end namespace irr
-
 
 #endif
 

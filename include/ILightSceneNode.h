@@ -30,11 +30,11 @@ public:
 		: ISceneNode(parent, mgr, id, position) {}
 
 	//! Gets the light data associated with this ILightSceneNode
-	virtual void setLightData( const video::SLight& light) = 0;
+	virtual void setLightData(const video::SLight& light) = 0;
 
 	//! Gets the light data associated with this ILightSceneNode
 	//! \return Returns the light data.
-	virtual void getLightData( video::SLight& light) = 0;
+	virtual const video::SLight& getLightData() const = 0;
 
 };
 
