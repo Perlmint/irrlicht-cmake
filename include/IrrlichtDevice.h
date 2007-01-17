@@ -62,6 +62,10 @@ while(device->run())
 		*/
 		virtual bool run() = 0;
 
+		//! Cause the device to temporarily pause execution and let other processes to run
+		// This should bring down processor usage without major performance loss for Irrlicht
+		virtual void yield() = 0;
+
 		//! Provides access to the video driver for drawing 3d and 2d geometry.
 		/** \return Returns a pointer the video driver. */
 		virtual video::IVideoDriver* getVideoDriver() = 0;

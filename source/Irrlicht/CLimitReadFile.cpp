@@ -45,7 +45,7 @@ CLimitReadFile::~CLimitReadFile()
 
 
 //! returns how much was read
-s32 CLimitReadFile::read(void* buffer, s32 sizeToRead)
+s32 CLimitReadFile::read(void* buffer, u32 sizeToRead)
 {
 	s32 pos = File->getPos();
 

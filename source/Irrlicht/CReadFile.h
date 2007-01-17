@@ -28,7 +28,7 @@ namespace io
 		virtual ~CReadFile();
 
 		//! returns how much was read
-		virtual s32 read(void* buffer, s32 sizeToRead);
+		virtual s32 read(void* buffer, u32 sizeToRead);
 
 		//! changes position in file, returns true if successful
 		//! if relativeMovement==true, the pos is changed relative to current pos,

@@ -457,13 +457,13 @@ namespace video
 		f32 Luminance;
 
 		private:
-			u32 toRGB1(f32 rm1, f32 rm2, f32 rh) const;
+			inline u32 toRGB1(f32 rm1, f32 rm2, f32 rh) const;
 
 	};
 
 	inline void SColorHSL::settoRGB ( SColor &color ) const
 	{
-		if ( Saturation == 0.0) // grey
+		if ( Saturation == 0.0f) // grey
 		{
 			u8 c = (u8) ( Luminance * 255.0 );
 			color.setRed ( c );

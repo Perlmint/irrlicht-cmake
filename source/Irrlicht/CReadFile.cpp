@@ -32,7 +32,7 @@ CReadFile::~CReadFile()
 
 
 //! returns how much was read
-s32 CReadFile::read(void* buffer, s32 sizeToRead)
+s32 CReadFile::read(void* buffer, u32 sizeToRead)
 {
 	if (!isOpen())
 		return 0;

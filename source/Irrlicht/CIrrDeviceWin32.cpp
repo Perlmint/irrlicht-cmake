@@ -515,6 +515,12 @@ bool CIrrDeviceWin32::run()
 }
 
 
+//! Pause the current process for the minimum time allowed only to allow other processes to execute
+void CIrrDeviceWin32::yield()
+{
+	Sleep(0);
+}
+
 void CIrrDeviceWin32::resizeIfNecessary()
 {
 	if (!Resized)

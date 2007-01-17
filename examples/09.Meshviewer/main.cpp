@@ -655,6 +655,7 @@ int main()
 	// draw everything
 
 	while(Device->run() && driver)
+	{
 		if (Device->isWindowActive())
 		{
 			driver->beginScene(true, true, video::SColor(150,50,50,50));
@@ -668,6 +669,9 @@ int main()
 			str += driver->getFPS();
 			fpstext->setText(str.c_str());
 		}
+		else
+			Device->yield();
+	}
 
 	Device->drop();
 	return 0;

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/utsname.h>
+#include <time.h>
 #include "IEventReceiver.h"
 #include "irrList.h"
 #include "os.h"
@@ -784,6 +785,12 @@ bool CIrrDeviceLinux::run()
 }
 
 
+//! Pause the current process for the minimum time allowed only to allow other processes to execute
+void CIrrDeviceLinux::yield()
+{
+	struct timespec ts = {0,0};
+	nanosleep(&ts, NULL);
+}
 
 //! sets the caption of the window
 void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)

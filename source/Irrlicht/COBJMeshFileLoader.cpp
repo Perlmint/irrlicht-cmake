@@ -105,7 +105,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 	{
 		switch(pBufPtr[0])
 		{
-		case '#':       // comment 
+		case '#':       // comment
 			// eat up rest of line
 			pBufPtr = goNextLine(pBufPtr, pBufEnd);
 			break;
@@ -210,7 +210,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 			// get all vertices data in this face (current line of obj file)
 			copyLine(wordBuffer, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
 			c8 * pLinePtr = wordBuffer;
-				
+
 			// read in all vertices
 			pLinePtr = goNextWord(pLinePtr, pBufEnd);
 			while (0 != pLinePtr[0])
@@ -297,7 +297,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 	Mesh->drop();
 	Mesh = 0;
 
-    return pAM;
+	return pAM;
 }
 
 
@@ -477,7 +477,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 					// get next word
 					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
 				}
-				if (type==1) 
+				if (type==1)
 				{
 					pCurrMaterial->pMeshbuffer->Material.MaterialTypeParam=core::fast_atof(textureNameBuf);
 					pBufPtr = goAndCopyNextWord(textureNameBuf, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
@@ -493,13 +493,13 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				{
 					if (type==0)
 						pCurrMaterial->pMeshbuffer->Material.Texture1 = pTexture;
-					else if (type==1) 
+					else if (type==1)
 					{
 						Driver->makeNormalMapTexture(pTexture);
 						pCurrMaterial->pMeshbuffer->Material.Texture2 = pTexture;
 						pCurrMaterial->pMeshbuffer->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
 					}
-					else if (type==2) 
+					else if (type==2)
 					{
 						pCurrMaterial->pMeshbuffer->Material.Texture1 = pTexture;
 						pCurrMaterial->pMeshbuffer->Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
@@ -528,7 +528,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 			}
 
 			pBufPtr = goNextLine(pBufPtr, pBufEnd);
-            break;
+			break;
 
 		case 'T':
 			if ( 0 != pCurrMaterial )
@@ -554,9 +554,9 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 			}
 
 			pBufPtr = goNextLine(pBufPtr, pBufEnd);
-            break;
+			break;
 
-        default:               // comments or not recognised
+		default:               // comments or not recognised
 			// eat up rest of line
 			pBufPtr = goNextLine(pBufPtr, pBufEnd);
 			break;
@@ -654,7 +654,7 @@ c8* COBJMeshFileLoader::goNextWord(c8* buf, const c8* pBufEnd)
 		return 0;
 
 	s32 i = 0;
-	// look for non-printable characters
+	// look for word boundary
 	while(buf[i])
 	{
 		if ( &(buf[i]) == pBufEnd )
@@ -662,7 +662,7 @@ c8* COBJMeshFileLoader::goNextWord(c8* buf, const c8* pBufEnd)
 			// end of buffer check
 			return 0;
 		}
-		if (buf[i]==' ' || buf[i]=='\n' || buf[i]=='\r' || buf[i]=='\t')
+		if (core::isspace(buf[i]))
 			break;
 
 		++i;

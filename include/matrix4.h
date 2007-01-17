@@ -57,7 +57,7 @@ namespace core
 			bool operator!=(const matrix4 &other) const;
 
 			//! set this matrix to the product of two matrices
-			void setbyproduct(const matrix4& other_a,const matrix4& other_b );
+			inline void setbyproduct(const matrix4& other_a,const matrix4& other_b );
 
 			//! set this matrix to the product of two matrices, no logical optimation
 			//! use it if you know you never have a identity matrix
@@ -73,7 +73,7 @@ namespace core
 			inline void makeIdentity();
 
 			//! Returns true if the matrix is the identity matrix
-			bool isIdentity() const;
+			inline bool isIdentity() const;
 
 			//! Returns true if the matrix is the identity matrix
 			bool isIdentity_integer_base () const;
@@ -212,7 +212,7 @@ namespace core
 			matrix4 getTransposed() const;
 
 			//! returns transposed matrix to a plain 4x4 float matrix
-			void getTransposed( f32 * dest ) const;
+			inline void getTransposed( f32 * dest ) const;
 
 			/*!
 				construct 2D Texture transformations

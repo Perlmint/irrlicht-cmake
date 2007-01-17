@@ -393,21 +393,9 @@ struct SVertexCache
 // swap 2 pointer
 inline void swapVertexPointer(const s4DVertex** v1, const s4DVertex** v2)
 {
-#if 0
-	u32 a = PointerAsValue ( *v1 );
-	u32 b = PointerAsValue ( *v2 );
-
-	a ^= b;
-	b ^= a;
-	a ^= b;
-
-	*v1 = (s4DVertex*) a;
-	*v2 = (s4DVertex*) b;
-#else
 	const s4DVertex* b = *v1;
 	*v1 = *v2;
 	*v2 = b;
-#endif
 }
 
 

@@ -498,7 +498,7 @@ void CXAnimationPlayer::animateSkeleton()
 			Joints[jii].WasAnimatedThisFrame = false;
 		}
 
-		SXAnimationSet& currentSet = AnimationSets[CurrentAnimationSet];
+		const SXAnimationSet& currentSet = AnimationSets[CurrentAnimationSet];
 
 		// go through all animation tracks
 		for (u32 i=0; i<currentSet.Animations.size(); ++i)

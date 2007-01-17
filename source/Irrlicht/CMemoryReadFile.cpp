@@ -32,7 +32,7 @@ CMemoryReadFile::~CMemoryReadFile()
 
 
 //! returns how much was read
-s32 CMemoryReadFile::read(void* buffer, s32 sizeToRead)
+s32 CMemoryReadFile::read(void* buffer, u32 sizeToRead)
 {
 	s32 amount = sizeToRead;
 	if (Pos + amount > Len)
