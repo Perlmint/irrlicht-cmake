@@ -303,7 +303,7 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 	for (u32 i=0; i < fc->CharSets.size(); ++i)
 		cbo->addItem(fc->CharSets[i].c_str());
 
-	yp+= h*1.5f;
+	yp += (s32)(h*1.5f);
 	xp = xs;
 
 	env->addStaticText(L"Font", core::rect<s32>(xp,yp,50,yp+h),false,false, win);
@@ -315,7 +315,7 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 	for (u32 i=0; i < fc->FontNames.size(); ++i)
 		cbo->addItem(fc->FontNames[i].c_str());
 
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 	xp = xs;
 
 	env->addStaticText(L"Size", core::rect<s32>(xp,yp,50,yp+h),false,false, win);
@@ -328,7 +328,7 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 		cbo->addItem( ((core::stringw(fc->FontSizes[i])) + L"px").c_str());
 
 	xp = xs;
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 
 	// bold checkbox
 	env->addCheckBox(false, core::rect<s32>(xp,yp,xp+50,yp+h),win, MYGUI_BOLD, L"Bold"); 
@@ -349,11 +349,11 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 	env->addCheckBox(false, core::rect<s32>(xp,yp,xp+50,yp+h),win, MYGUI_ALPHA, L"Alpha");
 
 	xp = xs;
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 
 	env->addCheckBox(false, core::rect<s32>(xp,yp,xp+200,yp+h),win, MYGUI_VECTOR, L"Vector Font");
 
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 
 	env->addStaticText(L"Max Width:", core::rect<s32>(xp,yp,50,yp+h),false,false, win);
 
@@ -365,7 +365,7 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 		cbo->addItem( ((core::stringw(texturesizes[i])) + L" wide").c_str());
 
 	xp=xs;
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 
 	env->addStaticText(L"Max Height:", core::rect<s32>(xp,yp,60,yp+h),false,false, win);
 	
@@ -378,14 +378,14 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 
 	// file name
 	xp = xs;
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 	env->addStaticText(L"Filename", core::rect<s32>(xp,yp,60,yp+h),false,false, win);
 	xp += 60;
 	env->addEditBox(L"myfont",core::rect<s32>(xp,yp,xp+70,yp+h), true, win, MYGUI_FILENAME);
 
 	// file format
 	xp = xs;
-	yp += h*1.5f;
+	yp += (s32)(h*1.5f);
 	env->addStaticText(L"File Format", core::rect<s32>(xp,yp,60,yp+h),false,false, win);
 	xp += 60;
 

@@ -1122,11 +1122,11 @@ public:
 			count = triangles.positions.size();
 			for (u32 i=0; i<triangles.positions.size(); ++i)
 			{
-				_swprintf(tmpstr, L"%s%d,%d",
-					i==0 ? L"" : L", ",
-					(s32)triangles.positions[i].X,
-					(s32)triangles.positions[i].Y);
-				data += tmpstr;
+				if (i!=0)
+					data += L", ";
+				data += (s32)triangles.positions[i].X;
+				data += L",";
+				data += (s32)triangles.positions[i].Y;
 			}
 			writer->writeElement(L"Vertices", true, L"count", count.c_str(), L"data", data.c_str());
 			writer->writeLineBreak();
@@ -1136,12 +1136,13 @@ public:
 			count = triangles.indexes.size();
 			for (u32 i=0; i<triangles.indexes.size(); i+=3)
 			{
-				_swprintf(tmpstr, L"%s%d,%d,%d",
-					i==0 ? L"" : L", ",
-					triangles.indexes[i+0],
-					triangles.indexes[i+1],
-					triangles.indexes[i+2]);
-				data += tmpstr;
+				if (i!=0)
+					data += L", ";
+				data += triangles.indexes[i+0];
+				data += L",";
+				data += triangles.indexes[i+1],
+				data += L",";
+				data += triangles.indexes[i+2];
 			}
 
 			writer->writeElement(L"Indices", true, L"count", count.c_str(), L"data", data.c_str());
@@ -1171,21 +1172,22 @@ public:
 
 
 	array<S3DVertex>	verts;
-	array<u16>			inds;
-	array<bool>			imagedata;
+	array<u16>		inds;
+	array<bool>		imagedata;
 
-	array<s32>			charstarts;		// start position of each char
-	array<s32>			charlengths;	// index count
-	array<wchar_t>		chars;			// letters
+	array<s32>		charstarts;	// start position of each char
+	array<s32>		charlengths;	// index count
+	array<wchar_t>		chars;		// letters
 
 	CGroupFinder*		triangulator;
-	CFontTool*			FontTool;
+	CFontTool*		FontTool;
 
-	s32					letterHeight;
-	s32					letterWidth;
+	s32			letterHeight;
+	s32			letterWidth;
 
 	STriangleList		triangles;
 
 };
 
 #endif // __VECTOR_FONT_TOOL_INCLUDED__
+

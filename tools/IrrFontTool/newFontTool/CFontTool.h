@@ -7,7 +7,7 @@
 #include "irrArray.h"
 #include "irrMap.h"
 #include "ITexture.h"
-#include "irrCompileConfig.h"
+#include "IrrCompileConfig.h"
 #include "IrrlichtDevice.h"
 
 #ifdef _IRR_WINDOWS_
