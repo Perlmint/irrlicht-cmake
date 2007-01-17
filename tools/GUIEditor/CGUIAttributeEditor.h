@@ -74,3 +74,4 @@ namespace gui
 } // end namespace irr
 
 #endif // __C_GUI_ATTRIBUTE_EDITOR_H_INCLUDED__
+

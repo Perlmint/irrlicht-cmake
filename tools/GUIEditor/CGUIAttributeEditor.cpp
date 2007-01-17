@@ -4,7 +4,7 @@
 
 // need to do something about the scope of createEmptyAttributes
 #include "IVideoDriver.h"
-#include "../../source/irrlicht/CAttributes.h"
+#include "../../source/Irrlicht/CAttributes.h"
 
 using namespace irr;
 using namespace core;
