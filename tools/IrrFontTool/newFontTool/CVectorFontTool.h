@@ -2,7 +2,7 @@
 /*
 
 	Vector font tool - Gaz Davidson December 2006
-	
+
 	I noticed bitmap fonts were taking massive amounts of video memory at reasonable sizes,
 	so I decided to make a vector font. I always wanted to try converting pixels to triangles...
 
@@ -27,10 +27,9 @@ struct STriangleList
 	STriangleList() : positions(), indexes() { }
 
 	array<vector2df>	positions;
-	array<u16>			indexes;
+	array<u16>		indexes;
 
-
-	// for adding one triangle list to another, 
+	// for adding one triangle list to another,
 	// these triangles share positions, but dont share triangles
 	STriangleList& operator+=(STriangleList &other)
 	{
@@ -58,12 +57,11 @@ struct STriangleList
 			indexes.push_back((u32)map[other.indexes[i]]);
 
 		return *this;
-		
 	}
 
-	// functions for building triangles for shapes, 
+	// functions for building triangles for shapes,
 	// each shape can't have duplicate triangels
-	bool hasTriangle(vector2df a, vector2df b, vector2df c) 
+	bool hasTriangle(vector2df a, vector2df b, vector2df c)
 	{
 		// make sure the triangle is wound correctly
 		if (line2df(a,b).getPointOrientation(c) < 0)
@@ -84,19 +82,21 @@ struct STriangleList
 
 		for (u32 i=0; i<indexes.size(); i+=3)
 			if ( (indexes[i]   == ia && indexes[i+1] == ib && indexes[i+2] == ic) ||
-				 (indexes[i]   == ic && indexes[i+1] == ia && indexes[i+2] == ib) ||
-				 (indexes[i]   == ib && indexes[i+1] == ic && indexes[i+2] == ia) )
+				(indexes[i]   == ic && indexes[i+1] == ia && indexes[i+2] == ib) ||
+				(indexes[i]   == ib && indexes[i+1] == ic && indexes[i+2] == ia) )
 					return true;
 
 		return false;
 	}
 
-	void add(vector2df a, vector2df b, vector2df c) 
+	void add(vector2df a, vector2df b, vector2df c)
 	{
 
 		// make sure the triangle is wound correctly
 		if (line2df(a,b).getPointOrientation(c) < 0)
-			{ vector2df tmp=a; a=b; b=tmp; }
+		{
+			vector2df tmp=a; a=b; b=tmp;
+		}
 
 		u32 ia=-1, ib=-1, ic=-1;
 		// no duplicate vertex positions allowed...
@@ -107,22 +107,33 @@ struct STriangleList
 			if (positions[i] == c) ic = i;
 		}
 		bool found=true;
-		if (ia==-1) { ia = positions.size(); positions.push_back(a); found=false; }
-		if (ib==-1) { ib = positions.size(); positions.push_back(b); found=false; }
-		if (ic==-1) { ic = positions.size(); positions.push_back(c); found=false; }
+		if (ia==-1)
+		{
+			ia = positions.size(); positions.push_back(a); found=false;
+		}
+		if (ib==-1)
+		{
+			ib = positions.size(); positions.push_back(b); found=false;
+		}
+		if (ic==-1)
+		{
+			ic = positions.size(); positions.push_back(c); found=false;
+		}
 
 		// no duplicate triangles allowed
 		if (found)
 		{
 			found=false;
 			for (u32 i=0; i<indexes.size(); i+=3)
+			{
 				if ( (indexes[i]   == ia && indexes[i+1] == ib && indexes[i+2] == ic) ||
-					 (indexes[i]   == ic && indexes[i+1] == ia && indexes[i+2] == ib) ||
-					 (indexes[i]   == ib && indexes[i+1] == ic && indexes[i+2] == ia) )
+					(indexes[i]   == ic && indexes[i+1] == ia && indexes[i+2] == ib) ||
+					(indexes[i]   == ib && indexes[i+1] == ic && indexes[i+2] == ia) )
 				{
 					found=true;
 					break;
 				}
+			}
 		}
 
 		if (!found)
@@ -198,32 +209,31 @@ public:
 			}
 
 			// level 1- if point1 points at point3, we can skip point2
-			// level 2+ allow a deviation of level-1 
-
+			// level 2+ allow a deviation of level-1
 
 		}
-		
+
 	};
-	
+
 	// contains an array of lines for triangulation
 	struct SLineList
 	{
 		array<line2df>	lines;
 		SLineList() : lines() { }
-		void addEdge(SEdge &edge)
+		void addEdge(const SEdge &edge)
 		{
 			// adds lines to the buffer
 			for (u32 i=1; i<edge.positions.size(); ++i)
 				addLine(line2df((f32)edge.positions[i-1].X,	(f32)edge.positions[i-1].Y,
-								(f32)edge.positions[i].X,	(f32)edge.positions[i].Y ));
+						(f32)edge.positions[i].X,	(f32)edge.positions[i].Y ));
 		}
-		void addLine( line2df &line )
+		void addLine( const line2df &line )
 		{
 			// no dupes!
 			if (!hasLine(line))
 				lines.push_back(line);
 		}
-		bool hasLine( line2df &line )
+		bool hasLine( const line2df &line )
 		{
 			for (u32 i=0; i<lines.size(); ++i)
 				if (line == lines[i] || (line.start == lines[i].end && line.end == lines[i].start) )
@@ -258,25 +268,25 @@ public:
 
 				vector2df out;
 				//if (la.intersectWith(l2,out))
-				//	if ( out != la.start && out != la.end && 
-				//		 out != l2.start && out != l2.end  )
+				//	if ( out != la.start && out != la.end &&
+				//		out != l2.start && out != l2.end  )
 				//		return true;
 				if (lb.intersectWith(l2,out))
-					if (!out.equals(lb.start) && !out.equals(lb.end) && 
+					if (!out.equals(lb.start) && !out.equals(lb.end) &&
 						!out.equals(l2.start) && !out.equals(l2.end)  )
 						return true;
 				if (lc.intersectWith(l2,out))
-					if (!out.equals(lc.start) && !out.equals(lc.end) && 
+					if (!out.equals(lc.start) && !out.equals(lc.end) &&
 						!out.equals(l2.start) && !out.equals(l2.end)  )
 						return true;
 
 				// my shit intersection code only works with lines in certain directions :(
 				if (l2.intersectWith(lb,out))
-					if (!out.equals(lb.start) && !out.equals(lb.end) && 
+					if (!out.equals(lb.start) && !out.equals(lb.end) &&
 						!out.equals(l2.start) && !out.equals(l2.end)  )
 						return true;
 				if (l2.intersectWith(lc,out))
-					if (!out.equals(lc.start) && !out.equals(lc.end) && 
+					if (!out.equals(lc.start) && !out.equals(lc.end) &&
 						!out.equals(l2.start) && !out.equals(l2.end)  )
 						return true;
 
@@ -342,7 +352,7 @@ public:
 				Device->getVideoDriver()->draw2DLine(st,en, SColor(255,255,0,0));
 				Device->getVideoDriver()->draw2DLine(en,p, SColor(255,0,255,0));
 				Device->getVideoDriver()->draw2DLine(p,st, SColor(255,0,0,255));
-				
+
 				Device->getVideoDriver()->endScene();
 			//}
 		}
@@ -398,7 +408,7 @@ public:
 							// can't already have this triangle
 							if (triangles.hasTriangle(currentLine.start,currentLine.end,point))
 								continue;
-							
+
 							// must not cross any other lines or enclose any points
 							bool itCrossed = false;
 							for (u32 v=0; v<ll.size(); ++v)
@@ -421,7 +431,7 @@ public:
 								score = 2;
 
 							// we prefer evenly shaped triangles
-							
+
 							// we prefer triangles with a large area
 
 							// do we like this one more than the others?
@@ -452,13 +462,13 @@ public:
 						for (u32 lineno=0;lineno<ll.size()-1; ++lineno)
 							if (ll[lineno].hasLine(la))
 								{ found=true; break; }
-						if (!found) 
+						if (!found)
 							ll[ll.size()-1].addLine(la);
 
 						for (u32 lineno=0;lineno<ll.size()-1; ++lineno)
 							if (ll[lineno].hasLine(lb))
 								{ found=true; break; }
-						if (!found) 
+						if (!found)
 							ll[ll.size()-1].addLine(lb);
 
 						//drawTrianagle(currentLine, point);
@@ -493,7 +503,7 @@ public:
 				bool bl = isMember(p.X-1,p.Y+1);
 				bool b  = isMember(p.X,p.Y+1);
 				bool br = isMember(p.X+1,p.Y+1);
-				
+
 				// walls already added?
 				bool top=u, bottom=b, left=l, right=r;
 
@@ -508,8 +518,8 @@ public:
 					a.positions.push_back( position2di(x,y));
 					edges.push_back(a);
 					top=bottom=left=right=true;
-				} 
-				else 
+				}
+				else
 				{
 					if (!(ul|u|l) && (b&r) )
 					{
@@ -568,7 +578,7 @@ public:
 
 				// all edges should have at least 3 points
 				assert(edges[i].positions.size() >= 3);
-				
+
 				// all edges should be closed
 				assert(edges[i].positions[0] == edges[i].positions[edges[i].positions.size()-1] );
 			}
@@ -670,7 +680,6 @@ public:
 	{
 		u32 stt  = device->getTimer()->getTime();
 		u32 endt = stt + t;
-		
 
 		while(device->getTimer()->getTime() < endt )
 		{
@@ -719,7 +728,6 @@ public:
 				en = position2di((s32)(t.positions[t.indexes[v+0]].X*scale)+50,(s32)(t.positions[t.indexes[v+0]].Y*scale)+50);
 				device->getVideoDriver()->draw2DLine(st,en, SColor(255,0,0,255));
 			}
-			
 			device->getVideoDriver()->endScene();
 		}
 	}
@@ -741,7 +749,7 @@ public:
 				position2di en = position2di((s32)(currentline.end.X*scale)+50,   (s32)(currentline.end.Y*scale)+50);
 				device->getVideoDriver()->draw2DLine(st,en, SColor(255,255,0,0));
 			}
-			
+
 			device->getVideoDriver()->endScene();
 		}
 	}
@@ -881,7 +889,7 @@ public:
 			}
 			else
 			{
-				groups[groupRefs[grp-1]-1 ].pixels.push_back(position2di(x,y));
+				groups[groupRefs[grp-1]-1].pixels.push_back(position2di(x,y));
 			}
 			setRef(x,y,groupRefs[grp-1]);
 		}
@@ -889,7 +897,7 @@ public:
 
 	bool& getPixel(s32 x, s32 y) { return mem[y*width +x]; }
 	s32& getRef(s32 x, s32 y) { return refbuffer[y*width +x]; }
-	void setRef(s32 x, s32 y, s32 g) { 	refbuffer[y*width +x] = g; 	}
+	void setRef(s32 x, s32 y, s32 g) { refbuffer[y*width +x] = g; }
 
 	void mergeGroups(s32 g1, s32 g2)
 	{
@@ -900,11 +908,10 @@ public:
 			groups[g1-1].pixels.push_back(groups[g2-1].pixels[i]);
 		groups[g2-1].pixels.clear();
 		groupRefs[g2-1] = g1;
-	} 
-
+	}
 
 	s32 width, height;
-	array<SPixelGroup>  groups;
+	array<SPixelGroup> groups;
 	array<s32> groupRefs;
 	array<s32> refbuffer;
 	bool *mem;
@@ -914,8 +921,8 @@ public:
 class CVectorFontTool
 {
 public:
-	CVectorFontTool(CFontTool *fonttool) : 
-		FontTool(fonttool), triangulator(0), charstarts(), 
+	CVectorFontTool(CFontTool *fonttool) :
+		FontTool(fonttool), triangulator(0), charstarts(),
 		charlengths(), chars(), inds(), verts(), triangles()
 	{
 		// get max character width+height
@@ -936,7 +943,6 @@ public:
 			it++;
 		}
 
-
 		// number of verts is one more than number of pixels because it's a grid of squares
 		letterWidth++;	letterHeight++;
 
@@ -949,12 +955,12 @@ public:
 			for (s32 x=0; x<letterWidth; ++x)
 			{
 				S3DVertex &v = getVert(x,y);
-				v.Pos		= vector3df((f32)x,(f32)y,0.0f);
+				v.Pos = vector3df((f32)x,(f32)y,0.0f);
 				v.TCoords.X = (f32)letterWidth / (f32)x;
 				v.TCoords.Y = (f32)letterHeight / (f32)y;
-				v.Normal	= vector3df(0,0,-1);
-				v.Color		= SColor(255,255,255,255);
-			} 
+				v.Normal = vector3df(0,0,-1);
+				v.Color = SColor(255,255,255,255);
+			}
 		// clear index list
 		inds.clear();
 
@@ -978,7 +984,7 @@ public:
 		s32 area = FontTool->CharMap[thischar];
 		CFontTool::SFontArea &fa = FontTool->Areas[area];
 
-		s32		img = fa.sourceimage;
+		s32 img = fa.sourceimage;
 		rect<s32> r = fa.rectangle;
 
 		// init image memory
@@ -996,13 +1002,13 @@ public:
 
 		// get shape areas
 		triangulator = new CGroupFinder(imagedata.pointer(), letterWidth, letterHeight, FontTool->Device );
-		
+
 		wprintf(L"Created character '%c' in texture %d\n", thischar, img );
-		
+
 		//floodfill->drawEdges(FontTool->Device, 500, 3);
 		//floodfill->drawTriangles(FontTool->Device, 500,30);
 		//floodfill->drawTriLines(FontTool->Device, 200,3);
-		
+
 		/*
 		if (area==32 && map == 0)
 		{
@@ -1104,7 +1110,7 @@ public:
 					names.push_back(core::stringw(L"o"));
 					values.push_back(over);
 				}
-				writer->writeElement(L"c", true, names, values); 
+				writer->writeElement(L"c", true, names, values);
 
 				writer->writeLineBreak();
 			}
@@ -1116,10 +1122,10 @@ public:
 			count = triangles.positions.size();
 			for (u32 i=0; i<triangles.positions.size(); ++i)
 			{
-				_swprintf(tmpstr, L"%s%d,%d", 
-								i==0 ? L"" : L", ", 
-								(s32)triangles.positions[i].X, 
-								(s32)triangles.positions[i].Y);
+				_swprintf(tmpstr, L"%s%d,%d",
+					i==0 ? L"" : L", ",
+					(s32)triangles.positions[i].X,
+					(s32)triangles.positions[i].Y);
 				data += tmpstr;
 			}
 			writer->writeElement(L"Vertices", true, L"count", count.c_str(), L"data", data.c_str());
@@ -1130,11 +1136,11 @@ public:
 			count = triangles.indexes.size();
 			for (u32 i=0; i<triangles.indexes.size(); i+=3)
 			{
-				_swprintf(tmpstr, L"%s%d,%d,%d", 
-								i==0 ? L"" : L", ", 
-								triangles.indexes[i+0], 
-								triangles.indexes[i+1], 
-								triangles.indexes[i+2]);
+				_swprintf(tmpstr, L"%s%d,%d,%d",
+					i==0 ? L"" : L", ",
+					triangles.indexes[i+0],
+					triangles.indexes[i+1],
+					triangles.indexes[i+2]);
 				data += tmpstr;
 			}
 
@@ -1161,7 +1167,7 @@ public:
 		}
 	}
 
-	S3DVertex getVert(s32 x, s32 y) { return verts[letterWidth*y +x]; }
+	S3DVertex& getVert(s32 x, s32 y) { return verts[letterWidth*y +x]; }
 
 
 	array<S3DVertex>	verts;
