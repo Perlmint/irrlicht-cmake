@@ -251,7 +251,7 @@ namespace quake3
 			case 12:
 				// filter = gl_dst_color gl_zero
 				blendfunc.type = video::EMT_ONETEXTURE_BLEND;
-				blendfunc.param = pack_texureBlendFunc ( video::EBF_DST_COLOR, video::EBF_ZERO, defaultModulate );
+				blendfunc.param = video::pack_texureBlendFunc ( video::EBF_DST_COLOR, video::EBF_ZERO, defaultModulate );
 				resolved = 1;
 				break;
 			case 13:
@@ -278,7 +278,7 @@ namespace quake3
 		if ( 0 == resolved )
 		{
 			blendfunc.type = video::EMT_ONETEXTURE_BLEND;
-			blendfunc.param = pack_texureBlendFunc (
+			blendfunc.param = video::pack_texureBlendFunc (
 					(video::E_BLEND_FACTOR) srcFact,
 					(video::E_BLEND_FACTOR) dstFact,
 					defaultModulate);
