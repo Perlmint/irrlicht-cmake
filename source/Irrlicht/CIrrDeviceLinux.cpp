@@ -798,8 +798,8 @@ void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer=false)
 	bool wasStopped = Timer ? Timer->isStopped() : true;
 	
 	struct timespec ts;
-	ts.seconds = (time_t) (timeMs / 1000);
-	ts.nanoseconds = (long) (timeMs % 1000) * 1000000;
+	ts.tv_sec = (time_t) (timeMs / 1000);
+	ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
 
 	if (pauseTimer && !wasStopped)
 		Timer->stop();
