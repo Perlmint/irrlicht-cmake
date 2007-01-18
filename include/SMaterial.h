@@ -208,9 +208,9 @@ namespace video
 	//! MaterialTypeParam: eg. DirectX: D3DTOP_MODULATE, D3DTOP_MODULATE2X, D3DTOP_MODULATE4X
 	enum E_MODULATE_FUNC
 	{
-		EMF_MODULATE_1X	= 1,
-		EMF_MODULATE_2X	= 2,
-		EMF_MODULATE_4X	= 4
+		EMFN_MODULATE_1X	= 1,
+		EMFN_MODULATE_2X	= 2,
+		EMFN_MODULATE_4X	= 4
 	};
 
 	//! EMT_ONETEXTURE_BLEND: pack srcFact & dstFact and Modulo to MaterialTypeParam

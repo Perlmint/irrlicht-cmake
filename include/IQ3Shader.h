@@ -27,7 +27,7 @@ namespace quake3
 	// we are not using gamma, so quake3 is very dark.
 	// define the standard multiplication for lightmaps and vertex colors
 	const video::E_MATERIAL_TYPE defaultLightMap = video::EMT_LIGHTMAP_M2;
-	const video::E_MODULATE_FUNC defaultModulate = video::EMF_MODULATE_2X;
+	const video::E_MODULATE_FUNC defaultModulate = video::EMFN_MODULATE_2X;
 
 	// some useful typedefs
 	typedef core::array< core::stringc > tStringList;
