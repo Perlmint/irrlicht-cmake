@@ -374,6 +374,26 @@ void	CIrrDeviceMacOSX::yield()
 	nanosleep(&ts, NULL);
 }
 
+//! Pause execution and let other processes to run for a specified amount of time.
+void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer=false)
+{
+	// TODO: Does this work or maybe is there a better way?
+	
+	bool wasStopped = Timer ? Timer->isStopped() : true;
+	
+	struct timespec ts;
+	ts.seconds = (time_t) (timeMs / 1000);
+	ts.nanoseconds = (long) (timeMs % 1000) * 1000000;
+
+	if (pauseTimer && !wasStopped)
+		Timer->stop();
+
+	nanosleep(&ts, NULL);
+
+	if (pauseTimer && !wasStopped)
+		Timer->start();
+}
+
 void	CIrrDeviceMacOSX::present(video::IImage* image, s32 windowId, core::rect<s32>* src )
 {
 }

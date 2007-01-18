@@ -83,7 +83,7 @@ private:
 	core::array<SFontArea>			Areas;
 	core::map<wchar_t, s32>			CharacterMap;
 	u32								WrongCharacter;
-	s32								CharSpacing;
+	s32								Kerning;
 };
 
 } // end namespace gui

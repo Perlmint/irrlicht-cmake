@@ -13,7 +13,7 @@ namespace gui
 
 //! constructor
 CGUIFontMultiTexture::CGUIFontMultiTexture(video::IVideoDriver* driver)
-: Driver(driver), Textures(0), WrongCharacter(0), Areas()
+: Driver(driver), Textures(0), WrongCharacter(0), Areas(), Kerning(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIFontMultiTexture");
@@ -160,13 +160,13 @@ bool CGUIFontMultiTexture::load(io::IXMLReader* xml)
 //! set an Pixel Offset on Drawing ( scale position on width )
 void CGUIFontMultiTexture::setKerning ( s32 kerning )
 {
-	return;
+	Kerning = kerning;
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
 s32 CGUIFontMultiTexture::getKerning ()
 {
-	return 0;
+	return Kerning;
 }
 
 //! returns the dimension of a text
@@ -180,7 +180,7 @@ core::dimension2d<s32> CGUIFontMultiTexture::getDimension(const wchar_t* text)
 		SFontArea &area = Areas[getAreaFromCharacter(*p)];
 
 		dim.Width += area.underhang;
-		dim.Width += area.rectangle.getWidth() + area.overhang;
+		dim.Width += area.rectangle.getWidth() + area.overhang + Kerning;
 		h = area.rectangle.getHeight();
 		if (h>dim.Height)
 			dim.Height = h;
@@ -237,7 +237,7 @@ void CGUIFontMultiTexture::draw(const wchar_t* text, const core::rect<s32>& posi
 							color, 
 							true);
 
-		offset.X += area.rectangle.getWidth() + area.overhang;
+		offset.X += area.rectangle.getWidth() + area.overhang + Kerning;
 
 		++text;
 	}

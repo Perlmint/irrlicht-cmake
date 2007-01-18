@@ -41,6 +41,9 @@ namespace irr
 		// This should bring down processor usage without major performance loss for Irrlicht
 		virtual void yield();
 
+		//! Pause execution and let other processes to run for a specified amount of time.
+		virtual void sleep(u32 timeMs, bool pauseTimer);
+
 		//! sets the caption of the window
 		virtual void setWindowCaption(const wchar_t* text);
 

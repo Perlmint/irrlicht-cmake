@@ -792,6 +792,24 @@ void CIrrDeviceLinux::yield()
 	nanosleep(&ts, NULL);
 }
 
+//! Pause execution and let other processes to run for a specified amount of time.
+void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer=false)
+{
+	bool wasStopped = Timer ? Timer->isStopped() : true;
+	
+	struct timespec ts;
+	ts.seconds = (time_t) (timeMs / 1000);
+	ts.nanoseconds = (long) (timeMs % 1000) * 1000000;
+
+	if (pauseTimer && !wasStopped)
+		Timer->stop();
+
+	nanosleep(&ts, NULL);
+
+	if (pauseTimer && !wasStopped)
+		Timer->start();
+}
+
 //! sets the caption of the window
 void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 {

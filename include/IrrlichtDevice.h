@@ -66,6 +66,13 @@ while(device->run())
 		// This should bring down processor usage without major performance loss for Irrlicht
 		virtual void yield() = 0;
 
+		//! Pause execution and let other processes to run for a specified amount of time.
+		/** It may not wait the full given time, as sleep may be interrupted
+		\param timeMs: Time to sleep for in milisecs. 
+		\param pauseTimer: If true, pauses the device timer while sleeping
+		*/
+		virtual void sleep(u32 timeMs, bool pauseTimer=false) = 0;
+
 		//! Provides access to the video driver for drawing 3d and 2d geometry.
 		/** \return Returns a pointer the video driver. */
 		virtual video::IVideoDriver* getVideoDriver() = 0;

@@ -82,7 +82,6 @@ IAttributes* CGUIAttributeEditor::getAttribs()
 
 void CGUIAttributeEditor::refreshAttribs()
 {
-
 	// clear the attribute list
 	u32 i;
 	for (i=0; i<AttribList.size(); ++i)
@@ -95,7 +94,7 @@ void CGUIAttributeEditor::refreshAttribs()
 	rect<s32> r(top.X,
 				top.Y,
 				AbsoluteRect.getWidth() - Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH) * 2,
-				5 + Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH) * 2);
+				5 + Environment->getSkin()->getFont()->getDimension(L"A").Height * 2);
 
 	// add attribute elements
 	u32 c = Attribs->getAttributeCount();

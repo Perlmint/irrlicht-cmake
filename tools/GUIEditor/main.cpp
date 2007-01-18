@@ -32,19 +32,22 @@ int main()
 	
 	env->addGUIElement("GUIEditor");
 
-	/*
+	
 	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
 	env->setSkin(skin);
-	//skin->setFont(0);
+	IGUIFont *font = env->getFont("lucida_latin.xml");
+	if (font)
+		skin->setFont(font);
 	skin->drop();
-	*/
+	
 
 	
 	while(device->run()) 
 	{
+		device->sleep(20);
+
 		if (device->isWindowActive())
 		{
-			
 			driver->beginScene(true, true, video::SColor(0,200,200,200));
 			smgr->drawAll();
 			env->drawAll();
