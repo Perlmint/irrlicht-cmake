@@ -38,10 +38,7 @@ namespace scene
  		/** \param material: material to search for
 		\return Returns the pointer to the mesh buffer or 
 		NULL if there is no such mesh buffer. */
-		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const
-		{
-			return 0;
-		}
+		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const = 0;
 
 		//! Returns an axis aligned bounding box of the mesh.
 		/** \return A bounding box of this mesh is returned. */

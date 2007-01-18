@@ -67,6 +67,12 @@ namespace scene
 		//! returns pointer to a mesh buffer
 		virtual IMeshBuffer* getMeshBuffer(u32 nr) const;
 
+		//! Returns pointer to a mesh buffer which fits a material
+ 		/** \param material: material to search for
+		\return Returns the pointer to the mesh buffer or 
+		NULL if there is no such mesh buffer. */
+		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const;
+
 		//! returns an axis aligned bounding box
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
@@ -141,7 +147,7 @@ private:
 				return Material;
 			}
 
-			video::SMaterial& getMaterial()
+			virtual video::SMaterial& getMaterial()
 			{
 				return Material;
 			}
@@ -186,7 +192,7 @@ private:
 				return BoundingBox;
 			}
 
-			void recalculateBoundingBox()
+			virtual void recalculateBoundingBox()
 			{
 				if (Vertices.empty())
 					BoundingBox.reset(0,0,0);
@@ -218,9 +224,6 @@ private:
 
 			core::array<u16> Indices;
 			core::aabbox3d<f32> BoundingBox;
-
-
-
 		};
 
 		struct B3dChunk

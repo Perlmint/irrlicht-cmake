@@ -1,5 +1,7 @@
 Changes in version 1.3 (?? ??? 2007)
 
+- Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. It was returning 0 for all implementations previously. User defined IMesh derivates will also have to implement it now due to the removed empty implementation.
+
 - Fixed the getLightData method of ILightSceneNode by changing it from
 	'void getLightData(SLight&)' to 'const SLight& getLightData()'. This
 	breaks the current API but avoids those cases where the SLight is changed
@@ -627,7 +629,7 @@ Changes in version 0.12.0 (24 August 2005)
   drawing your scene. If you need the system time, not the new virtual time,
   use ITimer::getRealTime().
 
-- The material EMT_TRANSPARENT_ALPHA_CHANNEL now is using a configuratable alpha ref value.
+- The material EMT_TRANSPARENT_ALPHA_CHANNEL now is using a configurable alpha ref value.
   The default value is 127, which means people who are using this material for drawing
   things like grass, trees etc will get nice results automaticly when changing to 0.12.0.
   To change to a different alpha ref value, just change SMaterial::MaterialTypeParam value.

@@ -483,6 +483,8 @@ namespace video
 				Texture4 != b.Texture4 ||
 				TextureWrap != b.TextureWrap;
 		}
+		inline bool operator==(const SMaterial& b) const
+		{ return !(b!=*this); }
 	};
 
 } // end namespace video

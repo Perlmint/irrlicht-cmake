@@ -354,6 +354,15 @@ IMeshBuffer* CAnimatedMeshMD2::getMeshBuffer(u32 nr) const
 }
 
 
+//! Returns pointer to a mesh buffer which fits a material
+IMeshBuffer* CAnimatedMeshMD2::getMeshBuffer( const video::SMaterial &material) const
+{
+	if (Material == material)
+		return (IMeshBuffer*) this;
+	else
+		return 0;
+}
+
 
 //! returns the material of this meshbuffer
 const video::SMaterial& CAnimatedMeshMD2::getMaterial() const

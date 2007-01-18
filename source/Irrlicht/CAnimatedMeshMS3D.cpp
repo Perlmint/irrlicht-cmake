@@ -664,7 +664,21 @@ u32 CAnimatedMeshMS3D::getMeshBufferCount() const
 //! returns pointer to a mesh buffer
 IMeshBuffer* CAnimatedMeshMS3D::getMeshBuffer(u32 nr) const
 {
-	return (IMeshBuffer*) &Buffers[nr];
+	if (nr < Buffers.size())
+		return (IMeshBuffer*) &Buffers[nr];
+	else
+		return 0;
+}
+
+//! Returns pointer to a mesh buffer which fits a material
+IMeshBuffer* CAnimatedMeshMS3D::getMeshBuffer( const video::SMaterial &material) const
+{
+	for (u32 i=0; i<Buffers.size(); ++i)
+	{
+		if (Buffers[i].getMaterial() == material)
+			return (IMeshBuffer*) &Buffers[i];
+	}
+	return 0;
 }
 
 

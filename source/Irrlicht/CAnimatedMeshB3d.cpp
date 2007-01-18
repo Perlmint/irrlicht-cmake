@@ -1707,10 +1707,24 @@ u32 CAnimatedMeshB3d::getMeshBufferCount() const
 //! returns pointer to a mesh buffer
 IMeshBuffer* CAnimatedMeshB3d::getMeshBuffer(u32 nr) const
 {
-	return Buffers[nr];
+	if (nr < Buffers.size())
+		return Buffers[nr];
+	else
+		return 0;
 }
 
 
+
+//! Returns pointer to a mesh buffer which fits a material
+IMeshBuffer* CAnimatedMeshB3d::getMeshBuffer( const video::SMaterial &material) const
+{
+	for (u32 i=0; i<Buffers.size(); ++i)
+	{
+		if (Buffers[i]->getMaterial() == material)
+			return Buffers[i];
+	}
+	return 0;
+}
 
 //! returns an axis aligned bounding box
 const core::aabbox3d<f32>& CAnimatedMeshB3d::getBoundingBox() const
