@@ -209,7 +209,7 @@ bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 #endif
 
 #if (defined(LINUX) || defined(MACOSX))
-	success=(chdir(newDirectory) != 0);
+	success=(chdir(newDirectory) == 0);
 #endif
 	return success;
 }

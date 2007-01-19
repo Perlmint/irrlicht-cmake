@@ -1244,42 +1244,25 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	{
 		if (material.BilinearFilter || material.TrilinearFilter || material.AnisotropicFilter)
 		{
-			D3DTEXTUREFILTERTYPE tftMagAniso = (Caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
-			D3DTEXTUREFILTERTYPE tftMinAniso = (Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMag = ((Caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC) && material.AnisotropicFilter) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMin = ((Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) && material.Anisotropic) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMip = material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT;
 
-			pID3DDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(0, D3DTSS_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
-
-			pID3DDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(1, D3DTSS_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(1, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
-
-			pID3DDevice->SetTextureStageState(2, D3DTSS_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(2, D3DTSS_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(2, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
-
-			pID3DDevice->SetTextureStageState(3, D3DTSS_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(3, D3DTSS_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetTextureStageState(3, D3DTSS_MIPFILTER, Material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
+			for (u32 st=0; st<4; ++st)
+			{
+				pID3DDevice->SetTextureStageState(st, D3DTSS_MAGFILTER, tftMag);
+				pID3DDevice->SetTextureStageState(st, D3DTSS_MINFILTER, tftMin);
+				pID3DDevice->SetTextureStageState(st, D3DTSS_MIPFILTER, tftMip);
+			}
 		}
 		else
 		{
-			pID3DDevice->SetTextureStageState(0, D3DTSS_MINFILTER,  D3DTEXF_POINT);
-			pID3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-			pID3DDevice->SetTextureStageState(0, D3DTSS_MAGFILTER,  D3DTEXF_POINT);
-
-			pID3DDevice->SetTextureStageState(1, D3DTSS_MINFILTER,  D3DTEXF_POINT);
-			pID3DDevice->SetTextureStageState(1, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-			pID3DDevice->SetTextureStageState(1, D3DTSS_MAGFILTER,  D3DTEXF_POINT);
-
-			pID3DDevice->SetTextureStageState(2, D3DTSS_MINFILTER,  D3DTEXF_POINT);
-			pID3DDevice->SetTextureStageState(2, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-			pID3DDevice->SetTextureStageState(2, D3DTSS_MAGFILTER,  D3DTEXF_POINT);
-
-			pID3DDevice->SetTextureStageState(3, D3DTSS_MINFILTER,  D3DTEXF_POINT);
-			pID3DDevice->SetTextureStageState(3, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-			pID3DDevice->SetTextureStageState(3, D3DTSS_MAGFILTER,  D3DTEXF_POINT);
+			for (u32 st=0; st<4; ++st)
+			{
+				pID3DDevice->SetTextureStageState(st, D3DTSS_MINFILTER, D3DTEXF_POINT);
+				pID3DDevice->SetTextureStageState(st, D3DTSS_MIPFILTER, D3DTEXF_NONE);
+				pID3DDevice->SetTextureStageState(st, D3DTSS_MAGFILTER, D3DTEXF_POINT);
+			}
 		}
 	}
 

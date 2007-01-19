@@ -1245,42 +1245,25 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	{
 		if (material.BilinearFilter || material.TrilinearFilter || material.AnisotropicFilter)
 		{
-			D3DTEXTUREFILTERTYPE tftMagAniso = (Caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
-			D3DTEXTUREFILTERTYPE tftMinAniso = (Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMag = ((Caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC) && material.AnisotropicFilter) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMin = ((Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) && material.Anisotropic) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
+			D3DTEXTUREFILTERTYPE tftMip = material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT;
 
-			pID3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
-
-			pID3DDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(1, D3DSAMP_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
-
-			pID3DDevice->SetSamplerState(2, D3DSAMP_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(2, D3DSAMP_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(2, D3DSAMP_MIPFILTER, material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
-
-			pID3DDevice->SetSamplerState(3, D3DSAMP_MAGFILTER, material.AnisotropicFilter ? tftMagAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(3, D3DSAMP_MINFILTER, material.AnisotropicFilter ? tftMinAniso : D3DTEXF_LINEAR);
-			pID3DDevice->SetSamplerState(3, D3DSAMP_MIPFILTER, material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT);
+			for (u32 st=0; st<4; ++st)
+			{
+				pID3DDevice->SetSamplerState(st, D3DSAMP_MAGFILTER, tftMag);
+				pID3DDevice->SetSamplerState(st, D3DSAMP_MINFILTER, tftMin);
+				pID3DDevice->SetSamplerState(st, D3DSAMP_MIPFILTER, tftMip);
+			}
 		}
 		else
 		{
-			pID3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-			pID3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-			pID3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-
-			pID3DDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-			pID3DDevice->SetSamplerState(1, D3DSAMP_MIPFILTER,  D3DTEXF_NONE);
-			pID3DDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-
-			pID3DDevice->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-			pID3DDevice->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-			pID3DDevice->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-
-			pID3DDevice->SetSamplerState(3, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-			pID3DDevice->SetSamplerState(3, D3DSAMP_MIPFILTER,  D3DTEXF_NONE);
-			pID3DDevice->SetSamplerState(3, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+			for (u32 st=0; st<4; ++st)
+			{
+				pID3DDevice->SetSamplerState(st, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+				pID3DDevice->SetSamplerState(st, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+				pID3DDevice->SetSamplerState(st, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+			}
 		}
 	}
 
