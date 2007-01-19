@@ -15,6 +15,8 @@ Changes in version 1.3 (?? ??? 2007)
 	a very short time. This allows other processes to execute without a major
 	penalty for the Irrlicht application.
 
+- Added sleep() methd to IrrlichtDevice, for pausing the Irrlicht process for a longer amount of time.
+
 - B3D changes by Luke: 
 	Texture scaling bugfix, support for alpha blending, 
 	new option to normalise weights, animation code optimization, fixed memory leak

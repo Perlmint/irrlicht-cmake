@@ -80,6 +80,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	irr::SEvent event;
 	SEnvMapper* envm = 0;
 
+	static irr::s32 ClickCount=0;
+
 	switch (message)
 	{
 	case WM_PAINT:
@@ -119,6 +121,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_LBUTTONDOWN:
+		ClickCount++;
 		SetCapture(hWnd);
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_LMOUSE_PRESSED_DOWN;
@@ -130,7 +133,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_LBUTTONUP:
-		ReleaseCapture();
+		ClickCount--;
+		if (ClickCount<1)
+		{
+			ClickCount=0;
+			ReleaseCapture();
+		}
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_LMOUSE_LEFT_UP;
 		event.MouseInput.X = (short)LOWORD(lParam);
@@ -141,6 +149,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_RBUTTONDOWN:
+		ClickCount++;
 		SetCapture(hWnd);
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_RMOUSE_PRESSED_DOWN;
@@ -152,7 +161,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_RBUTTONUP:
-		ReleaseCapture();
+		ClickCount--;
+		if (ClickCount<1)
+		{
+			ClickCount=0;
+			ReleaseCapture();
+		}
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_RMOUSE_LEFT_UP;
 		event.MouseInput.X = (short)LOWORD(lParam);
@@ -163,6 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_MBUTTONDOWN:
+		ClickCount++;
 		SetCapture(hWnd);
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_MMOUSE_PRESSED_DOWN;
@@ -174,7 +189,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_MBUTTONUP:
-		ReleaseCapture();
+		ClickCount--;
+		if (ClickCount<1)
+		{
+			ClickCount=0;
+			ReleaseCapture();
+		}
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
 		event.MouseInput.Event = irr::EMIE_MMOUSE_LEFT_UP;
 		event.MouseInput.X = (short)LOWORD(lParam);

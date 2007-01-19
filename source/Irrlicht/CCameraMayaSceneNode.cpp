@@ -14,24 +14,16 @@ namespace scene
 //! constructor
 CCameraMayaSceneNode::CCameraMayaSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 	 f32 rs, f32 zs, f32 ts)
-: CCameraSceneNode(parent, mgr, id)
+: CCameraSceneNode(parent, mgr, id), 
+zooming(false), rotating(false), moving(false), translating(false),
+zoomSpeed(zs), rotateSpeed(ts), translateSpeed(ts), currentZoom(70.0f), 
+rotX(0), rotY(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CCameraMayaSceneNode");
 	#endif
 
-	zooming = false;
-	rotating = false;
-	moving = false;
-	translating = false;
-	zoomSpeed = zs;
-	rotateSpeed = rs;
-	translateSpeed = ts;
-	currentZoom = 70.0f;
-	//Pos.set(0.0f, 70.0f, 0.0f);
 	Target.set(0.0f, 0.0f, 0.0f);
-	rotX = 0;
-	rotY = 0;
 	oldTarget = Target;
 
 	allKeysUp();
@@ -128,7 +120,7 @@ void CCameraMayaSceneNode::animate()
 	f32 nRotY = rotY;
 	f32 nZoom = currentZoom;
 
-	if (isMouseKeyDown(0) && isMouseKeyDown(2))
+	if ( (isMouseKeyDown(0) && isMouseKeyDown(2)) || isMouseKeyDown(1) )
 	{
 		if (!zooming)
 		{

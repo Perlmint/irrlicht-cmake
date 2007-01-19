@@ -28,34 +28,6 @@ namespace irr
 namespace gui
 {
 
-//! Names for gui element types
-const c8* const GUIElementTypeNames[] =
-{
-	"button",
-	"checkBox",
-	"comboBox",
-	"contextMenu",
-	"menu",
-	"editBox",
-	"fileOpenDialog",
-	"colorSelectDialog",
-	"inOutFader",
-	"image",
-	"listBox",
-	"meshViewer",
-	"messageBox",
-	"modalScreen",
-	"scrollBar",
-	"staticText",
-	"tab",
-	"tabControl",
-	"toolBar",
-	"window",
-	0
-};
-
-
-
 CDefaultGUIElementFactory::CDefaultGUIElementFactory(IGUIEnvironment* env)
 : Environment(env)
 {

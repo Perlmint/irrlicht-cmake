@@ -40,8 +40,6 @@ int main()
 		skin->setFont(font);
 	skin->drop();
 	
-
-	
 	while(device->run()) 
 	{
 		device->sleep(20);

@@ -370,6 +370,14 @@ public:
 		return Type;
 	}
 
+	//! Returns the type name of the gui element. 
+	/** This is needed serializing elements. For serializing your own elements, override this function 
+	and return your own type name which is created by your IGUIElementFactory */
+	virtual const c8* getTypeName()
+	{
+		return GUIElementTypeNames[Type];
+	}
+
 	//! Writes attributes of the scene node.
 	//! Implement this to expose the attributes of your scene node for
 	//! scripting languages, editors, debuggers or xml serialization purposes.

@@ -200,9 +200,6 @@ public:
 	//! reads an element
 	virtual void readGUIElement(io::IXMLReader* reader, IGUIElement* parent);
 
-	//! gets the type name from a gui element type id
-	virtual const c8* getGUIElementTypeName(EGUI_ELEMENT_TYPE type);
-
 
 private:
 

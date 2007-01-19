@@ -28,6 +28,9 @@ namespace gui
 		// save the attribute and reload
 		void updateAttrib();
 
+		//! this shoudln't be serialized, but this is included as it's an example
+		virtual const c8* getTypeName() { return "attribute"; }
+
 	private:
 		io::IAttributes*	Attribs;
 		u32			Index;
@@ -60,6 +63,9 @@ namespace gui
 
 		// save the attributes
 		void updateAttribs();
+
+		//! this shoudln't be serialized, but this is included as it's an example
+		virtual const c8* getTypeName() { return "attributeEditor"; }
 
 	private:
 

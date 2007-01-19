@@ -18,6 +18,9 @@ namespace gui
 		//! constructor
 		CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rectangle, IGUIElement *parent);
 
+		//! destructor
+		~CGUIEditWindow();
+
 		//! this part draws the window
 		virtual void draw();
 		//! handles events
@@ -31,8 +34,8 @@ namespace gui
 		virtual IGUIButton* getMinimizeButton();
 		virtual IGUIButton* getMaximizeButton();
 
-		//! destructor
-		~CGUIEditWindow();
+		//! this shoudln't be serialized, but this is included as it's an example
+		virtual const c8* getTypeName() { return "GUIEditWindow"; }
 
 	private:
 

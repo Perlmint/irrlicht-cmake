@@ -497,6 +497,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 					Environment->addFileOpenDialog(L"Please select a GUI file to open", false, this);
 					break;
 				case EGUIEDMC_FILE_SAVE:
+					Environment->saveGUI("guiTest.xml");
 					break;
 
 				//! edit menu

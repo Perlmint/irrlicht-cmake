@@ -24,7 +24,7 @@ enum EGUI_ELEMENT_TYPE
 	EGUIET_COMBO_BOX,
 
 	//! A context menu (IGUIContextMenu)
-    EGUIET_CONTEXT_MENU,
+	EGUIET_CONTEXT_MENU,
 
 	//! A menu (IGUIMenu)
 	EGUIET_MENU,
@@ -78,10 +78,39 @@ enum EGUI_ELEMENT_TYPE
 	EGUIET_COUNT,
 
 	//! Unknown type.
-	EGUIET_ELEMENT
+	EGUIET_ELEMENT,
+
+	//! This enum is never used, it only forces the compiler to 
+	//! compile these enumeration values to 32 bit.
+	EGUIET_FORCE_32_BIT = 0x7fffffff
 
 };
 
+//! Names for built-in element types
+const c8* const GUIElementTypeNames[] =
+{
+	"button",
+	"checkBox",
+	"comboBox",
+	"contextMenu",
+	"menu",
+	"editBox",
+	"fileOpenDialog",
+	"colorSelectDialog",
+	"inOutFader",
+	"image",
+	"listBox",
+	"meshViewer",
+	"messageBox",
+	"modalScreen",
+	"scrollBar",
+	"staticText",
+	"tab",
+	"tabControl",
+	"toolBar",
+	"window",
+	0
+};
 
 } // end namespace gui
 } // end namespace irr

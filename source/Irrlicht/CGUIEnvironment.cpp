@@ -554,7 +554,7 @@ void CGUIEnvironment::readGUIElement(io::IXMLReader* reader, IGUIElement* parent
 			// find node type and create it
 			core::stringc attrName = reader->getAttributeValue(IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE);
 
-			addGUIElement(attrName.c_str(), parent);
+			node = addGUIElement(attrName.c_str(), parent);
 
 			if (!node)
 				os::Printer::log("Could not create GUI element of unknown type", attrName.c_str());
@@ -638,7 +638,7 @@ void CGUIEnvironment::writeGUIElement(io::IXMLWriter* writer, IGUIElement* node)
 		{
 			name = IRR_XML_FORMAT_GUI_ELEMENT;
 			writer->writeElement(name, false, IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE,
-				core::stringw(getGUIElementTypeName(node->getType())).c_str());
+				core::stringw(node->getTypeName()).c_str());
 		}
 
 		writer->writeLineBreak();
@@ -667,18 +667,6 @@ void CGUIEnvironment::writeGUIElement(io::IXMLWriter* writer, IGUIElement* node)
 
 	attr->drop();
 
-}
-
-
-//! Returns a typename from a scene node type or null if not found
-const c8* CGUIEnvironment::getGUIElementTypeName(EGUI_ELEMENT_TYPE type)
-{
-	const c8* name = 0;
-
-	for (int i=0; !name && i<(int)GUIElementFactoryList.size(); ++i)
-		name = GUIElementFactoryList[i]->getCreateableGUIElementTypeName(type);
-
-	return name;
 }
 
 

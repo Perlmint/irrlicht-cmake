@@ -66,6 +66,9 @@ namespace gui
 		//! returns the selected element
 		virtual IGUIElement* getSelectedElement();
 
+		//! this shoudln't be serialized, but this is included as it's an example
+		virtual const c8* getTypeName() { return "GUIEditor"; }
+
 	private:
 
 		bool isMyChild(IGUIElement* target);

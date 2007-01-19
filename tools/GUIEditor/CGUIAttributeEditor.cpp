@@ -127,6 +127,12 @@ void CGUIAttributeEditor::updateAttribs()
 		AttribList[i]->updateAttrib();
 }
 
+
+//
+// Attribute
+//
+
+
 CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 							io::IAttributes *attribs, u32 attribIndex, rect<s32> r) :
 	IGUIElement(EGUIET_ELEMENT, environment, parent, -1, r),

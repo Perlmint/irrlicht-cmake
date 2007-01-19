@@ -370,8 +370,6 @@ public:
 	//! reads an element
 	virtual void readGUIElement(io::IXMLReader* reader, IGUIElement* parent) =0;
 
-	virtual const c8* getGUIElementTypeName(EGUI_ELEMENT_TYPE type) =0;
-
 };
 
 
