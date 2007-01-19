@@ -1071,6 +1071,11 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 
 	// font doesn't exist, attempt to load it
 
+	if (!FileSystem->existFile(filename))
+	{
+		os::Printer::log("Could not load font because the file does not exist", filename, ELL_ERROR);
+		return 0;
+	}
 
 	io::IXMLReader *xml = FileSystem->createXMLReader(filename);
 	if (xml)
@@ -1116,15 +1121,12 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 			//CGUIFontVector* font = new CGUIFontVector(Driver);
 			//ifont = (IGUIFont*)font;
 			//if (!font->load(xml))
-			if (1)
-			{
-			}
 		}
 		xml->drop();
 	}
 
 
-	if ( 0 == ifont )
+	if (!ifont)
 	{
 
 		CGUIFont* font = new CGUIFont(Driver);

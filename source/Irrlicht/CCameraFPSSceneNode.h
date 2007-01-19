@@ -53,6 +53,18 @@ namespace scene
 		//! otherwise not.
 		virtual void setInputReceiverEnabled(bool enabled);
 
+		//! Sets the speed that this camera rotates
+		virtual void setRotateSpeed(const f32 speed);
+
+		//! Sets the speed that this camera moves
+		virtual void setMoveSpeed(const f32 speed);
+
+		//! Gets the rotation speed
+		virtual f32 getRotateSpeed();
+
+		// Gets the movement speed
+		virtual f32 getMoveSpeed();
+
 	private:
 
 		struct SCamKeyMap
@@ -72,7 +84,6 @@ namespace scene
 		f32 MoveSpeed;
 		f32 RotateSpeed;
 		f32 JumpSpeed;
-
 
 		gui::ICursorControl* CursorControl;
 

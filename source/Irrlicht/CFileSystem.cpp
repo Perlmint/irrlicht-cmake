@@ -14,6 +14,7 @@
 #include "os.h"
 #include "IrrCompileConfig.h"
 #include "CAttributes.h"
+#include "CMemoryReadFile.h"
 
 #ifdef _IRR_WINDOWS_
 #include <direct.h> // for _chdir
@@ -89,6 +90,15 @@ IReadFile* CFileSystem::createAndOpenFile(const c8* filename)
 	return file;
 }
 
+//! Creates an IReadFile interface for treating memory like a file.
+IReadFile* CFileSystem::createMemoryReadFile(void* memory, s32 len, 
+											const c8* fileName, bool deleteMemoryWhenDropped)
+{
+	if (!memory)
+		return 0;
+	else
+		return new CMemoryReadFile(memory, len, fileName, deleteMemoryWhenDropped);
+}
 
 //! Opens a file for write access.
 IWriteFile* CFileSystem::createAndWriteFile(const c8* filename, bool append)

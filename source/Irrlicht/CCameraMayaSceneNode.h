@@ -44,6 +44,18 @@ namespace scene
 		//! relative to the parent.
 		virtual void setTarget(const core::vector3df& newpos);
 
+		//! Sets the rotation speed
+		virtual void setRotateSpeed(const f32 speed);
+
+		//! Sets the movement speed
+		virtual void setMoveSpeed(const f32 speed);
+
+		//! Gets the rotation speed
+		virtual f32 getRotateSpeed();
+
+		// Gets the movement speed
+		virtual f32 getMoveSpeed();
+
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_CAMERA_MAYA; }
 

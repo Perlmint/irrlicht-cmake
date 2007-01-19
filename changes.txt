@@ -1,5 +1,9 @@
 Changes in version 1.3 (?? ??? 2007)
 
+- Added get and set functions for movement and rotation to the FPS and Maya cameras.
+
+- Exposed memory files through IFileSystem::createMemoryReadFile.
+
 - Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. It was returning 0 for all implementations previously. User defined IMesh derivates will also have to implement it now due to the removed empty implementation.
 
 - Fixed the getLightData method of ILightSceneNode by changing it from

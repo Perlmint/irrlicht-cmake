@@ -307,6 +307,30 @@ void CCameraMayaSceneNode::updateAnimationState()
 	currentZoom = (f32)Pos.getDistanceFrom(Target);
 }
 
+//! Sets the rotation speed
+void CCameraMayaSceneNode::setRotateSpeed(const f32 speed)
+{
+	rotateSpeed = speed;	
+}
+
+//! Sets the movement speed
+void CCameraMayaSceneNode::setMoveSpeed(const f32 speed)
+{
+	translateSpeed = speed;
+}
+
+//! Gets the rotation speed
+f32 CCameraMayaSceneNode::getRotateSpeed()
+{
+	return rotateSpeed;
+}
+
+// Gets the movement speed
+f32 CCameraMayaSceneNode::getMoveSpeed()
+{
+	return translateSpeed;
+}
+
 } // end namespace
 } // end namespace
 

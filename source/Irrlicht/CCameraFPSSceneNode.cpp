@@ -274,6 +274,30 @@ void CCameraFPSSceneNode::setInputReceiverEnabled(bool enabled)
    InputReceiverEnabled = enabled;
 } 
 
+//! Sets the rotation speed
+void CCameraFPSSceneNode::setRotateSpeed(const f32 speed)
+{
+	RotateSpeed = speed;	
+}
+
+//! Sets the movement speed
+void CCameraFPSSceneNode::setMoveSpeed(const f32 speed)
+{
+	MoveSpeed = speed;
+}
+
+//! Gets the rotation speed
+f32 CCameraFPSSceneNode::getRotateSpeed()
+{
+	return RotateSpeed;
+}
+
+// Gets the movement speed
+f32 CCameraFPSSceneNode::getMoveSpeed()
+{
+	return MoveSpeed;
+}
+
 } // end namespace
 } // end namespace
 
