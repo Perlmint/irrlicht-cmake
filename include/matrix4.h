@@ -239,12 +239,13 @@ namespace core
 	{
 		switch ( constructor )
 		{
-			case EM4CONST_IDENTITY:
-			case EM4CONST_INVERSE:
-				makeIdentity();
-				break;
 			case EM4CONST_NOTHING:
 			case EM4CONST_COPY:
+				break;
+			case EM4CONST_IDENTITY:
+			case EM4CONST_INVERSE:
+			default:
+				makeIdentity();
 				break;
 		}
 	}
@@ -1257,10 +1258,9 @@ namespace core
 	*/
 
 	inline void matrix4::buildTextureTransform( f32 rotateRad,
-												const core::vector2df &rotatecenter,
-												const core::vector2df &translate,
-												const core::vector2df &scale
-											)
+					const core::vector2df &rotatecenter,
+					const core::vector2df &translate,
+					const core::vector2df &scale)
 	{
 		f32 c = cosf(rotateRad);
 		f32 s = sinf(rotateRad);
