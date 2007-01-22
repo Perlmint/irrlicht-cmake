@@ -17,7 +17,6 @@
 #include "rect.h"
 #include "irrString.h"
 #include "irrArray.h"
-#include "IGUIFont.h"
 #include "IXMLReader.h"
 
 namespace irr
@@ -101,10 +100,6 @@ enum E_ATTRIBUTE_TYPE
 
 	// texture reference attribute
 	EAT_TEXTURE,
-
-	// gui font reference attribute
-	EAT_FONT,
-
 	// known attribute type count
 	EAT_COUNT,
 
@@ -536,10 +531,6 @@ public:
 
 	//! Sets an attribute as texture reference
 	virtual void setAttribute(s32 index, video::ITexture* texture) = 0;
-
-	/*
-		todo: Font Attribute
-	*/
 
 };
 

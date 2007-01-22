@@ -47,11 +47,10 @@ void CGUIMenu::draw()
 	IGUIFont* font = skin->getFont();
 
 	core::rect<s32> rect = AbsoluteRect;
-	core::rect<s32>* clip = &AbsoluteClippingRect;
 
 	// draw frame
 
-	skin->draw3DToolBar(this, rect, clip);
+	skin->draw3DToolBar(this, rect, &AbsoluteClippingRect);
 
 	// loop through all menu items
 
@@ -81,7 +80,7 @@ void CGUIMenu::draw()
 
 			if (font)
 				font->draw(Items[i].Text.c_str(), rect, 
-					skin->getColor(c), true, true, clip);
+					skin->getColor(c), true, true, &AbsoluteClippingRect);
 		}
 	}
 
@@ -192,8 +191,8 @@ void CGUIMenu::recalculateSize()
 
 	rect.LowerRightCorner.X = width;
 	rect.LowerRightCorner.Y = height;
-	RelativeRect = rect;
-	updateAbsolutePosition();
+
+	setRelativePosition(rect);
 
 	// recalculate submenus
 	for (i=0; i<(s32)Items.size(); ++i)

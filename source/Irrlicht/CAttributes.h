@@ -455,10 +455,6 @@ protected:
 	IAttribute* getAttributeP(const c8* attributeName);
 
 	video::IVideoDriver* Driver;
-
-	static wchar_t	tmpBufferW[1024];
-	static c8		tmpBuffer [1024];
-
 };
 
 
@@ -472,13 +468,8 @@ public:
 	virtual f32 getFloat()					{ return 0; }
 	virtual video::SColorf getColorf()		{ return video::SColorf(1.0f,1.0f,1.0f,1.0f); }
 	virtual video::SColor getColor()		{ return video::SColor(255,255,255,255); }
-	virtual void getString(char* target)	{ target[0] = 0; };
-	virtual void getString(wchar_t* target) 
-	{ 
-		c8 tmp[1024];
-		getString(tmp);
-		wcscpy(target,core::stringw(tmp).c_str());
-	}
+	virtual core::stringc getString()		{ return core::stringc(getStringW().c_str()); }
+	virtual core::stringw getStringW()		{ return core::stringw(); }
 	virtual core::array<core::stringw> getArray()	{ return core::array<core::stringw>(); };
 	virtual bool getBool()					{ return false; }
 	virtual void getBinary(void* outdata, s32 maxLength) {};
@@ -499,7 +490,6 @@ public:
 	virtual core::plane3df getPlane()		{ return core::plane3df(); }
 
 	virtual video::ITexture* getTexture()	{ return 0; }
-	virtual gui::IGUIFont*	getFont()		{ return 0; }
 	virtual const char* getEnum()			{ return 0; }
 
 	virtual void setInt(s32 intValue)			{};
@@ -529,7 +519,6 @@ public:
 
 	virtual void setEnum(const char* enumValue, const char* const* enumerationLiterals) {};
 	virtual void setTexture(video::ITexture*)	{};
-	virtual void setFont(gui::IGUIFont*)		{};
 
 	core::stringc Name;
 

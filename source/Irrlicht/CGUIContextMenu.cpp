@@ -31,6 +31,8 @@ CGUIContextMenu::CGUIContextMenu(IGUIEnvironment* environment,
 
 	if (getFocus)
 		Environment->setFocus(this);
+
+	setNotClipped(true);
 }
 
 
@@ -472,9 +474,7 @@ void CGUIContextMenu::recalculateSize()
 	rect.LowerRightCorner.X = RelativeRect.UpperLeftCorner.X + width;
 	rect.LowerRightCorner.Y = RelativeRect.UpperLeftCorner.Y + height;
 
-	RelativeRect = rect;
-
-	updateAbsolutePosition();
+	setRelativePosition(rect);
 
 	// recalculate submenus
 	for (i=0; i<(s32)Items.size(); ++i)

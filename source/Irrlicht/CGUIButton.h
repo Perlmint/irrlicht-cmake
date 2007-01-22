@@ -70,7 +70,6 @@ namespace gui
 	private:
 
 		bool Pressed;
-		bool NoClip;
 		bool IsPushButton;
 		bool UseAlphaChannel;
 

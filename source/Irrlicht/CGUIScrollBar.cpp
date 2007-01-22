@@ -21,16 +21,15 @@ CGUIScrollBar::CGUIScrollBar(bool horizontal, IGUIEnvironment* environment,
 							 bool noclip)
 : IGUIScrollBar(environment, parent, id, rectangle), UpButton(0), DownButton(0),
 	Horizontal(horizontal), Pos(0), Max(100), SmallStep(10), DrawHeight(0),
-	DrawPos(0), Dragging(false), NoClip(noclip)
+	DrawPos(0), Dragging(false)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIScrollBar");
 	#endif
 
-	if (noclip)
-		AbsoluteClippingRect = AbsoluteRect;
-
 	refreshControls();
+
+	setNotClipped(noclip);
 
 	setPos(0);
 }
@@ -132,13 +131,9 @@ void CGUIScrollBar::draw()
 	irr::video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32> rect = AbsoluteRect;
-	core::rect<s32>* clip = 0;
-
-	if (!NoClip)
-		clip = &AbsoluteClippingRect;
 
 	// draws the background
-	driver->draw2DRectangle(skin->getColor(EGDC_SCROLLBAR), rect, clip);
+	driver->draw2DRectangle(skin->getColor(EGDC_SCROLLBAR), rect, &AbsoluteClippingRect);
 
 	if (Max!=0)
 	{
@@ -154,7 +149,7 @@ void CGUIScrollBar::draw()
 			rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + DrawHeight;	
 		}
 
-		skin->draw3DButtonPaneStandard(this, rect, clip);
+		skin->draw3DButtonPaneStandard(this, rect, &AbsoluteClippingRect);
 	}
 
 	// draw buttons
@@ -164,8 +159,6 @@ void CGUIScrollBar::draw()
 void CGUIScrollBar::updateAbsolutePosition()
 {
 	IGUIElement::updateAbsolutePosition();
-	if (NoClip)
-		AbsoluteClippingRect = AbsoluteRect;
 	refreshControls();
 }
 
@@ -295,11 +288,10 @@ void CGUIScrollBar::serializeAttributes(io::IAttributes* out, io::SAttributeRead
 {
 	IGUIScrollBar::serializeAttributes(out,options);
 
-	out->addBool	("Horizontal",	Horizontal);
-	out->addInt	("Value",	Pos);
-	out->addInt	("Max",		Max);
+	out->addBool("Horizontal",	Horizontal);
+	out->addInt	("Value",		Pos);
+	out->addInt	("Max",			Max);
 	out->addInt	("SmallStep",	SmallStep);
-	out->addBool	("NoClip",	NoClip);
 }
 
 //! Reads attributes of the element

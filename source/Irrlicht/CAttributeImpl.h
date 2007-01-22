@@ -44,9 +44,9 @@ public:
 		return BoolValue;
 	}
 
-	virtual void getString(char* target)
+	virtual core::stringw getStringW()
 	{
-		strcpy(target, BoolValue ? "true" : "false");
+		return core::stringw( BoolValue ? L"true" : L"false" );
 	}
 
 	virtual void setInt(s32 intValue)
@@ -106,9 +106,9 @@ public:
 		return (Value != 0);
 	}
 
-	virtual void getString(char* target)
+	virtual core::stringw getStringW()
 	{
-		sprintf(target, "%d", Value);
+		return core::stringw(Value);
 	}
 
 	virtual void setInt(s32 intValue)
@@ -166,9 +166,9 @@ public:
 		return (Value != 0);
 	}
 
-	virtual void getString(char* target)
+	virtual core::stringw getStringW()
 	{
-		sprintf(target, "%f", Value);
+		return core::stringw(Value);
 	}
 
 	virtual void setInt(s32 intValue)
@@ -442,19 +442,38 @@ public:
 		
 	}
 
-	virtual void getString(char* target)
+
+	virtual core::stringc getString()
 	{
-		char outstr[50];
-		target[0] = '\0';
+		core::stringc outstr;
+		
 		for (u32 i=0; i <Count; ++i)
 		{
 			if (IsFloat)
-				sprintf(outstr, "%f%s", ValueF[i], i==Count-1 ? "" : ", " );
+				outstr += ValueF[i];
 			else
-				sprintf(outstr, "%d%s", ValueI[i], i==Count-1 ? "" : ", " );
+				outstr += ValueI[i];
 
-			strcat(target,outstr);
+			if (i < Count-1)
+				outstr += L", ";
 		}
+		return outstr;
+	}
+	virtual core::stringw getStringW()
+	{
+		core::stringw outstr;
+		
+		for (u32 i=0; i <Count; ++i)
+		{
+			if (IsFloat)
+				outstr += ValueF[i];
+			else
+				outstr += ValueI[i];
+
+			if (i < Count-1)
+				outstr += L", ";
+		}
+		return outstr;
 	}
 
 	virtual core::position2di getPosition()
@@ -1065,10 +1084,12 @@ public:
 		setInt((s32)floatValue);
 	}
 
-	virtual void getString(char* target)
+	virtual core::stringw getStringW()
 	{
+		wchar_t tmp[10];
 		video::SColor c = getColor();
-		sprintf(target, "%08x", c.color);
+		_swprintf(tmp, L"%08x", c.color);
+		return core::stringw(tmp);
 	}
 
 	virtual void setString(const char* text)
@@ -1219,9 +1240,14 @@ public:
 		return (getInt() != 0); // does not make a lot of sense, I know
 	}
 
-	virtual void getString(char* target)
+	virtual core::stringc getString()
 	{
-		strcpy(target, Value.c_str());
+		return Value;
+	}
+
+	virtual core::stringw getStringW()
+	{
+		return core::stringw(Value.c_str());
 	}
 
 	virtual void setInt(s32 intValue)
@@ -1316,19 +1342,19 @@ public:
 			return Value.equals_ignore_case("true");
 	}
 
-	virtual void getString(char* target)
+	virtual core::stringc getString()
 	{
 		if (IsStringW)
-			strcpy(target, core::stringc(ValueW.c_str()).c_str() );
+			return core::stringc(ValueW.c_str());
 		else
-			strcpy(target, Value.c_str());
+			return Value;
 	}
-	virtual void getString(wchar_t* target)
+	virtual core::stringw getStringW()
 	{
 		if (IsStringW)
-			wcscpy(target, ValueW.c_str() );
+			return ValueW;
 		else
-			wcscpy(target, core::stringw(Value.c_str()).c_str());
+			return core::stringw(Value.c_str());
 	}
 
 	virtual void setInt(s32 intValue)

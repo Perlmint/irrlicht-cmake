@@ -20,7 +20,7 @@ namespace gui
 	public:
 
 		//! constructor
-		CGUIFileOpenDialog(io::IFileSystem* fs, const wchar_t* title, IGUIEnvironment* environment, IGUIElement* parent, s32 id);
+		CGUIFileOpenDialog(const wchar_t* title, IGUIEnvironment* environment, IGUIElement* parent, s32 id);
 
 		//! destructor
 		virtual ~CGUIFileOpenDialog();

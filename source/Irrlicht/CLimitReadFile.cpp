@@ -52,7 +52,7 @@ s32 CLimitReadFile::read(void* buffer, u32 sizeToRead)
 	if (pos >= AreaEnd)
 		return 0;
 
-	if (pos + sizeToRead >= AreaEnd)
+	if (pos + (s32)sizeToRead >= AreaEnd)
 		sizeToRead = AreaEnd - pos;
 
 	return File->read(buffer, sizeToRead);

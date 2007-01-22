@@ -11,6 +11,7 @@
 #include "irrTypes.h"
 #include "IGUIWindow.h"
 #include "IGUISkin.h"
+#include "IFileSystem.h"
 
 namespace irr
 {
@@ -73,6 +74,9 @@ public:
 
 	//! Returns the current video driver.
 	virtual video::IVideoDriver* getVideoDriver() = 0;
+
+	//! Returns the file system.
+	virtual io::IFileSystem* getFileSystem() = 0;
 
 	//! removes all elements from the environment.
 	virtual void clear() = 0;

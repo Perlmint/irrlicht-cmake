@@ -30,7 +30,6 @@ CGUIListBox::CGUIListBox(IGUIEnvironment* environment, IGUIElement* parent,
 
 	IGUISkin* skin = Environment->getSkin();
 	s32 s = skin->getSize(EGDS_SCROLLBAR_SIZE);
-	//ScrollBar = Environment->addScrollBar(false, core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()), this);
 
 	if (!clip)
 		AbsoluteClippingRect = AbsoluteRect;

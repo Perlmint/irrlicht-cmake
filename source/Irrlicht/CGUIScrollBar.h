@@ -64,7 +64,6 @@ namespace gui
 
 		bool Dragging;
 		bool Horizontal;
-		bool NoClip;
 		s32 Pos;
 		s32 DrawPos;
 		s32 DrawHeight;

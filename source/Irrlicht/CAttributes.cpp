@@ -13,9 +13,6 @@ namespace irr
 namespace io
 {
 
-c8		CAttributes::tmpBuffer [1024];
-wchar_t CAttributes::tmpBufferW[1024];
-
 CAttributes::CAttributes(video::IVideoDriver* driver)
 : Driver(driver)
 {
@@ -77,12 +74,9 @@ core::stringc CAttributes::getAttributeAsString(const c8* attributeName)
 
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
-	{
-		att->getString(tmpBuffer);
-		str = tmpBuffer;
-	}
-
-	return str;
+		return att->getString();
+	else
+		return str;
 }
 
 //! Gets a string attribute.
@@ -92,7 +86,10 @@ void CAttributes::getAttributeAsString(const c8* attributeName, char* target)
 {
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
-		att->getString(target);
+	{
+		core::stringc str = att->getString();
+		strcpy(target,str.c_str());
+	}
 	else
 		target[0] = 0;
 }
@@ -104,10 +101,7 @@ core::stringc CAttributes::getAttributeAsString(s32 index)
 	core::stringc str;
 
 	if (index >= 0 && index < (int)Attributes.size())
-	{
-		Attributes[index]->getString(tmpBuffer);
-		str = tmpBuffer;
-	}
+		return Attributes[index]->getString();
 
 	return str;
 }
@@ -148,10 +142,7 @@ core::stringw CAttributes::getAttributeAsStringW(const c8* attributeName)
 
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
-	{
-		att->getString(tmpBufferW);
-		str = tmpBufferW;
-	}
+		str = att->getStringW();
 
 	return str;
 }
@@ -163,7 +154,10 @@ void CAttributes::getAttributeAsStringW(const c8* attributeName, wchar_t* target
 {
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
-		att->getString(target);
+	{
+		core::stringw str = att->getStringW();
+		wcscpy(target,str.c_str());
+	}
 	else
 		target[0] = 0;
 }
@@ -176,8 +170,7 @@ core::stringw CAttributes::getAttributeAsStringW(s32 index)
 
 	if (index >= 0 && index < (int)Attributes.size())
 	{
-		Attributes[index]->getString(tmpBufferW);
-		str = tmpBufferW;
+		str = Attributes[index]->getStringW();
 	}
 
 	return str;
@@ -1060,7 +1053,7 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 	else
 	if (element == L"texture")
 	{
-		addTexture(name.c_str(), 0);
+		addString(name.c_str(), "");
 		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
@@ -1116,9 +1109,10 @@ bool CAttributes::write(io::IXMLWriter* writer)
 	s32 i=0;
 	for (; i<(s32)Attributes.size(); ++i)
 	{
-		// Special case for writing arrays
 		if ( Attributes[i]->getType() == EAT_STRINGWARRAY )
 		{
+			// Special case for writing arrays
+
 			wchar_t tmpName[20];
 			core::array<core::stringw> arraynames, arrayvalues;
 			core::array<core::stringw> arrayinput = Attributes[i]->getArray();
@@ -1147,12 +1141,10 @@ bool CAttributes::write(io::IXMLWriter* writer)
 		}
 		else
 		{
-			Attributes[i]->getString(tmpBuffer);
-
 			writer->writeElement(
 				Attributes[i]->getTypeString(), true,
 				L"name", core::stringw(Attributes[i]->Name.c_str()).c_str(),
-				L"value", core::stringw(tmpBuffer).c_str() );
+				L"value", Attributes[i]->getStringW().c_str() );
 		}
 
 		writer->writeLineBreak();

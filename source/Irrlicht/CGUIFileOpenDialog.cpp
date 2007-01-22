@@ -23,13 +23,13 @@ const s32 FOD_HEIGHT = 250;
 
 
 //! constructor
-CGUIFileOpenDialog::CGUIFileOpenDialog(io::IFileSystem* fs, const wchar_t* title, IGUIEnvironment* environment, IGUIElement* parent, s32 id)
+CGUIFileOpenDialog::CGUIFileOpenDialog(const wchar_t* title, IGUIEnvironment* environment, IGUIElement* parent, s32 id)
 : IGUIFileOpenDialog(environment, parent, id,
  core::rect<s32>((parent->getAbsolutePosition().getWidth()-FOD_WIDTH)/2,
 					(parent->getAbsolutePosition().getHeight()-FOD_HEIGHT)/2,	
 					(parent->getAbsolutePosition().getWidth()-FOD_WIDTH)/2+FOD_WIDTH,
 					(parent->getAbsolutePosition().getHeight()-FOD_HEIGHT)/2+FOD_HEIGHT)),	
-  Dragging(false), FileNameText(0), FileSystem(fs), FileList(0)
+  Dragging(false), FileNameText(0), FileList(0)
 {
 	#ifdef _DEBUG
 	IGUIElement::setDebugName("CGUIFileOpenDialog");
@@ -43,24 +43,31 @@ CGUIFileOpenDialog::CGUIFileOpenDialog(io::IFileSystem* fs, const wchar_t* title
 	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_CLOSE);
 	CloseButton->setSubElement(true);
 	CloseButton->setOverrideFont(Environment->getBuiltInFont());
+	CloseButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 	CloseButton->grab();
 
 	OKButton = Environment->addButton(core::rect<s32>(RelativeRect.getWidth()-80, 30, RelativeRect.getWidth()-10, 50), this, -1, L"OK");
 	OKButton->setSubElement(true);
+	OKButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 	OKButton->grab();
 
 	CancelButton = Environment->addButton(core::rect<s32>(RelativeRect.getWidth()-80, 55, RelativeRect.getWidth()-10, 75), this, -1, L"Cancel");
 	CancelButton->setSubElement(true);
+	CancelButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 	CancelButton->grab();
 
 	FileBox = Environment->addListBox(core::rect<s32>(10, 55, RelativeRect.getWidth()-90, 230), this, -1, true);
 	FileBox->setSubElement(true);
+	FileBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	FileBox->grab();
 	//Environment->setFocus(FileBox);
 
 	FileNameText = Environment->addStaticText(0, core::rect<s32>(10, 30, RelativeRect.getWidth()-90, 50), true, false, this);
 	FileNameText->setSubElement(true);
+	FileNameText->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 	FileNameText->grab();
+
+	FileSystem = Environment->getFileSystem();
 
 	if (FileSystem)
 		FileSystem->grab();

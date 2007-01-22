@@ -81,6 +81,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	SEnvMapper* envm = 0;
 
 	static irr::s32 ClickCount=0;
+	if (GetCapture() != hWnd && ClickCount > 0)
+		ClickCount = 0;
 
 	switch (message)
 	{

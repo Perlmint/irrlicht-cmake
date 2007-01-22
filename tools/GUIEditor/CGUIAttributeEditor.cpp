@@ -2,9 +2,9 @@
 #include "CGUIAttributeEditor.h"
 #include "IGUIEnvironment.h"
 
-// need to do something about the scope of createEmptyAttributes
 #include "IVideoDriver.h"
-#include "../../source/Irrlicht/CAttributes.h"
+#include "IAttributes.h"
+#include "IGUIFont.h"
 
 using namespace irr;
 using namespace core;
@@ -20,9 +20,10 @@ CGUIAttributeEditor::CGUIAttributeEditor(IGUIEnvironment* environment, s32 id, I
 	#endif
 
 	// create attributes
-	Attribs = new irr::io::CAttributes(environment->getVideoDriver());
+	Attribs = environment->getFileSystem()->createEmptyAttributes(Environment->getVideoDriver());
 	// add scrollbar
 	ScrollBar = environment->addScrollBar(false, rect<s32>(0, 0,100,100), this);
+	ScrollBar->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	ScrollBar->grab();
 	ScrollBar->setSubElement(true);
 
@@ -104,6 +105,7 @@ void CGUIAttributeEditor::refreshAttribs()
 		// dont grab it because we created it with new
 		AttribList[i]->setSubElement(true);
 		AttribList[i]->setRelativePosition(r);
+		AttribList[i]->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 		r += position2di(0, r.getHeight() + 2);
 	}
 
@@ -125,6 +127,30 @@ void CGUIAttributeEditor::updateAttribs()
 {
 	for (u32 i=0; i<AttribList.size(); ++i)
 		AttribList[i]->updateAttrib();
+}
+
+void CGUIAttributeEditor::updateAbsolutePosition()
+{
+	// get real pos from desired pos
+	IGUIElement::updateAbsolutePosition();
+
+	s32 p=0;
+	// get lowest position
+	if (AttribList.size())
+		p = AttribList[AttribList.size() - 1]->getRelativePosition().LowerRightCorner.Y + ScrollBar->getPos();
+
+	p -= RelativeRect.getHeight();
+
+	if (p > 1)
+	{
+		ScrollBar->setMax(p);
+		ScrollBar->setVisible(true);
+	}
+	else
+	{
+		ScrollBar->setMax(0);
+		ScrollBar->setVisible(false);
+	}
 }
 
 
@@ -155,6 +181,7 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 			rect<s32>(0, 0, r.getWidth(), r.getHeight()/2),
 			false, false, this, -1, false);
 	AttribName->grab();
+	AttribName->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 
 	rect<s32> r2(0, r.getHeight()/2, r.getWidth(), r.getHeight());
 
@@ -172,6 +199,7 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 				r2,
 				true, this, -1);
 		AttribEditBox->grab();
+		AttribEditBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 	}
 }
 

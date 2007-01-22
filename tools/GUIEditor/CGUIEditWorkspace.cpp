@@ -155,7 +155,10 @@ void CGUIEditWorkspace::setSelectedElement(IGUIElement *sel)
 	else
 		SelectedElement = 0;
 
-	Environment->setFocus(focus);
+	if (focus)
+		Environment->setFocus(focus);
+	else
+		Environment->setFocus(this);
 }
 
 IGUIElement* CGUIEditWorkspace::getSelectedElement()
@@ -217,6 +220,23 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 	IGUIFileOpenDialog* dialog=0;
 	switch(event.EventType)
 	{
+
+	case EET_KEY_INPUT_EVENT:
+		if (!event.KeyInput.PressedDown)
+		{
+			if (event.KeyInput.Key == KEY_DELETE && SelectedElement)
+			{
+				IGUIElement* el = SelectedElement;
+				setSelectedElement(0);
+				MouseOverElement = 0;
+				el->remove();
+				return true;
+			}
+
+			return true;
+		}
+		break;
+
 	case EET_MOUSE_INPUT_EVENT:
 		switch(event.MouseInput.Event)
 		{
@@ -228,10 +248,17 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 					selectPreviousSibling();
 				else
 					selectNextSibling();
-
 			}
 			break;
 		case EMIE_LMOUSE_PRESSED_DOWN:
+		{
+			IGUIElement* newSelection = getElementFromPoint(core::position2di(event.MouseInput.X,event.MouseInput.Y));
+			if (newSelection != this) // redirect event
+			{
+				Environment->setFocus(newSelection);
+				return true;
+			}
+
 			// hide the gui editor
 			if (EditorWindow)
 				EditorWindow->setVisible(false);
@@ -263,6 +290,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			}
 
 			break;
+		}
 		case EMIE_RMOUSE_PRESSED_DOWN:
 			if (CurrentMode == EGUIEDM_SELECT_NEW_PARENT || CurrentMode >= EGUIEDM_MOVE)
 			{
@@ -576,8 +604,8 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 		break;
 	}
 
+	// we never pass events back to the GUI we're editing!
 	return true;
-	//return IGUIElement::OnEvent(event);
 }
 
 
@@ -609,7 +637,6 @@ void CGUIEditWorkspace::draw()
 		MouseOverElement != Parent)
 	{
 		core::rect<s32> r = MouseOverElement->getAbsolutePosition();
-		r.clipAgainst(MouseOverElement->getParent()->getAbsolutePosition());
 		driver->draw2DRectangle(video::SColor(100,0,0,255), r);
 	}
 	if (SelectedElement && CurrentMode == EGUIEDM_SELECT)

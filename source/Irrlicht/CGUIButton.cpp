@@ -17,12 +17,13 @@ namespace gui
 CGUIButton::CGUIButton(IGUIEnvironment* environment, IGUIElement* parent,
 					   s32 id, core::rect<s32> rectangle, bool noclip)
 : IGUIButton(environment, parent, id, rectangle), Pressed(false), 
-	OverrideFont(0), NoClip(noclip), Image(0), PressedImage(0),
+	OverrideFont(0), Image(0), PressedImage(0),
 	IsPushButton(false), UseAlphaChannel(false)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIButton");
 	#endif
+	setNotClipped(noclip);
 }
 
 
@@ -160,13 +161,10 @@ void CGUIButton::draw()
 		font = skin->getFont();
 
 	core::rect<s32> rect = AbsoluteRect;
-	core::rect<s32> *clip = &AbsoluteClippingRect;
-	if (NoClip)
-		clip = 0;
 
 	if (!Pressed)
 	{
-		skin->draw3DButtonPaneStandard(this, rect, clip);
+		skin->draw3DButtonPaneStandard(this, rect, &AbsoluteClippingRect);
 
 		if (Image)
 		{
@@ -174,13 +172,13 @@ void CGUIButton::draw()
 			pos.X -= ImageRect.getWidth() / 2;
 			pos.Y -= ImageRect.getHeight() / 2;
 
-			driver->draw2DImage(Image, pos, ImageRect, clip, 
+			driver->draw2DImage(Image, pos, ImageRect, &AbsoluteClippingRect, 
 				video::SColor(255,255,255,255), UseAlphaChannel);
 		}
 	}
 	else
 	{
-		skin->draw3DButtonPanePressed(this, rect, clip);
+		skin->draw3DButtonPanePressed(this, rect, &AbsoluteClippingRect);
 
 		if (PressedImage)
 		{
@@ -193,7 +191,7 @@ void CGUIButton::draw()
 				pos.X += 1;
 				pos.Y += 1;
 			}
-			driver->draw2DImage(PressedImage, pos, PressedImageRect, clip,
+			driver->draw2DImage(PressedImage, pos, PressedImageRect, &AbsoluteClippingRect,
 				video::SColor(255,255,255,255), UseAlphaChannel);
 		}
 	}
@@ -206,8 +204,8 @@ void CGUIButton::draw()
 
 		if (font)
 			font->draw(Text.c_str(), rect,
-			skin->getColor(IsEnabled ? EGDC_BUTTON_TEXT : EGDC_GRAY_TEXT), true, true, 
-				clip);
+				skin->getColor(IsEnabled ? EGDC_BUTTON_TEXT : EGDC_GRAY_TEXT), true, true, 
+					&AbsoluteClippingRect);
 	}
 
 	IGUIElement::draw();
@@ -333,34 +331,41 @@ void CGUIButton::serializeAttributes(io::IAttributes* out, io::SAttributeReadWri
 	if (IsPushButton)
 		out->addBool	("Pressed",			Pressed);
 
-	out->addTexture	("Image",			Image);
+	out->addTexture ("Image",			Image);
 	out->addRect	("ImageRect",		ImageRect);
 	out->addTexture	("PressedImage",	PressedImage);
 	out->addRect	("PressedImageRect",PressedImageRect);
 
 	out->addBool		("UseAlphaChannel",	UseAlphaChannel);
-	out->addBool		("NoClip",			NoClip);
 
-	//   out->addFont  ("OverrideFont",	OverrideFont);
+	//   out->addString  ("OverrideFont",	OverrideFont);
 }
 
 //! Reads attributes of the element
 void CGUIButton::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
 {
+	video::IVideoDriver *drv = Environment->getVideoDriver();
 
 	IGUIButton::deserializeAttributes(in,options);
 
 	IsPushButton	= in->getAttributeAsBool("PushButton");
-	if (IsPushButton)
-		Pressed		= in->getAttributeAsBool("Pressed");
+	Pressed		= IsPushButton ? in->getAttributeAsBool("Pressed") : false;
 
-	setImage( in->getAttributeAsTexture("Image"), in->getAttributeAsRect("ImageRect") );
-	setPressedImage(in->getAttributeAsTexture("PressedImage"), in->getAttributeAsRect("PressedImageRect"));
+	core::rect<s32> rec = in->getAttributeAsRect("ImageRect");
+	if (rec.isValid())
+		setImage( in->getAttributeAsTexture("Image"), rec);
+	else
+		setImage( in->getAttributeAsTexture("Image") );
 
-	NoClip			= in->getAttributeAsBool("NoClip");
+	rec = in->getAttributeAsRect("PressedImageRect");
+	if (rec.isValid())
+		setPressedImage( in->getAttributeAsTexture("PressedImage"), rec);
+	else
+		setPressedImage( in->getAttributeAsTexture("PressedImage") );
+
 	UseAlphaChannel = in->getAttributeAsBool("UseAlphaChannel");
 
-	//   setOverrideFont(in->getAttributeAsFont("OverrideFont"));
+	//   setOverrideFont(in->getAttributeAsString("OverrideFont"));
 
 	updateAbsolutePosition();
 }

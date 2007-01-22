@@ -42,7 +42,7 @@ int main()
 	
 	while(device->run()) 
 	{
-		device->sleep(20);
+		device->sleep(10);
 
 		if (device->isWindowActive())
 		{

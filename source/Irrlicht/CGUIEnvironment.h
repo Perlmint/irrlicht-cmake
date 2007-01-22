@@ -36,6 +36,9 @@ public:
 	//! returns the current video driver
 	virtual video::IVideoDriver* getVideoDriver();
 
+	//! returns the current video driver
+	virtual io::IFileSystem* getFileSystem();
+
 	//! posts an input event to the environment
 	virtual bool postEventFromUser(SEvent event);
 

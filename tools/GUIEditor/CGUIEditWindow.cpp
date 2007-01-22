@@ -4,6 +4,7 @@
 #include "IGUIEnvironment.h"
 #include "IGUIElementFactory.h"
 #include "IAttributes.h"
+#include "IGUIFont.h"
 
 using namespace irr;
 using namespace gui;
@@ -11,7 +12,7 @@ using namespace gui;
 //! constructor
 CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rectangle, IGUIElement *parent)
 		 : IGUIWindow(environment, parent, -1, rectangle),
-		 Dragging(false), SelectedElement(0), AttribEditor(0)
+		 Dragging(false), Resizing(false), SelectedElement(0), AttribEditor(0)
 
 {
 
@@ -30,11 +31,19 @@ CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rec
 	s32 th = skin->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 
 	setRelativePosition(core::rect<s32>(50,50,250,500));
+	setMinSize( core::dimension2di(200,400));
 
 	AttribEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor",this);
 	AttribEditor->grab();
-	AttribEditor->setRelativePosition(core::rect<s32>(1,th+5,200,450-th-5));
 	AttribEditor->setSubElement(true);
+	AttribEditor->setRelativePosition(core::rect<s32>(1,th+5,200-th,450-th-5));
+	AttribEditor->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+	
+	ResizeButton = environment->addStaticText(L"/",core::rect<s32>(199-th,449-th,199,449), true, false, this, true);
+	ResizeButton->grab();
+	ResizeButton->setSubElement(true);
+	ResizeButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT);
+
 }
 
 //! destructor
@@ -43,6 +52,8 @@ CGUIEditWindow::~CGUIEditWindow()
 	// drop everything
 	if (AttribEditor)
 		AttribEditor->drop();
+	if (ResizeButton)
+		ResizeButton->drop();
 }
 
 void CGUIEditWindow::setSelectedElement(IGUIElement *sel)
@@ -80,7 +91,6 @@ void CGUIEditWindow::draw()
 	IGUISkin* skin = Environment->getSkin();
 
 	core::rect<s32> rect = AbsoluteRect;
-	core::rect<s32> *cl = &AbsoluteClippingRect;
 
 	// draw body fast
 	rect = skin->draw3DWindowBackground(this, true, skin->getColor(EGDC_ACTIVE_BORDER),
@@ -94,7 +104,7 @@ void CGUIEditWindow::draw()
 
 		IGUIFont* font = skin->getFont();
 		if (font)
-			font->draw(Text.c_str(), rect, skin->getColor(EGDC_ACTIVE_CAPTION), false, true, cl);
+			font->draw(Text.c_str(), rect, skin->getColor(EGDC_ACTIVE_CAPTION), false, true, &AbsoluteClippingRect);
 	}
 
 	IGUIElement::draw();
@@ -111,6 +121,7 @@ bool CGUIEditWindow::OnEvent(SEvent event)
 		{
 		case EGET_ELEMENT_FOCUS_LOST:
 			Dragging = false;
+			Resizing = false;
 			return true;
 
 			break;
@@ -124,22 +135,41 @@ bool CGUIEditWindow::OnEvent(SEvent event)
 		switch(event.MouseInput.Event)
 		{
 		case EMIE_LMOUSE_PRESSED_DOWN:
+		{
+			
 			DragStart.X = event.MouseInput.X;
 			DragStart.Y = event.MouseInput.Y;
-			if (!Environment->hasFocus(this))
+
+			IGUIElement* clickedElement = getElementFromPoint(DragStart);
+
+			if (clickedElement == this)
 			{
 				Dragging = true;
 				Environment->setFocus(this);
 				if (Parent)
 					Parent->bringToFront(this);
+				return true;
 			}
-			return true;
+			else if (clickedElement == ResizeButton)
+			{
+				Resizing = true;
+				Environment->setFocus(this);
+				if (Parent)
+					Parent->bringToFront(this);
+				return true;
+			}
+			break;
+		}
 		case EMIE_LMOUSE_LEFT_UP:
-			Dragging = false;
-			Environment->removeFocus(this);
-			return true;
+			if (Dragging || Resizing)
+			{
+				Dragging = false;
+				Environment->removeFocus(this);
+				return true;
+			}
+			break;
 		case EMIE_MOUSE_MOVED:
-			if (Dragging)
+			if (Dragging || Resizing)
 			{
 				// gui window should not be dragged outside of its parent
 				if (Parent)
@@ -149,10 +179,20 @@ bool CGUIEditWindow::OnEvent(SEvent event)
 						event.MouseInput.Y > Parent->getAbsolutePosition().LowerRightCorner.Y -1)
 
 						return true;
+				core::position2di diff(event.MouseInput.X - DragStart.X, event.MouseInput.Y - DragStart.Y);
+				if (Dragging)
+				{
+					move(diff);
+					DragStart.X = event.MouseInput.X;
+					DragStart.Y = event.MouseInput.Y;
+				}
+				else if (Resizing)
+				{
+					core::position2di dp = RelativeRect.LowerRightCorner + diff;
+					setRelativePosition( core::rect<s32>(RelativeRect.UpperLeftCorner, dp));
+					DragStart += dp - RelativeRect.LowerRightCorner + diff;
+				}
 
-				move(core::position2d<s32>(event.MouseInput.X - DragStart.X, event.MouseInput.Y - DragStart.Y));
-				DragStart.X = event.MouseInput.X;
-				DragStart.Y = event.MouseInput.Y;
 				return true;
 			}
 			break;

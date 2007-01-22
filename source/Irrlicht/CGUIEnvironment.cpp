@@ -226,6 +226,13 @@ video::IVideoDriver* CGUIEnvironment::getVideoDriver()
 	return Driver;
 }
 
+//! returns the current file system
+io::IFileSystem* CGUIEnvironment::getFileSystem()
+{
+	return FileSystem;
+}
+
+
 //! clear all GUI elements
 void CGUIEnvironment::clear()
 {
@@ -622,7 +629,7 @@ void CGUIEnvironment::writeGUIElement(io::IXMLWriter* writer, IGUIElement* node)
 
 	// write properties
 
-	io::IAttributes* attr = FileSystem->createEmptyAttributes(Driver);
+	io::IAttributes* attr = FileSystem->createEmptyAttributes();
 	node->serializeAttributes(attr);
 
 	// all gui elements must have at least one attribute
@@ -883,8 +890,7 @@ IGUIFileOpenDialog* CGUIEnvironment::addFileOpenDialog(const wchar_t* title,
 		parent->drop();
 	}
 
-	IGUIFileOpenDialog* d = new CGUIFileOpenDialog(FileSystem, title,
-			this, parent, id);
+	IGUIFileOpenDialog* d = new CGUIFileOpenDialog(title, this, parent, id);
 
 	d->drop();
 	return d;

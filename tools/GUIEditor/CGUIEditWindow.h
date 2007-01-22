@@ -42,11 +42,13 @@ namespace gui
 
 		// for dragging the window
 		bool					Dragging;
+		bool					Resizing;
 		core::position2d<s32>	DragStart;
 
-		IGUIElement				*SelectedElement; // current selected element
+		IGUIElement*			SelectedElement; // current selected element
 
-		CGUIAttributeEditor		*AttribEditor;	// edits the current attribute
+		CGUIAttributeEditor*	AttribEditor;	// edits the current attribute
+		IGUIStaticText*			ResizeButton;
 
 	};
 
