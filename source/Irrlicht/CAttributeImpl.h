@@ -562,6 +562,164 @@ public:
 		return r;
 	}
 
+	virtual core::matrix4 getMatrix()
+	{
+		core::matrix4 ret;
+		if (IsFloat)
+		{
+			for (u32 r=0; r<4; ++r)
+				for (u32 c=0; c<4; ++c)
+					if (Count > c+r*4) 
+						ret(r,c) = ValueF[c+r*4];
+		}
+		else
+		{
+			for (u32 r=0; r<4; ++r)
+				for (u32 c=0; c<4; ++c)
+					if (Count > c+r*4) 
+						ret(r,c) = (f32)ValueI[c+r*4];
+		}
+		return ret;
+	}
+
+	virtual core::quaternion getQuaternion()
+	{
+		core::quaternion ret;
+		if (IsFloat)
+		{
+			ret.X = Count > 0 ? ValueF[0] : 0.0f;
+			ret.Y = Count > 1 ? ValueF[1] : 0.0f;
+			ret.Z = Count > 2 ? ValueF[2] : 0.0f;
+			ret.W = Count > 3 ? ValueF[3] : 0.0f;
+		}
+		else
+		{
+			ret.X = Count > 0 ? (f32)ValueI[0] : 0.0f;
+			ret.Y = Count > 1 ? (f32)ValueI[1] : 0.0f;
+			ret.Z = Count > 2 ? (f32)ValueI[2] : 0.0f;
+			ret.W = Count > 3 ? (f32)ValueI[3] : 0.0f;
+		}
+		return ret;
+	}
+	virtual core::triangle3df getTriangle()
+	{
+		core::triangle3df ret;
+
+		if (IsFloat)
+		{
+			ret.pointA.X = Count > 0 ? ValueF[0] : 0.0f;
+			ret.pointA.Y = Count > 1 ? ValueF[1] : 0.0f;
+			ret.pointA.Z = Count > 2 ? ValueF[2] : 0.0f;
+			ret.pointB.X = Count > 3 ? ValueF[3] : 0.0f;
+			ret.pointB.Y = Count > 4 ? ValueF[4] : 0.0f;
+			ret.pointB.Z = Count > 5 ? ValueF[5] : 0.0f;
+			ret.pointC.X = Count > 6 ? ValueF[6] : 0.0f;
+			ret.pointC.X = Count > 7 ? ValueF[7] : 0.0f;
+			ret.pointC.Z = Count > 8 ? ValueF[8] : 0.0f;
+		}
+		else
+		{
+			ret.pointA.X = Count > 0 ? (f32)ValueI[0] : 0.0f;
+			ret.pointA.Y = Count > 1 ? (f32)ValueI[1] : 0.0f;
+			ret.pointA.Z = Count > 2 ? (f32)ValueI[2] : 0.0f;
+			ret.pointB.X = Count > 3 ? (f32)ValueI[3] : 0.0f;
+			ret.pointB.Y = Count > 4 ? (f32)ValueI[4] : 0.0f;
+			ret.pointB.Z = Count > 5 ? (f32)ValueI[5] : 0.0f;
+			ret.pointC.X = Count > 6 ? (f32)ValueI[6] : 0.0f;
+			ret.pointC.X = Count > 7 ? (f32)ValueI[7] : 0.0f;
+			ret.pointC.Z = Count > 8 ? (f32)ValueI[8] : 0.0f;
+		}
+
+		return ret;
+	}
+	virtual core::plane3df getPlane()
+	{
+		core::plane3df ret;
+
+		if (IsFloat)
+		{
+			ret.Normal.X = Count > 0 ? ValueF[0] : 0.0f;
+			ret.Normal.Y = Count > 1 ? ValueF[1] : 0.0f;
+			ret.Normal.Z = Count > 2 ? ValueF[2] : 0.0f;
+			ret.D		 = Count > 3 ? ValueF[3] : 0.0f;
+		}
+		else
+		{
+			ret.Normal.X = Count > 0 ? (f32)ValueI[0] : 0.0f;
+			ret.Normal.Y = Count > 1 ? (f32)ValueI[1] : 0.0f;
+			ret.Normal.Z = Count > 2 ? (f32)ValueI[2] : 0.0f;
+			ret.D		 = Count > 3 ? (f32)ValueI[3] : 0.0f;
+		}
+
+		return ret;
+	}
+	virtual core::aabbox3df getBBox()
+	{
+		core::aabbox3df ret;
+		if (IsFloat)
+		{
+			ret.MinEdge.X = Count > 0 ? ValueF[0] : 0.0f;
+			ret.MinEdge.Y = Count > 1 ? ValueF[1] : 0.0f;
+			ret.MinEdge.Z = Count > 2 ? ValueF[2] : 0.0f;
+			ret.MaxEdge.X = Count > 3 ? ValueF[3] : 0.0f;
+			ret.MaxEdge.Y = Count > 4 ? ValueF[4] : 0.0f;
+			ret.MaxEdge.Z = Count > 5 ? ValueF[5] : 0.0f;
+		}
+		else
+		{
+			ret.MinEdge.X = Count > 0 ? (f32)ValueI[0] : 0.0f;
+			ret.MinEdge.Y = Count > 1 ? (f32)ValueI[1] : 0.0f;
+			ret.MinEdge.Z = Count > 2 ? (f32)ValueI[2] : 0.0f;
+			ret.MaxEdge.X = Count > 3 ? (f32)ValueI[3] : 0.0f;
+			ret.MaxEdge.Y = Count > 4 ? (f32)ValueI[4] : 0.0f;
+			ret.MaxEdge.Z = Count > 5 ? (f32)ValueI[5] : 0.0f;
+		}
+		return ret;
+
+	}
+	virtual core::line2df getLine2d()
+	{
+		core::line2df ret;
+		if (IsFloat)
+		{
+			ret.start.X = Count > 0 ? ValueF[0] : 0.0f;
+			ret.start.Y = Count > 1 ? ValueF[1] : 0.0f;
+			ret.end.X   = Count > 2 ? ValueF[2] : 0.0f;
+			ret.end.Y   = Count > 3 ? ValueF[3] : 0.0f;
+		}
+		else
+		{
+			ret.start.X = Count > 0 ? (f32)ValueI[0] : 0.0f;
+			ret.start.Y = Count > 1 ? (f32)ValueI[1] : 0.0f;
+			ret.end.X   = Count > 2 ? (f32)ValueI[2] : 0.0f;
+			ret.end.Y   = Count > 3 ? (f32)ValueI[3] : 0.0f;
+		}
+		return ret;
+	}
+	virtual core::line3df getLine3d()
+	{
+		core::line3df ret;
+		if (IsFloat)
+		{
+			ret.start.X = Count > 0 ? ValueF[0] : 0.0f;
+			ret.start.Y = Count > 1 ? ValueF[1] : 0.0f;
+			ret.start.Z = Count > 2 ? ValueF[2] : 0.0f;
+			ret.end.X   = Count > 3 ? ValueF[3] : 0.0f;
+			ret.end.Y   = Count > 4 ? ValueF[4] : 0.0f;
+			ret.end.Z   = Count > 5 ? ValueF[5] : 0.0f;
+		}
+		else
+		{
+			ret.start.X = Count > 0 ? (f32)ValueI[0] : 0.0f;
+			ret.start.Y = Count > 1 ? (f32)ValueI[1] : 0.0f;
+			ret.start.Z = Count > 2 ? (f32)ValueI[2] : 0.0f;
+			ret.end.X   = Count > 3 ? (f32)ValueI[3] : 0.0f;
+			ret.end.Y   = Count > 4 ? (f32)ValueI[4] : 0.0f;
+			ret.end.Z   = Count > 5 ? (f32)ValueI[5] : 0.0f;
+		}
+		return ret;
+	}
+
 	//! get float array
 	virtual core::array<f32> getFloatArray()
 	{
@@ -1113,7 +1271,6 @@ public:
 };
 
 
-
 // Attribute implemented for 3d vectors
 class CVector3DAttribute : public CNumbersAttribute
 {
@@ -1124,6 +1281,14 @@ public:
 	virtual E_ATTRIBUTE_TYPE getType()
 	{
 		return EAT_VECTOR3D;
+	}
+
+	virtual core::matrix4 getMatrix()
+	{
+		core::matrix4 ret;
+		ret.makeIdentity();
+		ret.setTranslation( core::vector3df(ValueF[0],ValueF[1],ValueF[2]) );
+		return ret;
 	}
 
 	virtual const wchar_t* getTypeString()
@@ -1168,23 +1333,154 @@ public:
 	{
 		return L"rect";
 	}
+};
 
-	core::rect<s32> Value;
+// Attribute implemented for matrices
+class CMatrixAttribute : public CNumbersAttribute
+{
+public:
+
+	CMatrixAttribute(const char* name, core::matrix4 value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_MATRIX;
+	}
+
+	virtual core::quaternion getQuaternion()
+	{
+		return core::quaternion(getMatrix());
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"matrix";
+	}
+};
+
+// Attribute implemented for quaternions
+class CQuaternionAttribute : public CNumbersAttribute
+{
+public:
+
+	CQuaternionAttribute(const char* name, core::quaternion value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_QUATERNION;
+	}
+
+	virtual core::matrix4 getMatrix()
+	{
+		return getQuaternion().getMatrix();
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"quaternion";
+	}
 };
 
 
+// Attribute implemented for bounding boxes
+class CBBoxAttribute : public CNumbersAttribute
+{
+public:
+
+	CBBoxAttribute(const char* name, core::aabbox3df value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_BBOX;
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"box3d";
+	}
+};
+
+// Attribute implemented for planes
+class CPlaneAttribute : public CNumbersAttribute
+{
+public:
+
+	CPlaneAttribute(const char* name, core::plane3df value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_PLANE;
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"plane";
+	}
+};
+
+// Attribute implemented for triangles
+class CTriangleAttribute : public CNumbersAttribute
+{
+public:
+
+	CTriangleAttribute(const char* name, core::triangle3df value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_TRIANGLE3D;
+	}
+
+	virtual core::plane3df getPlane()
+	{
+		return getTriangle().getPlane();
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"triangle";
+	}
+};
 
 
+// Attribute implemented for 2d lines
+class CLine2dAttribute : public CNumbersAttribute
+{
+public:
 
-// quaternion
-// matrix4
-// triangle3d
-// vector2d
-// line2d
-// line3d
-// dimension2d
-// aabbox3d
-// plane
+	CLine2dAttribute(const char* name, core::line2df value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_LINE2D;
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"line2d";
+	}
+};
+
+// Attribute implemented for 3d lines
+class CLine3dAttribute : public CNumbersAttribute
+{
+public:
+
+	CLine3dAttribute(const char* name, core::line3df value) : CNumbersAttribute(name, value) { }
+
+	virtual E_ATTRIBUTE_TYPE getType()
+	{
+		return EAT_LINE3D;
+	}
+
+	virtual const wchar_t* getTypeString()
+	{
+		return L"line3d";
+	}
+};
+
+
+// vector2df
+// dimension2di
 
 /* 
 	Special attributes

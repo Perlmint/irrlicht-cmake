@@ -15,6 +15,12 @@
 #include "quaternion.h"
 #include "position2d.h"
 #include "rect.h"
+#include "matrix4.h"
+#include "quaternion.h"
+#include "plane3d.h"
+#include "triangle3d.h"
+#include "line2d.h"
+#include "line3d.h"
 #include "irrString.h"
 #include "irrArray.h"
 #include "IXMLReader.h"
@@ -100,6 +106,7 @@ enum E_ATTRIBUTE_TYPE
 
 	// texture reference attribute
 	EAT_TEXTURE,
+
 	// known attribute type count
 	EAT_COUNT,
 
@@ -263,6 +270,29 @@ public:
 	//! \param attributeName: Name for the attribute
 	virtual void setAttribute(s32 index, const wchar_t* value) = 0;
 
+	/*
+
+		Binary Data Attribute
+
+	*/
+
+	//! Adds an attribute as binary data
+	virtual void addBinary(const c8* attributeName, void* data, s32 dataSizeInBytes) = 0;
+
+	//! Sets an attribute as binary data
+	virtual void setAttribute(const c8* attributeName, void* data, s32 dataSizeInBytes ) = 0;
+
+	//! Gets an attribute as binary data
+	//! \param attributeName: Name of the attribute to get.
+	virtual void getAttributeAsBinaryData(const c8* attributeName, void* outData, s32 maxSizeInBytes) = 0;
+
+	//! Gets an attribute as binary data
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual void getAttributeAsBinaryData(s32 index, void* outData, s32 maxSizeInBytes) = 0;
+
+	//! Sets an attribute as binary data
+	virtual void setAttribute(s32 index, void* data, s32 dataSizeInBytes ) = 0;
+
 
 	/*
 
@@ -309,7 +339,7 @@ public:
 	//! \return Returns value of the attribute previously set by setAttribute() 
 	virtual bool getAttributeAsBool(const c8* attributeName) = 0;
 
-    //! Gets an attribute as boolean value
+	//! Gets an attribute as boolean value
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual bool getAttributeAsBool(s32 index) = 0;
 
@@ -486,28 +516,177 @@ public:
 	//! Sets an attribute as rectangle
 	virtual void setAttribute(s32 index, core::rect<s32> v) = 0;
 
+
 	/*
 
-		Binary Data Attribute
+		matrix attribute
+
+	*/ 
+
+	//! Adds an attribute as matrix
+	virtual void addMatrix(const c8* attributeName, core::matrix4 v) = 0;
+
+	//! Sets an attribute as matrix
+	virtual void setAttribute(const c8* attributeName, core::matrix4 v) = 0;
+
+	//! Gets an attribute as a matrix4
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::matrix4 getAttributeAsMatrix(const c8* attributeName) = 0;
+
+	//! Gets an attribute as matrix
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::matrix4 getAttributeAsMatrix(s32 index) = 0;
+
+	//! Sets an attribute as matrix
+	virtual void setAttribute(s32 index, core::matrix4 v) = 0;
+
+	/*
+		quaternion attribute
 
 	*/
 
-	//! Adds an attribute as binary data
-	virtual void addBinary(const c8* attributeName, void* data, s32 dataSizeInBytes) = 0;
+	//! Adds an attribute as quaternion
+	virtual void addQuaternion(const c8* attributeName, core::quaternion v) = 0;
 
-	//! Sets an attribute as binary data
-	virtual void setAttribute(const c8* attributeName, void* data, s32 dataSizeInBytes ) = 0;
+	//! Sets an attribute as quaternion
+	virtual void setAttribute(const c8* attributeName, core::quaternion v) = 0;
 
-	//! Gets an attribute as binary data
+	//! Gets an attribute as a quaternion
 	//! \param attributeName: Name of the attribute to get.
-	virtual void getAttributeAsBinaryData(const c8* attributeName, void* outData, s32 maxSizeInBytes) = 0;
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::quaternion getAttributeAsQuaternion(const c8* attributeName) = 0;
 
-	//! Gets an attribute as binary data
+	//! Gets an attribute as quaternion
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
-	virtual void getAttributeAsBinaryData(s32 index, void* outData, s32 maxSizeInBytes) = 0;
+	virtual core::quaternion getAttributeAsQuaternion(s32 index) = 0;
 
-	//! Sets an attribute as binary data
-	virtual void setAttribute(s32 index, void* data, s32 dataSizeInBytes ) = 0;
+	//! Sets an attribute as quaternion
+	virtual void setAttribute(s32 index, core::quaternion v) = 0;
+
+	/*
+
+		3d bounding box
+
+	*/
+
+	//! Adds an attribute as axis aligned bounding box
+	virtual void addBox3d(const c8* attributeName, core::aabbox3df v) = 0;
+
+	//! Sets an attribute as axis aligned bounding box
+	virtual void setAttribute(const c8* attributeName, core::aabbox3df v) = 0;
+
+	//! Gets an attribute as a axis aligned bounding box
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::aabbox3df getAttributeAsBox3d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as axis aligned bounding box
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::aabbox3df getAttributeAsBox3d(s32 index) = 0;
+
+	//! Sets an attribute as axis aligned bounding box
+	virtual void setAttribute(s32 index, core::aabbox3df v) = 0;
+
+	/*
+
+		plane
+
+	*/
+
+	//! Adds an attribute as 3d plane
+	virtual void addPlane3d(const c8* attributeName, core::plane3df v) = 0;
+
+	//! Sets an attribute as 3d plane
+	virtual void setAttribute(const c8* attributeName, core::plane3df v) = 0;
+
+	//! Gets an attribute as a 3d plane
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::plane3df getAttributeAsPlane3d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as 3d plane
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::plane3df getAttributeAsPlane3d(s32 index) = 0;
+
+	//! Sets an attribute as 3d plane
+	virtual void setAttribute(s32 index, core::plane3df v) = 0;
+
+
+	/*
+
+		3d triangle
+
+	*/
+
+	//! Adds an attribute as 3d triangle
+	virtual void addTriangle3d(const c8* attributeName, core::triangle3df v) = 0;
+
+	//! Sets an attribute as 3d trianle
+	virtual void setAttribute(const c8* attributeName, core::triangle3df v) = 0;
+
+	//! Gets an attribute as a 3d triangle
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::triangle3df getAttributeAsTriangle3d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as 3d triangle
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::triangle3df getAttributeAsTriangle3d(s32 index) = 0;
+
+	//! Sets an attribute as 3d triangle
+	virtual void setAttribute(s32 index, core::triangle3df v) = 0;
+
+
+	/*
+
+		line 2d
+
+	*/
+
+	//! Adds an attribute as a 2d line
+	virtual void addLine2d(const c8* attributeName, core::line2df v) = 0;
+
+	//! Sets an attribute as a 2d line
+	virtual void setAttribute(const c8* attributeName, core::line2df v) = 0;
+
+	//! Gets an attribute as a 2d line
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::line2df getAttributeAsLine2d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as a 2d line
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::line2df getAttributeAsLine2d(s32 index) = 0;
+
+	//! Sets an attribute as a 2d line
+	virtual void setAttribute(s32 index, core::line2df v) = 0;
+
+
+	/*
+
+		line 3d
+
+	*/
+
+	//! Adds an attribute as a 3d line
+	virtual void addLine3d(const c8* attributeName, core::line3df v) = 0;
+
+	//! Sets an attribute as a 3d line
+	virtual void setAttribute(const c8* attributeName, core::line3df v) = 0;
+
+	//! Gets an attribute as a 3d line
+	//! \param attributeName: Name of the attribute to get.
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual core::line3df getAttributeAsLine3d(const c8* attributeName) = 0;
+
+	//! Gets an attribute as a 3d line
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual core::line3df getAttributeAsLine3d(s32 index) = 0;
+
+	//! Sets an attribute as a 3d line
+	virtual void setAttribute(s32 index, core::line3df v) = 0;
+
 
 	/*
 
