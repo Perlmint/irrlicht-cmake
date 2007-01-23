@@ -65,7 +65,7 @@ public:
 	virtual bool read(irr::io::IXMLReader* reader, bool readCurrentElementOnly=false);
 
 	//! Write these attributes into a xml file
-	virtual bool write(io::IXMLWriter* writer);
+	virtual bool write(io::IXMLWriter* writer, bool writeXMLHeader=false);
 
 
 	/*

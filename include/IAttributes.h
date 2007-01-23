@@ -153,11 +153,14 @@ public:
 
 	//! Reads attributes from a xml file.
 	//! \param readCurrentElementOnly: If set to true, reading only works if current element has the name 'attributes'.
-	//! IF set to false, the first appearing list attributes are read.
+	//! If set to false, the first appearing list attributes are read.
 	virtual bool read(irr::io::IXMLReader* reader, bool readCurrentElementOnly=false) = 0;
 
 	//! Write these attributes into a xml file
-	virtual bool write(io::IXMLWriter* writer) = 0;
+	//! \param writer: The XML writer to write to
+	//! \param writeXMLHeader: Writes a header to the XML file, required if at the beginning of the file
+	//! and you haven't already written one with writer->writeXMLHeader()
+	virtual bool write(io::IXMLWriter* writer, bool writeXMLHeader=false) = 0;
 
 
 	/*

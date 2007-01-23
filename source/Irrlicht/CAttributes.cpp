@@ -1489,10 +1489,13 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 }
 
 //! Write these attributes into a xml file
-bool CAttributes::write(io::IXMLWriter* writer)
+bool CAttributes::write(io::IXMLWriter* writer, bool writeXMLHeader)
 {
 	if (!writer)
 		return false;
+
+	if (writeXMLHeader)
+		writer->writeXMLHeader();
 
 	writer->writeElement(L"attributes", false);
 	writer->writeLineBreak();
