@@ -322,7 +322,7 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 		Manipulator->recalculateNormals ( buf, true );
 	}
 
-	// transform vertices and normals
+	/*// transform vertices and normals
 	core::matrix4 mat = frame.LocalMatrix;
 
 	s32 vcnt = buf->Vertices.size();
@@ -330,7 +330,7 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 	{
 		mat.transformVect(buf->Vertices[u].Pos);
 		mat.rotateVect(buf->Vertices[u].Normal);
-	} 
+	}*/
 }
 
 

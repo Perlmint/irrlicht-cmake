@@ -2841,7 +2841,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 //! call.
 u32 COpenGLDriver::getMaximalPrimitiveCount()
 {
-	return MaxIndices;
+	return 65535;// TODO: Fix all loaders to auto-split and then return the correct value: MaxIndices;
 }
 
 
