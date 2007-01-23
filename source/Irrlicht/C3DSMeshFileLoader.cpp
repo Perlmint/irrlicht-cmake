@@ -898,12 +898,13 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 		}
 	}
 
-
 	for (u32 i=0; i<MaterialGroups.size(); ++i)
 	{
 		SMeshBuffer* mb = 0;
 		video::SMaterial* mat=0;
 		u32 mbPos;
+		// -3 because we add three vertices at once
+		u32 maxPrimitives = core::min_(Driver->getMaximalPrimitiveCount(), (u32)((1<<16)-1))-3; // currently hardcoded s16 max value for index pointers
 
 		// find mesh buffer for this group
 		for (mbPos=0; mbPos<Materials.size(); ++mbPos)
@@ -933,7 +934,7 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 			for (s32 f=0; f<MaterialGroups[i].faceCount; ++f)
 			{
 				u32 vtxCount = mb->Vertices.size();
-				if (vtxCount>Driver->getMaximalPrimitiveCount()-4)
+				if (vtxCount>maxPrimitives)
 				{
 					Mesh->addMeshBuffer(new SMeshBuffer());
 					IMeshBuffer* tmp = mb;
