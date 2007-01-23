@@ -214,6 +214,10 @@ void CSoftwareDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 	setTexture(Material.Texture1);
+	setTransform(ETS_TEXTURE_0, material.TextureMatrix[0]);
+	setTransform(ETS_TEXTURE_1, material.TextureMatrix[1]);
+	setTransform(ETS_TEXTURE_2, material.TextureMatrix[2]);
+	setTransform(ETS_TEXTURE_3, material.TextureMatrix[3]);
 }
 
 
@@ -322,6 +326,77 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 	core::array<u16> newBuffer;
 	switch (pType)
 	{
+		case scene::EPT_LINE_STRIP:
+			{
+				switch (vType)
+				{
+					case EVT_STANDARD:
+						for (s32 i=0; i < primitiveCount-1; ++i)
+							draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
+								((S3DVertex*)vertices)[indexList[i+1]].Pos,
+								((S3DVertex*)vertices)[indexList[i]].Color);
+						break;
+					case EVT_2TCOORDS:
+						for (s32 i=0; i < primitiveCount-1; ++i)
+							draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
+								((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
+								((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
+						break;
+					case EVT_TANGENTS:
+						for (s32 i=0; i < primitiveCount-1; ++i)
+							draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
+								((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
+								((S3DVertexTangents*)vertices)[indexList[i]].Color);
+						break;
+				}
+			}
+			return;
+		case scene::EPT_LINE_LOOP:
+			drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount-1, vType, scene::EPT_LINE_STRIP);
+			switch (vType)
+			{
+				case EVT_STANDARD:
+					draw3DLine(((S3DVertex*)vertices)[indexList[primitiveCount-1]].Pos,
+						((S3DVertex*)vertices)[indexList[0]].Pos,
+						((S3DVertex*)vertices)[indexList[primitiveCount-1]].Color);
+					break;
+				case EVT_2TCOORDS:
+					draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[primitiveCount-1]].Pos,
+						((S3DVertex2TCoords*)vertices)[indexList[0]].Pos,
+						((S3DVertex2TCoords*)vertices)[indexList[primitiveCount-1]].Color);
+					break;
+				case EVT_TANGENTS:
+					draw3DLine(((S3DVertexTangents*)vertices)[indexList[primitiveCount-1]].Pos,
+						((S3DVertexTangents*)vertices)[indexList[0]].Pos,
+						((S3DVertexTangents*)vertices)[indexList[primitiveCount-1]].Color);
+					break;
+			}
+			return;
+		case scene::EPT_LINES:
+			{
+				switch (vType)
+				{
+					case EVT_STANDARD:
+						for (s32 i=0; i < 2*primitiveCount; i+=2)
+							draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
+								((S3DVertex*)vertices)[indexList[i+1]].Pos,
+								((S3DVertex*)vertices)[indexList[i]].Color);
+						break;
+					case EVT_2TCOORDS:
+						for (s32 i=0; i < 2*primitiveCount; i+=2)
+							draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
+								((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
+								((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
+						break;
+					case EVT_TANGENTS:
+						for (s32 i=0; i < 2*primitiveCount; i+=2)
+							draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
+								((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
+								((S3DVertexTangents*)vertices)[indexList[i]].Color);
+						break;
+				}
+			}
+			return;
 		case scene::EPT_TRIANGLE_FAN:
 			{
 				// TODO: don't convert fan to list
@@ -338,6 +413,7 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 			break;
 		case scene::EPT_TRIANGLES:
 			indexPointer=indexList;
+			break;
 	}
 	switch (vType)
 	{
@@ -597,7 +673,7 @@ void CSoftwareDriver::draw3DLine(const core::vector3df& start,
 {
 	core::vector3df vect = start.crossProduct(end);
 	vect.normalize();
-	vect *= Material.Thickness;
+	vect *= Material.Thickness*0.3f;
 
 	S3DVertex vtx[4];
 

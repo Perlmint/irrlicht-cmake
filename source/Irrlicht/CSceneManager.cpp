@@ -992,7 +992,6 @@ void CSceneManager::drawAll()
 	Parameters.setAttribute ( "calls", 0 );
 	Parameters.setAttribute ( "drawn", 0 );
 
-
 	// reset all transforms
 	video::IVideoDriver* driver = getVideoDriver();
 	if ( driver )
@@ -1003,11 +1002,12 @@ void CSceneManager::drawAll()
 		driver->setTransform ( video::ETS_WORLD, identity );
 		driver->setTransform ( video::ETS_TEXTURE_0, identity );
 		driver->setTransform ( video::ETS_TEXTURE_1, identity );
+		driver->setTransform ( video::ETS_TEXTURE_2, identity );
+		driver->setTransform ( video::ETS_TEXTURE_3, identity );
 	}
 
 	// do animations and other stuff.
 	OnPostRender(os::Timer::getTime());
-
 
 	/*!
 		First Scene Node for prerendering should be the active camera
@@ -1099,7 +1099,6 @@ void CSceneManager::drawAll()
 		TransparentNodeList.clear();
 	}
 
-
 	// render shader objects.
 	{
 		for ( u32 g = 0; g!= ESNRP_SHADER_10 - ESNRP_SHADER_0 + 1; ++g )
@@ -1117,7 +1116,6 @@ void CSceneManager::drawAll()
 			ShaderNodeList[g].clear();
 		}
 	}
-
 
 	// do animations and other stuff.
 	//OnPostRender(os::Timer::getTime());
@@ -1156,9 +1154,8 @@ ISceneNodeAnimator* CSceneManager::createRotationAnimator(const core::vector3df&
 
 //! creates a fly circle animator, which lets the attached scene node fly around a center.
 ISceneNodeAnimator* CSceneManager::createFlyCircleAnimator(const core::vector3df& normal,
-														   f32 radius, f32 speed,
-														   const core::vector3df& direction
-														   )
+					   f32 radius, f32 speed,
+					   const core::vector3df& direction)
 {
 	ISceneNodeAnimator* anim = new CSceneNodeAnimatorFlyCircle(os::Timer::getTime(), normal,
 			radius, speed, direction);

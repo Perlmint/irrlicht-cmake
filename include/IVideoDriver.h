@@ -124,6 +124,10 @@ namespace video
 		ETS_TEXTURE_0,
 		//! Texture transformation
 		ETS_TEXTURE_1,
+		//! Texture transformation
+		ETS_TEXTURE_2,
+		//! Texture transformation
+		ETS_TEXTURE_3,
 		//! Not used
 		ETS_COUNT
 	};

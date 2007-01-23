@@ -57,7 +57,6 @@ public:
 		}
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 	}
-
 };
 
 

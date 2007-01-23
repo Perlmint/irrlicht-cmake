@@ -1088,7 +1088,7 @@ public:
 	{
 		wchar_t tmp[10];
 		video::SColor c = getColor();
-		_swprintf(tmp, L"%08x", c.color);
+		swprintf(tmp, 10, L"%08x", c.color);
 		return core::stringw(tmp);
 	}
 

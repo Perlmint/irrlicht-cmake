@@ -831,12 +831,19 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 		break;
 	case ETS_TEXTURE_0:
 	case ETS_TEXTURE_1:
-		createGLTextureMatrix(glmat, mat );
+	case ETS_TEXTURE_2:
+	case ETS_TEXTURE_3:
 		if (MultiTextureExtension)
 			extGlActiveTextureARB(GL_TEXTURE0_ARB + ( state - ETS_TEXTURE_0 ));
 
 		glMatrixMode(GL_TEXTURE);
-		glLoadMatrixf(glmat);
+		if (mat.isIdentity())
+			glLoadIdentity();
+		else
+		{
+			createGLTextureMatrix(glmat, mat );
+			glLoadMatrixf(glmat);
+		}
 	}
 }
 
@@ -1675,7 +1682,6 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	// Texture filter
 	// Has to be checked always because it depends on the textures
 	// Filtering has to be set for each texture layer
-
 	for (s32 i=0; i<MaxTextureUnits; ++i)
 	{
 		if (!material.Textures[i])
@@ -1697,6 +1703,10 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 				material.AnisotropicFilter ? MaxAnisotropy : 1.0f );
 	}
+	setTransform(ETS_TEXTURE_0, material.TextureMatrix[0]);
+	setTransform(ETS_TEXTURE_1, material.TextureMatrix[1]);
+	setTransform(ETS_TEXTURE_2, material.TextureMatrix[2]);
+	setTransform(ETS_TEXTURE_3, material.TextureMatrix[3]);
 
 	// fillmode
 
@@ -1753,8 +1763,6 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 				break;
 		}
 	}
-
-
 
 	// zwrite
 	if (resetAllRenderStates || lastmaterial.ZWriteEnable != material.ZWriteEnable)

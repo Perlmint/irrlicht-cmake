@@ -164,7 +164,6 @@ void CSoftwareDriver2::setCurrentShader()
 	bool zMaterialTest = true;
 	switch ( Material.org.MaterialType )
 	{
-
 		case EMT_ONETEXTURE_BLEND:
 			shader = ETR_TEXTURE_BLEND;
 			zMaterialTest = false;
@@ -270,7 +269,6 @@ void CSoftwareDriver2::setCurrentShader()
 
 		CurrentShader->setRenderTarget(RenderTargetSurface, ViewPort);
 	}
-
 }
 
 
@@ -280,7 +278,7 @@ bool CSoftwareDriver2::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
 	switch (feature)
 	{
-#ifdef SOFTWARE_DRIVER_2_BILINEAR   
+#ifdef SOFTWARE_DRIVER_2_BILINEAR
 	case EVDF_BILINEAR_FILTER:
 		return true;
 #endif
@@ -350,10 +348,8 @@ void CSoftwareDriver2::setTransform(E_TRANSFORMATION_STATE state, const core::ma
 			}
 #endif
 			break;
-
 	}
 }
-
 
 
 
@@ -396,12 +392,13 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 	Material.SpecularColor.setA8R8G8B8 ( Material.org.SpecularColor.color );
 
 	Material.SpecularEnabled = Material.org.Shininess != 0.f;
-	if (Material.SpecularEnabled )
+	if (Material.SpecularEnabled)
 		Material.org.NormalizeNormals = true;
-
 
 	setTexture( 0, Material.org.Texture1 );
 	setTexture( 1, Material.org.Texture2 );
+	setTransform(ETS_TEXTURE_0, Material.org.TextureMatrix[0]);
+	setTransform(ETS_TEXTURE_1, Material.org.TextureMatrix[1]);
 }
 
 
@@ -1480,7 +1477,7 @@ void CSoftwareDriver2::lightVertex ( s4DVertex *dest, const S3DVertex *source )
 	{
 		const SInternalLight &light = Light[i];
 
-		sVec4 vp;				// unit vector vertex to light
+		sVec4 vp;			// unit vector vertex to light
 		sVec4 lightHalf;		// blinn-phong reflection
 
 

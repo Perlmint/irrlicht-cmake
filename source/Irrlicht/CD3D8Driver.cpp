@@ -581,6 +581,8 @@ void CD3D8Driver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 		break;
 	case ETS_TEXTURE_0:
 	case ETS_TEXTURE_1:
+	case ETS_TEXTURE_2:
+	case ETS_TEXTURE_3:
 		pID3DDevice->SetTextureStageState( state - ETS_TEXTURE_0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 		pID3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+ ( state - ETS_TEXTURE_0 )),
 			(D3DMATRIX*)((void*)&mat));
@@ -1265,6 +1267,10 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 			}
 		}
 	}
+	setTransform(ETS_TEXTURE_0, material.TextureMatrix[0]);
+	setTransform(ETS_TEXTURE_1, material.TextureMatrix[1]);
+	setTransform(ETS_TEXTURE_2, material.TextureMatrix[2]);
+	setTransform(ETS_TEXTURE_3, material.TextureMatrix[3]);
 
 	// fillmode
 
