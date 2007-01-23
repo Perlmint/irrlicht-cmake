@@ -704,7 +704,7 @@ namespace video
 		/** (mostly vertices) which
 		the device is able to render with one drawIndexedTriangleList
 		call. */
-		virtual s32 getMaximalPrimitiveCount() = 0;
+		virtual u32 getMaximalPrimitiveCount() = 0;
 
 		//! Enables or disables a texture creation flag.
 		/** This flag defines how

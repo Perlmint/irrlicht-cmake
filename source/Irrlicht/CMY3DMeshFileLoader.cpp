@@ -602,7 +602,7 @@ for (u32 p=0; p<nToRead; p++)
 		SMeshBufferLightMap* buffer = getMeshBufferByMaterialIndex(meshHeader.MatIndex);
 
 		if (!buffer ||
-			((int)buffer->Vertices.size()+vertsNum) > Driver->getMaximalPrimitiveCount())
+			(buffer->Vertices.size()+vertsNum) > Driver->getMaximalPrimitiveCount())
 		{
 			// creating new mesh buffer for this material
 			buffer = new scene::SMeshBufferLightMap();

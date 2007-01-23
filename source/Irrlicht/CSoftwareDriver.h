@@ -90,6 +90,11 @@ namespace video
 		//! Returns an image created from the last rendered frame.
 		virtual IImage* createScreenShot();
 
+		//! Returns the maximum amount of primitives (mostly vertices) which
+		//! the device is able to render with one drawIndexedTriangleList
+		//! call.
+		virtual u32 getMaximalPrimitiveCount();
+
 	protected:
 
 		struct splane

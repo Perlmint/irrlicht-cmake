@@ -1814,7 +1814,7 @@ void CD3D9Driver::drawStencilShadow(bool clearStencilBuffer, video::SColor leftU
 //! Returns the maximum amount of primitives (mostly vertices) which
 //! the device is able to render with one drawIndexedTriangleList
 //! call.
-s32 CD3D9Driver::getMaximalPrimitiveCount()
+u32 CD3D9Driver::getMaximalPrimitiveCount()
 {
 	return Caps.MaxPrimitiveCount;
 }

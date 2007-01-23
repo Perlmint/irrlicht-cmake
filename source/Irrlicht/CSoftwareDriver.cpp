@@ -824,6 +824,16 @@ IImage* CSoftwareDriver::createScreenShot()
 }
 
 
+//! Returns the maximum amount of primitives (mostly vertices) which
+//! the device is able to render with one drawIndexedTriangleList
+//! call.
+u32 CSoftwareDriver::getMaximalPrimitiveCount()
+{
+	return 0x00800000;
+}
+
+
+//! creates a video driver
 //! creates a video driver
 IVideoDriver* createSoftwareDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
 {

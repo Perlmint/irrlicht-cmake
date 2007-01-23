@@ -195,7 +195,6 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 			XF86VidModeGetAllModeLines(display, screennr, &modeCount, &modes);
 
 			// save current video mode
-
 			oldVideoMode = *modes[0];
 
 			// find fitting mode

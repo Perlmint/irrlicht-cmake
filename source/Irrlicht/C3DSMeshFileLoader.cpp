@@ -496,7 +496,7 @@ bool C3DSMeshFileLoader::readTrackChunk(io::IReadFile* file, ChunkData& data,
 		// Angle
 		file->read(&angle, sizeof(f32));
 #ifdef __BIG_ENDIAN__
-	angle = os::Byteswap::byteswap(angle);
+		angle = os::Byteswap::byteswap(angle);
 #endif
 		data.read += sizeof(f32);
 	}
@@ -932,7 +932,7 @@ void C3DSMeshFileLoader::composeObject(io::IReadFile* file, const core::stringc&
 
 			for (s32 f=0; f<MaterialGroups[i].faceCount; ++f)
 			{
-				s32 vtxCount = mb->Vertices.size();
+				u32 vtxCount = mb->Vertices.size();
 				if (vtxCount>Driver->getMaximalPrimitiveCount()-4)
 				{
 					Mesh->addMeshBuffer(new SMeshBuffer());

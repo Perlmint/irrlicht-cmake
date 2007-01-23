@@ -1863,7 +1863,7 @@ ITexture* CSoftwareDriver2::createDeviceDependentTexture(IImage* surface, const 
 //! Returns the maximum amount of primitives (mostly vertices) which
 //! the device is able to render with one drawIndexedTriangleList
 //! call.
-s32 CSoftwareDriver2::getMaximalPrimitiveCount()
+u32 CSoftwareDriver2::getMaximalPrimitiveCount()
 {
 	return 0x00800000;
 }

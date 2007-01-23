@@ -1037,9 +1037,9 @@ void CNullDriver::makeNormalMapTexture(video::ITexture* texture, f32 amplitude)
 //! Returns the maximum amount of primitives (mostly vertices) which
 //! the device is able to render with one drawIndexedTriangleList
 //! call.
-s32 CNullDriver::getMaximalPrimitiveCount()
+u32 CNullDriver::getMaximalPrimitiveCount()
 {
-	return (1<<30)-1;
+	return 0xFFFFFFFF;
 }
 
 

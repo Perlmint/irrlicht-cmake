@@ -89,7 +89,7 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
 		0, 0, 0				// Layer Masks Ignored
 	};
 
-	for (int i=0; i<4; ++i)
+	for (int i=0; i<5; ++i)
 	{
 		if (i == 1)
 		{
@@ -101,10 +101,14 @@ bool COpenGLDriver::initDriver(const core::dimension2d<s32>& screenSize,
 		else
 		if (i == 2)
 		{
+			pfd.cDepthBits = 24;
+		}
+		if (i == 3) // might be checked twice, but shouldn't matter
+		{
 			pfd.cDepthBits = 16;
 		}
 		else
-		if (i == 3)
+		if (i == 4)
 		{
 			os::Printer::log("Cannot create a GL device context.", ELL_ERROR);
 			return false;
@@ -743,7 +747,8 @@ void COpenGLDriver::loadExtensions()
 		MultiTextureExtension = false;
 		os::Printer::log("Warning: OpenGL device only has one texture unit. Disabling multitexturing.", ELL_WARNING);
 	}
-	MaxTextureUnits = core::min_((s32)MaxTextureUnits,MATERIAL_MAX_TEXTURES);
+	MaxTextureUnits = core::min_((u32)MaxTextureUnits,MATERIAL_MAX_TEXTURES);
+	glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &MaxIndices);
 }
 
 
@@ -2834,9 +2839,9 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2d<s32>&
 //! Returns the maximum amount of primitives (mostly vertices) which
 //! the device is able to render with one drawIndexedTriangleList
 //! call.
-s32 COpenGLDriver::getMaximalPrimitiveCount()
+u32 COpenGLDriver::getMaximalPrimitiveCount()
 {
-	return (1<<16)-1;
+	return MaxIndices;
 }
 
 

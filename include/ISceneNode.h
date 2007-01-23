@@ -341,9 +341,9 @@ namespace scene
 		//! \param textureLayer: Layer of texture to be set. Must be a value greater or
 		//! equal than 0 and smaller than MATERIAL_MAX_TEXTURES.
 		//! \param texture: Texture to be used.
-		void setMaterialTexture(s32 textureLayer, video::ITexture* texture)
+		void setMaterialTexture(u32 textureLayer, video::ITexture* texture)
 		{
-			if (textureLayer<0 || textureLayer>= video::MATERIAL_MAX_TEXTURES)
+			if (textureLayer>= video::MATERIAL_MAX_TEXTURES)
 				return;
 
 			for (u32 i=0; i<getMaterialCount(); ++i)

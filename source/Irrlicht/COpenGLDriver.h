@@ -291,7 +291,7 @@ namespace video
 		//! Returns the maximum amount of primitives (mostly vertices) which
 		//! the device is able to render with one drawIndexedTriangleList
 		//! call.
-		virtual s32 getMaximalPrimitiveCount();
+		virtual u32 getMaximalPrimitiveCount();
 
 		ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size);
 
@@ -370,6 +370,7 @@ namespace video
 
 		GLint MaxTextureUnits;
 		GLint MaxLights;
+		GLint MaxIndices;
 
 		core::dimension2d<s32> CurrentRendertargetSize;
 
