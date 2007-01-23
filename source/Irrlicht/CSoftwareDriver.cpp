@@ -331,19 +331,19 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 				switch (vType)
 				{
 					case EVT_STANDARD:
-						for (s32 i=0; i < primitiveCount-1; ++i)
+						for (u32 i=0; i < primitiveCount-1; ++i)
 							draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
 								((S3DVertex*)vertices)[indexList[i+1]].Pos,
 								((S3DVertex*)vertices)[indexList[i]].Color);
 						break;
 					case EVT_2TCOORDS:
-						for (s32 i=0; i < primitiveCount-1; ++i)
+						for (u32 i=0; i < primitiveCount-1; ++i)
 							draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
 								((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
 								((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
 						break;
 					case EVT_TANGENTS:
-						for (s32 i=0; i < primitiveCount-1; ++i)
+						for (u32 i=0; i < primitiveCount-1; ++i)
 							draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
 								((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
 								((S3DVertexTangents*)vertices)[indexList[i]].Color);
@@ -377,19 +377,19 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 				switch (vType)
 				{
 					case EVT_STANDARD:
-						for (s32 i=0; i < 2*primitiveCount; i+=2)
+						for (u32 i=0; i < 2*primitiveCount; i+=2)
 							draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
 								((S3DVertex*)vertices)[indexList[i+1]].Pos,
 								((S3DVertex*)vertices)[indexList[i]].Color);
 						break;
 					case EVT_2TCOORDS:
-						for (s32 i=0; i < 2*primitiveCount; i+=2)
+						for (u32 i=0; i < 2*primitiveCount; i+=2)
 							draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
 								((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
 								((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
 						break;
 					case EVT_TANGENTS:
-						for (s32 i=0; i < 2*primitiveCount; i+=2)
+						for (u32 i=0; i < 2*primitiveCount; i+=2)
 							draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
 								((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
 								((S3DVertexTangents*)vertices)[indexList[i]].Color);

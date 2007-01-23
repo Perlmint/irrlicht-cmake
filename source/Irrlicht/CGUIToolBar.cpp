@@ -57,7 +57,7 @@ CGUIToolBar::CGUIToolBar(IGUIEnvironment* environment, IGUIElement* parent, s32 
 	}*/
 
 	rr.LowerRightCorner.X = parentwidth;
-	rr.LowerRightCorner.Y = RelativeRect.UpperLeftCorner.Y + height;
+	rr.LowerRightCorner.Y = rr.UpperLeftCorner.Y + height;
 	setRelativePosition(rr);
 }
 
