@@ -153,7 +153,7 @@ namespace scene
 		//! panoramic texture on it and is drawn around the camera position.
 		virtual ISceneNode* addSkyDomeSceneNode(video::ITexture* texture,
 			u32 horiRes, u32 vertRes, f64 texturePercentage,
-			f64 spherePercentage, ISceneNode* parent, s32 id);
+			f64 spherePercentage, ISceneNode* parent=0, s32 id=-1);
 
 		//! Adds a text scene node, which is able to display 
 		//! 2d text at a position in three dimensional space

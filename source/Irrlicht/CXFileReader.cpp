@@ -240,21 +240,20 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 		{
 			// combine this frame with parent
 			// add child frames to parent
-			pgParent->LocalMatrix = pgParent->LocalMatrix * pgFrame->LocalMatrix;
+			pgParent->LocalMatrix *= pgFrame->LocalMatrix;
 
 			u32 c;
 
+			pgParent->ChildFrames.reallocate(pgParent->ChildFrames.size()+pgFrame->ChildFrames.size());
 			for( c=0; c<pgFrame->ChildFrames.size(); ++c )
 			{
 				// add child frames to parent
-				for (u32 c=0; c<pgFrame->ChildFrames.size(); ++c)
-				{
-					pgParent->ChildFrames.push_back(pgFrame->ChildFrames[c]);
-				}
+				pgParent->ChildFrames.push_back(pgFrame->ChildFrames[c]);
 			}
 
 			// add meshes to parent
 
+			pgParent->Meshes.reallocate(pgParent->Meshes.size()+pgFrame->Meshes.size());
 			for( c=0; c<pgFrame->Meshes.size(); ++c )
 			{
 				// add meshes frames to parent
@@ -303,12 +302,12 @@ bool CXFileReader::parseDataObject()
 		if (!m_pgCurFrame)
 		{
 			RootFrames.push_back(SXFrame());
-			m_pgCurFrame = &RootFrames[ RootFrames.size() - 1 ];
+			m_pgCurFrame = &RootFrames.getLast();
 		}
 		else
 		{
 			m_pgCurFrame->ChildFrames.push_back(SXFrame());
-			m_pgCurFrame = &(m_pgCurFrame->ChildFrames[ m_pgCurFrame->ChildFrames.size() - 1 ]);
+			m_pgCurFrame = &(m_pgCurFrame->ChildFrames.getLast());
 		}
 		return parseDataObjectFrame( * m_pgCurFrame );
 	}
@@ -319,16 +318,16 @@ bool CXFileReader::parseDataObject()
 		if (!m_pgCurFrame)
 		{
 			RootFrames.push_back(SXFrame());
-			m_pgCurFrame = &RootFrames[ RootFrames.size() - 1 ];
+			m_pgCurFrame = &RootFrames.getLast();
 		}
 		m_pgCurFrame->Meshes.push_back(SXMesh());
-		return parseDataObjectMesh(m_pgCurFrame->Meshes[m_pgCurFrame->Meshes.size()-1]);
+		return parseDataObjectMesh(m_pgCurFrame->Meshes.getLast());
 	}
 	else
 	if (objectName == "AnimationSet")
 	{
 		AnimationSets.push_back(SXAnimationSet());
-		return parseDataObjectAnimationSet(AnimationSets[AnimationSets.size()-1]);
+		return parseDataObjectAnimationSet(AnimationSets.getLast());
 	}
 	else
 	if (objectName == "Material")
@@ -384,7 +383,7 @@ bool CXFileReader::parseDataObjectFrame(SXFrame& frame)
 		if (objectName == "Frame")
 		{
 			frame.ChildFrames.push_back(SXFrame());
-			if (!parseDataObjectFrame(frame.ChildFrames[frame.ChildFrames.size()-1]))
+			if (!parseDataObjectFrame(frame.ChildFrames.getLast()))
 				return false;
 		}
 		else
@@ -397,7 +396,7 @@ bool CXFileReader::parseDataObjectFrame(SXFrame& frame)
 		if (objectName == "Mesh")
 		{
 			frame.Meshes.push_back(SXMesh());
-			if (!parseDataObjectMesh(frame.Meshes[frame.Meshes.size()-1]))
+			if (!parseDataObjectMesh(frame.Meshes.getLast()))
 				return false;
 		}
 		else
@@ -660,7 +659,7 @@ bool CXFileReader::parseDataObjectMesh(SXMesh &mesh)
 		if (objectName == "SkinWeights")
 		{
 			mesh.SkinWeights.push_back(SXSkinWeight());
-			if (!parseDataObjectSkinWeights(mesh.SkinWeights[mesh.SkinWeights.size()-1]))
+			if (!parseDataObjectSkinWeights(mesh.SkinWeights.getLast()))
 				return false;
 		}
 		else
@@ -862,7 +861,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 		if (objectName == "Material")
 		{
 			mlist.Materials.push_back(SXMaterial());
-			if (!parseDataObjectMaterial(mlist.Materials[mlist.Materials.size()-1]))
+			if (!parseDataObjectMaterial(mlist.Materials.getLast()))
 				return false;
 		}
 		else
@@ -876,11 +875,10 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 			if (!parseUnknownDataObject())
 				return false;
 		}
-
 	}
-
 	return true;
 }
+
 
 
 bool CXFileReader::parseDataObjectMaterial(SXMaterial& material)
@@ -1020,7 +1018,7 @@ bool CXFileReader::parseDataObjectAnimationSet(SXAnimationSet& set)
 		if (objectName == "Animation")
 		{
 			set.Animations.push_back(SXAnimation());
-			if (!parseDataObjectAnimation(set.Animations[set.Animations.size()-1]))
+			if (!parseDataObjectAnimation(set.Animations.getLast()))
 				return false;
 		}
 		else
@@ -1029,11 +1027,10 @@ bool CXFileReader::parseDataObjectAnimationSet(SXAnimationSet& set)
 			if (!parseUnknownDataObject())
 				return false;
 		}
-
 	}
-
 	return true;
 }
+
 
 
 bool CXFileReader::parseDataObjectAnimation(SXAnimation& anim)
@@ -1069,7 +1066,7 @@ bool CXFileReader::parseDataObjectAnimation(SXAnimation& anim)
 		if (objectName == "AnimationKey")
 		{
 			anim.Keys.push_back(SXAnimationKey());
-			if (!parseDataObjectAnimationKey(anim.Keys[anim.Keys.size()-1]))
+			if (!parseDataObjectAnimationKey(anim.Keys.getLast()))
 				return false;
 		}
 		else
@@ -1105,11 +1102,10 @@ bool CXFileReader::parseDataObjectAnimation(SXAnimation& anim)
 					return false;
 			}
 		}
-
 	}
-
 	return true;
 }
+
 
 
 bool CXFileReader::parseDataObjectAnimationKey(SXAnimationKey& animkey)
