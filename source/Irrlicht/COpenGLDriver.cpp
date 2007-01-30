@@ -1708,6 +1708,8 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 				material.AnisotropicFilter ? MaxAnisotropy : 1.0f );
 	}
+	if (MultiTextureExtension)
+		extGlActiveTextureARB(GL_TEXTURE0_ARB);
 	setTransform(ETS_TEXTURE_0, material.TextureMatrix[0]);
 	setTransform(ETS_TEXTURE_1, material.TextureMatrix[1]);
 	setTransform(ETS_TEXTURE_2, material.TextureMatrix[2]);
@@ -1818,10 +1820,33 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	// texture address mode
 	if (resetAllRenderStates || lastmaterial.TextureWrap != material.TextureWrap)
 	{
-		u32 mode = material.TextureWrap ? GL_REPEAT : GL_CLAMP;
+		GLint mode;
+		switch (material.TextureWrap)
+		{
+			case ETC_REPEAT:
+				mode=GL_REPEAT;
+				break;
+			case ETC_CLAMP:
+				mode=GL_CLAMP;
+				break;
+			case ETC_CLAMP_TO_EDGE:
+				mode=GL_CLAMP_TO_EDGE;
+				break;
+			case ETC_CLAMP_TO_BORDER:
+				mode=GL_CLAMP_TO_BORDER;
+				break;
+			case ETC_MIRROR:
+				mode=GL_MIRRORED_REPEAT;
+				break;
+		}
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
+		for (s32 i=0; i<MaxTextureUnits; ++i)
+		{
+			if (MultiTextureExtension)
+				extGlActiveTextureARB(GL_TEXTURE0_ARB + i);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
+		}
 	}
 
 

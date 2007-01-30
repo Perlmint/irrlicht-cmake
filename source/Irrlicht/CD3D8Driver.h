@@ -267,6 +267,7 @@ namespace video
 
 		D3DMATRIX UnitMatrix;
 
+		u32 MaxTextureUnits;
 		f32 MaxLightDistance;
 		s32 LastSetLight;
 		bool DeviceLost;

@@ -378,11 +378,13 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	// set the renderstates
 	setRenderStates3DMode();
 
+	MaxTextureUnits = core::min_((u32)Caps.MaxSimultaneousTextures, MATERIAL_MAX_TEXTURES);
+
 	// set max anisotropy
-	pID3DDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, irr::core::min_( (DWORD) 16, Caps.MaxAnisotropy));
-	pID3DDevice->SetTextureStageState(1, D3DTSS_MAXANISOTROPY, irr::core::min_( (DWORD) 16, Caps.MaxAnisotropy));
-	pID3DDevice->SetTextureStageState(2, D3DTSS_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
-	pID3DDevice->SetTextureStageState(3, D3DTSS_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
+	pID3DDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, core::min_( (DWORD) 16, Caps.MaxAnisotropy));
+	pID3DDevice->SetTextureStageState(1, D3DTSS_MAXANISOTROPY, core::min_( (DWORD) 16, Caps.MaxAnisotropy));
+	pID3DDevice->SetTextureStageState(2, D3DTSS_MAXANISOTROPY, core::min_( (DWORD) 16, Caps.MaxAnisotropy));
+	pID3DDevice->SetTextureStageState(3, D3DTSS_MAXANISOTROPY, core::min_( (DWORD) 16, Caps.MaxAnisotropy));
 
 	// so far so good.
 	return true;
@@ -1250,7 +1252,7 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 			D3DTEXTUREFILTERTYPE tftMin = ((Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) && material.AnisotropicFilter) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
 			D3DTEXTUREFILTERTYPE tftMip = material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT;
 
-			for (u32 st=0; st<4; ++st)
+			for (u32 st=0; st<MaxTextureUnits; ++st)
 			{
 				pID3DDevice->SetTextureStageState(st, D3DTSS_MAGFILTER, tftMag);
 				pID3DDevice->SetTextureStageState(st, D3DTSS_MINFILTER, tftMin);
@@ -1259,7 +1261,7 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 		}
 		else
 		{
-			for (u32 st=0; st<4; ++st)
+			for (u32 st=0; st<MaxTextureUnits; ++st)
 			{
 				pID3DDevice->SetTextureStageState(st, D3DTSS_MINFILTER, D3DTEXF_POINT);
 				pID3DDevice->SetTextureStageState(st, D3DTSS_MIPFILTER, D3DTEXF_NONE);
@@ -1371,12 +1373,29 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	// texture address mode
 	if (resetAllRenderstates || lastmaterial.TextureWrap != material.TextureWrap)
 	{
-		u32 mode = material.TextureWrap ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
+		u32 mode;
+		switch (material.TextureWrap)
+		{
+			case ETC_REPEAT:
+				mode=D3DTADDRESS_WRAP;
+				break;
+			case ETC_CLAMP:
+			case ETC_CLAMP_TO_EDGE:
+				mode=D3DTADDRESS_CLAMP;
+				break;
+			case ETC_MIRROR:
+				mode=D3DTADDRESS_MIRROR;
+				break;
+			case ETC_CLAMP_TO_BORDER:
+				mode=D3DTADDRESS_BORDER;
+				break;
+		}
 
-		pID3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, mode );
-		pID3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, mode );
-		pID3DDevice->SetTextureStageState(1, D3DTSS_ADDRESSU, mode );
-		pID3DDevice->SetTextureStageState(1, D3DTSS_ADDRESSV, mode );
+		for (u32 st=0; st<MaxTextureUnits; ++st)
+		{
+			pID3DDevice->SetTextureStageState(st, D3DTSS_ADDRESSU, mode );
+			pID3DDevice->SetTextureStageState(st, D3DTSS_ADDRESSV, mode );
+		}
 
 	}
 

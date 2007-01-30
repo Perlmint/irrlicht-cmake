@@ -968,7 +968,7 @@ void CSoftwareDriver2::VertexCache_fill ( const u32 sourceIndex,
 		for ( t = 0; t != vSize[VertexCache.vType].TexSize; ++t )
 		{
 			const f32 *M =  Transformation [ ETS_TEXTURE_0 + t ].m.M;
-			if ( Material.org.TextureWrap )
+			if ( Material.org.TextureWrap==ETC_REPEAT )
 			{
 				dest->Tex[t].x = M[0] * src[t].X + M[4] * src[t].Y + M[8];
 				dest->Tex[t].y = M[1] * src[t].X + M[5] * src[t].Y + M[9];

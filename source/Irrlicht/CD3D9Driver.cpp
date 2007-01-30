@@ -420,6 +420,8 @@ bool CD3D9Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	// set the renderstates
 	setRenderStates3DMode();
 
+	MaxTextureUnits = core::min_((u32)Caps.MaxSimultaneousTextures, MATERIAL_MAX_TEXTURES);
+
 	// set maximal anisotropy
 	pID3DDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
 	pID3DDevice->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, min(16, Caps.MaxAnisotropy));
@@ -1251,7 +1253,7 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 			D3DTEXTUREFILTERTYPE tftMin = ((Caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) && material.AnisotropicFilter) ? D3DTEXF_ANISOTROPIC : D3DTEXF_LINEAR;
 			D3DTEXTUREFILTERTYPE tftMip = material.TrilinearFilter ? D3DTEXF_LINEAR : D3DTEXF_POINT;
 
-			for (u32 st=0; st<4; ++st)
+			for (u32 st=0; st<MaxTextureUnits; ++st)
 			{
 				pID3DDevice->SetSamplerState(st, D3DSAMP_MAGFILTER, tftMag);
 				pID3DDevice->SetSamplerState(st, D3DSAMP_MINFILTER, tftMin);
@@ -1260,7 +1262,7 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 		}
 		else
 		{
-			for (u32 st=0; st<4; ++st)
+			for (u32 st=0; st<MaxTextureUnits; ++st)
 			{
 				pID3DDevice->SetSamplerState(st, D3DSAMP_MINFILTER, D3DTEXF_POINT);
 				pID3DDevice->SetSamplerState(st, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
@@ -1369,14 +1371,29 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	// texture address mode
 	if (resetAllRenderstates || lastmaterial.TextureWrap != material.TextureWrap)
 	{
-		u32 mode = material.TextureWrap ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
+		u32 mode;
+		switch (material.TextureWrap)
+		{
+			case ETC_REPEAT:
+				mode=D3DTADDRESS_WRAP;
+				break;
+			case ETC_CLAMP:
+			case ETC_CLAMP_TO_EDGE:
+				mode=D3DTADDRESS_CLAMP;
+				break;
+			case ETC_MIRROR:
+				mode=D3DTADDRESS_MIRROR;
+				break;
+			case ETC_CLAMP_TO_BORDER:
+				mode=D3DTADDRESS_BORDER;
+				break;
+		}
 
-		pID3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, mode );
-		pID3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, mode );
-
-		pID3DDevice->SetSamplerState(1, D3DSAMP_ADDRESSU, mode );
-		pID3DDevice->SetSamplerState(1, D3DSAMP_ADDRESSV, mode );
-
+		for (u32 st=0; st<MaxTextureUnits; ++st)
+		{
+			pID3DDevice->SetSamplerState(st, D3DSAMP_ADDRESSU, mode );
+			pID3DDevice->SetSamplerState(st, D3DSAMP_ADDRESSV, mode );
+		}
 	}
 
 

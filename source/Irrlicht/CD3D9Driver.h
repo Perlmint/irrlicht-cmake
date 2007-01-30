@@ -272,6 +272,7 @@ namespace video
 
 		E_VERTEX_TYPE LastVertexType;
 
+		u32 MaxTextureUnits;
 		f32 MaxLightDistance;
 		s32 LastSetLight;
 		bool DeviceLost;

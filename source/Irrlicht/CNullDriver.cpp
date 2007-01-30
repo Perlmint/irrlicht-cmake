@@ -1269,8 +1269,7 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	io::CAttributes* attr = new io::CAttributes(this);
 
 	const char** materialNames = new const char*[MaterialRenderers.size()+1];
-	u32 i;
-	for ( i=0; i < MaterialRenderers.size(); ++i)
+	for (u32 i=0; i < MaterialRenderers.size(); ++i)
 		materialNames[i] = MaterialRenderers[i].Name.c_str();
 
 	materialNames[MaterialRenderers.size()] = 0;
@@ -1305,7 +1304,7 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	attr->addBool("NormalizeNormals", material.NormalizeNormals);
 
 	attr->addInt("ZBuffer", material.ZBuffer);
-	attr->addInt("TextureWrap", material.TextureWrap);
+	attr->addEnum("TextureWrap", material.TextureWrap, aTextureClampNames);
 
 	return attr;
 }
@@ -1353,8 +1352,7 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 	outMaterial.NormalizeNormals = attr->getAttributeAsBool("NormalizeNormals");
 
 	outMaterial.ZBuffer = attr->getAttributeAsInt("ZBuffer");
-	outMaterial.TextureWrap = attr->getAttributeAsInt("TextureWrap");
-
+	outMaterial.TextureWrap = (E_TEXTURE_CLAMP)attr->getAttributeAsEnumeration("TextureWrap", aTextureClampNames);
 }
 
 

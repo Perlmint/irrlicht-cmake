@@ -287,7 +287,7 @@ void CQuake3ShaderSceneNode::render()
 		transformtex ( texture, q.TextureAddressMode );
 	}
 */
-	material.TextureWrap = q.TextureAddressMode;
+	material.TextureWrap = q.TextureAddressMode ? video::ETC_CLAMP : video::ETC_REPEAT;
 	driver->setTransform ( video::ETS_TEXTURE_0, texture );
 
 	//material.Wireframe = true;

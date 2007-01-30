@@ -205,6 +205,22 @@ namespace video
 		EBF_SRC_ALPHA_SATURATE		// src		(min(srcA, 1-destA), idem, ...)
 	};
 
+	//! Texture coord clamp mode
+	enum E_TEXTURE_CLAMP
+	{
+		ETC_REPEAT = 0,
+		ETC_CLAMP,
+		ETC_CLAMP_TO_EDGE,
+		ETC_CLAMP_TO_BORDER,
+		ETC_MIRROR
+	};
+	static const char* aTextureClampNames[] = {
+			"texture_clamp_repeat",
+			"texture_clamp_clamp",
+			"texture_clamp_clamp_to_edge",
+			"texture_clamp_clamp_to_border",
+			"texture_clamp_mirror", 0};
+
 	//! MaterialTypeParam: eg. DirectX: D3DTOP_MODULATE, D3DTOP_MODULATE2X, D3DTOP_MODULATE4X
 	enum E_MODULATE_FUNC
 	{
@@ -297,14 +313,16 @@ namespace video
 		: MaterialType(EMT_SOLID), AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
 			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f), Thickness(1.0f),
-			Texture1(0), Texture2(0), Texture3(0), Texture4(0),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
 			BilinearFilter(true), TrilinearFilter(true), AnisotropicFilter(true),
-			FogEnable(false), NormalizeNormals(false),TextureWrap(true)
+			FogEnable(false), NormalizeNormals(false),TextureWrap(ETC_REPEAT)
 		{
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+			{
+				Textures[i] = 0;
 				TextureMatrix[i].makeIdentity();
+			}
 		}
 
 		//! Type of the material. Specifies how everything is blended together
@@ -448,7 +466,7 @@ namespace video
 				bool NormalizeNormals;
 
 				//! Texture Address Mode ( Wrap == Default, Clamp == false )
-				u32 TextureWrap;
+				E_TEXTURE_CLAMP TextureWrap;
 			};
 
 			//! Array representing all flags.
