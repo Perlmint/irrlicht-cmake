@@ -375,10 +375,10 @@ bool CD3D8Driver::initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd
 	// create materials
 	createMaterialRenderers();
 
+	MaxTextureUnits = core::min_((u32)Caps.MaxSimultaneousTextures, MATERIAL_MAX_TEXTURES);
+
 	// set the renderstates
 	setRenderStates3DMode();
-
-	MaxTextureUnits = core::min_((u32)Caps.MaxSimultaneousTextures, MATERIAL_MAX_TEXTURES);
 
 	// set max anisotropy
 	pID3DDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, core::min_( (DWORD) 16, Caps.MaxAnisotropy));
