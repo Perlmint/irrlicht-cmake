@@ -11,7 +11,7 @@ using namespace gui;
 
 int main()
 {
-	IrrlichtDevice *device =createDevice(video::EDT_OPENGL, core::dimension2d<s32>(1024, 768));
+	IrrlichtDevice *device =createDevice(video::EDT_OPENGL, core::dimension2d<s32>(800, 600));
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 	gui::IGUIEnvironment *env = device->getGUIEnvironment();
@@ -33,12 +33,12 @@ int main()
 	env->addGUIElement("GUIEditor");
 
 	
-	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
+	/* IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
 	env->setSkin(skin);
 	IGUIFont *font = env->getFont("lucida_latin.xml");
 	if (font)
 		skin->setFont(font);
-	skin->drop();
+	skin->drop(); /*
 	
 	while(device->run()) 
 	{
@@ -57,4 +57,5 @@ int main()
 	
 	return 0;
 }
+
 

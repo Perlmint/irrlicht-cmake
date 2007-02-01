@@ -19,17 +19,11 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add directory="../../include"/>
+			<Add directory="..\..\include"/>
 		</Compiler>
 		<Linker>
 			<Add option="../../lib/Win32-gcc/libIrrlicht.a"/>
 		</Linker>
-		<Unit filename="..\..\source\Irrlicht\CAttributeImpl.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="CGUIAttributeEditor.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt / Gaz Davidson
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -68,6 +68,15 @@ namespace gui
 
 		//! this shoudln't be serialized, but this is included as it's an example
 		virtual const c8* getTypeName() { return "GUIEditor"; }
+
+		core::rect<s32> TLRect;
+		core::rect<s32> TRRect;
+		core::rect<s32> TopRect;
+		core::rect<s32> BLRect;
+		core::rect<s32> LRect;
+		core::rect<s32> RRect;
+		core::rect<s32> BRRect;
+		core::rect<s32> BRect;
 
 	private:
 
@@ -145,4 +154,5 @@ namespace gui
 } // end namespace irr
 
 #endif
+
 

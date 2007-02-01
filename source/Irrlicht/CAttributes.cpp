@@ -1408,7 +1408,7 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 	else
 	if (element == L"texture")
 	{
-		addString(name.c_str(), "");
+		addTexture(name.c_str(), 0);
 		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else

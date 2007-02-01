@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt / Gaz Davidson
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -56,28 +56,34 @@ void CGUIEditWorkspace::setMenuCommandIDStart(s32 id)
 
 CGUIEditWorkspace::EGUIEDIT_MODE CGUIEditWorkspace::getModeFromPos(core::position2di p)
 {
-	s32 accuracy = 4; // TODO: accuracy
-
 	if (SelectedElement)
 	{
 		core::rect<s32>		r = SelectedElement->getAbsolutePosition();
 
-		if		( p == r.UpperLeftCorner)
+		if		( TLRect.isPointInside(p))  
 			return EGUIEDM_RESIZE_TL;
-		else if ( p == core::position2di(r.UpperLeftCorner.Y, r.LowerRightCorner.X) )
+
+		else if ( TRRect.isPointInside(p))
 			return EGUIEDM_RESIZE_TR;
-		else if ( p == core::position2di(r.LowerRightCorner.Y, r.UpperLeftCorner.X) )
+
+		else if ( BLRect.isPointInside(p) )
 			return EGUIEDM_RESIZE_BL;
-		else if ( p == r.LowerRightCorner )
+
+		else if ( BRRect.isPointInside(p))
 			return EGUIEDM_RESIZE_BR;
-		else if ( p.Y == r.UpperLeftCorner.Y )
+
+		else if ( TopRect.isPointInside(p))
 			return EGUIEDM_RESIZE_T;
-		else if ( p.Y == r.LowerRightCorner.Y )
+
+		else if ( BRect.isPointInside(p))
 			return EGUIEDM_RESIZE_B;
-		else if ( p.X == r.UpperLeftCorner.X )
+
+		else if ( LRect.isPointInside(p))
 			return EGUIEDM_RESIZE_L;
-		else if ( p.X == r.LowerRightCorner.X )
+
+		else if ( RRect.isPointInside(p))
 			return EGUIEDM_RESIZE_R;
+
 		else
 			return EGUIEDM_MOVE;
 	}
@@ -662,38 +668,39 @@ void CGUIEditWorkspace::draw()
 
 		core::position2di d = core::position2di(4,4);
 
+		TLRect = core::rect<s32>(r.UpperLeftCorner, r.UpperLeftCorner + d );
+		TRRect = core::rect<s32>(r.LowerRightCorner.X-4, r.UpperLeftCorner.Y, r.LowerRightCorner.X, r.UpperLeftCorner.Y+4);
+		TopRect = core::rect<s32>(r.getCenter().X-2, r.UpperLeftCorner.Y,r.getCenter().X+2, r.UpperLeftCorner.Y+4 );
+		BLRect = core::rect<s32>(r.UpperLeftCorner.X, r.LowerRightCorner.Y-4, r.UpperLeftCorner.X+4, r.LowerRightCorner.Y);
+		LRect = core::rect<s32>(r.UpperLeftCorner.X,r.getCenter().Y-2, r.UpperLeftCorner.X+4, r.getCenter().Y+2 );
+		RRect = core::rect<s32>(r.LowerRightCorner.X-4,r.getCenter().Y-2, r.LowerRightCorner.X, r.getCenter().Y+2 );	
+		BRRect = core::rect<s32>(r.LowerRightCorner-d, r.LowerRightCorner);
+		BRect = core::rect<s32>(r.getCenter().X-2, r.LowerRightCorner.Y-4,r.getCenter().X+2, r.LowerRightCorner.Y );	
+
 		// top left
 		if (m == EGUIEDM_RESIZE_T || m == EGUIEDM_RESIZE_L || m == EGUIEDM_RESIZE_TL || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-									core::rect<s32>(r.UpperLeftCorner, r.UpperLeftCorner + d ) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), TLRect);
 
 		if (m == EGUIEDM_RESIZE_T || m == EGUIEDM_RESIZE_R || m == EGUIEDM_RESIZE_TR || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-							core::rect<s32>(r.LowerRightCorner.X-4, r.UpperLeftCorner.Y, r.LowerRightCorner.X, r.UpperLeftCorner.Y+4) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), TRRect);
 
 		if (m == EGUIEDM_RESIZE_T || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-				core::rect<s32>(r.getCenter().X-2, r.UpperLeftCorner.Y,r.getCenter().X+2, r.UpperLeftCorner.Y+4 ) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), TopRect);
 
 		if (m == EGUIEDM_RESIZE_L || m == EGUIEDM_RESIZE_BL || m == EGUIEDM_RESIZE_B || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-									core::rect<s32>(r.UpperLeftCorner.X, r.LowerRightCorner.Y-4, r.UpperLeftCorner.X+4, r.LowerRightCorner.Y) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), BLRect);
 
 		if (m == EGUIEDM_RESIZE_L || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-				core::rect<s32>(r.UpperLeftCorner.X,r.getCenter().Y-2, r.UpperLeftCorner.X+4, r.getCenter().Y+2 ) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), LRect);
 
 		if (m == EGUIEDM_RESIZE_R || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-				core::rect<s32>(r.LowerRightCorner.X-4,r.getCenter().Y-2, r.LowerRightCorner.X, r.getCenter().Y+2 ) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), RRect);
 
 		if (m == EGUIEDM_RESIZE_R || m == EGUIEDM_RESIZE_BR || m == EGUIEDM_RESIZE_B || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-							core::rect<s32>(r.LowerRightCorner-d, r.LowerRightCorner) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), BRRect );
 
 		if (m == EGUIEDM_RESIZE_B || m == EGUIEDM_MOVE )
-			driver->draw2DRectangle(video::SColor(100,255,255,255),
-				core::rect<s32>(r.getCenter().X-2, r.LowerRightCorner.Y-4,r.getCenter().X+2, r.LowerRightCorner.Y ) );
+			driver->draw2DRectangle(video::SColor(100,255,255,255), BRect);
 
 
 	}
@@ -751,4 +758,5 @@ void CGUIEditWorkspace::updateAbsolutePosition()
 
 } // end namespace gui
 } // end namespace irr
+
 
