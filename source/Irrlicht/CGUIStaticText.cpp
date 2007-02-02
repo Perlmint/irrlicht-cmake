@@ -15,20 +15,18 @@ namespace gui
 {
 
 
-
 //! constructor
-CGUIStaticText::CGUIStaticText(const wchar_t* text, bool border, IGUIEnvironment* environment,
-							   IGUIElement* parent, s32 id, const core::rect<s32>& rectangle,
-							   bool background)
+CGUIStaticText::CGUIStaticText(const wchar_t* text, bool border,
+			IGUIEnvironment* environment, IGUIElement* parent,
+			s32 id, const core::rect<s32>& rectangle,
+			bool background)
 : IGUIStaticText(environment, parent, id, rectangle), Border(border),
-	OverrideFont(0), OverrideColorEnabled(false), WordWrap(false),
-	LastBreakFont(0), Background(background)
+	OverrideColorEnabled(false), WordWrap(false), Background(background),
+	OverrideColor(video::SColor(101,255,255,255)), OverrideFont(0), LastBreakFont(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIStaticText");
 	#endif
-
-	OverrideColor = video::SColor(101,255,255,255);
 	Text = text;
 }
 
@@ -64,7 +62,7 @@ void CGUIStaticText::draw()
 
 	if (Border)
 	{
-		skin->draw3DSunkenPane(this, 0, true, false, frameRect, &AbsoluteClippingRect);	
+		skin->draw3DSunkenPane(this, 0, true, false, frameRect, &AbsoluteClippingRect);
 		frameRect.UpperLeftCorner.X += 3;
 	}
 
@@ -78,7 +76,7 @@ void CGUIStaticText::draw()
 		if (font)
 		{
 			if (!WordWrap)
-				font->draw(Text.c_str(), frameRect, 
+				font->draw(Text.c_str(), frameRect,
 					OverrideColorEnabled ? OverrideColor : skin->getColor(IsEnabled ? EGDC_BUTTON_TEXT : EGDC_GRAY_TEXT),
 					false, true, &AbsoluteClippingRect);
 			else
@@ -180,18 +178,27 @@ void CGUIStaticText::breakText()
 		c = Text[i];
 		bool lineBreak = false;
 
-		if (c == L'\n')
+		if (c == L'\r') // Mac or Windows breaks
+		{
+			lineBreak = true;
+			c = ' ';
+			if (Text[i+1] == L'\n') // Windows breaks
+			{
+				Text.erase(i+1);
+				--size;
+			}
+		}
+		else if (c == L'\n') // Unix breaks
 		{
 			lineBreak = true;
 			c = ' ';
 		}
-		
+
 		if (c == L' ' || c == 0 || i == (size-1))
 		{
-			
 			if (word.size())
 			{
-				// here comes the next whitespace, look if 
+				// here comes the next whitespace, look if
 				// we can break the last word to the next line.
 				s32 whitelgth = font->getDimension(whitespace.c_str()).Width;
 				s32 worldlgth = font->getDimension(word.c_str()).Width;
@@ -236,8 +243,8 @@ void CGUIStaticText::breakText()
 		}
 	}
 
-	line += whitespace; 
-	line += word; 
+	line += whitespace;
+	line += word;
 	BrokenText.push_back(line);
 }
 
