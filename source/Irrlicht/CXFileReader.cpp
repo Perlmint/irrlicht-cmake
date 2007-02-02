@@ -212,7 +212,7 @@ bool CXFileReader::parseFile()
 	}
 	// loop through hiearchy and combine frames that have no mesh
 	// and no name into its parent
-	
+
 	m_bFrameRemoved = false;
 	for( u32Idx = 0; u32Idx < RootFrames.size(); u32Idx++ )
 	{
@@ -244,7 +244,6 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 
 			u32 c;
 
-			pgParent->ChildFrames.reallocate(pgParent->ChildFrames.size()+pgFrame->ChildFrames.size());
 			for( c=0; c<pgFrame->ChildFrames.size(); ++c )
 			{
 				// add child frames to parent
@@ -253,7 +252,6 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 
 			// add meshes to parent
 
-			pgParent->Meshes.reallocate(pgParent->Meshes.size()+pgFrame->Meshes.size());
 			for( c=0; c<pgFrame->Meshes.size(); ++c )
 			{
 				// add meshes frames to parent
@@ -782,8 +780,8 @@ bool CXFileReader::parseDataObjectSkinMeshHeader(SXSkinMeshHeader& header)
 
 
 bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
-												   s32 triangulatedIndexCount,
-												   core::array< s32 >& indexCountPerFace)
+					s32 triangulatedIndexCount,
+					core::array< s32 >& indexCountPerFace)
 {
 #ifdef _XREADER_DEBUG
 	os::Printer::log("CXFileReader: Reading mesh material list");
@@ -1312,9 +1310,9 @@ bool CXFileReader::parseDataObjectTextureFilename(core::stringc& texturename)
 
 
 bool CXFileReader::parseDataObjectMeshNormals(core::array<core::vector3df>& normals,
-											  core::array< s32 >& normalIndices,
-											  s32 triangulatedIndexCount,
-											  core::array< s32 >& indexCountPerFace)
+					core::array< s32 >& normalIndices,
+					s32 triangulatedIndexCount,
+					core::array< s32 >& indexCountPerFace)
 {
 #ifdef _XREADER_DEBUG
 	os::Printer::log("CXFileReader: reading mesh normals");

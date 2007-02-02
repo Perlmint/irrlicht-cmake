@@ -37,16 +37,14 @@ public:
 	//! Returns if the loaded mesh is static
 	bool isStaticMesh() const;
 
-	//! returns count of animations 
+	//! returns count of animations
 	s32 getAnimationSetCount() const;
 
 	//! returns a specific animation set
 	SXAnimationSet& getAnimationSet(s32 i);
 
 	//! returns array of root frames
-   core::array<SXFrame> & getRootFrames();
-
-
+	core::array<SXFrame> & getRootFrames();
 
 	struct SXMaterial
 	{
@@ -63,10 +61,10 @@ public:
 		core::array<SXMaterial> Materials; // material array
 	};
 
-	struct SXTemplateMaterial 
-	{ 
-		core::stringc Name; // template name from Xfile 
-		SXMaterial Material; // material 
+	struct SXTemplateMaterial
+	{
+		core::stringc Name; // template name from Xfile
+		SXMaterial Material; // material
 	};
 
 	struct SXIndexedColor
@@ -110,7 +108,7 @@ public:
 		// this mesh contains triangulated texture data.
 		// because in an .x file, faces can be made of more than 3
 		// vertices, the indices data structure is triangulated during the
-		// loading process. The IndexCountPerFace array is filled during 
+		// loading process. The IndexCountPerFace array is filled during
 		// this triangulation process and stores how much indices belong to
 		// every face. This data structure can be ignored, because all data
 		// in this structure is triangulated.
@@ -120,8 +118,8 @@ public:
 		core::array< s32 > Indices; // triangle indices
 
 		// optional:
-		
-		core::array<core::vector2df> TextureCoords;	
+
+		core::array<core::vector2df> TextureCoords;
 		core::array<core::vector3df> Normals;
 		core::array<s32> NormalIndices; // amount is equal to Indices amount
 
@@ -134,13 +132,10 @@ public:
 
 	struct SXFrame
 	{
-      SXFrame()
-      {
-         iLevel = 0;
-         pParent = 0;
-      }
-      int iLevel;
-      SXFrame * pParent;
+		SXFrame() : iLevel(0), pParent(0) { }
+
+		int iLevel;
+		SXFrame * pParent;
 		core::stringc Name;
 		core::matrix4 LocalMatrix;
 		core::matrix4 GlobalMatrix;
@@ -161,7 +156,7 @@ public:
 			{
 			case -1: break;
 			case 0 : delete [] (core::quaternion*)data; break;
-			case 1 : 
+			case 1 :
 			case 2 : delete [] (core::vector3df*)data; break;
 			case 3 :
 			case 4 : delete [] (core::matrix4*)data; break;
@@ -171,13 +166,13 @@ public:
 		void init()
 		{
 			time = new s32[numberOfKeys];
-			
+
 			switch(keyType)
 			{
 			case 0 : data = new core::quaternion[numberOfKeys]; break;
-			case 1 : 
+			case 1 :
 			case 2 : data = new core::vector3df[numberOfKeys]; break;
-			case 3 : 
+			case 3 :
 			case 4 : data = new core::matrix4[numberOfKeys]; break;
 			}
 
@@ -198,7 +193,7 @@ public:
 			return ((core::quaternion*)data)[nr];
 		}
 
-		s32 keyType; // 0=rotation, 1=scale, 2=position, 3=matrix 
+		s32 keyType; // 0=rotation, 1=scale, 2=position, 3=matrix
 		s32 numberOfKeys;
 
 		s32* time;
@@ -243,7 +238,7 @@ private:
 	core::stringc getNextToken();
 
 	//! reads header of dataobject including the opening brace.
-	//! returns false if error happened, and writes name of object 
+	//! returns false if error happened, and writes name of object
 	//! if there is one
 	bool readHeadOfDataObject(core::stringc* outname=0);
 
@@ -280,9 +275,7 @@ private:
 	bool parseDataObjectAnimationSet(SXAnimationSet& set);
 	bool parseDataObjectAnimation(SXAnimation& anim);
 	bool parseDataObjectAnimationKey(SXAnimationKey& animkey);
-	bool parseUnknownDataObject();	
-
-	bool ErrorHappened;
+	bool parseUnknownDataObject();
 
 	void readUntilEndOfLine();
 
@@ -290,8 +283,10 @@ private:
 	void optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent );
 	bool validateMesh(SXFrame* frame);
 
+	bool ErrorHappened;
+
 	s32 MajorVersion;
-	s32 MinorVersion;	
+	s32 MinorVersion;
 	bool binary;
 	s32 binaryNumCount;
 
@@ -301,11 +296,11 @@ private:
 	const c8* P;
 	c8* End;
 
-   SXFrame * m_pgCurFrame;
-   core::array<SXFrame>RootFrames;
+	SXFrame * m_pgCurFrame;
+	core::array<SXFrame>RootFrames;
 	core::array<SXAnimationSet> AnimationSets;
-	core::array<SXTemplateMaterial> TemplateMaterials; 
-   bool m_bFrameRemoved;
+	core::array<SXTemplateMaterial> TemplateMaterials;
+	bool m_bFrameRemoved;
 };
 
 } // end namespace scene
