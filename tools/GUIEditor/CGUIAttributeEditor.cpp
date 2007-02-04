@@ -101,6 +101,17 @@ void CGUIAttributeEditor::refreshAttribs()
 	u32 c = Attribs->getAttributeCount();
 	for (i=0; i<c; ++i)
 	{
+		/*
+		core::stringc attribTypeString = "GUIAttribute_"
+		attribTypeString += attribs->getAttributeTypeString(i);
+		// add attribute by name
+		IGUIElement *att = Environment->addGUIElement(attribTypeString.c_str(),this);
+		if (!att)
+		{
+			// generic string editor
+		}
+		*/
+
 		AttribList.push_back(new CGUIAttribute(Environment, this, Attribs, i, r));
 		// dont grab it because we created it with new
 		AttribList[i]->setSubElement(true);
@@ -131,7 +142,7 @@ void CGUIAttributeEditor::updateAttribs()
 
 void CGUIAttributeEditor::updateAbsolutePosition()
 {
-	// get real pos from desired pos
+	// get real position from desired position
 	IGUIElement::updateAbsolutePosition();
 
 	s32 p=0;
@@ -163,7 +174,7 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 							io::IAttributes *attribs, u32 attribIndex, rect<s32> r) :
 	IGUIElement(EGUIET_ELEMENT, environment, parent, -1, r),
 		Attribs(attribs), Index(attribIndex),
-		AttribName(0), AttribEditBox(0), AttribCheckBox(0)
+		AttribName(0), AttribEditBox(0), AttribCheckBox(0), AttribComboBox(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIAttribute");
@@ -192,6 +203,32 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 				r2, this);
 		AttribCheckBox->grab();
 	}
+	else if (attribs->getAttributeType(attribIndex) == io::EAT_ENUM)
+	{
+		core::array<core::stringc> outLiterals;
+		attribs->getAttributeEnumerationLiteralsOfEnumeration(attribIndex, outLiterals);
+
+		if (outLiterals.size() > 0)
+		{
+			AttribComboBox = environment->addComboBox(r2, this, -1);
+			for (u32 i=0; i<outLiterals.size(); ++i)
+				AttribComboBox->addItem( core::stringw(outLiterals[i].c_str()).c_str());
+
+			AttribComboBox->grab();
+			AttribComboBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+		}
+		else
+		{
+
+			AttribEditBox = environment->addEditBox(
+					attribs->getAttributeAsStringW(attribIndex).c_str(),
+					r2, true, this, -1);
+			AttribEditBox->grab();
+			AttribEditBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+		}
+
+
+	}
 	else
 	{
 		AttribEditBox = environment->addEditBox(
@@ -211,6 +248,8 @@ CGUIAttribute::~CGUIAttribute()
 		AttribEditBox->drop();
 	if (AttribCheckBox)
 		AttribCheckBox->drop();
+	if (AttribComboBox)
+		AttribComboBox->drop();
 }
 
 
@@ -239,6 +278,10 @@ void CGUIAttribute::updateAttrib()
 	if (Attribs->getAttributeType(Index) == io::EAT_BOOL)
 	{
 		Attribs->setAttribute(Index, AttribCheckBox->isChecked());
+	}
+	else if (Attribs->getAttributeType(Index) == io::EAT_ENUM)
+	{
+		//Attribs->setAttribute(Index, AttribEditBox->getText());
 	}
 	else
 	{

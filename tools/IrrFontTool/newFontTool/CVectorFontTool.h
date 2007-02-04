@@ -1117,7 +1117,6 @@ public:
 
 			// write vertex data
 			stringw data, count;
-			wchar_t tmpstr[50];
 			data  = L"";
 			count = triangles.positions.size();
 			for (u32 i=0; i<triangles.positions.size(); ++i)

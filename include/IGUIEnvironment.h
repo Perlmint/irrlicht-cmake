@@ -32,6 +32,7 @@ namespace gui
 
 class IGUIElement;
 class IGUIFont;
+class IGUISpriteBank;
 class IGUIScrollBar;
 class IGUIImage;
 class IGUIMeshViewer;
@@ -123,6 +124,16 @@ public:
 
 	//! Returns the default built-in font.
 	virtual IGUIFont* getBuiltInFont() = 0;
+
+	//! Returns pointer to the sprite bank with the specified file name. 
+	/** Loads the bank if it was not loaded before. Returns 0 if it could not be loaded.
+	\return
+	returns a pointer to the sprite bank.
+	This pointer should not be dropped. See IUnknown::drop() for more information. */
+	virtual IGUISpriteBank* getSpriteBank(const c8* filename) = 0;
+
+	//! adds an empty sprite bank to the manager
+	virtual IGUISpriteBank* addEmptySpriteBank(const c8 *name) = 0;
 
 	//! Returns the root gui element. 
 	/** This is the first gui element, parent of all other

@@ -8,7 +8,7 @@
 #include "IVideoDriver.h"
 #include "IGUIButton.h"
 #include "IGUIFont.h"
-#include "GUIIcons.h"
+#include "IGUIFontBitmap.h"
 
 namespace irr
 {
@@ -26,18 +26,18 @@ CGUIWindow::CGUIWindow(IGUIEnvironment* environment, IGUIElement* parent, s32 id
 	s32 buttonw = environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 	s32 posx = RelativeRect.getWidth() - buttonw - 4;
 
-	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_CLOSE);
+	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, L"" );// GUI_ICON_WINDOW_CLOSE);
 	CloseButton->setOverrideFont(Environment->getBuiltInFont());
 	CloseButton->setSubElement(true);
 	posx -= buttonw + 2;
 
-	RestoreButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_RESTORE);
+	RestoreButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, L"" );//GUI_ICON_WINDOW_RESTORE);
 	RestoreButton->setOverrideFont(Environment->getBuiltInFont());
 	RestoreButton->setVisible(false);
 	RestoreButton->setSubElement(true);
 	posx -= buttonw + 2;
 
-	MinButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_MINIMIZE);
+	MinButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, L"" );//GUI_ICON_WINDOW_MINIMIZE);
 	MinButton->setOverrideFont(Environment->getBuiltInFont());
 	MinButton->setVisible(false);
 	MinButton->setSubElement(true);

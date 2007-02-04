@@ -7,7 +7,6 @@
 #include "IGUIEnvironment.h"
 #include "IVideoDriver.h"
 #include "IGUIFont.h"
-#include "GUIIcons.h"
 
 #include "os.h"
 
@@ -111,7 +110,7 @@ bool CGUIMenu::OnEvent(SEvent event)
 		case EMIE_LMOUSE_LEFT_UP:
 			{
 				core::position2d<s32> p(event.MouseInput.X, event.MouseInput.Y);
-				if (AbsoluteRect.isPointInside(p))
+				if (AbsoluteClippingRect.isPointInside(p))
 				{
 					if (HighLighted != -1)
 						Environment->removeFocus(this);

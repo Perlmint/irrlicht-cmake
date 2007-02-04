@@ -621,7 +621,7 @@ class map
 	//! \param v: the new value of
 	void set(const KeyType& k, const ValueType& v)
 	{
-		Node* p = Find(k);
+		Node* p = find(k);
 		if (p)
 			p->setValue(v);
 		else

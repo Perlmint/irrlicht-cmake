@@ -4,7 +4,9 @@
 
 #include "CGUISkin.h"
 #include "IGUIFont.h"
+#include "IGUISpriteBank.h"
 #include "IVideoDriver.h"
+#include "IAttributes.h"
 #include "SoftwareDriver2_helper.h"
 
 namespace irr
@@ -13,7 +15,7 @@ namespace gui
 {
 
 CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
-: Font(0), Driver(driver), Type ( type )
+: Font(0), Driver(driver), Type(type), SpriteBank(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUISkin");
@@ -40,6 +42,9 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Colors[EGDC_TOOLTIP] =		video::SColor(101,255,255,230);
 		Colors[EGDC_SCROLLBAR] =	video::SColor(101,230,230,230);
 		Colors[EGDC_WINDOW] =		video::SColor(101,255,255,255);
+		Colors[EGDC_WINDOW_SYMBOL] = video::SColor(240,10,10,10);
+		Colors[EGDC_ICON] =			video::SColor(240,255,255,255);
+		Colors[EGDC_ICON_HIGH_LIGHT] = video::SColor(240,10,10,10);
 
 		Sizes[EGDS_SCROLLBAR_SIZE] = 14;
 		Sizes[EGDS_MENU_HEIGHT] = 30;
@@ -52,6 +57,7 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 	
 		Sizes[EGDS_TEXT_DISTANCE_X] = 2;
 		Sizes[EGDS_TEXT_DISTANCE_Y] = 0;
+
 	}
 	else
 	{
@@ -62,7 +68,7 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Colors[EGDC_3D_SHADOW]		=	0x50e4e8f1;		// tab background, and left-top highlight
 		Colors[EGDC_3D_HIGH_LIGHT]	=	0x40c7ccdc;	
 		Colors[EGDC_3D_LIGHT]		=	0x802e313a;
-		Colors[EGDC_ACTIVE_BORDER]	=	0x80404040;		// fenster titel
+		Colors[EGDC_ACTIVE_BORDER]	=	0x80404040;		// window title
 		Colors[EGDC_ACTIVE_CAPTION] =	0xf0d0d0d0;
 		Colors[EGDC_APP_WORKSPACE]	=	0xc0646464;		// unused
 		Colors[EGDC_BUTTON_TEXT]	=	0xd0161616;
@@ -74,6 +80,9 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Colors[EGDC_TOOLTIP]		=	0xf00f2033;
 		Colors[EGDC_SCROLLBAR]		=	0xf0e0e0e0;
 		Colors[EGDC_WINDOW]			=	0xf0f0f0f0;
+		Colors[EGDC_WINDOW_SYMBOL]	=	0xd0161616;
+		Colors[EGDC_ICON]			=	0xd0161616;
+		Colors[EGDC_ICON_HIGH_LIGHT]=	0xd0e0e0e0;
 
 		Sizes[EGDS_SCROLLBAR_SIZE] = 14;
 		Sizes[EGDS_MENU_HEIGHT] = 48;
@@ -93,6 +102,23 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 	Texts[EGDT_MSG_BOX_YES] = L"Yes";
 	Texts[EGDT_MSG_BOX_NO] = L"No";
 
+	Icons[EGDI_WINDOW_MAXIMIZE] = 224;
+	Icons[EGDI_WINDOW_RESTORE] = 225;
+	Icons[EGDI_WINDOW_CLOSE] = 226;
+	Icons[EGDI_WINDOW_MINIMIZE] = 227;
+	Icons[EGDI_CURSOR_UP] = 228;
+	Icons[EGDI_CURSOR_DOWN] = 229;
+	Icons[EGDI_CURSOR_LEFT] = 230;
+	Icons[EGDI_CURSOR_RIGHT] = 231;
+	Icons[EGDI_MENU_MORE] = 232;
+	Icons[EGDI_CHECK_BOX_CHECKED] = 233;
+	Icons[EGDI_DROP_DOWN] = 234;
+	Icons[EGDI_SMALL_CURSOR_UP] = 235;
+	Icons[EGDI_SMALL_CURSOR_DOWN] = 236;
+	Icons[EGDI_RADIO_BUTTON_CHECKED] = 237;
+	Icons[EGDI_FILE] = 238;
+	Icons[EGDI_DIRECTORY] = 239;
+
 	UseGradient = (Type == EGST_WINDOWS_METALLIC) ||
 				  (Type == EGST_BURNING_SKIN) ;
 }
@@ -103,6 +129,8 @@ CGUISkin::~CGUISkin()
 {
 	if (Font)
 		Font->drop();
+	if (SpriteBank)
+		SpriteBank->drop();
 }
 
 
@@ -145,7 +173,6 @@ IGUIFont* CGUISkin::getFont()
 	return Font;
 }
 
-
 //! sets a default font
 void CGUISkin::setFont(IGUIFont* font)
 {
@@ -158,6 +185,33 @@ void CGUISkin::setFont(IGUIFont* font)
 		Font->grab();
 }
 
+IGUISpriteBank* CGUISkin::getSpriteBank()
+{
+	return SpriteBank;
+}
+
+void CGUISkin::setSpriteBank(IGUISpriteBank* bank)
+{
+	if (SpriteBank)
+		SpriteBank->drop();
+
+	if (bank)
+		bank->grab();
+
+	SpriteBank = bank;
+}
+
+//! Returns a default icon
+u32 CGUISkin::getIcon(EGUI_DEFAULT_ICON icon)
+{
+	return Icons[icon];
+}
+
+//! Sets a default icon
+void CGUISkin::setIcon(EGUI_DEFAULT_ICON icon, u32 index)
+{
+	Icons[icon] = index;
+}
 
 //! Returns a default text. For example for Message box button captions:
 //! "OK", "Cancel", "Yes", "No" and so on.
@@ -673,9 +727,70 @@ void CGUISkin::draw3DTabBody(IGUIElement* element, bool border, bool background,
 	}
 }
 
+//! draws an icon, usually from the skin's sprite bank
+/**	\param parent: Pointer to the element which wishes to draw this icon. 
+This parameter is usually not used by IGUISkin, but can be used for example 
+by more complex implementations to find out how to draw the part exactly. 
+\param icon: Specifies the icon to be drawn.
+\param position: The position to draw the icon
+\param starttime: The time at the start of the animation
+\param currenttime: The present time, used to calculate the frame number
+\param loop: Whether the animation should loop or not
+\param clip: Clip area.	*/
+void CGUISkin::drawIcon(IGUIElement* element, EGUI_DEFAULT_ICON icon,
+			const core::position2di position, u32 starttime, u32 currenttime, 
+			bool loop, const core::rect<s32>* clip)
+{
+	if (!SpriteBank)
+		return;
+
+	SpriteBank->draw2DSprite(Icons[icon], position, clip, 
+			video::SColor(255,0,0,0), starttime, currenttime, loop, true);
+
+}
+
 EGUI_SKIN_TYPE CGUISkin::getType()
 {
 	return Type;
+}
+
+//! Writes attributes of the object.
+//! Implement this to expose the attributes of your scene node animator for 
+//! scripting languages, editors, debuggers or xml serialization purposes.
+void CGUISkin::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options) 
+{
+	u32 i;
+	for (i=0; i<EGDC_COUNT; ++i)
+		out->addColor(GUISkinColorNames[i], Colors[i]);
+
+	for (i=0; i<EGDS_COUNT; ++i)
+		out->addInt(GUISkinSizeNames[i], Sizes[i]);
+
+	for (i=0; i<EGDT_COUNT; ++i)
+		out->addString(GUISkinTextNames[i], Texts[i].c_str());
+
+	for (i=0; i<EGDI_COUNT; ++i)
+		out->addInt(GUISkinIconNames[i], Icons[i]);
+}
+
+//! Reads attributes of the object.
+//! Implement this to set the attributes of your scene node animator for 
+//! scripting languages, editors, debuggers or xml deserialization purposes.
+void CGUISkin::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
+{
+	u32 i;
+	for (i=0; i<EGDC_COUNT; ++i)
+		Colors[i] = in->getAttributeAsColor(GUISkinColorNames[i]);
+
+	for (i=0; i<EGDS_COUNT; ++i)
+		Sizes[i] = in->getAttributeAsInt(GUISkinSizeNames[i]);
+
+	for (i=0; i<EGDT_COUNT; ++i)
+		Texts[i] = in->getAttributeAsStringW(GUISkinTextNames[i]);
+
+	for (i=0; i<EGDI_COUNT; ++i)
+		Icons[i] = in->getAttributeAsInt(GUISkinIconNames[i]);
+
 }
 
 

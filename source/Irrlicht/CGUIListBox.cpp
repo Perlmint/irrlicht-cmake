@@ -7,6 +7,7 @@
 #include "IGUIEnvironment.h"
 #include "IVideoDriver.h"
 #include "IGUIFont.h"
+#include "IGUISpriteBank.h"
 #include "CGUIScrollBar.h"
 #include "os.h"
 
@@ -21,7 +22,7 @@ CGUIListBox::CGUIListBox(IGUIEnvironment* environment, IGUIElement* parent,
 						 bool drawBack, bool moveOverSelect)
 : IGUIListBox(environment, parent, id, rectangle), Selected(-1), ScrollBar(0), 
 	ItemHeight(0), TotalItemHeight(0), Selecting(false), Font(0), 
-	IconFont(0), ItemsIconWidth(0), Clip(clip), DrawBack(drawBack),
+	IconBank(0), ItemsIconWidth(0), DrawBack(drawBack), selectTime(0),
 	MoveOverSelect(moveOverSelect)
 {
 	#ifdef _DEBUG
@@ -31,19 +32,19 @@ CGUIListBox::CGUIListBox(IGUIEnvironment* environment, IGUIElement* parent,
 	IGUISkin* skin = Environment->getSkin();
 	s32 s = skin->getSize(EGDS_SCROLLBAR_SIZE);
 
-	if (!clip)
-		AbsoluteClippingRect = AbsoluteRect;
-
 	ScrollBar = new CGUIScrollBar(false, Environment, this, 0,
 		core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()),
 		!clip);
 	ScrollBar->setSubElement(true);
+	ScrollBar->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT); 
 	ScrollBar->drop();
 
 	ScrollBar->setPos(0);
 	ScrollBar->grab();
+
+	setNotClipped(!clip);
 	
-	recalculateItemHeight();
+	updateAbsolutePosition();
 }
 
 
@@ -56,8 +57,8 @@ CGUIListBox::~CGUIListBox()
 	if (Font)
 		Font->drop();
 
-	if (IconFont)
-		IconFont->drop();
+	if (IconBank)
+		IconBank->drop();
 }
 
 
@@ -149,6 +150,8 @@ void CGUIListBox::setSelected(s32 id)
 		Selected = -1;
 	else
 		Selected = id;
+
+	selectTime = os::Timer::getTime();
 }
 
 
@@ -254,17 +257,9 @@ void CGUIListBox::selectNew(s32 ypos, bool onlyHover)
 //! Update the position and size of the listbox, and update the scrollbar
 void CGUIListBox::updateAbsolutePosition()
 {
-	// update scrollbar
-	IGUISkin* skin = Environment->getSkin();
-	s32 s = skin->getSize(EGDS_SCROLLBAR_SIZE);
-	ScrollBar->setRelativePosition(core::rect<s32>(RelativeRect.getWidth() - s, 0, RelativeRect.getWidth(), RelativeRect.getHeight()));
-
 	recalculateItemHeight();
 
 	IGUIElement::updateAbsolutePosition();
-
-	if (!Clip)
-		AbsoluteClippingRect = AbsoluteRect;
 }
 
 //! draws the element and its children
@@ -279,8 +274,6 @@ void CGUIListBox::draw()
 	irr::video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32>* clipRect = 0;
-	if (!Clip)
-		clipRect = &AbsoluteClippingRect;
 
 	// draw background
 	core::rect<s32> frameRect(AbsoluteRect);
@@ -322,8 +315,15 @@ void CGUIListBox::draw()
 
 			if (Font)
 			{
-				if (IconFont && Items[i].icon.size())
-					IconFont->draw(Items[i].icon.c_str(), textRect, skin->getColor((i==Selected) ? EGDC_HIGH_LIGHT_TEXT : EGDC_BUTTON_TEXT), false, true, &clientClip);
+				if (IconBank && Items[i].icon > -1)
+				{
+					core::position2di iconPos = textRect.UpperLeftCorner;
+					iconPos.Y += textRect.getHeight() / 2;
+					iconPos.X += ItemsIconWidth/2; 
+					IconBank->draw2DSprite( (u32)Items[i].icon, iconPos, &clientClip, 
+						skin->getColor((i==Selected) ? EGDC_ICON_HIGH_LIGHT : EGDC_ICON),
+						(i==Selected) ? selectTime : 0 , (i==Selected) ? os::Timer::getTime() : 0, false, true);
+				}
 
 				textRect.UpperLeftCorner.X += ItemsIconWidth+3;
 
@@ -343,13 +343,7 @@ void CGUIListBox::draw()
 
 
 //! adds an list item with an icon
-//! \param
-//! text: Text of list entry
-//!  icon: Text of the Icon. This text can be for example one of the texts defined in
-//!  GUIIcons.h. 
-//! \return
-//! returns the id of the new created item
-s32 CGUIListBox::addItem(const wchar_t* text, const wchar_t* icon)
+s32 CGUIListBox::addItem(const wchar_t* text, s32 icon)
 {
 	ListItem i;
 	i.text = text;
@@ -358,46 +352,45 @@ s32 CGUIListBox::addItem(const wchar_t* text, const wchar_t* icon)
 	Items.push_back(i);
 	recalculateItemHeight();
 
-	if (IconFont)
+	if (IconBank && icon > -1 && 
+		IconBank->getSprites().size() > (u32)icon &&
+		IconBank->getSprites()[(u32)icon].Frames.size())
 	{
-		s32 w = IconFont->getDimension(icon).Width;
-		if (w > ItemsIconWidth)
-			ItemsIconWidth = w;
+		u32 rno = IconBank->getSprites()[(u32)icon].Frames[0].rectNumber;
+		if (IconBank->getPositions().size() > rno)
+		{
+			s32 w = IconBank->getPositions()[rno].getWidth();
+			if (w > ItemsIconWidth)
+				ItemsIconWidth = w;
+		}
 	}
 
     return Items.size() - 1;
 }
 
 
-//! Sets the font which should be used as icon font. This font is set to the Irrlicht engine
-//! built-in-font by default. Icons can be displayed in front of every list item.
-//! An icon is a string, displayed with the icon font. When using the build-in-font of the
-//! Irrlicht engine as icon font, the icon strings defined in GUIIcons.h can be used.
-void CGUIListBox::setIconFont(IGUIFont* font)
+void CGUIListBox::setSpriteBank(IGUISpriteBank* bank)
 {
-	if (IconFont)
-		IconFont->drop();
+	if (IconBank)
+		IconBank->drop();
 
-	IconFont = font;
-	if (IconFont)
-		IconFont->grab();
+	IconBank = bank;
+	if (IconBank)
+		IconBank->grab();
 }
 
 
 //! Writes attributes of the element.
 void CGUIListBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
 {
-
 	IGUIListBox::serializeAttributes(out,options);
 
-	//out->addFont	("IconFont",		IconFont);
-
-	out->addBool	("Clip",			Clip);
+	// todo: out->addString	("IconBank",		IconBank->getName?);
 	out->addBool	("DrawBack",		DrawBack);
 	out->addBool	("MoveOverSelect",	MoveOverSelect);
 
-	// save list of items as two arrays
-	core::array<core::stringw> tmpText;
+	// todo: save list of items and icons.
+	/*core::array<core::stringw> tmpText;
 	core::array<core::stringw> tmpIcons;
 	u32 i;
 	for (i=0;i<Items.size(); ++i)
@@ -410,19 +403,20 @@ void CGUIListBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWr
 	out->addArray	("ItemIcons",		tmpIcons);
 
 	out->addInt		("Selected",		Selected);
+	*/
 
 }
 
 //! Reads attributes of the element
 void CGUIListBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
 {
-	Clip			= in->getAttributeAsBool("Clip");
 	DrawBack		= in->getAttributeAsBool("DrawBack");
 	MoveOverSelect	= in->getAttributeAsBool("MoveOverSelect");
 
 	IGUIListBox::deserializeAttributes(in,options);
 
 	// read arrays
+	/*
 	core::array<core::stringw> tmpText;
 	core::array<core::stringw> tmpIcons;
 
@@ -431,8 +425,10 @@ void CGUIListBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadW
 	u32 i;
 	for (i=0; i<Items.size(); ++i)
 		addItem(tmpText[i].c_str(), tmpIcons[i].c_str());
+	
 
 	this->setSelected(in->getAttributeAsInt("Selected"));
+	*/
 
 }
 

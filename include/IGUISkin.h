@@ -5,7 +5,7 @@
 #ifndef __I_GUI_SKIN_H_INCLUDED__
 #define __I_GUI_SKIN_H_INCLUDED__
 
-#include "IUnknown.h"
+#include "IAttributeExchangingObject.h"
 #include "SColor.h"
 #include "IGUISkin.h"
 #include "rect.h"
@@ -15,6 +15,7 @@ namespace irr
 namespace gui
 {
 	class IGUIFont;
+	class IGUISpriteBank;
 	class IGUIElement;
 
 	//! Enumeration of available default skins.
@@ -30,16 +31,13 @@ namespace gui
 	{
 		//! Default windows look and feel
 		EGST_WINDOWS_CLASSIC=0,
-
 		//! Like EGST_WINDOWS_CLASSIC, but with metallic shaded windows and buttons
 		EGST_WINDOWS_METALLIC,
-
 		//! Burning's skin
 		EGST_BURNING_SKIN,
 
 		//! Count to say how many skins are available
 		EGST_COUNT,
-
 		//! An unknown skin, not serializable at present
 		EGST_UNKNOWN
 	};
@@ -92,7 +90,14 @@ namespace gui
 		EGDC_SCROLLBAR,
 		//! Window background
 		EGDC_WINDOW,
-
+		//! Window symbols like on close buttons, scroll bars and check boxes
+		EGDC_WINDOW_SYMBOL,
+		//! Icons in a list or tree
+		EGDC_ICON,
+		//! Selected icons in a list or tree
+		EGDC_ICON_HIGH_LIGHT,
+		//! this value is not used, it only specifies the amount of default colors
+		//! available.
 		EGDC_COUNT
 	};
 
@@ -103,6 +108,7 @@ namespace gui
 		"3DShadow",
 		"3DFace",
 		"3DHighlight",
+		"3DLight",
 		"ActiveBorder",
 		"ActiveCaption",
 		"AppWorkspace",
@@ -115,6 +121,9 @@ namespace gui
 		"ToolTip",
 		"ScrollBar",
 		"Window",
+		"WindowSymbol",
+		"Icon",
+		"IconHighlight",
 		0,
 	};
 
@@ -123,34 +132,24 @@ namespace gui
 	{
 		//! default with / height of scrollbar
 		EGDS_SCROLLBAR_SIZE = 0,
-
 		//! height of menu
 		EGDS_MENU_HEIGHT,
-
 		//! width of a window button
 		EGDS_WINDOW_BUTTON_WIDTH,
-
 		//! width of a checkbox check
 		EGDS_CHECK_BOX_WIDTH,
-
 		//! width of a messagebox
 		EGDS_MESSAGE_BOX_WIDTH,
-
 		//! height of a messagebox
 		EGDS_MESSAGE_BOX_HEIGHT,
-
 		//! width of a default button
 		EGDS_BUTTON_WIDTH,
-
 		//! height of a default button
 		EGDS_BUTTON_HEIGHT,
-	
 		//! distance for text from background
 		EGDS_TEXT_DISTANCE_X,
-
 		//! distance for text from background
 		EGDS_TEXT_DISTANCE_Y,
-
 		//! this value is not used, it only specifies the amount of default sizes
 		//! available.
 		EGDS_COUNT
@@ -178,18 +177,14 @@ namespace gui
 	{
 		//! Text for the OK button on a message box
 		EGDT_MSG_BOX_OK = 0,
-
 		//! Text for the Cancel button on a message box
 		EGDT_MSG_BOX_CANCEL,
-
 		//! Text for the Yes button on a message box
 		EGDT_MSG_BOX_YES,
-
 		//! Text for the No button on a message box
 		EGDT_MSG_BOX_NO,
 
-		//! this value is not used, it only specifies the amount of default texts
-		//! available.
+		//! this value is not used, it only specifies the number of default texts
 		EGDT_COUNT
 	};
 
@@ -203,9 +198,69 @@ namespace gui
 		0,
 	};
 
+	//! Customizable symbols for GUI
+	enum EGUI_DEFAULT_ICON
+	{
+		//! maximize window button
+		EGDI_WINDOW_MAXIMIZE = 0,
+		//! restore window button
+		EGDI_WINDOW_RESTORE,
+		//! close window button
+		EGDI_WINDOW_CLOSE,
+		//! minimize window button
+		EGDI_WINDOW_MINIMIZE,
+		//! scroll bar up button
+		EGDI_CURSOR_UP,
+		//! scroll bar down button
+		EGDI_CURSOR_DOWN,
+		//! scroll bar left button
+		EGDI_CURSOR_LEFT,
+		//! scroll bar right button
+		EGDI_CURSOR_RIGHT,
+		//! icon for menu children
+		EGDI_MENU_MORE,
+		//! tick for checkbox
+		EGDI_CHECK_BOX_CHECKED,
+		//! down arrow for dropdown menus
+		EGDI_DROP_DOWN,
+		//! smaller up arrow
+		EGDI_SMALL_CURSOR_UP,
+		//! smaller down arrow
+		EGDI_SMALL_CURSOR_DOWN,
+		//! selection dot in a radio button
+		EGDI_RADIO_BUTTON_CHECKED,
+		//! file icon for file selection
+		EGDI_FILE,
+		//! folder icon for file selection
+		EGDI_DIRECTORY,
+
+		//! value not used, it only specifies the number of icons
+		EGDI_COUNT
+	};
+
+	const c8* const GUISkinIconNames[] =
+	{
+		"windowMaximize",
+		"windowRestore",
+		"windowClose",
+		"windowMinimize",
+		"cursorUp",
+		"cursorDown",
+		"cursorLeft",
+		"cursorRight",
+		"menuMore",
+		"checkBoxChecked",
+		"dropDown",
+		"smallCursorUp",
+		"smallCursorDown",
+		"radioButtonChecked",
+		"file",
+		"directory",
+		0
+	};
 
 	//! A skin modifies the look of the GUI elements.
-	class IGUISkin : public virtual IUnknown
+	class IGUISkin : public virtual io::IAttributeExchangingObject
 	{
 	public:
 
@@ -240,11 +295,28 @@ namespace gui
 		//! sets a default font
 		virtual void setFont(IGUIFont* font) = 0;
 
+		//! returns the sprite bank
+		virtual IGUISpriteBank* getSpriteBank() = 0;
+
+		//! sets the sprite bank
+		virtual void setSpriteBank(IGUISpriteBank* bank) = 0;
+
+		//! Returns a default icon
+		/** Returns the sprite index within the sprite bank */
+		virtual u32 getIcon(EGUI_DEFAULT_ICON icon) = 0;
+
+		//! Sets a default icon
+		/** Sets the sprite index used for drawing icons like arrows, 
+		close buttons and ticks in checkboxes 
+		\param icon: Enum specifying which icon to change
+		\param index: The sprite index used to draw this icon */
+		virtual void setIcon(EGUI_DEFAULT_ICON icon, u32 index) = 0;
+
 		//! draws a standard 3d button pane
 		/**	Used for drawing for example buttons in normal state. 
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
@@ -257,7 +329,7 @@ namespace gui
 		/**	Used for drawing for example buttons in pressed state. 
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
@@ -268,7 +340,7 @@ namespace gui
 
 		//! draws a sunken 3d pane
 		/** Used for drawing the background of edit, combo or check boxes.
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param bgcolor: Background color.
@@ -285,7 +357,7 @@ namespace gui
 
 		//! draws a window background
 		/** Used for drawing the background of dialogs and windows.
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param titleBarColor: Title color.
@@ -302,7 +374,7 @@ namespace gui
 		/**	Used for drawing for menus and context menus. 
 		It uses the colors EGDC_3D_DARK_SHADOW, EGDC_3D_HIGH_LIGHT, EGDC_3D_SHADOW and
 		EGDC_3D_FACE for this. See EGUI_DEFAULT_COLOR for details. 
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
@@ -313,7 +385,7 @@ namespace gui
 
 		//! draws a standard 3d tool bar
 		/**	Used for drawing for toolbars and menus.
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param rect: Defining area where to draw.
@@ -324,7 +396,7 @@ namespace gui
 
 		//! draws a tab button
 		/**	Used for drawing for tab buttons on top of tabs.
-		\param element: Pointer to the element which whiches to draw this. This parameter
+		\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param active: Specifies if the tab is currently active.
@@ -334,7 +406,7 @@ namespace gui
 			const core::rect<s32>& rect, const core::rect<s32>* clip=0) = 0;
 
 		//! draws a tab control body
-		/**	\param element: Pointer to the element which whiches to draw this. This parameter
+		/**	\param element: Pointer to the element which wishes to draw this. This parameter
 		is usually not used by IGUISkin, but can be used for example by more complex 
 		implementations to find out how to draw the part exactly. 
 		\param border: Specifies if the border should be drawn.
@@ -343,6 +415,20 @@ namespace gui
 		\param clip: Clip area.	*/
 		virtual void draw3DTabBody(IGUIElement* element, bool border, bool background,
 			const core::rect<s32>& rect, const core::rect<s32>* clip=0) = 0;
+
+		//! draws an icon, usually from the skin's sprite bank
+		/**	\param parent: Pointer to the element which wishes to draw this icon. 
+		This parameter is usually not used by IGUISkin, but can be used for example 
+		by more complex implementations to find out how to draw the part exactly. 
+		\param icon: Specifies the icon to be drawn.
+		\param position: The position to draw the icon
+		\param starttime: The time at the start of the animation
+		\param currenttime: The present time, used to calculate the frame number
+		\param loop: Whether the animation should loop or not
+		\param clip: Clip area.	*/
+		virtual void drawIcon(IGUIElement* element, EGUI_DEFAULT_ICON icon,
+			const core::position2di position, u32 starttime=0, u32 currenttime=0, 
+			bool loop=false, const core::rect<s32>* clip=0) = 0;
 
 		//! get the type of this skin
 		virtual EGUI_SKIN_TYPE getType() { return EGST_UNKNOWN; };

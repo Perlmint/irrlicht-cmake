@@ -67,6 +67,12 @@ public:
 	//! returns the font
 	virtual IGUIFont* getFont(const c8* filename);
 
+	//! returns the sprite bank
+	virtual IGUISpriteBank* getSpriteBank(const c8* filename);
+
+	//! returns the sprite bank
+	virtual IGUISpriteBank* addEmptySpriteBank(const c8* name);
+
 	//! adds an button. The returned pointer must not be dropped.
 	virtual IGUIButton* addButton(const core::rect<s32>& rectangle, IGUIElement* parent=0, s32 id=-1, const wchar_t* text=0,const wchar_t* tooltiptext = 0);
 
@@ -217,6 +223,17 @@ private:
 		}
 	};
 
+	struct SSpriteBank
+	{
+		core::stringc Filename;
+		IGUISpriteBank* Bank;
+
+		bool operator < (const SSpriteBank& other) const
+		{
+			return (Filename < other.Filename);
+		}
+	};
+
 	struct SToolTip
 	{
 		u32 LastTime;
@@ -231,6 +248,7 @@ private:
 	core::array<IGUIElementFactory*> GUIElementFactoryList;
 
 	core::array<SFont> Fonts;
+	core::array<SSpriteBank> Banks;
 	video::IVideoDriver* Driver;
 	IGUIElement* Hovered;
 	IGUIElement* Focus;

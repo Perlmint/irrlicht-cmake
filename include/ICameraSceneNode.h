@@ -136,24 +136,6 @@ namespace scene
 			IsOrthogonal = orthogonal;
 		}
 
-		//! Sets the rotation speed
-		virtual void setRotateSpeed(const f32 speed) { };
-
-		//! Sets the movement speed
-		virtual void setMoveSpeed(const f32 speed) { };
-
-		//! Gets the rotation speed
-		virtual f32 getRotateSpeed()
-		{
-			return 0.0f;
-		}
-
-		// Gets the movement speed
-		virtual f32 getMoveSpeed()
-		{
-			return 0.0f;
-		}
-
 
 	private:
 

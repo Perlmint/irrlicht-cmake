@@ -54,17 +54,16 @@ namespace gui
 
 		//! adds an list item with an icon
 		//! \param text Text of list entry
-		//! \param icon Text of the Icon. This text can be for example one of the texts defined in
-		//!  GUIIcons.h. 
+		//! \param icon Sprite index of the Icon within the current sprite bank. Set it to -1 if you want no icon
 		//! \return
 		//! returns the id of the new created item
-		virtual s32 addItem(const wchar_t* text, const wchar_t* icon);
+		virtual s32 addItem(const wchar_t* text, s32 icon);
 
-		//! Sets the font which should be used as icon font. This font is set to the Irrlicht engine
-		//! built-in-font by default. Icons can be displayed in front of every list item.
-		//! An icon is a string, displayed with the icon font. When using the build-in-font of the
-		//! Irrlicht engine as icon font, the icon strings defined in GUIIcons.h can be used.
-		virtual void setIconFont(IGUIFont* font);
+		//! Sets the sprite bank which should be used to draw list icons. This font is set to the sprite bank of
+		//! the built-in-font by default. A sprite can be displayed in front of every list item.
+		//! An icon is an index within the icon sprite bank. Several default icons are available in the
+		//! skin through getIcon
+		virtual void setSpriteBank(IGUISpriteBank* bank);
 		
 		//! Update the position and size of the listbox, and update the scrollbar
 		virtual void updateAbsolutePosition();
@@ -80,7 +79,7 @@ namespace gui
 		struct ListItem
 		{
 			core::stringw text;
-			core::stringw icon;
+			s32 icon;
 		};
 
 		void recalculateItemHeight();
@@ -92,12 +91,12 @@ namespace gui
 		s32 TotalItemHeight;
 		s32 ItemsIconWidth;
 		gui::IGUIFont* Font;
-		gui::IGUIFont* IconFont;
+		gui::IGUISpriteBank* IconBank;
 		bool Selecting;
 		gui::IGUIScrollBar* ScrollBar;
-		bool Clip;
 		bool DrawBack;
 		bool MoveOverSelect;
+		u32 selectTime;
 	};
 
 

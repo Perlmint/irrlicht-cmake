@@ -8,7 +8,6 @@
 #include "IGUISkin.h"
 #include "IGUIEnvironment.h"
 #include "IGUIFont.h"
-#include "GUIIcons.h"
 #include "IGUIListBox.h"
 #include "CGUIListBox.h"
 #include "os.h"
@@ -39,9 +38,11 @@ CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 	r.UpperLeftCorner.Y = 2;
 	r.LowerRightCorner.Y = rectangle.getHeight() - 2;
 
-	ListButton = Environment->addButton(r, this, -1, GUI_ICON_CURSOR_DOWN);
+	ListButton = Environment->addButton(r, this, -1, L"");//GUI_ICON_CURSOR_DOWN);
 	ListButton->setSubElement(true);
 	ListButton->setOverrideFont(Environment->getBuiltInFont());
+
+	setNotClipped(true);
 }
 
 
@@ -164,7 +165,7 @@ bool CGUIComboBox::OnEvent(SEvent event)
 					return true;
 		
 				// check if it is outside
-				if (!AbsoluteRect.isPointInside(p))
+				if (!AbsoluteClippingRect.isPointInside(p))
 				{
 					Environment->removeFocus(this);
 					return false;
@@ -182,7 +183,7 @@ bool CGUIComboBox::OnEvent(SEvent event)
 				else
 					openCloseMenu();
 				
-				if (!AbsoluteRect.isPointInside(p))
+				if (!AbsoluteClippingRect.isPointInside(p))
 				{
 					Environment->removeFocus(this);
 					return false;

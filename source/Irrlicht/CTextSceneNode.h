@@ -7,7 +7,7 @@
 
 #include "ITextSceneNode.h"
 #include "IGUIFont.h"
-#include "IGUIFontASCII.h"
+#include "IGUIFontBitmap.h"
 #include "ISceneCollisionManager.h"
 #include "S3DVertex.h"
 
@@ -59,18 +59,18 @@ namespace scene
 	};
 
 
-	class CTextSceneNode2 : public ITextSceneNode
+	class CBillboardTextSceneNode : public ITextSceneNode
 	{
 	public:
 
-		CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-			gui::IGUIFontASCII* font,const wchar_t* text,
+		CBillboardTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
+			gui::IGUIFontBitmap* font,const wchar_t* text,
 			const core::vector3df& position, const core::dimension2d<f32>& size,
 			f32 kerning,
 			video::SColor shade_top,video::SColor shade_down );
 
 		//! destructor
-		virtual ~CTextSceneNode2();
+		virtual ~CBillboardTextSceneNode();
 
 		virtual void OnPreRender();
 
@@ -105,7 +105,7 @@ namespace scene
 
 		core::stringw Text;
 		video::SColor Color;
-		gui::IGUIFontASCII* Font;
+		gui::IGUIFontBitmap* Font;
 
 		core::dimension2d<f32> Size;
 		core::aabbox3d<f32> BBox;

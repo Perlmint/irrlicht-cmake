@@ -87,18 +87,18 @@ void CTextSceneNode::setTextColor(video::SColor color)
 }
 
 
-//!--------------------------------- CTextSceneNode2 ----------------------------------------------
+//!--------------------------------- CBillboardTextSceneNode ----------------------------------------------
 
 //! constructor
-CTextSceneNode2::CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-	gui::IGUIFontASCII* font,const wchar_t* text,
+CBillboardTextSceneNode::CBillboardTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
+	gui::IGUIFontBitmap* font,const wchar_t* text,
 	const core::vector3df& position, const core::dimension2d<f32>& size,f32 kerning,
 	video::SColor shade_top,video::SColor shade_down )
 : ITextSceneNode(parent, mgr, id, position),
 	Font(0),Shade_top ( shade_top ), Shade_down ( shade_down ),	Kerning ( kerning )
 {
 	#ifdef _DEBUG
-	setDebugName("CTextSceneNode2");
+	setDebugName("CBillboardTextSceneNode");
 	#endif
 
 	setText ( text );
@@ -112,7 +112,7 @@ CTextSceneNode2::CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,
 		{
 			Font = font;
 			Font->grab();
-			Material.Texture1 = Font->getTexture ();
+			//Material.Texture1 = Font->getTexture ();
 		}
 	}
 
@@ -129,7 +129,7 @@ CTextSceneNode2::CTextSceneNode2(ISceneNode* parent, ISceneManager* mgr, s32 id,
 
 
 
-CTextSceneNode2::~CTextSceneNode2()
+CBillboardTextSceneNode::~CBillboardTextSceneNode()
 {
 	if (Font)
 		Font->drop();
@@ -138,8 +138,8 @@ CTextSceneNode2::~CTextSceneNode2()
 
 
 //! sets the text string
-void CTextSceneNode2::setText(const wchar_t* text)
-{
+void CBillboardTextSceneNode::setText(const wchar_t* text)
+{/*
 	Text = text;
 
 	Symbol.clear ();
@@ -180,12 +180,12 @@ void CTextSceneNode2::setText(const wchar_t* text)
 		info.Width = tex[3] - tex[0];
 
 		Symbol.push_back ( info );
-	}
+	}*/
 }
 
 
 //! pre render event
-void CTextSceneNode2::OnPreRender()
+void CBillboardTextSceneNode::OnPreRender()
 {
 	if (!IsVisible)
 		return;
@@ -274,7 +274,7 @@ void CTextSceneNode2::OnPreRender()
 
 
 //! render
-void CTextSceneNode2::render()
+void CBillboardTextSceneNode::render()
 {
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
@@ -304,14 +304,14 @@ void CTextSceneNode2::render()
 }
 
 //! returns the axis aligned bounding box of this node
-const core::aabbox3d<f32>& CTextSceneNode2::getBoundingBox() const
+const core::aabbox3d<f32>& CBillboardTextSceneNode::getBoundingBox() const
 {
 	return BBox;
 }
 
 
 //! sets the size of the billboard
-void CTextSceneNode2::setSize(const core::dimension2d<f32>& size)
+void CBillboardTextSceneNode::setSize(const core::dimension2d<f32>& size)
 {
 	Size = size;
 
@@ -327,21 +327,21 @@ void CTextSceneNode2::setSize(const core::dimension2d<f32>& size)
 }
 
 
-video::SMaterial& CTextSceneNode2::getMaterial(u32 i)
+video::SMaterial& CBillboardTextSceneNode::getMaterial(u32 i)
 {
 	return Material;
 }
 
 
 //! returns amount of materials used by this scene node.
-u32 CTextSceneNode2::getMaterialCount()
+u32 CBillboardTextSceneNode::getMaterialCount()
 {
 	return 1;
 }
 
 
 //! gets the size of the billboard
-const core::dimension2d<f32>& CTextSceneNode2::getSize()
+const core::dimension2d<f32>& CBillboardTextSceneNode::getSize()
 {
 	return Size;
 }
@@ -350,7 +350,7 @@ const core::dimension2d<f32>& CTextSceneNode2::getSize()
 
 
 //! sets the color of the text
-void CTextSceneNode2::setTextColor(video::SColor color)
+void CBillboardTextSceneNode::setTextColor(video::SColor color)
 {
 	Color = color;
 }

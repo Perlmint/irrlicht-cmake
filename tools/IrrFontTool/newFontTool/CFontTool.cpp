@@ -81,7 +81,7 @@ inline int getTextureSizeFromSurfaceSize(int size)
 
 		LOGFONTW lf;
 		lf.lfFaceName[0] = L'\0';
-		lf.lfCharSet = charsets[currentCharSet];
+		lf.lfCharSet = (BYTE) charsets[currentCharSet];
 		// HRESULT hr; // no error checking(!)
 
 		// clear font list

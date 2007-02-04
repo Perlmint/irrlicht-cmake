@@ -6,8 +6,9 @@
 #include "IGUISkin.h"
 #include "IGUIEnvironment.h"
 #include "IVideoDriver.h"
-#include "GUIIcons.h"
 #include "CGUIButton.h"
+#include "IGUIFont.h"
+#include "IGUIFontBitmap.h"
 
 namespace irr
 {
@@ -250,7 +251,7 @@ void CGUIScrollBar::refreshControls()
 			UpButton->setSubElement(true);
 			UpButton->setOverrideFont(Environment->getBuiltInFont());
 		}
-		UpButton->setText(GUI_ICON_CURSOR_LEFT);
+		UpButton->setText(L"" );//GUI_ICON_CURSOR_LEFT);
 		UpButton->setRelativePosition(core::rect<s32>(0,0, h, h));
 		if (!DownButton)
 		{
@@ -259,7 +260,7 @@ void CGUIScrollBar::refreshControls()
 			DownButton->setOverrideFont(Environment->getBuiltInFont());
 		}
 		DownButton->setRelativePosition(core::rect<s32>(RelativeRect.getWidth()-h, 0, RelativeRect.getWidth(), h));
-		DownButton->setText(GUI_ICON_CURSOR_RIGHT);
+		DownButton->setText(L"" );//GUI_ICON_CURSOR_RIGHT);
 	}
 	else
 	{
@@ -270,7 +271,7 @@ void CGUIScrollBar::refreshControls()
 			UpButton->setSubElement(true);
 			UpButton->setOverrideFont(Environment->getBuiltInFont());
 		}
-		UpButton->setText(GUI_ICON_CURSOR_UP);
+		UpButton->setText(L"" );//GUI_ICON_CURSOR_UP);
 		UpButton->setRelativePosition(core::rect<s32>(0,0, w, w));
 		if (!DownButton)
 		{
@@ -278,7 +279,7 @@ void CGUIScrollBar::refreshControls()
 			DownButton->setSubElement(true);
 			DownButton->setOverrideFont(Environment->getBuiltInFont());
 		}
-		DownButton->setText(GUI_ICON_CURSOR_DOWN);
+		DownButton->setText(L"" );//GUI_ICON_CURSOR_DOWN);
 		DownButton->setRelativePosition(core::rect<s32>(0,RelativeRect.getHeight()-w, w, RelativeRect.getHeight()));
 	}
 }

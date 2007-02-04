@@ -11,8 +11,7 @@
 #include "CGUIWindow.h"
 #include "CGUIScrollBar.h"
 #include "CGUIFont.h"
-#include "CGUIFontMultiTexture.h"
-//#include "CGUIFontVector.h"
+#include "CGUISpriteBank.h"
 #include "CGUIImage.h"
 #include "CGUIMeshViewer.h"
 #include "CGUICheckBox.h"
@@ -123,7 +122,7 @@ void CGUIEnvironment::loadBuiltInFont()
 	const c8* filename = "#DefaultFont";
 	io::IReadFile* file = io::createMemoryReadFile(BuiltInFontData, BuiltInFontDataSize, filename, false);
 
-	CGUIFont* font = new CGUIFont(Driver);
+	CGUIFont* font = new CGUIFont(this, "#DefaultFont");
 	if (!font->load(file))
 	{
 		os::Printer::log("Error: Could not load built-in Font.", ELL_ERROR);
@@ -410,7 +409,20 @@ See IUnknown::drop() for more information. */
 IGUISkin* CGUIEnvironment::createSkin(EGUI_SKIN_TYPE type)
 {
 	IGUISkin* skin = new CGUISkin(type, Driver);
-	skin->setFont(getBuiltInFont());
+
+	IGUIFont* builtinfont = getBuiltInFont();
+	IGUIFontBitmap* bitfont = 0;
+	if (builtinfont->getType() == EGFT_BITMAP)
+		bitfont = (IGUIFontBitmap*)builtinfont;
+
+	IGUISpriteBank* bank = 0;
+	skin->setFont(builtinfont);
+
+	if (bitfont)
+		bank = bitfont->getSpriteBank();
+
+	skin->setSpriteBank(bank);
+
 	return skin;
 }
 
@@ -680,8 +692,13 @@ void CGUIEnvironment::writeGUIElement(io::IXMLWriter* writer, IGUIElement* node)
 //! Writes attributes of the environment
 void CGUIEnvironment::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
 {
-	if (getSkin())
+	IGUISkin* skin = getSkin();
+
+	if (skin)
+	{
 		out->addEnum("Skin",getSkin()->getType(),GUISkinTypeNames);
+		skin->serializeAttributes(out, options);
+	}
 }
 
 //! Reads attributes of the environment
@@ -690,9 +707,23 @@ void CGUIEnvironment::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 
 	if (in->existsAttribute("Skin"))
 	{
+		IGUISkin *skin = getSkin();
+
 		EGUI_SKIN_TYPE t = (EGUI_SKIN_TYPE) in->getAttributeAsEnumeration("Skin",GUISkinTypeNames);
-		if ( !getSkin() || t != getSkin()->getType())
-			setSkin(createSkin(t));
+		if ( !skin || t != skin->getType())
+		{
+			skin = createSkin(t);
+			setSkin(skin);
+			skin->drop();
+		}
+
+		skin = getSkin();
+
+		if (skin)
+		{
+			skin->deserializeAttributes(in, options);
+		}
+
 	}
 
 	RelativeRect = AbsoluteRect = 
@@ -869,7 +900,10 @@ IGUIListBox* CGUIEnvironment::addListBox(const core::rect<s32>& rectangle,
 {
 	IGUIListBox* b = new CGUIListBox(this, parent ? parent : this, id, rectangle,
 		true, drawBackground, false);
-	b->setIconFont(getBuiltInFont());
+
+	if (getBuiltInFont() && getBuiltInFont()->getType() == EGFT_BITMAP)
+		b->setSpriteBank( ((IGUIFontBitmap*)getBuiltInFont())->getSpriteBank());
+
 	b->drop();
 	return b;
 
@@ -1054,9 +1088,10 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 	SFont f;
 	IGUIFont* ifont=0;
 	if (!filename)
-		filename = "";
+		f.Filename = "";
+	else
+		f.Filename = filename;
 
-	f.Filename = filename;
 	f.Filename.make_lower();
 
 	s32 index = Fonts.binary_search(f);
@@ -1065,13 +1100,15 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 
 	// font doesn't exist, attempt to load it
 
-	if (!FileSystem->existFile(filename))
+	// does the file exist?
+
+	if (!FileSystem->existFile(f.Filename.c_str()))
 	{
-		os::Printer::log("Could not load font because the file does not exist", filename, ELL_ERROR);
+		os::Printer::log("Could not load font because the file does not exist", f.Filename.c_str(), ELL_ERROR);
 		return 0;
 	}
 
-	io::IXMLReader *xml = FileSystem->createXMLReader(filename);
+	io::IXMLReader *xml = FileSystem->createXMLReader(f.Filename.c_str());
 	if (xml)
 	{
 		// this is an XML font, but we need to know what type
@@ -1086,12 +1123,12 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 				{
 					if (core::stringw(L"vector") == xml->getAttributeValue(L"type"))
 					{
-						t = EGFT_XML_VECTOR;
+						t = EGFT_VECTOR;
 						found=true;
 					}
 					else if (core::stringw(L"bitmap") == xml->getAttributeValue(L"type"))
 					{
-						t = EGFT_XML_BITMAP;
+						t = EGFT_BITMAP;
 						found=true;
 					}
 					else found=true;
@@ -1099,16 +1136,16 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 			}
 		}
 
-		if (t==EGFT_XML_BITMAP)
+		if (t==EGFT_BITMAP)
 		{
-			CGUIFontMultiTexture* font = new CGUIFontMultiTexture(Driver);
+			CGUIFont* font = new CGUIFont(this, f.Filename.c_str());
 			ifont = (IGUIFont*)font;
 			if (!font->load(xml))
 			{
 				font->drop();
 			}
 		}
-		else if (t==EGFT_XML_VECTOR)
+		else if (t==EGFT_VECTOR)
 		{
 			// todo: vector fonts
 
@@ -1123,9 +1160,9 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 	if (!ifont)
 	{
 
-		CGUIFont* font = new CGUIFont(Driver);
+		CGUIFont* font = new CGUIFont(this, f.Filename.c_str());
 		ifont = (IGUIFont*)font;
-		if (!font->load(filename))
+		if (!font->load(f.Filename.c_str()))
 		{
 			font->drop();
 			return 0;
@@ -1140,7 +1177,60 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 	return ifont;
 }
 
+IGUISpriteBank* CGUIEnvironment::getSpriteBank(const c8* filename)
+{
+	// search for the file name
 
+	SSpriteBank b;
+	if (!filename)
+		b.Filename = "";
+	else
+		b.Filename = filename;
+
+	b.Filename.make_lower();
+
+	s32 index = Banks.binary_search(b);
+	if (index != -1)
+		return Banks[index].Bank;
+
+	// we don't have this sprite bank, we should load it
+
+	if (!FileSystem->existFile(b.Filename.c_str()))
+	{
+		os::Printer::log("Could not load sprite bank because the file does not exist", filename, ELL_ERROR);
+		return 0;
+	}
+
+	// todo: load it!
+
+	return 0;
+
+}
+
+IGUISpriteBank* CGUIEnvironment::addEmptySpriteBank(const c8 *name)
+{
+	// no duplicate names allowed
+
+	SSpriteBank b;
+	if (!name)
+		b.Filename = "";
+	else
+		b.Filename = name;
+
+	s32 index = Banks.binary_search(b);
+	if (index != -1)
+		return 0; 
+
+
+	// create a new sprite bank
+
+	b.Bank = new CGUISpriteBank(this);
+
+	Banks.push_back(b);
+
+	return b.Bank;
+
+}
 
 //! returns default font
 IGUIFont* CGUIEnvironment::getBuiltInFont()

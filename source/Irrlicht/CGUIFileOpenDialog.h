@@ -34,7 +34,7 @@ namespace gui
 		//! draws the element and its children
 		virtual void draw();
 
-	private:
+	protected:
 
 		//! fills the listbox with files.
 		void fillListBox();

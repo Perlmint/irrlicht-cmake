@@ -801,6 +801,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\include\IGUISpriteBank.h"
+					>
+				</File>
+				<File
 					RelativePath=".\..\..\include\IGUIStaticText.h"
 					>
 				</File>
@@ -902,14 +906,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGUIFontMultiTexture.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CGUIFontMultiTexture.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CGUIImage.cpp"
 				>
 			</File>
@@ -982,6 +978,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGUISpriteBank.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CGUISpriteBank.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CGUIStaticText.cpp"
 				>
 			</File>
@@ -1011,10 +1015,6 @@
 			</File>
 			<File
 				RelativePath=".\CGUIWindow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GUIIcons.h"
 				>
 			</File>
 		</Filter>

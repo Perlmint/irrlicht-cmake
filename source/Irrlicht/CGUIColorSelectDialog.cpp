@@ -9,7 +9,7 @@
 #include "IGUIButton.h"
 #include "IGUIStaticText.h"
 #include "IGUIFont.h"
-#include "GUIIcons.h"
+#include "IGUISpriteBank.h"
 #include "IFileList.h"
 #include "os.h"
 #include "SoftwareDriver2_helper.h"
@@ -57,19 +57,32 @@ CGUIColorSelectDialog::CGUIColorSelectDialog( const wchar_t* title, IGUIEnvironm
 
 	Text = title;
 
+	IGUISkin* skin = Environment->getSkin();
+	video::ITexture* tex = 0;
+	core::rect<s32> rec;
+
 	s32 buttonw = environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 	s32 posx = RelativeRect.getWidth() - buttonw - 4;
 
-	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, GUI_ICON_WINDOW_CLOSE);
-	CloseButton->setOverrideFont(Environment->getBuiltInFont());
+	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, L"x");
+	/*
+	TODO: sprites for button pictures.
+	if (skin && skin->getSpriteBank())
+	{
+		skin->getSpriteBank()->getSprites()[skin->getIcon(EGDI_WINDOW_CLOSE)];
+	}*/
 	CloseButton->setSubElement(true);
 	CloseButton->grab();
 
-	OKButton = Environment->addButton(core::rect<s32>(RelativeRect.getWidth()-80, 30, RelativeRect.getWidth()-10, 50), this, -1, L"OK");
+	OKButton = Environment->addButton(
+		core::rect<s32>(RelativeRect.getWidth()-80, 30, RelativeRect.getWidth()-10, 50),
+		this, -1, skin ? skin->getDefaultText(EGDT_MSG_BOX_OK) : L"OK");
 	OKButton->setSubElement(true);
 	OKButton->grab();
 
-	CancelButton = Environment->addButton(core::rect<s32>(RelativeRect.getWidth()-80, 55, RelativeRect.getWidth()-10, 75), this, -1, L"Cancel");
+	CancelButton = Environment->addButton(
+		core::rect<s32>(RelativeRect.getWidth()-80, 55, RelativeRect.getWidth()-10, 75), 
+		this, -1, skin ? skin->getDefaultText(EGDT_MSG_BOX_CANCEL) : L"Cancel");
 	CancelButton->setSubElement(true);
 	CancelButton->grab();
 
@@ -134,7 +147,6 @@ CGUIColorSelectDialog::CGUIColorSelectDialog( const wchar_t* title, IGUIEnvironm
 
 		Battery.push_back ( item );
 	}
-
 
 }
 
@@ -385,6 +397,15 @@ bool CGUIColorSelectDialog::OnEvent(SEvent event)
 		case EMIE_MOUSE_MOVED:
 			if (Dragging)
 			{
+				// gui window should not be dragged outside its parent
+				if (Parent)
+					if (event.MouseInput.X < Parent->getAbsolutePosition().UpperLeftCorner.X +1 ||
+						event.MouseInput.Y < Parent->getAbsolutePosition().UpperLeftCorner.Y +1 ||
+						event.MouseInput.X > Parent->getAbsolutePosition().LowerRightCorner.X -1 ||
+						event.MouseInput.Y > Parent->getAbsolutePosition().LowerRightCorner.Y -1)
+
+						return true;
+
 				move(core::position2d<s32>(event.MouseInput.X - DragStart.X, event.MouseInput.Y - DragStart.Y));
 				DragStart.X = event.MouseInput.X;
 				DragStart.Y = event.MouseInput.Y;

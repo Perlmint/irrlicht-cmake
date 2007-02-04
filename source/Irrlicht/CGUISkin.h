@@ -44,6 +44,23 @@ namespace gui
 		//! sets a default font
 		virtual void setFont(IGUIFont* font);
 
+		//! sets the sprite bank used for drawing icons
+		virtual void setSpriteBank(IGUISpriteBank* bank);
+
+		//! gets the sprite bank used for drawing icons
+		virtual IGUISpriteBank* getSpriteBank();
+
+		//! Returns a default icon
+		/** Returns the sprite index within the sprite bank */
+		virtual u32 getIcon(EGUI_DEFAULT_ICON icon);
+
+		//! Sets a default icon
+		/** Sets the sprite index used for drawing icons like arrows, 
+		close buttons and ticks in checkboxes 
+		\param icon: Enum specifying which icon to change
+		\param index: The sprite index used to draw this icon */
+		virtual void setIcon(EGUI_DEFAULT_ICON icon, u32 index);
+
 		//! Returns a default text.
 		/** For example for Message box button captions:
 		 "OK", "Cancel", "Yes", "No" and so on. */
@@ -158,14 +175,40 @@ namespace gui
 						const core::rect<s32>& rect,
 						const core::rect<s32>* clip=0);
 
+		//! draws an icon, usually from the skin's sprite bank
+		/**	\param parent: Pointer to the element which wishes to draw this icon. 
+		This parameter is usually not used by IGUISkin, but can be used for example 
+		by more complex implementations to find out how to draw the part exactly. 
+		\param icon: Specifies the icon to be drawn.
+		\param position: The position to draw the icon
+		\param starttime: The time at the start of the animation
+		\param currenttime: The present time, used to calculate the frame number
+		\param loop: Whether the animation should loop or not
+		\param clip: Clip area.	*/
+		virtual void drawIcon(IGUIElement* element, EGUI_DEFAULT_ICON icon,
+			const core::position2di position, u32 starttime=0, u32 currenttime=0, 
+			bool loop=false, const core::rect<s32>* clip=0);
+
 		//! get the type of this skin
 		virtual EGUI_SKIN_TYPE getType();
+
+		//! Writes attributes of the object.
+		//! Implement this to expose the attributes of your scene node animator for 
+		//! scripting languages, editors, debuggers or xml serialization purposes.
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0);
+
+		//! Reads attributes of the object.
+		//! Implement this to set the attributes of your scene node animator for 
+		//! scripting languages, editors, debuggers or xml deserialization purposes.
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0);
 
 	private:
 
 		video::SColor Colors[EGDC_COUNT];
 		s32 Sizes[EGDS_COUNT];
+		u32 Icons[EGDI_COUNT];
 		IGUIFont* Font;
+		IGUISpriteBank* SpriteBank;
 		core::stringw Texts[EGDT_COUNT];
 		video::IVideoDriver* Driver;
 		bool UseGradient;

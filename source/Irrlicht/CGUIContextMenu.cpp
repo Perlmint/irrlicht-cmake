@@ -7,7 +7,6 @@
 #include "IGUIEnvironment.h"
 #include "IVideoDriver.h"
 #include "IGUIFont.h"
-#include "GUIIcons.h"
 
 namespace irr
 {
@@ -261,7 +260,7 @@ s32 CGUIContextMenu::sendClick(core::position2d<s32> p)
 	}
 
 	// check click on myself
-	if (AbsoluteRect.isPointInside(p) &&
+	if (AbsoluteClippingRect.isPointInside(p) &&
 		HighLighted >= 0 && HighLighted <(s32)Items.size())
 	{
 		if (!Items[HighLighted].Enabled ||
@@ -421,7 +420,7 @@ void CGUIContextMenu::draw()
 				core::rect<s32> r = rect;
 				r.UpperLeftCorner.X = r.LowerRightCorner.X - 15;
 
-				defaultFont->draw(GUI_ICON_CURSOR_RIGHT, r,
+				defaultFont->draw(L"", r, //GUI_ICON_CURSOR_RIGHT, r,
 					skin->getColor(c), true, true, clip);
 			}
 

@@ -93,9 +93,13 @@ bool CGUIEditBox::OnEvent(SEvent event)
 		}
 		break;
 	case EET_KEY_INPUT_EVENT:
-		return processKey(event);
+		if (processKey(event))
+			return true;
+		break;
 	case EET_MOUSE_INPUT_EVENT:
-		return processMouse(event);
+		if (processMouse(event))
+			return true;
+		break;
 	}
 
 	return Parent ? Parent->OnEvent(event) : false;
@@ -652,7 +656,7 @@ bool CGUIEditBox::processMouse(const SEvent& event)
 		}
 		else
 		{
-			if (!AbsoluteRect.isPointInside(
+			if (!AbsoluteClippingRect.isPointInside(
 			core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y)))
 			{
 				// remove focus

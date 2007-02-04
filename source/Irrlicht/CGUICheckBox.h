@@ -44,6 +44,7 @@ namespace gui
 
 		bool Pressed;
 		bool Checked;
+		u32 checkTime;
 	};
 
 } // end namespace gui

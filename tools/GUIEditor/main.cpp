@@ -33,12 +33,12 @@ int main()
 	env->addGUIElement("GUIEditor");
 
 	
-	/* IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
+	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
 	env->setSkin(skin);
 	IGUIFont *font = env->getFont("lucida_latin.xml");
 	if (font)
 		skin->setFont(font);
-	skin->drop(); /*
+	skin->drop();
 	
 	while(device->run()) 
 	{

@@ -95,7 +95,7 @@ bool CGUIButton::OnEvent(SEvent event)
 		if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 		{
 			if (Environment->hasFocus(this) &&
-			    !AbsoluteRect.isPointInside(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y)))
+			    !AbsoluteClippingRect.isPointInside(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y)))
 			{
 					Environment->removeFocus(this);
 					return false;
@@ -113,7 +113,7 @@ bool CGUIButton::OnEvent(SEvent event)
 			bool wasPressed = Pressed;
 			Environment->removeFocus(this);
 
-			if ( !AbsoluteRect.isPointInside( core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y ) ) )
+			if ( !AbsoluteClippingRect.isPointInside( core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y ) ) )
 			{
 				if (!IsPushButton)
 					Pressed = false;

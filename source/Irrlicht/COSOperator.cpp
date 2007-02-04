@@ -18,6 +18,8 @@
 #ifdef MACOSX
 #include "OSXClipboard.h"
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #endif
 
 namespace irr
@@ -165,7 +167,7 @@ bool COSOperator::getSystemMemory(irr::u32* Total, irr::u32* Avail)
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return true;
 
-#elif defined(LINUX) || defined(MACOSX)
+#elif defined(LINUX) // || defined(MACOSX)
         long ps = sysconf(_SC_PAGESIZE);
         long pp = sysconf(_SC_PHYS_PAGES);
         long ap = sysconf(_SC_AVPHYS_PAGES);
@@ -179,6 +181,8 @@ bool COSOperator::getSystemMemory(irr::u32* Total, irr::u32* Avail)
 		*Avail = ((ps*(long long)ap)>>10);
 	return true;
 #endif
+	// TODO: implement for OSX 
+	return false;
 }
 
 

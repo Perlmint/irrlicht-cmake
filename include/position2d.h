@@ -6,6 +6,7 @@
 #define __IRR_POSITION_H_INCLUDED__
 
 #include "irrTypes.h"
+#include "dimension2d.h"
 
 namespace irr
 {
@@ -57,6 +58,20 @@ namespace core
 				return *this;
 			}
 
+			const position2d<T>& operator+=(const dimension2d<T>& other)
+			{
+				X += other.Width;
+				Y += other.Height;
+				return *this;
+			}
+
+			const position2d<T>& operator-=(const dimension2d<T>& other)
+			{
+				X -= other.Width;
+				Y -= other.Height;
+				return *this;
+			}
+
 			position2d<T> operator-(const position2d<T>& other) const
 			{
 				return position2d<T>(X-other.X, Y-other.Y);
@@ -66,13 +81,25 @@ namespace core
 			{
 				return position2d<T>(X+other.X, Y+other.Y);
 			}
-			position2d<T> operator*(const position2d<T>& other) 
+
+			position2d<T> operator*(const position2d<T>& other) const
 			{
 				return position2d<T>(X*other.X, Y*other.Y);
 			}
-			position2d<T> operator*(const T& scalar) 
+
+			position2d<T> operator*(const T& scalar) const
 			{
 				return position2d<T>(X*scalar, Y*scalar);
+			}
+
+			position2d<T> operator+(const dimension2d<T>& other) const
+			{
+				return position2d<T>(X+other.Width, Y+other.Height);
+			}
+
+			position2d<T> operator-(const dimension2d<T>& other) const
+			{
+				return position2d<T>(X-other.Width, Y-other.Height);
 			}
 
 			const position2d<T>& operator=(const position2d<T>& other) 

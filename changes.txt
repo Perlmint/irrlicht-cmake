@@ -1,8 +1,6 @@
 Changes in version 1.3 (?? ??? 2007)
 
-- Added get and set functions for movement and rotation to the FPS and Maya cameras.
-
-- Exposed memory files through IFileSystem::createMemoryReadFile.
+- Added IFileSystem::createMemoryReadFile for accessing memory like a file.
 
 - Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. It was returning 0 for all implementations previously. User defined IMesh derivates will also have to implement it now due to the removed empty implementation.
 
@@ -60,6 +58,13 @@ Changes in version 1.3 (?? ??? 2007)
 	setRelativePosition now takes a rect<f32> for relative positioning within their parents
 
 	getFileSystem added to the GUI environment
+
+	New IGUISpriteBank, used to hold 2d image data like fonts and GUI icons. 
+	Icons provided by the built-in font are now accessed through the skin's sprite bank.
+	Users can override the icons by setting a different sprite bank and setting new sprites.
+
+	Skins are now serializable and are loaded/saved with the GUI.
+
 
 - ROUNDING_ERROR is now ROUNDING_ERROR_32 or ROUNDING_ERROR_64
 

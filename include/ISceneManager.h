@@ -32,7 +32,7 @@ namespace io
 namespace gui
 {
 	class IGUIFont;
-	class IGUIFontASCII;
+	class IGUIFontBitmap;
 }
 
 namespace video
@@ -701,7 +701,7 @@ namespace scene
 			s32 id=-1) = 0;
 
 		//! Adds a text scene node, which uses billboards
-		virtual ITextSceneNode* addTextSceneNode2( gui::IGUIFontASCII* font, const wchar_t* text,
+		virtual ITextSceneNode* addBillboardTextSceneNode( gui::IGUIFontBitmap* font, const wchar_t* text,
 			ISceneNode* parent = 0,
 			const core::dimension2d<f32>& size = core::dimension2d<f32>(10.0f, 10.0f),
 			f32 kerning = 0.5f,

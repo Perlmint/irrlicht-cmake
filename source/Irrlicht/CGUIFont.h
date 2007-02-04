@@ -5,30 +5,43 @@
 #ifndef __C_GUI_FONT_H_INCLUDED__
 #define __C_GUI_FONT_H_INCLUDED__
 
-#include "IGUIFontASCII.h"
+#include "IGUIFontBitmap.h"
 #include "irrString.h"
-#include "IVideoDriver.h"
+#include "irrMap.h"
+#include "IXMLReader.h"
+#include "IReadFile.h"
 
 namespace irr
 {
+
+namespace video
+{
+	class IVideoDriver;
+}
+
 namespace gui
 {
 
-class CGUIFont : public IGUIFontASCII
+	class IGUIEnvironment;
+
+class CGUIFont : public IGUIFontBitmap
 {
 public:
 
 	//! constructor
-	CGUIFont(video::IVideoDriver* Driver);
+	CGUIFont(IGUIEnvironment* env, const c8* filename);
 
 	//! destructor
 	virtual ~CGUIFont();
 
-	//! loads a font file
+	//! loads a font from a texture file
 	bool load(const c8* filename);
 
-	//! loads a font file
+	//! loads a font from a texture file
 	bool load(io::IReadFile* file);
+
+	//! loads a font from an XML file
+	bool load(io::IXMLReader* xml);
 
 	//! draws an text and clips it to the specified rectangle if wanted
 	virtual void draw(const wchar_t* text, const core::rect<s32>& position, video::SColor color, bool hcenter=false, bool vcenter=false, const core::rect<s32>* clip=0);
@@ -43,17 +56,24 @@ public:
 	virtual EGUI_FONT_TYPE getType() { return EGFT_BITMAP; }
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
-	virtual void setKerning ( s32 kerning );
+	virtual void setKerning(s32 kerning);
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
-	virtual s32 getKerning ();
+	virtual s32 getKerning();
 
-	//! get the Font Texture
-	virtual video::ITexture* getTexture ();
-	//! returns the parsed Symbol Information
-	virtual const core::array< core::rect<s32> >& getPositions ();
+	//! gets the sprite bank
+	virtual IGUISpriteBank* getSpriteBank();
 
 private:
+
+	struct SFontArea
+	{
+		SFontArea() : underhang(0), overhang(0), spriteno(0) {}
+		s32				underhang;
+		s32				overhang;
+		s32				width;
+		u32				spriteno;
+	};
 
 	//! load & prepare font from ITexture
 	bool loadTexture(video::IImage * image, const c8* name);
@@ -61,14 +81,17 @@ private:
 	void readPositions16bit(video::IImage* texture, s32& lowerRightPositions);
 	void readPositions32bit(video::IImage* texture, s32& lowerRightPositions);
 
-	inline s32 getWidthFromCharacter(wchar_t c);
+	s32 getAreaFromCharacter (const wchar_t c);
+	void setMaxHeight();
 
-	video::IVideoDriver* Driver;
-	core::array< core::rect<s32> > Positions;
-	video::ITexture* Texture;
-	s32 WrongCharacter;
-
-	s32 GlobalKerningWidth;
+	core::array<SFontArea>			Areas;
+	core::map<wchar_t, s32>			CharacterMap;
+	u32								WrongCharacter;
+	s32								MaxHeight;
+	s32								Kerning;
+	video::IVideoDriver*			Driver;
+	IGUISpriteBank*					SpriteBank;
+	IGUIEnvironment*				Environment;
 };
 
 } // end namespace gui

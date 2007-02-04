@@ -5,6 +5,7 @@
 #include "IGUIStaticText.h"
 #include "IGUIEditBox.h"
 #include "IGUICheckBox.h"
+#include "IGUIComboBox.h"
 #include "IGUIScrollBar.h"
 #include "irrArray.h"
 #include "IAttributes.h"
@@ -33,10 +34,11 @@ namespace gui
 
 	private:
 		io::IAttributes*	Attribs;
-		u32			Index;
+		u32					Index;
 		IGUIStaticText*		AttribName;
 		IGUIEditBox*		AttribEditBox;
 		IGUICheckBox*		AttribCheckBox;
+		IGUIComboBox*		AttribComboBox;
 	};
 
 	class CGUIAttributeEditor : public IGUIElement
