@@ -750,7 +750,10 @@ bool CIrrDeviceLinux::run()
 					if (idx != -1)
 						irrevent.KeyInput.Key = (EKEY_CODE)KeyMap[idx].Win32Key;
 					else
+					{
+						irrevent.KeyInput.Key = (EKEY_CODE)0;
 						os::Printer::log("Could not find win32 key for x11 key.", ELL_WARNING);
+					}
 					irrevent.EventType = irr::EET_KEY_INPUT_EVENT;
 					irrevent.KeyInput.PressedDown = (event.type == KeyPress);
 					mbtowc(&irrevent.KeyInput.Char, buf, 4);

@@ -295,7 +295,7 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file)
 	const u32 totalTags = Mesh->MD3Header.numTags * Mesh->MD3Header.numFrames;
 
 	SMD3Tag import;
-	SMD3QuaterionTag export;
+	SMD3QuaterionTag exp;
 
 	file->seek( Mesh->MD3Header.tagStart );
 	for (i = 0; i != totalTags; ++i )
@@ -303,21 +303,20 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file)
 		file->read(&import, sizeof(import) );
 
 		//! tag name
-		export.Name = import.Name;
+		exp.Name = import.Name;
 
 		//! position
-		export.position.X = import.position[0];
-		export.position.Y = import.position[2];
-		export.position.Z = import.position[1];
+		exp.position.X = import.position[0];
+		exp.position.Y = import.position[2];
+		exp.position.Z = import.position[1];
 
 		//! construct quaternion from a RH 3x3 Matrix
-		export.rotation.set (	import.rotationMatrix[7], 
-								0.f,
-								-import.rotationMatrix[6],
-								1 + import.rotationMatrix[8]
-							);
-		export.rotation.normalize ();
-		Mesh->TagList.Container.push_back ( export );
+		exp.rotation.set (import.rotationMatrix[7], 
+					0.f,
+					-import.rotationMatrix[6],
+					1 + import.rotationMatrix[8]);
+		exp.rotation.normalize ();
+		Mesh->TagList.Container.push_back ( exp );
 	}
 
 	//! Meshes

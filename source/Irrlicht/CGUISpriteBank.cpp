@@ -81,7 +81,7 @@ void CGUISpriteBank::setTexture(u32 index, video::ITexture* texture)
 
 //! draws a sprite in 2d with scale and color
 void CGUISpriteBank::draw2DSprite(u32 index, const core::position2di& pos, const core::rect<s32>* clip,
-				video::SColor& color, u32 starttime, u32 currenttime, bool loop, bool center)
+				const video::SColor& color, u32 starttime, u32 currenttime, bool loop, bool center)
 {
 	if (index >= Sprites.size() || Sprites[index].Frames.empty())
 		return;

@@ -50,16 +50,14 @@ public:
 	//! Constructor
 	IGUIElement(EGUI_ELEMENT_TYPE type, IGUIEnvironment* environment, IGUIElement* parent,
 		s32 id, core::rect<s32> rectangle)
-		: Parent(0), RelativeRect(rectangle), IsVisible(true), IsEnabled(true), IsSubElement(false),
-			AlignLeft(EGUIA_UPPERLEFT), AlignRight(EGUIA_UPPERLEFT), AlignTop(EGUIA_UPPERLEFT),
-			AlignBottom(EGUIA_UPPERLEFT), MinSize(1,1), MaxSize(0,0), NoClip(false), 
-			LastParentRect(0,0,0,0), ScaleRect(0.0f, 0.0f, 0.0f, 0.0f),
-			ID(id), Environment(environment), Type(type)
+		: Parent(0), RelativeRect(rectangle), AbsoluteRect(rectangle),
+		AbsoluteClippingRect(rectangle), DesiredRect(rectangle),
+		LastParentRect(0,0,0,0), ScaleRect(0.0f, 0.0f, 0.0f, 0.0f),
+		MaxSize(0,0), MinSize(1,1), IsVisible(true), IsEnabled(true),
+		IsSubElement(false), NoClip(false), ID(id), ClipLock(false),
+		AlignLeft(EGUIA_UPPERLEFT), AlignRight(EGUIA_UPPERLEFT), AlignTop(EGUIA_UPPERLEFT), AlignBottom(EGUIA_UPPERLEFT),
+		Environment(environment), Type(type)
 	{
-		AbsoluteRect = RelativeRect;
-		DesiredRect = RelativeRect;
-		AbsoluteClippingRect = AbsoluteRect;
-
 		// if we were given a parent to attach to
 		if (parent)
 			parent->addChild(this);
@@ -72,7 +70,6 @@ public:
 			AbsoluteClippingRect = AbsoluteRect;
 			AbsoluteClippingRect.clipAgainst(Parent->AbsoluteClippingRect);
 		}
-
 	}
 
 

@@ -258,7 +258,7 @@ void CXFileReader::optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent )
 				pgParent->Meshes.push_back( pgFrame->Meshes[c] );
 			}
 
-			// remove child fames in our list
+			// remove child frames in our list
 			pgFrame->ChildFrames.clear();
 
 			// remove meshes

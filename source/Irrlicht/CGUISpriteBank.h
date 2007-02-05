@@ -36,7 +36,7 @@ public:
 
 	//! draws a sprite in 2d with position and color
 	virtual void draw2DSprite(u32 index, const core::position2di& pos, const core::rect<s32>* clip=0,
-				video::SColor& color= video::SColor(255,255,255,255),
+				const video::SColor& color= video::SColor(255,255,255,255),
 				u32 starttime=0, u32 currenttime=0, bool loop=true, bool center=false);
 
 protected:

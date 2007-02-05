@@ -69,7 +69,6 @@ typedef double				f64;
 //! Define for swprintf because this method does not match the ISO C standard
 //! on Windows platforms, but it does on all other ones.
 #define   swprintf   _snwprintf
-#endif // _IRR_WINDOWS_
 
 // define the wchar_t type if not already built in.
 #ifdef _MSC_VER 
@@ -86,8 +85,9 @@ typedef unsigned short wchar_t;
 #define _WCHAR_T_DEFINED
 #endif // wchar is not defined
 #endif // microsoft compiler
+#endif // _IRR_WINDOWS_
 
-//! define a break macro for debugging only in Win32 mode.
+//! define a break macro for debugging.
 #if defined(_DEBUG)
 #if defined(_IRR_WINDOWS_) && defined(_MSC_VER)
 #define _IRR_DEBUG_BREAK_IF( _CONDITION_ ) if (_CONDITION_) {_asm int 3}

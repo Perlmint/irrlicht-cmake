@@ -4,7 +4,7 @@
 
 #include "CMD3MeshFileLoader.h"
 #include "CAnimatedMeshMD3.h"
-#include "irrstring.h"
+#include "irrString.h"
 
 namespace irr
 {

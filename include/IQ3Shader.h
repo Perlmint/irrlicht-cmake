@@ -291,7 +291,7 @@ namespace quake3
 	{
 		SModifierFunction ()
 			: masterfunc0 ( 0 ), masterfunc1(0), func ( 0 ),
-			base ( 0 ), phase ( 0 ), freq ( 1 ), amp ( 1 ), wave(1), tcgen(8) {}
+			tcgen( 8 ), base ( 0 ), amp ( 1 ), phase ( 0 ), freq ( 1 ), wave(1) {}
 
 		// "tcmod","deformvertexes","rgbgen", "tcgen"
 		s32 masterfunc0;

@@ -8,7 +8,7 @@
 #include "IAnimatedMeshMD3.h"
 #include "IReadFile.h"
 #include "IFileSystem.h"
-#include "irrarray.h"
+#include "irrArray.h"
 #include "irrString.h"
 #include "SMesh.h"
 #include "SMeshBuffer.h"
