@@ -34,6 +34,11 @@ public:
 		Room = room;
 		Driver = driver;
 
+		// set new Skin
+		gui::IGUISkin* newskin = env->createSkin( gui::EGST_BURNING_SKIN);
+		env->setSkin(newskin);
+		newskin->drop();
+
 		// set a nicer font
 		gui::IGUISkin* skin = env->getSkin();
 		gui::IGUIFont* font = env->getFont("../../media/fontlucida.png");
@@ -170,7 +175,7 @@ int main()
 		case 'b': driverType = video::EDT_DIRECT3D8;break;
 		case 'c': driverType = video::EDT_OPENGL;   break;
 		case 'd': driverType = video::EDT_SOFTWARE; break;
-		case 'e': driverType = video::EDT_SOFTWARE2;break;
+		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 0;
 	}	
@@ -352,7 +357,6 @@ int main()
 		smgr->addLightSceneNode(0, core::vector3df(0,0,0), 
 		video::SColorf(0.5f, 1.0f, 0.5f, 0.0f), 200.0f);
 
-	light1->setDebugDataVisible ( scene::EDS_FULL );
 
 	// add fly circle animator to light 1
 	scene::ISceneNodeAnimator* anim = 
@@ -385,7 +389,6 @@ int main()
 		smgr->addLightSceneNode(0, core::vector3df(0,0,0), 
 		video::SColorf(1.0f, 0.2f, 0.2f, 0.0f), 200.0f);
 
-	light2->setDebugDataVisible ( scene::EDS_FULL );
 	// add fly circle animator to light 2
 	anim = smgr->createFlyCircleAnimator (core::vector3df(0,150,0),200.0f, 0.001f, core::vector3df ( 0.2f, 0.9f, 0.f )); 
 	light2->addAnimator(anim);

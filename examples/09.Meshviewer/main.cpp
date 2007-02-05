@@ -422,7 +422,7 @@ int main()
 		case 'b': driverType = video::EDT_DIRECT3D8;break;
 		case 'c': driverType = video::EDT_OPENGL;   break;
 		case 'd': driverType = video::EDT_SOFTWARE; break;
-		case 'e': driverType = video::EDT_SOFTWARE2;break;
+		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 1;
 	}	
@@ -443,6 +443,11 @@ int main()
 	video::IVideoDriver* driver = Device->getVideoDriver();
 	IGUIEnvironment* env = Device->getGUIEnvironment();
 	scene::ISceneManager* smgr = Device->getSceneManager();
+
+	// set new Skin
+	gui::IGUISkin* newskin = env->createSkin( gui::EGST_BURNING_SKIN);
+	env->setSkin(newskin);
+	newskin->drop();
 
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 

@@ -154,7 +154,7 @@ int main()
 		case 'b': driverType = video::EDT_DIRECT3D8;break;
 		case 'c': driverType = video::EDT_OPENGL;   break;
 		case 'd': driverType = video::EDT_SOFTWARE; break;
-		case 'e': driverType = video::EDT_SOFTWARE2;break;
+		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 1;
 	}	
@@ -177,6 +177,17 @@ int main()
 	IGUIEnvironment* env = device->getGUIEnvironment();
 
 	/*
+	To make the font a little bit nicer, we load an external font
+	and set it as new font in the skin. An at last, we create a 
+	nice Irrlicht Engine logo in the top left corner.
+	*/
+
+	IGUISkin* skin = env->getSkin();
+	IGUIFont* font = env->getFont("../../media/fontlucida.png");
+	if (font)
+		skin->setFont(font);
+
+	/*
 	We add three buttons. The first one closes the engine. The second
 	creates a window and the third opens a file open dialog. The third
 	parameter is the id of the button, with which we can easily identify
@@ -188,20 +199,6 @@ int main()
 	env->addButton(rect<s32>(10,290,110,290 + 32), 0, 103, L"File Open", L"Opens a file");
 	env->addButton(rect<s32>(10,330,110,330 + 32), 0, 104, L"Color Select", L"Select's a color");
 
-	/*
-	To make the font a little bit nicer, we load an external font
-	and set it as new font in the skin. An at last, we create a 
-	nice Irrlicht Engine logo in the top left corner.
-	*/
-
-	IGUISkin* skin = env->getSkin();
-	IGUIFont* font = env->getFont("../../media/fontlucida.png");
-	if (font)
-		skin->setFont(font);
-
-	IGUIImage* img = env->addImage(
-		driver->getTexture("../../media/irrlichtlogo2.png"),
-		position2d<int>(10,10));
 
 	/*
 	Now, we add a static text and a scrollbar, which modifies the
@@ -221,6 +218,12 @@ int main()
 	env->addStaticText(L"Logging ListBox:", rect<s32>(50,80,250,100), true);
 	listbox = env->addListBox(rect<s32>(50, 110, 250, 180));
 	env->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
+
+	// add the engine logo
+	IGUIImage* img = env->addImage(
+		driver->getTexture("../../media/irrlichtlogo2.png"),
+		position2d<int>(10,10));
+
 
 	/*
 	That's all, we only have to draw everything.

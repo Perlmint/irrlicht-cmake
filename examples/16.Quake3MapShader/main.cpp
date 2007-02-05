@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 		case 'b': driverType = video::EDT_DIRECT3D8;break;
 		case 'c': driverType = video::EDT_OPENGL;   break;
 		case 'd': driverType = video::EDT_SOFTWARE; break;
-		case 'e': driverType = video::EDT_SOFTWARE2;break;
+		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 1;
 	}	
@@ -101,7 +101,8 @@ int main(int argc, char* argv[])
 	we are able to read from the files in that archive as they would
 	directly be stored on disk.
 	*/
-	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
+	//device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
+	device->getFileSystem()->addFolderFileArchive("/baseq3/");
 	
 
 	/* 
@@ -120,7 +121,8 @@ int main(int argc, char* argv[])
 	IVideoDriver class). Note that this optimization with the Octree is only
 	useful when drawing huge meshes consisting of lots of geometry.
 	*/
-	scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
+	//scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
+	scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm0.bsp");
 
 	/*
 		add the geometry mesh to the Scene ( polygon & patches )
@@ -238,7 +240,7 @@ int main(int argc, char* argv[])
 	// load the engine logo
 	gui::IGUIEnvironment* env = device->getGUIEnvironment();
 	env->addImage(driver->getTexture("irrlichtlogo2.png"),core::position2d<s32>(10, 10));
-	if ( driverType == video::EDT_SOFTWARE2 )
+	if ( driverType == video::EDT_BURNINGSVIDEO )
 	{
 		env->addImage(driver->getTexture("burninglogo.png"),core::position2d<s32>(100, 8));
 	}

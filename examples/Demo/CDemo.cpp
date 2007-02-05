@@ -35,7 +35,7 @@ void CDemo::run()
 {
 	core::dimension2d<s32> resolution ( 800, 600 );
 
-	if ( driverType == video::EDT_SOFTWARE2 || driverType == video::EDT_SOFTWARE )
+	if ( driverType == video::EDT_BURNINGSVIDEO || driverType == video::EDT_SOFTWARE )
 	{
 		resolution.Width = 640;
 		resolution.Height = 480;
@@ -150,6 +150,7 @@ bool CDemo::OnEvent(SEvent event)
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.png");
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.tga");
 			device->getVideoDriver()->writeImageToFile(image, "screenshot.ppm");
+			device->getVideoDriver()->writeImageToFile(image, "screenshot.jpg");
 			image->drop();
 		}
 	}
@@ -487,7 +488,6 @@ void CDemo::loadSceneData()
 
 	light = sm->addLightSceneNode(0,
 		core::vector3df(0,0,0),	video::SColorf(1.0f, 1.0f, 1.f, 1.0f), 500.f);
-	light->setDebugDataVisible ( scene::EDS_FULL );
 
 	anim = sm->createFlyCircleAnimator(
 		core::vector3df(100,150,80), 80.0f, 0.0005f);

@@ -91,7 +91,7 @@ int main()
 	createDevice() has 7 paramters:
 	deviceType: Type of the device. This can currently be the Null-device,
 	   the Software device, the second software renderer, D3D8, D3D9, or OpenGL. 
-	   In this example we use EDT_SOFTWARE2, but to try out, you might want to change it to
+	   In this example we use EDT_BURNINGSVIDEO, but to try out, you might want to change it to
 	   EDT_SOFTWARE, EDT_NULL, EDT_DIRECT3D8 , EDT_DIRECT3D9, or EDT_OPENGL. 
 	windowSize: Size of the Window or FullscreenMode to be created. In this 
 	   example we use 640x480.
@@ -107,7 +107,7 @@ int main()
 	*/
 
 	IrrlichtDevice *device =
-		createDevice( video::EDT_SOFTWARE2, dimension2d<s32>(640, 480), 16,
+		createDevice( video::EDT_BURNINGSVIDEO, dimension2d<s32>(640, 480), 16,
 			false, false, false, 0);
 
 	/*
