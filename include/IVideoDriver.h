@@ -648,7 +648,7 @@ namespace video
 		//! Returns amount of primitives (mostly triangles) which were drawn in the last frame.
 		/** Together with getFPS() very useful method for statistics.
 		\return Amount of primitives drawn in the last frame. */
-		virtual u32 getPrimitiveCountDrawn() = 0;
+		virtual u32 getPrimitiveCountDrawn( u32 param = 0 ) = 0;
 
 		//! Deletes all dynamic lights which were previously added with addDynamicLight().
 		virtual void deleteAllDynamicLights() = 0;

@@ -692,9 +692,9 @@ s32 CNullDriver::getFPS()
 
 //! returns amount of primitives (mostly triangles) were drawn in the last frame.
 //! very useful method for statistics.
-u32 CNullDriver::getPrimitiveCountDrawn()
+u32 CNullDriver::getPrimitiveCountDrawn( u32 param )
 {
-	return FPSCounter.getPrimitve();
+	return 0 == param ? FPSCounter.getPrimitive() : FPSCounter.getPrimitiveAverage();
 }
 
 

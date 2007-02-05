@@ -96,7 +96,7 @@ void CDemo::run()
 			swprintf(tmp, 255, L"%ls fps:%3d triangle:%0.3f million", 
 								driver->getName(),
 								driver->getFPS(),
-								(f32) driver->getPrimitiveCountDrawn() * ( 1.f / 1000000.f )
+								(f32) driver->getPrimitiveCountDrawn( 1 ) * ( 1.f / 1000000.f )
 								);
 
 			statusText->setText(tmp);

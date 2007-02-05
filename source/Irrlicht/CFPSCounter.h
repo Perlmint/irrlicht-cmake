@@ -20,8 +20,12 @@ public:
 
 	//! returns current fps
 	s32 getFPS();
+
 	//! returns primitive count
-	u32 getPrimitve();
+	u32 getPrimitive();
+
+	//! returns average primitive count
+	u32 getPrimitiveAverage();
 
 	//! to be called every frame
 	void registerFrame(u32 now, u32 primitive);
@@ -34,6 +38,7 @@ private:
 
 	u32 framesCounted;
 	u32 primitivesCounted;
+	u32 primitiveAverage;
 };
 
 
