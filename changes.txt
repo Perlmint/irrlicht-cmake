@@ -9,7 +9,7 @@ Changes in version 1.3 (?? ??? 2007)
 		CGUIEnvironment::addContextMenu
 			IGUIContextMenu* c = new CGUIContextMenu(this, 
 	to set the focus on the submenu..
-=======
+	
 - Added IFileSystem::createMemoryReadFile for accessing memory like a file.
 
 - Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. It was returning 0 for all implementations previously. User defined IMesh derivates will also have to implement it now due to the removed empty implementation.

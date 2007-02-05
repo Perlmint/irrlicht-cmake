@@ -321,7 +321,6 @@ namespace video
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 			{
 				Textures[i] = 0;
-				TextureMatrix[i].makeIdentity();
 			}
 		}
 
@@ -409,8 +408,6 @@ namespace video
 			//! Array of textures, the same as accessing through Texture1 and Texture2
 			ITexture* Textures[MATERIAL_MAX_TEXTURES];
 		};
-
-		core::matrix4 TextureMatrix[MATERIAL_MAX_TEXTURES];
 
 		//! material flag union.
 		/** This enables the user to access the

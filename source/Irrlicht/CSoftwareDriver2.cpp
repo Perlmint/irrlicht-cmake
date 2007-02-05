@@ -397,8 +397,6 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 
 	setTexture( 0, Material.org.Texture1 );
 	setTexture( 1, Material.org.Texture2 );
-	setTransform(ETS_TEXTURE_0, Material.org.TextureMatrix[0]);
-	setTransform(ETS_TEXTURE_1, Material.org.TextureMatrix[1]);
 }
 
 

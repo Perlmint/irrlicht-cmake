@@ -842,13 +842,8 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 			extGlActiveTextureARB(GL_TEXTURE0_ARB + ( state - ETS_TEXTURE_0 ));
 
 		glMatrixMode(GL_TEXTURE);
-		if (mat.isIdentity())
-			glLoadIdentity();
-		else
-		{
-			createGLTextureMatrix(glmat, mat );
-			glLoadMatrixf(glmat);
-		}
+		createGLTextureMatrix(glmat, mat );
+		glLoadMatrixf(glmat);
 	}
 }
 
@@ -1708,15 +1703,8 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 				material.AnisotropicFilter ? MaxAnisotropy : 1.0f );
 	}
-	if (MultiTextureExtension)
-		extGlActiveTextureARB(GL_TEXTURE0_ARB);
-	setTransform(ETS_TEXTURE_0, material.TextureMatrix[0]);
-	setTransform(ETS_TEXTURE_1, material.TextureMatrix[1]);
-	setTransform(ETS_TEXTURE_2, material.TextureMatrix[2]);
-	setTransform(ETS_TEXTURE_3, material.TextureMatrix[3]);
 
 	// fillmode
-
 	if (resetAllRenderStates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
 		glPolygonMode(GL_FRONT_AND_BACK, material.Wireframe ? GL_LINE : material.PointCloud? GL_POINT : GL_FILL);
 

@@ -1269,13 +1269,8 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 			}
 		}
 	}
-	setTransform(ETS_TEXTURE_0, material.TextureMatrix[0]);
-	setTransform(ETS_TEXTURE_1, material.TextureMatrix[1]);
-	setTransform(ETS_TEXTURE_2, material.TextureMatrix[2]);
-	setTransform(ETS_TEXTURE_3, material.TextureMatrix[3]);
 
 	// fillmode
-
 	if (resetAllRenderstates || lastmaterial.Wireframe != material.Wireframe || lastmaterial.PointCloud != material.PointCloud)
 	{
 		if (material.Wireframe)
