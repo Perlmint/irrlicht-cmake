@@ -192,17 +192,17 @@ namespace video
 	//! BlendFunc = source * sourceFactor + dest * destFactor
 	enum E_BLEND_FACTOR
 	{
-		EBF_ZERO	= 0,		// src & dest	(0, 0, 0, 0)
-		EBF_ONE,			// src & dest	(1, 1, 1, 1)
-		EBF_DST_COLOR, 			// src		(destR, destG, destB, destA)
-		EBF_ONE_MINUS_DST_COLOR, 	// src		(1-destR, 1-destG, 1-destB, 1-destA)
-		EBF_SRC_COLOR,			// dest		(srcR, srcG, srcB, srcA)
-		EBF_ONE_MINUS_SRC_COLOR, 	// dest		(1-srcR, 1-srcG, 1-srcB, 1-srcA)
-		EBF_SRC_ALPHA,			// src & dest	(srcA, srcA, srcA, srcA)
+		EBF_ZERO	= 0,			// src & dest	(0, 0, 0, 0)
+		EBF_ONE,					// src & dest	(1, 1, 1, 1)
+		EBF_DST_COLOR, 				// src			(destR, destG, destB, destA)
+		EBF_ONE_MINUS_DST_COLOR, 	// src			(1-destR, 1-destG, 1-destB, 1-destA)
+		EBF_SRC_COLOR,				// dest			(srcR, srcG, srcB, srcA)
+		EBF_ONE_MINUS_SRC_COLOR, 	// dest			(1-srcR, 1-srcG, 1-srcB, 1-srcA)
+		EBF_SRC_ALPHA,				// src & dest	(srcA, srcA, srcA, srcA)
 		EBF_ONE_MINUS_SRC_ALPHA,	// src & dest	(1-srcA, 1-srcA, 1-srcA, 1-srcA)
-		EBF_DST_ALPHA,			// src & dest	(destA, destA, destA, destA)
+		EBF_DST_ALPHA,				// src & dest	(destA, destA, destA, destA)
 		EBF_ONE_MINUS_DST_ALPHA,	// src & dest	(1-destA, 1-destA, 1-destA, 1-destA)
-		EBF_SRC_ALPHA_SATURATE		// src		(min(srcA, 1-destA), idem, ...)
+		EBF_SRC_ALPHA_SATURATE		// src			(min(srcA, 1-destA), idem, ...)
 	};
 
 	//! Texture coord clamp mode
@@ -321,6 +321,7 @@ namespace video
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 			{
 				Textures[i] = 0;
+				TextureMatrix[i].makeIdentity();
 			}
 		}
 
@@ -409,6 +410,7 @@ namespace video
 			ITexture* Textures[MATERIAL_MAX_TEXTURES];
 		};
 
+		core::matrix4 TextureMatrix[MATERIAL_MAX_TEXTURES];
 		//! material flag union.
 		/** This enables the user to access the
 		material flag using e.g: material.Wireframe = true or
