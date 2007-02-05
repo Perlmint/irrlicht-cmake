@@ -82,6 +82,12 @@ namespace scene
 			return Box;
 		}
 
+		//! set user axis aligned bounding box
+		virtual void setBoundingBox( const core::aabbox3df& box)
+		{
+			Box = box;
+		}
+
 		void recalculateBoundingBox()
 		{
 			Box.reset(0,0,0);

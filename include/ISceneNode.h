@@ -178,7 +178,7 @@ namespace scene
 
 		//! Returns true if the node is visible. This is only an option, set by the user and has
 		//! nothing to do with geometry culling
-		virtual bool isVisible()
+		virtual bool isVisible() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return IsVisible;
@@ -193,7 +193,7 @@ namespace scene
 
 
 		//! Returns the id of the scene node. This id can be used to identify the node.
-		virtual s32 getID()
+		virtual s32 getID() const
 		{
 			return ID;
 		}
@@ -447,13 +447,13 @@ namespace scene
 
 		//! Sets if debug data like bounding boxes should be drawn.
 		/** Please note that not all scene nodes support this feature. */
-		void setDebugDataVisible(E_DEBUG_SCENE_TYPE visible)
+		virtual void setDebugDataVisible(E_DEBUG_SCENE_TYPE visible)
 		{
 			DebugDataVisible = visible;
 		}
 
 		//! Returns if debug data like bounding boxes are drawed.
-		E_DEBUG_SCENE_TYPE isDebugDataVisible()
+		E_DEBUG_SCENE_TYPE isDebugDataVisible() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return DebugDataVisible;
@@ -536,28 +536,23 @@ namespace scene
 		//! updates the absolute position based on the relative and the parents position
 		virtual void updateAbsolutePosition()
 		{
-			if (Parent && SceneManager && (Parent != SceneManager->getRootSceneNode()))
+			if (Parent )
 			{
-				AbsoluteTransformation.setbyproduct (	Parent->getAbsoluteTransformation(),
-														getRelativeTransformation()
-													);
-/*														
 				AbsoluteTransformation =
 					Parent->getAbsoluteTransformation() * getRelativeTransformation();
-*/
 			}
 			else
 				AbsoluteTransformation = getRelativeTransformation();
 		}
 
 		//! Returns the parent of this scene node
-		scene::ISceneNode* getParent()
+		scene::ISceneNode* getParent() const
 		{
 			return Parent;
 		}
 
 		//! Returns type of the scene node
-		virtual ESCENE_NODE_TYPE getType()
+		virtual ESCENE_NODE_TYPE getType() const
 		{
 			return ESNT_UNKNOWN;
 		}

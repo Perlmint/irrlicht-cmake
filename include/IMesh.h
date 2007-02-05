@@ -38,15 +38,14 @@ namespace scene
  		/** \param material: material to search for
 		\return Returns the pointer to the mesh buffer or 
 		NULL if there is no such mesh buffer. */
-		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const = 0;
+		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const { return 0; }
 
 		//! Returns an axis aligned bounding box of the mesh.
 		/** \return A bounding box of this mesh is returned. */
 		virtual const core::aabbox3d<f32>& getBoundingBox() const = 0;
 
-		//! Returns an axis aligned bounding box of the mesh.
-		/** \return A bounding box of this mesh is returned. */
-		virtual core::aabbox3d<f32>& getBoundingBox() = 0;
+		//! set user axis aligned bounding box
+		virtual void setBoundingBox( const core::aabbox3df& box) = 0;
 
 		//! Sets a flag of all contained materials to a new value.
 		/** \param flag: Flag to set in all materials.

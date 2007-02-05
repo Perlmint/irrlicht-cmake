@@ -66,6 +66,9 @@ namespace scene
 		//! Particle System Scene Node
 		ESNT_PARTICLE_SYSTEM,
 
+		//! Quake3 Model Scene Node ( has tag to link to )
+		ESNT_MD3_SCENE_NODE,
+
 		//! Amount of build in Scene Nodes
 		ESNT_COUNT,
 
@@ -100,12 +103,21 @@ namespace scene
 	//! An enumeration for all types of debug data for built-in scene nodes (flags)
 	enum E_DEBUG_SCENE_TYPE 
 	{
+		//! No Debug Data ( Default )
 		EDS_OFF			= 0,
+		//! Show Bounding Boxes of SceneNode
 		EDS_BBOX		= 1,
+		//! Show Vertex Normals
 		EDS_NORMALS		= 2,
+		//! Shows Skeleton/Tags
 		EDS_SKELETON	= 4,
-		EDS_MESH		= 8,
-		EDS_FULL		= EDS_BBOX | EDS_NORMALS | EDS_SKELETON | EDS_MESH
+		//! Overlays Mesh Wireframe
+		EDS_MESH_WIRE_OVERLAY	= 8,
+		//! Temporary use transparency Material Type 
+		EDS_HALF_TRANSPARENCY	= 16,
+		//! Show Bounding Boxes of all MeshBuffers
+		EDS_BBOX_BUFFERS		= 32,
+		EDS_FULL		= EDS_BBOX | EDS_NORMALS | EDS_SKELETON | EDS_MESH_WIRE_OVERLAY
 	};
 
 

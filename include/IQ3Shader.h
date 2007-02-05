@@ -7,6 +7,8 @@
 
 #include "irrArray.h"
 #include "fast_atof.h"
+#include "IFileSystem.h"
+#include "IVideoDriver.h"
 
 namespace irr
 {
@@ -532,6 +534,53 @@ namespace quake3
 		dest.append ( "}\n" );
 		return dest;
 	}
+
+
+
+	/*
+		quake3 doesn't care much about tga & jpg
+		load one or multiple files stored in name started at startPos to the texture array textures
+		if texture is not loaded 0 will be added ( to find missing textures easier)
+	*/
+	inline void getTextures (	tTexArray &textures ,
+						const core::stringc &name, u32 &startPos,
+						io::IFileSystem *fileSystem,
+						video::IVideoDriver* driver
+					)
+	{
+		static const char * extension[2] = 
+		{
+			".jpg",
+			".tga"
+		};
+
+		tStringList stringList;
+		getAsStringList ( stringList, -1, name, startPos );
+
+		textures.clear();
+
+		core::stringc loadFile;
+		for ( u32 i = 0; i!= stringList.size (); ++i )
+		{
+			video::ITexture* texture = 0;
+			for ( u32 g = 0; g != 2 ; ++g )
+			{
+				cutExtension ( loadFile, stringList[i] ).append ( extension[g] );
+
+				if ( fileSystem->existFile ( loadFile.c_str() ) )
+				{
+					texture = driver->getTexture( loadFile.c_str () );
+					if ( texture )
+					{
+						break;
+					}
+				}
+			}
+			// take 0 Texture
+			textures.push_back(texture);
+		}
+	}
+
 
 	/*!
 		Manages various Quake3 Shader Styles

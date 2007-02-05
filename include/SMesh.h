@@ -66,11 +66,10 @@ namespace scene
 			return BoundingBox;
 		}
 
-		//! Returns an axis aligned bounding box of the mesh.
-		//! \return A bounding box of this mesh is returned.
-		virtual core::aabbox3d<f32>& getBoundingBox()
+		//! set user axis aligned bounding box
+		virtual void setBoundingBox( const core::aabbox3df& box)
 		{
-			return BoundingBox;
+			BoundingBox = box;
 		}
 
 		//! recalculates the bounding box

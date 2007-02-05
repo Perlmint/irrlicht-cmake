@@ -165,15 +165,15 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 		16 Bit/32 Bit can be adjusted on a global flag.
 
 		BURNINGVIDEO_RENDERER_BEAUTIFUL 
-			Vertexcolor + Lighting + Per Pixel Perspective Correct + SubPixel/SubTexel Correct + 
+			32 Bit + Vertexcolor + Lighting + Per Pixel Perspective Correct + SubPixel/SubTexel Correct + 
 			Bilinear Texturefiltering + WBuffer
 
 		BURNINGVIDEO_RENDERER_FAST
-			Per Pixel Perspective Correct + SubPixel/SubTexel Correct + WBuffer +
+			32 Bit + Per Pixel Perspective Correct + SubPixel/SubTexel Correct + WBuffer +
 			Bilinear Dithering TextureFilterung + WBuffer
 
 		BURNINGVIDEO_RENDERER_ULTRA_FAST
-			SubPixel/SubTexel Correct + ZBuffer
+			16Bit + SubPixel/SubTexel Correct + ZBuffer
 */
 
 #define BURNINGVIDEO_RENDERER_BEAUTIFUL

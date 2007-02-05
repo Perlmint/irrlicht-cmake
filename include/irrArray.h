@@ -127,7 +127,7 @@ public:
 	void push_front(const T& element)
 	{
 		if (used + 1 > allocated)
-			reallocate(used * 2 +1);
+			reallocate(used +1);
 
 		for (int i=(int)used; i>0; --i)
 		{
@@ -153,7 +153,7 @@ public:
 		_IRR_DEBUG_BREAK_IF(index>used) // access violation
 
 		if (used + 1 > allocated)
-			reallocate(used * 2 +1);
+			reallocate(used +1);
 
 		for (u32 i=used++; i>index; i--)
 			allocator.construct(&data[i], data[i-1]); // data[i] = data[i-1];

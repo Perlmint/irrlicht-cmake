@@ -748,8 +748,9 @@ namespace video
 		registered for writing the image to disk
 		\param image: Image to write to disk
 		\param filename: name of the file to write
+		\param param: control parameter for the backend ( eq. compression level )
 		\return Returns true on success */
-		virtual bool writeImageToFile(IImage* image, const c8* filename) = 0;
+		virtual bool writeImageToFile(IImage* image, const c8* filename, u32 param = 0) = 0;
 
 		//! Creates a software image from a byte array.
 		/** No hardware texture will

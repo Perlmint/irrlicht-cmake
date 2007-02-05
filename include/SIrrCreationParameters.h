@@ -14,7 +14,7 @@ namespace irr
 		//! Constructs a SIrrlichtCreationParameters structure with default values.
 		SIrrlichtCreationParameters()
 		{
-			DriverType = video::EDT_SOFTWARE2;
+			DriverType = video::EDT_BURNINGSVIDEO;
 			WindowSize = core::dimension2d<s32>(800, 600);
 			Bits = 16;
 			Fullscreen = false;

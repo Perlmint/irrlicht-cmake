@@ -772,7 +772,9 @@ namespace scene
 		//! add a static arrow mesh to the meshpool
 		/** it quite usefull for debuggin purposes. ( showing directions eq )
 		*/
-		virtual IAnimatedMesh* addArrowMesh(const c8* name, u32 tesselation, f32 width, f32 height, video::SColor vtxColor) = 0;
+		virtual IAnimatedMesh* addArrowMesh(const c8* name, u32 tesselationCylinder, u32 tesselationCone, f32 height,
+											f32 cylinderHeight, f32 width0,f32 width1,
+											video::SColor vtxColor0, video::SColor vtxColor1) = 0;
 
 		//! Returns the root scene node.
 		/** This is the scene node wich is parent

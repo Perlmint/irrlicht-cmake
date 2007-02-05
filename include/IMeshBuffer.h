@@ -94,8 +94,9 @@ enum E_PRIMITIVE_TYPE
 		//! returns an axis aligned bounding box
 		virtual const core::aabbox3df& getBoundingBox() const = 0;
 
-		//! returns an axis aligned bounding box
-		virtual core::aabbox3df& getBoundingBox() = 0;
+		//! set user axis aligned bounding box
+		virtual void setBoundingBox( const core::aabbox3df& box) = 0;
+
 	};
 
 } // end namespace scene

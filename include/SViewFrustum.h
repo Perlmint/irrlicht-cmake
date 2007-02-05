@@ -59,8 +59,6 @@ namespace scene
 		//! all planes enclosing the view frustum.
 		core::plane3d<f32> planes[VF_PLANE_COUNT];
 
-		//! bouding box around the view frustum
-		core::aabbox3d<f32> boundingBox;
 
 		//! transforms the frustum by the matrix
 		//! \param mat: Matrix by which the view frustum is transformed.
@@ -88,6 +86,9 @@ namespace scene
 		//! recalculates the bounding box member based on the planes
 		inline void recalculateBoundingBox();
 
+		//! bouding box around the view frustum
+		core::aabbox3d<f32> boundingBox;
+
 		//! Hold a copy of important transform matrices
 		enum E_TRANSFORMATION_STATE_3
 		{
@@ -110,7 +111,6 @@ namespace scene
 			mat.transformPlane(planes[i]);
 
 		mat.transformVect(cameraPosition);
-
 		recalculateBoundingBox();
 	}
 
@@ -163,27 +163,22 @@ namespace scene
 		return p;
 	}
 
-
-	//! returns a bounding box encosing the whole view frustum
+	//! returns a bounding box enclosing the whole view frustum
 	inline const core::aabbox3d<f32> &SViewFrustum::getBoundingBox() const
 	{
 		return boundingBox;
 	}
 
-
 	//! recalculates the bounding box member based on the planes
 	inline void SViewFrustum::recalculateBoundingBox()
 	{
-		core::aabbox3d<f32> box(cameraPosition);
+		boundingBox.reset ( cameraPosition );
 
-		box.addInternalPoint(getFarLeftUp());
-		box.addInternalPoint(getFarRightUp());
-		box.addInternalPoint(getFarLeftDown());
-		box.addInternalPoint(getFarRightDown());
-
-		boundingBox = box;
+		boundingBox.addInternalPoint(getFarLeftUp());
+		boundingBox.addInternalPoint(getFarRightUp());
+		boundingBox.addInternalPoint(getFarLeftDown());
+		boundingBox.addInternalPoint(getFarRightDown());
 	}
-
 
 	//! This constructor creates a view frustum based on a projection
 	//! and/or view matrix.
@@ -192,7 +187,7 @@ namespace scene
 		setFrom ( mat );
 	}
 
-
+/*
 	//! This constructor creates a view frustum based on a projection
 	//! and/or view matrix.
 	inline void SViewFrustum::setFrom(const core::matrix4& mat)
@@ -232,7 +227,6 @@ namespace scene
 		planes[SViewFrustum::VF_FAR_PLANE].Normal.Y = -(mat(1,3) - mat(1,2));
 		planes[SViewFrustum::VF_FAR_PLANE].Normal.Z = -(mat(2,3) - mat(2,2));
 		planes[SViewFrustum::VF_FAR_PLANE].D =        -(mat(3,3) - mat(3,2));
-
 		// normalize normals
 
 		for (s32 i=0; i<6; ++i)
@@ -243,7 +237,63 @@ namespace scene
 		}
 
 		// make bounding box
+		recalculateBoundingBox();
+	}
+*/
 
+	//! This constructor creates a view frustum based on a projection
+	//! and/or view matrix.
+	inline void SViewFrustum::setFrom(const core::matrix4& mat)
+	{
+		const f32 * m = mat.M;
+
+		// left clipping plane
+		planes[VF_LEFT_PLANE].Normal.X	= m[3 ] + m[0];
+		planes[VF_LEFT_PLANE].Normal.Y	= m[7 ] + m[4];
+		planes[VF_LEFT_PLANE].Normal.Z	= m[11] + m[8];
+		planes[VF_LEFT_PLANE].D			= m[15] + m[12];
+
+		// right clipping plane
+		planes[VF_RIGHT_PLANE].Normal.X = m[3 ] - m[0];
+		planes[VF_RIGHT_PLANE].Normal.Y = m[7 ] - m[4];
+		planes[VF_RIGHT_PLANE].Normal.Z = m[11] - m[8];
+		planes[VF_RIGHT_PLANE].D =        m[15] - m[12];
+
+		// top clipping plane
+		planes[VF_TOP_PLANE].Normal.X = m[3 ] - m[1];
+		planes[VF_TOP_PLANE].Normal.Y = m[7 ] - m[5];
+		planes[VF_TOP_PLANE].Normal.Z = m[11] - m[9];
+		planes[VF_TOP_PLANE].D =        m[15] - m[13];
+
+		// bottom clipping plane
+		planes[VF_BOTTOM_PLANE].Normal.X = m[3 ] + m[1];
+		planes[VF_BOTTOM_PLANE].Normal.Y = m[7 ] + m[5];
+		planes[VF_BOTTOM_PLANE].Normal.Z = m[11] + m[9];
+		planes[VF_BOTTOM_PLANE].D =        m[15] + m[13];
+
+		// far clipping plane
+		planes[VF_FAR_PLANE].Normal.X = m[3 ] - m[2];
+		planes[VF_FAR_PLANE].Normal.Y = m[7 ] - m[6];
+		planes[VF_FAR_PLANE].Normal.Z = m[11] - m[10];
+		planes[VF_FAR_PLANE].D =        m[15] - m[14];
+
+		// near clipping plane
+		planes[VF_NEAR_PLANE].Normal.X = m[2];
+		planes[VF_NEAR_PLANE].Normal.Y = m[6];
+		planes[VF_NEAR_PLANE].Normal.Z = m[10];
+		planes[VF_NEAR_PLANE].D =        m[14];
+
+		
+		// normalize normals
+		u32 i;
+		for ( i=0; i != 6; ++i)
+		{
+			const f32 len = - core::reciprocal_squareroot ( planes[i].Normal.getLengthSQ() );
+			planes[i].Normal *= len;
+			planes[i].D *= len;
+		}
+
+		// make bounding box
 		recalculateBoundingBox();
 	}
 

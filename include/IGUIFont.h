@@ -33,6 +33,8 @@ enum EGUI_FONT_TYPE
 	//! Currently not used.
 	EGFT_OS,
 
+	EGFT_XML_BITMAP,
+
 	//! An external font type provided by the user.
 	EGFT_CUSTOM
 };
@@ -71,6 +73,21 @@ public:
 
 	//! Returns the type of this font
 	virtual EGUI_FONT_TYPE getType() { return EGFT_CUSTOM; }
+
+	//! set an Pixel Offset on Drawing ( scale position on width )
+	virtual void setKerningWidth (s32 kerning) = 0;
+	virtual void setKerningHeight (s32 kerning) = 0;
+
+	//! set an Pixel Offset on Drawing ( scale position on width )
+	virtual s32 getKerningWidth() = 0;
+	virtual s32 getKerningHeight() = 0;
+
+	/*
+	//! get the Font Texture
+	virtual video::ITexture* getTexture () = 0;
+	//! returns the parsed Symbol Information
+	virtual const core::array< core::rect<s32> > & getPositions () = 0;
+	*/
 
 };
 

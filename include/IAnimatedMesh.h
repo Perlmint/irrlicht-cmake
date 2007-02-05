@@ -21,6 +21,9 @@ namespace scene
 		//! Quake 2 MD2 model file
 		EAMT_MD2, 
 
+		//! Quake 3 MD3 model file
+		EAMT_MD3, 
+
 		//! Milkshape 3d skeletal animation file
 		EAMT_MS3D,
 

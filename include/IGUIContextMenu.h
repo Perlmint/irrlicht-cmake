@@ -38,7 +38,9 @@ namespace gui
 		 at this item. You can acess this submenu via getSubMenu().
 		 \return Returns the index of the new item */
 		virtual s32 addItem(const wchar_t* text, s32 commandId=-1, bool enabled=true,
-			bool hasSubMenu=false) = 0;
+			bool hasSubMenu=false,
+			bool checked=false
+			) = 0;
 
 		//! Adds a separator item to the menu
 		virtual void addSeparator() = 0;
@@ -60,6 +62,12 @@ namespace gui
 		/** \param idx: Zero based index of the menu item
 		 \param enabled: True if it is enabled, otherwise false. */
 		virtual void setItemEnabled(s32 idx, bool enabled) = 0;
+
+		//! Sets if the menu item should be checked.
+		/** \param idx: Zero based index of the menu item
+		 \param enabled: True if it is enabled, otherwise false. */
+		virtual void setItemChecked(s32 idx, bool enabled) = 0;
+
 
 		//! Removes a menu item
 		/** \param idx: Zero based index of the menu item */

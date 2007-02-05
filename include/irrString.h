@@ -835,6 +835,7 @@ inline void stringc_to_stringw ( stringw &dest, const stringc & source )
 	}
 }
 
+//! cut the filename extension from a string
 inline core::stringc &cutExtension ( core::stringc &dest, const core::stringc &source )
 {
 	s32 endPos = source.findLast ( '.' );
@@ -842,6 +843,7 @@ inline core::stringc &cutExtension ( core::stringc &dest, const core::stringc &s
 	return dest;
 }
 
+//! get the filename extension from a string
 inline core::stringc &getExtension ( core::stringc &dest, const core::stringc &source )
 {
 	s32 endPos = source.findLast ( '.' );

@@ -103,6 +103,31 @@ namespace core
 		return fabs ( a ) < tolerance;
 	}
 
+	inline s32 s32_min ( s32 a, s32 b)
+	{
+		s32 mask = (a - b) >> 31;
+		return (a & mask) | (b & ~mask);
+	}
+
+	inline s32 s32_max ( s32 a, s32 b)
+	{
+		s32 mask = (a - b) >> 31;
+		return (b & mask) | (a & ~mask);
+	}
+
+	inline s32 s32_clamp (s32 value, s32 low, s32 high) 
+	{
+		return s32_min (s32_max(value,low), high);
+	}
+
+	// swap integer with xor
+	inline void swap_xor ( s32 &a, s32 &b )
+	{
+		a ^= b;
+		b ^= a;
+		a ^= b;
+	}
+
 	/* 
 	
 		float IEEE-754 bit represenation
@@ -150,6 +175,7 @@ namespace core
 	// only same sign
 	#define	F32_A_GREATER_B(a,b)	(F32_AS_S32((a)) >  F32_AS_S32((b)))
 
+
 #ifndef REALINLINE
 	#ifdef _MSC_VER
 		#define REALINLINE __forceinline
@@ -157,6 +183,29 @@ namespace core
 		#define REALINLINE inline
 	#endif
 #endif
+
+
+	//! conditional set based on mask and arithmetic shift
+	REALINLINE u32 if_c_a_else_b ( const s32 condition, const u32 a, const u32 b )
+	{
+		return ( ( -condition >> 31 ) & ( a ^ b ) ) ^ b;
+	}
+
+	//! conditional set based on mask and arithmetic shift
+	REALINLINE u32 if_c_a_else_0 ( const s32 condition, const u32 a )
+	{
+		return ( -condition >> 31 ) & a;
+	}
+
+	/*
+		if (condition) state |= m; else state &= ~m; 
+	*/
+	REALINLINE void setbit ( u32 &state, s32 condition, u32 mask )
+	{
+		// 0, or any postive to mask
+		//s32 conmask = -condition >> 31;
+		state ^= ( ( -condition >> 31 ) ^ state ) & mask;
+	}
 
 
 #ifdef IRRLICHT_FAST_MATH
