@@ -388,7 +388,6 @@ namespace scene
 
 
 		s32 setShaderMaterial ( video::SMaterial & material, const tBSPFace * face ) const;
-		video::ITexture* loadTexture ( const tStringList &stringList );
 
 		struct SToBuffer
 		{

@@ -511,6 +511,9 @@
 					RelativePath=".\..\..\include\IAnimatedMeshMD2.h">
 				</File>
 				<File
+					RelativePath="..\..\include\IAnimatedMeshMD3.h">
+				</File>
+				<File
 					RelativePath=".\..\..\include\IAnimatedMeshMS3D.h">
 				</File>
 				<File
@@ -686,6 +689,9 @@
 					RelativePath=".\..\..\include\IGUISkin.h">
 				</File>
 				<File
+					RelativePath="..\..\include\IGUISpriteBank.h">
+				</File>
+				<File
 					RelativePath=".\..\..\include\IGUIStaticText.h">
 				</File>
 				<File
@@ -824,6 +830,12 @@
 			</File>
 			<File
 				RelativePath=".\CGUISkin.h">
+			</File>
+			<File
+				RelativePath=".\CGUISpriteBank.cpp">
+			</File>
+			<File
+				RelativePath=".\CGUISpriteBank.h">
 			</File>
 			<File
 				RelativePath=".\CGUIStaticText.cpp">
@@ -1031,42 +1043,6 @@
 					RelativePath="CImage.h">
 				</File>
 				<File
-					RelativePath="CImageLoaderBMP.cpp">
-				</File>
-				<File
-					RelativePath="CImageLoaderBMP.h">
-				</File>
-				<File
-					RelativePath="CImageLoaderJPG.cpp">
-				</File>
-				<File
-					RelativePath="CImageLoaderJPG.h">
-				</File>
-				<File
-					RelativePath="CImageLoaderPCX.cpp">
-				</File>
-				<File
-					RelativePath="CImageLoaderPCX.h">
-				</File>
-				<File
-					RelativePath=".\CImageLoaderPNG.cpp">
-				</File>
-				<File
-					RelativePath=".\CImageLoaderPNG.h">
-				</File>
-				<File
-					RelativePath="CImageLoaderPSD.cpp">
-				</File>
-				<File
-					RelativePath="CImageLoaderPSD.h">
-				</File>
-				<File
-					RelativePath="CImageLoaderTGA.cpp">
-				</File>
-				<File
-					RelativePath="CImageLoaderTGA.h">
-				</File>
-				<File
 					RelativePath=".\CNullDriver.cpp">
 				</File>
 				<File
@@ -1119,6 +1095,46 @@
 					</File>
 					<File
 						RelativePath=".\CImageWriterTGA.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="Loader"
+					Filter="">
+					<File
+						RelativePath="CImageLoaderBMP.cpp">
+					</File>
+					<File
+						RelativePath="CImageLoaderBMP.h">
+					</File>
+					<File
+						RelativePath="CImageLoaderJPG.cpp">
+					</File>
+					<File
+						RelativePath="CImageLoaderJPG.h">
+					</File>
+					<File
+						RelativePath="CImageLoaderPCX.cpp">
+					</File>
+					<File
+						RelativePath="CImageLoaderPCX.h">
+					</File>
+					<File
+						RelativePath=".\CImageLoaderPNG.cpp">
+					</File>
+					<File
+						RelativePath=".\CImageLoaderPNG.h">
+					</File>
+					<File
+						RelativePath="CImageLoaderPSD.cpp">
+					</File>
+					<File
+						RelativePath="CImageLoaderPSD.h">
+					</File>
+					<File
+						RelativePath="CImageLoaderTGA.cpp">
+					</File>
+					<File
+						RelativePath="CImageLoaderTGA.h">
 					</File>
 				</Filter>
 			</Filter>
@@ -1327,6 +1343,12 @@
 					RelativePath=".\CAnimatedMeshMD2.h">
 				</File>
 				<File
+					RelativePath=".\CAnimatedMeshMD3.cpp">
+				</File>
+				<File
+					RelativePath=".\CAnimatedMeshMD3.h">
+				</File>
+				<File
 					RelativePath=".\CAnimatedMeshMS3D.cpp">
 				</File>
 				<File
@@ -1361,6 +1383,12 @@
 				</File>
 				<File
 					RelativePath=".\CLMTSMeshFileLoader.h">
+				</File>
+				<File
+					RelativePath=".\CMD3MeshFileLoader.cpp">
+				</File>
+				<File
+					RelativePath=".\CMD3MeshFileLoader.h">
 				</File>
 				<File
 					RelativePath=".\CMY3DHelper.h">

@@ -689,12 +689,11 @@ const core::aabbox3d<f32>& CAnimatedMeshMS3D::getBoundingBox() const
 }
 
 
-//! returns an axis aligned bounding box
-core::aabbox3d<f32>& CAnimatedMeshMS3D::getBoundingBox()
+//! set user axis aligned bounding box
+void CAnimatedMeshMS3D::setBoundingBox( const core::aabbox3df& box)
 {
-	return BoundingBox;
+	BoundingBox = box;
 }
-
 
 //! sets a flag of all contained materials to a new value
 void CAnimatedMeshMS3D::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
@@ -778,9 +777,9 @@ const core::aabbox3d<f32>& CAnimatedMeshMS3D::SMS3DMeshBuffer::getBoundingBox() 
 } 
 
 //! returns an axis aligned bounding box 
-core::aabbox3d<f32>& CAnimatedMeshMS3D::SMS3DMeshBuffer::getBoundingBox() 
+void CAnimatedMeshMS3D::SMS3DMeshBuffer::setBoundingBox( const core::aabbox3df& box) 
 { 
-	return *BoundingBox; 
+	*BoundingBox = box; 
 } 
 
 //! returns which type of vertex data is stored.

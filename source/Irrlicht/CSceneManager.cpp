@@ -26,6 +26,7 @@
 #include "CDMFLoader.h"
 #include "COgreMeshFileLoader.h"
 #include "COBJMeshFileLoader.h"
+#include "CMD3MeshFileLoader.h"
 
 #include "CCubeSceneNode.h"
 #include "CSphereSceneNode.h"
@@ -126,6 +127,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	MeshLoaderList.push_back(new CDMFLoader(Driver, this));
 	MeshLoaderList.push_back(new COgreMeshFileLoader(MeshManipulator, FileSystem, Driver));
 	MeshLoaderList.push_back(new COBJMeshFileLoader(FileSystem, Driver));
+	MeshLoaderList.push_back(new CMD3MeshFileLoader(FileSystem, Driver));
 	// factories
 
 	ISceneNodeFactory* factory = new CDefaultSceneNodeFactory(this);
@@ -202,6 +204,7 @@ IAnimatedMesh* CSceneManager::getMesh(const c8* filename)
 
 	s32 count = MeshLoaderList.size();
 	for (s32 i=count-1; i>=0; --i)
+	{
 		if (MeshLoaderList[i]->isALoadableFileExtension(name.c_str()))
 		{
 			// reset file to avoid side effects of previous calls to createMesh
@@ -214,6 +217,7 @@ IAnimatedMesh* CSceneManager::getMesh(const c8* filename)
 				break;
 			}
 		}
+	}
 
 	file->drop();
 
@@ -711,12 +715,14 @@ IAnimatedMesh* CSceneManager::addTerrainMesh(const c8* name,
 }
 
 //! Adds an arrow mesh to the mesh pool.
-IAnimatedMesh* CSceneManager::addArrowMesh(const c8* name, u32 tesselation, f32 width, f32 height, video::SColor vtxColor)
+IAnimatedMesh* CSceneManager::addArrowMesh(const c8* name,u32 tesselationCylinder, u32 tesselationCone, f32 height, f32 cylinderHeight, f32 width0,f32 width1, video::SColor vtxColor0, video::SColor vtxColor1)
 {
+	
 	if (!name || MeshCache->isMeshLoaded(name))
 		return 0;
 
-	IAnimatedMesh* animatedMesh = CGeometryCreator::createArrowMesh( tesselation, width, height, vtxColor );
+	IAnimatedMesh* animatedMesh = CGeometryCreator::createArrowMesh(
+		tesselationCylinder, tesselationCone, height, cylinderHeight, width0,width1, vtxColor0, vtxColor1);
 
 	if (!animatedMesh)
 		return 0;
@@ -800,7 +806,7 @@ bool CSceneManager::isCulled(ISceneNode* node)
 		{
 			core::aabbox3d<f32> tbox = node->getBoundingBox();
 			node->getAbsoluteTransformation().transformBox(tbox);
-			return !(tbox.intersectsWithBox(cam->getViewFrustum()->boundingBox));
+			return !(tbox.intersectsWithBox(cam->getViewFrustum()->getBoundingBox() ));
 		} break;
 
 		// can be seen by a bounding sphere

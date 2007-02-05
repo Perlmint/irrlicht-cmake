@@ -62,7 +62,7 @@ bool CImageWriterPNG::isAWriteableFileExtension(const c8* fileName)
 #endif
 }
 
-bool CImageWriterPNG::writeImage(io::IWriteFile* file, IImage* image)
+bool CImageWriterPNG::writeImage(io::IWriteFile* file, IImage* image,u32 param)
 {
 #ifdef _IRR_COMPILE_WITH_LIBPNG_
 	if (!file || !image)

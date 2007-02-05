@@ -85,7 +85,7 @@ void CGUIStaticText::draw()
 					breakText();
 
 				core::rect<s32> r = frameRect;
-				s32 height = font->getDimension(L"A").Height;
+				s32 height = font->getDimension(L"A").Height + font->getKerningHeight();
 
 				for (u32 i=0; i<BrokenText.size(); ++i)
 				{
@@ -272,7 +272,7 @@ s32 CGUIStaticText::getTextHeight()
 	if (!font)
 		return 0;
 
-	s32 height = font->getDimension(L"A").Height;
+	s32 height = font->getDimension(L"A").Height + font->getKerningHeight();
 
 	if (WordWrap)
 		height *= BrokenText.size();

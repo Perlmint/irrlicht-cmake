@@ -326,7 +326,7 @@ void CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m)
 			v = (video::S3DVertex*) ((u8*) v + vtxPitch);
 		}
 
-		buffer->getBoundingBox() = bufferbox;
+		buffer->setBoundingBox(bufferbox);
 
 		if (b == 0)
 			meshbox.reset(buffer->getBoundingBox());
@@ -334,7 +334,8 @@ void CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m)
 			meshbox.addInternalBox(buffer->getBoundingBox());
 	}
 
-	mesh->getBoundingBox() = meshbox;
+
+	mesh->setBoundingBox( meshbox );
 
 }
 
@@ -399,7 +400,7 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 			break;
 		}
 
-		buffer->getBoundingBox() = bufferbox;
+		buffer->setBoundingBox( bufferbox );
 
 		if (b == 0)
 			meshbox.reset(buffer->getBoundingBox());
@@ -407,7 +408,7 @@ void CMeshManipulator::scaleMesh(scene::IMesh* mesh, const core::vector3df& scal
 			meshbox.addInternalBox(buffer->getBoundingBox());
 	}
 
-	mesh->getBoundingBox() = meshbox;
+	mesh->setBoundingBox( meshbox );
 }
 
 
@@ -420,7 +421,7 @@ void CMeshManipulator::recalculateBoundingBox(scene::IMeshBuffer* buffer) const
 	const u32 vtxcnt = buffer->getVertexCount();
 	if ( 0 == vtxcnt )
 	{
-		buffer->getBoundingBox() = box;
+		buffer->setBoundingBox( box );
 		return;
 	}
 
@@ -455,7 +456,7 @@ void CMeshManipulator::recalculateBoundingBox(scene::IMeshBuffer* buffer) const
 		break;
 	}
 
-	buffer->getBoundingBox() = box;
+	buffer->setBoundingBox( box );
 }
 
 

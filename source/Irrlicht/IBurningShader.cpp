@@ -84,7 +84,7 @@ namespace video
 			//SOFTWARE_DRIVER_2_MIPMAPPING_LOD_BIAS
 			it->lodLevel = lodLevel;
 			it->Texture->setCurrentMipMapLOD (
-				s32_clamp ( lodLevel + SOFTWARE_DRIVER_2_MIPMAPPING_LOD_BIAS, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 )
+				core::s32_clamp ( lodLevel + SOFTWARE_DRIVER_2_MIPMAPPING_LOD_BIAS, 0, SOFTWARE_DRIVER_2_MIPMAPPING_MAX - 1 )
 				);
 
 			// prepare for optimal fixpoint

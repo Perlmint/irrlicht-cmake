@@ -43,13 +43,16 @@ private:
 
 	struct SQ3Texture
 	{
-		SQ3Texture () : TextureIndex ( 0 ),TextureFrequency(0.f),TextureAddressMode(1) {}
+		SQ3Texture () :
+			TextureIndex ( 0 ),
+			TextureFrequency(0.f),
+			TextureAddressMode( video::ETC_REPEAT ) {}
 
 		quake3::tTexArray Texture;
 
 		u32 TextureIndex;
 		f32 TextureFrequency;
-		u32 TextureAddressMode;	// Wrapping/Clamping
+		video::E_TEXTURE_CLAMP TextureAddressMode;	// Wrapping/Clamping
 	};
 
 	core::array< SQ3Texture > Q3Texture;

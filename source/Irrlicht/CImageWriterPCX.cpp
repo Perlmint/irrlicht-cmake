@@ -27,7 +27,7 @@ bool CImageWriterPCX::isAWriteableFileExtension(const c8* fileName)
 	return strstr(fileName, ".pcx") != 0;
 }
 
-bool CImageWriterPCX::writeImage(io::IWriteFile *file, IImage *image)
+bool CImageWriterPCX::writeImage(io::IWriteFile *file, IImage *image,u32 param)
 {
 	os::Printer::log("PCX writer not yet implemented. Image not written.", ELL_WARNING);
 	return false;

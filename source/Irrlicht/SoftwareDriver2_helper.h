@@ -135,47 +135,10 @@ static inline s32 s32_abs(s32 x)
 	return (x ^ b ) - b;
 }
 
-// swap integer with xor
-inline void swap_xor ( s32 &a, s32 &b )
-{
-	a ^= b;
-	b ^= a;
-	a ^= b;
-}
-
-
-inline s32 s32_min ( s32 a, s32 b)
-{
-	s32 mask = (a - b) >> 31;
-	return (a & mask) | (b & ~mask);
-}
-
-inline s32 s32_max ( s32 a, s32 b)
-{
-	s32 mask = (a - b) >> 31;
-	return (b & mask) | (a & ~mask);
-}
-
-inline s32 s32_clamp (s32 value, s32 low, s32 high) 
-{
-	return s32_min (s32_max(value,low), high);
-}
 
 // TODO: don't stick on 32 Bit Pointer
 #define PointerAsValue(x) ( (u32) (u32*) (x) ) 
 
-
-//! conditional set based on mask and arithmetic shift
-REALINLINE u32 if_c_a_else_b ( const s32 condition, const u32 a, const u32 b )
-{
-	return ( ( -condition >> 31 ) & ( a ^ b ) ) ^ b;
-}
-
-//! conditional set based on mask and arithmetic shift
-REALINLINE u32 if_c_a_else_0 ( const s32 condition, const u32 a )
-{
-	return ( -condition >> 31 ) & a;
-}
 
 //! conditional set based on mask and arithmetic shift
 REALINLINE u32 if_mask_a_else_b ( const u32 mask, const u32 a, const u32 b )
@@ -894,10 +857,10 @@ struct AbsRectangle
 
 inline void intersect ( AbsRectangle &dest, const AbsRectangle& a, const AbsRectangle& b)
 {
-	dest.x0 = s32_max( a.x0, b.x0 );
-	dest.y0 = s32_max( a.y0, b.y0 );
-	dest.x1 = s32_min( a.x1, b.x1 );
-	dest.y1 = s32_min( a.y1, b.y1 );
+	dest.x0 = core::s32_max( a.x0, b.x0 );
+	dest.y0 = core::s32_max( a.y0, b.y0 );
+	dest.x1 = core::s32_min( a.x1, b.x1 );
+	dest.y1 = core::s32_min( a.y1, b.y1 );
 }
 
 inline bool isValid (const AbsRectangle& a)
@@ -915,7 +878,7 @@ struct sIntervall
 // returning intersection width
 inline s32 intervall_intersect_test( const sIntervall& a, const sIntervall& b)
 {
-	return s32_min( a.end, b.end ) - s32_max( a.start, b.start );
+	return core::s32_min( a.end, b.end ) - core::s32_max( a.start, b.start );
 }
 
 

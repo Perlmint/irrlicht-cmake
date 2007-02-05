@@ -1732,12 +1732,10 @@ const core::aabbox3d<f32>& CAnimatedMeshB3d::getBoundingBox() const
 	return BoundingBox;
 }
 
-
-
-//! returns an axis aligned bounding box
-core::aabbox3d<f32>& CAnimatedMeshB3d::getBoundingBox()
+//! set user axis aligned bounding box
+void CAnimatedMeshB3d::setBoundingBox( const core::aabbox3df& box)
 {
-	return BoundingBox;
+	BoundingBox = box;
 }
 
 

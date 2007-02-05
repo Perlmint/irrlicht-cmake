@@ -29,7 +29,7 @@ CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver, sce
 	s32 i;
 	for ( i = 0; i!= E_Q3_MESH_SIZE; ++i )
 	{
-		Mesh[i] = new SMesh();
+		Mesh[i] = 0;
 	}
 
 	if (Driver)
@@ -37,6 +37,10 @@ CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver, sce
 
 	if (FileSystem)
 		FileSystem->grab();
+
+	// load default shaders
+	InitShader ();
+
 
 }
 
@@ -127,10 +131,11 @@ bool CQ3LevelMesh::loadFile(io::IReadFile* file)
 	}
 	#endif
 
-	// load default shaders
-	InitShader ();
-
-	// Release Entities
+	s32 i;
+	for ( i = 0; i!= E_Q3_MESH_SIZE; ++i )
+	{
+		Mesh[i] = new SMesh();
+	}
 	ReleaseEntity ();
 
 	// load everything
@@ -156,6 +161,7 @@ bool CQ3LevelMesh::loadFile(io::IReadFile* file)
 
 	//constructMesh();
 	//loadTextures();
+
 
 	loadTextures2();
 	constructMesh2();
@@ -384,7 +390,7 @@ void CQ3LevelMesh::loadLeafBrushes(tBSPLump* l, io::IReadFile* file)
 }
 
 
-inline bool isWhiteSpace ( const u8 symbol )
+inline bool isQ3WhiteSpace ( const u8 symbol )
 {
 	return symbol == ' ' || symbol == '\t' || symbol == '\r';
 }
@@ -408,7 +414,7 @@ void CQ3LevelMesh::parser_nextToken ()
 
 		symbol = Parser.source [ Parser.index ];
 		Parser.index += 1;
-	} while ( isWhiteSpace ( symbol ) );
+	} while ( isQ3WhiteSpace ( symbol ) );
 
 	// first symbol, one symbol
 	switch ( symbol )
@@ -426,7 +432,7 @@ void CQ3LevelMesh::parser_nextToken ()
 			}
 			symbol = Parser.source [ Parser.index ];
 			Parser.index += 1;
-			if ( isWhiteSpace ( symbol ) )
+			if ( isQ3WhiteSpace ( symbol ) )
 			{
 				Parser.tokenresult = Q3_TOKEN_MATH_DIVIDE;
 				return;
@@ -499,7 +505,7 @@ void CQ3LevelMesh::parser_nextToken ()
 		}
 		symbol = Parser.source [ Parser.index ];
 
-		notisWhite = ! isWhiteSpace ( symbol );
+		notisWhite = ! isQ3WhiteSpace ( symbol );
 		if ( notisWhite )
 		{
 			Parser.token.append ( symbol );
@@ -1454,9 +1460,12 @@ const SShader * CQ3LevelMesh::getShader ( const c8 * filename, s32 fileNameIsVal
 
 	s32 index;
 	
+	//! is Shader already in cache?
 	index = Shader.linear_search ( search );
 	if ( index >= 0 )
+	{
 		return &Shader[index];
+	}
 
 	core::stringc loadFile;
 
@@ -1483,16 +1492,28 @@ const SShader * CQ3LevelMesh::getShader ( const c8 * filename, s32 fileNameIsVal
 	if ( index >= 0 )
 		return 0;
 
+#if 0
 	core::stringc message;
 	message = loadFile + " for " + core::stringc ( filename );
 	os::Printer::log("Q3: Loading shader file ", message.c_str(), ELL_INFORMATION);
-
 	io::IReadFile *file = FileSystem->createAndOpenFile ( loadFile.c_str () );
 	if ( 0 == file )
 	{
 		os::Printer::log("Q3: could not load shader ", loadFile.c_str(), ELL_INFORMATION);
 		return 0;
 	}
+#endif
+
+	if ( !FileSystem->existFile ( loadFile.c_str () ) )
+		return 0;
+
+	io::IReadFile *file = FileSystem->createAndOpenFile ( loadFile.c_str () );
+	if ( 0 == file )
+		return 0;
+
+	core::stringc message;
+	message = loadFile + " for " + core::stringc ( filename );
+	os::Printer::log("Loaded shader", message.c_str(), ELL_INFORMATION);
 
 	// add file to loaded files
 	ShaderFile.push_back ( loadFile );
@@ -1539,9 +1560,6 @@ void CQ3LevelMesh::InitShader ()
 
 	// load common named shader
 	getShader ( "scripts/common.shader", 1 );
-	getShader ( "scripts/models.shader", 1 );
-	getShader ( "scripts/liquid.shader", 1 );
-	//getShader ( "scripts/sky.shader", 1 );
 }
 
 //!. script callback for shaders
@@ -1733,7 +1751,7 @@ void CQ3LevelMesh::calcBoundingBoxes ()
 
 }
 
-
+/*
 //! loads a texture
 video::ITexture* CQ3LevelMesh::loadTexture ( const tStringList &stringList )
 {
@@ -1760,6 +1778,7 @@ video::ITexture* CQ3LevelMesh::loadTexture ( const tStringList &stringList )
 	}
 	return 0;
 }
+*/
 
 //! loads the textures
 void CQ3LevelMesh::loadTextures2()
@@ -1795,16 +1814,17 @@ void CQ3LevelMesh::loadTextures2()
 	Tex.set_used( NumTextures+1 );
 	
 	const SShader * shader;
-	tStringList list;
 
+	core::stringc list;
 	core::stringc check;
+	quake3::tTexArray textureArray;
 
 	for ( t=0; t< NumTextures; ++t)
 	{
 		Tex[t].ShaderID = -1;
 		Tex[t].Texture = 0;
 
-		list.clear ();
+		list = "";
 
 		// get a shader ( if one exists )
 		shader = getShader ( Textures[t].strName, 0 );
@@ -1820,7 +1840,7 @@ void CQ3LevelMesh::loadTextures2()
 			{
 				if ( cutExtension ( check, group->get ( "map" ) ) == Textures[t].strName )
 				{
-					list.push_back ( check );
+					list += check;
 				}
 				else
 				if ( check == "$lightmap" )
@@ -1828,24 +1848,20 @@ void CQ3LevelMesh::loadTextures2()
 					// we check if lightmap is in stage 1 and texture in stage 2
 					group = shader->getGroup ( 3 );
 					if ( group )
-					{
-						check = group->get ( "map" );
-						if ( check.size () )
-						{
-							list.push_back ( check );
-						}
-					}
+						list += group->get ( "map" );
 				}
-
 			}
 		}
 		else
 		{
 			// no shader, take it
-			list.push_back ( Textures[t].strName );
+			list += Textures[t].strName;
 		}
 
-		Tex[t].Texture = loadTexture ( list );
+		u32 pos = 0;
+		quake3::getTextures ( textureArray, list, pos, FileSystem, Driver );
+
+		Tex[t].Texture = textureArray[0];
 	}
 }
 

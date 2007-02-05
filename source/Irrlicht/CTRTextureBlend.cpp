@@ -201,9 +201,7 @@ void CTRTextureBlend::scanline_bilinear ()
 #endif
 
 
-#ifdef INVERSE_W
-	f32 inversew;
-#endif
+	f32 inversew = 	FIX_POINT_F32_MUL;
 
 	tFixPoint r0, g0, b0;
 	tFixPoint r1, g1, b1;
@@ -225,7 +223,9 @@ void CTRTextureBlend::scanline_bilinear ()
 			z[i] = line.w[0];
 #endif
 
+#ifdef INVERSEW
 		inversew = fix_inverse32 ( line.w[0] );
+#endif
 
 		getSample_texture ( r0, g0, b0, 
 							&IT[0],
@@ -263,8 +263,9 @@ void CTRTextureBlend::scanline_bilinear ()
 			z[i] = line.w[0];
 #endif
 
+#ifdef INVERSEW
 		inversew = fix_inverse32 ( line.w[0] );
-
+#endif
 		getSample_texture ( r0, g0, b0, 
 							&IT[0],
 							f32_to_fixPoint ( line.t0[0].x,inversew),

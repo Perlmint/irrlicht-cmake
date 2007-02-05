@@ -55,8 +55,8 @@ namespace scene
 		//! returns an axis aligned bounding box
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
-		//! returns an axis aligned bounding box
-		virtual core::aabbox3d<f32>& getBoundingBox();
+		//! set user axis aligned bounding box
+		virtual void setBoundingBox( const core::aabbox3df& box);
 
 		//! sets a flag of all contained materials to a new value
 		virtual void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue);
@@ -148,8 +148,8 @@ namespace scene
 			//! returns an axis aligned bounding box 
 			virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
-			//! returns an axis aligned bounding box 
-			virtual core::aabbox3d<f32>& getBoundingBox();
+			//! set user axis aligned bounding box
+			virtual void setBoundingBox( const core::aabbox3df& box);
 
 			//! returns which type of vertex data is stored. 
 			virtual video::E_VERTEX_TYPE getVertexType() const;

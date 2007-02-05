@@ -133,7 +133,7 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		}
 		#endif
 
-		if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_SOFTWARE2)
+		if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_BURNINGSVIDEO)
 			XDestroyImage(SoftwareImage);
 		XDestroyWindow(display,window);
 		XCloseDisplay(display);
@@ -576,7 +576,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	// create an XImage for the software renderer 
 	//(thx to Nadav for some clues on how to do that!)
 
-	if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_SOFTWARE2)
+	if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_BURNINGSVIDEO)
 	{
 		SoftwareImage = XCreateImage(display, 
 			visual->visual, visual->depth, 
@@ -604,7 +604,7 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 		VideoDriver = video::createSoftwareDriver(windowSize, Fullscreen, FileSystem, this);
 		break;
 		
-	case video::EDT_SOFTWARE2:
+	case video::EDT_BURNINGSVIDEO:
 		VideoDriver = video::createSoftwareDriver2(windowSize, Fullscreen, FileSystem, this);
 		break;
 
@@ -829,7 +829,7 @@ void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32
 {
 #ifdef _IRR_COMPILE_WITH_X11_
 	// this is only necessary for software drivers.
-	if (DriverType != video::EDT_SOFTWARE && DriverType != video::EDT_SOFTWARE2)
+	if (DriverType != video::EDT_SOFTWARE && DriverType != video::EDT_BURNINGSVIDEO)
 		return;
 
 	// thx to Nadav, who send me some clues of how to display the image 

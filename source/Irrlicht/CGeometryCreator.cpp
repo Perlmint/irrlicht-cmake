@@ -253,21 +253,26 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 }
 
 /*
-	a cylinder and a cone
+	a cylinder, a cone and a cross
 	point up on (0,1.f, 0.f )
 */
-IAnimatedMesh* CGeometryCreator::createArrowMesh ( u32 tesselation, f32 width, f32 height, video::SColor vtxColor)
+IAnimatedMesh* CGeometryCreator::createArrowMesh (	const u32 tesselationCylinder, 
+													const u32 tesselationCone, 
+													const f32 height,
+													const f32 cylinderHeight,
+													const f32 width0,
+													const f32 width1,
+													const video::SColor vtxColor0,
+													const video::SColor vtxColor1
+													)
 {
 	SMeshBuffer* buffer;
 	video::S3DVertex v;
 	u32 i;
 
-	v.Color = vtxColor;
+	v.Color = vtxColor0;
 
 	SMesh* mesh = new SMesh();
-
-	const u32 tesselationCylinder = tesselation / 2;
-	const u32 tesselationCone = tesselation;
 
 	// cylinder
 	buffer = new SMeshBuffer();
@@ -275,23 +280,44 @@ IAnimatedMesh* CGeometryCreator::createArrowMesh ( u32 tesselation, f32 width, f
 	// floor, bottom
 	f32 angleStep = (core::PI * 2.f ) / tesselationCylinder;
 
-	const f32 cylinderHeight = height - (height * 1/5.f );
 
 	for ( i = 0; i != tesselationCylinder; ++i )
 	{
 		f32 angle = angleStep * f32(i);
-		v.Pos.X = width * cosf ( angle );
+		v.Color = vtxColor0;
+		v.Pos.X = width0 * cosf ( angle );
 		v.Pos.Y = 0.f;
-		v.Pos.Z = width * sinf ( angle );
+		v.Pos.Z = width0 * sinf ( angle );
 		v.Normal = v.Pos;
 		v.Normal.normalize ();
+		buffer->Vertices.push_back ( v );
 
-		buffer->Vertices.push_back ( v );
+		v.Pos.X = width0 * 0.5f * cosf ( angle );
 		v.Pos.Y = cylinderHeight;
+		v.Pos.Z = width0 * 0.5f * sinf ( angle );
+		v.Normal = v.Pos;
+		v.Normal.normalize ();
 		buffer->Vertices.push_back ( v );
+
+		angle += ( angleStep / 2.f );
+		v.Color = vtxColor1;
+		v.Pos.X = ( width0 * 0.75f ) * cosf ( angle );
+		v.Pos.Y = 0.f;
+		v.Pos.Z = ( width0 * 0.75f ) * sinf ( angle );
+		v.Normal = v.Pos;
+		v.Normal.normalize ();
+		buffer->Vertices.push_back ( v );
+
+		v.Pos.X = ( width0 * 0.25f ) * cosf ( angle );
+		v.Pos.Y = cylinderHeight;
+		v.Pos.Z = ( width0 * 0.25f ) * sinf ( angle );
+		v.Normal = v.Pos;
+		v.Normal.normalize ();
+		buffer->Vertices.push_back ( v );
+
 	}
 
-	u32 nonWrappedSize = (tesselationCylinder - 1 ) * 2;
+	u32 nonWrappedSize = ( ( tesselationCylinder * 2 ) - 1 ) * 2;
 	for ( i = 0; i != nonWrappedSize; i += 2 )
 	{
 		buffer->Indices.push_back ( i + 2 );
@@ -365,12 +391,25 @@ IAnimatedMesh* CGeometryCreator::createArrowMesh ( u32 tesselation, f32 width, f
 
 	angleStep = (core::PI * 2.f ) / tesselationCone;
 
+	v.Color = vtxColor0;
 	for ( i = 0; i != tesselationCone; ++i )
 	{
 		f32 angle = angleStep * f32(i);
-		v.Pos.X = width * 4.f * cosf ( angle );
+
+		v.Color = vtxColor0;
+		v.Pos.X = width1 * cosf ( angle );
 		v.Pos.Y = cylinderHeight;
-		v.Pos.Z = width * 4.f * sinf ( angle );
+		v.Pos.Z = width1 * sinf ( angle );
+		v.Normal = v.Pos;
+		v.Normal.normalize ();
+
+		buffer->Vertices.push_back ( v );
+
+		angle += angleStep / 2.f;
+		v.Color = vtxColor1;
+		v.Pos.X = (width1 * 0.75f ) * cosf ( angle );
+		v.Pos.Y = cylinderHeight;
+		v.Pos.Z = (width1 * 0.75f ) * sinf ( angle );
 		v.Normal = v.Pos;
 		v.Normal.normalize ();
 

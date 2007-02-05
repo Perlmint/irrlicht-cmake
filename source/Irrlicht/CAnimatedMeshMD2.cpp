@@ -31,6 +31,7 @@ namespace scene
 
 	// TA: private
 	const s32 MD2_FRAME_SHIFT	= 2;
+	const f32 MD2_FRAME_SHIFT_RECIPROCAL = 1.f / ( 1 << MD2_FRAME_SHIFT );
 
 	struct SMD2Header
 	{
@@ -456,31 +457,18 @@ void CAnimatedMeshMD2::updateInterpolationBuffer(s32 frame, s32 startFrameLoop, 
 	else
 	{
 		// key frames
-#if 1
 		u32 s = startFrameLoop >> MD2_FRAME_SHIFT;
 		u32 e = endFrameLoop >> MD2_FRAME_SHIFT;
 
 		firstFrame = frame >> MD2_FRAME_SHIFT;
-		// are there reverse anims ?
-		secondFrame = firstFrame + 1;
-		if ( secondFrame > e )
-			secondFrame = s;
+		secondFrame = core::if_c_a_else_b ( firstFrame + 1 > e, s, firstFrame + 1 );
 
-		firstFrame = irr::core::min_ ( FrameCount - 1, firstFrame );
-		secondFrame = irr::core::min_ ( FrameCount - 1, secondFrame );
+		firstFrame = core::s32_min ( FrameCount - 1, firstFrame );
+		secondFrame = core::s32_min ( FrameCount - 1, secondFrame );
 
-		div = (frame % (1<<MD2_FRAME_SHIFT)) / (f32)(1<<MD2_FRAME_SHIFT);
-#else
-		firstFrame = frame>>MD2_FRAME_SHIFT;
-
-		if (!((endFrameLoop>>MD2_FRAME_SHIFT) - (startFrameLoop>>MD2_FRAME_SHIFT)))
-			secondFrame = firstFrame;
-		else
-		secondFrame = (startFrameLoop>>MD2_FRAME_SHIFT) + (((frame>>MD2_FRAME_SHIFT)+1 - (startFrameLoop>>MD2_FRAME_SHIFT)) % 
-			((endFrameLoop>>MD2_FRAME_SHIFT) - (startFrameLoop>>MD2_FRAME_SHIFT)));
-
-		div = (frame % (1<<MD2_FRAME_SHIFT)) / (f32)(1<<MD2_FRAME_SHIFT);
-#endif
+		//div = (frame % (1<<MD2_FRAME_SHIFT)) / (f32)(1<<MD2_FRAME_SHIFT);
+		frame &= (1<<MD2_FRAME_SHIFT) - 1;
+		div = frame * MD2_FRAME_SHIFT_RECIPROCAL;
 	}
 		
 	video::S3DVertex* target = &InterpolateBuffer[0];
@@ -773,12 +761,10 @@ const core::aabbox3d<f32>& CAnimatedMeshMD2::getBoundingBox() const
 	return BoundingBox;
 }
 
-
-
-//! returns an axis aligned bounding box
-core::aabbox3d<f32>& CAnimatedMeshMD2::getBoundingBox()
+//! set user axis aligned bounding box
+void CAnimatedMeshMD2::setBoundingBox( const core::aabbox3df& box)
 {
-	return BoundingBox;
+	BoundingBox = box;
 }
 
 
@@ -820,10 +806,9 @@ void CAnimatedMeshMD2::getFrameLoop(EMD2_ANIMATION_TYPE l,
 	outBegin = MD2AnimationTypeList[l].begin << MD2_FRAME_SHIFT;
 	outEnd = MD2AnimationTypeList[l].end << MD2_FRAME_SHIFT;
 
-	// TA:correct to anim between last->first frame
+	// correct to anim between last->first frame
 	outEnd += MD2_FRAME_SHIFT == 0 ? 1 : ( 1 << MD2_FRAME_SHIFT ) - 1;
-	//TA: don't know about * 5...
-	outFPS = MD2AnimationTypeList[l].fps << MD2_FRAME_SHIFT; // * 5;
+	outFPS = MD2AnimationTypeList[l].fps << MD2_FRAME_SHIFT;
 }
 
 

@@ -74,7 +74,7 @@ CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* drive
 
 	loadBuiltInFont();
 
-	IGUISkin* skin = createSkin(EGST_BURNING_SKIN);
+	IGUISkin* skin = createSkin( gui::EGST_WINDOWS_METALLIC );
 	setSkin(skin);
 	skin->drop();
 
@@ -1012,7 +1012,7 @@ IGUIContextMenu* CGUIEnvironment::addContextMenu(const core::rect<s32>& rectangl
 	IGUIElement* parent, s32 id)
 {
 	IGUIContextMenu* c = new CGUIContextMenu(this, 
-		parent ? parent : this, id, rectangle, false);
+		parent ? parent : this, id, rectangle, true);
 	c->drop();
 	return c;
 }

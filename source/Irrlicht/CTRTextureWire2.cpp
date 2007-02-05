@@ -150,9 +150,9 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 
 	if ( dy > dx )
 	{
-		swap_xor ( dx, dy );
-		swap_xor ( xInc0, yInc0 );
-		swap_xor ( xInc1, yInc1 );
+		core::swap_xor ( dx, dy );
+		core::swap_xor ( xInc0, yInc0 );
+		core::swap_xor ( xInc1, yInc1 );
 	}
 
 	if ( 0 == dx )

@@ -211,8 +211,8 @@ static void RenderLine32_Decal (	video::IImage *t,
 
 	if ( dy > dx )
 	{
-		swap_xor ( dx, dy );
-		swap_xor ( xInc, yInc );
+		core::swap_xor ( dx, dy );
+		core::swap_xor ( xInc, yInc );
 	}
 
 	c = dx << 1;
@@ -275,8 +275,8 @@ static void RenderLine32_Blend (	video::IImage *t,
 
 	if ( dy > dx )
 	{
-		swap_xor ( dx, dy );
-		swap_xor ( xInc, yInc );
+		core::swap_xor ( dx, dy );
+		core::swap_xor ( xInc, yInc );
 	}
 
 	c = dx << 1;
@@ -335,8 +335,8 @@ static void RenderLine16_Decal (video::IImage *t,
 
 	if ( dy > dx )
 	{
-		swap_xor ( dx, dy );
-		swap_xor ( xInc, yInc );
+		core::swap_xor ( dx, dy );
+		core::swap_xor ( xInc, yInc );
 	}
 
 	c = dx << 1;
@@ -397,8 +397,8 @@ static void RenderLine16_Blend (video::IImage *t,
 
 	if ( dy > dx )
 	{
-		swap_xor ( dx, dy );
-		swap_xor ( xInc, yInc );
+		core::swap_xor ( dx, dy );
+		core::swap_xor ( xInc, yInc );
 	}
 
 	c = dx << 1;
@@ -541,7 +541,7 @@ static void executeBlit_TextureBlend_16_to_16 ( const SBlitJob * job )
 
 
 	const u32 rdx = job->width >> 1;
-	const u32 off = if_c_a_else_b ( job->width & 1 ,job->width - 1, 0 );
+	const u32 off = core::if_c_a_else_b ( job->width & 1 ,job->width - 1, 0 );
 
 
 	if ( 0 == off )
@@ -1318,10 +1318,10 @@ inline SColor CImage::getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias )
 
 	s32 sdiv = s32_log2_s32(fx * fy);
 
-	a = s32_clamp ( ( a >> sdiv ) + bias, 0, 255 );
-	r = s32_clamp ( ( r >> sdiv ) + bias, 0, 255 );
-	g = s32_clamp ( ( g >> sdiv ) + bias, 0, 255 );
-	b = s32_clamp ( ( b >> sdiv ) + bias, 0, 255 );
+	a = core::s32_clamp ( ( a >> sdiv ) + bias, 0, 255 );
+	r = core::s32_clamp ( ( r >> sdiv ) + bias, 0, 255 );
+	g = core::s32_clamp ( ( g >> sdiv ) + bias, 0, 255 );
+	b = core::s32_clamp ( ( b >> sdiv ) + bias, 0, 255 );
 
 	c.set ( a, r, g, b );
 	return c;

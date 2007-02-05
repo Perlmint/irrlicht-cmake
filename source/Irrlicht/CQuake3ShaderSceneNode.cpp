@@ -12,53 +12,6 @@ namespace scene
 {
 
 
-
-/*
-	quake3 doesn't care much about tga & jpg
-	load one or multiple files stored in name started at startPos to the texture array textures
-	if texture is not loaded 0 will be added ( to find missing textures easier)
-*/
-
-void getTextures (	quake3::tTexArray &textures ,
-					const core::stringc &name, u32 &startPos,
-					io::IFileSystem *fileSystem,
-					video::IVideoDriver* driver
-				)
-{
-	static const char * extension[2] = 
-	{
-		".jpg",
-		".tga"
-	};
-
-	quake3::tStringList stringList;
-	quake3::getAsStringList ( stringList, -1, name, startPos );
-
-	textures.clear();
-
-	core::stringc loadFile;
-	for ( u32 i = 0; i!= stringList.size (); ++i )
-	{
-		video::ITexture* texture = 0;
-		for ( u32 g = 0; g != 2 ; ++g )
-		{
-			cutExtension ( loadFile, stringList[i] ).append ( extension[g] );
-
-			if ( fileSystem->existFile ( loadFile.c_str() ) )
-			{
-				texture = driver->getTexture( loadFile.c_str () );
-				if ( texture )
-				{
-					break;
-				}
-			}
-		}
-		// take 0 Texture
-		textures.push_back(texture);
-	}
-
-}
-
 /*
 */
 CQuake3ShaderSceneNode::CQuake3ShaderSceneNode(scene::ISceneNode* parent, scene::ISceneManager* mgr,s32 id,
@@ -161,7 +114,7 @@ void CQuake3ShaderSceneNode::loadTextures ( io::IFileSystem * fileSystem )
 		else
 		{
 			pos = 0;
-			getTextures ( Q3Texture [i].Texture, mapname, pos, fileSystem, SceneManager->getVideoDriver() );
+			quake3::getTextures ( Q3Texture [i].Texture, mapname, pos, fileSystem, SceneManager->getVideoDriver() );
 		}
 	}
 
@@ -181,7 +134,7 @@ void CQuake3ShaderSceneNode::loadTextures ( io::IFileSystem * fileSystem )
 		pos = 0;
 		Q3Texture [i].TextureFrequency = core::max_ ( 0.0001f, quake3::getAsFloat ( animmap, pos ) );
 
-		getTextures ( Q3Texture [i].Texture, animmap, pos,fileSystem, SceneManager->getVideoDriver() );
+		quake3::getTextures ( Q3Texture [i].Texture, animmap, pos,fileSystem, SceneManager->getVideoDriver() );
 	}
 
 	// get clamp map
@@ -196,9 +149,9 @@ void CQuake3ShaderSceneNode::loadTextures ( io::IFileSystem * fileSystem )
 		if ( 0 == clampmap.size () )
 			continue;
 
-		Q3Texture [i].TextureAddressMode = 0;
+		Q3Texture [i].TextureAddressMode = video::ETC_CLAMP;
 		pos = 0;
-		getTextures ( Q3Texture [i].Texture, clampmap, pos,fileSystem, SceneManager->getVideoDriver() );
+		quake3::getTextures ( Q3Texture [i].Texture, clampmap, pos,fileSystem, SceneManager->getVideoDriver() );
 	}
 
 }
@@ -287,7 +240,7 @@ void CQuake3ShaderSceneNode::render()
 		transformtex ( texture, q.TextureAddressMode );
 	}
 */
-	material.TextureWrap = q.TextureAddressMode ? video::ETC_CLAMP : video::ETC_REPEAT;
+	material.TextureWrap = q.TextureAddressMode;
 	driver->setTransform ( video::ETS_TEXTURE_0, texture );
 
 	//material.Wireframe = true;

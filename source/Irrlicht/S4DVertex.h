@@ -328,7 +328,8 @@ struct SAlignedVertex
 	{
 		u32 byteSize = (ElementSize << SIZEOF_SVERTEX_LOG2 ) + aligned;
 		mem = new u8 [ byteSize ];
-		data = (s4DVertex*) ((PointerAsValue ( mem ) + (aligned-1) ) & ~ ( aligned - 1 ) );
+		//data = (s4DVertex*) ((PointerAsValue ( mem ) + (aligned-1) ) & ~ ( aligned - 1 ) );
+		data = (s4DVertex*) mem;
 	}
 
 	virtual ~SAlignedVertex ()

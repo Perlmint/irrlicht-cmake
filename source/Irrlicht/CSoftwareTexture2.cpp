@@ -106,8 +106,8 @@ void CSoftwareTexture2::regenerateMipMapLevels()
 	while ( i < SOFTWARE_DRIVER_2_MIPMAPPING_MAX )
 	{
 		currentSize = c->getDimension();
-		newSize.Width = s32_max ( 1, currentSize.Width >> 1 );
-		newSize.Height = s32_max ( 1, currentSize.Height >> 1 );
+		newSize.Width = core::s32_max ( 1, currentSize.Width >> 1 );
+		newSize.Height = core::s32_max ( 1, currentSize.Height >> 1 );
 
 		MipMap[i] = new CImage(ECF_SOFTWARE2, newSize);
 		MipMap[0]->copyToScalingBoxFilter ( MipMap[i], 0 );

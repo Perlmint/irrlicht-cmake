@@ -52,10 +52,11 @@ s32 CGUIContextMenu::getItemCount() const
 
 
 //! Adds a menu item.
-s32 CGUIContextMenu::addItem(const wchar_t* text, s32 id, bool enabled, bool hasSubMenu)
+s32 CGUIContextMenu::addItem(const wchar_t* text, s32 id, bool enabled, bool hasSubMenu, bool checked)
 {
 	SItem s;
 	s.Enabled = enabled;
+	s.Checked = checked;
 	s.Text = text;
 	s.IsSeparator = (text == 0);
 	s.SubMenu = 0;
@@ -63,7 +64,7 @@ s32 CGUIContextMenu::addItem(const wchar_t* text, s32 id, bool enabled, bool has
 
 	if (hasSubMenu)
 	{
-		s.SubMenu = new CGUIContextMenu(Environment, this, -1,
+		s.SubMenu = new CGUIContextMenu(Environment, this, id,
 			core::rect<s32>(0,0,100,100), false);
 		s.SubMenu->setVisible(false);
 	}
@@ -96,7 +97,7 @@ void CGUIContextMenu::setSubMenu(s32 index, CGUIContextMenu* menu)
 //! Adds a separator item to the menu
 void CGUIContextMenu::addSeparator()
 {
-	addItem(0, true);
+	addItem(0, -1, true, false, false);
 }
 
 
@@ -142,6 +143,15 @@ void CGUIContextMenu::setItemEnabled(s32 idx, bool enabled)
 		return;
 
 	Items[idx].Enabled = enabled;
+}
+
+//! Sets if the menu item should be checked.
+void CGUIContextMenu::setItemChecked(s32 idx, bool checked )
+{
+	if (idx < 0 || idx >= (s32)Items.size())
+		return;
+
+	Items[idx].Checked = checked;
 }
 
 
@@ -424,6 +434,15 @@ void CGUIContextMenu::draw()
 					skin->getColor(c), true, true, clip);
 			}
 
+			// draw checked symbol
+			if (Items[i].Checked && defaultFont)
+			{
+				core::rect<s32> r = rect;
+				r.UpperLeftCorner.X -= 15;
+				defaultFont->draw(L"",r, //GUI_ICON_CHECK_BOX_CHECKED, r,
+					skin->getColor(c), false, true, clip);
+			}
+
 		}
 	}
 
@@ -588,6 +607,7 @@ void CGUIContextMenu::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 		core::stringw txt;
 		s32 commandid;
 		bool enabled;
+		bool checked;
 
 		tmp = "IsSeparator"; tmp += i;
 		if ( in->getAttributeAsBool(tmp.c_str()) )
@@ -602,8 +622,11 @@ void CGUIContextMenu::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 
 			tmp = "Enabled"; tmp += i;
 			enabled = in->getAttributeAsBool(tmp.c_str());
+
+			tmp = "Checked"; tmp += i;
+			checked = in->getAttributeAsBool(tmp.c_str());
 			
-			addItem(core::stringw(txt.c_str()).c_str(), commandid, enabled);
+			addItem(core::stringw(txt.c_str()).c_str(), commandid, enabled, false, checked);
 		}
 	}
 

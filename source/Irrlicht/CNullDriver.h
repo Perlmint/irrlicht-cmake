@@ -369,7 +369,7 @@ namespace video
 		virtual IImage* createScreenShot();
 
 		//! Writes the provided image to disk file
-		virtual bool writeImageToFile(IImage* image, const char* filename);
+		virtual bool writeImageToFile(IImage* image, const char* filename, u32 param = 0);
 
 		//! Sets the name of a material renderer. 
 		virtual void setMaterialRendererName(s32 idx, const char* name);

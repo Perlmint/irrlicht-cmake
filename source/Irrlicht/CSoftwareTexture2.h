@@ -69,7 +69,7 @@ public:
 	//! returns driver type of texture (=the driver, who created the texture)
 	virtual E_DRIVER_TYPE getDriverType()
 	{
-		return EDT_SOFTWARE2;
+		return EDT_BURNINGSVIDEO;
 	}
 
 	//! returns color format of texture

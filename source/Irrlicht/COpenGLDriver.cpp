@@ -1820,7 +1820,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	// texture address mode
 	if (resetAllRenderStates || lastmaterial.TextureWrap != material.TextureWrap)
 	{
-		GLint mode;
+		GLint mode=GL_REPEAT;
 		switch (material.TextureWrap)
 		{
 			case ETC_REPEAT:

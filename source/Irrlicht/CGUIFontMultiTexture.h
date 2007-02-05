@@ -53,10 +53,12 @@ public:
 	virtual s32 getCharacterFromPos(const wchar_t* text, s32 pixel_x);
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
-	virtual void setKerning (s32 kerning);
+	virtual void setKerningWidth (s32 kerning);
+	virtual void setKerningHeight (s32 kerning);
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
-	virtual s32 getKerning();
+	virtual s32 getKerningWidth();
+	virtual s32 getKerningHeight();
 
 	//! Returns the type of this font
 	virtual EGUI_FONT_TYPE getType() { return EGFT_XML_BITMAP; }

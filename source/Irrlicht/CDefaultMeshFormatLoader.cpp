@@ -44,8 +44,9 @@ CDefaultMeshFormatLoader::~CDefaultMeshFormatLoader()
 //! based on the file extension (e.g. ".bsp")
 bool CDefaultMeshFormatLoader::isALoadableFileExtension(const c8* filename)
 {
-	return (strstr(filename, ".md2") || strstr(filename, ".b3d") ||
-			strstr(filename, ".ms3d") || strstr(filename, ".bsp"));
+	return strstr(filename, ".md2") || strstr(filename, ".b3d") ||
+			strstr(filename, ".ms3d") || strstr(filename, ".bsp") ||
+			 strstr(filename, ".shader");
 }
 
 
@@ -89,12 +90,24 @@ IAnimatedMesh* CDefaultMeshFormatLoader::createMesh(irr::io::IReadFile* file)
 	// load quake 3 bsp
 	if (strstr(file->getFileName(), ".bsp"))
 	{
-		msh = new CQ3LevelMesh(FileSystem, Driver, SceneManager);
-		success = ((CQ3LevelMesh*)msh)->loadFile(file);
-		if (success)
-			return msh;
+		CQ3LevelMesh* q = new CQ3LevelMesh(FileSystem, Driver, SceneManager);
+		
+		q->getShader ( "scripts/models.shader", 1 );
+		q->getShader ( "scripts/liquid.shader", 1 );
+		//q->getShader ( "scripts/sky.shader", 1 );
 
-		msh->drop();
+		if ( q->loadFile(file) )
+			return q;
+
+		q->drop();
+	}
+
+	// load quake 3 shader container
+	if (strstr(file->getFileName(), ".shader"))
+	{
+		CQ3LevelMesh* q = new CQ3LevelMesh(FileSystem, Driver, SceneManager);
+		q->getShader ( file->getFileName(), 1 );
+		return q;
 	}
 
 	// load blitz basic

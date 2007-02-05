@@ -356,7 +356,7 @@ void CSoftwareDriver2::setTransform(E_TRANSFORMATION_STATE state, const core::ma
 //! sets the current Texture
 bool CSoftwareDriver2::setTexture(u32 stage, video::ITexture* texture)
 {
-	if (texture && texture->getDriverType() != EDT_SOFTWARE2)
+	if (texture && texture->getDriverType() != EDT_BURNINGSVIDEO)
 	{
 		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
 		return false;
@@ -435,7 +435,7 @@ bool CSoftwareDriver2::endScene( s32 windowId, core::rect<s32>* sourceRect )
 bool CSoftwareDriver2::setRenderTarget(video::ITexture* texture, bool clearBackBuffer, 
 								 bool clearZBuffer, SColor color)
 {
-	if (texture && texture->getDriverType() != EDT_SOFTWARE2)
+	if (texture && texture->getDriverType() != EDT_BURNINGSVIDEO)
 	{
 		os::Printer::log("Fatal Error: Tried to set a texture not owned by this driver.", ELL_ERROR);
 		return false;
@@ -587,24 +587,13 @@ REALINLINE u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) cons
 
 #else
 
-/*
-	if (condition) state |= m; else state &= ~m; 
-*/
-inline void setbit ( u32 &state, s32 condition, u32 mask )
-{
-	// 0, or any postive to mask
-	//s32 conmask = -condition >> 31;
-	state ^= ( ( -condition >> 31 ) ^ state ) & mask;
-}
 
 REALINLINE u32 CSoftwareDriver2::clipToFrustumTest ( const s4DVertex * v  ) const
 {
 	u32 flag = 0;
-	f32 dotPlane;
 	for ( u32 i = 0; i!= 6; ++i )
 	{
-		dotPlane = v->Pos.dotProduct ( NDCPlane[i] );
-		setbit ( flag, dotPlane <= 0.f, 1 << i );
+		core::setbit ( flag, v->Pos.dotProduct ( NDCPlane[i] ) <= 0.f, 1 << i );
 	}
 	return flag;
 }
@@ -1105,7 +1094,7 @@ REALINLINE void CSoftwareDriver2::VertexCache_get ( s4DVertex ** face )
 		}
 	}
 
-	const u32 i0 = if_c_a_else_0 ( VertexCache.pType != scene::EPT_TRIANGLE_FAN, VertexCache.indicesRun );
+	const u32 i0 = core::if_c_a_else_0 ( VertexCache.pType != scene::EPT_TRIANGLE_FAN, VertexCache.indicesRun );
 
 	face[0] = VertexCache_getVertex ( VertexCache.indices[ i0    ] );
 	face[1] = VertexCache_getVertex ( VertexCache.indices[ VertexCache.indicesRun + 1] );
@@ -1116,7 +1105,7 @@ REALINLINE void CSoftwareDriver2::VertexCache_get ( s4DVertex ** face )
 
 REALINLINE void CSoftwareDriver2::VertexCache_get2 ( s4DVertex ** face )
 {
-	const u32 i0 = if_c_a_else_0 ( VertexCache.pType != scene::EPT_TRIANGLE_FAN, VertexCache.indicesRun );
+	const u32 i0 = core::if_c_a_else_0 ( VertexCache.pType != scene::EPT_TRIANGLE_FAN, VertexCache.indicesRun );
 
 	VertexCache_fill ( VertexCache.indices[ i0    ], 0 );
 	VertexCache_fill ( VertexCache.indices[ VertexCache.indicesRun + 1], 1 );
@@ -1576,7 +1565,7 @@ void CSoftwareDriver2::draw2DImage(video::ITexture* texture, const core::positio
 {
 	if (texture)
 	{
-		if (texture->getDriverType() != EDT_SOFTWARE2)
+		if (texture->getDriverType() != EDT_BURNINGSVIDEO)
 		{
 			os::Printer::log("Fatal Error: Tried to copy from a surface not owned by this driver.", ELL_ERROR);
 			return;
@@ -1810,7 +1799,7 @@ const wchar_t* CSoftwareDriver2::getName()
 //! Returns type of video driver
 E_DRIVER_TYPE CSoftwareDriver2::getDriverType()
 {
-	return EDT_SOFTWARE2;
+	return EDT_BURNINGSVIDEO;
 }
 
 //! Returns the transformation set by setTransform

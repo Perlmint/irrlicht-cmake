@@ -1149,7 +1149,7 @@ IImage* CNullDriver::createImageFromFile(io::IReadFile* file)
 
 
 //! Writes the provided image to disk file
-bool CNullDriver::writeImageToFile(IImage* image, const char* filename)
+bool CNullDriver::writeImageToFile(IImage* image, const char* filename,u32 param)
 {
 	for (u32 i=0; i<SurfaceWriter.size(); ++i)
 	{
@@ -1158,7 +1158,7 @@ bool CNullDriver::writeImageToFile(IImage* image, const char* filename)
 			io::IWriteFile* file = FileSystem->createAndWriteFile(filename);
 			if (file)
 			{
-				bool written = SurfaceWriter[i]->writeImage(file, image);
+				bool written = SurfaceWriter[i]->writeImage(file, image, param);
 				file->drop();
 				if (written)
 					return true;

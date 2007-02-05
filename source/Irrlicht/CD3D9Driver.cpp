@@ -1371,7 +1371,7 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	// texture address mode
 	if (resetAllRenderstates || lastmaterial.TextureWrap != material.TextureWrap)
 	{
-		u32 mode;
+		u32 mode = D3DTADDRESS_WRAP;
 		switch (material.TextureWrap)
 		{
 			case ETC_REPEAT:
