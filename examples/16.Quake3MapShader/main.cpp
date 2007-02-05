@@ -101,8 +101,8 @@ int main(int argc, char* argv[])
 	we are able to read from the files in that archive as they would
 	directly be stored on disk.
 	*/
-	//device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
-	device->getFileSystem()->addFolderFileArchive("/baseq3/");
+	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
+	//device->getFileSystem()->addFolderFileArchive("/baseq3/");
 	
 
 	/* 
@@ -121,8 +121,8 @@ int main(int argc, char* argv[])
 	IVideoDriver class). Note that this optimization with the Octree is only
 	useful when drawing huge meshes consisting of lots of geometry.
 	*/
-	//scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
-	scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm0.bsp");
+	scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
+	//scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm0.bsp");
 
 	/*
 		add the geometry mesh to the Scene ( polygon & patches )
