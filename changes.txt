@@ -1,5 +1,15 @@
 Changes in version 1.3 (?? ??? 2007)
 
+- implemented CImagerWriterJpeg::writeImage
+- added param to IIImageWriteFile::writeImage
+	control Parameter for the backend ( eq. jpeg compression level )
+- addContextMenu
+	I noticed that contextmenu didn't work anymore in demo mainmenu..
+	so i changed the 
+		CGUIEnvironment::addContextMenu
+			IGUIContextMenu* c = new CGUIContextMenu(this, 
+	to set the focus on the submenu..
+=======
 - Added IFileSystem::createMemoryReadFile for accessing memory like a file.
 
 - Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. It was returning 0 for all implementations previously. User defined IMesh derivates will also have to implement it now due to the removed empty implementation.
@@ -101,7 +111,7 @@ Changes in version 1.3 (?? ??? 2007)
 	b) sorting ignores case
 	so it feel's more like common browers
 - texture transformation
-	in my opionion ITexture is the wrong place to hold a texture transformation
+	in my opinion ITexture is the wrong place to hold a texture transformation
 	a) a texture can have multiple different transformations..
 	b) not every ( in fact usually no texture ) has a transformationen
 	c) it belongs to a material...
