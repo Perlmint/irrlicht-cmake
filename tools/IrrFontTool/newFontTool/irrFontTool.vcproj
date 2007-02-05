@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Font Tool"
 	ProjectGUID="{853A396E-C031-4C26-A716-5B4E176BE11D}"
 	Keyword="Win32Proj"
@@ -40,11 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-<<<<<<< .mine
-				AdditionalIncludeDirectories="..\..\..\include"
-=======
 				AdditionalIncludeDirectories="../../../include"
->>>>>>> .r445
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,15 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-<<<<<<< .mine
-				AdditionalOptions=" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib glu32.lib opengl32.lib "
-				OutputFile="../../../bin/Win32-visualstudio/FontTool.exe"
-=======
 				AdditionalOptions=" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib glu32.lib opengl32.lib gdi32.lib"
 				OutputFile="../../../bin/Win32-visualstudio/FontTool.exe"
->>>>>>> .r445
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../../lib/Win32-visualstudio"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/TestProject.pdb"
 				SubSystem="1"
@@ -129,7 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\include"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -148,9 +138,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../../../bin/Win32-visualstudio/FontTool.exe"
+				OutputFile="../../bin/Win32-visualstudio/TestProject.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../lib/Win32-visualstudio"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -206,3 +195,4 @@
 	<Globals>
 	</Globals>
 </VisualStudioProject>
+ 
