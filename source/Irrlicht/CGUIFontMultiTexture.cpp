@@ -158,15 +158,26 @@ bool CGUIFontMultiTexture::load(io::IXMLReader* xml)
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
-void CGUIFontMultiTexture::setKerning ( s32 kerning )
+void CGUIFontMultiTexture::setKerningWidth ( s32 kerning )
 {
 	Kerning = kerning;
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
-s32 CGUIFontMultiTexture::getKerning ()
+s32 CGUIFontMultiTexture::getKerningWidth ()
 {
 	return Kerning;
+}
+
+//! set an Pixel Offset on Drawing ( scale position on height )
+void CGUIFontMultiTexture::setKerningHeight ( s32 kerning )
+{
+}
+
+//! set an Pixel Offset on Drawing ( scale position on height )
+s32 CGUIFontMultiTexture::getKerningHeight ()
+{
+	return 0;
 }
 
 //! returns the dimension of a text

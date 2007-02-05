@@ -18,6 +18,7 @@
 #include <winuser.h>
 #include "irrlicht.h"
 
+
 namespace irr
 {
 	namespace video
@@ -79,6 +80,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	irr::CIrrDeviceWin32* dev = 0;
 	irr::SEvent event;
 	SEnvMapper* envm = 0;
+
+	BYTE allKeys[256];
 
 	static irr::s32 ClickCount=0;
 	if (GetCapture() != hWnd && ClickCount > 0)
@@ -223,7 +226,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			event.KeyInput.PressedDown = true;
 			dev = getDeviceFromHWnd(hWnd);
 
-			BYTE allKeys[256];
 			WORD KeyAsc=0;
 			GetKeyboardState(allKeys);
 			ToAscii(wParam,lParam,allKeys,&KeyAsc,0);
@@ -244,7 +246,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			event.KeyInput.PressedDown = false;
 			dev = getDeviceFromHWnd(hWnd);
 
-			BYTE allKeys[256];
 			WORD KeyAsc=0;
 			GetKeyboardState(allKeys);
 			ToAscii(wParam,lParam,allKeys,&KeyAsc,0);
@@ -493,7 +494,7 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 		VideoDriver = video::createSoftwareDriver(windowSize, fullscreen, FileSystem, this);
 		break;
 
-	case video::EDT_SOFTWARE2:
+	case video::EDT_BURNINGSVIDEO:
 		if (fullscreen)	switchToFullScreen(windowSize.Width, windowSize.Height, bits);
 		VideoDriver = video::createSoftwareDriver2(windowSize, fullscreen, FileSystem, this);
 		break;

@@ -469,16 +469,30 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
-void CGUIFont::setKerning ( s32 kerning )
+void CGUIFont::setKerningWidth ( s32 kerning )
 {
 	Kerning = kerning;
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
-s32 CGUIFont::getKerning ()
+s32 CGUIFont::getKerningWidth ()
 {
 	return Kerning;
 }
+
+//! set an Pixel Offset on Drawing ( scale position on height )
+void CGUIFont::setKerningHeight ( s32 kerning )
+{
+	GlobalKerningHeight = kerning;
+}
+
+//! set an Pixel Offset on Drawing ( scale position on height )
+s32 CGUIFont::getKerningHeight ()
+{
+	return GlobalKerningHeight;
+}
+
+
 
 s32 CGUIFont::getAreaFromCharacter(const wchar_t c)
 {
