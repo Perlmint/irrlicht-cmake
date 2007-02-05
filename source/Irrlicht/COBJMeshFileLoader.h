@@ -81,7 +81,14 @@ private:
 	c8* goAndCopyNextWord(c8* outBuf, c8* inBuf, s32 outBufLength, const c8* pBufEnd);
 
 	void readMTL(const c8* pFileName, core::stringc relPath);
+	//! Read RGB color
 	c8* readColor(c8* pBufPtr, video::SColor& color, const c8* pBufEnd);
+	//! Read 3d vector of floats
+	c8* readVec3(c8* pBufPtr, core::vector3df& vec, const c8* pBufEnd);
+	//! Read 2d vector of floats
+	c8* readVec2(c8* pBufPtr, core::vector2df& vec, const c8* pBufEnd);
+	//! Read boolean value represented as 'on' or 'off'
+	c8* readBool(c8* pBufPtr, bool& tf, const c8* pBufEnd);
 	SObjMtl * findMtl(const c8* pMtlName);
 	SObjGroup * findGroup(const c8* pGroupName);
 	SObjGroup * findOrAddGroup(const c8* pGroupName);
