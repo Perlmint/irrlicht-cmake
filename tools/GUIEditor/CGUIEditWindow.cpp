@@ -6,6 +6,10 @@
 #include "IAttributes.h"
 #include "IGUIFont.h"
 
+// bah
+#include "IVideoDriver.h"
+#include "../../source/irrlicht/CAttributes.h"
+
 using namespace irr;
 using namespace gui;
 
