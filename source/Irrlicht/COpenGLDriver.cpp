@@ -322,7 +322,8 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 	glViewport(0, 0, screenSize.Width, screenSize.Height); // Reset The Current Viewport
 	setAmbientLight(SColorf(0.0f,0.0f,0.0f,0.0f));
 #ifdef GL_EXT_separate_specular_color
-	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+	if (EXTSeparateSpecularColor)
+		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 #endif
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
 	glClearDepth(1.0);
@@ -429,6 +430,7 @@ void COpenGLDriver::loadExtensions()
 		TextureNPOTExtension = gluCheckExtension((const GLubyte*)"GL_ARB_texture_non_power_of_two", t);
 		FramebufferObjectExtension = gluCheckExtension((const GLubyte*)"GL_EXT_framebuffer_object", t);
 		EXTPackedDepthStencil = gluCheckExtension((const GLubyte*)"GL_EXT_packed_depth_stencil", t);
+		EXTSeparateSpecularColor = gluCheckExtension((const GLubyte*)"GL_EXT_separate_specular_color", t);
 	}
 	else
 	#endif
@@ -482,6 +484,9 @@ void COpenGLDriver::loadExtensions()
 				else
 				if (strstr(p, "GL_EXT_packed_depth_stencil"))
 					EXTPackedDepthStencil = true;
+				else
+				if (strstr(p, "GL_EXT_separate_specular_color"))
+					EXTSeparateSpecularColor = true;
 
 				p = p + strlen(p) + 1;
 			}
@@ -1657,12 +1662,11 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
 
 		// disable Specular colors if no shininess is set
-		if (material.Shininess == 0.0f)
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
-		else
+		if (material.Shininess != 0.0f)
 		{
 #ifdef GL_EXT_separate_specular_color
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+			if (EXTSeparateSpecularColor)
+				glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 #endif
 			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material.Shininess);
 			color[0] = material.SpecularColor.getRed() * inv;
@@ -1671,6 +1675,11 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			color[3] = material.SpecularColor.getAlpha() * inv;
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
 		}
+#ifdef GL_EXT_separate_specular_color
+		else
+			if (EXTSeparateSpecularColor)
+				glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
+#endif
 
 		color[0] = material.EmissiveColor.getRed() * inv;
 		color[1] = material.EmissiveColor.getGreen() * inv;
@@ -1723,21 +1732,9 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	if (resetAllRenderStates || lastmaterial.Lighting != material.Lighting)
 	{
 		if (material.Lighting)
-		{
 			glEnable(GL_LIGHTING);
-#ifdef GL_EXT_separate_specular_color
-			// enable specular colors
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-#endif
-		}
 		else
-		{
 			glDisable(GL_LIGHTING);
-#ifdef GL_EXT_separate_specular_color
-			// disable specular colors
-			glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
-#endif
-		}
 	}
 
 	// zbuffer

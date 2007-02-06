@@ -361,6 +361,7 @@ namespace video
 		bool TextureNPOTExtension;
 		bool FramebufferObjectExtension;
 		bool EXTPackedDepthStencil;
+		bool EXTSeparateSpecularColor;
 
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;
