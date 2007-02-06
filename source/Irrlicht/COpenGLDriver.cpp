@@ -1550,6 +1550,15 @@ video::ITexture* COpenGLDriver::createDeviceDependentTexture(IImage* surface, co
 void COpenGLDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
+
+	s32 i;
+	for ( i = 0; i < core::s32_min ( MATERIAL_MAX_TEXTURES, material.TextureMatrix.size() ); ++i)
+	{
+		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
+						material.TextureMatrix [ i ]
+					);
+	}
+
 }
 
 

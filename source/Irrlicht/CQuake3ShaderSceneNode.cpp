@@ -243,6 +243,7 @@ void CQuake3ShaderSceneNode::render()
 	material.TextureWrap = q.TextureAddressMode;
 
 	//material.Wireframe = true;
+	//material.setTransform ( video::ETS_TEXTURE_0, texture );
 	driver->setMaterial( material );
 
 	driver->setTransform ( video::ETS_TEXTURE_0, texture );

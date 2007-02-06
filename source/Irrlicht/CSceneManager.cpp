@@ -284,7 +284,7 @@ ITextSceneNode* CSceneManager::addBillboardTextSceneNode(gui::IGUIFontBitmap* fo
 }
 
 
-//! Adds a text scene node, which uses billboards
+//! Adds a scene node, which can render a quake3 shader
 ISceneNode* CSceneManager::addQuake3SceneNode(	IMeshBuffer* meshBuffer,
 												const quake3::SShader * shader,
 												ISceneNode* parent,
@@ -1017,7 +1017,7 @@ void CSceneManager::drawAll()
 
 	/*!
 		First Scene Node for prerendering should be the active camera
-		consisten Camera is needed for culling
+		consistent Camera is needed for culling
 	*/
 	camWorldPos.set(0,0,0);
 	if ( ActiveCamera )

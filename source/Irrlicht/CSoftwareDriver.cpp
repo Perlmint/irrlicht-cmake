@@ -214,6 +214,15 @@ void CSoftwareDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 	setTexture(Material.Texture1);
+
+	s32 i;
+	for ( i = 0; i < core::s32_min ( 1, material.TextureMatrix.size() ); ++i)
+	{
+		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
+						material.TextureMatrix [ i ]
+					);
+	}
+
 }
 
 

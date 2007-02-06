@@ -642,8 +642,17 @@ void CD3D9Driver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+	s32 i;
+	for ( i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 		setTexture(i, Material.Textures[i]);
+
+	for ( i = 0; i < core::s32_min ( MATERIAL_MAX_TEXTURES, material.TextureMatrix.size() ); ++i)
+	{
+		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
+						material.TextureMatrix [ i ]
+					);
+	}
+
 }
 
 

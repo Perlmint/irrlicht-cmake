@@ -170,6 +170,7 @@ namespace scene
 			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1,
 			video::SColor shade_top = 0xFFFFFFFF, video::SColor shade_down = 0xFFFFFFFF);
 
+		//! Adds a scene node, which can render a quake3 shader
 		virtual ISceneNode* addQuake3SceneNode(IMeshBuffer* meshBuffer, const quake3::SShader * shader,
 												ISceneNode* parent=0, s32 id=-1
 												);
