@@ -8,6 +8,7 @@
 #include "SColor.h"
 #include "ITexture.h"
 #include "matrix4.h"
+#include "irrArray.h"
 
 namespace irr
 {
@@ -321,7 +322,6 @@ namespace video
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 			{
 				Textures[i] = 0;
-				TextureMatrix[i].makeIdentity();
 			}
 		}
 
@@ -410,7 +410,24 @@ namespace video
 			ITexture* Textures[MATERIAL_MAX_TEXTURES];
 		};
 
-		core::matrix4 TextureMatrix[MATERIAL_MAX_TEXTURES];
+		//! hold an anchor point for material Texture Transformations
+		core::array < core::matrix4 > TextureMatrix;
+
+		//! Texture transformation
+		//! state = video::E_TRANSFORMATION_STATE
+		void setTransform( u32 state, const core::matrix4& mat)
+		{
+			u32 index = state - 3;
+			if ( index > 3 )
+				return;
+
+			s32 diff = index - TextureMatrix.size () + 1;
+			for ( s32 i = 0; i < diff; ++i )
+				TextureMatrix.push_back ( core::matrix4() );
+
+			TextureMatrix[ index ] = mat;
+		}
+
 		//! material flag union.
 		/** This enables the user to access the
 		material flag using e.g: material.Wireframe = true or
