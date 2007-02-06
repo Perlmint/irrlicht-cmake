@@ -35,13 +35,59 @@ to make it easy, we use a pragma comment lib:
 #pragma comment(lib, "Irrlicht.lib")
 
 
+//! produces a serie of screenshots
+class CScreenShotFactory : public IEventReceiver
+{
+public:
+
+	CScreenShotFactory( IrrlichtDevice *device, const c8 * templateName )
+	{
+		// store pointer to device so we can use it
+		Device = device;
+
+		// start with zero
+		Number = 0;
+
+		Filename.reserve ( 256 );
+		FilenameTemplate = templateName;
+	}
+
+	bool OnEvent(SEvent event)
+	{
+		// check if user presses the key F9
+		if (event.EventType == EET_KEY_INPUT_EVENT &&
+			event.KeyInput.Key == KEY_F9 &&
+			event.KeyInput.PressedDown == false)
+		{
+			video::IImage* image = Device->getVideoDriver()->createScreenShot();
+			if (image)
+			{
+				sprintf (	(c8*) Filename.c_str() ,
+							"%s_shot%04d.jpg",
+							FilenameTemplate.c_str (),
+							Number++
+						);
+				Device->getVideoDriver()->writeImageToFile(image, Filename.c_str(), 85 );
+				image->drop();
+			}
+		}
+		return false;
+	}
+
+private:
+	IrrlichtDevice *Device;
+	u32 Number;
+	core::stringc Filename;
+	core::stringc FilenameTemplate;
+};
+
+
 /*
 Ok, lets start. Again, we use the main() method as start, not the
 WinMain(), because its shorter to write.
 */
 
-
-int main(int argc, char* argv[])
+int __cdecl main(int argc, char* argv[])
 {
 	/*
 	Like in the HelloWorld example, we create an IrrlichtDevice with
@@ -75,9 +121,9 @@ int main(int argc, char* argv[])
 	}	
 
 	// create device and exit if creation failed
+	core::dimension2di videoDim ( 800,600 );
 
-	IrrlichtDevice *device =
-		createDevice(driverType, core::dimension2d<s32>(800, 600), 32, false );
+	IrrlichtDevice *device = createDevice(driverType, videoDim, 32, false );
 
 	if (device == 0)
 		return 1; // could not create selected driver.
@@ -104,7 +150,6 @@ int main(int argc, char* argv[])
 	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
 	//device->getFileSystem()->addFolderFileArchive("/baseq3/");
 	
-
 	/* 
 	Now we can load the mesh by calling getMesh(). We get a pointer returned
 	to a IAnimatedMesh. As you know, Quake 3 maps are not really animated,
@@ -122,7 +167,12 @@ int main(int argc, char* argv[])
 	useful when drawing huge meshes consisting of lots of geometry.
 	*/
 	scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
-	//scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm0.bsp");
+	//scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm14.bsp");
+
+	// create an event receiver for making screenshots
+	CScreenShotFactory screenshotFactory ( device, "20kdm2" );
+	device->setEventReceiver ( &screenshotFactory );
+
 
 	/*
 		add the geometry mesh to the Scene ( polygon & patches )
@@ -240,9 +290,22 @@ int main(int argc, char* argv[])
 	// load the engine logo
 	gui::IGUIEnvironment* env = device->getGUIEnvironment();
 	env->addImage(driver->getTexture("irrlichtlogo2.png"),core::position2d<s32>(10, 10));
-	if ( driverType == video::EDT_BURNINGSVIDEO )
+
+	// show the driver logo
+	core::position2di pos ( videoDim.Width - 128, videoDim.Height - 64 );
+
+	switch ( driverType )
 	{
-		env->addImage(driver->getTexture("burninglogo.png"),core::position2d<s32>(100, 8));
+		case video::EDT_BURNINGSVIDEO:
+			env->addImage(driver->getTexture("burninglogo.png"),pos );
+			break;
+		case video::EDT_OPENGL:
+			env->addImage(driver->getTexture("opengllogo.png"),pos );
+			break;
+		case video::EDT_DIRECT3D8:
+		case video::EDT_DIRECT3D9:
+			env->addImage(driver->getTexture("directxlogo.png"),pos );
+			break;
 	}
 
 	/*
