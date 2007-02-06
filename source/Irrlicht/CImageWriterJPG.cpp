@@ -191,7 +191,7 @@ bool CImageWriterJPG::writeImage(io::IWriteFile *file, IImage *input,u32 quality
 	if ( 0 == format )
 		return false;
 
-	u32 y;
+	s32 y;
 	void *src = input->lock();
 	void *dst = image->lock();
 	for ( y = 0; y!= dim.Height; ++y )
