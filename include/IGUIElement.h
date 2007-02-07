@@ -218,7 +218,7 @@ public:
 		core::rect<s32> parentAbsolute(0,0,0,0);
 		core::rect<s32> parentAbsoluteClip;
 		s32 diffx, diffy;
-		f32 fw, fh;
+		f32 fw=0.f, fh=0.f;
 
 		if (Parent)
 		{

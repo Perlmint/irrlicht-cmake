@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\2DGraphics.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\06.2DGraphics.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\2DGraphics.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\06.2DGraphics.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"

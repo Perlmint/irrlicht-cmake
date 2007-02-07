@@ -1637,6 +1637,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CAnimatedMeshMD3.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CAnimatedMeshMD3.h"
+					>
+				</File>
+				<File
 					RelativePath=".\CAnimatedMeshMS3D.cpp"
 					>
 				</File>
@@ -1682,6 +1690,14 @@
 				</File>
 				<File
 					RelativePath=".\CLMTSMeshFileLoader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CMD3MeshFileLoader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CMD3MeshFileLoader.h"
 					>
 				</File>
 				<File

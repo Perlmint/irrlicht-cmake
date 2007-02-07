@@ -18,7 +18,8 @@ namespace gui
 
 //! constructor
 CGUIFont::CGUIFont(IGUIEnvironment *env, const c8* filename)
-: Environment(env), SpriteBank(0), Areas(), Driver(0), WrongCharacter(0), Kerning(0)
+: Environment(env), SpriteBank(0), Areas(), Driver(0), WrongCharacter(0), 
+GlobalKerningWidth(0), GlobalKerningHeight(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIFont");
@@ -460,7 +461,7 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 		SFontArea &area = Areas[getAreaFromCharacter(*p)];
 
 		dim.Width += area.underhang;
-		dim.Width += area.width + area.overhang + Kerning;
+		dim.Width += area.width + area.overhang + GlobalKerningWidth;
 	}
 
 	dim.Height = MaxHeight;
@@ -471,13 +472,13 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text)
 //! set an Pixel Offset on Drawing ( scale position on width )
 void CGUIFont::setKerningWidth ( s32 kerning )
 {
-	Kerning = kerning;
+	GlobalKerningWidth = kerning;
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
 s32 CGUIFont::getKerningWidth ()
 {
-	return Kerning;
+	return GlobalKerningWidth;
 }
 
 //! set an Pixel Offset on Drawing ( scale position on height )
@@ -569,7 +570,7 @@ void CGUIFont::draw(const wchar_t* text, const core::rect<s32>& position, video:
 
 		SpriteBank->draw2DSprite(area.spriteno, offset, clip, color);
 
-		offset.X += area.width + area.overhang + Kerning;
+		offset.X += area.width + area.overhang + GlobalKerningWidth;
 
 		++text;
 	}

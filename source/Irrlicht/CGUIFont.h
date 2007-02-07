@@ -90,11 +90,10 @@ private:
 	core::map<wchar_t, s32>			CharacterMap;
 	u32								WrongCharacter;
 	s32								MaxHeight;
-	s32								Kerning;
+	s32								GlobalKerningWidth, GlobalKerningHeight;
 	video::IVideoDriver*			Driver;
 	IGUISpriteBank*					SpriteBank;
 	IGUIEnvironment*				Environment;
-	s32 GlobalKerningHeight;
 };
 
 } // end namespace gui

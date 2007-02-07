@@ -28,14 +28,14 @@ struct SMD3Bone
 	f32  Maxs[3];
 	f32  Position[3];		// position of bounding box
 	f32  scale;
-	c8   creator[16]; 
+	c8   creator[16];
 };
 
 
 struct SMD3Tag
 {
-	c8 Name[64];				//name of 'tag' as it's usually called in the md3 files try to see it as a sub-mesh/seperate mesh-part. 
-	f32 position[3];			//relative position of tag 
+	c8 Name[64];				//name of 'tag' as it's usually called in the md3 files try to see it as a sub-mesh/seperate mesh-part.
+	f32 position[3];			//relative position of tag
 	f32 rotationMatrix[9];		//3x3 rotation direction of tag
 };
 
@@ -155,7 +155,7 @@ IMesh* CAnimatedMeshMD3::getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop,
 	// build curren vertex
 	for ( i = 0; i!= Mesh->Buffer.size (); ++i )
 	{
-		buildVertexArray (	frameA, frameB, iPol, 
+		buildVertexArray (	frameA, frameB, iPol,
 							Mesh->Buffer[i],
 							(SMeshBuffer*) MeshIPol.getMeshBuffer ( i )
 						);
@@ -175,7 +175,7 @@ IMeshBuffer * CAnimatedMeshMD3::createMeshBuffer ( const SMD3MeshBuffer * source
 	SMeshBuffer * dest = new SMeshBuffer ();
 	dest->Vertices.set_used ( source->MeshHeader.numVertices );
 	dest->Indices.set_used ( source->Indices.size () );
-	
+
 	u32 i;
 
 	// fill in static face info
@@ -187,7 +187,7 @@ IMeshBuffer * CAnimatedMeshMD3::createMeshBuffer ( const SMD3MeshBuffer * source
 	}
 
 	// fill in static vertex info
-	for ( i = 0; i!= source->MeshHeader.numVertices; ++i )
+	for ( i = 0; i!= (u32)source->MeshHeader.numVertices; ++i )
 	{
 		video::S3DVertex &v = dest->Vertices [ i ];
 		v.Color = 0xFFFFFFFF;
@@ -212,7 +212,7 @@ void CAnimatedMeshMD3::buildVertexArray ( u32 frameA, u32 frameB, f32 interpolat
 	core::vector3df nA;
 	core::vector3df nB;
 
-	for ( i = 0; i!= source->MeshHeader.numVertices; ++i )
+	for ( i = 0; i!= (u32)source->MeshHeader.numVertices; ++i )
 	{
 		video::S3DVertex &v = dest->Vertices [ i ];
 
@@ -231,7 +231,7 @@ void CAnimatedMeshMD3::buildVertexArray ( u32 frameA, u32 frameB, f32 interpolat
 		v.Normal.X = nA.X + interpolate * ( nB.X - nA.X );
 		v.Normal.Y = nA.Z + interpolate * ( nB.Z - nA.Z );
 		v.Normal.Z = nA.Y + interpolate * ( nB.Y - nA.Y );
-		 
+
 	}
 
 	dest->recalculateBoundingBox ();
@@ -245,7 +245,7 @@ void CAnimatedMeshMD3::buildTagArray ( u32 frameA, u32 frameB, f32 interpolate )
 	u32 frameOffsetA = frameA * Mesh->MD3Header.numTags;
 	u32 frameOffsetB = frameB * Mesh->MD3Header.numTags;
 
-	for ( i = 0; i!= Mesh->MD3Header.numTags; ++i )
+	for ( i = 0; i!= (u32)Mesh->MD3Header.numTags; ++i )
 	{
 		SMD3QuaterionTag &d = TagListIPol [ i ];
 
@@ -311,7 +311,7 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file)
 		exp.position.Z = import.position[1];
 
 		//! construct quaternion from a RH 3x3 Matrix
-		exp.rotation.set (import.rotationMatrix[7], 
+		exp.rotation.set (import.rotationMatrix[7],
 					0.f,
 					-import.rotationMatrix[6],
 					1 + import.rotationMatrix[8]);
@@ -324,7 +324,7 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file)
 
 	SMD3Skin skin;
 
-	for (i = 0; i != Mesh->MD3Header.numMeshes; ++i )
+	for (i = 0; i != (u32)Mesh->MD3Header.numMeshes; ++i )
 	{
 		//! construct a new mesh buffer
 		SMD3MeshBuffer * buf = new SMD3MeshBuffer ();
@@ -344,7 +344,7 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file)
 
 		//! read skins (shaders)
 		file->seek( offset + buf->MeshHeader.offset_shaders );
-		for ( g = 0; g != buf->MeshHeader.numShader; ++g )
+		for ( g = 0; g != (u32)buf->MeshHeader.numShader; ++g )
 		{
 			file->read( &skin, sizeof(skin) );
 			buf->Shader.push_back ( skin.name );
@@ -377,7 +377,7 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file)
 	}
 
 	// Init Tag Interpolation
-	for (i = 0; i != Mesh->MD3Header.numTags; ++i )
+	for (i = 0; i != (u32)Mesh->MD3Header.numTags; ++i )
 	{
 		TagListIPol.Container.push_back ( Mesh->TagList.Container[i] );
 	}

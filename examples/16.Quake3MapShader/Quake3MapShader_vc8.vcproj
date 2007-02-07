@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="16.Quake3MapShader_vc8"
 	ProjectGUID="{EB3B38EA-5CE7-4983-845B-880661E69D09}"
 	Keyword="Win32Proj"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\Quake3MapShader.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\16.Quake3MapShader.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
 				GenerateDebugInformation="true"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\Win32-VisualStudio\Quake3MapShader.exe"
+				OutputFile="..\..\bin\Win32-VisualStudio\16.Quake3MapShader.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\lib\Win32-visualstudio"
 				GenerateDebugInformation="false"

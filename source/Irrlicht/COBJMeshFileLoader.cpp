@@ -588,7 +588,7 @@ c8* COBJMeshFileLoader::readBool(c8* pBufPtr, bool& tf, const c8* pBufEnd)
 	c8 tfStr[BUFFER_LENGTH];
 
 	pBufPtr = goAndCopyNextWord(tfStr, pBufPtr, BUFFER_LENGTH, pBufEnd);
-	tf = strcmp(tfStr, "off");
+	tf = strcmp(tfStr, "off") != 0;
 	return pBufPtr;
 }
 

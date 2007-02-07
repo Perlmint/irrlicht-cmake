@@ -197,7 +197,7 @@ int main()
 	env->addButton(rect<s32>(10,210,110,210 + 32), 0, 101, L"Quit", L"Exits Programm");
 	env->addButton(rect<s32>(10,250,110,250 + 32), 0, 102, L"New Window", L"Launches a new Window");
 	env->addButton(rect<s32>(10,290,110,290 + 32), 0, 103, L"File Open", L"Opens a file");
-	env->addButton(rect<s32>(10,330,110,330 + 32), 0, 104, L"Color Select", L"Select's a color");
+	env->addButton(rect<s32>(10,330,110,330 + 32), 0, 104, L"Color Select", L"Selects a color");
 
 
 	/*
