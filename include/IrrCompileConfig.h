@@ -130,16 +130,21 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 
 #ifdef _IRR_WINDOWS_
 
+#ifndef _IRR_STATIC_LIB_
 #ifdef IRRLICHT_EXPORTS
 #define IRRLICHT_API __declspec(dllexport)
 #else
 #define IRRLICHT_API __declspec(dllimport)
 #endif // IRRLICHT_EXPORT
-
-#if defined(_STDCALL_SUPPORTED)
-#define IRRCALLCONV __stdcall  // Declare the calling convention.
 #else
-#define IRRCALLCONV	__cdecl
+#define IRRLICHT_API
+#endif // _IRR_STATIC_LIB_
+
+// Declare the calling convention.
+#if defined(_STDCALL_SUPPORTED)
+#define IRRCALLCONV __stdcall
+#else
+#define IRRCALLCONV __cdecl
 #endif // STDCALL_SUPPORTED
 
 #else
