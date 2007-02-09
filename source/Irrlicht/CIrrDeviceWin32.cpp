@@ -485,18 +485,28 @@ void CIrrDeviceWin32::createDriver(video::E_DRIVER_TYPE driverType,
 			os::Printer::log("Could not create OpenGL driver.", ELL_ERROR);
 		}
 		#else
-		os::Printer::log("OpenGL driver was not compiled into this dll.", ELL_ERROR);
+		os::Printer::log("OpenGL driver was not compiled in.", ELL_ERROR);
 		#endif
 		break;
 
 	case video::EDT_SOFTWARE:
+
+		#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 		if (fullscreen)	switchToFullScreen(windowSize.Width, windowSize.Height, bits);
 		VideoDriver = video::createSoftwareDriver(windowSize, fullscreen, FileSystem, this);
+		#else
+		os::Printer::log("Software driver was not compiled in.", ELL_ERROR);
+		#endif
+
 		break;
 
 	case video::EDT_BURNINGSVIDEO:
+		#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
 		if (fullscreen)	switchToFullScreen(windowSize.Width, windowSize.Height, bits);
 		VideoDriver = video::createSoftwareDriver2(windowSize, fullscreen, FileSystem, this);
+		#else
+		os::Printer::log("Burning's Video driver was not compiled in.", ELL_ERROR);
+		#endif 
 		break;
 
 	default:

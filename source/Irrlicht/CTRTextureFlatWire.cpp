@@ -2,6 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+
 #include "CTRTextureGouraud.h"
 
 namespace irr
@@ -285,12 +288,26 @@ public:
 	}
 };
 
+} // end namespace video
+} // end namespace irr
+
+#endif // _IRR_COMPILE_WITH_SOFTWARE_
+
+namespace irr
+{
+namespace video
+{
 
 //! creates a flat triangle renderer
 ITriangleRenderer* createTriangleRendererTextureFlatWire(IZBuffer* zbuffer)
 {
+	#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 	return new CTRTextureFlatWire(zbuffer);
+	#else
+	return 0;
+	#endif // _IRR_COMPILE_WITH_SOFTWARE_
 }
 
 } // end namespace video
 } // end namespace irr
+

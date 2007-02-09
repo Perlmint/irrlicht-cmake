@@ -2,6 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+
 #include "CSoftwareTexture.h"
 #include "os.h"
 
@@ -153,3 +156,6 @@ void CSoftwareTexture::regenerateMipMapLevels()
 
 } // end namespace video
 } // end namespace irr
+
+#endif // _IRR_COMPILE_WITH_SOFTWARE_
+

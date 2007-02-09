@@ -119,6 +119,11 @@ void CGUIStaticText::setOverrideFont(IGUIFont* font)
 	breakText();
 }
 
+IGUIFont * CGUIStaticText::getOverrideFont(void)
+{
+	return OverrideFont;
+}
+
 
 //! Sets another color for the text.
 void CGUIStaticText::setOverrideColor(video::SColor color)
@@ -127,6 +132,10 @@ void CGUIStaticText::setOverrideColor(video::SColor color)
 	OverrideColorEnabled = true;
 }
 
+video::SColor const & CGUIStaticText::getOverrideColor(void)
+{
+	return OverrideColor;
+}
 
 
 //! Sets if the static text should use the overide color or the
@@ -136,6 +145,11 @@ void CGUIStaticText::enableOverrideColor(bool enable)
 	OverrideColorEnabled = enable;
 }
 
+bool CGUIStaticText::isOverrideColorEnabled(void)
+{
+	return OverrideColorEnabled;
+}
+
 
 //! Enables or disables word wrap for using the static text as
 //! multiline text control.
@@ -143,6 +157,11 @@ void CGUIStaticText::setWordWrap(bool enable)
 {
 	WordWrap = enable;
 	breakText();
+}
+
+bool CGUIStaticText::isWordWrapEnabled(void)
+{
+	return WordWrap;
 }
 
 
@@ -281,6 +300,41 @@ s32 CGUIStaticText::getTextHeight()
 }
 
 
+s32 CGUIStaticText::getTextWidth(void)
+{
+	IGUIFont * font = OverrideFont;
+
+	if(!OverrideFont)
+	{
+		IGUISkin * skin = Environment->getSkin();
+		if(skin)
+			font = skin->getFont();
+	}
+
+	if(!font)
+		return 0;
+
+	if(WordWrap)
+	{
+		s32 widest = 0;
+
+		for(u32 line = 0; line < BrokenText.size(); ++line)
+		{
+			s32 width = font->getDimension(BrokenText[line].c_str()).Width;
+
+			if(width > widest)
+				widest = width;
+		}
+
+		return widest;
+	}
+	else
+	{
+		return font->getDimension(Text.c_str()).Width;
+	}
+}
+
+
 
 //! Writes attributes of the element.
 //! Implement this to expose the attributes of your element for
@@ -318,4 +372,5 @@ void CGUIStaticText::deserializeAttributes(io::IAttributes* in, io::SAttributeRe
 
 } // end namespace gui
 } // end namespace irr
+
 

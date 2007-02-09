@@ -601,11 +601,19 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 #ifdef _IRR_COMPILE_WITH_X11_
 
 	case video::EDT_SOFTWARE:
+		#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 		VideoDriver = video::createSoftwareDriver(windowSize, Fullscreen, FileSystem, this);
+		#else
+		os::Printer::log("No Software driver support compiled in.", ELL_WARNING);
+		#endif
 		break;
 		
 	case video::EDT_BURNINGSVIDEO:
+		#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
 		VideoDriver = video::createSoftwareDriver2(windowSize, Fullscreen, FileSystem, this);
+		#else
+		os::Printer::log("Burning's video driver was not compiled in.", ELL_WARNING);
+		#endif
 		break;
 
 	case video::EDT_OPENGL:

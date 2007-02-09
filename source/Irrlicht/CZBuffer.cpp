@@ -2,6 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+
 #include "CZBuffer.h"
 #include "irrString.h"
 
@@ -81,12 +84,24 @@ void CZBuffer::unlock()
 {
 }
 
+} // end namespace video
+} // end namespace irr
 
+#endif // _IRR_COMPILE_WITH_SOFTWARE_
+
+namespace irr
+{
+namespace video
+{
 
 //! creates a ZBuffer
 IZBuffer* createZBuffer(const core::dimension2d<s32>& size)
 {
+	#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 	return new CZBuffer(size);
+	#else
+	return 0;
+	#endif // _IRR_COMPILE_WITH_SOFTWARE_
 }
 
 	

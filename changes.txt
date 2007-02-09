@@ -1,5 +1,7 @@
 Changes in version 1.3 (?? ??? 2007)
 
+- added _IRR_COMPILE_WITH_SOFTWARE_ and _IRR_COMPILE_WITH_BURNINGSVIDEO_ to compile config
+
 - implemented CImagerWriterJpeg::writeImage
 - added param to IIImageWriteFile::writeImage
 	control Parameter for the backend ( eq. jpeg compression level )
@@ -74,6 +76,8 @@ Changes in version 1.3 (?? ??? 2007)
 	Users can override the icons by setting a different sprite bank and setting new sprites.
 
 	Skins are now serializable and are loaded/saved with the GUI.
+
+	IGUIStaticText getter/setter functions patch by rogerborg
 
 
 - ROUNDING_ERROR is now ROUNDING_ERROR_32 or ROUNDING_ERROR_64

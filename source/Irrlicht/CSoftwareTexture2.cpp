@@ -2,6 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
+
 #include "SoftwareDriver2_compile_config.h"
 #include "SoftwareDriver2_helper.h"
 #include "CSoftwareTexture2.h"
@@ -119,3 +122,5 @@ void CSoftwareTexture2::regenerateMipMapLevels()
 
 } // end namespace video
 } // end namespace irr
+
+#endif // _IRR_COMPILE_WITH_BURNINGSVIDEO_

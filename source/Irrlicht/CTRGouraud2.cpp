@@ -2,6 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
+
 #include "IBurningShader.h"
 
 // compile flag for this file
@@ -641,19 +644,28 @@ void CTRGouraud2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,const s4D
 }
 
 
+} // end namespace video
+} // end namespace irr
 
+#endif // _IRR_COMPILE_WITH_BURNINGSVIDEO_
 
-
+namespace irr
+{
+namespace video
+{
 
 //! creates a flat triangle renderer
 IBurningShader* createTriangleRendererGouraud2(IDepthBuffer* zbuffer)
 {
+	#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
 	return new CTRGouraud2(zbuffer);
+	#else
+	return 0;
+	#endif // _IRR_COMPILE_WITH_BURNINGSVIDEO_
 }
 
 
 } // end namespace video
 } // end namespace irr
-
 
 

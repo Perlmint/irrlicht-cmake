@@ -18,7 +18,6 @@ extern "C"
 	#include "jpeglib/jerror.h"
 #endif
 }
-#endif // _IRR_COMPILE_WITH_LIBJPEG_
 
 
 namespace irr
@@ -143,7 +142,7 @@ void write_JPEG_memory (void *img_buf, s32 width, s32 height, u32 bpp, u32 pitch
 }; // namespace video
 }; // namespace irr
 
-
+#endif // _IRR_COMPILE_WITH_LIBJPEG_
 
 namespace irr
 {

@@ -2,15 +2,15 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+
+#ifdef _IRR_COMPILE_WITH_OPENGL_
+
 #include "irrTypes.h"
 #include "COpenGLTexture.h"
 #include "COpenGLDriver.h"
 #include "os.h"
 #include "CColorConverter.h"
-
-#include "IrrCompileConfig.h"
-
-#ifdef _IRR_COMPILE_WITH_OPENGL_
 
 #include "irrString.h"
 

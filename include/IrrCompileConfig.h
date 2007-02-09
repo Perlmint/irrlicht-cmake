@@ -55,6 +55,14 @@ define out. */
 
 #endif // ! _XBOX
 
+//! Define _IRR_COMPILE_WITH_SOFTWARE_ to compile the Irrlicht engine with software driver
+/** If you do not need the software driver, or want to use Burning's Video instead, 
+comment this define out */
+#define _IRR_COMPILE_WITH_SOFTWARE_
+
+//! Define _IRR_COMPILE_WITH_BURNINGSVIDEO_ to compile the Irrlicht engine with Burning's video driver
+/** If you do not need this software driver, you can comment this define out. */
+#define _IRR_COMPILE_WITH_BURNINGSVIDEO_
 
 //! Define _IRR_COMPILE_WITH_X11_ to compile the Irrlicht engine with X11 support.
 /** If you do not wish the engine to be compiled with X11, comment this
@@ -194,4 +202,4 @@ precision will be lower but speed higher. currently X86 only
 	//#define IRRLICHT_FAST_MATH
 #endif
 
-#endif
+#endif // __IRR_COMPILE_CONFIG_H_INCLUDED__

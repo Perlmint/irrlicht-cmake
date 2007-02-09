@@ -3,10 +3,16 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CSoftwareDriver2.h"
+
+#include "IrrCompileConfig.h"
+
+#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
+
 #include "CSoftwareTexture2.h"
 #include "CSoftware2MaterialRenderer.h"
 #include "S3DVertex.h"
 #include "S4DVertex.h"
+
 
 namespace irr
 {
@@ -1851,8 +1857,7 @@ void CSoftwareDriver2::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 ITexture* CSoftwareDriver2::createDeviceDependentTexture(IImage* surface, const char* name)
 {
-	return new CSoftwareTexture2(surface, name, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS)
-					);
+	return new CSoftwareTexture2(surface, name, getTextureCreationFlag(ETCF_CREATE_MIP_MAPS));
 
 }
 
@@ -1864,11 +1869,24 @@ u32 CSoftwareDriver2::getMaximalPrimitiveCount()
 	return 0x00800000;
 }
 
+} // end namespace video
+} // end namespace irr
+
+#endif _IRR_COMPILE_WITH_BURNINGSVIDEO_
+
+namespace irr
+{
+namespace video
+{
 
 //! creates a video driver
 IVideoDriver* createSoftwareDriver2(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
 {
+	#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
 	return new CSoftwareDriver2(windowSize, fullscreen, io, presenter);
+	#else
+	return 0;
+	#endif // _IRR_COMPILE_WITH_BURNINGSVIDEO_
 }
 
 

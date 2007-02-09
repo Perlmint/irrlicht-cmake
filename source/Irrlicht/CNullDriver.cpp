@@ -437,7 +437,11 @@ ITexture* CNullDriver::addTexture(const core::dimension2d<s32>& size,
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
 ITexture* CNullDriver::createDeviceDependentTexture(IImage* surface, const char* name)
 {
+	#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 	return new CSoftwareTexture(surface, name);
+	#else
+	return 0;
+	#endif
 }
 
 

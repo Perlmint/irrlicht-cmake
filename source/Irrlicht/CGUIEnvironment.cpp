@@ -412,7 +412,7 @@ IGUISkin* CGUIEnvironment::createSkin(EGUI_SKIN_TYPE type)
 
 	IGUIFont* builtinfont = getBuiltInFont();
 	IGUIFontBitmap* bitfont = 0;
-	if (builtinfont->getType() == EGFT_BITMAP)
+	if (builtinfont && builtinfont->getType() == EGFT_BITMAP)
 		bitfont = (IGUIFontBitmap*)builtinfont;
 
 	IGUISpriteBank* bank = 0;

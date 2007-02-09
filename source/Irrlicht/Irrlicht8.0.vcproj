@@ -2242,10 +2242,6 @@
 				>
 			</File>
 			<File
-				RelativePath="fast_atof.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Irrlicht.cpp"
 				>
 			</File>

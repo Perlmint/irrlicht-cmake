@@ -2,6 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+
 #include "CTRTextureGouraud.h"
 #include "os.h"
 
@@ -392,16 +395,26 @@ void CTRTextureGouraudAdd::drawIndexedTriangleList(S2DVertex* vertices, s32 vert
 	Texture->unlock();
 }
 
-
-ITriangleRenderer* createTriangleRendererTextureGouraudAdd(IZBuffer* zbuffer)
-{
-	return new CTRTextureGouraudAdd(zbuffer);
-}
-
-
-
 } // end namespace video
 } // end namespace irr
 
+#endif // _IRR_COMPILE_WITH_SOFTWARE_
+
+namespace irr
+{
+namespace video
+{
+
+ITriangleRenderer* createTriangleRendererTextureGouraudAdd(IZBuffer* zbuffer)
+{
+	#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+	return new CTRTextureGouraudAdd(zbuffer);
+	#else
+	return 0;
+	#endif // _IRR_COMPILE_WITH_SOFTWARE_
+}
+
+} // end namespace video
+} // end namespace irr
 
 

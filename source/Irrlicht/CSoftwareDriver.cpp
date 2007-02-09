@@ -3,6 +3,10 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CSoftwareDriver.h"
+
+#include "IrrCompileConfig.h"
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+
 #include "CSoftwareTexture.h"
 #include "os.h"
 #include "S3DVertex.h"
@@ -837,12 +841,25 @@ u32 CSoftwareDriver::getMaximalPrimitiveCount()
 	return 0x00800000;
 }
 
+} // end namespace video
+} // end namespace irr
 
-//! creates a video driver
+#endif // _IRR_COMPILE_WITH_SOFTWARE_
+
+namespace irr
+{
+namespace video
+{
+
+
 //! creates a video driver
 IVideoDriver* createSoftwareDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
 {
+	#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 	return new CSoftwareDriver(windowSize, fullscreen, io, presenter);
+	#else
+	return 0;
+	#endif
 }
 
 

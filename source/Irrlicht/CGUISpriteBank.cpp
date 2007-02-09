@@ -15,7 +15,8 @@ CGUISpriteBank::CGUISpriteBank(IGUIEnvironment* env) :
 	if (Environment)
 	{
 		Driver = Environment->getVideoDriver();
-		Driver->grab();
+		if (Driver)
+			Driver->grab();
 	}
 
 }
