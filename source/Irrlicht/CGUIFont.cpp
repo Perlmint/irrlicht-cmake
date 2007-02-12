@@ -476,9 +476,21 @@ void CGUIFont::setKerningWidth ( s32 kerning )
 }
 
 //! set an Pixel Offset on Drawing ( scale position on width )
-s32 CGUIFont::getKerningWidth ()
+s32 CGUIFont::getKerningWidth(const wchar_t* thisLetter, const wchar_t* previousLetter)
 {
-	return GlobalKerningWidth;
+	s32 ret = GlobalKerningWidth;
+
+	if (thisLetter)
+	{
+		ret += Areas[getAreaFromCharacter(*thisLetter)].overhang;
+
+		if (previousLetter)
+		{
+			ret += Areas[getAreaFromCharacter(*previousLetter)].underhang;
+		}
+	}
+
+	return ret;
 }
 
 //! set an Pixel Offset on Drawing ( scale position on height )
@@ -493,6 +505,11 @@ s32 CGUIFont::getKerningHeight ()
 	return GlobalKerningHeight;
 }
 
+//! returns the sprite number from a given character
+u32 CGUIFont::getSpriteNoFromChar(const wchar_t *c)
+{
+	return Areas[getAreaFromCharacter(*c)].spriteno;
+}
 
 
 s32 CGUIFont::getAreaFromCharacter(const wchar_t c)

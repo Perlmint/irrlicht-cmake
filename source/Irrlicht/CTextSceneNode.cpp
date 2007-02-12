@@ -6,12 +6,15 @@
 #include "ISceneManager.h"
 #include "IVideoDriver.h"
 #include "ICameraSceneNode.h"
+#include "SMeshBuffer.h"
+#include "os.h"
 
 
 namespace irr
 {
 namespace scene
 {
+
 
 //! constructor
 CTextSceneNode::CTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
@@ -42,7 +45,7 @@ void CTextSceneNode::OnPreRender()
 {
 	if (IsVisible)
 	{
-		SceneManager->registerNodeForRendering(this, ESNRP_SHADOW);
+		SceneManager->registerNodeForRendering(this, ESNRP_TRANSPARENT);
 		ISceneNode::OnPreRender();
 	}
 }
@@ -89,39 +92,53 @@ void CTextSceneNode::setTextColor(video::SColor color)
 
 //!--------------------------------- CBillboardTextSceneNode ----------------------------------------------
 
+
 //! constructor
 CBillboardTextSceneNode::CBillboardTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-	gui::IGUIFontBitmap* font,const wchar_t* text,
-	const core::vector3df& position, const core::dimension2d<f32>& size,f32 kerning,
-	video::SColor shade_top,video::SColor shade_down )
+	gui::IGUIFont* font,const wchar_t* text,
+	const core::vector3df& position, const core::dimension2d<f32>& size,
+	video::SColor shade_top,video::SColor shade_bottom )
 : ITextSceneNode(parent, mgr, id, position),
-	Font(0),Shade_top ( shade_top ), Shade_down ( shade_down ),	Kerning ( kerning )
+	Font(0), Mesh(0), Shade_top(shade_top), Shade_bottom(shade_bottom)
 {
 	#ifdef _DEBUG
 	setDebugName("CBillboardTextSceneNode");
 	#endif
 
-	setText ( text );
-
-	setSize(size);
-
-	if (font)
-	{
-		// doesn't support other font types
-		if (Font->getType() == gui::EGFT_BITMAP)
-		{
-			Font = font;
-			Font->grab();
-			//Material.Texture1 = Font->getTexture ();
-		}
-	}
-
 	Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
 	Material.MaterialTypeParam = 0.5f;
 	Material.BackfaceCulling = false;
 	Material.Lighting = false;
-	Material.ZBuffer = true;
-	Material.ZWriteEnable = true;
+	Material.ZBuffer = false;
+	Material.ZWriteEnable = false;
+
+	if (font)
+	{
+		// doesn't support other font types
+		if (font->getType() == gui::EGFT_BITMAP)
+		{
+			Font = (gui::IGUIFontBitmap*)font;
+			Font->grab();
+
+			// mesh with one buffer per texture
+			Mesh = new SMesh();
+			for (u32 i=0; i<Font->getSpriteBank()->getTextureCount(); ++i)
+			{
+				SMeshBuffer *mb = new SMeshBuffer();
+				mb->Material = Material;
+				mb->Material.Textures[0] = Font->getSpriteBank()->getTexture(i);
+				Mesh->addMeshBuffer(mb);
+				mb->drop();
+			}
+		}
+		else
+		{
+			os::Printer::log("Sorry, CBillboardTextSceneNode does not support this font type", ELL_INFORMATION);
+		}
+	}
+
+	setText(text);
+	setSize(size);
 
 	setAutomaticCulling ( scene::EAC_BOX );
 
@@ -134,70 +151,111 @@ CBillboardTextSceneNode::~CBillboardTextSceneNode()
 	if (Font)
 		Font->drop();
 
+	if (Mesh)
+		Mesh->drop();
+
 }
 
 
 //! sets the text string
 void CBillboardTextSceneNode::setText(const wchar_t* text)
-{/*
+{
 	Text = text;
 
-	Symbol.clear ();
+	Symbol.clear();
 
-	if ( 0 == Font )
+	if (!Font)
 		return;
 
-	SSymbolInfo info ( Shade_top, Shade_down );
-
-
-	const core::array< core::rect<s32> > &sourceRects = Font->getPositions();
+	const core::array< core::rect<s32> > &sourceRects = Font->getSpriteBank()->getPositions();
+	const core::array< gui::SGUISprite > &sprites = Font->getSpriteBank()->getSprites();
 
 	f32 dim[2];
 	f32 tex[4];
 
-	dim[0] = core::reciprocal ( (f32) Font->getTexture ()->getOriginalSize().Width );
-	dim[1] = core::reciprocal ( (f32) Font->getTexture ()->getOriginalSize().Height );
-
 	u32 i;
 	for ( i = 0; i != Text.size (); ++i )
 	{
-		s32 symbol = Text[i] - 32;
-		if ( symbol < 0 )
-			continue;
+		SSymbolInfo info;
 
-		const core::rect<s32>& s = sourceRects [ symbol ];
+		u32 spriteno = Font->getSpriteNoFromChar( &text[i] );
+		u32 rectno = sprites[spriteno].Frames[0].rectNumber;
+		u32 texno = sprites[spriteno].Frames[0].textureNumber;
 
-		tex[0] = s.LowerRightCorner.X * dim[0];
-		tex[1] = s.LowerRightCorner.Y * dim[1];
-		tex[2] = s.UpperLeftCorner.Y * dim[1];
-		tex[3] = s.UpperLeftCorner.X * dim[0];
+		dim[0] = core::reciprocal ( (f32) Font->getSpriteBank()->getTexture(texno)->getSize().Width );
+		dim[1] = core::reciprocal ( (f32) Font->getSpriteBank()->getTexture(texno)->getSize().Height );
+
+		const core::rect<s32>& s = sourceRects[rectno];
+
+		// add space for letter to buffer
+		SMeshBuffer* buf = (SMeshBuffer*)Mesh->getMeshBuffer(texno);
+		u32 firstInd = buf->Indices.size();
+		u32 firstVert = buf->Vertices.size();
+		buf->Indices.set_used(firstInd + 6);
+		buf->Vertices.set_used(firstVert + 4);
+
+		tex[0] = (s.LowerRightCorner.X * dim[0]) + 0.5f*dim[0]; // half pixel
+		tex[1] = (s.LowerRightCorner.Y * dim[1]) + 0.5f*dim[1];
+		tex[2] = (s.UpperLeftCorner.Y  * dim[1]) - 0.5f*dim[1];
+		tex[3] = (s.UpperLeftCorner.X  * dim[0]) - 0.5f*dim[0];
 		
-		info.vertices[0].TCoords.set(tex[0], tex[1]);
-		info.vertices[1].TCoords.set(tex[0], tex[2]);
-		info.vertices[2].TCoords.set(tex[3], tex[2]);
-		info.vertices[3].TCoords.set(tex[3], tex[1]);
+		buf->Vertices[firstVert+0].TCoords.set(tex[0], tex[1]);
+		buf->Vertices[firstVert+1].TCoords.set(tex[0], tex[2]);
+		buf->Vertices[firstVert+2].TCoords.set(tex[3], tex[2]);
+		buf->Vertices[firstVert+3].TCoords.set(tex[3], tex[1]);
 
-		info.Width = tex[3] - tex[0];
+		buf->Vertices[firstVert+0].Color = Shade_bottom;
+		buf->Vertices[firstVert+3].Color = Shade_bottom;
+		buf->Vertices[firstVert+1].Color = Shade_top;
+		buf->Vertices[firstVert+2].Color = Shade_top;
 
-		Symbol.push_back ( info );
-	}*/
+		buf->Indices[firstInd+0] = firstVert+0;
+		buf->Indices[firstInd+1] = firstVert+2;
+		buf->Indices[firstInd+2] = firstVert+1;
+		buf->Indices[firstInd+3] = firstVert+0;
+		buf->Indices[firstInd+4] = firstVert+3;
+		buf->Indices[firstInd+5] = firstVert+2;
+
+		wchar_t *tp = 0;
+		if (i>0) 
+			tp = &Text[i-1];
+
+		info.Width = (f32)s.getWidth();
+		info.bufNo = texno;
+		info.Kerning = (f32)Font->getKerningWidth(&Text[i], tp);
+		info.firstInd = firstInd;
+		info.firstVert = firstVert;
+
+		Symbol.push_back(info);
+
+	}
 }
 
 
 //! pre render event
 void CBillboardTextSceneNode::OnPreRender()
 {
-	if (!IsVisible)
+	if (!IsVisible || !Font || !Mesh)
 		return;
 
 	ICameraSceneNode* camera = SceneManager->getActiveCamera();
-	if ( 0 == camera )
+	if (!camera)
 		return;
 
+	// get text width
+	f32 textLength = 0.f;
+	u32 i;
+	for(i=0; i!=Symbol.size(); ++i)
+	{
+		SSymbolInfo &info = Symbol[i];
+		textLength += info.Kerning + info.Width;
+	}
+	if (textLength<0.0f)
+		textLength=1.0f;
 
 	const core::matrix4 &m = camera->getViewFrustum()->Matrices[ video::ETS_VIEW ];
-	// make billboard look to camera
 
+	// make billboard look to camera
 	core::vector3df pos = getAbsolutePosition();
 
 	core::vector3df campos = camera->getAbsolutePosition();
@@ -212,7 +270,6 @@ void CBillboardTextSceneNode::OnPreRender()
 		horizontal.set(up.Y,up.X,up.Z);
 	}
 
-	
 	horizontal.normalize();
 	core::vector3df space = horizontal;
 
@@ -224,51 +281,44 @@ void CBillboardTextSceneNode::OnPreRender()
 
 	view *= -1.0f;
 
-
 	// center text
-
-	f32 textLength = 0.f;
-	u32 i;
-	for ( i = 0; i!= Symbol.size(); ++i )
-	{
-		SSymbolInfo &info = Symbol[i];
-		textLength += Kerning + ( info.Width * 0.5f * Size.Width );
-	}
-
-	pos += space * ( textLength * -0.5f );
+	pos += space * (Size.Width * -0.5f);
 
 	for ( i = 0; i!= Symbol.size(); ++i )
 	{
 		SSymbolInfo &info = Symbol[i];
+		f32 infw = info.Width / textLength;
+		f32 infk = info.Kerning / textLength;
+		f32 w = (Size.Width * infw * 0.5f);
+		pos += space * w;
 
-		info.vertices[0].Normal = view;
-		info.vertices[1].Normal = view;
-		info.vertices[2].Normal = view;
-		info.vertices[3].Normal = view;
+		SMeshBuffer* buf = (SMeshBuffer*)Mesh->getMeshBuffer(info.bufNo);
 
-		info.vertices[0].Pos = pos + horizontal + vertical;
-		info.vertices[1].Pos = pos + horizontal - vertical;
-		info.vertices[2].Pos = pos - horizontal - vertical;
-		info.vertices[3].Pos = pos - horizontal + vertical;
+		buf->Vertices[info.firstVert+0].Normal = view;
+		buf->Vertices[info.firstVert+1].Normal = view;
+		buf->Vertices[info.firstVert+2].Normal = view;
+		buf->Vertices[info.firstVert+3].Normal = view;
 
-		pos += space * ( Kerning + ( info.Width * 0.5f * Size.Width ) );
+		buf->Vertices[info.firstVert+0].Pos = pos + (space * w) + vertical;
+		buf->Vertices[info.firstVert+1].Pos = pos + (space * w) - vertical;
+		buf->Vertices[info.firstVert+2].Pos = pos - (space * w) - vertical;
+		buf->Vertices[info.firstVert+3].Pos = pos - (space * w) + vertical;
+
+		pos += space * (Size.Width*infk + w);
 	}
 
-	// reset bounding box
-	pos = getAbsolutePosition ();
-	BBox.reset ( Symbol[0].vertices[0].Pos - pos );
-	
-	for ( i = 0; i!= Symbol.size(); ++i )
-	{
-		SSymbolInfo &info = Symbol[i];
+	// make bounding box
 
-		for ( u32 v = 0; v!= 4; ++v )
-		{
-			BBox.addInternalPoint ( info.vertices[v].Pos - pos );
-		}
-	}
+	for (i=0; i< Mesh->getMeshBufferCount() ; ++i)
+		((SMeshBuffer*)Mesh->getMeshBuffer(i))->recalculateBoundingBox();
+	Mesh->recalculateBoundingBox();
 
-	SceneManager->registerNodeForRendering(this);
+	BBox = Mesh->getBoundingBox();
+	core::matrix4 mat = getAbsoluteTransformation();
+	mat.makeInverse();
+	mat.transformBox(BBox);
+
+	SceneManager->registerNodeForRendering(this, ESNRP_TRANSPARENT);
 	ISceneNode::OnPreRender();
 }
 
@@ -282,14 +332,13 @@ void CBillboardTextSceneNode::render()
 	core::matrix4 mat;
 	driver->setTransform(video::ETS_WORLD, mat);
 
-	driver->setMaterial(Material);
+	
 
 	u32 i;
-	for ( i = 0; i!= Symbol.size(); ++i )
+	for ( i = 0; i < Mesh->getMeshBufferCount(); ++i )
 	{
-		SSymbolInfo &info = Symbol[i];
-
-		driver->drawIndexedTriangleList( info.vertices, 4, info.indices, 2);
+		driver->setMaterial(Mesh->getMeshBuffer(i)->getMaterial());
+		driver->drawMeshBuffer(Mesh->getMeshBuffer(i));
 	}
 
 	if (DebugDataVisible)
@@ -329,14 +378,20 @@ void CBillboardTextSceneNode::setSize(const core::dimension2d<f32>& size)
 
 video::SMaterial& CBillboardTextSceneNode::getMaterial(u32 i)
 {
-	return Material;
+	if (Mesh && Mesh->getMeshBufferCount() > i )
+		return Mesh->getMeshBuffer(i)->getMaterial();
+	else
+		return Material;
 }
 
 
 //! returns amount of materials used by this scene node.
 u32 CBillboardTextSceneNode::getMaterialCount()
 {
-	return 1;
+	if (Mesh)
+		return Mesh->getMeshBufferCount();
+	else
+		return 0;
 }
 
 

@@ -60,11 +60,14 @@ public:
 	virtual void setKerningHeight (s32 kerning);
 
 	//! set an Pixel Offset on Drawing ( scale position on width )
-	virtual s32 getKerningWidth();
+	virtual s32 getKerningWidth(const wchar_t* thisLetter=0, const wchar_t* previousLetter=0);
 	virtual s32 getKerningHeight();
 
 	//! gets the sprite bank
 	virtual IGUISpriteBank* getSpriteBank();
+
+	//! returns the sprite number from a given character
+	virtual u32 getSpriteNoFromChar(const wchar_t *c);
 
 private:
 

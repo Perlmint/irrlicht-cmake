@@ -9,12 +9,13 @@
 #include "IGUIFont.h"
 #include "IGUIFontBitmap.h"
 #include "ISceneCollisionManager.h"
-#include "S3DVertex.h"
+#include "SMesh.h"
 
 namespace irr
 {
 namespace scene
 {
+
 
 	class CTextSceneNode : public ITextSceneNode
 	{
@@ -58,16 +59,14 @@ namespace scene
 		scene::ISceneCollisionManager* Coll;
 	};
 
-
 	class CBillboardTextSceneNode : public ITextSceneNode
 	{
 	public:
 
 		CBillboardTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
-			gui::IGUIFontBitmap* font,const wchar_t* text,
+			gui::IGUIFont* font,const wchar_t* text,
 			const core::vector3df& position, const core::dimension2d<f32>& size,
-			f32 kerning,
-			video::SColor shade_top,video::SColor shade_down );
+			video::SColor shade_top, video::SColor shade_bottom);
 
 		//! destructor
 		virtual ~CBillboardTextSceneNode();
@@ -100,7 +99,6 @@ namespace scene
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_TEXT; }
 
-
 	private:
 
 		core::stringw Text;
@@ -112,30 +110,19 @@ namespace scene
 		video::SMaterial Material;
 
 		video::SColor Shade_top;
-		video::SColor Shade_down;
+		video::SColor Shade_bottom;
 		struct SSymbolInfo
 		{
-			SSymbolInfo ( video::SColor shade_down, video::SColor shade_up )
-			{
-				indices[0] = 0;
-				indices[1] = 2;
-				indices[2] = 1;
-				indices[3] = 0;
-				indices[4] = 3;
-				indices[5] = 2;
-				vertices[0].Color = shade_down;
-				vertices[3].Color = shade_down;
-				vertices[1].Color = shade_up;
-				vertices[2].Color = shade_up;
-			}
-			video::S3DVertex vertices[4];
-			u16 indices[6];
+			u32 bufNo;
 			f32 Width;
+			f32 Kerning;
+			u32 firstInd;
+			u32 firstVert;
 		};
 
 		core::array < SSymbolInfo > Symbol;
-		f32 Kerning;
 
+		SMesh *Mesh;
 	};
 
 } // end namespace scene

@@ -1143,6 +1143,8 @@ IGUIFont* CGUIEnvironment::getFont(const c8* filename)
 			if (!font->load(xml))
 			{
 				font->drop();
+				font  = 0;
+				ifont = 0;
 			}
 		}
 		else if (t==EGFT_VECTOR)

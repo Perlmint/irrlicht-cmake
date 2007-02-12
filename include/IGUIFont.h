@@ -33,8 +33,6 @@ enum EGUI_FONT_TYPE
 	//! Currently not used.
 	EGFT_OS,
 
-	EGFT_XML_BITMAP,
-
 	//! An external font type provided by the user.
 	EGFT_CUSTOM
 };
@@ -74,20 +72,23 @@ public:
 	//! Returns the type of this font
 	virtual EGUI_FONT_TYPE getType() { return EGFT_CUSTOM; }
 
-	//! set an Pixel Offset on Drawing ( scale position on width )
+	//! Sets global kerning for the font.
 	virtual void setKerningWidth (s32 kerning) = 0;
 	virtual void setKerningHeight (s32 kerning) = 0;
 
-	//! set an Pixel Offset on Drawing ( scale position on width )
-	virtual s32 getKerningWidth() = 0;
-	virtual s32 getKerningHeight() = 0;
-
-	/*
-	//! get the Font Texture
-	virtual video::ITexture* getTexture () = 0;
-	//! returns the parsed Symbol Information
-	virtual const core::array< core::rect<s32> > & getPositions () = 0;
+	//! Gets kerning values (distance between letters) for the font. If no parameters are provided,
+	/** the global kerning distance is returned.
+	\param thisLetter: If this parameter is provided, the left side kerning for this letter is added
+	to the global kerning value. For example, a space might only be one pixel wide, but it may
+	be displayed as several pixels.
+	\param previousLetter: If provided, kerning is calculated for both letters and added to the global
+	kerning value. For example, in a font which supports kerning pairs a string such as 'Wo' may have 
+	the 'o' tucked neatly under the 'W'.
 	*/
+	virtual s32 getKerningWidth(const wchar_t* thisLetter=0, const wchar_t* previousLetter=0) = 0;
+
+	//! Returns the distance between letters
+	virtual s32 getKerningHeight() = 0;
 
 };
 
