@@ -247,6 +247,23 @@ public:
 			allocator.construct(&data[i], other.data[i]); // data[i] = other.data[i];
 	}
 
+	// equality operator
+	bool operator == (const array<T>& other) const
+	{
+		if (used != other.used)
+			return false;
+
+		for (u32 i=0; i<other.used; ++i)
+			if (data[i] != other[i])
+				return false;
+		return true;
+	}
+
+	// inequality operator
+	bool operator != (const array<T>& other) const
+	{
+		return !(*this==other);
+	}
 
 	//! Direct access operator
 	T& operator [](u32 index)

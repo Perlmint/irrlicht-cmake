@@ -255,7 +255,7 @@ public:
 	 \param text is the text to be displayed. Can be altered after creation with SetText().
 	 \param rectangle is the position of the static text.
 	 \param border has to be set to true if the static text should have a 3d border.
-	 \param wordWrap specifyes, if the text should be wrapped into multiple lines.
+	 \param wordWrap specifies, if the text should be wrapped into multiple lines.
 	 \param parent is the parent item of the element. E.g. a window. Set it to 0 to place the fader directly in the environment.
 	 \param id is a s32 to identify the static text element.
 	 \param fillBackground specifies if the background will be filled. Default: false.

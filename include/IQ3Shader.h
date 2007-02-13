@@ -65,7 +65,11 @@ namespace quake3
 
 		for ( u32 i = 0; i != listSize; ++i )
 		{
+			if (string.size() < pos)
+				return -2;
 			u32 len = (u32) strlen ( list[i] );
+			if (string.size() < pos+len)
+				continue;
 			if ( in [len] != 0 && in [len] != ' ' )
 				continue;
 			if ( strncmp ( in, list[i], len ) )
