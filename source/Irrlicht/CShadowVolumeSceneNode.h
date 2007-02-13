@@ -6,7 +6,6 @@
 #define __C_SHADOW_VOLUME_SCENE_NODE_H_INCLUDED__
 
 #include "IShadowVolumeSceneNode.h"
-#include "SLight.h"
 
 namespace irr
 {

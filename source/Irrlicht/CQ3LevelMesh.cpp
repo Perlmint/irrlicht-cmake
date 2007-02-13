@@ -761,7 +761,7 @@ void CQ3LevelMesh::constructMesh2()
 				{
 					if ( 0 == shader )
 					{
-						item.takeVertexColor = material.Texture1 == 0 || material.Texture2 == 0;
+						item.takeVertexColor = material.Textures[0] == 0 || material.Textures[1] == 0;
 						item.index = E_Q3_MESH_GEOMETRY;
 						toBuffer.push_back ( item );
 					}
@@ -778,16 +778,16 @@ void CQ3LevelMesh::constructMesh2()
 /*
 			case 1: // normal polygons
 			case 2: // patches
-				if ( material.Texture1 && 0 == shader )
+				if ( material.Textures[0] && 0 == shader )
 				{
-					item.takeVertexColor = material.Texture2 == 0;
+					item.takeVertexColor = material.Textures[1] == 0;
 					item.index = E_Q3_MESH_GEOMETRY;
 					toBuffer.push_back ( item );
 				}
 				else
-				if ( material.Texture1 )
+				if ( material.Textures[0] )
 				{
-					item.takeVertexColor = material.Texture2 == 0;
+					item.takeVertexColor = material.Textures[1] == 0;
 					item.index = E_Q3_MESH_GEOMETRY;
 					toBuffer.push_back ( item );
 					if ( 0 == (shaderState & 0xFFFF0000 ) )
@@ -806,9 +806,9 @@ void CQ3LevelMesh::constructMesh2()
 				break;
 
 			case 3: // mesh vertices
-				if ( material.Texture1 && ( shaderState & 0xFFFF0000 ) == 0x00030000 )
+				if ( material.Textures[0] && ( shaderState & 0xFFFF0000 ) == 0x00030000 )
 				{
-					item.takeVertexColor = material.Texture2 == 0;
+					item.takeVertexColor = material.Textures[1] == 0;
 					item.index = E_Q3_MESH_GEOMETRY;
 					toBuffer.push_back ( item );
 				}
@@ -835,7 +835,7 @@ void CQ3LevelMesh::constructMesh2()
 			{
 				if ( 0 == toBuffer[g].takeVertexColor )
 				{
-					toBuffer[g].takeVertexColor = material.Texture1 == 0 || material.Texture2;
+					toBuffer[g].takeVertexColor = material.Textures[0] == 0 || material.Textures[1];
 				}
 				if (Faces[i].lightmapID < -1 || Faces[i].lightmapID > NumLightMaps-1)
 				{
@@ -1696,13 +1696,13 @@ void CQ3LevelMesh::loadTextures()
 		for (t=0; t<NumTextures+1; ++t)
 		{
 			SMeshBufferLightMap* b = (SMeshBufferLightMap*)Mesh[0]->getMeshBuffer(l*(NumTextures+1) + t);
-			b->Material.Texture2 = lig[l];
-			b->Material.Texture1 = tex[t];
+			b->Material.Textures[1] = lig[l];
+			b->Material.Textures[0] = tex[t];
 
-			if (!b->Material.Texture2)
+			if (!b->Material.Textures[1])
 				b->Material.MaterialType = video::EMT_SOLID;
 
-			if ( !b->Material.Texture1 )
+			if ( !b->Material.Textures[0] )
  				b->Material.MaterialType = video::EMT_SOLID;
 
 		}
@@ -1721,7 +1721,7 @@ void CQ3LevelMesh::cleanMeshes ()
 		{
 			if (Mesh[g]->MeshBuffers[i]->getVertexCount() == 0 ||
 				Mesh[g]->MeshBuffers[i]->getIndexCount() == 0 ||
-				( texture0important && Mesh[g]->MeshBuffers[i]->getMaterial().Texture1 == 0 )
+				( texture0important && Mesh[g]->MeshBuffers[i]->getMaterial().Textures[0] == 0 )
 				)
 			{
 				// delete Meshbuffer

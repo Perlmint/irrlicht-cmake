@@ -368,14 +368,14 @@ void COgreMeshFileLoader::composeMeshBufferMaterial(scene::IMeshBuffer* mb, cons
 			material=Materials[k].Techniques[0].Passes[0].Material;
 			if (Materials[k].Techniques[0].Passes[0].Texture.Filename.size())
 			{
-				material.Texture1=Driver->getTexture(Materials[k].Techniques[0].Passes[0].Texture.Filename.c_str());
-				if (!material.Texture1)
+				material.Textures[0]=Driver->getTexture(Materials[k].Techniques[0].Passes[0].Texture.Filename.c_str());
+				if (!material.Textures[0])
 				{
 					// retry with relative path
 					core::stringc relative = CurrentlyLoadingFromPath;
 					relative += '/';
 					relative += Materials[k].Techniques[0].Passes[0].Texture.Filename;
-					material.Texture1 = Driver->getTexture(relative.c_str());
+					material.Textures[0] = Driver->getTexture(relative.c_str());
 				}
 			}
 			break;

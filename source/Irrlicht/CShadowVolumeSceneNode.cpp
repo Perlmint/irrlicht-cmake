@@ -5,6 +5,7 @@
 #include "CShadowVolumeSceneNode.h"
 #include "ISceneManager.h"
 #include "IVideoDriver.h"
+#include "SLight.h"
 
 namespace irr
 {

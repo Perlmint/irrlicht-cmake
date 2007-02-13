@@ -203,9 +203,9 @@ video::SMaterial CXAnimationPlayer::getMaterialFromXMaterial(const CXFileReader:
 	
 	if (xmat.TextureFileName.size() != 0)
 	{
-		mat.Texture1 = Driver->getTexture(getTextureFileName(xmat.TextureFileName).c_str());
-		if (mat.Texture1 == 0)
-			mat.Texture1 = Driver->getTexture(xmat.TextureFileName.c_str());
+		mat.Textures[0] = Driver->getTexture(getTextureFileName(xmat.TextureFileName).c_str());
+		if (mat.Textures[0] == 0)
+			mat.Textures[0] = Driver->getTexture(xmat.TextureFileName.c_str());
 	}
 
 	return mat;

@@ -61,7 +61,7 @@ public:
 	virtual s32 getKerningHeight();
 
 	//! Returns the type of this font
-	virtual EGUI_FONT_TYPE getType() { return EGFT_XML_BITMAP; }
+	virtual EGUI_FONT_TYPE getType() { return EGFT_BITMAP; }
 
 	//! loads a font from an XML file
 	bool load(io::IXMLReader* xml);

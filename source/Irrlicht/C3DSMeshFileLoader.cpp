@@ -1024,34 +1024,34 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 		m->Material = Materials[i].Material;
 		if (Materials[i].Filename[0].size())
 		{
-			m->Material.Texture1 = Driver->getTexture(Materials[i].Filename[0].c_str());
+			m->Material.Textures[0] = Driver->getTexture(Materials[i].Filename[0].c_str());
 			
-			if (!m->Material.Texture1)
+			if (!m->Material.Textures[0])
 			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[0], modelFilename);
 				if (fname.size())
-					m->Material.Texture1 = Driver->getTexture(fname.c_str());				
+					m->Material.Textures[0] = Driver->getTexture(fname.c_str());				
 			}
 
-			if (!m->Material.Texture1)
+			if (!m->Material.Textures[0])
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[0].c_str(), ELL_WARNING);
 		}
 
 		if (Materials[i].Filename[2].size())
 		{
-			m->Material.Texture1 = Driver->getTexture(Materials[i].Filename[2].c_str());
+			m->Material.Textures[0] = Driver->getTexture(Materials[i].Filename[2].c_str());
 			
-			if (!m->Material.Texture1)
+			if (!m->Material.Textures[0])
 			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[2], modelFilename);
 				if (fname.size())
-					m->Material.Texture1 = Driver->getTexture(fname.c_str());				
+					m->Material.Textures[0] = Driver->getTexture(fname.c_str());				
 			}
 
-			if (!m->Material.Texture1)
+			if (!m->Material.Textures[0])
 			{
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[2].c_str(), ELL_WARNING);
@@ -1064,24 +1064,24 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 
 		if (Materials[i].Filename[3].size())
 		{
-			m->Material.Texture2=m->Material.Texture1;
-			m->Material.Texture1=0;
-			m->Material.Texture1 = Driver->getTexture(Materials[i].Filename[3].c_str());
+			m->Material.Textures[1]=m->Material.Textures[0];
+			m->Material.Textures[0]=0;
+			m->Material.Textures[0] = Driver->getTexture(Materials[i].Filename[3].c_str());
 			
-			if (!m->Material.Texture1)
+			if (!m->Material.Textures[0])
 			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[3], modelFilename);
 				if (fname.size())
-					m->Material.Texture1 = Driver->getTexture(fname.c_str());				
+					m->Material.Textures[0] = Driver->getTexture(fname.c_str());				
 			}
 
-			if (!m->Material.Texture1)
+			if (!m->Material.Textures[0])
 			{
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[3].c_str(), ELL_WARNING);
-				m->Material.Texture1=m->Material.Texture2;
-				m->Material.Texture2=0;
+				m->Material.Textures[0]=m->Material.Textures[1];
+				m->Material.Textures[1]=0;
 			}
 			else
 			{
@@ -1091,22 +1091,22 @@ void C3DSMeshFileLoader::loadMaterials(io::IReadFile* file)
 
 		if (Materials[i].Filename[4].size())
 		{
-			m->Material.Texture2 = Driver->getTexture(Materials[i].Filename[4].c_str());
+			m->Material.Textures[1] = Driver->getTexture(Materials[i].Filename[4].c_str());
 			
-			if (!m->Material.Texture2)
+			if (!m->Material.Textures[1])
 			{
 				core::stringc fname = getTextureFileName(
 					Materials[i].Filename[4], modelFilename);
 				if (fname.size())
-					m->Material.Texture2 = Driver->getTexture(fname.c_str());				
+					m->Material.Textures[1] = Driver->getTexture(fname.c_str());				
 			}
 
-			if (!m->Material.Texture2)
+			if (!m->Material.Textures[1])
 				os::Printer::log("Could not load a texture for entry in 3ds file",
 					Materials[i].Filename[4].c_str(), ELL_WARNING);
 			else
 			{
-				Driver->makeNormalMapTexture(m->Material.Texture2, 9.0f);
+				Driver->makeNormalMapTexture(m->Material.Textures[1], 9.0f);
 				m->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
 				m->Material.MaterialTypeParam=0.035f;
 			}

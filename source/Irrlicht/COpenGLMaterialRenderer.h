@@ -45,7 +45,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			// thanks to Murphy, the following line removed some
@@ -72,7 +72,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 
 
 //		if (material.MaterialType != lastMaterial.MaterialType || 
@@ -171,8 +171,8 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(2);
-		Driver->setTexture(1, material.Texture2);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(1, material.Textures[1]);
+		Driver->setTexture(0, material.Textures[0]);
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			if (Driver->queryFeature(EVDF_MULTITEXTURE))
@@ -206,7 +206,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 		//if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
 			glDisable(GL_ALPHA_TEST);
@@ -239,7 +239,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
@@ -295,7 +295,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
@@ -349,7 +349,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
@@ -389,8 +389,8 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(2);
-		Driver->setTexture(1, material.Texture2);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(1, material.Textures[1]);
+		Driver->setTexture(0, material.Textures[0]);
 
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
@@ -476,8 +476,8 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(2);
-		Driver->setTexture(1, material.Texture2);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(1, material.Textures[1]);
+		Driver->setTexture(0, material.Textures[0]);
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
@@ -523,7 +523,7 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(1);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(0, material.Textures[0]);
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
@@ -572,8 +572,8 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(2);
-		Driver->setTexture(1, material.Texture2);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(1, material.Textures[1]);
+		Driver->setTexture(0, material.Textures[0]);
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
@@ -651,8 +651,8 @@ public:
 		bool resetAllRenderstates, IMaterialRendererServices* services)
 	{
 		Driver->disableTextures(2);
-		Driver->setTexture(1, material.Texture2);
-		Driver->setTexture(0, material.Texture1);
+		Driver->setTexture(1, material.Textures[1]);
+		Driver->setTexture(0, material.Textures[0]);
 
 		Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 

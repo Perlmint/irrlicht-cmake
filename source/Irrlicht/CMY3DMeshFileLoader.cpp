@@ -390,7 +390,7 @@ for (u32 p=0; p<nToRead; p++)
 				me.Texture1FileName = texFName;
                 if (Name.size()>0)
 				{
-                    me.Texture1 = Driver->getTexture(texFName.c_str());
+                    			me.Texture1 = Driver->getTexture(texFName.c_str());
 					texCount++;
 				}
 
@@ -619,13 +619,13 @@ for (u32 p=0; p<nToRead; p++)
 				if (buffer->Material.MaterialType == video::EMT_REFLECTION_2_LAYER)
 				{
 					buffer->Material.Lighting = true;
-					buffer->Material.Texture2 = matEnt->Texture1;
-					buffer->Material.Texture1 = matEnt->Texture2;
+					buffer->Material.Textures[1] = matEnt->Texture1;
+					buffer->Material.Textures[0] = matEnt->Texture2;
 				}
 				else
 				{
-					buffer->Material.Texture1 = matEnt->Texture1;
-					buffer->Material.Texture2 = matEnt->Texture2;
+					buffer->Material.Textures[0] = matEnt->Texture1;
+					buffer->Material.Textures[1] = matEnt->Texture2;
 				}
 
 				if (buffer->Material.MaterialType == video::EMT_TRANSPARENT_ALPHA_CHANNEL)
@@ -658,8 +658,8 @@ for (u32 p=0; p<nToRead; p++)
 			}
 			else
 	        {
-			buffer->Material.Texture1 = NULL;
-		        buffer->Material.Texture2 = NULL;
+			buffer->Material.Textures[0] = 0;
+		        buffer->Material.Textures[1] = 0;
 
 			buffer->Material.AmbientColor = video::SColor(255, 255, 255, 255);
 			buffer->Material.DiffuseColor =	video::SColor(255, 255, 255, 255);
@@ -683,7 +683,7 @@ for (u32 p=0; p<nToRead; p++)
 				}
 	        }
 			else if (
-				!buffer->Material.Texture2 &&
+				!buffer->Material.Textures[1] &&
 				buffer->Material.MaterialType != video::EMT_TRANSPARENT_ALPHA_CHANNEL &&
 				buffer->Material.MaterialType != video::EMT_SPHERE_MAP
 				)

@@ -399,7 +399,8 @@ CIrrDeviceWin32::CIrrDeviceWin32(video::E_DRIVER_TYPE driverType,
 
 	createDriver(driverType, windowSize, bits, fullscreen, stencilbuffer, vsync, antiAlias, highPrecisionFPU);
 
-	createGUIAndScene();
+	if (VideoDriver)
+		createGUIAndScene();
 
 	// register environment
 

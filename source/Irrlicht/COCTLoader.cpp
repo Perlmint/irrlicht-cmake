@@ -315,16 +315,16 @@ IAnimatedMesh* COCTLoader::createMesh(irr::io::IReadFile* file)
 		{
 			u32 mb = i * (header.numTextures + 1) + j;
 			SMeshBufferLightMap * meshBuffer = (SMeshBufferLightMap*)Mesh->getMeshBuffer(mb);
-			meshBuffer->Material.Texture1 = tex[j];
-			meshBuffer->Material.Texture2 = lig[i];
+			meshBuffer->Material.Textures[0] = tex[j];
+			meshBuffer->Material.Textures[1] = lig[i];
 
-			if (meshBuffer->Material.Texture1 == 0) {
+			if (meshBuffer->Material.Textures[0] == 0) {
 				// This material has no texture, so we'll just show the lightmap if there is one.
 				// We swapped the texture coordinates earlier.
-				meshBuffer->Material.Texture1 = meshBuffer->Material.Texture2;
-				meshBuffer->Material.Texture2 = 0;
+				meshBuffer->Material.Textures[0] = meshBuffer->Material.Textures[1];
+				meshBuffer->Material.Textures[1] = 0;
 			}
-			if (meshBuffer->Material.Texture2 == 0)
+			if (meshBuffer->Material.Textures[1] == 0)
 			{
 				// If there is only one texture, it should be solid and lit.
 				// Among other things, this way you can preview OCT lights.
@@ -341,7 +341,7 @@ IAnimatedMesh* COCTLoader::createMesh(irr::io::IReadFile* file)
 	{
 		if (Mesh->MeshBuffers[i]->getVertexCount() == 0 ||
 			Mesh->MeshBuffers[i]->getIndexCount() == 0 ||
-			Mesh->MeshBuffers[i]->getMaterial().Texture1 == 0)
+			Mesh->MeshBuffers[i]->getMaterial().Textures[0] == 0)
 		{
 			// Meshbuffer is empty -- drop it
 			Mesh->MeshBuffers[i]->drop();

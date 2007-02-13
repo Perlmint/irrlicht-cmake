@@ -77,7 +77,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	f32 o = 0.0f + onepixel;
 
 	Material[0] = mat;
-	Material[0].Texture1 = front;
+	Material[0].Textures[0] = front;
 	Vertices[0] = video::S3DVertex(-l,-l,-l, 0,0,1, video::SColor(255,255,255,255), o, t);
 	Vertices[1] = video::S3DVertex( l,-l,-l, 0,0,1, video::SColor(255,255,255,255), t, t);
 	Vertices[2] = video::S3DVertex( l, l,-l, 0,0,1, video::SColor(255,255,255,255), t, o);
@@ -86,7 +86,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	// create left side
 
 	Material[1] = mat;
-	Material[1].Texture1 = left;
+	Material[1].Textures[0] = left;
 	Vertices[4] = video::S3DVertex( l,-l,-l, -1,0,0, video::SColor(255,255,255,255), o, t);
 	Vertices[5] = video::S3DVertex( l,-l, l, -1,0,0, video::SColor(255,255,255,255), t, t);
 	Vertices[6] = video::S3DVertex( l, l, l, -1,0,0, video::SColor(255,255,255,255), t, o);
@@ -95,7 +95,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	// create back side
 
 	Material[2] = mat;
-	Material[2].Texture1 = back;
+	Material[2].Textures[0] = back;
 	Vertices[8]  = video::S3DVertex( l,-l, l, 0,0,-1, video::SColor(255,255,255,255), o, t);
 	Vertices[9]  = video::S3DVertex(-l,-l, l, 0,0,-1, video::SColor(255,255,255,255), t, t);
 	Vertices[10] = video::S3DVertex(-l, l, l, 0,0,-1, video::SColor(255,255,255,255), t, o);
@@ -104,7 +104,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	// create right side
 
 	Material[3] = mat;
-	Material[3].Texture1 = right;
+	Material[3].Textures[0] = right;
 	Vertices[12] = video::S3DVertex(-l,-l, l, 1,0,0, video::SColor(255,255,255,255), o, t);
 	Vertices[13] = video::S3DVertex(-l,-l,-l, 1,0,0, video::SColor(255,255,255,255), t, t);
 	Vertices[14] = video::S3DVertex(-l, l,-l, 1,0,0, video::SColor(255,255,255,255), t, o);
@@ -113,7 +113,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	// create top side
 
 	Material[4] = mat;
-	Material[4].Texture1 = top;
+	Material[4].Textures[0] = top;
 	Vertices[16] = video::S3DVertex( l, l, l, 0,-1,0, video::SColor(255,255,255,255), o, o);
 	Vertices[17] = video::S3DVertex(-l, l, l, 0,-1,0, video::SColor(255,255,255,255), o, t);
 	Vertices[18] = video::S3DVertex(-l, l,-l, 0,-1,0, video::SColor(255,255,255,255), t, t);
@@ -122,7 +122,7 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom
 	// create bottom side
 
 	Material[5] = mat;
-	Material[5].Texture1 = bottom;
+	Material[5].Textures[0] = bottom;
 	Vertices[20] = video::S3DVertex(-l,-l, l, 0,1,0, video::SColor(255,255,255,255), o, o);
 	Vertices[21] = video::S3DVertex( l,-l, l, 0,1,0, video::SColor(255,255,255,255), o, t);
 	Vertices[22] = video::S3DVertex( l,-l,-l, 0,1,0, video::SColor(255,255,255,255), t, t);
@@ -193,7 +193,7 @@ void CSkyBoxSceneNode::render()
 			idx = lookVect.Z > 0 ? 1 : 3;
 		}
 
-		video::ITexture* tex = Material[idx].Texture1;
+		video::ITexture* tex = Material[idx].Textures[0];
 
 		if ( tex )
 		{

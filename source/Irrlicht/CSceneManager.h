@@ -206,7 +206,7 @@ namespace scene
 
 		//! Adds a terrain scene node to the scene graph.
 		virtual ITerrainSceneNode* addTerrainSceneNode(
-			const char* heightMapFileName, 
+			const c8* heightMapFileName, 
 			ISceneNode* parent=0, s32 id=-1, 
 			const core::vector3df& position = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
@@ -333,7 +333,7 @@ namespace scene
 		virtual ISceneNode* getSceneNodeFromId(s32 id, ISceneNode* start=0);
 
 		//! Returns the first scene node with the specified name.
-		virtual ISceneNode* getSceneNodeFromName(const char* name, ISceneNode* start=0);
+		virtual ISceneNode* getSceneNodeFromName(const c8* name, ISceneNode* start=0);
 
 		//! Posts an input event to the environment. Usually you do not have to
 		//! use this method, it is used by the internal engine.
@@ -447,7 +447,7 @@ namespace scene
 				textureValue = 0;
 
 				if (n->getMaterialCount())
-					textureValue = (n->getMaterial(0).Texture1);
+					textureValue = (n->getMaterial(0).Textures[0]);
 
 				node = n;
 			}
@@ -467,7 +467,7 @@ namespace scene
 
 			ShaderNodeEntry(ISceneNode* n, u32 sceneTime )
 			{
-				textureValue = n->getMaterial( sceneTime ).Texture1;
+				textureValue = n->getMaterial( sceneTime ).Textures[0];
 
 				node = n;
 			}

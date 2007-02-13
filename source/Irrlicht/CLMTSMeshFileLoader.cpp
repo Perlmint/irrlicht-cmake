@@ -342,11 +342,11 @@ void CLMTSMeshFileLoader::loadTextures()
 			SMeshBufferLightMap* b = (SMeshBufferLightMap*)Mesh->getMeshBuffer(i);
 
 			if (Subsets[i].TextID1 < Header.TextureCount)
-				b->Material.Texture1 = tex[TextureIDs[Subsets[i].TextID1]];
+				b->Material.Textures[0] = tex[TextureIDs[Subsets[i].TextID1]];
 			if (Subsets[i].TextID2 < Header.TextureCount)
-				b->Material.Texture2 = lig[TextureIDs[Subsets[i].TextID2]];
+				b->Material.Textures[1] = lig[TextureIDs[Subsets[i].TextID2]];
 
-			if (!b->Material.Texture2)
+			if (!b->Material.Textures[1])
 				b->Material.MaterialType = video::EMT_SOLID;
 		}
 
