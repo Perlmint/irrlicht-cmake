@@ -300,7 +300,6 @@ void CGUIListBox::draw()
 
 	frameRect.UpperLeftCorner.Y -= ScrollBar->getPos();
 	frameRect.LowerRightCorner.Y -= ScrollBar->getPos();
-	
 
 	for (s32 i=0; i<(s32)Items.size(); ++i)
 	{
@@ -315,7 +314,7 @@ void CGUIListBox::draw()
 
 			if (Font)
 			{
-				if (IconBank && Items[i].icon > -1)
+				if (IconBank && (Items[i].icon > -1))
 				{
 					core::position2di iconPos = textRect.UpperLeftCorner;
 					iconPos.Y += textRect.getHeight() / 2;

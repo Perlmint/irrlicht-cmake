@@ -78,6 +78,8 @@ namespace gui
 
 		struct ListItem
 		{
+			ListItem() : icon(-1) {}
+
 			core::stringw text;
 			s32 icon;
 		};
