@@ -83,11 +83,10 @@ private:
 
 
 /*
-Ok, lets start. Again, we use the main() method as start, not the
-WinMain(), because its shorter to write.
+Ok, lets start. 
 */
 
-int __cdecl main(int argc, char* argv[])
+int IRRCALLCONV main(int argc, char* argv[])
 {
 	/*
 	Like in the HelloWorld example, we create an IrrlichtDevice with
