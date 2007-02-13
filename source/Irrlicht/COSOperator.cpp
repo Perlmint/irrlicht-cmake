@@ -138,7 +138,7 @@ bool COSOperator::getProcessorSpeedMHz(irr::u32* MHz)
 	struct clockinfo CpuClock;
 	size_t Size = sizeof(clockinfo);
 
-	if (!sysctlbyname("kern.clockrate", 2, &CpuClock, &Size, NULL, 0))
+	if (!sysctlbyname("kern.clockrate", &CpuClock, &Size, NULL, 0))
 		return false;
 	else if (MHz)
 		*MHz = CpuClock.hz;
