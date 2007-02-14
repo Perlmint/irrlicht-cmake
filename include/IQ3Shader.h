@@ -182,7 +182,7 @@ namespace quake3
 
 
 	// parses the content of Variable blendfunc,alphafunc
-	inline void getBlendFunc ( const core::stringc &string, SBlendFunc &blendfunc )
+	inline static void getBlendFunc ( const core::stringc &string, SBlendFunc &blendfunc )
 	{
 		if ( string.size() == 0 )
 			return;

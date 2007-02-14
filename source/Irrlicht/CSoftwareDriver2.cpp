@@ -1872,7 +1872,7 @@ u32 CSoftwareDriver2::getMaximalPrimitiveCount()
 } // end namespace video
 } // end namespace irr
 
-#endif _IRR_COMPILE_WITH_BURNINGSVIDEO_
+#endif // _IRR_COMPILE_WITH_BURNINGSVIDEO_
 
 namespace irr
 {

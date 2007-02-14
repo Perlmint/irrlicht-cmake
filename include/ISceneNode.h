@@ -530,7 +530,8 @@ namespace scene
 				TriangleSelector->drop();
 
 			TriangleSelector = selector;
-			TriangleSelector->grab();
+			if (TriangleSelector)
+				TriangleSelector->grab();
 		}
 
 		//! updates the absolute position based on the relative and the parents position

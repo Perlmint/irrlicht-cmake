@@ -405,9 +405,7 @@ void CAnimatedMeshSceneNode::render()
 			}
 
 		}
-
 	}
-
 }
 
 

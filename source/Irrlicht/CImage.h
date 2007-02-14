@@ -6,6 +6,7 @@
 #define __C_IMAGE_H_INCLUDED__
 
 #include "IImage.h"
+#include "rect.h"
 
 namespace irr
 {

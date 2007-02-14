@@ -7,7 +7,6 @@
 
 #include "IUnknown.h"
 #include "position2d.h"
-#include "rect.h"
 #include "SColor.h"
 
 namespace irr
