@@ -337,6 +337,7 @@ public:
 						{
 							Model->setMaterialFlag(video::EMF_ANISOTROPIC_FILTER, true);
 						}
+						break;
 						case 4:
 						if (Model)
 						{
