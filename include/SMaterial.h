@@ -215,7 +215,7 @@ namespace video
 		ETC_CLAMP_TO_BORDER,
 		ETC_MIRROR
 	};
-	static const char* aTextureClampNames[] = {
+	static const char* const aTextureClampNames[] = {
 			"texture_clamp_repeat",
 			"texture_clamp_clamp",
 			"texture_clamp_clamp_to_edge",
