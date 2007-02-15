@@ -316,7 +316,7 @@ namespace video
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f), Thickness(1.0f),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
 			ZBuffer(true), ZWriteEnable(true), BackfaceCulling(true),
-			BilinearFilter(true), TrilinearFilter(true), AnisotropicFilter(true),
+			BilinearFilter(true), TrilinearFilter(false), AnisotropicFilter(false),
 			FogEnable(false), NormalizeNormals(false),TextureWrap(ETC_REPEAT)
 		{
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
