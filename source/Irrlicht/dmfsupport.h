@@ -23,7 +23,7 @@
 using namespace irr;
 using namespace video;
 
-#include <irrString.h>
+#include "irrString.h"
 
 /** A structure representing some DeleD infos. 
  This structure contains data about DeleD level file like: version, ambient colour, number of objects etc...*/

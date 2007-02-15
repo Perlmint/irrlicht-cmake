@@ -38,7 +38,7 @@ COpenGLSLMaterialRenderer::COpenGLSLMaterialRenderer(video::COpenGLDriver* drive
 		IShaderConstantSetCallBack* callback,
 		video::IMaterialRenderer* baseMaterial,
 		s32 userData)
-	: Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
+	: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 		Program(0), UserData(userData)
 {
 	//entry points must always be main, and the compile target isn't selectable
@@ -63,7 +63,7 @@ COpenGLSLMaterialRenderer::COpenGLSLMaterialRenderer(video::COpenGLDriver* drive
 COpenGLSLMaterialRenderer::COpenGLSLMaterialRenderer(COpenGLDriver* driver,
 							IShaderConstantSetCallBack* callback,
 							IMaterialRenderer* baseMaterial, s32 userData)
-: Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
+: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 		Program(0), UserData(userData)
 {
 	if (BaseMaterial)

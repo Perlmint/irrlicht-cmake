@@ -1025,7 +1025,7 @@ void CSceneManager::drawAll()
 		camWorldPos = ActiveCamera->getAbsolutePosition();
 	}
 
-	// let all nodes register themselfes
+	// let all nodes register themselves
 	OnPreRender();
 
 	u32 i; // new ISO for scoping problem in some compilers

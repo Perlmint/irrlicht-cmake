@@ -107,12 +107,12 @@ protected:
 	IShaderConstantSetCallBack* CallBack;
 	IMaterialRenderer* BaseMaterial;
 
-	struct SUniformInfo 
+	struct SUniformInfo
 	{
 		core::stringc name;
 		GLenum type;
 	};
-	
+
 	GLhandleARB Program;
 	core::array<SUniformInfo> UniformInfo;
 	s32 UserData;
@@ -122,6 +122,6 @@ protected:
 } // end namespace video
 } // end namespace irr
 
-#endif
-#endif
+#endif // compile with OpenGL
+#endif // if included
 

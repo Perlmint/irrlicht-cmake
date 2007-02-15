@@ -136,6 +136,8 @@ namespace scene
 
 	private:
 
+		u32 buildFrameNr( u32 timeMs);
+
 		core::array<video::SMaterial> Materials;
 		core::aabbox3d<f32> Box;
 		IAnimatedMesh* Mesh;
@@ -146,8 +148,6 @@ namespace scene
 		f32 FramesPerSecond;
 
 		u32 CurrentFrameNr;
-		u32 buildFrameNr( u32 timeMs);
-
 
 		bool Looping;
 		bool ReadOnlyMaterials;

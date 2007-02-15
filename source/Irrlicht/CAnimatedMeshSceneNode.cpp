@@ -31,8 +31,8 @@ CAnimatedMeshSceneNode::CAnimatedMeshSceneNode(IAnimatedMesh* mesh, ISceneNode* 
 			const core::vector3df& position, const core::vector3df& rotation,	const core::vector3df& scale)
 : IAnimatedMeshSceneNode(parent, mgr, id, position, rotation, scale), Mesh(0),
 	BeginFrameTime(0), StartFrame(0), EndFrame(0), FramesPerSecond(25.f / 1000.f ),
-	Shadow(0), Looping(true), LoopCallBack(0), ReadOnlyMaterials(false),
-	CurrentFrameNr ( 0 )
+	CurrentFrameNr(0), Looping(true), ReadOnlyMaterials(false),
+	LoopCallBack(0), PassCount(0), Shadow(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CAnimatedMeshSceneNode");

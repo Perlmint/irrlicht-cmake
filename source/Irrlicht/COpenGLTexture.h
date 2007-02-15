@@ -18,8 +18,10 @@
 	#include <GL/gl.h>
 	#include <GL/glu.h>
 	#include "glext.h"
+#ifdef _MSC_VER
 	#pragma comment(lib, "OpenGL32.lib")
 	#pragma comment(lib, "GLu32.lib")
+#endif
 #elif defined(MACOSX)
 	#include <OpenGL/gl.h>
 	#include <OpenGL/glu.h>
