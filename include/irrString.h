@@ -536,7 +536,7 @@ public:
 	or -1 if not found. */
 	s32 findFirst(T c) const
 	{
-		for (s32 i=0; i<used; ++i)
+		for (u32 i=0; i<used; ++i)
 			if (array[i] == c)
 				return i;
 
@@ -555,7 +555,7 @@ public:
 		if (!c)
 			return -1;
 
-		for (s32 i=0; i<used; ++i)
+		for (u32 i=0; i<used; ++i)
 			for (u32 j=0; j<count; ++j)
 				if (array[i] == c[j])
 					return i;
@@ -576,7 +576,7 @@ public:
 	{
 		for (u32 i=0; i<used; ++i)
 		{
-			s32 j;
+			u32 j;
 			for (j=0; j<count; ++j)
 				if (array[i] == c[j])
 					break;
@@ -598,9 +598,9 @@ public:
 	template <class B>
 	s32 findLastCharNotInList(B* c, u32 count) const
 	{
-		for (int i=used-2; i>=0; --i)
+		for (u32 i=used-2; i>=0; --i)
 		{
-			s32 j;
+			u32 j;
 			for (j=0; j<count; ++j)
 				if (array[i] == c[j])
 					break;
@@ -621,7 +621,7 @@ public:
 	{
 		for (u32 i=startPos; i<used; ++i)
 			if (array[i] == c)
-				return (s32)i;
+				return i;
 
 		return -1;
 	}
@@ -659,7 +659,7 @@ public:
 			if (len > used-1)
 				return -1;
 
-			for (s32 i=0; i<(s32)(used-len); ++i)
+			for (u32 i=0; i<used-len; ++i)
 			{
 				u32 j=0;
 
@@ -736,7 +736,7 @@ public:
 	void trim()
 	{
 		const c8 whitespace[] = " \t\n\r";
-		const int whitespacecount = 4;
+		const u32 whitespacecount = 4;
 
 		// find start and end of real string without whitespace
 		int begin = findFirstCharNotInList(whitespace, whitespacecount);
@@ -754,11 +754,11 @@ public:
 	//! Erases a character from the string. May be slow, because all elements
 	//! following after the erased element have to be copied.
 	//! \param index: Index of element to be erased.
-	void erase(int index)
+	void erase(u32 index)
 	{
-		_IRR_DEBUG_BREAK_IF(index>=used || index<0) // access violation
+		_IRR_DEBUG_BREAK_IF(index>=used) // access violation
 
-		for (int i=index+1; i<used; ++i)
+		for (u32 i=index+1; i<used; ++i)
 			array[i-1] = array[i];
 
 		--used;

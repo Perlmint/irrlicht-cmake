@@ -506,7 +506,7 @@ private:
 
 		core::string<char_type> newstr;
 
-		while(pos != -1 && pos < origstr.size()-2)
+		while(pos != -1 && pos < (int)origstr.size()-2)
 		{
 			// check if it is one of the special characters
 
@@ -539,7 +539,7 @@ private:
 			pos = origstr.findNext(L'&', pos);		
 		}
 
-		if (oldPos < origstr.size()-1)
+		if (oldPos < (int)origstr.size()-1)
 			newstr.append(origstr.subString(oldPos, origstr.size()-oldPos));
 
 		return newstr;
