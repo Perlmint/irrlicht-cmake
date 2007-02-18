@@ -176,7 +176,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 						s.append(p);
 						s.append( Text.subString(CursorPos, Text.size()-CursorPos) );
 
-						if (!Max || s.size()<=Max) // thx to Fish FH for fix
+						if (!Max || s.size()<=(u32)Max) // thx to Fish FH for fix
 						{
 							Text = s;
 							s = p;
@@ -191,7 +191,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 						s.append(p);
 						s.append( Text.subString(realmend, Text.size()-realmend) );
 
-						if (!Max || s.size()<=Max)  // thx to Fish FH for fix
+						if (!Max || s.size()<=(u32)Max)  // thx to Fish FH for fix
 						{
 							Text = s;
 							s = p;
@@ -279,7 +279,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 
 		if (event.KeyInput.Shift) 
 		{ 
-			if (Text.size() > CursorPos) 
+			if (Text.size() > (u32)CursorPos) 
 			{ 
 				if (MarkBegin == MarkEnd) 
 					MarkBegin = CursorPos; 
@@ -293,7 +293,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			MarkEnd = 0;
 		}
 
-		if (Text.size() > CursorPos) CursorPos++;
+		if (Text.size() > (u32)CursorPos) CursorPos++;
 		BlinkStartTime = os::Timer::getTime();
 		break;
 
@@ -361,8 +361,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 				Text = s;
 			}
 
-			if (CursorPos > Text.size())
-				CursorPos = Text.size();
+			if (CursorPos > (s32)Text.size())
+				CursorPos = (s32)Text.size();
 
 			BlinkStartTime = os::Timer::getTime();
 			MarkBegin = 0;
@@ -375,7 +375,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 
 		if (event.KeyInput.Char != 0)
 		{
-			if (Text.size() < Max || Max == 0)
+			if (Text.size() < (u32)Max || Max == 0)
 			{
 				core::stringw s;
 
@@ -606,7 +606,7 @@ void CGUIEditBox::setMax(s32 max)
 	if (Max < 0)
 		Max = 0;
 
-	if (Text.size() > Max && Max != 0)
+	if (Text.size() > (u32)Max && Max != 0)
 		Text = Text.subString(0, Max);
 }
 

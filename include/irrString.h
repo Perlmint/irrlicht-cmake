@@ -598,7 +598,7 @@ public:
 	template <class B>
 	s32 findLastCharNotInList(B* c, u32 count) const
 	{
-		for (u32 i=used-2; i>=0; --i)
+		for (s32 i=(s32)(used-2); i>=0; --i)
 		{
 			u32 j;
 			for (j=0; j<count; ++j)

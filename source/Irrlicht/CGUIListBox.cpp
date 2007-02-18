@@ -93,6 +93,28 @@ s32 CGUIListBox::addItem(const wchar_t* text)
 	return Items.size() - 1;
 }
 
+//! adds an list item, returns id of item
+void CGUIListBox::removeItem(s32 id)
+{
+	if (id < 0 || id >= (s32)Items.size())
+		return;
+
+	if (Selected==id)
+	{
+		Selected = -1;
+	}
+	else if (Selected > id)
+	{
+		Selected -= 1;
+		selectTime = os::Timer::getTime();
+	}
+
+	Items.erase(id);
+
+	recalculateItemHeight();
+}
+
+
 
 
 //! clears the list

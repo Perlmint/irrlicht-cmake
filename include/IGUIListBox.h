@@ -43,6 +43,9 @@ namespace gui
 		//! returns the id of the new created item
 		virtual s32 addItem(const wchar_t* text, s32 icon) = 0;
 
+		//! Removes an item from the list
+		virtual void removeItem(s32 index) = 0;
+
 		//! Sets the sprite bank which should be used to draw list icons. This font is set to the sprite bank of
 		//! the built-in-font by default. A sprite can be displayed in front of every list item.
 		//! An icon is an index within the icon sprite bank. Several default icons are available in the
