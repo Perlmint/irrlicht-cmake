@@ -3,11 +3,10 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "IrrCompileConfig.h"
-#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
-
 #include "SoftwareDriver2_compile_config.h"
-
 #include "CDepthBuffer.h"
+
+#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
 
 namespace irr
 {
@@ -116,5 +115,6 @@ IDepthBuffer* createDepthBuffer(const core::dimension2d<s32>& size)
 	
 } // end namespace video
 } // end namespace irr
+
 
 

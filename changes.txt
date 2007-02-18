@@ -1,5 +1,7 @@
 Changes in version 1.3 (?? ??? 2007)
 
+- updated to latest PNG library
+
 - added _IRR_COMPILE_WITH_SOFTWARE_ and _IRR_COMPILE_WITH_BURNINGSVIDEO_ to compile config
 
 - implemented CImagerWriterJpeg::writeImage
@@ -32,10 +34,13 @@ Changes in version 1.3 (?? ??? 2007)
 	new option to normalise weights, animation code optimization, fixed memory leak
 
 - Fonts:
-	Changed original IGUIFont to IGUIFontASCII and added options for more fonts
-	Added CGUIFontMultiTexture for UTF16 fonts which must span many textures, loads from XML
+	Changed built-in IGUIFont to IGUIFontBitmap and added options for more fonts.
+	CGUIFont now supports UCS-2 and may span many textures, loads from XML (Unicode support planned)
 	Started a font tool for creating the new XML fonts, including generating vector fonts
 	(currently not backward compatible with old fonts, only works for Win2K+, some bugs still)
+	Font interface now supports kerning- kerning pairs, per letter and global kerning widths, although
+	the internal font only supports global and per-letter.
+	
 
 - GUI:
 	GUI Serialization with loadGUI and saveGUI, and serializable custom GUI elements via factories
@@ -77,7 +82,7 @@ Changes in version 1.3 (?? ??? 2007)
 
 	Skins are now serializable and are loaded/saved with the GUI.
 
-	IGUIStaticText getter/setter functions patch by rogerborg
+	IGUIStaticText getter/setter functions patch by rogerborg.
 
 
 - ROUNDING_ERROR is now ROUNDING_ERROR_32 or ROUNDING_ERROR_64

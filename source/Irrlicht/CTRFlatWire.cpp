@@ -3,9 +3,9 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "IrrCompileConfig.h"
-#ifdef _IRR_COMPILE_WITH_SOFTWARE_
-
 #include "CTRTextureGouraud.h"
+
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
 
 namespace irr
 {
@@ -278,4 +278,5 @@ ITriangleRenderer* createTriangleRendererFlatWire(IZBuffer* zbuffer)
 
 } // end namespace video
 } // end namespace irr
+
 

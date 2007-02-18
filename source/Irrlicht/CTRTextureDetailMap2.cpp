@@ -3,9 +3,9 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "IrrCompileConfig.h"
-#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
-
 #include "IBurningShader.h"
+
+#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
 
 // compile flag for this file
 #undef USE_ZBUFFER
@@ -686,4 +686,5 @@ IBurningShader* createTriangleRendererTextureDetailMap2(IDepthBuffer* zbuffer)
 
 } // end namespace video
 } // end namespace irr
+
 
