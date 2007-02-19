@@ -44,8 +44,8 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 	pGlCreateShaderObjectARB(0), pGlShaderSourceARB(0),
 	pGlCompileShaderARB(0), pGlCreateProgramObjectARB(0), pGlAttachObjectARB(0),
 	pGlLinkProgramARB(0), pGlUseProgramObjectARB(0), pGlDeleteObjectARB(0),
-	pGlGetObjectParameterivARB(0), pGlGetUniformLocationARB(0), pGlUniform4fvARB(0),
-	pGlUniform1ivARB(0), pGlUniform1fvARB(0), pGlUniform2fvARB(0), pGlUniform3fvARB(0), pGlUniformMatrix2fvARB(0),
+	pGlGetObjectParameterivARB(0), pGlGetUniformLocationARB(0),
+	pGlUniform1ivARB(0), pGlUniform1fvARB(0), pGlUniform2fvARB(0), pGlUniform3fvARB(0), pGlUniform4fvARB(0), pGlUniformMatrix2fvARB(0),
 	pGlUniformMatrix3fvARB(0), pGlUniformMatrix4fvARB(0), pGlGetActiveUniformARB(0), pGlPointParameterfARB(0), pGlPointParameterfvARB(0),
 	pGlStencilFuncSeparate(0), pGlStencilOpSeparate(0),
 	pGlStencilFuncSeparateATI(0), pGlStencilOpSeparateATI(0),
@@ -312,10 +312,8 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize)
 		os::Printer::log((const c8*)renderer, (const c8*)vendor, ELL_INFORMATION);
 	}
 
-	CurrentTexture[0]=0;
-	CurrentTexture[1]=0;
-	CurrentTexture[2]=0;
-	CurrentTexture[3]=0;
+	for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+		CurrentTexture[i]=0;
 	// load extensions
 	loadExtensions();
 
@@ -1891,8 +1889,17 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 
 		if (alphaChannel)
 		{
-			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE);
+			if (alpha)
+			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_MODULATE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_EXT, GL_PRIMARY_COLOR_EXT);
+			}
+			else
+			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE);
+			}
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
