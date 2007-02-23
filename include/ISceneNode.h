@@ -39,7 +39,7 @@ namespace scene
 					const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
 			: RelativeTranslation(position), RelativeRotation(rotation), RelativeScale(scale),
 				Parent(parent), ID(id), SceneManager(mgr), TriangleSelector(0),
-				AutomaticCullingState(EAC_OFF), IsVisible(true),
+				AutomaticCullingState(EAC_BOX), IsVisible(true),
 				DebugDataVisible(EDS_OFF), IsDebugObject(false)
 		{
 			if (Parent)
