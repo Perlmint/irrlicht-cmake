@@ -1474,15 +1474,14 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 	else
 	if (element == L"stringwarray")
 	{
-		wchar_t tmpName[20];
 		core::array<core::stringw> tmpArray;
 
 		s32 count = reader->getAttributeValueAsInt(L"count");
 		s32 n=0;
+		const core::stringw tmpName(L"value");
 		for (; n<count; ++n)
 		{
-			swprintf(tmpName,20,L"value%d",n);
-			tmpArray.push_back(reader->getAttributeValue(tmpName));
+			tmpArray.push_back(reader->getAttributeValue((tmpName+n).c_str()));
 		}
 		addArray(name.c_str(),tmpArray);
 	}
@@ -1505,9 +1504,6 @@ bool CAttributes::write(io::IXMLWriter* writer, bool writeXMLHeader)
 	{
 		if ( Attributes[i]->getType() == EAT_STRINGWARRAY )
 		{
-			// Special case for writing arrays
-
-			wchar_t tmpName[20];
 			core::array<core::stringw> arraynames, arrayvalues;
 			core::array<core::stringw> arrayinput = Attributes[i]->getArray();
 
@@ -1523,10 +1519,10 @@ bool CAttributes::write(io::IXMLWriter* writer, bool writeXMLHeader)
 
 			// array...
 			u32 n=0;
+			const core::stringw tmpName(L"value");
 			for (; n < arrayinput.size(); ++n)
 			{
-				swprintf(tmpName,20,L"value%d",n);
-				arraynames.push_back(core::stringw(tmpName));
+				arraynames.push_back((tmpName+n).c_str());
 				arrayvalues.push_back(arrayinput[n]);
 			}
 

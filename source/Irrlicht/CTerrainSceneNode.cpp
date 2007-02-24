@@ -1096,11 +1096,10 @@ namespace scene
 		font->setKerning ( -2 );
 		for( s32 j = 0; j < TerrainData.PatchCount * TerrainData.PatchCount; ++j )
 		{
-			wchar_t buf[64];
-			swprintf ( buf, 64, L"%d", j );
+			const core::stringw buf(j);
 			TerrainData.Patches[j].DebugText = SceneManager->addTextSceneNode (
 				font,
-				buf,
+				buf.c_str(),
 				0xFFFFFFFF,
 				0
 				);

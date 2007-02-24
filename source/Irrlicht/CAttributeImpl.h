@@ -1244,9 +1244,9 @@ public:
 
 	virtual core::stringw getStringW()
 	{
-		wchar_t tmp[10];
+		char tmp[10];
 		video::SColor c = getColor();
-		swprintf(tmp, 10, L"%08x", c.color);
+		snprintf(tmp, 10, "%08x", c.color);
 		return core::stringw(tmp);
 	}
 
@@ -1665,15 +1665,11 @@ public:
 	{
 		if (IsStringW)
 		{
-			wchar_t tmp[32];
-			swprintf(tmp, 32, L"%f", floatValue);
-			ValueW = tmp;
+			ValueW = core::stringw(floatValue);
 		}
 		else
 		{
-			char tmp[32];
-			sprintf(tmp, "%f", floatValue);
-			Value = tmp;
+			Value = core::stringc(floatValue);
 		}
 	};
 
