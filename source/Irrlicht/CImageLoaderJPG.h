@@ -9,6 +9,7 @@
 
 
 #include "IrrCompileConfig.h"
+#include <stdio.h> // required for jpeglib.h
 #ifdef _IRR_COMPILE_WITH_LIBJPEG_
 extern "C" {
 	#ifndef _IRR_USE_NON_SYSTEM_JPEG_LIB_
