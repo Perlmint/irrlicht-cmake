@@ -108,6 +108,22 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 				}
 			}
 			break;
+		case video::EVT_TANGENTS:
+			{
+				video::S3DVertexTangents* v =
+					(video::S3DVertexTangents*)Mesh->getMeshBuffer(b)->getVertices();
+
+				video::S3DVertexTangents* v2 =
+					(video::S3DVertexTangents*)OriginalMesh->getMeshBuffer(b)->getVertices();
+
+				for (u32 i=0; i<vtxCnt; ++i)
+				{
+					v[i].Pos.Y = v2[i].Pos.Y +
+					(sinf(((v2[i].Pos.X/WaveLength) + time)) * WaveHeight) +
+					(cosf(((v2[i].Pos.Z/WaveLength) + time)) * WaveHeight);
+				}
+			}
+			break;
 		} // end switch
 	}// end for all mesh buffers
 

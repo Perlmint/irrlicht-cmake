@@ -520,6 +520,15 @@ inline void CNullDriver::drawIndexedTriangleFan(const S3DVertex2TCoords* vertice
 
 
 
+//! Draws an indexed triangle fan.
+inline void CNullDriver::drawIndexedTriangleFan(const S3DVertexTangents* vertices,
+	u32 vertexCount, const u16* indexList, u32 triangleCount)
+{
+	drawVertexPrimitiveList(vertices, vertexCount, indexList, triangleCount, EVT_TANGENTS, scene::EPT_TRIANGLE_FAN);
+}
+
+
+
 //! Draws a 3d line.
 void CNullDriver::draw3DLine(const core::vector3df& start,
 				const core::vector3df& end, SColor color)

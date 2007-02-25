@@ -159,6 +159,9 @@ void CGUIMeshViewer::draw()
 			case video::EVT_2TCOORDS:
 				driver->drawIndexedTriangleList((video::S3DVertex2TCoords*)mb->getVertices(), mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/ 3);
 				break;
+			case video::EVT_TANGENTS:
+				driver->drawIndexedTriangleList((video::S3DVertexTangents*)mb->getVertices(), mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/ 3);
+				break;
 			}
 		}
 

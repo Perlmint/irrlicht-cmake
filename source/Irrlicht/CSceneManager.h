@@ -412,7 +412,7 @@ namespace scene
 		//! Returns ambient color of the scene
 		virtual video::SColorf getAmbientLight();
 
-	private:		
+	private:
 
 		//! Returns a typename from a scene node animator type or null if not found
 		virtual const c8* getAnimatorTypeName(ESCENE_NODE_ANIMATOR_TYPE type);
@@ -532,7 +532,6 @@ namespace scene
 			}
 		};
 
-
 		//! video driver
 		video::IVideoDriver* Driver;
 
@@ -578,7 +577,7 @@ namespace scene
 		//! Mesh cache
 		CMeshCache* MeshCache;
 
-		E_SCENE_NODE_RENDER_PASS CurrentRendertime;	
+		E_SCENE_NODE_RENDER_PASS CurrentRendertime;
 
 		//! constants for reading and writing XML.
 		//! Not made static due to portability problems.

@@ -90,6 +90,10 @@ namespace video
 		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 			u32 vertexCount, const u16* indexList, u32 triangleCount);
 
+		//! Draws an indexed triangle fan.
+		inline void drawIndexedTriangleFan(const S3DVertexTangents* vertices,
+			u32 vertexCount, const u16* indexList, u32 triangleCount);
+
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
 			const core::vector3df& end, SColor color = SColor(255,255,255,255));

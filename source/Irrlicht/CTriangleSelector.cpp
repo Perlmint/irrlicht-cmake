@@ -63,6 +63,18 @@ CTriangleSelector::CTriangleSelector(IMesh* mesh, ISceneNode* node)
 				}
 			}
 			break;
+		case video::EVT_TANGENTS:
+			{
+				video::S3DVertexTangents* vtx = (video::S3DVertexTangents*)buf->getVertices();
+				for (s32 j=0; j<idxCnt; j+=3)
+				{
+					tri.pointA = vtx[indices[j+0]].Pos;
+					tri.pointB = vtx[indices[j+1]].Pos;
+					tri.pointC = vtx[indices[j+2]].Pos;
+					Triangles.push_back(tri);
+				}
+			}
+			break;
 		}
 	}
 }

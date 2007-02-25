@@ -18,11 +18,11 @@ namespace gui
 
 //! constructor
 CGUIScrollBar::CGUIScrollBar(bool horizontal, IGUIEnvironment* environment,
-							 IGUIElement* parent, s32 id, core::rect<s32> rectangle,
-							 bool noclip)
+				IGUIElement* parent, s32 id,
+				core::rect<s32> rectangle, bool noclip)
 : IGUIScrollBar(environment, parent, id, rectangle), UpButton(0), DownButton(0),
-	Horizontal(horizontal), Pos(0), Max(100), SmallStep(10), DrawHeight(0),
-	DrawPos(0), Dragging(false)
+	Dragging(false), Horizontal(horizontal), Pos(0), DrawPos(0),
+	DrawHeight(0), Max(100), SmallStep(10)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIScrollBar");
@@ -81,12 +81,12 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 		{
 		case EMIE_MOUSE_WHEEL:
 			{ // thanks to a bug report by REAPER
-				setPos(getPos() + (s32)event.MouseInput.Wheel* -SmallStep); 
-				SEvent newEvent; 
-				newEvent.EventType = EET_GUI_EVENT; 
-				newEvent.GUIEvent.Caller = this; 
-				newEvent.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED; 
-				Parent->OnEvent(newEvent); 
+				setPos(getPos() + (s32)event.MouseInput.Wheel* -SmallStep);
+				SEvent newEvent;
+				newEvent.EventType = EET_GUI_EVENT;
+				newEvent.GUIEvent.Caller = this;
+				newEvent.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED;
+				Parent->OnEvent(newEvent);
 			}
 			return true;
 		case EMIE_LMOUSE_PRESSED_DOWN:
@@ -142,12 +142,12 @@ void CGUIScrollBar::draw()
 		if (Horizontal)
 		{
 			rect.UpperLeftCorner.X = AbsoluteRect.UpperLeftCorner.X + DrawPos + RelativeRect.getHeight() - DrawHeight/2;
-			rect.LowerRightCorner.X = rect.UpperLeftCorner.X + DrawHeight;	
+			rect.LowerRightCorner.X = rect.UpperLeftCorner.X + DrawHeight;
 		}
 		else
 		{
 			rect.UpperLeftCorner.Y = AbsoluteRect.UpperLeftCorner.Y + DrawPos + RelativeRect.getWidth() - DrawHeight/2;
-			rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + DrawHeight;	
+			rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + DrawHeight;
 		}
 
 		skin->draw3DButtonPaneStandard(this, rect, &AbsoluteClippingRect);
@@ -168,7 +168,7 @@ void CGUIScrollBar::setPosFromMousePos(s32 x, s32 y)
 {
 	if (Horizontal)
 	{
-		f32 f = (RelativeRect.getWidth() - ((f32)RelativeRect.getHeight()*3.0f)) / (f32)Max;	
+		f32 f = (RelativeRect.getWidth() - ((f32)RelativeRect.getHeight()*3.0f)) / (f32)Max;
 		setPos((s32)(((f32)(x - AbsoluteRect.UpperLeftCorner.X - RelativeRect.getHeight())) / f));
 	}
 	else
@@ -189,15 +189,15 @@ void CGUIScrollBar::setPos(s32 pos)
 	if (Pos > Max)
 		Pos = Max;
 
-    if (Horizontal)
+	if (Horizontal)
 	{
-		f32 f = (RelativeRect.getWidth() - ((f32)RelativeRect.getHeight()*3.0f)) / (f32)Max;	
+		f32 f = (RelativeRect.getWidth() - ((f32)RelativeRect.getHeight()*3.0f)) / (f32)Max;
 		DrawPos = (s32)((Pos * f) + ((f32)RelativeRect.getHeight() * 0.5f));
 		DrawHeight = RelativeRect.getHeight();
 	}
 	else
 	{
-        f32 f = 0.0f;
+		f32 f = 0.0f;
 		if (Max != 0)
 			f = (RelativeRect.getHeight() - ((f32)RelativeRect.getWidth()*3.0f)) / (f32)Max;
 
@@ -229,7 +229,7 @@ void CGUIScrollBar::setMax(s32 max)
 	bool enable = (Max != 0);
 	UpButton->setEnabled(enable);
 	DownButton->setEnabled(enable);
-	setPos(Pos);	
+	setPos(Pos);
 }
 
 

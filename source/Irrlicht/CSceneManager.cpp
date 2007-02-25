@@ -79,10 +79,10 @@ namespace scene
 CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 							 gui::ICursorControl* cursorControl, CMeshCache* cache,
 							 gui::IGUIEnvironment * gui)
-: ISceneNode(0, 0), Driver(driver), FileSystem(fs), ActiveCamera(0),
-	CursorControl(cursorControl), CollisionManager(0),
-	ShadowColor(150,0,0,0), MeshManipulator(0), CurrentRendertime(ESNRP_COUNT),
-	MeshCache(cache), AmbientLight(0,0,0,0), GUIEnvironment ( gui ),
+: ISceneNode(0, 0), Driver(driver), FileSystem(fs), GUIEnvironment(gui),
+	CursorControl(cursorControl), CollisionManager(0), MeshManipulator(0),
+	ActiveCamera(0), ShadowColor(150,0,0,0), AmbientLight(0,0,0,0),
+	MeshCache(cache), CurrentRendertime(ESNRP_COUNT),
 	IRR_XML_FORMAT_SCENE(L"irr_scene"), IRR_XML_FORMAT_NODE(L"node"), IRR_XML_FORMAT_NODE_ATTR_TYPE(L"type")
 {
 	#ifdef _DEBUG
@@ -797,7 +797,6 @@ bool CSceneManager::isCulled(ISceneNode* node)
 	if (!cam)
 		return false;
 
-
 	switch ( node->getAutomaticCulling() )
 	{
 		// can be seen by a bounding box ?
@@ -806,12 +805,14 @@ bool CSceneManager::isCulled(ISceneNode* node)
 			core::aabbox3d<f32> tbox = node->getBoundingBox();
 			node->getAbsoluteTransformation().transformBox(tbox);
 			return !(tbox.intersectsWithBox(cam->getViewFrustum()->getBoundingBox() ));
-		} break;
+		};
+		break;
 
 		// can be seen by a bounding sphere
 		case scene::EAC_FRUSTUM_SPHERE:
 		{
-		} break;
+		};
+		break;
 
 		// can be seen by cam pyramid planes ?
 		case scene::EAC_FRUSTUM_BOX:
@@ -828,13 +829,11 @@ bool CSceneManager::isCulled(ISceneNode* node)
 			node->getBoundingBox().getEdges(edges);
 
 			bool visible = true;
-
-			s32 i;
-			for (i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
+			for (s32 i=0; i<scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 			{
 				bool boxInFrustum = false;
 
-				for (int j=0; j<8; ++j)
+				for (u32 j=0; j<8; ++j)
 				{
 					if (frust.planes[i].isFrontFacing(edges[j]) )
 					{
@@ -853,7 +852,10 @@ bool CSceneManager::isCulled(ISceneNode* node)
 
 			return !visible;
 
-		} break;
+		}
+		break;
+		case scene::EAC_OFF:
+		break;
 	}
 
 	return false;
@@ -1671,7 +1673,8 @@ void CSceneManager::readSceneNode(io::IXMLReader* reader, ISceneNode* parent, IS
 				os::Printer::log("Found unknown element in irrlicht scene file",
 								 core::stringc(reader->getNodeName()).c_str());
 			}
-
+			break;
+		default:
 			break;
 		}
 
@@ -1712,6 +1715,8 @@ void CSceneManager::readMaterials(io::IXMLReader* reader, ISceneNode* node)
 				attr->drop();
 				++nr;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -1759,6 +1764,8 @@ void CSceneManager::readAnimators(io::IXMLReader* reader, ISceneNode* node)
 				++cnt;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -1791,6 +1798,8 @@ void CSceneManager::readUserData(io::IXMLReader* reader, ISceneNode* node, IScen
 
 				attr->drop();
 			}
+			break;
+		default:
 			break;
 		}
 	}
