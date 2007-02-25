@@ -49,7 +49,6 @@ namespace gui
 		"windowsMetallic",
 		"burning",
 		0,
-		0,
 	};
 
 
@@ -183,6 +182,14 @@ namespace gui
 		EGDT_MSG_BOX_YES,
 		//! Text for the No button on a message box
 		EGDT_MSG_BOX_NO,
+		//! Tooltip text for window close button
+		EGDT_WINDOW_CLOSE,
+		//! Tooltip text for window maximize button
+		EGDT_WINDOW_MAXIMIZE,
+		//! Tooltip text for window minimize button
+		EGDT_WINDOW_MINIMIZE,
+		//! Tooltip text for window restore button
+		EGDT_WINDOW_RESTORE,
 
 		//! this value is not used, it only specifies the number of default texts
 		EGDT_COUNT
@@ -195,6 +202,10 @@ namespace gui
 		"MessageBoxCancel",
 		"MessageBoxYes",
 		"MessageBoxNo",
+		"WindowButtonClose",
+		"WindowButtonMaximize",
+		"WindowButtonMinimize",
+		"WindowButtonRestore",
 		0,
 	};
 

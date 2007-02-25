@@ -7,6 +7,8 @@
 #include "IGUIEnvironment.h"
 #include "IVideoDriver.h"
 #include "IGUIFont.h"
+#include "IGUISpriteBank.h"
+#include "os.h"
 
 namespace irr
 {
@@ -19,7 +21,7 @@ namespace gui
 CGUIContextMenu::CGUIContextMenu(IGUIEnvironment* environment,
 				 IGUIElement* parent, s32 id,
 				 core::rect<s32> rectangle, bool getFocus)
-: IGUIContextMenu(environment, parent, id, rectangle), HighLighted(-1)
+: IGUIContextMenu(environment, parent, id, rectangle), HighLighted(-1), ChangeTime(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIContextMenu");
@@ -235,6 +237,7 @@ bool CGUIContextMenu::OnEvent(SEvent event)
 void CGUIContextMenu::setVisible(bool visible)
 {
 	HighLighted = -1;
+	ChangeTime = os::Timer::getTime();
 	for (s32 j=0; j<(s32)Items.size(); ++j)
 		if (Items[j].SubMenu)
 			Items[j].SubMenu->setVisible(false);
@@ -310,6 +313,7 @@ bool CGUIContextMenu::highlight(core::position2d<s32> p)
 		if (Items[openmenu].SubMenu->highlight(p))
 		{
 			HighLighted = openmenu;
+			ChangeTime = os::Timer::getTime();
 			return true;
 		}
 	}
@@ -319,6 +323,7 @@ bool CGUIContextMenu::highlight(core::position2d<s32> p)
 		if (getHRect(Items[i], AbsoluteRect).isPointInside(p))
 		{
 			HighLighted = i;
+			ChangeTime = os::Timer::getTime();
 
 			// make submenus visible/invisible
 			for (s32 j=0; j<(s32)Items.size(); ++j)
@@ -360,12 +365,16 @@ void CGUIContextMenu::draw()
 		return;
 
 	IGUISkin* skin = Environment->getSkin();
+
+	if (!skin)
+		return;
+	
 	IGUIFont* font = skin->getFont();
-	IGUIFont* defaultFont = Environment->getBuiltInFont();
+	IGUISpriteBank* sprites = skin->getSpriteBank();
+
 	video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32> rect = AbsoluteRect;
-	//core::rect<s32>* clip = &AbsoluteClippingRect;
 	core::rect<s32>* clip = 0;
 
 	// draw frame
@@ -425,22 +434,28 @@ void CGUIContextMenu::draw()
 					skin->getColor(c), false, true, clip);
 
 			// draw submenu symbol
-			if (Items[i].SubMenu && defaultFont)
+			if (Items[i].SubMenu && sprites)
 			{
 				core::rect<s32> r = rect;
 				r.UpperLeftCorner.X = r.LowerRightCorner.X - 15;
 
-				defaultFont->draw(L"", r, //GUI_ICON_CURSOR_RIGHT, r,
-					skin->getColor(c), true, true, clip);
+				sprites->draw2DSprite(skin->getIcon(EGDI_CURSOR_RIGHT), 
+					r.getCenter(), clip, skin->getColor(c), 
+					(i == HighLighted) ? ChangeTime : 0,  
+					(i == HighLighted) ? os::Timer::getTime() : 0, 
+					(i == HighLighted), true); 
 			}
 
 			// draw checked symbol
-			if (Items[i].Checked && defaultFont)
+			if (Items[i].Checked && sprites)
 			{
 				core::rect<s32> r = rect;
 				r.UpperLeftCorner.X -= 15;
-				defaultFont->draw(L"",r, //GUI_ICON_CHECK_BOX_CHECKED, r,
-					skin->getColor(c), false, true, clip);
+				sprites->draw2DSprite(skin->getIcon(EGDI_CHECK_BOX_CHECKED), 
+					r.getCenter(), clip, skin->getColor(c), 
+					(i == HighLighted) ? ChangeTime : 0,  
+					(i == HighLighted) ? os::Timer::getTime() : 0, 
+					(i == HighLighted), true); 
 			}
 
 		}

@@ -7,6 +7,8 @@
 #include "IGUIEnvironment.h"
 #include "IVideoDriver.h"
 #include "IGUIFont.h"
+#include "IGUISkin.h"
+#include "os.h"
 
 namespace irr
 {
@@ -16,14 +18,19 @@ namespace gui
 //! constructor
 CGUIButton::CGUIButton(IGUIEnvironment* environment, IGUIElement* parent,
 					   s32 id, core::rect<s32> rectangle, bool noclip)
-: IGUIButton(environment, parent, id, rectangle), Pressed(false), 
-	OverrideFont(0), Image(0), PressedImage(0),
+: IGUIButton(environment, parent, id, rectangle), Pressed(false), Border(true),
+	OverrideFont(0), Image(0), PressedImage(0), SpriteBank(0),
+	MouseOverTime(0), FocusTime(0), ClickTime(0),
 	IsPushButton(false), UseAlphaChannel(false)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIButton");
 	#endif
 	setNotClipped(noclip);
+
+	// reset sprites
+	for (u32 i=0; i<EGBS_COUNT; ++i)
+		ButtonSprites[i].Index = -1;
 }
 
 
@@ -39,9 +46,41 @@ CGUIButton::~CGUIButton()
 
 	if (PressedImage)
 		PressedImage->drop();
+
+	if (SpriteBank)
+		SpriteBank->drop();
 }
 
+//! Sets if the button should use the skin to draw its border
+void CGUIButton::setDrawBorder(bool border)
+{
+	Border = border;
+}
 
+void CGUIButton::setSpriteBank(IGUISpriteBank* sprites)
+{
+	if (sprites)
+		sprites->grab();
+
+	if (SpriteBank)
+		SpriteBank->drop();
+
+	SpriteBank = sprites;
+}
+
+void CGUIButton::setSprite(EGUI_BUTTON_STATE state, s32 index, video::SColor color, bool loop)
+{
+	if (SpriteBank)
+	{
+		ButtonSprites[(u32)state].Index	= index;
+		ButtonSprites[(u32)state].Color	= color;
+		ButtonSprites[(u32)state].Loop	= loop;
+	}
+	else
+	{
+		ButtonSprites[(u32)state].Index = -1;
+	}
+}
 
 //! called if an event happened.
 bool CGUIButton::OnEvent(SEvent event)
@@ -57,9 +96,9 @@ bool CGUIButton::OnEvent(SEvent event)
 			 event.KeyInput.Key == KEY_SPACE))
 		{
 			if (!IsPushButton)
-				Pressed = true;
+				setPressed(true);
 			else
-				Pressed = !Pressed;
+				setPressed(!Pressed);
 
 			return true;
 		}
@@ -71,7 +110,7 @@ bool CGUIButton::OnEvent(SEvent event)
 			Environment->removeFocus(this);
 
 			if (!IsPushButton)
-				Pressed = false;
+				setPressed(false);
 			
 			if (Parent)
 			{
@@ -88,7 +127,7 @@ bool CGUIButton::OnEvent(SEvent event)
 		if (event.GUIEvent.EventType == EGET_ELEMENT_FOCUS_LOST)
 		{
 			if (event.GUIEvent.Caller == (IGUIElement*) this && !IsPushButton)
-				Pressed = false;
+				setPressed(false);
 		}
 		break;
 	case EET_MOUSE_INPUT_EVENT:
@@ -102,7 +141,7 @@ bool CGUIButton::OnEvent(SEvent event)
 			}
 
 			if (!IsPushButton)
-				Pressed = true;
+				setPressed(true);
 			
 			Environment->setFocus(this);
 			return true;
@@ -116,15 +155,15 @@ bool CGUIButton::OnEvent(SEvent event)
 			if ( !AbsoluteClippingRect.isPointInside( core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y ) ) )
 			{
 				if (!IsPushButton)
-					Pressed = false;
+					setPressed(false);
 				return true;
 			}
 
 			if (!IsPushButton)
-				Pressed = false;
+				setPressed(false);
 			else
 			{
-				Pressed = !Pressed;
+				setPressed(!Pressed);
 			}
 			
 			if ((!IsPushButton && wasPressed && Parent) ||
@@ -162,9 +201,14 @@ void CGUIButton::draw()
 
 	core::rect<s32> rect = AbsoluteRect;
 
+	// todo:	move sprite up and text down if the pressed state has a sprite
+	//			draw sprites for focused and mouse-over 
+	core::position2di spritePos = AbsoluteRect.getCenter();
+
 	if (!Pressed)
 	{
-		skin->draw3DButtonPaneStandard(this, rect, &AbsoluteClippingRect);
+		if (Border)
+			skin->draw3DButtonPaneStandard(this, rect, &AbsoluteClippingRect);
 
 		if (Image)
 		{
@@ -175,10 +219,18 @@ void CGUIButton::draw()
 			driver->draw2DImage(Image, pos, ImageRect, &AbsoluteClippingRect, 
 				video::SColor(255,255,255,255), UseAlphaChannel);
 		}
+		if (SpriteBank && ButtonSprites[EGBS_BUTTON_UP].Index != -1)
+		{
+			// draw pressed sprite
+			SpriteBank->draw2DSprite(ButtonSprites[EGBS_BUTTON_UP].Index, spritePos, 
+				&AbsoluteClippingRect, ButtonSprites[EGBS_BUTTON_UP].Color, ClickTime, os::Timer::getTime(), 
+				ButtonSprites[EGBS_BUTTON_UP].Loop, true);
+		}
 	}
 	else
 	{
-		skin->draw3DButtonPanePressed(this, rect, &AbsoluteClippingRect);
+		if (Border)
+			skin->draw3DButtonPanePressed(this, rect, &AbsoluteClippingRect);
 
 		if (PressedImage)
 		{
@@ -194,6 +246,15 @@ void CGUIButton::draw()
 			driver->draw2DImage(PressedImage, pos, PressedImageRect, &AbsoluteClippingRect,
 				video::SColor(255,255,255,255), UseAlphaChannel);
 		}
+
+		if (SpriteBank && ButtonSprites[EGBS_BUTTON_DOWN].Index != -1)
+		{
+			// draw sprite
+			SpriteBank->draw2DSprite(ButtonSprites[EGBS_BUTTON_DOWN].Index, spritePos, 
+				&AbsoluteClippingRect, ButtonSprites[EGBS_BUTTON_DOWN].Color, ClickTime, os::Timer::getTime(), 
+				ButtonSprites[EGBS_BUTTON_DOWN].Loop, true);
+		}
+
 	}
 
 	if (Text.size())
@@ -306,7 +367,11 @@ bool CGUIButton::isPressed()
 //! Sets the pressed state of the button if this is a pushbutton
 void CGUIButton::setPressed(bool pressed)
 {
-	Pressed = pressed;
+	if (Pressed != pressed)
+	{
+		ClickTime = os::Timer::getTime();
+		Pressed = pressed;
+	}
 }
 
 //! Sets if the alpha channel should be used for drawing images on the button (default is false)

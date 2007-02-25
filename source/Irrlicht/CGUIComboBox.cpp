@@ -29,7 +29,9 @@ CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 
 	IGUISkin* skin = Environment->getSkin();
 
-	s32 width = skin->getSize(EGDS_WINDOW_BUTTON_WIDTH);
+	s32 width = 15;
+	if (skin)
+		width = skin->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 
 	core::rect<s32> r;
 	r.UpperLeftCorner.X = rectangle.getWidth() - width - 2;
@@ -38,9 +40,14 @@ CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 	r.UpperLeftCorner.Y = 2;
 	r.LowerRightCorner.Y = rectangle.getHeight() - 2;
 
-	ListButton = Environment->addButton(r, this, -1, L"");//GUI_ICON_CURSOR_DOWN);
+	ListButton = Environment->addButton(r, this, -1, L"");
+	if (skin && skin->getSpriteBank())
+	{
+		ListButton->setSpriteBank(skin->getSpriteBank());
+		ListButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_CURSOR_DOWN), skin->getColor(EGDC_WINDOW_SYMBOL));
+		ListButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_CURSOR_DOWN), skin->getColor(EGDC_WINDOW_SYMBOL));
+	}
 	ListButton->setSubElement(true);
-	ListButton->setOverrideFont(Environment->getBuiltInFont());
 
 	setNotClipped(true);
 }

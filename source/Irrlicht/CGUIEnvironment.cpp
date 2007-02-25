@@ -269,6 +269,12 @@ void CGUIEnvironment::OnPostRender( u32 time )
 		core::rect<s32> pos;
 		pos.UpperLeftCorner = Hovered->getAbsolutePosition().LowerRightCorner;
 		pos.LowerRightCorner = pos.UpperLeftCorner + core::position2d<s32> ( 100, 50 );
+		if (getSkin() && getSkin()->getFont())
+		{
+			pos.LowerRightCorner = pos.UpperLeftCorner + 
+				getSkin()->getFont()->getDimension(Hovered->getToolTipText().c_str()) + 
+				core::position2di(getSkin()->getSize(EGDS_TEXT_DISTANCE_X)*2, getSkin()->getSize(EGDS_TEXT_DISTANCE_Y)*2);
+		}
 
 		ToolTip.Element = addStaticText (	Hovered->getToolTipText().c_str(), pos, true, true, this, -1, true );
 		ToolTip.Element->setOverrideColor ( getSkin()->getColor ( EGDC_TOOLTIP ) );

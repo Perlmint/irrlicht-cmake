@@ -474,7 +474,7 @@ void CGUIEditBox::draw()
 		skin->draw3DSunkenPane(this, skin->getColor(EGDC_WINDOW),
 			false, true, frameRect, &AbsoluteClippingRect);
 		
-		frameRect.UpperLeftCorner.X += 3;
+		frameRect.UpperLeftCorner.X += skin->getSize(EGDS_TEXT_DISTANCE_X);
 	}
 
 	// draw the text
@@ -501,8 +501,8 @@ void CGUIEditBox::draw()
 		{
 			rct = frameRect;
 
-			rct.LowerRightCorner.Y -= 2;
-			rct.UpperLeftCorner.Y += 2;
+			rct.LowerRightCorner.Y -= skin->getSize(EGDS_TEXT_DISTANCE_Y);
+			rct.UpperLeftCorner.Y += skin->getSize(EGDS_TEXT_DISTANCE_Y);
 
 			s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
 			s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;

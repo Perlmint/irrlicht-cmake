@@ -124,6 +124,7 @@ namespace gui
 		s32 HighLighted;
 		core::array<SItem> Items;
 		core::position2d<s32> Pos;
+		u32 ChangeTime;
 	};
 
 } // end namespace gui

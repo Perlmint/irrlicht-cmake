@@ -160,6 +160,7 @@ void CGUIScrollBar::draw()
 void CGUIScrollBar::updateAbsolutePosition()
 {
 	IGUIElement::updateAbsolutePosition();
+	// todo: properly resize
 	refreshControls();
 }
 
@@ -242,6 +243,17 @@ s32 CGUIScrollBar::getPos()
 //! refreshes the position and text on child buttons
 void CGUIScrollBar::refreshControls()
 {
+	video::SColor color(255,255,255,255);
+
+	IGUISkin* skin = Environment->getSkin();
+	IGUISpriteBank* sprites = 0;
+
+	if (skin)
+	{
+		sprites = skin->getSpriteBank();
+		color = skin->getColor(EGDC_WINDOW_SYMBOL);
+	}
+
 	if (Horizontal)
 	{
 		s32 h = RelativeRect.getHeight();
@@ -249,18 +261,28 @@ void CGUIScrollBar::refreshControls()
 		{
 			UpButton = new CGUIButton(Environment, this, -1, core::rect<s32>(0,0, h, h), NoClip);
 			UpButton->setSubElement(true);
-			UpButton->setOverrideFont(Environment->getBuiltInFont());
 		}
-		UpButton->setText(L"" );//GUI_ICON_CURSOR_LEFT);
+		if (sprites)
+		{
+			UpButton->setSpriteBank(sprites);
+			UpButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_CURSOR_LEFT), color);
+			UpButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_CURSOR_LEFT), color);
+		}
 		UpButton->setRelativePosition(core::rect<s32>(0,0, h, h));
+		UpButton->setAlignment(EGUIA_UPPERLEFT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 		if (!DownButton)
 		{
 			DownButton = new CGUIButton(Environment, this, -1, core::rect<s32>(RelativeRect.getWidth()-h, 0, RelativeRect.getWidth(), h), NoClip);
 			DownButton->setSubElement(true);
-			DownButton->setOverrideFont(Environment->getBuiltInFont());
+		}
+		if (sprites)
+		{
+			DownButton->setSpriteBank(sprites);
+			DownButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_CURSOR_RIGHT), color);
+			DownButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_CURSOR_RIGHT), color);
 		}
 		DownButton->setRelativePosition(core::rect<s32>(RelativeRect.getWidth()-h, 0, RelativeRect.getWidth(), h));
-		DownButton->setText(L"" );//GUI_ICON_CURSOR_RIGHT);
+		DownButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	}
 	else
 	{
@@ -269,18 +291,28 @@ void CGUIScrollBar::refreshControls()
 		{
 			UpButton = new CGUIButton(Environment, this, -1, core::rect<s32>(0,0, w, w), NoClip);
 			UpButton->setSubElement(true);
-			UpButton->setOverrideFont(Environment->getBuiltInFont());
 		}
-		UpButton->setText(L"" );//GUI_ICON_CURSOR_UP);
+		if (sprites)
+		{
+			UpButton->setSpriteBank(sprites);
+			UpButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_CURSOR_UP), color);
+			UpButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_CURSOR_UP), color);
+		}
 		UpButton->setRelativePosition(core::rect<s32>(0,0, w, w));
+		UpButton->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 		if (!DownButton)
 		{
 			DownButton = new CGUIButton(Environment, this, -1, core::rect<s32>(0,RelativeRect.getHeight()-w, w, RelativeRect.getHeight()), NoClip);
 			DownButton->setSubElement(true);
-			DownButton->setOverrideFont(Environment->getBuiltInFont());
 		}
-		DownButton->setText(L"" );//GUI_ICON_CURSOR_DOWN);
+		if (sprites)
+		{
+			DownButton->setSpriteBank(sprites);
+			DownButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_CURSOR_DOWN), color);
+			DownButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_CURSOR_DOWN), color);
+		}
 		DownButton->setRelativePosition(core::rect<s32>(0,RelativeRect.getHeight()-w, w, RelativeRect.getHeight()));
+		DownButton->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT);
 	}
 }
 

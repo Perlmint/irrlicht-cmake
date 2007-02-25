@@ -1246,7 +1246,7 @@ public:
 	{
 		char tmp[10];
 		video::SColor c = getColor();
-		snprintf(tmp, 10, "%08x", c.color);
+		sprintf(tmp, "%08x", c.color);
 		return core::stringw(tmp);
 	}
 

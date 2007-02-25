@@ -46,6 +46,8 @@ void CGUIStaticText::draw()
 		return;
 
 	IGUISkin* skin = Environment->getSkin();
+	if (!skin)
+		return;
 	irr::video::IVideoDriver* driver = Environment->getVideoDriver();
 
 	core::rect<s32> frameRect(AbsoluteRect);
@@ -63,7 +65,7 @@ void CGUIStaticText::draw()
 	if (Border)
 	{
 		skin->draw3DSunkenPane(this, 0, true, false, frameRect, &AbsoluteClippingRect);
-		frameRect.UpperLeftCorner.X += 3;
+		frameRect.UpperLeftCorner.X += skin->getSize(EGDS_TEXT_DISTANCE_X);
 	}
 
 	// draw the text
