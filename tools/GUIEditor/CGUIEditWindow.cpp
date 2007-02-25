@@ -5,6 +5,7 @@
 #include "IGUIElementFactory.h"
 #include "IAttributes.h"
 #include "IGUIFont.h"
+#include "IGUITabControl.h"
 
 using namespace irr;
 using namespace gui;
@@ -21,7 +22,7 @@ CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rec
 	#endif
 
 	// set window text
-	setText(L"Attributes");
+	setText(L"GUI Editor");
 
 	// return if we have no skin.
 	IGUISkin *skin = environment->getSkin();
@@ -31,12 +32,24 @@ CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rec
 	s32 th = skin->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 
 	setRelativePosition(core::rect<s32>(50,50,250,500));
-	setMinSize( core::dimension2di(200,400));
+	setMinSize( core::dimension2di(200,200));
 
-	AttribEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor",this);
+	IGUITabControl *TabControl = environment->addTabControl(core::rect<s32>(1,th+5,199,449), this, false, true);
+	//TabControl->setRelativePosition(core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
+	TabControl->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+
+	IGUITab* OptionsTab = TabControl->addTab(L"Options");
+	OptionsTab->setSubElement(true);
+	OptionsTab->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+
+	IGUITab* AttributeTab = TabControl->addTab(L"Attributes");
+	AttributeTab->setSubElement(true);
+	AttributeTab->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+
+	AttribEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor",AttributeTab);
 	AttribEditor->grab();
 	AttribEditor->setSubElement(true);
-	AttribEditor->setRelativePosition(core::rect<s32>(1,th+5,200-th,450-th-5));
+	AttribEditor->setRelativePosition( core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
 	AttribEditor->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	
 	ResizeButton = environment->addStaticText(L"/",core::rect<s32>(199-th,449-th,199,449), true, false, this, true);

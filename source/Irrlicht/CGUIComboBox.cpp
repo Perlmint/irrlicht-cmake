@@ -74,6 +74,12 @@ const wchar_t* CGUIComboBox::getItem(s32 idx)
 	return Items[idx].c_str();
 }
 
+//! Returns caption of this element.
+const wchar_t* CGUIComboBox::getText()
+{
+	return getItem(Selected);
+}
+
 
 //! adds an item and returns the index of it
 s32 CGUIComboBox::addItem(const wchar_t* text)

@@ -22,7 +22,7 @@ CGUIAttributeEditor::CGUIAttributeEditor(IGUIEnvironment* environment, s32 id, I
 	// create attributes
 	Attribs = environment->getFileSystem()->createEmptyAttributes(Environment->getVideoDriver());
 	// add scrollbar
-	ScrollBar = environment->addScrollBar(false, rect<s32>(0, 0,100,100), this);
+	ScrollBar = environment->addScrollBar(false, rect<s32>(75, 15, 90, 85), this);
 	ScrollBar->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	ScrollBar->grab();
 	ScrollBar->setSubElement(true);
@@ -44,13 +44,6 @@ CGUIAttributeEditor::~CGUIAttributeEditor()
 	ScrollBar->drop();
 }
 
-void CGUIAttributeEditor::setRelativePosition(const rect<s32>& r)
-{
-	IGUIElement::setRelativePosition(r);
-	s32 w = Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
-	ScrollBar->setRelativePosition(rect<s32>( r.getWidth() - (s32)(w * 1.5f), 10, r.getWidth() - (s32)(w * 0.5f), r.getHeight() - 1));
-}
-
 bool CGUIAttributeEditor::OnEvent(SEvent e)
 {
 
@@ -63,6 +56,22 @@ bool CGUIAttributeEditor::OnEvent(SEvent e)
 		case EGET_SCROLL_BAR_CHANGED:
 			{
 				// set the offset of every attribute
+				s32 diff = LastOffset - ScrollBar->getPos();
+				for (u32 i=0; i<AttribList.size(); ++i)
+					AttribList[i]->setRelativePosition(AttribList[i]->getRelativePosition() + position2di(0,diff));
+
+				LastOffset = ScrollBar->getPos();
+				return true;
+			}
+		}
+		break;
+	case EET_MOUSE_INPUT_EVENT:
+		switch (e.MouseInput.Event)
+		{
+		case EMIE_MOUSE_WHEEL:
+			{
+				ScrollBar->setPos(ScrollBar->getPos() - e.MouseInput.Wheel*20);
+				
 				s32 diff = LastOffset - ScrollBar->getPos();
 				for (u32 i=0; i<AttribList.size(); ++i)
 					AttribList[i]->setRelativePosition(AttribList[i]->getRelativePosition() + position2di(0,diff));
@@ -214,6 +223,8 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 			for (u32 i=0; i<outLiterals.size(); ++i)
 				AttribComboBox->addItem( core::stringw(outLiterals[i].c_str()).c_str());
 
+			AttribComboBox->setSelected( attribs->getAttributeAsInt(attribIndex) );
+
 			AttribComboBox->grab();
 			AttribComboBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 		}
@@ -264,11 +275,20 @@ bool CGUIAttribute::OnEvent(SEvent e)
 		{
 		case EGET_EDITBOX_ENTER:
 		case EGET_CHECKBOX_CHANGED:
-		case EGET_ELEMENT_FOCUS_LOST:
+		case EGET_COMBO_BOX_CHANGED:
 			updateAttrib();
 			return true;
+		case EGET_ELEMENT_FOCUS_LOST:
+			updateAttrib();
+			break;
+		case EGET_ELEMENT_FOCUSED:
+			if (Parent)
+				Parent->bringToFront(this);
+			break;
 		}
 		break;
+	case EET_KEY_INPUT_EVENT:
+		return true;
 	}
 	return Parent->OnEvent(e);
 }
@@ -281,7 +301,8 @@ void CGUIAttribute::updateAttrib()
 	}
 	else if (Attribs->getAttributeType(Index) == io::EAT_ENUM)
 	{
-		//Attribs->setAttribute(Index, AttribEditBox->getText());
+		core::stringw test = AttribComboBox->getText();
+		Attribs->setAttribute(Index, AttribComboBox->getText());
 	}
 	else
 	{

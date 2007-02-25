@@ -54,7 +54,7 @@ public:
 		AbsoluteClippingRect(rectangle), DesiredRect(rectangle),
 		LastParentRect(0,0,0,0), ScaleRect(0.0f, 0.0f, 0.0f, 0.0f),
 		MaxSize(0,0), MinSize(1,1), IsVisible(true), IsEnabled(true),
-		IsSubElement(false), NoClip(false), ID(id), ClipLock(false),
+		IsSubElement(false), NoClip(false), ID(id), 
 		AlignLeft(EGUIA_UPPERLEFT), AlignRight(EGUIA_UPPERLEFT), AlignTop(EGUIA_UPPERLEFT), AlignBottom(EGUIA_UPPERLEFT),
 		Environment(environment), Type(type)
 	{
@@ -141,8 +141,6 @@ public:
 						(s32)((f32)d.Height * r.UpperLeftCorner.Y),
 						(s32)((f32)d.Width  * r.LowerRightCorner.X),
 						(s32)((f32)d.Height * r.LowerRightCorner.Y));
-		
-		DesiredRect += r2.UpperLeftCorner;
 
 		ScaleRect = r;
 
@@ -692,9 +690,6 @@ protected:
 
 	//! id
 	s32 ID;
-
-	//! does this element ignore its parent's clipping area?
-	bool ClipLock;
 
 	//! tells the element how to act when its parent is resized
 	EGUI_ALIGNMENT AlignLeft, AlignRight, AlignTop, AlignBottom;

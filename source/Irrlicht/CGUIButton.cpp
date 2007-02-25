@@ -401,7 +401,8 @@ void CGUIButton::serializeAttributes(io::IAttributes* out, io::SAttributeReadWri
 	out->addTexture	("PressedImage",	PressedImage);
 	out->addRect	("PressedImageRect",PressedImageRect);
 
-	out->addBool		("UseAlphaChannel",	UseAlphaChannel);
+	out->addBool	("Border",	Border);
+	out->addBool	("UseAlphaChannel",	UseAlphaChannel);
 
 	//   out->addString  ("OverrideFont",	OverrideFont);
 }
@@ -428,6 +429,7 @@ void CGUIButton::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWr
 	else
 		setPressedImage( in->getAttributeAsTexture("PressedImage") );
 
+	setDrawBorder(in->getAttributeAsBool("Border"));
 	UseAlphaChannel = in->getAttributeAsBool("UseAlphaChannel");
 
 	//   setOverrideFont(in->getAttributeAsString("OverrideFont"));

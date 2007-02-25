@@ -64,26 +64,30 @@ CGUIColorSelectDialog::CGUIColorSelectDialog( const wchar_t* title, IGUIEnvironm
 	s32 buttonw = environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 	s32 posx = RelativeRect.getWidth() - buttonw - 4;
 
-	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, L"x");
-	/*
-	TODO: sprites for button pictures.
+	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), 
+		this, -1, L"", skin ? skin->getDefaultText(EGDT_WINDOW_CLOSE) : L"Close");
 	if (skin && skin->getSpriteBank())
 	{
-		skin->getSpriteBank()->getSprites()[skin->getIcon(EGDI_WINDOW_CLOSE)];
-	}*/
+		CloseButton->setSpriteBank(skin->getSpriteBank());
+		CloseButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_WINDOW_CLOSE), skin->getColor(EGDC_WINDOW_SYMBOL));
+		CloseButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_WINDOW_CLOSE), skin->getColor(EGDC_WINDOW_SYMBOL));
+	}
 	CloseButton->setSubElement(true);
+	CloseButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT); 
 	CloseButton->grab();
 
 	OKButton = Environment->addButton(
 		core::rect<s32>(RelativeRect.getWidth()-80, 30, RelativeRect.getWidth()-10, 50),
 		this, -1, skin ? skin->getDefaultText(EGDT_MSG_BOX_OK) : L"OK");
 	OKButton->setSubElement(true);
+	OKButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT); 
 	OKButton->grab();
 
 	CancelButton = Environment->addButton(
 		core::rect<s32>(RelativeRect.getWidth()-80, 55, RelativeRect.getWidth()-10, 75), 
 		this, -1, skin ? skin->getDefaultText(EGDT_MSG_BOX_CANCEL) : L"Cancel");
 	CancelButton->setSubElement(true);
+	CancelButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT); 
 	CancelButton->grab();
 
 	core::rect<s32> r;
@@ -92,12 +96,13 @@ CGUIColorSelectDialog::CGUIColorSelectDialog( const wchar_t* title, IGUIEnvironm
 	ColorRing.Texture = driver->getTexture ( "#colorring" );
 	if ( 0 == ColorRing.Texture )
 	{
-		buildColorRing ( core::dimension2d<s32> ( 128, 128  ), 1,  Environment->getSkin ()->getColor (EGDC_3D_SHADOW ).color );
+		buildColorRing(core::dimension2d<s32>(128, 128), 1,  
+			Environment->getSkin()->getColor(EGDC_3D_SHADOW).color);
 	}
 
 	r.UpperLeftCorner.X = 20;
 	r.UpperLeftCorner.Y = 20;
-	ColorRing.Control = Environment->addImage ( ColorRing.Texture, r.UpperLeftCorner, true, this );
+	ColorRing.Control = Environment->addImage(ColorRing.Texture, r.UpperLeftCorner, true, this);
 	ColorRing.Control->setSubElement(true);
 	ColorRing.Control->grab();
 
@@ -147,6 +152,9 @@ CGUIColorSelectDialog::CGUIColorSelectDialog( const wchar_t* title, IGUIEnvironm
 
 		Battery.push_back ( item );
 	}
+
+	bringToFront(CancelButton);
+	bringToFront(OKButton);
 
 }
 

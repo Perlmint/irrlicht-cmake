@@ -37,6 +37,9 @@ namespace gui
 		//! deletes all items in the combo box
 		virtual void clear();
 
+		//! returns the text of the currently selected item
+		virtual const wchar_t* getText();
+
 		//! returns id of selected item. returns -1 if no item is selected.
 		virtual s32 getSelected();
 

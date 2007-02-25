@@ -301,7 +301,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 		if ( !this->IsEnabled )
 			break;
 
-		if (Text.size()!=0)
+		if (Text.size())
 		{
 			core::stringw s;
 			
@@ -320,7 +320,10 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			else
 			{
 				// delete text behind cursor
-				s = Text.subString(0, CursorPos-1);
+				if (CursorPos>0)
+					s = Text.subString(0, CursorPos-1);
+				else
+					s = L"";
 				s.append( Text.subString(CursorPos, Text.size()-CursorPos) );
 				Text = s;
 				--CursorPos;

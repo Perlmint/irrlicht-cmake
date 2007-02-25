@@ -38,13 +38,26 @@ CGUIFileOpenDialog::CGUIFileOpenDialog(const wchar_t* title, IGUIEnvironment* en
 	Text = title;
 
 	IGUISkin* skin = Environment->getSkin();
+	IGUISpriteBank* sprites = 0;
+	video::SColor color(255,255,255,255);
+	if (skin)
+	{
+		sprites = skin->getSpriteBank();
+		color = skin->getColor(EGDC_WINDOW_SYMBOL);
+	}
 
 	s32 buttonw = environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
 	s32 posx = RelativeRect.getWidth() - buttonw - 4;
 
-	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, L"");//GUI_ICON_WINDOW_CLOSE);
+	CloseButton = Environment->addButton(core::rect<s32>(posx, 3, posx + buttonw, 3 + buttonw), this, -1, 
+		L"", skin ? skin->getDefaultText(EGDT_MSG_BOX_OK) : L"Close");
 	CloseButton->setSubElement(true);
-	CloseButton->setOverrideFont(Environment->getBuiltInFont());
+	if (sprites)
+	{
+		CloseButton->setSpriteBank(sprites);
+		CloseButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_WINDOW_CLOSE), color);
+		CloseButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_WINDOW_CLOSE), color);
+	}
 	CloseButton->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 	CloseButton->grab();
 

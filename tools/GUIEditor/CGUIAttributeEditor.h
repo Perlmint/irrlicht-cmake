@@ -57,9 +57,6 @@ namespace gui
 		// gets the current attributes list
 		virtual io::IAttributes* getAttribs();
 
-		// set a new position, update the scrollbar
-		virtual void setRelativePosition(const core::rect<s32> &r);
-
 		// update the attribute list after making a change
 		void refreshAttribs();
 
