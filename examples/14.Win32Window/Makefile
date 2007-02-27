@@ -1,7 +1,7 @@
 # Makefile for Irrlicht Examples
 # It's usually sufficient to change just the target name and source file list
 # and be sure that CXX is set to a valid compiler
-Target = 10.Shaders
+Target = 14.Win32Window
 Sources = main.cpp
 
 # general compiler settings

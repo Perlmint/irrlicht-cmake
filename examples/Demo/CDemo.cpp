@@ -2,9 +2,6 @@
 // This file is not documentated.
 
 #include "CDemo.h"
-#include <stdio.h>
-
-
 
 CDemo::CDemo(bool f, bool m, bool s, bool a, bool v, video::E_DRIVER_TYPE d)
 : fullscreen(f), driverType(d), currentScene(-2),

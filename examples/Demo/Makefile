@@ -1,20 +1,40 @@
 # Irrlicht Engine Demo Makefile
-# Handwritten by me, made with Kate. So it is far from being perfect. :)
+Target = Demo
+Sources = CDemo.cpp CMainMenu.cpp main.cpp
 
-CXX = g++
-CPPFLAGS = -I"../../include" -I"/usr/X11R6/include"
+CPPFLAGS = -I../../include -I/usr/X11R6/include
 CXXFLAGS = -O3 -ffast-math
-LDFLAGS = -L"/usr/X11R6/lib" -L"../../lib/Linux" -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
+
+all: all_linux
+
+all_linux: SYSTEM=Linux
+all_linux: LDFLAGS = -L/usr/X11R6/lib -L../../lib/$(SYSTEM) -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
+
+all_win32 clean_win32: SYSTEM=Win32-gcc
+# Avoid namespace problems in iostream by using ansi c++
+all_win32: CPPFLAGS += -ansi -DWIN32
+all_win32: LDFLAGS = -L../../lib/$(SYSTEM) -lIrrlicht -lopengl32 -lglu32 -lm
+
 # if you enable sound add the proper library for linking
-# -laudiere
-# -lSDL_mixer -lSDL
+#LDFLAGS += -lIrrKlang
+#LDFLAGS += -laudiere
+#LDFLAGS += -lSDL_mixer -lSDL
 
-LINKOBJ = CDemo.o CMainMenu.o main.o $(RES)
+all_win32 clean_win32: SUF=.exe
+# name of the binary - only valid for targets which set SYSTEM
+DESTPATH = ../../bin/$(SYSTEM)/$(Target)$(SUF)
 
-all: demo
+OBJ = $(Sources:.cpp=.o)
 
-demo: $(LINKOBJ)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o demo $(LDFLAGS)
+all_linux all_win32: $(OBJ)
+	$(warning Building...)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $(DESTPATH) $(LDFLAGS)
 
-clean:
-	$(RM) $(LINKOBJ) demo
+clean: clean_linux clean_win32
+	$(warning Cleaning...)
+	@$(RM) $(OBJ)
+
+clean_linux clean_win32:
+	@$(RM) $(DESTPATH)
+
+.PHONY: all all_win32 clean clean_linux clean_win32

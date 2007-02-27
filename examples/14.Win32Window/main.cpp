@@ -2,6 +2,9 @@
 // can run inside a win32 window.
 
 #include <irrlicht.h>
+#ifndef _IRR_WINDOWS_
+#error Windows only example
+#else
 #include <windows.h> // this example only runs with windows
 
 using namespace irr;
@@ -182,3 +185,5 @@ int main()
 
 	return 0;
 }
+#endif // if windows
+

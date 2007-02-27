@@ -1,8 +1,36 @@
-CPP = g++
-OPTS =  -I"../../include" -I"/usr/X11R6/include" -L"/usr/X11R6/lib" -L"../../lib/Linux" -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
+# Makefile for Irrlicht Examples
+# It's usually sufficient to change just the target name and source file list
+# and be sure that CXX is set to a valid compiler
+Target = 07.Collision
+Sources = main.cpp
 
-all:
-	$(CPP) main.cpp -o example $(OPTS)
+# general compiler settings
+CPPFLAGS = -I../../include -I/usr/X11R6/include
+CXXFLAGS = -O3 -ffast-math
+#CXXFLAGS = -g -Wall
 
-clean:
-	$(RM) example
+#default target is Linux
+all: all_linux
+
+# target specific settings
+all_linux: LDFLAGS = -L/usr/X11R6/lib -L../../lib/Linux -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
+all_linux clean_linux: SYSTEM=Linux
+# Avoid namespace problems in iostream by using ansi c++
+all_win32: CPPFLAGS += -ansi
+all_win32: LDFLAGS = -L../../lib/Win32-gcc -lIrrlicht -lopengl32 -lglu32 -lm
+all_win32 clean_win32: SYSTEM=Win32-gcc
+all_win32 clean_win32: SUF=.exe
+# name of the binary - only valid for targets which set SYSTEM
+DESTPATH = ../../bin/$(SYSTEM)/$(Target)$(SUF)
+
+all_linux all_win32:
+	$(warning Building...)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(Sources) -o $(DESTPATH) $(LDFLAGS)
+
+clean: clean_linux clean_win32
+	$(warning Cleaning...)
+
+clean_linux clean_win32:
+	@$(RM) $(DESTPATH)
+
+.PHONY: all all_win32 clean clean_linux clean_win32
