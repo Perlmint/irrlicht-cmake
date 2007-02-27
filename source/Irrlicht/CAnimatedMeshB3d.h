@@ -11,14 +11,12 @@
 #include "IAnimatedMeshB3d.h"
 #include "IReadFile.h"
 
-#include "CEmptySceneNode.h"
-
+#include "SMeshBuffer.h"
 #include "S3DVertex.h"
+
 #include "irrString.h"
 #include "matrix4.h"
-#include "SMeshBuffer.h"
-
-#include <quaternion.h>
+#include "quaternion.h"
 
 namespace irr
 {

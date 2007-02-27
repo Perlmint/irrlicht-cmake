@@ -18,20 +18,21 @@ namespace scene
 
 //! constructor
 CTextSceneNode::CTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
-							   gui::IGUIFont* font, scene::ISceneCollisionManager* coll,
-	const core::vector3df& position, const wchar_t* text,
-	video::SColor color)
-	: ITextSceneNode(parent, mgr, id, position), Font(font), Coll(coll), Color(color)
+			gui::IGUIFont* font, scene::ISceneCollisionManager* coll,
+			const core::vector3df& position, const wchar_t* text,
+			video::SColor color)
+	: ITextSceneNode(parent, mgr, id, position), Text(text), Color(color),
+		Font(font), Coll(coll)
+	
 {
 	#ifdef _DEBUG
 	setDebugName("CTextSceneNode");
 	#endif
 
-	Text = text;
-	setAutomaticCulling(scene::EAC_OFF);
-
 	if (Font)
 		Font->grab();
+
+	setAutomaticCulling(scene::EAC_OFF);
 }
 
 //! destructor
@@ -99,7 +100,7 @@ CBillboardTextSceneNode::CBillboardTextSceneNode(ISceneNode* parent, ISceneManag
 	const core::vector3df& position, const core::dimension2d<f32>& size,
 	video::SColor shade_top,video::SColor shade_bottom )
 : ITextSceneNode(parent, mgr, id, position),
-	Font(0), Mesh(0), Shade_top(shade_top), Shade_bottom(shade_bottom)
+	Font(0), Shade_top(shade_top), Shade_bottom(shade_bottom), Mesh(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CBillboardTextSceneNode");
@@ -141,7 +142,6 @@ CBillboardTextSceneNode::CBillboardTextSceneNode(ISceneNode* parent, ISceneManag
 	setSize(size);
 
 	setAutomaticCulling ( scene::EAC_BOX );
-
 }
 
 

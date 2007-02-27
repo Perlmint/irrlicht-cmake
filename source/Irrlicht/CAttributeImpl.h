@@ -27,8 +27,6 @@ public:
 		setBool(value);
 	}
 
-	bool BoolValue;
-
 	virtual s32 getInt()
 	{
 		return BoolValue ? 1 : 0;
@@ -78,6 +76,8 @@ public:
 	{
 		return L"bool";
 	}
+
+	bool BoolValue;
 };
 
 // Attribute implemented for integers
@@ -202,8 +202,6 @@ public:
 
 
 
-
-
 /*
 	Types which can be represented as a list of numbers
 */
@@ -215,7 +213,7 @@ class CNumbersAttribute : public IAttribute
 public:
 
 	CNumbersAttribute(const char* name, video::SColorf value) : 
-		IsFloat(true), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.r);
@@ -225,7 +223,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, video::SColor value) :
-		IsFloat(false), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(false)
 	{
 		Name = name;
 		ValueI.push_back(value.getRed());
@@ -236,7 +234,7 @@ public:
 
 
 	CNumbersAttribute(const char* name, core::vector3df value) : 
-		IsFloat(true), Count(3), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(3), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.X);
@@ -245,7 +243,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::position2df value) : 
-		IsFloat(true), Count(2), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(2), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.X);
@@ -253,7 +251,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::position2di value) : 
-		IsFloat(false), Count(2), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(2), IsFloat(false)
 	{
 		Name = name;
 		ValueI.push_back(value.X);
@@ -261,7 +259,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::rect<s32> value) : 
-		IsFloat(false), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(false)
 	{
 		Name = name;
 		ValueI.push_back(value.UpperLeftCorner.X);
@@ -271,7 +269,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::rect<f32> value) : 
-		IsFloat(true), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.UpperLeftCorner.X);
@@ -281,7 +279,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::matrix4 value) : 
-		IsFloat(true), Count(16), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(16), IsFloat(true)
 	{
 		Name = name;
 		for (s32 r=0; r<4; ++r)
@@ -290,7 +288,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::quaternion value) : 
-		IsFloat(true), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.X);
@@ -300,7 +298,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::aabbox3d<f32> value) : 
-		IsFloat(true), Count(6), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(6), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.MinEdge.X);
@@ -312,7 +310,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::plane3df value) : 
-		IsFloat(true), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.Normal.X);
@@ -322,7 +320,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::triangle3df value) : 
-		IsFloat(true), Count(9), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(9), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.pointA.X);
@@ -337,7 +335,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::vector2df value) : 
-		IsFloat(true), Count(2), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(2), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.X);
@@ -345,7 +343,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::vector2di value) : 
-		IsFloat(false), Count(2), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(2), IsFloat(false)
 	{
 		Name = name;
 		ValueI.push_back(value.X);
@@ -353,7 +351,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::line2di value) : 
-		IsFloat(false), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(false)
 	{
 		Name = name;
 		ValueI.push_back(value.start.X);
@@ -363,7 +361,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::line2df value) : 
-		IsFloat(true), Count(4), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(4), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.start.X);
@@ -373,7 +371,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::line3df value) : 
-		IsFloat(true), Count(6), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(6), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.start.X);
@@ -385,7 +383,7 @@ public:
 	}
 
 	CNumbersAttribute(const char* name, core::dimension2di value) : 
-		IsFloat(false), Count(2), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(2), IsFloat(false)
 	{
 		Name = name;
 		ValueI.push_back(value.Width);
@@ -394,7 +392,7 @@ public:
 
 
 	CNumbersAttribute(const char* name, core::dimension2df value) : 
-		IsFloat(true), Count(2), ValueI(), ValueF()
+		ValueI(), ValueF(), Count(2), IsFloat(true)
 	{
 		Name = name;
 		ValueF.push_back(value.Width);
@@ -455,7 +453,7 @@ public:
 				outstr += ValueI[i];
 
 			if (i < Count-1)
-				outstr += L", ";
+				outstr += ", ";
 		}
 		return outstr;
 	}
@@ -601,6 +599,7 @@ public:
 		}
 		return ret;
 	}
+
 	virtual core::triangle3df getTriangle()
 	{
 		core::triangle3df ret;
@@ -632,6 +631,7 @@ public:
 
 		return ret;
 	}
+
 	virtual core::plane3df getPlane()
 	{
 		core::plane3df ret;
@@ -653,6 +653,7 @@ public:
 
 		return ret;
 	}
+
 	virtual core::aabbox3df getBBox()
 	{
 		core::aabbox3df ret;
@@ -677,6 +678,7 @@ public:
 		return ret;
 
 	}
+
 	virtual core::line2df getLine2d()
 	{
 		core::line2df ret;
@@ -696,6 +698,7 @@ public:
 		}
 		return ret;
 	}
+
 	virtual core::line3df getLine3d()
 	{
 		core::line3df ret;
@@ -826,6 +829,7 @@ public:
 			if (Count > 1) ValueI[1] = v.Y;
 		}
 	}
+
 	virtual void setVector(core::vector3df v)
 	{
 		reset();
@@ -881,6 +885,7 @@ public:
 			if (Count > 3) ValueI[3] = color.getAlpha();
 		}
 	}
+
 	virtual void setRect(core::rect<s32> value)
 	{
 		reset();
@@ -899,6 +904,7 @@ public:
 			if (Count > 3) ValueI[3] = value.LowerRightCorner.Y;
 		}
 	}
+
 	virtual void setMatrix(core::matrix4 value)
 	{
 		reset();
@@ -917,6 +923,7 @@ public:
 						ValueI[c+r*4] = (s32)value(r,c);
 		}
 	}
+
 	virtual void setQuaternion(core::quaternion value)
 	{
 		reset();
@@ -958,6 +965,7 @@ public:
 			if (Count > 5) ValueI[5] = (s32)value.MaxEdge.Z;
 		}
 	}
+
 	virtual void setPlane(core::plane3df value)
 	{
 		reset();
@@ -976,7 +984,6 @@ public:
 			if (Count > 3) ValueI[3] = (s32)value.D;
 		}
 	}
-
 
 	virtual void setTriangle3d(core::triangle3df value)
 	{
@@ -1036,6 +1043,7 @@ public:
 			if (Count > 1) ValueI[1] = v.Y;
 		}
 	}
+
 	virtual void setLine2d(core::line2di v)
 	{
 		reset();
@@ -1073,6 +1081,7 @@ public:
 			if (Count > 3) ValueI[3] = (s32)v.end.Y;
 		}
 	}
+
 	virtual void setDimension2d(core::dimension2di v)
 	{
 		reset();
@@ -1117,7 +1126,6 @@ public:
 	}
 
 
-
 	//! is it a number list?
 	virtual bool isNumberList()
 	{
@@ -1159,8 +1167,8 @@ protected:
 				ValueI[i] = 0;
 	}
 
-	core::array<f32> ValueF;
 	core::array<s32> ValueI;
+	core::array<f32> ValueF;
 	u32 Count;
 	bool IsFloat;
 };

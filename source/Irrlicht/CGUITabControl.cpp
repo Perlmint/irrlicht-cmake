@@ -24,7 +24,7 @@ CGUITab::CGUITab(s32 number, IGUIEnvironment* environment,
 	IGUIElement* parent, const core::rect<s32>& rectangle, 
 	s32 id)
 	: IGUITab(environment, parent, id, rectangle), Number(number),
-	BackColor(0,0,0,0), DrawBackground(false)
+		DrawBackground(false), BackColor(0,0,0,0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUITab");

@@ -39,9 +39,9 @@ public:
 
 private:
 
-	scene::ISceneManager* SceneManager;
 	io::IFileSystem* FileSystem;
 	video::IVideoDriver* Driver;
+	scene::ISceneManager* SceneManager;
 };
 
 } // end namespace scene

@@ -71,8 +71,8 @@ namespace scene
 		core::vector3df Pos;
 		bool zooming, rotating, moving, translating;
 		f32 zoomSpeed;
-		f32 translateSpeed;
 		f32 rotateSpeed;
+		f32 translateSpeed;
 		f32 rotateStartX, rotateStartY;
 		f32 zoomStartX, zoomStartY;
 		f32 translateStartX, translateStartY;

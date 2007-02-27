@@ -344,13 +344,13 @@ s32 CGUIStaticText::getTextWidth(void)
 void CGUIStaticText::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
 {
 
-	out->addBool	("Border",					Border);
+	out->addBool	("Border",			Border);
 	out->addBool	("OverrideColorEnabled",	OverrideColorEnabled);
-	out->addBool	("WordWrap",				WordWrap);
-	out->addBool	("Background",				Background);
-	out->addColor	("OverrideColor",			OverrideColor);
+	out->addBool	("WordWrap",			WordWrap);
+	out->addBool	("Background",			Background);
+	out->addColor	("OverrideColor",		OverrideColor);
 
-	// out->addFont ("OverrideFont",			OverrideFont);
+	// out->addFont ("OverrideFont",		OverrideFont);
 
 	IGUIStaticText::serializeAttributes(out,options);
 }

@@ -171,7 +171,6 @@ private:
 	SMesh* Mesh;
 
 	IMeshManipulator* Manipulator;
-
 };
 
 } // end namespace scene

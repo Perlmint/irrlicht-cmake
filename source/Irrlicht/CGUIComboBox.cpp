@@ -8,7 +8,6 @@
 #include "IGUISkin.h"
 #include "IGUIEnvironment.h"
 #include "IGUIFont.h"
-#include "IGUIListBox.h"
 #include "CGUIListBox.h"
 #include "os.h"
 
@@ -20,8 +19,8 @@ namespace gui
 //! constructor
 CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 	s32 id, core::rect<s32> rectangle)
-	: IGUIComboBox(environment, parent, id, rectangle), Selected(-1), 
-	ListBox(0)
+	: IGUIComboBox(environment, parent, id, rectangle),
+	ListButton(0), ListBox(0), Selected(-1)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUICheckBox");

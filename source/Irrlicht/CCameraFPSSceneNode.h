@@ -81,11 +81,11 @@ namespace scene
 
 		bool CursorKeys[6];
 
+		gui::ICursorControl* CursorControl;
+
 		f32 MoveSpeed;
 		f32 RotateSpeed;
 		f32 JumpSpeed;
-
-		gui::ICursorControl* CursorControl;
 
 		bool firstUpdate;
 		s32 LastAnimationTime;

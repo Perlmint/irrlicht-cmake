@@ -17,11 +17,11 @@ namespace gui
 
 //! constructor
 CGUIButton::CGUIButton(IGUIEnvironment* environment, IGUIElement* parent,
-					   s32 id, core::rect<s32> rectangle, bool noclip)
-: IGUIButton(environment, parent, id, rectangle), Pressed(false), Border(true),
-	OverrideFont(0), Image(0), PressedImage(0), SpriteBank(0),
-	MouseOverTime(0), FocusTime(0), ClickTime(0),
-	IsPushButton(false), UseAlphaChannel(false)
+			   s32 id, core::rect<s32> rectangle, bool noclip)
+: IGUIButton(environment, parent, id, rectangle), Pressed(false),
+	IsPushButton(false), UseAlphaChannel(false), Border(true),
+	MouseOverTime(0), FocusTime(0), ClickTime(0), SpriteBank(0),
+	OverrideFont(0), Image(0), PressedImage(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIButton");
@@ -410,8 +410,6 @@ void CGUIButton::serializeAttributes(io::IAttributes* out, io::SAttributeReadWri
 //! Reads attributes of the element
 void CGUIButton::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
 {
-	video::IVideoDriver *drv = Environment->getVideoDriver();
-
 	IGUIButton::deserializeAttributes(in,options);
 
 	IsPushButton	= in->getAttributeAsBool("PushButton");

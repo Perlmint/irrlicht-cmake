@@ -582,12 +582,12 @@ void CIrrDeviceWin32::resizeIfNecessary()
 
 	if (r.right < 2 || r.bottom < 2)
 	{
-		sprintf(tmp, "Ignoring resize operation to (%d %d)", r.right, r.bottom);
+		sprintf(tmp, "Ignoring resize operation to (%ld %ld)", r.right, r.bottom);
 		os::Printer::log(tmp);
 	}
 	else
 	{
-		sprintf(tmp, "Resizing window (%d %d)", r.right, r.bottom);
+		sprintf(tmp, "Resizing window (%ld %ld)", r.right, r.bottom);
 		os::Printer::log(tmp);
 
 		if ( r.right % 2 )
@@ -832,7 +832,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 
 		if (osvi.dwMajorVersion <= 4 )
 		{
-			sprintf (tmp, "version %d.%d %s (Build %d)",
+			sprintf (tmp, "version %ld.%ld %s (Build %ld)",
 				osvi.dwMajorVersion,
 				osvi.dwMinorVersion,
 				osvi.szCSDVersion,
@@ -840,7 +840,7 @@ void CIrrDeviceWin32::getWindowsVersion(core::stringc& out)
 		}
 		else
 		{
-			sprintf (tmp, "%s (Build %d)", osvi.szCSDVersion,
+			sprintf (tmp, "%s (Build %ld)", osvi.szCSDVersion,
 				osvi.dwBuildNumber & 0xFFFF);
 		}
 

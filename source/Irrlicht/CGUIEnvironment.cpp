@@ -5,8 +5,8 @@
 
 #include "CGUIEnvironment.h"
 #include "IVideoDriver.h"
-#include "IGUISkin.h"
 
+#include "CGUISkin.h"
 #include "CGUIButton.h"
 #include "CGUIWindow.h"
 #include "CGUIScrollBar.h"
@@ -33,8 +33,6 @@
 #include "IWriteFile.h"
 #include "IXMLWriter.h"
 
-#include "CGUISkin.h"
-
 #include "BuiltInFont.h"
 #include "os.h"
 
@@ -43,16 +41,15 @@ namespace irr
 namespace gui
 {
 
-const wchar_t* IRR_XML_FORMAT_GUI_ENV				= L"irr_gui";
-const wchar_t* IRR_XML_FORMAT_GUI_ELEMENT			= L"element";
+const wchar_t* IRR_XML_FORMAT_GUI_ENV			= L"irr_gui";
+const wchar_t* IRR_XML_FORMAT_GUI_ELEMENT		= L"element";
 const wchar_t* IRR_XML_FORMAT_GUI_ELEMENT_ATTR_TYPE	= L"type";
 
 //! constructor
 CGUIEnvironment::CGUIEnvironment(io::IFileSystem* fs, video::IVideoDriver* driver, IOSOperator* op)
-: IGUIElement(EGUIET_ELEMENT, 0, 0, 0, core::rect<s32>(core::position2d<s32>(0,0), 
- driver ? driver->getScreenSize() : core::dimension2d<s32>(0,0))),
- Hovered(0), CurrentSkin(0), Driver(driver),
- Focus(0), FileSystem(fs), UserReceiver(0), Operator(op)
+: IGUIElement(EGUIET_ELEMENT, 0, 0, 0, core::rect<s32>(core::position2d<s32>(0,0), driver ? driver->getScreenSize() : core::dimension2d<s32>(0,0))),
+	Driver(driver), Hovered(0), Focus(0), CurrentSkin(0),
+	FileSystem(fs), UserReceiver(0), Operator(op)
 {
 	if (Driver)
 		Driver->grab();

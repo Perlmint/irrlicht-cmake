@@ -13,7 +13,7 @@ namespace gui
 
 //! constructor
 CGUIFontMultiTexture::CGUIFontMultiTexture(video::IVideoDriver* driver)
-: Driver(driver), Textures(0), WrongCharacter(0), Areas(), Kerning(0)
+: Driver(driver), Textures(0), WrongCharacter(0), Kerning(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIFontMultiTexture");

@@ -72,20 +72,20 @@ private:
 	{
 		SFontArea() : rectangle(), underhang(0), overhang(0), sourceimage(0) {}
 		core::rect<s32> rectangle;
-		s32				underhang;
-		s32				overhang;
-		u32				sourceimage;
+		s32		underhang;
+		s32		overhang;
+		u32		sourceimage;
 	};
 
 	s32 getAreaFromCharacter (const wchar_t c);
-	s32	getWidthFromCharacter(const wchar_t c);
+	s32 getWidthFromCharacter(const wchar_t c);
 
-	video::IVideoDriver*			Driver;
+	video::IVideoDriver*		Driver;
 	core::array<video::ITexture*>	Textures;
-	core::array<SFontArea>			Areas;
-	core::map<wchar_t, s32>			CharacterMap;
-	u32								WrongCharacter;
-	s32								Kerning;
+	core::array<SFontArea>		Areas;
+	core::map<wchar_t, s32>		CharacterMap;
+	u32				WrongCharacter;
+	s32				Kerning;
 };
 
 } // end namespace gui

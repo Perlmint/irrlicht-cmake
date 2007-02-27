@@ -19,8 +19,8 @@ namespace video
 
 //! constructor
 CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
-: CNullDriver(io, windowSize), CurrentTriangleRenderer(0), Texture(0),
-	ZBuffer(0), RenderTargetTexture(0), RenderTargetSurface(0)
+: CNullDriver(io, windowSize), RenderTargetTexture(0), RenderTargetSurface(0),
+	CurrentTriangleRenderer(0), ZBuffer(0), Texture(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CSoftwareDriver");

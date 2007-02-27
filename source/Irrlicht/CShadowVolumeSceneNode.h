@@ -62,13 +62,13 @@ namespace scene
 		//! Generates adjacency information based on mesh indices.
 		void calculateAdjacency(f32 epsilon=0.0001f);
 
-		bool UseZFailMethod;
 		core::aabbox3d<f32> Box;
 
 		u16* Indices;
 		core::vector3df* Vertices;
 		u16* Adjacency;
 		bool* FaceData; // used for zfail method, if face is front facing
+		bool UseZFailMethod;
 
 		s32 IndexCountAllocated;
 		s32 VertexCountAllocated;

@@ -20,9 +20,9 @@ CSceneNodeAnimatorCollisionResponse::CSceneNodeAnimatorCollisionResponse(
 		const core::vector3df& gravityPerSecond,
 		const core::vector3df& ellipsoidTranslation,
 		f32 slidingSpeed)
-: SceneManager(scenemanager), World(world), Object(object),
-	Radius(ellipsoidRadius), Gravity(gravityPerSecond / 1000.0f),
-	SlidingSpeed(slidingSpeed), Translation(ellipsoidTranslation)
+: Radius(ellipsoidRadius), Gravity(gravityPerSecond / 1000.0f), Translation(ellipsoidTranslation),
+	World(world), Object(object), SceneManager(scenemanager),
+	SlidingSpeed(slidingSpeed), Falling(false)
 {
 	if (World)
 		World->grab();
@@ -30,14 +30,8 @@ CSceneNodeAnimatorCollisionResponse::CSceneNodeAnimatorCollisionResponse(
 	if (Object)
 		LastPosition = Object->getPosition();
 
-	Falling = false;
-
 	LastTime = os::Timer::getTime();
 	FallStartTime = LastTime;
-
-	RefTriangle.pointA.set(0.0f, 0.0f, 0.0f);
-	RefTriangle.pointB.set(0.0f, 0.0f, 0.0f);
-	RefTriangle.pointC.set(0.0f, 0.0f, 0.0f);
 }
 
 

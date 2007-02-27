@@ -27,25 +27,16 @@ namespace scene
 			s32 id, s32 maxLOD, E_TERRAIN_PATCH_SIZE patchSize, const core::vector3df& position,
 			const core::vector3df& rotation, const core::vector3df& scale)
 	: ITerrainSceneNode(parent, mgr, id, position, rotation, scale),
-	OverrideDistanceThreshold(false),
-	DynamicSelectorUpdate(false),
-	UseDefaultRotationPivot(true)
+	TerrainData(patchSize, maxLOD, position, rotation, scale),
+	VerticesToRender(0), IndicesToRender(0), DynamicSelectorUpdate(false),
+	OverrideDistanceThreshold(false), UseDefaultRotationPivot(true),
+	OldCameraPosition(core::vector3df(-99999.9f, -99999.9f, -99999.9f)),
+	OldCameraRotation(core::vector3df(-99999.9f, -99999.9f, -99999.9f)),
+	CameraMovementDelta(10.0f), CameraRotationDelta(1.0f)
 	{
 		#ifdef _DEBUG
 		setDebugName("CTerrainSceneNode");
 		#endif
-
-		TerrainData.PatchSize = patchSize;
-		TerrainData.CalcPatchSize = patchSize - 1;
-		TerrainData.MaxLOD = maxLOD;
-		TerrainData.Scale = scale;
-		TerrainData.Position = position;
-		TerrainData.Rotation = rotation;
-
-		OldCameraPosition = core::vector3df(-99999.9f, -99999.9f, -99999.9f );
-		OldCameraRotation = core::vector3df(-99999.9f, -99999.9f, -99999.9f );
-		CameraMovementDelta = 10.0f;
-		CameraRotationDelta = 1.0f;
 
 		setAutomaticCulling( scene::EAC_OFF );
 	}
@@ -124,12 +115,11 @@ namespace scene
 		// Read the heightmap to get the vertex data
 		// Apply positions changes, scaling changes
 		const f32 tdSize = 1.0f/(f32)(TerrainData.Size-1);
+		s32 index = 0;
 		for( s32 x = 0; x < TerrainData.Size; ++x )
 		{
 			for( s32 z = 0; z < TerrainData.Size; ++z )
 			{
-				s32 index = x * TerrainData.Size + z;
-
 				vertex.Pos.X = (f32)x;
 				video::SColor pixelColor(heightMap->getPixel(x,z));
 				vertex.Pos.Y = (f32) pixelColor.getLuminance();
@@ -139,6 +129,7 @@ namespace scene
 				vertex.TCoords.Y = vertex.TCoords2.Y = z * tdSize;
 
 				pMeshBuffer->Vertices[index] = vertex;
+				++index;
 			}
 		}
 
@@ -149,7 +140,6 @@ namespace scene
 		// http://irrlicht.sourceforge.net/phpBB2/viewtopic.php?p=91272#91272
 
 		s32 run;
-		s32 index;
 
 		for( run = 0; run < smoothFactor; ++run )
 		{
@@ -182,7 +172,7 @@ namespace scene
 		// We copy the data to the renderBuffer, after the normals have been calculated.
 		RenderBuffer.Vertices.set_used( vertexCount );
 
-		for( s32 i = 0; i < vertexCount; i++ )
+		for( s32 i = 0; i < vertexCount; ++i )
 		{
 			RenderBuffer.Vertices[i] = pMeshBuffer->Vertices[i];
 			RenderBuffer.Vertices[i].Pos *= TerrainData.Scale;
@@ -214,7 +204,7 @@ namespace scene
 		c8 tmp[255];
 		sprintf(tmp, "Generated terrain data (%dx%d) in %.4f seconds",
 			TerrainData.Size, TerrainData.Size, ( endTime - startTime ) / 1000.0f );
-		os::Printer::print( tmp );
+		os::Printer::log( tmp );
 
 		return true;
 	}
@@ -883,12 +873,15 @@ namespace scene
 		const f32 resBySize = resolution / (f32)(TerrainData.Size-1);
 		const f32 res2BySize = resolution2 / (f32)(TerrainData.Size-1);
 		u32 index = 0;
+		f32 xval = 0, zval;
+		f32 x2val = 0, z2val=0;
 		for (s32 x=0; x<TerrainData.Size; ++x)
 		{
+			zval=z2val=0;
 			for (s32 z=0; z<TerrainData.Size; ++z)
 			{
-				RenderBuffer.Vertices[index].TCoords.X = x * resBySize;
-				RenderBuffer.Vertices[index].TCoords.Y = z * resBySize;
+				RenderBuffer.Vertices[index].TCoords.X = xval;
+				RenderBuffer.Vertices[index].TCoords.Y = zval;
 
 				if ( resolution2 == 0 )
 				{
@@ -896,17 +889,21 @@ namespace scene
 				}
 				else
 				{
-					RenderBuffer.Vertices[index].TCoords2.X = x * res2BySize;
-					RenderBuffer.Vertices[index].TCoords2.Y = z * res2BySize;
+					RenderBuffer.Vertices[index].TCoords2.X = x2val;
+					RenderBuffer.Vertices[index].TCoords2.Y = z2val;
 				}
 				++index;
+				zval += resBySize;
+				z2val += res2BySize;
 			}
+			xval += resBySize;
+			x2val += res2BySize;
 		}
 	}
 
 	//! used to get the indices when generating index data for patches at varying levels of detail.
 	u32 CTerrainSceneNode::getIndex(const s32& PatchX, const s32& PatchZ,
-									const s32& PatchIndex, u32 vX, u32 vZ)
+					const s32& PatchIndex, u32 vX, u32 vZ)
 	{
 		// top border
 		if (vZ == 0)
@@ -1183,9 +1180,6 @@ namespace scene
 	//! used to calculate or recalculate the distance thresholds
 	void CTerrainSceneNode::calculateDistanceThresholds(bool scalechanged)
 	{
-		// Initialize Patch Data
-		s32 i;
-
 		// Only update the LODDistanceThreshold if it's not manually changed
 		if (!OverrideDistanceThreshold)
 		{
@@ -1197,7 +1191,7 @@ namespace scene
 			// Determine new distance threshold for determining what LOD to draw patches at
 			TerrainData.LODDistanceThreshold = new f64[TerrainData.MaxLOD];
 
-			for (i=0; i<TerrainData.MaxLOD; ++i)
+			for (s32 i=0; i<TerrainData.MaxLOD; ++i)
 			{
 				TerrainData.LODDistanceThreshold[i] =
 					(TerrainData.PatchSize * TerrainData.PatchSize) *

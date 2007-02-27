@@ -32,13 +32,13 @@ public:
 
 private:
 
-	s32 fps;
-	u32 primitive;
-	u32 startTime;
+	s32 FPS;
+	u32 Primitive;
+	u32 StartTime;
 
-	u32 framesCounted;
-	u32 primitivesCounted;
-	u32 primitiveAverage;
+	u32 FramesCounted;
+	u32 PrimitivesCounted;
+	u32 PrimitiveAverage;
 };
 
 

@@ -144,7 +144,6 @@ namespace video
 		video::ITexture* Texture[2];
 		sInternalTexture Texmap[2];
 
-
 		/*
 			extend Matrix Stack
 			-> combined CameraProjection

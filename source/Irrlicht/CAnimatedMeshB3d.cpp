@@ -4,15 +4,9 @@
 
 //B3D file loader by Luke Hoschke, File format by Mark Sibly
 
-#include <iostream>
-
-
 #include "CAnimatedMeshB3d.h"
 #include "os.h"
 #include "IVideoDriver.h"
-
-
-
 
 namespace irr
 {

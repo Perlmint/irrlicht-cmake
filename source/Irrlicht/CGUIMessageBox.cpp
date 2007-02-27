@@ -17,8 +17,9 @@ namespace gui
 CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* caption,
 	const wchar_t* text, s32 flags,
 	IGUIElement* parent, s32 id, core::rect<s32> rectangle)
-: CGUIWindow(environment, parent, id, rectangle), StaticText(0),
-  OkButton(0), YesButton(0), NoButton(0), CancelButton(0), Flags(flags), MessageText(text)
+: CGUIWindow(environment, parent, id, rectangle),
+	OkButton(0), CancelButton(0), YesButton(0), NoButton(0), StaticText(0),
+	Flags(flags), MessageText(text)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIMessageBox");
@@ -41,12 +42,10 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 	Environment->setFocus(this);
 
 	refreshControls();
-
 }
 
 void CGUIMessageBox::refreshControls()
 {
-
 	IGUISkin* skin = Environment->getSkin();
 
 	s32 buttonHeight = skin->getSize(EGDS_BUTTON_HEIGHT);

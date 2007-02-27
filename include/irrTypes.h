@@ -66,9 +66,10 @@ typedef double				f64;
 
 #include <wchar.h>
 #ifdef _IRR_WINDOWS_
-//! Define for swprintf because this method does not match the ISO C standard
-//! on Windows platforms, but it does on all other ones.
-#define   swprintf   _snwprintf
+//! Defines for s{w,n}printf because these methods do not match the ISO C
+//! standard on Windows platforms, but it does on all others.
+#define swprintf _snwprintf
+#define snprintf _snprintf
 
 // define the wchar_t type if not already built in.
 #ifdef _MSC_VER 

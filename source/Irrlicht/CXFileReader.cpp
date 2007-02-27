@@ -12,7 +12,9 @@ namespace scene
 {
 
 CXFileReader::CXFileReader(io::IReadFile* file)
-: ErrorHappened(false), Buffer(0), Size(0), P(0), End(0), binary(false), m_pgCurFrame(0)
+: MajorVersion(0), MinorVersion(0), binary(false), binaryNumCount(0),
+	Buffer(0), Size(0), FloatSize(0), P(0), End(0), ErrorHappened(false),
+	m_bFrameRemoved(false), m_pgCurFrame(0)
 {
 	if (!file)
 	{

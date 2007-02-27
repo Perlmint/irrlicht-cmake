@@ -22,9 +22,9 @@ namespace video
 
 //! constructor
 CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
-: CNullDriver(io, windowSize), CurrentShader(0),
-	 DepthBuffer(0), RenderTargetTexture(0), RenderTargetSurface(0),
-	 CurrentOut ( 12 * 2, 128 ), Temp ( 12 * 2, 128 )
+: CNullDriver(io, windowSize), BackBuffer(0), Presenter(presenter),
+	RenderTargetTexture(0), RenderTargetSurface(0), CurrentShader(0),
+	 DepthBuffer(0), CurrentOut ( 12 * 2, 128 ), Temp ( 12 * 2, 128 )
 {
 	#ifdef _DEBUG
 	setDebugName("CSoftwareDriver2");
@@ -39,10 +39,6 @@ CSoftwareDriver2::CSoftwareDriver2(const core::dimension2d<s32>& windowSize, boo
 	BackBuffer = new CImage(ECF_SOFTWARE2, windowSize);
 	BackBuffer->fill(SColor(0));
 	
-	// get presenter
-
-	Presenter = presenter;
-
 	// create z buffer
 
 	DepthBuffer = irr::video::createDepthBuffer(BackBuffer->getDimension());

@@ -18,7 +18,7 @@ namespace scene
 
 //! constructor
 CSceneCollisionManager::CSceneCollisionManager(ISceneManager* smanager, video::IVideoDriver* driver)
-: Driver(driver), SceneManager(smanager)
+: SceneManager(smanager), Driver(driver)
 {
 	#ifdef _DEBUG
 	setDebugName("CSceneCollisionManager");

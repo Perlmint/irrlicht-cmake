@@ -296,7 +296,7 @@ static const SMD2AnimationType MD2AnimationTypeList[21] =
 
 //! constructor
 CAnimatedMeshMD2::CAnimatedMeshMD2()
-: FrameCount(0), FrameList(0)
+: FrameList(0), FrameCount(0), TriangleCount(0)
 {
 	#ifdef _DEBUG
 	IAnimatedMesh::setDebugName("CAnimatedMeshMD2 IAnimatedMesh");

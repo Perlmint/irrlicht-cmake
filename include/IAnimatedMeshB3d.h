@@ -5,7 +5,6 @@
 #ifndef __I_ANIMATED_MESH_B3D_H_INCLUDED__
 #define __I_ANIMATED_MESH_B3D_H_INCLUDED__
 
-#include "irrArray.h"
 #include "ISceneNode.h"
 #include "IAnimatedMesh.h"
 

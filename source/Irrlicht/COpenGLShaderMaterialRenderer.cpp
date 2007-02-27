@@ -22,7 +22,7 @@ namespace video
 COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(video::COpenGLDriver* driver,
 	s32& outMaterialTypeNr, const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 	IShaderConstantSetCallBack* callback, IMaterialRenderer* baseMaterial, s32 userData)
-	: Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
+	: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 		VertexShader(0), PixelShader(0), UserData(userData)
 {
 	if (BaseMaterial)
@@ -40,7 +40,7 @@ COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(video::COpenGLDrive
 COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(COpenGLDriver* driver,
 							IShaderConstantSetCallBack* callback,
 							IMaterialRenderer* baseMaterial, s32 userData)
-: Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
+: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 		VertexShader(0), PixelShader(0), UserData(userData)
 {
 	if (BaseMaterial)

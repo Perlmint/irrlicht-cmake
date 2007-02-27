@@ -146,7 +146,7 @@ public:
 
 	struct SXAnimationKey
 	{
-		SXAnimationKey() : time(0), data(0), keyType(-1) { }
+		SXAnimationKey() : keyType(-1), numberOfKeys(0), time(0), data(0) { }
 
 		void del()
 		{
@@ -283,8 +283,6 @@ private:
 	void optimizeFrames( SXFrame * pgFrame,  SXFrame * pgParent );
 	bool validateMesh(SXFrame* frame);
 
-	bool ErrorHappened;
-
 	s32 MajorVersion;
 	s32 MinorVersion;
 	bool binary;
@@ -296,11 +294,13 @@ private:
 	const c8* P;
 	c8* End;
 
+	bool ErrorHappened;
+
+	bool m_bFrameRemoved;
 	SXFrame * m_pgCurFrame;
 	core::array<SXFrame>RootFrames;
 	core::array<SXAnimationSet> AnimationSets;
 	core::array<SXTemplateMaterial> TemplateMaterials;
-	bool m_bFrameRemoved;
 };
 
 } // end namespace scene

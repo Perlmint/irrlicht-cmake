@@ -180,7 +180,7 @@ namespace scene
 CColladaFileLoader::CColladaFileLoader(video::IVideoDriver* driver,
 		scene::ISceneManager* smgr, io::IFileSystem* fs)
 : Driver(driver), SceneManager(smgr), FileSystem(fs), DummyMesh(0),
-	CreateInstances(false), FirstLoadedMesh(0), LoadedMeshCount(0)
+	FirstLoadedMesh(0), LoadedMeshCount(0), CreateInstances(false)
 {
 	
 }

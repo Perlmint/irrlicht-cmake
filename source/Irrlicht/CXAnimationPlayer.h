@@ -161,10 +161,10 @@ namespace scene
 		void addVirtualWeight(s32 meshbuffernr, s32 vtxidx, CXFileReader::SXMesh& mesh,
 			const CXFileReader::SXFrame& frame);
 
+		CXFileReader* Reader;
 		video::IVideoDriver* Driver;
 		scene::SMesh OriginalMesh;
 		scene::SMesh *AnimatedMesh;
-		CXFileReader* Reader;
 		core::aabbox3df Box;
 		core::stringc FileName;
 		IMeshManipulator* Manipulator;
@@ -209,12 +209,6 @@ namespace scene
 		};
 
 		core::array<SXAnimationSet> AnimationSets;
-
-		void addMatrix(core::matrix4& m1, core::matrix4& m2)
-		{
-			for (int i=0; i<16; ++i)
-				m1.M[i] += m2.M[i];
-		}
 	};
 
 } // end namespace scene

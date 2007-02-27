@@ -18,17 +18,17 @@ namespace gui
 
 //! constructor
 CGUIEditBox::CGUIEditBox(const wchar_t* text, bool border, IGUIEnvironment* environment,
-						 IGUIElement* parent, s32 id, const core::rect<s32>& rectangle,
-						 IOSOperator* op)
-: IGUIEditBox(environment, parent, id, rectangle), Border(border), 
-	OverrideColorEnabled(false), OverrideFont(0), CursorPos(0), ScrollPos(0),
-	MarkBegin(0), MarkEnd(0), MouseMarking(false), Operator(op), Max(0)
+			IGUIElement* parent, s32 id,
+			const core::rect<s32>& rectangle, IOSOperator* op)
+: IGUIEditBox(environment, parent, id, rectangle), MouseMarking(false),
+	Border(border), OverrideColorEnabled(false), MarkBegin(0), MarkEnd(0),
+	OverrideColor(video::SColor(101,255,255,255)),
+	OverrideFont(0), Operator(op), CursorPos(0), ScrollPos(0), Max(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIEditBox");
 	#endif
 
-	OverrideColor = video::SColor(101,255,255,255);
 	Text = text;
 
 	if (Operator)

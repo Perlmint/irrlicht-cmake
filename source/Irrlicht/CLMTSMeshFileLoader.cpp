@@ -94,8 +94,8 @@ namespace scene
 
 CLMTSMeshFileLoader::CLMTSMeshFileLoader(io::IFileSystem* fs, video::IVideoDriver* driver,
 										 io::IAttributes* parameters)
-	: Textures(NULL), Subsets(NULL), Triangles(NULL), NumTextures(0), NumLightMaps(0),
-	TextureIDs(NULL), Mesh(0), Driver(driver), FileSystem(fs), Parameters(parameters)
+	: Textures(0), TextureIDs(0), Subsets(0), Triangles(0), Mesh(0),
+	NumTextures(0), NumLightMaps(0), Parameters(parameters), Driver(driver), FileSystem(fs)
 {
 	if (Driver)
 		Driver->grab();
@@ -107,10 +107,9 @@ CLMTSMeshFileLoader::CLMTSMeshFileLoader(io::IFileSystem* fs, video::IVideoDrive
 #else
 
 CLMTSMeshFileLoader::CLMTSMeshFileLoader(IrrlichtDevice* device)
-: Textures(0), Subsets(0), Triangles(0), NumTextures(0), NumLightMaps(0),
-  TextureIDs(0), Mesh(NULL), Logger(NULL), Parameters(0)
+: Textures(0), TextureIDs(0), Subsets(0), Triangles(0), Mesh(0),
+	NumTextures(0), NumLightMaps(0), Parameters(0), Logger(0)
 {
-
 	FileSystem = device->getFileSystem();
 	FileSystem->grab();
 

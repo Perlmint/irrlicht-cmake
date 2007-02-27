@@ -120,8 +120,9 @@ private:
 	//! assumes format and size has been set and creates the rest
 	void initData();
 
-
 	s32 getBitsPerPixelFromFormat();
+
+	inline SColor getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias );
 
 	void* Data;
 	core::dimension2d<s32> Size;
@@ -130,14 +131,12 @@ private:
 	u32 Pitch;
 	ECOLOR_FORMAT Format;
 
+	bool DeleteMemory;
+
 	u32 RedMask;
 	u32 GreenMask;
 	u32 BlueMask;
 	u32 AlphaMask;
-
-	inline SColor getPixelBox ( s32 x, s32 y, s32 fx, s32 fy, s32 bias );
-
-	u32 DeleteMemory;
 };
 
 } // end namespace video

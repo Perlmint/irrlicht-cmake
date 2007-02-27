@@ -9,7 +9,6 @@
 namespace irr
 {
 
-
 	struct SBlitJob
 	{
 		AbsRectangle Dest;
@@ -79,12 +78,11 @@ inline u32 GetClipCode ( const AbsRectangle &r, const core::position2d<s32> &p )
 	@return: 1 if valid
 */
 
-static int ClipLine (	const AbsRectangle &clipping,
-				core::position2d<s32> &p0,
-				core::position2d<s32> &p1,
-				const core::position2d<s32>& p0_in,
-				const core::position2d<s32>& p1_in
-			)
+static int ClipLine (const AbsRectangle &clipping,
+			core::position2d<s32> &p0,
+			core::position2d<s32> &p1,
+			const core::position2d<s32>& p0_in,
+			const core::position2d<s32>& p1_in)
 {
 	u32 code0;
 	u32 code1;
@@ -100,7 +98,7 @@ static int ClipLine (	const AbsRectangle &clipping,
 	while ( code0 | code1 )
 	{
 		s32 x=0;
-        s32 y=0;
+		s32 y=0;
 
 		// trivial reject
 		if ( code0 & code1 )
@@ -162,12 +160,11 @@ static int ClipLine (	const AbsRectangle &clipping,
 	}
 
 	return 1;
-
 }
 
 /*
 */
-inline void GetClip ( AbsRectangle &clipping, video::IImage * t)
+inline void GetClip(AbsRectangle &clipping, video::IImage * t)
 {
 	clipping.x0 = 0;
 	clipping.y0 = 0;
@@ -177,10 +174,10 @@ inline void GetClip ( AbsRectangle &clipping, video::IImage * t)
 
 /*
 */
-static void RenderLine32_Decal (	video::IImage *t,
-							const core::position2d<s32> &p0,
-							const core::position2d<s32> &p1,
-							u32 argb )
+static void RenderLine32_Decal(video::IImage *t,
+				const core::position2d<s32> &p0,
+				const core::position2d<s32> &p1,
+				u32 argb )
 {
 	s32 dx = p1.X - p0.X;
 	s32 dy = p1.Y - p0.Y;
@@ -243,12 +240,10 @@ static void RenderLine32_Decal (	video::IImage *t,
 
 /*
 */
-static void RenderLine32_Blend (	video::IImage *t,
-							const core::position2d<s32> &p0,
-							const core::position2d<s32> &p1,
-							u32 argb,
-							u32 alpha
-						)
+static void RenderLine32_Blend(video::IImage *t,
+				const core::position2d<s32> &p0,
+				const core::position2d<s32> &p1,
+				u32 argb, u32 alpha)
 {
 	s32 dx = p1.X - p0.X;
 	s32 dy = p1.Y - p0.Y;
@@ -929,7 +924,7 @@ namespace video
 
 //! constructor
 CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size)
-: Format(format), Size(size), Data(0),DeleteMemory ( 1 )
+:Data(0), Size(size), Format(format), DeleteMemory(true)
 {
 	initData();	
 }
@@ -938,7 +933,7 @@ CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size)
 //! constructor
 CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size, void* data,
 			   bool ownForeignMemory, bool deleteForeignMemory)
-: Format(format), Size(size), Data(0), DeleteMemory ( deleteForeignMemory )
+: Data(0), Size(size), Format(format), DeleteMemory(deleteForeignMemory)
 {
 	if (ownForeignMemory)
 	{
@@ -958,7 +953,7 @@ CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size, void* d
 
 //! constructor 
 CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
-: Format(format), Data(0),DeleteMemory ( 1 )
+: Data(0), Format(format), DeleteMemory(true)
 {
 	if (!imageToCopy)
 		return;
@@ -976,7 +971,7 @@ CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
 //! constructor
 CImage::CImage(IImage* imageToCopy, const core::position2d<s32>& pos,
 		   const core::dimension2d<s32>& size)
- : Data(0), Size(0,0),DeleteMemory ( 1 )
+ : Data(0), Size(0,0), DeleteMemory(true)
 {
 	if (!imageToCopy)
 		return;

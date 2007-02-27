@@ -10,7 +10,7 @@ namespace gui
 {
 
 CGUISpriteBank::CGUISpriteBank(IGUIEnvironment* env) :
-	Textures(), Sprites(), Rectangles(), Environment(env), Driver(0)
+	Environment(env), Driver(0)
 {
 	if (Environment)
 	{

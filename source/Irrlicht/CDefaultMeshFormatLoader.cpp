@@ -15,7 +15,7 @@ namespace scene
 
 //! Constructor
 CDefaultMeshFormatLoader::CDefaultMeshFormatLoader(io::IFileSystem* fs,video::IVideoDriver* driver, scene::ISceneManager* smgr)
-: FileSystem(fs), Driver(driver),SceneManager ( smgr )
+: FileSystem(fs), Driver(driver), SceneManager(smgr)
 {
 	if (FileSystem)
 		FileSystem->grab();

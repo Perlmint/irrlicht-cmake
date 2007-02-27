@@ -51,7 +51,9 @@ namespace irr
 
 #if defined(_IRR_WINDOWS_) || defined(_XBOX)
 
+#ifdef _MSC_VER
 #pragma comment(exestr, "Irrlicht Engine (c) 2002-2006 Nikolaus Gebhardt")
+#endif
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 

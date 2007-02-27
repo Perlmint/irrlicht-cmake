@@ -25,7 +25,10 @@ namespace scene
 		virtual void animateNode(ISceneNode* node, u32 timeMs);
 
 		//! Returns type of the scene node animator
-		virtual ESCENE_NODE_ANIMATOR_TYPE getType()	{ return ESNAT_DELETION; }
+		virtual ESCENE_NODE_ANIMATOR_TYPE getType()
+		{
+			return ESNAT_DELETION;
+		}
 
 	private:
 

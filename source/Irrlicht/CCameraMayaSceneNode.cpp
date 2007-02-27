@@ -15,9 +15,10 @@ namespace scene
 CCameraMayaSceneNode::CCameraMayaSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 	 f32 rs, f32 zs, f32 ts)
 : CCameraSceneNode(parent, mgr, id), 
-zooming(false), rotating(false), moving(false), translating(false),
-zoomSpeed(zs), rotateSpeed(ts), translateSpeed(ts), currentZoom(70.0f), 
-rotX(0), rotY(0)
+	zooming(false), rotating(false), moving(false), translating(false),
+	zoomSpeed(zs), rotateSpeed(ts), translateSpeed(ts),
+	rotateStartX(0.0f), rotateStartY(0.0f), zoomStartX(0.0f), zoomStartY(0.0f),
+	translateStartX(0.0f), translateStartY(0.0f), currentZoom(70.0f), rotX(0.0f), rotY(0.0f)
 {
 	#ifdef _DEBUG
 	setDebugName("CCameraMayaSceneNode");

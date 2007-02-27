@@ -21,10 +21,10 @@ namespace core
 	{
 	public:
 
-		//! Determinates if the triangle is totally inside a bounding box.
+		//! Determines if the triangle is totally inside a bounding box.
 		//! \param box: Box to check.
 		//! \return Returns true if the triangle is withing the box,
-		//! and false if it is not.
+		//! and false otherwise.
 		bool isTotalInsideBox(const aabbox3d<T>& box) const
 		{
 			return (box.isPointInside(pointA) && 

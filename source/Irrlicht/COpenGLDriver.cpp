@@ -27,7 +27,7 @@ namespace video
 #ifdef _IRR_WINDOWS_
 //! Windows constructor and init code
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool antiAlias)
-: CNullDriver(io, screenSize), HDc(0), HRc(0), Window(window),
+: CNullDriver(io, screenSize),
 	CurrentRenderMode(ERM_NONE), ResetRenderStates(true), Transformation3DChanged(true),
 	StencilBuffer(stencilBuffer), AntiAlias(antiAlias),
 	MultiTextureExtension(false), MultiSamplingExtension(false), AnisotropyExtension(false),
@@ -53,11 +53,12 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND wind
 		pGlCompressedTexImage2D(0),
 	#endif // PFNGLCOMPRESSEDTEXIMAGE2DPROC
 #endif // _IRR_OPENGL_USE_EXTPOINTER_
-	wglSwapIntervalEXT(0)
-    ,pGlBindFramebufferEXT(0), pGlDeleteFramebuffersEXT(0), pGlGenFramebuffersEXT(0),
-    pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
-    pGlBindRenderbufferEXT(0), pGlDeleteRenderbuffersEXT(0), pGlGenRenderbuffersEXT(0),
-    pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0)
+	wglSwapIntervalEXT(0),
+	pGlBindFramebufferEXT(0), pGlDeleteFramebuffersEXT(0), pGlGenFramebuffersEXT(0),
+	pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
+	pGlBindRenderbufferEXT(0), pGlDeleteRenderbuffersEXT(0), pGlGenRenderbuffersEXT(0),
+	pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0),
+	HDc(0), Window(window), HRc(0)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLDriver");
@@ -847,6 +848,9 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 		glMatrixMode(GL_TEXTURE);
 		createGLTextureMatrix(glmat, mat );
 		glLoadMatrixf(glmat);
+		break;
+	default:
+		break;
 	}
 }
 

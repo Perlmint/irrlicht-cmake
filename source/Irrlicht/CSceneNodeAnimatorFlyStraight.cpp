@@ -12,9 +12,9 @@ namespace scene
 
 //! constructor
 CSceneNodeAnimatorFlyStraight::CSceneNodeAnimatorFlyStraight(const core::vector3df& startPoint,
-							const core::vector3df& endPoint, u32 timeForWay,
-							bool loop, u32 now)
-: Start(startPoint), End(endPoint), StartTime(now), TimeForWay(timeForWay), Loop(loop)
+				const core::vector3df& endPoint, u32 timeForWay,
+				bool loop, u32 now)
+: Start(startPoint), End(endPoint), WayLength(0.0f), TimeFactor(0.0f), StartTime(now), TimeForWay(timeForWay), Loop(loop)
 {
 	#ifdef _DEBUG
 	setDebugName("CSceneNodeAnimatorFlyStraight");

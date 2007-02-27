@@ -208,7 +208,7 @@ void CQuake3ShaderSceneNode::render()
 
 	// advance current stage
 	core::matrix4 texture;
-	u32 textureTransform = animate ( stage, texture );
+	animate ( stage, texture );
 
 	// stage 1 finished, no drawing stage ( vertex transform only )
 	if ( stage == 1 )

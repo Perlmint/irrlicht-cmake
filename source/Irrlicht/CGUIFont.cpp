@@ -18,8 +18,8 @@ namespace gui
 
 //! constructor
 CGUIFont::CGUIFont(IGUIEnvironment *env, const c8* filename)
-: Environment(env), SpriteBank(0), Areas(), Driver(0), WrongCharacter(0), 
-GlobalKerningWidth(0), GlobalKerningHeight(0)
+: Driver(0), SpriteBank(0), Environment(env), WrongCharacter(0),
+	MaxHeight(0), GlobalKerningWidth(0), GlobalKerningHeight(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIFont");

@@ -635,35 +635,35 @@ public:
 
 	virtual ~IAttribute() {};
 
-	virtual s32 getInt()					{ return 0; }
-	virtual f32 getFloat()					{ return 0; }
+	virtual s32 getInt()				{ return 0; }
+	virtual f32 getFloat()				{ return 0; }
 	virtual video::SColorf getColorf()		{ return video::SColorf(1.0f,1.0f,1.0f,1.0f); }
 	virtual video::SColor getColor()		{ return video::SColor(255,255,255,255); }
 	virtual core::stringc getString()		{ return core::stringc(getStringW().c_str()); }
 	virtual core::stringw getStringW()		{ return core::stringw(); }
 	virtual core::array<core::stringw> getArray()	{ return core::array<core::stringw>(); };
-	virtual bool getBool()					{ return false; }
+	virtual bool getBool()				{ return false; }
 	virtual void getBinary(void* outdata, s32 maxLength) {};
 	virtual core::vector3df getVector()		{ return core::vector3df(); }
 	virtual core::position2di getPosition()	{ return core::position2di(); }
 	virtual core::rect<s32> getRect()		{ return core::rect<s32>(); }
 	virtual core::quaternion getQuaternion(){ return core::quaternion(); }
 	virtual core::matrix4 getMatrix()		{ return core::matrix4(); }
-	virtual core::triangle3df getTriangle() { return core::triangle3df(); }
-	virtual core::vector2df getVector2d()	{ return core::vector2df(); }
-	virtual core::vector2di getVector2di()	{ return core::vector2di(); }
+	virtual core::triangle3df getTriangle()		{ return core::triangle3df(); }
+	virtual core::vector2df getVector2d()		{ return core::vector2df(); }
+	virtual core::vector2di getVector2di()		{ return core::vector2di(); }
 	virtual core::line2df getLine2d()		{ return core::line2df(); }
 	virtual core::line2di getLine2di()		{ return core::line2di(); }
 	virtual core::line3df getLine3d()		{ return core::line3df(); }
 	virtual core::line3di getLine3di()		{ return core::line3di(); }
-	virtual core::dimension2di getDimension2d() { return core::dimension2di(); }
-	virtual core::aabbox3d<f32> getBBox()	{ return core::aabbox3d<f32>(); }
+	virtual core::dimension2di getDimension2d()	{ return core::dimension2di(); }
+	virtual core::aabbox3d<f32> getBBox()		{ return core::aabbox3d<f32>(); }
 	virtual core::plane3df getPlane()		{ return core::plane3df(); }
 
-	virtual video::ITexture* getTexture()	{ return 0; }
+	virtual video::ITexture* getTexture()		{ return 0; }
 	virtual const char* getEnum()			{ return 0; }
 
-	virtual void setInt(s32 intValue)			{};
+	virtual void setInt(s32 intValue)		{};
 	virtual void setFloat(f32 floatValue)		{};
 	virtual void setString(const char* text)	{};
 	virtual void setString(const wchar_t* text){ setString(core::stringc(text).c_str()); };

@@ -12,7 +12,7 @@ namespace io
 
 
 CLimitReadFile::CLimitReadFile(IReadFile* alreadyOpenedFile, s32 areaSize, const c8* name)
-: AreaSize(areaSize), File(alreadyOpenedFile), Filename(name)
+: Filename(name), AreaSize(areaSize), AreaStart(0), AreaEnd(0), File(alreadyOpenedFile)
 {
 	#ifdef _DEBUG
 	setDebugName("CLimitReadFile");

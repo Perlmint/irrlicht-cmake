@@ -67,7 +67,6 @@ namespace gui
 		bool MouseMarking;
 		bool Border;
 		bool OverrideColorEnabled;
-		bool WordWrap;
 		s32 MarkBegin;
 		s32 MarkEnd;
 

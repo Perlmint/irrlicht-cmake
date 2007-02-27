@@ -81,7 +81,6 @@ namespace scene
 		virtual ESCENE_NODE_ANIMATOR_TYPE getType()	{ return ESNAT_COLLISION_RESPONSE; }
 
 	private:
-
 		core::vector3df LastPosition;
 		core::vector3df Radius;
 		core::vector3df Gravity;

@@ -233,15 +233,15 @@ namespace irr
 			}
 
 			core::position2d<s32> CursorPos;
-			bool IsVisible;
 			CIrrDeviceLinux* Device;
+			bool IsVisible;
+			bool Null;
 #ifdef _IRR_COMPILE_WITH_X11_
 			GC gc;
 			Cursor invisCursor;
 			Pixmap invisBitmap;
 			Pixmap maskBitmap;
 #endif
-			bool Null;
 		};
 
 		friend class CCursorControl;

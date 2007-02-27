@@ -5,14 +5,6 @@
 #include "dimension2d.h"
 #include "irrString.h"
 
-#include "IrrCompileConfig.h"
-// this should really go into the compile config header.
-// there is a similar macro in irrlicht.h, but i feel that
-// macro should be moved to compile config also.
-#ifdef _IRR_WINDOWS_
-#  define snprintf _snprintf
-#endif
-
 namespace irr
 {
 namespace video

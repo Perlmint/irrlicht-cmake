@@ -73,7 +73,7 @@ private:
 
 	struct SFontArea
 	{
-		SFontArea() : underhang(0), overhang(0), spriteno(0) {}
+		SFontArea() : underhang(0), overhang(0), width(0), spriteno(0) {}
 		s32				underhang;
 		s32				overhang;
 		s32				width;
@@ -89,14 +89,14 @@ private:
 	s32 getAreaFromCharacter (const wchar_t c);
 	void setMaxHeight();
 
-	core::array<SFontArea>			Areas;
-	core::map<wchar_t, s32>			CharacterMap;
-	u32								WrongCharacter;
-	s32								MaxHeight;
-	s32								GlobalKerningWidth, GlobalKerningHeight;
-	video::IVideoDriver*			Driver;
-	IGUISpriteBank*					SpriteBank;
-	IGUIEnvironment*				Environment;
+	core::array<SFontArea>		Areas;
+	core::map<wchar_t, s32>		CharacterMap;
+	video::IVideoDriver*		Driver;
+	IGUISpriteBank*			SpriteBank;
+	IGUIEnvironment*		Environment;
+	u32				WrongCharacter;
+	s32				MaxHeight;
+	s32				GlobalKerningWidth, GlobalKerningHeight;
 };
 
 } // end namespace gui

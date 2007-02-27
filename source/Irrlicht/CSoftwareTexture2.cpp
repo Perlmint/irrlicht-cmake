@@ -17,7 +17,7 @@ namespace video
 
 //! constructor
 CSoftwareTexture2::CSoftwareTexture2(IImage* image, const char* name, bool generateMipLevels)
-: ITexture(name), HasMipMaps(generateMipLevels),MipMapLOD(0)
+: ITexture(name), MipMapLOD(0), HasMipMaps(generateMipLevels)
 {
 	#ifndef SOFTWARE_DRIVER_2_MIPMAPPING
 		HasMipMaps = 0;

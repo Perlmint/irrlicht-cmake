@@ -16,14 +16,14 @@ namespace scene
 
 //! constructor
 CXAnimationPlayer::CXAnimationPlayer(CXFileReader* reader,
-									 video::IVideoDriver* driver,
-									 IMeshManipulator* manip,
-									 const c8* filename)
+					 video::IVideoDriver* driver,
+					 IMeshManipulator* manip,
+					 const c8* filename)
 : Reader(reader), Driver(driver), AnimatedMesh(0),
-Manipulator(manip), CurrentAnimationTime(0.0f), LastAnimationTime(1.0f),
-	CurrentAnimationSet(0), IsAnimatedSkinnedMesh(false), DebugSkeletonCrossSize(1.0f)
+	FileName(filename), Manipulator(manip), IsAnimatedSkinnedMesh(false),
+	CurrentAnimationTime(0.0f), LastAnimationTime(1.0f),
+	CurrentAnimationSet(0), DebugSkeletonCrossSize(1.0f)
 {
-	FileName = filename;
 
 	if (!Reader)
 		return;

@@ -52,7 +52,6 @@ public:
 		s32 id, core::rect<s32> rectangle)
 		: Parent(0), RelativeRect(rectangle), AbsoluteRect(rectangle),
 		AbsoluteClippingRect(rectangle), DesiredRect(rectangle),
-		LastParentRect(0,0,0,0), ScaleRect(0.0f, 0.0f, 0.0f, 0.0f),
 		MaxSize(0,0), MinSize(1,1), IsVisible(true), IsEnabled(true),
 		IsSubElement(false), NoClip(false), ID(id), 
 		AlignLeft(EGUIA_UPPERLEFT), AlignRight(EGUIA_UPPERLEFT), AlignTop(EGUIA_UPPERLEFT), AlignBottom(EGUIA_UPPERLEFT),
@@ -103,11 +102,9 @@ public:
 	//! Sets the relative rectangle of this element.
 	void setRelativePosition(const core::rect<s32>& r)
 	{
-		core::rect<s32> r2;
 		if (Parent)
 		{
-			core::rect<s32> r2;
-			r2 = Parent->getAbsolutePosition();
+			core::rect<s32> r2(Parent->getAbsolutePosition());
 		
 			core::dimension2df d((f32)r2.getSize().Width, (f32)r2.getSize().Height);
 
@@ -128,11 +125,10 @@ public:
 	//! Sets the relative rectangle of this element.
 	void setRelativePosition(const core::rect<f32>& r)
 	{
-		core::rect<s32> r2;
 		if (!Parent)
 			return;
 		
-		r2 = Parent->getAbsolutePosition();
+		core::rect<s32> r2(Parent->getAbsolutePosition());
 		
 		core::dimension2di d(r2.getSize());
 		
@@ -192,7 +188,6 @@ public:
 		AlignTop = top;
 		AlignBottom = bottom;
 
-		
 		if (Parent)
 		{
 			core::rect<s32> r(Parent->getAbsolutePosition());
@@ -247,9 +242,10 @@ public:
 			fh = (f32)parentAbsolute.getHeight();
 
 
-		if (AlignLeft != EGUIA_UPPERLEFT)
-			switch (AlignLeft)
-			{
+		switch (AlignLeft)
+		{
+			case EGUIA_UPPERLEFT:
+				break;
 			case EGUIA_LOWERRIGHT:
 				DesiredRect.UpperLeftCorner.X += diffx;
 				break;
@@ -259,11 +255,12 @@ public:
 			case EGUIA_SCALE:
 				DesiredRect.UpperLeftCorner.X = (s32)(ScaleRect.UpperLeftCorner.X * fw);
 				break;
-			}
+		}
 
-		if (AlignRight != EGUIA_UPPERLEFT)
-			switch (AlignRight)
-			{
+		switch (AlignRight)
+		{
+			case EGUIA_UPPERLEFT:
+				break;
 			case EGUIA_LOWERRIGHT:
 				DesiredRect.LowerRightCorner.X += diffx;
 				break;
@@ -273,11 +270,12 @@ public:
 			case EGUIA_SCALE:
 				DesiredRect.LowerRightCorner.X = (s32)(ScaleRect.LowerRightCorner.X * fw);
 				break;
-			}
+		}
 
-		if (AlignTop != EGUIA_UPPERLEFT)
-			switch (AlignTop)
-			{
+		switch (AlignTop)
+		{
+			case EGUIA_UPPERLEFT:
+				break;
 			case EGUIA_LOWERRIGHT:
 				DesiredRect.UpperLeftCorner.Y += diffy;
 				break;
@@ -287,11 +285,12 @@ public:
 			case EGUIA_SCALE:
 				DesiredRect.UpperLeftCorner.Y = (s32)(ScaleRect.UpperLeftCorner.Y * fh);
 				break;
-			}
+		}
 
-		if (AlignBottom != EGUIA_UPPERLEFT)
-			switch (AlignBottom)
-			{
+		switch (AlignBottom)
+		{
+			case EGUIA_UPPERLEFT:
+				break;
 			case EGUIA_LOWERRIGHT:
 				DesiredRect.LowerRightCorner.Y += diffy;
 				break;
@@ -301,12 +300,12 @@ public:
 			case EGUIA_SCALE:
 				DesiredRect.LowerRightCorner.Y = (s32)(ScaleRect.LowerRightCorner.Y * fh);
 				break;
-			}
+		}
 
 		RelativeRect = DesiredRect;
 
-		s32 w = RelativeRect.getWidth(), 
-		    h = RelativeRect.getHeight();
+		s32 w = RelativeRect.getWidth();
+		s32 h = RelativeRect.getHeight();
 
 		// make sure the desired rectangle is allowed
 		if (w < MinSize.Width)
@@ -601,9 +600,9 @@ public:
 	//! scripting languages, editors, debuggers or xml serialization purposes.
 	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
 	{
-		out->addInt	("Id", ID );
-		out->addString ("Caption", Text.c_str());
-		out->addRect ("Rect",     DesiredRect);
+		out->addInt("Id", ID );
+		out->addString("Caption", Text.c_str());
+		out->addRect("Rect", DesiredRect);
 		out->addPosition2d("MinSize", core::position2di(MinSize.Width, MinSize.Height));
 		out->addPosition2d("MaxSize", core::position2di(MaxSize.Width, MaxSize.Height));
 		out->addBool("NoClip", NoClip);
@@ -611,9 +610,8 @@ public:
 		out->addEnum("RightAlign", AlignRight, GUIAlignmentNames);
 		out->addEnum("TopAlign", AlignTop, GUIAlignmentNames);
 		out->addEnum("BottomAlign", AlignBottom, GUIAlignmentNames);
-		out->addBool("Visible",  IsVisible );
-		out->addBool("Enabled",  IsEnabled );
-
+		out->addBool("Visible", IsVisible );
+		out->addBool("Enabled", IsEnabled );
 	}
 
 	//! Reads attributes of the scene node.
@@ -621,7 +619,6 @@ public:
 	//! scripting languages, editors, debuggers or xml deserialization purposes.
 	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
 	{
-
 		//! relative rect of element
 		ID = in->getAttributeAsInt("Id");
 		Text = in->getAttributeAsStringW("Caption").c_str();

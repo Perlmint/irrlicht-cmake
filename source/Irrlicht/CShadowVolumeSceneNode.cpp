@@ -15,15 +15,13 @@ namespace scene
 
 //! constructor
 CShadowVolumeSceneNode::CShadowVolumeSceneNode(ISceneNode* parent,
-						ISceneManager* mgr,
-						s32 id,
-						bool zfailmethod,
-						f32 infinity)
-: IShadowVolumeSceneNode(parent, mgr, id), Edges(0), EdgeCount(0),
-	ShadowVolumesUsed(0), Indices(0), Vertices(0), IndexCount(0),
-	VertexCount(0),	IndexCountAllocated(0),
-	VertexCountAllocated(0), UseZFailMethod(zfailmethod),
-	Adjacency(0), FaceData(0), Infinity(infinity)
+					ISceneManager* mgr, s32 id,
+					bool zfailmethod, f32 infinity)
+: IShadowVolumeSceneNode(parent, mgr, id), Indices(0), Vertices(0),
+	Adjacency(0), FaceData(0), UseZFailMethod(zfailmethod),
+	IndexCountAllocated(0), VertexCountAllocated(0),
+	IndexCount(0), VertexCount(0), ShadowVolumesUsed(0),
+	Edges(0), EdgeCount(0), Infinity(infinity)
 {
 	#ifdef _DEBUG
 	setDebugName("CShadowVolumeSceneNode");

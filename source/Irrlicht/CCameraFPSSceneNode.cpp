@@ -21,8 +21,8 @@ CCameraFPSSceneNode::CCameraFPSSceneNode(ISceneNode* parent, ISceneManager* mgr,
 		gui::ICursorControl* cursorControl, s32 id, f32 rotateSpeed , f32 moveSpeed,f32 jumpSpeed,
 		SKeyMap* keyMapArray, s32 keyMapSize, bool noVerticalMovement)
 : CCameraSceneNode(parent, mgr, id), CursorControl(cursorControl),
-	MoveSpeed(moveSpeed), RotateSpeed(rotateSpeed), JumpSpeed ( jumpSpeed ), firstUpdate(true),
-	NoVerticalMovement(noVerticalMovement),LastAnimationTime ( 0 )
+	MoveSpeed(moveSpeed), RotateSpeed(rotateSpeed), JumpSpeed(jumpSpeed),
+	firstUpdate(true), LastAnimationTime(0), NoVerticalMovement(noVerticalMovement)
 {
 	#ifdef _DEBUG
 	setDebugName("CCameraFPSSceneNode");

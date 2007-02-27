@@ -30,10 +30,11 @@ namespace video
 CD3D8Driver::CD3D8Driver(const core::dimension2d<s32>& screenSize, HWND window,
 								bool fullscreen, bool stencilbuffer,
 								io::IFileSystem* io, bool pureSoftware, bool vsync)
-: CNullDriver(io, screenSize), D3DLibrary(0), CurrentRenderMode(ERM_NONE), pID3DDevice(0),
- LastVertexType((video::E_VERTEX_TYPE)-1), ResetRenderStates(true), pID3D(0),
- LastSetLight(-1), Transformation3DChanged(0), StencilBuffer(stencilbuffer),
- DeviceLost(false), PrevRenderTarget(0), CurrentRendertargetSize(0,0)
+: CNullDriver(io, screenSize), CurrentRenderMode(ERM_NONE),
+	ResetRenderStates(true), Transformation3DChanged(0), StencilBuffer(stencilbuffer),
+	D3DLibrary(0), pID3D(0), pID3DDevice(0), PrevRenderTarget(0),
+	LastVertexType((video::E_VERTEX_TYPE)-1), MaxTextureUnits(0),
+	MaxLightDistance(sqrtf(FLT_MAX)), LastSetLight(-1), DeviceLost(false)
 {
 	#ifdef _DEBUG
 	setDebugName("CD3D8Driver");
@@ -59,10 +60,7 @@ CD3D8Driver::CD3D8Driver(const core::dimension2d<s32>& screenSize, HWND window,
 	UnitMatrixD3D8 = *(D3DMATRIX*)((void*)&mat);
 
 	// init direct 3d is done in the factory function
-
-	MaxLightDistance = sqrtf(FLT_MAX);
 }
-
 
 
 

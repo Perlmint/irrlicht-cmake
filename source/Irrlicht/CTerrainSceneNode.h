@@ -214,6 +214,12 @@ namespace scene
 
 		struct SPatch
 		{
+			SPatch()
+			: CurrentLOD(-1), DebugText(0),
+			Top(0), Bottom(0), Right(0), Left(0)
+			{
+			}
+
 			s32			CurrentLOD;
 			core::aabbox3df		BoundingBox;
 			core::vector3df		Center;
@@ -222,25 +228,25 @@ namespace scene
 			SPatch*			Bottom;
 			SPatch*			Right;
 			SPatch*			Left;
-
-			SPatch()
-			: CurrentLOD( -1 )
-			, Top( 0 )
-			, Bottom( 0 )
-			, Right( 0 )
-			, Left( 0 )
-			, DebugText ( 0 )
-			{
-			}
 		};
 
 		struct STerrainData
 		{
 			STerrainData()
+			: Size(0), PatchSize(0), CalcPatchSize(0),
+				PatchCount(0), MaxLOD(0),
+				BoundingBox(core::aabbox3df( 99999.9f, 99999.9f, 99999.9f, -99999.9f, -99999.9f, -99999.9f)),
+				LODDistanceThreshold(0), Patches(0)
 			{
-				Patches = 0;
-				LODDistanceThreshold = 0;
-				BoundingBox = core::aabbox3df( 99999.9f, 99999.9f, 99999.9f, -99999.9f, -99999.9f, -99999.9f);
+			}
+
+			STerrainData(s32 patchSize, s32 maxLOD, const core::vector3df& position, const core::vector3df& rotation, const core::vector3df& scale)
+			: Size(0), Position(position), Rotation(rotation), Scale(scale),
+				PatchSize(patchSize), CalcPatchSize(patchSize-1),
+				PatchCount(0), MaxLOD(maxLOD),
+				BoundingBox(core::aabbox3df( 99999.9f, 99999.9f, 99999.9f, -99999.9f, -99999.9f, -99999.9f)),
+				LODDistanceThreshold(0), Patches(0)
+			{
 			}
 
 			s32		Size;

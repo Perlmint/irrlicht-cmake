@@ -88,8 +88,8 @@ const char* const sBuiltInMaterialTypeNames[] =
 
 //! constructor
 CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<s32>& screenSize)
-: ScreenSize(screenSize), ViewPort(0,0,0,0),
- FileSystem(io), PrimitivesDrawn(0), TextureCreationFlags(0)
+: FileSystem(io), ViewPort(0,0,0,0), ScreenSize(screenSize),
+ PrimitivesDrawn(0), TextureCreationFlags(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CNullDriver");

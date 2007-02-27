@@ -52,11 +52,11 @@ namespace scene
 
 	private:
 
-		core::aabbox3d<f32> Box;
 		core::stringw Text;
 		video::SColor Color;
 		gui::IGUIFont* Font;
 		scene::ISceneCollisionManager* Coll;
+		core::aabbox3d<f32> Box;
 	};
 
 	class CBillboardTextSceneNode : public ITextSceneNode

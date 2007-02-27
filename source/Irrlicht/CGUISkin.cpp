@@ -15,7 +15,7 @@ namespace gui
 {
 
 CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
-: Font(0), Driver(driver), Type(type), SpriteBank(0)
+: Font(0), SpriteBank(0), Driver(driver), Type(type)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUISkin");

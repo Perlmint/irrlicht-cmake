@@ -12,8 +12,8 @@ namespace scene
 
 //! constructor
 CSceneNodeAnimatorTexture::CSceneNodeAnimatorTexture(const core::array<video::ITexture*>& textures, 
-						 s32 timePerFrame, bool loop, u32 now)
-: Loop(loop), StartTime(now), TimePerFrame(timePerFrame)
+					 s32 timePerFrame, bool loop, u32 now)
+: TimePerFrame(timePerFrame), StartTime(now), Loop(loop)
 {
 	#ifdef _DEBUG
 	setDebugName("CSceneNodeAnimatorTexture");
