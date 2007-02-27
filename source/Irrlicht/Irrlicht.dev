@@ -5068,16 +5068,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit503]
-FileName=CGUIFontMultiTexture.cpp
-CompileCpp=1
-Folder=gui_impl
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit504]
 FileName=CDefaultGUIElementFactory.h
 CompileCpp=1
 Folder=gui_impl
@@ -5087,7 +5077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit505]
+[Unit504]
 FileName=CGUIColorSelectDialog.h
 CompileCpp=1
 Folder=gui_impl
@@ -5097,17 +5087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit506]
-FileName=CGUIFontMultiTexture.h
-CompileCpp=1
-Folder=gui_impl
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit507]
+[Unit505]
 FileName=CSoftware2MaterialRenderer.h
 CompileCpp=1
 Folder=video_impl/Burning Video
@@ -5117,7 +5097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit508]
+[Unit506]
 FileName=CXMLReaderImpl.h
 CompileCpp=1
 Folder=io_impl
@@ -5127,7 +5107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit509]
+[Unit507]
 FileName=ITriangleRenderer.h
 CompileCpp=1
 Folder=video_impl/Software
@@ -5137,7 +5117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit510]
+[Unit508]
 FileName=..\..\include\EGUIElementTypes.h
 CompileCpp=1
 Folder=include/gui
@@ -5147,7 +5127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit511]
+[Unit509]
 FileName=..\..\include\ESceneNodeAnimatorTypes.h
 CompileCpp=1
 Folder=include/scene
@@ -5157,7 +5137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit512]
+[Unit510]
 FileName=..\..\include\ESceneNodeTypes.h
 CompileCpp=1
 Folder=include/scene
@@ -5167,7 +5147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit513]
+[Unit511]
 FileName=..\..\include\ETerrainElements.h
 CompileCpp=1
 Folder=include/scene
@@ -5177,7 +5157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit514]
+[Unit512]
 FileName=..\..\include\IAnimatedMeshB3d.h
 CompileCpp=1
 Folder=include/scene
@@ -5187,7 +5167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit515]
+[Unit513]
 FileName=..\..\include\IAnimatedMeshMD2.h
 CompileCpp=1
 Folder=include/scene
@@ -5197,7 +5177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit516]
+[Unit514]
 FileName=..\..\include\IAnimatedMeshMS3D.h
 CompileCpp=1
 Folder=include/scene
@@ -5207,7 +5187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit517]
+[Unit515]
 FileName=..\..\include\IAnimatedMeshX.h
 CompileCpp=1
 Folder=include/scene
@@ -5217,7 +5197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit518]
+[Unit516]
 FileName=..\..\include\IAttributeExchangingObject.h
 CompileCpp=1
 Folder=include/io
@@ -5227,7 +5207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit519]
+[Unit517]
 FileName=..\..\include\IAttributes.h
 CompileCpp=1
 Folder=include/io
@@ -5237,7 +5217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit520]
+[Unit518]
 FileName=..\..\include\IDummyTransformationSceneNode.h
 CompileCpp=1
 Folder=include/scene
@@ -5247,7 +5227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit521]
+[Unit519]
 FileName=..\..\include\IGPUProgrammingServices.h
 CompileCpp=1
 Folder=include/video
@@ -5257,7 +5237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit522]
+[Unit520]
 FileName=..\..\include\IGUIColorSelectDialog.h
 CompileCpp=1
 Folder=include/gui
@@ -5267,7 +5247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit523]
+[Unit521]
 FileName=..\..\include\IGUIComboBox.h
 CompileCpp=1
 Folder=include/gui
@@ -5277,7 +5257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit524]
+[Unit522]
 FileName=..\..\include\IGUIContextMenu.h
 CompileCpp=1
 Folder=include/gui
@@ -5287,7 +5267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit525]
+[Unit523]
 FileName=..\..\include\IGUIEditBox.h
 CompileCpp=1
 Folder=include/gui
@@ -5297,7 +5277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit526]
+[Unit524]
 FileName=..\..\include\IGUIElementFactory.h
 CompileCpp=1
 Folder=include/gui
@@ -5307,7 +5287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit527]
+[Unit525]
 FileName=..\..\include\IGUIInOutFader.h
 CompileCpp=1
 Folder=include/gui
@@ -5317,7 +5297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit528]
+[Unit526]
 FileName=..\..\include\IGUIStaticText.h
 CompileCpp=1
 Folder=include/gui
@@ -5327,7 +5307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit529]
+[Unit527]
 FileName=..\..\include\IGUITabControl.h
 CompileCpp=1
 Folder=include/gui
@@ -5337,7 +5317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit530]
+[Unit528]
 FileName=..\..\include\IGUIToolbar.h
 CompileCpp=1
 Folder=include/gui
@@ -5347,7 +5327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit531]
+[Unit529]
 FileName=..\..\include\IImage.h
 CompileCpp=1
 Folder=include/video
@@ -5357,7 +5337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit532]
+[Unit530]
 FileName=..\..\include\IImageLoader.h
 CompileCpp=1
 Folder=include/video
@@ -5367,7 +5347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit533]
+[Unit531]
 FileName=..\..\include\IImageWriter.h
 CompileCpp=1
 Folder=include/video
@@ -5377,7 +5357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit534]
+[Unit532]
 FileName=..\..\include\ILogger.h
 CompileCpp=1
 Folder=include/io
@@ -5387,7 +5367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit535]
+[Unit533]
 FileName=..\..\include\IMaterialRenderer.h
 CompileCpp=1
 Folder=include/video
@@ -5397,7 +5377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit536]
+[Unit534]
 FileName=..\..\include\IMaterialRendererServices.h
 CompileCpp=1
 Folder=include/video
@@ -5407,7 +5387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit537]
+[Unit535]
 FileName=..\..\include\IMeshCache.h
 CompileCpp=1
 Folder=include/scene
@@ -5417,7 +5397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit538]
+[Unit536]
 FileName=..\..\include\IMeshLoader.h
 CompileCpp=1
 Folder=include/io
@@ -5427,7 +5407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit539]
+[Unit537]
 FileName=..\..\include\IMeshManipulator.h
 CompileCpp=1
 Folder=include/scene
@@ -5437,7 +5417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit540]
+[Unit538]
 FileName=..\..\include\IMeshSceneNode.h
 CompileCpp=1
 Folder=include/scene
@@ -5447,7 +5427,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit541]
+[Unit539]
 FileName=..\..\include\IMetaTriangleSelector.h
 CompileCpp=1
 Folder=include/scene
@@ -5457,7 +5437,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit542]
+[Unit540]
 FileName=..\..\include\IOSOperator.h
 CompileCpp=1
 Folder=include/io
@@ -5467,7 +5447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit543]
+[Unit541]
 FileName=..\..\include\IParticleAffector.h
 CompileCpp=1
 Folder=include/scene
@@ -5477,7 +5457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit544]
+[Unit542]
 FileName=..\..\include\IParticleEmitter.h
 CompileCpp=1
 Folder=include/scene
@@ -5487,7 +5467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit545]
+[Unit543]
 FileName=..\..\include\IParticleSystemSceneNode.h
 CompileCpp=1
 Folder=include/scene
@@ -5497,7 +5477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit546]
+[Unit544]
 FileName=..\..\include\IQ3Shader.h
 CompileCpp=1
 Folder=include/scene
@@ -5507,7 +5487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit547]
+[Unit545]
 FileName=..\..\include\irrAllocator.h
 CompileCpp=1
 Folder=include/core
@@ -5517,7 +5497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit548]
+[Unit546]
 FileName=..\..\include\irrMap.h
 CompileCpp=1
 Folder=include/core
@@ -5527,7 +5507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit549]
+[Unit547]
 FileName=..\..\include\irrXML.h
 CompileCpp=1
 Folder=include/io
@@ -5537,7 +5517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit550]
+[Unit548]
 FileName=..\..\include\ISceneCollisionManager.h
 CompileCpp=1
 Folder=include/scene
@@ -5547,7 +5527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit551]
+[Unit549]
 FileName=..\..\include\ISceneNodeAnimatorCollisionResponse.h
 CompileCpp=1
 Folder=include/scene
@@ -5557,7 +5537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit552]
+[Unit550]
 FileName=..\..\include\ISceneNodeAnimatorFactory.h
 CompileCpp=1
 Folder=include/scene
@@ -5567,7 +5547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit553]
+[Unit551]
 FileName=..\..\include\ISceneNodeFactory.h
 CompileCpp=1
 Folder=include/scene
@@ -5577,7 +5557,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit554]
+[Unit552]
 FileName=..\..\include\ISceneUserDataSerializer.h
 CompileCpp=1
 Folder=include/scene
@@ -5587,7 +5567,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit555]
+[Unit553]
 FileName=..\..\include\IShaderConstantSetCallBack.h
 CompileCpp=1
 Folder=include/video
@@ -5597,7 +5577,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit556]
+[Unit554]
 FileName=..\..\include\IShadowVolumeSceneNode.h
 CompileCpp=1
 Folder=include/video
@@ -5607,7 +5587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit557]
+[Unit555]
 FileName=..\..\include\ITerrainSceneNode.h
 CompileCpp=1
 Folder=include/scene
@@ -5617,7 +5597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit558]
+[Unit556]
 FileName=..\..\include\ITextSceneNode.h
 CompileCpp=1
 Folder=include/scene
@@ -5627,7 +5607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit559]
+[Unit557]
 FileName=..\..\include\ITimer.h
 CompileCpp=1
 Folder=include
@@ -5637,7 +5617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit560]
+[Unit558]
 FileName=..\..\include\ITriangleSelector.h
 CompileCpp=1
 Folder=include/scene
@@ -5647,7 +5627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit561]
+[Unit559]
 FileName=..\..\include\IVideoModeList.h
 CompileCpp=1
 Folder=include/video
@@ -5657,7 +5637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit562]
+[Unit560]
 FileName=..\..\include\IWriteFile.h
 CompileCpp=1
 Folder=include/io
@@ -5667,7 +5647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit563]
+[Unit561]
 FileName=..\..\include\IXMLReader.h
 CompileCpp=1
 Folder=include/io
@@ -5677,7 +5657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit564]
+[Unit562]
 FileName=..\..\include\IXMLWriter.h
 CompileCpp=1
 Folder=include/io
@@ -5687,7 +5667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit565]
+[Unit563]
 FileName=..\..\include\quaternion.h
 CompileCpp=1
 Folder=include/core
@@ -5697,7 +5677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit566]
+[Unit564]
 FileName=..\..\include\SAnimatedMesh.h
 CompileCpp=1
 Folder=include/scene
@@ -5707,7 +5687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit567]
+[Unit565]
 FileName=..\..\include\SceneParameters.h
 CompileCpp=1
 Folder=include/scene
@@ -5717,7 +5697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit568]
+[Unit566]
 FileName=..\..\include\SExposedVideoData.h
 CompileCpp=1
 Folder=include/video
@@ -5727,7 +5707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit569]
+[Unit567]
 FileName=..\..\include\SKeyMap.h
 CompileCpp=1
 Folder=include
@@ -5737,7 +5717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit570]
+[Unit568]
 FileName=..\..\include\SMeshBufferTangents.h
 CompileCpp=1
 Folder=include/video
@@ -5747,7 +5727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit571]
+[Unit569]
 FileName=..\..\include\SParticle.h
 CompileCpp=1
 Folder=include/scene
@@ -5757,7 +5737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit572]
+[Unit570]
 FileName=..\..\include\SViewFrustum.h
 CompileCpp=1
 Folder=include/scene
@@ -5767,7 +5747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit573]
+[Unit571]
 FileName=..\..\include\triangle3d.h
 CompileCpp=1
 Folder=include/core
@@ -5777,7 +5757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit574]
+[Unit572]
 FileName=CMD3MeshFileLoader.h
 CompileCpp=1
 Folder=scene_impl
@@ -5787,7 +5767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit575]
+[Unit573]
 FileName=CMD3MeshFileLoader.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -5797,7 +5777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit576]
+[Unit574]
 FileName=CAnimatedMeshMD3.h
 CompileCpp=1
 Folder=scene_impl
@@ -5807,7 +5787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit577]
+[Unit575]
 FileName=CAnimatedMeshMD3.cpp
 CompileCpp=1
 Folder=scene_impl
@@ -5817,7 +5797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit578]
+[Unit576]
 FileName=CGUISpriteBank.h
 CompileCpp=1
 Folder=scene_impl
@@ -5827,10 +5807,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit579]
+[Unit577]
 FileName=CGUISpriteBank.cpp
 CompileCpp=1
 Folder=scene_impl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit578]
+FileName=..\..\include\IGUIFontBitmap.h
+CompileCpp=1
+Folder=include/gui
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit579]
+FileName=..\..\include\IGUISpriteBank.h
+CompileCpp=1
+Folder=include/gui
 Compile=1
 Link=1
 Priority=1000

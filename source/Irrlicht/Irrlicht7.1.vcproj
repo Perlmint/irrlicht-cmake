@@ -772,12 +772,6 @@
 				RelativePath=".\CGUIFont.h">
 			</File>
 			<File
-				RelativePath=".\CGUIFontMultiTexture.cpp">
-			</File>
-			<File
-				RelativePath=".\CGUIFontMultiTexture.h">
-			</File>
-			<File
 				RelativePath=".\CGUIImage.cpp">
 			</File>
 			<File
