@@ -187,7 +187,7 @@ bool CD3D9Texture::createMipMaps(s32 level)
 	HRESULT hr = Texture->GetSurfaceLevel(level-1, &upperSurface);
 	if (FAILED(hr) || !upperSurface)
 	{
-		os::Printer::log("Could get upper surface level for mip map generation", ELL_WARNING);
+		os::Printer::log("Could not get upper surface level for mip map generation", ELL_WARNING);
 		return false;
 	}
 
@@ -195,7 +195,8 @@ bool CD3D9Texture::createMipMaps(s32 level)
 	hr = Texture->GetSurfaceLevel(level, &lowerSurface);
 	if (FAILED(hr) || !lowerSurface)
 	{
-		os::Printer::log("Could get lower surface level for mip map generation", ELL_WARNING);
+		os::Printer::log("Could not get lower surface level for mip map generation", ELL_WARNING);
+		upperSurface->Release();
 		return false;
 	}
 
