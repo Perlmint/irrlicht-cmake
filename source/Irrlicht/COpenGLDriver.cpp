@@ -3067,7 +3067,7 @@ IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
 {
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	return new COpenGLDriver(screenSize, fullscreen, stencilBuffer,
-		io, antiAlias, vsync);
+		io, vsync, antiAlias);
 #else
 	return 0;
 #endif //  _IRR_COMPILE_WITH_OPENGL_
