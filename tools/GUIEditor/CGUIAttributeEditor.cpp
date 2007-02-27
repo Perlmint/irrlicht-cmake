@@ -5,6 +5,7 @@
 #include "IVideoDriver.h"
 #include "IAttributes.h"
 #include "IGUIFont.h"
+#include "CGUIEditWorkspace.h"
 
 using namespace irr;
 using namespace core;
@@ -22,7 +23,7 @@ CGUIAttributeEditor::CGUIAttributeEditor(IGUIEnvironment* environment, s32 id, I
 	// create attributes
 	Attribs = environment->getFileSystem()->createEmptyAttributes(Environment->getVideoDriver());
 	// add scrollbar
-	ScrollBar = environment->addScrollBar(false, rect<s32>(75, 15, 90, 85), this);
+	ScrollBar = environment->addScrollBar(false, rect<s32>(84, 5, 99, 85), this);
 	ScrollBar->setAlignment(EGUIA_LOWERRIGHT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	ScrollBar->grab();
 	ScrollBar->setSubElement(true);
@@ -70,7 +71,7 @@ bool CGUIAttributeEditor::OnEvent(SEvent e)
 		{
 		case EMIE_MOUSE_WHEEL:
 			{
-				ScrollBar->setPos(ScrollBar->getPos() - e.MouseInput.Wheel*20);
+				ScrollBar->setPos(ScrollBar->getPos() - (s32)(e.MouseInput.Wheel)*20);
 				
 				s32 diff = LastOffset - ScrollBar->getPos();
 				for (u32 i=0; i<AttribList.size(); ++i)
@@ -104,29 +105,18 @@ void CGUIAttributeEditor::refreshAttribs()
 	rect<s32> r(top.X,
 				top.Y,
 				AbsoluteRect.getWidth() - Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH) * 2,
-				5 + Environment->getSkin()->getFont()->getDimension(L"A").Height * 2);
+				5 + Environment->getSkin()->getFont()->getDimension(L"A").Height);
 
 	// add attribute elements
 	u32 c = Attribs->getAttributeCount();
 	for (i=0; i<c; ++i)
 	{
-		/*
-		core::stringc attribTypeString = "GUIAttribute_"
-		attribTypeString += attribs->getAttributeTypeString(i);
-		// add attribute by name
-		IGUIElement *att = Environment->addGUIElement(attribTypeString.c_str(),this);
-		if (!att)
-		{
-			// generic string editor
-		}
-		*/
-
 		AttribList.push_back(new CGUIAttribute(Environment, this, Attribs, i, r));
 		// dont grab it because we created it with new
 		AttribList[i]->setSubElement(true);
 		AttribList[i]->setRelativePosition(r);
 		AttribList[i]->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
-		r += position2di(0, r.getHeight() + 2);
+		r += position2di(0, AttribList[i]->getRelativePosition().getHeight() + 5);
 	}
 
 	if (r.UpperLeftCorner.Y > RelativeRect.getHeight())
@@ -146,7 +136,7 @@ void CGUIAttributeEditor::refreshAttribs()
 void CGUIAttributeEditor::updateAttribs()
 {
 	for (u32 i=0; i<AttribList.size(); ++i)
-		AttribList[i]->updateAttrib();
+		AttribList[i]->updateAttrib(false);
 }
 
 void CGUIAttributeEditor::updateAbsolutePosition()
@@ -198,57 +188,114 @@ CGUIAttribute::CGUIAttribute(IGUIEnvironment* environment, IGUIElement *parent,
 
 	AttribName = environment->addStaticText(
 			name.c_str(),
-			rect<s32>(0, 0, r.getWidth(), r.getHeight()/2),
+			rect<s32>(0, 0, r.getWidth(), Environment->getSkin()->getFont()->getDimension(L"A").Height),
 			false, false, this, -1, false);
 	AttribName->grab();
 	AttribName->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 
-	rect<s32> r2(0, r.getHeight()/2, r.getWidth(), r.getHeight());
+	rect<s32> r2(0, Environment->getSkin()->getFont()->getDimension(L"A").Height + 5, 
+		r.getWidth(), Environment->getSkin()->getFont()->getDimension(L"A").Height*2 + 10 );
 
-	if (attribs->getAttributeType(attribIndex) == io::EAT_BOOL)
-	{
-		AttribCheckBox = environment->addCheckBox(
-				attribs->getAttributeAsBool(attribIndex),
-				r2, this);
-		AttribCheckBox->grab();
-	}
-	else if (attribs->getAttributeType(attribIndex) == io::EAT_ENUM)
-	{
-		core::array<core::stringc> outLiterals;
-		attribs->getAttributeEnumerationLiteralsOfEnumeration(attribIndex, outLiterals);
+	io::E_ATTRIBUTE_TYPE aType = attribs->getAttributeType(attribIndex);
 
-		if (outLiterals.size() > 0)
+	switch(aType)
+	{
+	case io::EAT_BOOL:
 		{
-			AttribComboBox = environment->addComboBox(r2, this, -1);
-			for (u32 i=0; i<outLiterals.size(); ++i)
-				AttribComboBox->addItem( core::stringw(outLiterals[i].c_str()).c_str());
-
-			AttribComboBox->setSelected( attribs->getAttributeAsInt(attribIndex) );
-
-			AttribComboBox->grab();
-			AttribComboBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+			AttribCheckBox = environment->addCheckBox(
+					attribs->getAttributeAsBool(attribIndex),
+					r2, this);
+			AttribCheckBox->grab();
 		}
-		else
+		break;
+	case io::EAT_ENUM:
 		{
+			core::array<core::stringc> outLiterals;
+			attribs->getAttributeEnumerationLiteralsOfEnumeration(attribIndex, outLiterals);
 
+			if (outLiterals.size() > 0)
+			{
+				AttribComboBox = environment->addComboBox(r2, this, -1);
+				for (u32 i=0; i<outLiterals.size(); ++i)
+					AttribComboBox->addItem( core::stringw(outLiterals[i].c_str()).c_str());
+
+				AttribComboBox->setSelected( attribs->getAttributeAsInt(attribIndex) );
+
+				AttribComboBox->grab();
+				AttribComboBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+			}
+			else
+			{
+
+				AttribEditBox = environment->addEditBox(
+						attribs->getAttributeAsStringW(attribIndex).c_str(),
+						r2, true, this, -1);
+				AttribEditBox->grab();
+				AttribEditBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+			}
+		}
+		break;
+	case io::EAT_COLOR:
+	case io::EAT_COLORF:
+		{
+			video::SColor col = attribs->getAttributeAsColor(attribIndex);
+
+			core::rect<s32> r3 = r2;
+			s32 h=5;
+			r2 += position2di(0, h*4 + Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH)*4);
+			r3.LowerRightCorner.Y = r3.UpperLeftCorner.Y + Environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);
+
+			AttribSliderA = environment->addScrollBar(true, r3, this, -1);
+			AttribSliderA->setMax(255);
+			AttribSliderA->setPos(col.getAlpha());
+			AttribSliderA->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+			r3 += position2di(0, r3.getHeight()+h);
+			AttribSliderR = environment->addScrollBar(true, r3, this, -1);
+			AttribSliderR->setMax(255);
+			AttribSliderR->setPos(col.getRed());
+			AttribSliderR->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+			r3 += position2di(0, r3.getHeight()+h);
+			AttribSliderG = environment->addScrollBar(true, r3, this, -1);
+			AttribSliderG->setMax(255);
+			AttribSliderG->setPos(col.getGreen());
+			AttribSliderG->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+			r3 += position2di(0, r3.getHeight()+h);
+			AttribSliderB = environment->addScrollBar(true, r3, this, -1);
+			AttribSliderB->setMax(255);
+			AttribSliderB->setPos(col.getBlue());
+			AttribSliderB->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+
+			// add editbox
 			AttribEditBox = environment->addEditBox(
 					attribs->getAttributeAsStringW(attribIndex).c_str(),
-					r2, true, this, -1);
+					r2,
+					true, this, -1);
 			AttribEditBox->grab();
 			AttribEditBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
 		}
-
-
+		break;
+	default:
+		{
+			AttribEditBox = environment->addEditBox(
+					attribs->getAttributeAsStringW(attribIndex).c_str(),
+					r2,
+					true, this, -1);
+			AttribEditBox->grab();
+			AttribEditBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+		}
+		break;
 	}
-	else
+
+	// get minimum height
+	s32 y=0;
+	core::list<IGUIElement*>::Iterator it = Children.begin();
+	for (; it != Children.end(); ++it)
 	{
-		AttribEditBox = environment->addEditBox(
-				attribs->getAttributeAsStringW(attribIndex).c_str(),
-				r2,
-				true, this, -1);
-		AttribEditBox->grab();
-		AttribEditBox->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_UPPERLEFT);
+		if (y < (*it)->getRelativePosition().LowerRightCorner.Y)
+			y = (*it)->getRelativePosition().LowerRightCorner.Y;
 	}
+	setMinSize( core::dimension2di(50, y+5));	
+
 }
 
 CGUIAttribute::~CGUIAttribute()
@@ -276,11 +323,34 @@ bool CGUIAttribute::OnEvent(SEvent e)
 		case EGET_EDITBOX_ENTER:
 		case EGET_CHECKBOX_CHANGED:
 		case EGET_COMBO_BOX_CHANGED:
-			updateAttrib();
-			return true;
 		case EGET_ELEMENT_FOCUS_LOST:
-			updateAttrib();
-			break;
+			if ((Attribs->getAttributeType(Index) == io::EAT_COLOR || 
+				Attribs->getAttributeType(Index) == io::EAT_COLORF) &&
+				e.GUIEvent.Caller == AttribEditBox)
+			{
+				// update scrollbars from textbox
+				Attribs->setAttribute(Index, AttribEditBox->getText());
+				video::SColor col = Attribs->getAttributeAsColor(Index);
+				AttribSliderA->setPos(col.getAlpha());
+				AttribSliderR->setPos(col.getRed()); 
+				AttribSliderG->setPos(col.getGreen());
+				AttribSliderB->setPos(col.getBlue());
+			}
+			return updateAttrib();
+		case EGET_SCROLL_BAR_CHANGED:
+			if (Attribs->getAttributeType(Index) == io::EAT_COLOR || 
+				Attribs->getAttributeType(Index) == io::EAT_COLORF)
+			{
+				video::SColor col(
+					AttribSliderA->getPos(), 
+					AttribSliderR->getPos(), 
+					AttribSliderG->getPos(),
+					AttribSliderB->getPos());
+
+				Attribs->setAttribute(Index, col);
+				AttribEditBox->setText( Attribs->getAttributeAsStringW(Index).c_str());
+			}
+			return updateAttrib();
 		case EGET_ELEMENT_FOCUSED:
 			if (Parent)
 				Parent->bringToFront(this);
@@ -293,20 +363,34 @@ bool CGUIAttribute::OnEvent(SEvent e)
 	return Parent->OnEvent(e);
 }
 
-void CGUIAttribute::updateAttrib()
+bool CGUIAttribute::updateAttrib(bool sendEvent)
 {
-	if (Attribs->getAttributeType(Index) == io::EAT_BOOL)
+	io::E_ATTRIBUTE_TYPE eType = Attribs->getAttributeType(Index);
+	switch(eType)
 	{
-		Attribs->setAttribute(Index, AttribCheckBox->isChecked());
+		case io::EAT_BOOL:
+			Attribs->setAttribute(Index, AttribCheckBox->isChecked());
+			break;
+	
+		case io::EAT_ENUM:
+			Attribs->setAttribute(Index, AttribComboBox->getText());
+			break;
+		case io::EAT_COLOR:
+		case io::EAT_COLORF:
+		default:
+			Attribs->setAttribute(Index, AttribEditBox->getText());
+			AttribEditBox->setText(Attribs->getAttributeAsStringW(Index).c_str());
 	}
-	else if (Attribs->getAttributeType(Index) == io::EAT_ENUM)
+	if (sendEvent)
 	{
-		core::stringw test = AttribComboBox->getText();
-		Attribs->setAttribute(Index, AttribComboBox->getText());
+		// build event and pass to parent
+		SEvent event;
+		event.EventType = EET_USER_EVENT;
+		event.UserEvent.UserData1 = EGUIEDCE_ATTRIBUTE_CHANGED;
+		event.UserEvent.UserData2 = Parent->getID();
+		event.UserEvent.UserData3 = (f32)Index;
+		return Parent->OnEvent(event);
 	}
-	else
-	{
-		Attribs->setAttribute(Index, AttribEditBox->getText());
-		AttribEditBox->setText(Attribs->getAttributeAsStringW(Index).c_str());
-	}
+
+	return true;
 }

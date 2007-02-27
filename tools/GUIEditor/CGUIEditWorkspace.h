@@ -21,6 +21,16 @@ namespace gui
 		the current skin.
 	*/
 
+	// custom events
+	enum EGUIEDIT_CUSTOM_EVENTS 
+	{
+		EGUIEDCE_ATTRIBUTE_CHANGED=35123, // some number hopefully nobody else is using
+		EGUIEDCE_ATTRIB_EDITOR,
+		EGUIEDCE_OPTION_EDITOR,
+		EGUIEDCE_ENV_EDITOR,
+		EGUIEDCE_COUNT
+	};
+
 	class CGUIEditWorkspace : public IGUIElement
 	{
 	public:
@@ -69,14 +79,9 @@ namespace gui
 		//! this shoudln't be serialized, but this is included as it's an example
 		virtual const c8* getTypeName() { return "GUIEditor"; }
 
-		core::rect<s32> TLRect;
-		core::rect<s32> TRRect;
-		core::rect<s32> TopRect;
-		core::rect<s32> BLRect;
-		core::rect<s32> LRect;
-		core::rect<s32> RRect;
-		core::rect<s32> BRRect;
-		core::rect<s32> BRect;
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0);
+
+		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0);
 
 	private:
 
@@ -117,9 +122,6 @@ namespace gui
 			EGUIEDMC_BRING_TO_FRONT,
 			EGUIEDMC_SAVE_ELEMENT,
 			//! grid
-			EGUIEDMC_TOGGLE_GRID,
-			EGUIEDMC_TOGGLE_SNAP_GRID,
-			EGUIEDMC_SET_GRID_SIZE,
 			EGUIEDMC_TOGGLE_EDITOR,
 
 			EGUIEDMC_INSERT_XML,
@@ -145,7 +147,16 @@ namespace gui
 		CGUIEditWindow		*EditorWindow;
 
 		core::stringw		CopyBuffer;
-		
+
+		core::rect<s32> TLRect;
+		core::rect<s32> TRRect;
+		core::rect<s32> TopRect;
+		core::rect<s32> BLRect;
+		core::rect<s32> LRect;
+		core::rect<s32> RRect;
+		core::rect<s32> BRRect;
+		core::rect<s32> BRect;
+
 
 	};
 

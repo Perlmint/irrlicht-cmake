@@ -34,6 +34,10 @@ namespace gui
 		virtual IGUIButton* getMinimizeButton();
 		virtual IGUIButton* getMaximizeButton();
 
+		CGUIAttributeEditor* getAttributeEditor();
+		CGUIAttributeEditor* getOptionEditor();
+		CGUIAttributeEditor* getEnvironmentEditor();
+
 		//! this shoudln't be serialized, but this is included as it's an example
 		virtual const c8* getTypeName() { return "GUIEditWindow"; }
 
@@ -48,6 +52,8 @@ namespace gui
 		IGUIElement*			SelectedElement; // current selected element
 
 		CGUIAttributeEditor*	AttribEditor;	// edits the current attribute
+		CGUIAttributeEditor*	OptionEditor;	// edits the options for the window
+		CGUIAttributeEditor*	EnvEditor;		// edits attributes for the environment
 		IGUIStaticText*			ResizeButton;
 
 	};

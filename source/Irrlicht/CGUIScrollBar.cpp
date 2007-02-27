@@ -80,6 +80,7 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 		switch(event.MouseInput.Event)
 		{
 		case EMIE_MOUSE_WHEEL:
+			if (Environment->getFocus() == this)
 			{ // thanks to a bug report by REAPER
 				setPos(getPos() + (s32)event.MouseInput.Wheel* -SmallStep);
 				SEvent newEvent;
@@ -87,16 +88,34 @@ bool CGUIScrollBar::OnEvent(SEvent event)
 				newEvent.GUIEvent.Caller = this;
 				newEvent.GUIEvent.EventType = EGET_SCROLL_BAR_CHANGED;
 				Parent->OnEvent(newEvent);
+				return true;
 			}
-			return true;
+			break;
 		case EMIE_LMOUSE_PRESSED_DOWN:
-			Dragging = true;
-			Environment->setFocus(this);
-			return true;
+		{
+			IGUIElement *el = Environment->getRootGUIElement()->getElementFromPoint(
+				core::position2di(event.MouseInput.X, event.MouseInput.Y));
+			if (el == this )
+			{
+				Dragging = true;
+				Environment->setFocus(this);
+				return true;
+			}
+			else
+			{
+				if (Environment->getFocus() == this)
+				{
+					Environment->setFocus(el);
+					return el->OnEvent(event);
+				}
+			}
+			break;
+		}
 		case EMIE_LMOUSE_LEFT_UP:
 			Dragging = false;
-			Environment->removeFocus(this);
 			return true;
+			
+			break;
 		case EMIE_MOUSE_MOVED:
 			if (Dragging)
 			{
@@ -162,6 +181,22 @@ void CGUIScrollBar::updateAbsolutePosition()
 	IGUIElement::updateAbsolutePosition();
 	// todo: properly resize
 	refreshControls();
+
+	if (Horizontal)
+	{
+		f32 f = (RelativeRect.getWidth() - ((f32)RelativeRect.getHeight()*3.0f)) / (f32)Max;
+		DrawPos = (s32)((Pos * f) + ((f32)RelativeRect.getHeight() * 0.5f));
+		DrawHeight = RelativeRect.getHeight();
+	}
+	else
+	{
+		f32 f = 0.0f;
+		if (Max != 0)
+			f = (RelativeRect.getHeight() - ((f32)RelativeRect.getWidth()*3.0f)) / (f32)Max;
+
+		DrawPos = (s32)((Pos * f) + ((f32)RelativeRect.getWidth() * 0.5f));
+		DrawHeight = RelativeRect.getWidth();
+	}
 }
 
 void CGUIScrollBar::setPosFromMousePos(s32 x, s32 y)

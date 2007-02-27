@@ -36,7 +36,16 @@ CGUIEditWorkspace::CGUIEditWorkspace(IGUIEnvironment* environment, s32 id, IGUIE
 		EditorWindow->grab();
 		EditorWindow->setSubElement(true);
 
-		environment->setFocus(EditorWindow);
+		Environment->setFocus(EditorWindow);
+		serializeAttributes(EditorWindow->getOptionEditor()->getAttribs());
+		EditorWindow->getOptionEditor()->refreshAttribs();
+
+		if (EditorWindow->getEnvironmentEditor())
+		{
+			Environment->serializeAttributes(EditorWindow->getEnvironmentEditor()->getAttribs());
+			EditorWindow->getEnvironmentEditor()->refreshAttribs();
+		}
+
 	}
 }
 
@@ -221,16 +230,52 @@ void CGUIEditWorkspace::selectPreviousSibling()
 }
 
 //! called if an event happened.
-bool CGUIEditWorkspace::OnEvent(SEvent event)
+bool CGUIEditWorkspace::OnEvent(SEvent e)
 {
 	IGUIFileOpenDialog* dialog=0;
-	switch(event.EventType)
+	switch(e.EventType)
 	{
+	case EET_USER_EVENT:
+		{
+			switch (e.UserEvent.UserData1)
+			{
+			case EGUIEDCE_ATTRIBUTE_CHANGED:
+				{
+					switch (e.UserEvent.UserData2)
+					{
+					case EGUIEDCE_ATTRIB_EDITOR:
+						{
+							// update selected items attributes
+							if (SelectedElement)
+							{
+								SelectedElement->deserializeAttributes(EditorWindow->getAttributeEditor()->getAttribs());
+							}
+							return true;
+						}
+					case EGUIEDCE_OPTION_EDITOR:
+						{
+							// update editor options
+							deserializeAttributes(EditorWindow->getOptionEditor()->getAttribs());
+							return true;
+						}
+					case EGUIEDCE_ENV_EDITOR:
+						{
+							// update environment
+							Environment->deserializeAttributes(EditorWindow->getEnvironmentEditor()->getAttribs());
+							return true;
+						}
+					}
+				}
+				break;
+
+			}
+		}
+		break;
 
 	case EET_KEY_INPUT_EVENT:
-		if (!event.KeyInput.PressedDown)
+		if (!e.KeyInput.PressedDown)
 		{
-			if (event.KeyInput.Key == KEY_DELETE && SelectedElement)
+			if (e.KeyInput.Key == KEY_DELETE && SelectedElement)
 			{
 				IGUIElement* el = SelectedElement;
 				setSelectedElement(0);
@@ -244,11 +289,11 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 		break;
 
 	case EET_MOUSE_INPUT_EVENT:
-		switch(event.MouseInput.Event)
+		switch(e.MouseInput.Event)
 		{
 		case EMIE_MOUSE_WHEEL:
 			{
-				f32 wheel = event.MouseInput.Wheel;
+				f32 wheel = e.MouseInput.Wheel;
 
 				if (wheel > 0)
 					selectPreviousSibling();
@@ -258,7 +303,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			break;
 		case EMIE_LMOUSE_PRESSED_DOWN:
 		{
-			IGUIElement* newSelection = getElementFromPoint(core::position2di(event.MouseInput.X,event.MouseInput.Y));
+			IGUIElement* newSelection = getElementFromPoint(core::position2di(e.MouseInput.X,e.MouseInput.Y));
 			if (newSelection != this) // redirect event
 			{
 				Environment->setFocus(newSelection);
@@ -272,7 +317,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			if (CurrentMode == EGUIEDM_SELECT)
 			{
 				// selecting an element...
-				MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(event.MouseInput.X,event.MouseInput.Y));
+				MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(e.MouseInput.X,e.MouseInput.Y));
 
 				if (MouseOverElement == Parent)
 						MouseOverElement = 0;
@@ -281,7 +326,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				{
 					// start moving or dragging
 
-					core::position2di p = core::position2di(event.MouseInput.X,event.MouseInput.Y);
+					core::position2di p = core::position2di(e.MouseInput.X,e.MouseInput.Y);
 
 					CurrentMode = getModeFromPos(p);
 
@@ -305,9 +350,10 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			}
 			else
 			{
-				DragStart = core::position2di(event.MouseInput.X,event.MouseInput.Y);
+				DragStart = core::position2di(e.MouseInput.X,e.MouseInput.Y);
 				// root menu
-				IGUIContextMenu* mnu = Environment->addContextMenu(core::rect<s32>(event.MouseInput.X, event.MouseInput.Y, event.MouseInput.Y+100, event.MouseInput.Y+100),this);
+				IGUIContextMenu* mnu = Environment->addContextMenu(
+					core::rect<s32>(e.MouseInput.X, e.MouseInput.Y, e.MouseInput.Y+100, e.MouseInput.Y+100),this);
 				mnu->addItem(L"File",-1,true,true);
 				mnu->addItem(L"Edit",-1,true,true);
 				mnu->addItem(L"View",-1,true,true);
@@ -315,6 +361,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 
 				// file menu
 				IGUIContextMenu* sub = mnu->getSubMenu(0);
+				IGUIContextMenu* sub2 =0;
 
 				sub->addItem(L"New",	MenuCommandStart + EGUIEDMC_FILE_NEW );
 				sub->addItem(L"Load...",MenuCommandStart + EGUIEDMC_FILE_LOAD);
@@ -332,17 +379,10 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				sub->addSeparator();
 				sub->addItem(L"Save to XML...", MenuCommandStart + EGUIEDMC_SAVE_ELEMENT,	(SelectedElement != 0));
 
-				// view menu
-
 				sub = mnu->getSubMenu(2);
-				sub->addItem(L"Grid",-1,true,true);
-					IGUIContextMenu* sub2 = sub->getSubMenu(0);
-					sub2->addItem( DrawGrid ? L"Hide grid" : L"Draw grid",	MenuCommandStart + EGUIEDMC_TOGGLE_GRID);
-					sub2->addItem( UseGrid ? L"Don't snap" : L"Snap",		MenuCommandStart + EGUIEDMC_TOGGLE_SNAP_GRID);
-					sub2->addItem(L"Set size",								MenuCommandStart + EGUIEDMC_SET_GRID_SIZE);
-
+				// view menu
 				if (EditorWindow)
-					sub->addItem(EditorWindow->isVisible() ? L"Hide property editor" : L"Show property editor", MenuCommandStart + EGUIEDMC_TOGGLE_EDITOR);
+					sub->addItem(EditorWindow->isVisible() ? L"Hide window" : L"Show window", MenuCommandStart + EGUIEDMC_TOGGLE_EDITOR);
 
 				sub = mnu->getSubMenu(3);
 
@@ -373,11 +413,9 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				sub->addSeparator();
 				sub->addItem(L"From XML...", MenuCommandStart + EGUIEDMC_INSERT_XML);
 
-				// add menu
-
+				// set focus to menu
 				Environment->setFocus(mnu);
 
-				// create menu
 			}
 			break;
 		case EMIE_LMOUSE_LEFT_UP:
@@ -389,7 +427,8 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			{
 				if (SelectedElement)
 				{
-					MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(event.MouseInput.X,event.MouseInput.Y));
+					MouseOverElement = getEditableElementFromPoint(Parent, 
+						core::position2di(e.MouseInput.X,e.MouseInput.Y));
 					if (MouseOverElement)
 					{
 						MouseOverElement->addChild(SelectedElement);
@@ -424,18 +463,19 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			if (CurrentMode == EGUIEDM_SELECT || CurrentMode == EGUIEDM_SELECT_NEW_PARENT)
 			{
 				// highlight the element that the mouse is over
-				MouseOverElement = getEditableElementFromPoint(Parent, core::position2di(event.MouseInput.X,event.MouseInput.Y));
+				MouseOverElement = getEditableElementFromPoint(Parent, 
+					core::position2di(e.MouseInput.X,e.MouseInput.Y));
 				if (MouseOverElement == Parent)
 						MouseOverElement = 0;
 
-				core::position2di p = core::position2di(event.MouseInput.X,event.MouseInput.Y);
+				core::position2di p = core::position2di(e.MouseInput.X,e.MouseInput.Y);
 				if (CurrentMode == EGUIEDM_SELECT)
 					MouseOverMode = getModeFromPos(p);
 			}
 			else if (CurrentMode == EGUIEDM_MOVE)
 			{
 				// get difference
-				core::position2di p = core::position2di(event.MouseInput.X,event.MouseInput.Y);
+				core::position2di p = core::position2di(e.MouseInput.X,e.MouseInput.Y);
 				p -= DragStart;
 
 				// apply to top corner
@@ -451,7 +491,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 			else if (CurrentMode > EGUIEDM_MOVE)
 			{
 				// get difference from start position
-				core::position2di p = core::position2di(event.MouseInput.X,event.MouseInput.Y);
+				core::position2di p = core::position2di(e.MouseInput.X,e.MouseInput.Y);
 				if (UseGrid)
 				{
 					p.X = (p.X/GridSize.Width)*GridSize.Width;
@@ -494,17 +534,17 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 		break;
 
 	case EET_GUI_EVENT:
-		switch(event.GUIEvent.EventType)
+		switch(e.GUIEvent.EventType)
 		{
 		// load a gui file
 		case EGET_FILE_SELECTED:
-			dialog = (IGUIFileOpenDialog*)event.GUIEvent.Caller;
+			dialog = (IGUIFileOpenDialog*)e.GUIEvent.Caller;
 			Environment->loadGUI(core::stringc(dialog->getFilename()).c_str());
 			break;
 
 		case EGET_MENU_ITEM_SELECTED:
 
-			IGUIContextMenu *menu = (IGUIContextMenu*)event.GUIEvent.Caller;
+			IGUIContextMenu *menu = (IGUIContextMenu*)e.GUIEvent.Caller;
 			s32 cmdID = menu->getItemCommandId(menu->getSelectedItem()) - MenuCommandStart;
 
 			IGUIElement* el;
@@ -560,15 +600,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent event)
 				case EGUIEDMC_SAVE_ELEMENT:
 					break;
 
-				//! grid
-				case EGUIEDMC_TOGGLE_GRID:
-					DrawGrid = !DrawGrid;
-					break;
-				case EGUIEDMC_TOGGLE_SNAP_GRID:
-					UseGrid = !UseGrid;
-					break;
-				case EGUIEDMC_SET_GRID_SIZE:
-					break;
+				//! toggle edit window
 				case EGUIEDMC_TOGGLE_EDITOR:
 					break;
 				//
@@ -753,6 +785,24 @@ void CGUIEditWorkspace::updateAbsolutePosition()
 	}
 
 	IGUIElement::updateAbsolutePosition();
+}
+
+void CGUIEditWorkspace::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options)
+{
+	out->addBool("DrawGrid", DrawGrid);
+	out->addBool("UseGrid", UseGrid);
+	out->addPosition2d("GridSize", core::position2di(GridSize.Width, GridSize.Height));
+	out->addInt("MenuCommandStart", MenuCommandStart);
+}
+
+void CGUIEditWorkspace::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
+{
+	DrawGrid = in->getAttributeAsBool("DrawGrid");
+	UseGrid = in->getAttributeAsBool("UseGrid");
+
+	core::position2di tmpd = in->getAttributeAsPosition2d("GridSize");
+	GridSize = core::dimension2di(tmpd.X, tmpd.Y);
+	MenuCommandStart = in->getAttributeAsInt("MenuCommandStart");
 }
 
 

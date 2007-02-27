@@ -150,6 +150,7 @@ IGUITab* CGUITabControl::addTab(const wchar_t* caption, s32 id)
 
 	CGUITab* tab = new CGUITab(Tabs.size(), Environment, this, 
 		r, id);
+	tab->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 
 	tab->setText(caption);
 	tab->setVisible(false);

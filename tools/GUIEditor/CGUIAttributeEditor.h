@@ -26,8 +26,8 @@ namespace gui
 
 		virtual bool OnEvent(SEvent event);
 
-		// save the attribute and reload
-		void updateAttrib();
+		// save the attribute and possibly post the event to its parent
+		bool updateAttrib(bool sendEvent=true);
 
 		//! this shoudln't be serialized, but this is included as it's an example
 		virtual const c8* getTypeName() { return "attribute"; }
@@ -39,6 +39,10 @@ namespace gui
 		IGUIEditBox*		AttribEditBox;
 		IGUICheckBox*		AttribCheckBox;
 		IGUIComboBox*		AttribComboBox;
+		IGUIScrollBar*		AttribSliderA;
+		IGUIScrollBar*		AttribSliderR;
+		IGUIScrollBar*		AttribSliderG;
+		IGUIScrollBar*		AttribSliderB;
 	};
 
 	class CGUIAttributeEditor : public IGUIElement

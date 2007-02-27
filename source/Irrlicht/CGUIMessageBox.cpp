@@ -38,6 +38,8 @@ CGUIMessageBox::CGUIMessageBox(IGUIEnvironment* environment, const wchar_t* capt
 	if (caption)
 		setText(caption);
 
+	Environment->setFocus(this);
+
 	refreshControls();
 
 }
@@ -124,7 +126,8 @@ void CGUIMessageBox::refreshControls()
 		btnRect.LowerRightCorner.X += buttonWidth + buttonDistance;
 		btnRect.UpperLeftCorner.X += buttonWidth + buttonDistance;
 
-		Environment->setFocus(OkButton);
+		if (Environment->getFocus() == this)
+			Environment->setFocus(OkButton);
 	}
 	else if (OkButton)
 	{

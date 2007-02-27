@@ -26,19 +26,18 @@ int main()
 	// remember to drop since we created with a create call
 	factory->drop();
 
-	/*
-		now we add the GUI Editor Workspace
-	*/
-	
-	env->addGUIElement("GUIEditor");
-
-	
 	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
 	env->setSkin(skin);
 	IGUIFont *font = env->getFont("lucida_latin.xml");
 	if (font)
 		skin->setFont(font);
 	skin->drop();
+
+	/*
+		now we add the GUI Editor Workspace
+	*/
+
+	env->addGUIElement("GUIEditor");
 	
 	while(device->run()) 
 	{

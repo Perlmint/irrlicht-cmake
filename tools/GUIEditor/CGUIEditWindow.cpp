@@ -6,6 +6,7 @@
 #include "IAttributes.h"
 #include "IGUIFont.h"
 #include "IGUITabControl.h"
+#include "CGUIEditWorkspace.h"
 
 using namespace irr;
 using namespace gui;
@@ -13,7 +14,8 @@ using namespace gui;
 //! constructor
 CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rectangle, IGUIElement *parent)
 		 : IGUIWindow(environment, parent, -1, rectangle),
-		 Dragging(false), Resizing(false), SelectedElement(0), AttribEditor(0)
+		 Dragging(false), Resizing(false), SelectedElement(0), 
+		 AttribEditor(0), OptionEditor(0), EnvEditor(0)
 
 {
 
@@ -35,20 +37,38 @@ CGUIEditWindow::CGUIEditWindow(IGUIEnvironment* environment, core::rect<s32> rec
 	setMinSize( core::dimension2di(200,200));
 
 	IGUITabControl *TabControl = environment->addTabControl(core::rect<s32>(1,th+5,199,449), this, false, true);
-	//TabControl->setRelativePosition(core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
+	TabControl->setSubElement(true);
 	TabControl->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 
-	IGUITab* OptionsTab = TabControl->addTab(L"Options");
-	OptionsTab->setSubElement(true);
-	OptionsTab->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+	IGUITab* ToolsTab = TabControl->addTab(L"Tools");
 
-	IGUITab* AttributeTab = TabControl->addTab(L"Attributes");
-	AttributeTab->setSubElement(true);
-	AttributeTab->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+	IGUITab* OptionsTab = TabControl->addTab(L"Attributes");
 
-	AttribEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor",AttributeTab);
+	IGUITabControl *AttribTabControl = environment->addTabControl(core::rect<s32>(1,1,100,100), OptionsTab, false, true);
+	AttribTabControl->setRelativePosition( core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
+	AttribTabControl->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+
+	IGUITab* EditorTab = AttribTabControl->addTab(L"Editor");
+	OptionEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor", EditorTab);
+	OptionEditor->grab();
+	OptionEditor->setID(EGUIEDCE_OPTION_EDITOR);
+	OptionEditor->setRelativePosition(core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
+	OptionEditor->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+
+	if (Parent && Parent->getParent() == Environment->getRootGUIElement())
+	{
+		IGUITab* EnvTab = AttribTabControl->addTab(L"Env");
+		EnvEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor", EnvTab);
+		EnvEditor->grab();
+		EnvEditor->setID(EGUIEDCE_ENV_EDITOR);
+		EnvEditor->setRelativePosition(core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
+		EnvEditor->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
+	}
+	IGUITab* ElementTab = AttribTabControl->addTab(L"Element");
+
+	AttribEditor = (CGUIAttributeEditor*) environment->addGUIElement("attributeEditor", ElementTab);
 	AttribEditor->grab();
-	AttribEditor->setSubElement(true);
+	AttribEditor->setID(EGUIEDCE_ATTRIB_EDITOR);
 	AttribEditor->setRelativePosition( core::rect<f32>(0.0f, 0.0f, 1.0f, 1.0f));
 	AttribEditor->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	
@@ -65,8 +85,27 @@ CGUIEditWindow::~CGUIEditWindow()
 	// drop everything
 	if (AttribEditor)
 		AttribEditor->drop();
+	if (EnvEditor)
+		EnvEditor->drop();
+	if (OptionEditor)
+		OptionEditor->drop();
 	if (ResizeButton)
 		ResizeButton->drop();
+}
+
+CGUIAttributeEditor* CGUIEditWindow::getEnvironmentEditor()
+{
+	return EnvEditor;
+}
+
+CGUIAttributeEditor* CGUIEditWindow::getAttributeEditor()
+{
+	return AttribEditor;
+}
+
+CGUIAttributeEditor* CGUIEditWindow::getOptionEditor()
+{
+	return OptionEditor;
 }
 
 void CGUIEditWindow::setSelectedElement(IGUIElement *sel)
