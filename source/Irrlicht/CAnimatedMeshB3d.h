@@ -434,7 +434,7 @@ private:
 		bool ReadChunkKEYS(io::IReadFile* file, SB3dNode *InNode);
 		bool ReadChunkANIM(io::IReadFile* file, SB3dNode *InNode);
 
-		void normaliseWeights();
+		void normalizeWeights();
 		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
 		void CalculateGlobalMatrixes(SB3dNode *Node,SB3dNode *ParentNode);
 		void animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
