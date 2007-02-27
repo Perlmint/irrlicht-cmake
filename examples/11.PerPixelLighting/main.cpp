@@ -277,10 +277,10 @@ int main()
 
 		scene::IMesh* tangentMesh = smgr->getMeshManipulator()->createMeshWithTangents(
 			roomMesh->getMesh(0));
-			
+
 		room = smgr->addMeshSceneNode(tangentMesh);
-		room->setMaterialTexture(0,	colorMap);
-		room->setMaterialTexture(1,	normalMap);
+		room->setMaterialTexture(0, colorMap);
+		room->setMaterialTexture(1, normalMap);
 
 		room->getMaterial(0).SpecularColor.set(0,0,0,0);
 

@@ -568,18 +568,10 @@ namespace core
 			for (s32 j=0; j<4; ++j)
 			if (j != i)
 			{
-				if ((*this)(i,j) < -0.0000001f ||
-					(*this)(i,j) > 0.0000001f)
+				if ((*this)(i,j) < -ROUNDING_ERROR_32||
+					(*this)(i,j) > ROUNDING_ERROR_32)
 					return false;
 			}
-/*
-			else
-			{
-				if ((*this)(i,j) < 0.9999999f ||
-					(*this)(i,j) > 1.0000001f)
-					return false;
-			}
-*/
 		return true;
 	}
 

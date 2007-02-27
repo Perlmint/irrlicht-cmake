@@ -269,12 +269,12 @@ int main()
 			// create material from high level shaders (hlsl or glsl)
 
 			newMaterialType1 = gpu->addHighLevelShaderMaterialFromFiles(
-				vsFileName,	"vertexMain", video::EVST_VS_1_1,
+				vsFileName, "vertexMain", video::EVST_VS_1_1,
 				psFileName, "pixelMain", video::EPST_PS_1_1,
 				mc, video::EMT_SOLID);
 
 			newMaterialType2 = gpu->addHighLevelShaderMaterialFromFiles(
-				vsFileName,	"vertexMain", video::EVST_VS_1_1,
+				vsFileName, "vertexMain", video::EVST_VS_1_1,
 				psFileName, "pixelMain", video::EPST_PS_1_1,
 				mc, video::EMT_TRANSPARENT_ADD_COLOR);
 		}

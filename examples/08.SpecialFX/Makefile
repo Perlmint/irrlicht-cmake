@@ -12,8 +12,12 @@ CXXFLAGS = -O3 -ffast-math
 #default target is Linux
 all: all_linux
 
+ifeq ($(HOSTTYPE), x86_64)
+LIBSELECT=64
+endif
+
 # target specific settings
-all_linux: LDFLAGS = -L/usr/X11R6/lib -L../../lib/Linux -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
+all_linux: LDFLAGS = -L/usr/X11R6/lib$(LIBSELECT) -L../../lib/Linux -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
 all_linux clean_linux: SYSTEM=Linux
 # Avoid namespace problems in iostream by using ansi c++
 all_win32: CPPFLAGS += -ansi

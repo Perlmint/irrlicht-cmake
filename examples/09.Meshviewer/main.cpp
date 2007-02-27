@@ -110,7 +110,7 @@ void loadModel(const c8* fn)
 	//strcpy(filename, fn);
 	c8* found = 0;
 
-	if (found = strstr(filename.c_str(), ".pk3"))
+	if ((found = strstr(filename.c_str(), ".pk3")))
 	{
 		Device->getFileSystem()->addZipFileArchive( filename.c_str () );
 		strcpy(found +1, "bsp");
@@ -170,7 +170,6 @@ void createToolBox()
 		core::rect<s32>(2,20,800-602,480-7), wnd, true, true);
 
 	IGUITab* t1 = tab->addTab(L"Scale");
-	IGUITab* t2 = tab->addTab(L"Empty Tab");
 
 	// add some edit boxes and a button to tab one
 	env->addEditBox(L"1.0", core::rect<s32>(40,50,130,70), true, t1, 901);

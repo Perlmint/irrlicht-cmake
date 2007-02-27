@@ -42,7 +42,7 @@ CXXFLAGS += -g
 else
 CXXFLAGS += -fexpensive-optimizations -O3
 endif
-CFLAGS := -fexpensive-optimizations -O3
+CFLAGS := -fexpensive-optimizations -O3 -DPNG_NO_MMX_CODE
 
 #Linux specific options
 STATIC_LIB = libIrrlicht.a
