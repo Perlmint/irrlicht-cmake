@@ -79,10 +79,13 @@ namespace scene
 		//!3-Update both nodes and skin (default)
 		virtual void setAnimateMode(s32 mode) = 0;
 
-		virtual void storeAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes) = 0;
-		virtual void recoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes) = 0;
+		//!Convert all mesh buffers to use tangent vertices
+		virtual void convertToTangents() =0;
 
-		virtual void createAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager) = 0;
+
+		virtual void recoverJointsFromMesh(core::array<ISceneNode*> &JointChildSceneNodes)=0;
+		virtual void tranferJointsToMesh(core::array<ISceneNode*> &JointChildSceneNodes)=0;
+		virtual void createJoints(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* AnimatedMeshSceneNode, ISceneManager* SceneManager)=0;
 
 	};
 

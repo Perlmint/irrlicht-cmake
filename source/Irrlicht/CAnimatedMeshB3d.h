@@ -5,23 +5,13 @@
 
 //B3D file loader by Luke Hoschke, File format by Mark Sibly
 
-
-
 #ifndef __C_ANIMATED_MESH_B3D_H_INCLUDED__
 #define __C_ANIMATED_MESH_B3D_H_INCLUDED__
 
 #include "IAnimatedMeshB3d.h"
 #include "IReadFile.h"
 
-
-
 #include "CEmptySceneNode.h"
-
-#include "CAnimatedMeshSceneNode.h"
-
-
-
-//#include "IAnimatedMeshSceneNode.h"
 
 #include "S3DVertex.h"
 #include "irrString.h"
@@ -29,8 +19,6 @@
 #include "SMeshBuffer.h"
 
 #include <quaternion.h>
-
-
 
 namespace irr
 {
@@ -40,8 +28,6 @@ namespace video
 }
 namespace scene
 {
-
-
 	class CAnimatedMeshB3d : public IAnimatedMeshB3d, public IMesh
 	{
 	public:
@@ -69,7 +55,7 @@ namespace scene
 
 		//! Returns pointer to a mesh buffer which fits a material
  		/** \param material: material to search for
-		\return Returns the pointer to the mesh buffer or 
+		\return Returns the pointer to the mesh buffer or
 		NULL if there is no such mesh buffer. */
 		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const;
 
@@ -124,19 +110,27 @@ namespace scene
 		virtual void setAnimateMode(s32 mode);
 
 
+		//!Convert all mesh buffers to use tangent vertices
+		virtual void convertToTangents();
+
+
+
+		//New Animation System Stuff (WIP)...
+		virtual void recoverJointsFromMesh(core::array<ISceneNode*> &JointChildSceneNodes);
+		virtual void tranferJointsToMesh(core::array<ISceneNode*> &JointChildSceneNodes);
+		virtual void createJoints(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* AnimatedMeshSceneNode, ISceneManager* SceneManager);
+
+
+
+
+
 private:
-
-
-
-
-
-
 		struct SB3DMeshBuffer : public IMeshBuffer
 		{
 			SB3DMeshBuffer()
 			{
 				#ifdef _DEBUG
-				setDebugName("SB3DMeshBuffer");
+				setDebugName("SSkinMeshBuffer");
 				#endif
 			}
 
@@ -152,19 +146,32 @@ private:
 				return Material;
 			}
 
+			virtual video::S3DVertex *getVertex(u32 index)
+			{
+				if (VertexType==video::EVT_STANDARD) return &Vertices_Standard[index];
+				if (VertexType==video::EVT_TANGENTS) return (video::S3DVertex*)&Vertices_Tangents[index];
+				return (video::S3DVertex*)&Vertices_2TCoords[index];
+			}
+
 			virtual const void* getVertices() const
 			{
-				return Vertices.const_pointer();
+				if (VertexType==video::EVT_STANDARD) return Vertices_Standard.const_pointer();
+				if (VertexType==video::EVT_TANGENTS) return Vertices_Tangents.const_pointer();
+				return Vertices_2TCoords.const_pointer();
 			}
 
 			virtual void* getVertices()
 			{
-				return Vertices.pointer();
+				if (VertexType==video::EVT_STANDARD) return Vertices_Standard.pointer();
+				if (VertexType==video::EVT_TANGENTS) return Vertices_Tangents.pointer();
+				return Vertices_2TCoords.pointer();
 			}
 
 			virtual u32 getVertexCount() const
 			{
-				return Vertices.size();
+				if (VertexType==video::EVT_STANDARD) return Vertices_Standard.size();
+				if (VertexType==video::EVT_TANGENTS) return Vertices_Tangents.size();
+				return Vertices_2TCoords.size();
 			}
 
 			virtual const u16* getIndices() const
@@ -194,34 +201,127 @@ private:
 
 			virtual void recalculateBoundingBox()
 			{
-				if (Vertices.empty())
-					BoundingBox.reset(0,0,0);
+				if (VertexType==video::EVT_STANDARD)
+				{
+					if (Vertices_Standard.empty())
+						BoundingBox.reset(0,0,0);
+					else
+					{
+						BoundingBox.reset(Vertices_Standard[0].Pos);
+						for (u32 i=1; i<Vertices_Standard.size(); ++i)
+							BoundingBox.addInternalPoint(Vertices_Standard[i].Pos);
+					}
+				}
+				else if (VertexType==video::EVT_2TCOORDS)
+				{
+					if (Vertices_2TCoords.empty())
+						BoundingBox.reset(0,0,0);
+					else
+					{
+						BoundingBox.reset(Vertices_2TCoords[0].Pos);
+						for (u32 i=1; i<Vertices_2TCoords.size(); ++i)
+							BoundingBox.addInternalPoint(Vertices_2TCoords[i].Pos);
+					}
+				}
 				else
 				{
-					BoundingBox.reset(Vertices[0].Pos);
-					for (u32 i=1; i<Vertices.size(); ++i)
-						BoundingBox.addInternalPoint(Vertices[i].Pos);
+					if (Vertices_Tangents.empty())
+						BoundingBox.reset(0,0,0);
+					else
+					{
+						BoundingBox.reset(Vertices_Tangents[0].Pos);
+						for (u32 i=1; i<Vertices_Tangents.size(); ++i)
+							BoundingBox.addInternalPoint(Vertices_Tangents[i].Pos);
+					}
 				}
+
 			}
 
 			virtual video::E_VERTEX_TYPE getVertexType() const
 			{
-				return video::EVT_2TCOORDS;
-				//return video::EVT_STANDARD;
+				return VertexType;
 			}
 
 			//! returns the byte size (stride, pitch) of the vertex
 			virtual u32 getVertexPitch() const
 			{
+				if (VertexType==video::EVT_STANDARD) return sizeof ( video::S3DVertex );
+				if (VertexType==video::EVT_TANGENTS) return sizeof ( video::S3DVertexTangents );
 				return sizeof ( video::S3DVertex2TCoords );
 			}
 
+			virtual void MoveTo_2TCoords()
+			{
+				if (VertexType==video::EVT_STANDARD)
+				{
+
+					for(u32 n=0;n<Vertices_Standard.size();++n)
+					{
+						video::S3DVertex2TCoords Vertex;
+						Vertex.Color=Vertices_Standard[n].Color;
+						Vertex.Pos=Vertices_Standard[n].Pos;
+						Vertex.Normal=Vertices_Standard[n].Normal;
+						Vertex.TCoords=Vertices_Standard[n].TCoords;
+						Vertices_2TCoords.push_back(Vertex);
+					}
+					Vertices_Standard.clear();
+
+					VertexType=video::EVT_2TCOORDS;
+				}
+			}
+
+			virtual void MoveTo_Tangents()
+			{
+				if (VertexType==video::EVT_STANDARD)
+				{
+
+					for(u32 n=0;n<Vertices_Standard.size();++n)
+					{
+						video::S3DVertexTangents Vertex;
+						Vertex.Color=Vertices_Standard[n].Color;
+						Vertex.Pos=Vertices_Standard[n].Pos;
+						Vertex.Normal=Vertices_Standard[n].Normal;
+						Vertex.TCoords=Vertices_Standard[n].TCoords;
+						Vertices_Tangents.push_back(Vertex);
+					}
+
+					Vertices_Standard.clear();
+
+					VertexType=video::EVT_TANGENTS;
+				}
+				else if (VertexType==video::EVT_2TCOORDS)
+				{
+
+					for(u32 n=0;n<Vertices_2TCoords.size();++n)
+					{
+						video::S3DVertexTangents Vertex;
+						Vertex.Color=Vertices_2TCoords[n].Color;
+						Vertex.Pos=Vertices_2TCoords[n].Pos;
+						Vertex.Normal=Vertices_2TCoords[n].Normal;
+						Vertex.TCoords=Vertices_2TCoords[n].TCoords;
+						//Vertex.TCoords2=Vertices_2TCoords[n].TCoords2;
+						Vertices_Tangents.push_back(Vertex);
+
+					}
+
+					Vertices_2TCoords.clear();
+
+					VertexType=video::EVT_TANGENTS;
+				}
+
+
+			}
+
+
+
+
 
 			video::SMaterial Material;
-			core::array<video::S3DVertex2TCoords> Vertices;
+			video::E_VERTEX_TYPE VertexType;
 
-			//core::array<video::S3DVertex> Vertices;
-
+			core::array<video::S3DVertexTangents> Vertices_Tangents;
+			core::array<video::S3DVertex2TCoords> Vertices_2TCoords;
+			core::array<video::S3DVertex> Vertices_Standard;
 			core::array<u16> Indices;
 			core::aabbox3d<f32> BoundingBox;
 		};
@@ -233,7 +333,6 @@ private:
 			s32 startposition;
 		};
 
-
 		s32 AnimFlags;
 		s32 AnimFrames; //how many frames in anim
 		f32 AnimFPS;
@@ -242,14 +341,26 @@ private:
 		{
 			s32 vertex_id;
 			f32 weight;
+			core::vector3df pos;
+			core::vector3df normal;
+			video::S3DVertex *vertex;
 		};
 
-		struct SB3dKey
+		struct SB3dPositionKey
 		{
 			s32 frame;
-			s32 flags;
 			core::vector3df position;
+		};
+
+		struct SB3dScaleKey
+		{
+			s32 frame;
 			core::vector3df scale;
+		};
+
+		struct SB3dRotationKey
+		{
+			s32 frame;
 			core::quaternion rotation;
 		};
 
@@ -264,6 +375,7 @@ private:
 			core::vector3df Animatedposition;
 			core::vector3df Animatedscale;
 			core::quaternion Animatedrotation;
+
 			core::matrix4 GlobalAnimatedMatrix;
 			core::matrix4 LocalAnimatedMatrix;
 
@@ -272,8 +384,15 @@ private:
 			core::matrix4 GlobalInversedMatrix;
 
 			bool Animate; //Move this nodes local matrix when animating?
+			bool AnimatingPositionKeys;
+			bool AnimatingScaleKeys;
+			bool AnimatingRotationKeys;
 
-			core::array<SB3dKey> Keys;
+			bool HasScaleAnimation;
+
+			core::array<SB3dPositionKey> PositionKeys;
+			core::array<SB3dScaleKey> ScaleKeys;
+			core::array<SB3dRotationKey> RotationKeys;
 
 			core::array<SB3dBone> Bones;
 
@@ -307,124 +426,69 @@ private:
 
 		};
 
-		bool ReadChunkTEXS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
-
-		bool ReadChunkBRUS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize);
-
-		bool ReadChunkMESH(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-		bool ReadChunkVRTS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
-
-		bool ReadChunkTRIS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
-
-		bool ReadChunkNODE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-
-		bool ReadChunkBONE(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-		bool ReadChunkKEYS(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
-
-		bool ReadChunkANIM(io::IReadFile* file, B3dChunk *B3dStack, s16 &B3dStackSize, SB3dNode *InNode);
+		bool ReadChunkTEXS(io::IReadFile* file);
+		bool ReadChunkBRUS(io::IReadFile* file);
+		bool ReadChunkMESH(io::IReadFile* file, SB3dNode *InNode);
+		bool ReadChunkVRTS(io::IReadFile* file, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
+		bool ReadChunkTRIS(io::IReadFile* file, SB3dNode *InNode, SB3DMeshBuffer *MeshBuffer, s32 Vertices_Start);
+		bool ReadChunkNODE(io::IReadFile* file, SB3dNode *InNode);
+		bool ReadChunkBONE(io::IReadFile* file, SB3dNode *InNode);
+		bool ReadChunkKEYS(io::IReadFile* file, SB3dNode *InNode);
+		bool ReadChunkANIM(io::IReadFile* file, SB3dNode *InNode);
 
 		void normaliseWeights();
-
 		void animate(s32 frame,s32 startFrameLoop, s32 endFrameLoop);
-
-
-		void resetSkin();
-
 		void CalculateGlobalMatrixes(SB3dNode *Node,SB3dNode *ParentNode);
-
 		void animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNode *InNode,SB3dNode *ParentNode);
-
 		void getNodeAnimation(f32 frame,SB3dNode *Node,core::vector3df &position, core::vector3df &scale, core::quaternion &rotation);
-
 		void animateNodes(f32 frame,f32 startFrame, f32 endFrame);
-
-
 		void slerp(core::quaternion A,core::quaternion B,core::quaternion &C,f32 t);
+
+		void calculateTangents(core::vector3df& normal,
+	core::vector3df& tangent, core::vector3df& binormal,
+	core::vector3df& vt1, core::vector3df& vt2, core::vector3df& vt3,
+	core::vector2df& tc1, core::vector2df& tc2, core::vector2df& tc3);
+
+
+		void createSkelton_Helper(ISceneManager* SceneManager, core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
+
+
+
+		core::array<B3dChunk> B3dStack;
 
 		f32 totalTime;
 		bool HasAnimation;
-		bool HasScaleAnimation;
-
-
 		bool HasBones;
-		s32 lastCalculatedFrame;
 
+		s32 lastCalculatedFrame;
 		s32 lastAnimateMode;
 
+		bool NormalsInFile;
 		bool AnimateNormals;
 
-
-		//0- Constant
-		//1- Linear
+		//0- Constant 1- Linear
 		s32 InterpolationMode;
 
-
-
-		//0-None
-		//1-Update nodes only
-		//2-Update skin only
-		//3-Update both nodes and skin
+		//0-None 1-Update nodes only 2-Update skin only 3-Update both nodes and skin
 		s32 AnimateMode;
-
-
-
-		bool NormalsInFile;
-
 
 		core::stringc readString(io::IReadFile* file);
 		core::stringc stripPathString(core::stringc oldstring, bool keepPath);
-
 		void readFloats(io::IReadFile* file, f32* vec, u32 count);
 
 		core::aabbox3d<f32> BoundingBox;
-
-
 		core::array<SB3dMaterial> Materials;
-
-
 		core::array<SB3dTexture> Textures;
 
-		core::array<video::S3DVertex2TCoords*> Vertices;
-		//core::array<video::S3DVertex*> Vertices;
+		core::array<video::S3DVertex2TCoords*> BaseVertices;
 
-		//core::array<core::vector3df> Vertices_GlobalPos;
-
-		core::array<core::matrix4> Vertices_GlobalMatrix;
 		core::array<bool> Vertices_Moved;
-
 		core::array<f32> Vertices_Alpha;
-
 		core::array<s32> AnimatedVertices_VertexID;
-
 		core::array<SB3DMeshBuffer*> AnimatedVertices_MeshBuffer;
-
 		core::array<SB3DMeshBuffer*> Buffers;
 
 		video::IVideoDriver* Driver;
-
-
-
-
-
-
-		//This stuff is WIP...
-
-
-	virtual void createAnimationSkelton_Helper(ISceneManager* SceneManager ,core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode *AnimatedMeshSceneNode, ISceneNode* ParentNode, SB3dNode *ParentB3dNode, SB3dNode *B3dNode);
-
-	public:
-
-		virtual void storeAnimationSkelton(core::array<core::matrix4> &Matrixs);
-		virtual void recoverAnimationSkelton(core::array<core::matrix4> &Matrixs);
-
-
-		virtual void storeAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
-		virtual void recoverAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes);
-
-		virtual void createAnimationSkelton(core::array<ISceneNode*> &JointChildSceneNodes, ISceneNode* Parent, ISceneManager* SceneManager);
 
 
 
