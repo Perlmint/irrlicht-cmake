@@ -230,6 +230,12 @@ int main()
 		smgr->drawAll();
 
 		driver->endScene();
+		core::stringw str = L"Irrlicht Engine [";
+		str += driver->getName();
+		str += L"] Tris: ";
+		str += (s32)driver->getPrimitiveCountDrawn();
+
+		device->setWindowCaption(str.c_str());
 	}
 
 	device->drop();

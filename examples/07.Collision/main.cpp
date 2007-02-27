@@ -155,7 +155,7 @@ int main()
 	// add 3 animated faeries.
 
 	video::SMaterial material;
-	material.Texture1 = driver->getTexture("../../media/faerie2.bmp");
+	material.Textures[0] = driver->getTexture("../../media/faerie2.bmp");
 	material.Lighting = true;
 
 	scene::IAnimatedMeshSceneNode* node = 0;
@@ -179,7 +179,7 @@ int main()
 		node->getMaterial(0) = material;
 	}
 
-	material.Texture1 = 0;
+	material.Textures[0] = 0;
 	material.Lighting = false;
 
 	// Add a light

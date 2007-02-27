@@ -106,8 +106,8 @@ int main()
 	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0), 3.0f, 300.0f, 30.0f);
 	node->setPosition(core::vector3df(0,7,0));
 
-	node->setMaterialTexture(0,	driver->getTexture("../../media/stones.jpg"));
-	node->setMaterialTexture(1,	driver->getTexture("../../media/water.jpg"));
+	node->setMaterialTexture(0, driver->getTexture("../../media/stones.jpg"));
+	node->setMaterialTexture(1, driver->getTexture("../../media/water.jpg"));
 
 	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
 
@@ -132,7 +132,7 @@ int main()
 	node = smgr->addBillboardSceneNode(node, core::dimension2d<f32>(50, 50));
 	node->setMaterialFlag(video::EMF_LIGHTING, false);
 	node->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
-	node->setMaterialTexture(0,	driver->getTexture("../../media/particlewhite.bmp"));
+	node->setMaterialTexture(0, driver->getTexture("../../media/particlewhite.bmp"));
 
 	/*
 	The next special effect is a lot more interesting: A particle system. The particle

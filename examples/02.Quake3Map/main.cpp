@@ -180,7 +180,6 @@ int main()
 	In the end, delete the Irrlicht device.
 	*/
 	device->drop();
-	
 	return 0;
 }
 

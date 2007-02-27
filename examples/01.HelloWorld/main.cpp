@@ -72,7 +72,9 @@ To be able to use the Irrlicht.DLL file, we need to link with the
 Irrlicht.lib. We could set this option in the project settings, but
 to make it easy, we use a pragma comment lib:
 */
+#ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
+#endif
 
 
 /*
