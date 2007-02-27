@@ -499,23 +499,24 @@ public:
 	 \param length: How much characters of the other string to add to this one. */
 	void append(const string<T>& other, u32 length)
 	{
-		u32 len = other.size();
-
-		if (len < length)
+		if (other.size() < length)
 		{
 			append(other);
 			return;
 		}
 
-		--used;
-
 		if (used + length > allocated)
 			reallocate(used + length);
 
+		--used;
+
 		for (u32 l=0; l<length; ++l)
 			array[l+used] = other[l];
-
 		used += length;
+
+		// ensure proper termination
+		array[used]=0;
+		++used;
 	}
 
 
