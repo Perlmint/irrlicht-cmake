@@ -426,10 +426,15 @@ s32 CAnimatedMeshSceneNode::getEndFrame()
 bool CAnimatedMeshSceneNode::setFrameLoop(s32 begin, s32 end)
 {
 	if ( end < begin )
-		core::swap_xor ( begin, end );
-
-	StartFrame = core::s32_max ( 0, begin );
-	EndFrame = core::s32_clamp ( end, StartFrame, Mesh->getFrameCount() - 1 );
+	{
+		StartFrame = core::s32_max(0, end);
+		EndFrame = core::s32_clamp(begin, StartFrame, Mesh->getFrameCount() - 1);
+	}
+	else
+	{
+		StartFrame = core::s32_max(0, begin);
+		EndFrame = core::s32_clamp(end, StartFrame, Mesh->getFrameCount() - 1);
+	}
 	setCurrentFrame ( StartFrame );
 
 	return true;

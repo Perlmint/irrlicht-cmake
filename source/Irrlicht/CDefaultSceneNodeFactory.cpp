@@ -100,6 +100,8 @@ ISceneNode* CDefaultSceneNodeFactory::addSceneNode(ESCENE_NODE_TYPE type, IScene
 												 core::vector3df(), core::vector3df(1,1,1), true);
 	case ESNT_PARTICLE_SYSTEM:
 		return Manager->addParticleSystemSceneNode(true, parent);
+	default:
+		break;
 	}
 
 	return 0;

@@ -120,14 +120,6 @@ namespace core
 		return s32_min (s32_max(value,low), high);
 	}
 
-	// swap integer with xor
-	inline void swap_xor ( s32 &a, s32 &b )
-	{
-		a ^= b;
-		b ^= a;
-		a ^= b;
-	}
-
 	/* 
 	
 		float IEEE-754 bit represenation

@@ -159,7 +159,7 @@ namespace core
 			bool makeInverse();
 
 
-			//! Inverts a primitive matrix which only contains a tranlation and a rotation
+			//! Inverts a primitive matrix which only contains a translation and a rotation
 			//! \param out: where result matrix is written to.
 			bool getInversePrimitive ( matrix4& out ) const;
 
@@ -264,6 +264,16 @@ namespace core
 				break;
 			case EM4CONST_TRANSPOSED:
 				other.getTransposed(M);
+				break;
+			case EM4CONST_INVERSE:
+				if (!other.getInverse(*this))
+					memset(M, 0, 16*sizeof(f32));
+				break;
+			case EM4CONST_INVERSE_TRANSPOSED:
+				if (!other.getInverse(*this))
+					memset(M, 0, 16*sizeof(f32));
+				else
+					*this=getTransposed();
 				break;
 		}
 	}
@@ -1321,7 +1331,7 @@ namespace core
 		M[6] = -0.5f * sy + 0.5f;
 	}
 
-
+	const matrix4 IdentityMatrix(matrix4::EM4CONST_IDENTITY);
 } // end namespace core
 } // end namespace irr
 

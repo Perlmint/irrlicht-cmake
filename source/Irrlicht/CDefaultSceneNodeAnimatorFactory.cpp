@@ -73,6 +73,8 @@ ISceneNodeAnimator* CDefaultSceneNodeAnimatorFactory::createSceneNodeAnimator(ES
 	case ESNAT_COLLISION_RESPONSE:
 		anim = Manager->createCollisionResponseAnimator(0, target);
 		break;
+	default:
+		break;
 	}
 
 	if (anim && target)

@@ -253,7 +253,7 @@ void CBillboardTextSceneNode::OnPreRender()
 	if (textLength<0.0f)
 		textLength=1.0f;
 
-	const core::matrix4 &m = camera->getViewFrustum()->Matrices[ video::ETS_VIEW ];
+//	const core::matrix4 &m = camera->getViewFrustum()->Matrices[ video::ETS_VIEW ];
 
 	// make billboard look to camera
 	core::vector3df pos = getAbsolutePosition();

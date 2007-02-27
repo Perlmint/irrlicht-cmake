@@ -219,7 +219,6 @@ void CXAnimationPlayer::addFacesToBuffer(s32 meshbuffernr, CXFileReader::SXMesh&
 
 	u32 tcnt = mesh.TextureCoords.size();
 	u32 ncnt = mesh.Normals.size();
-	u32 fcnt = mesh.Indices.size();
 	u32 ccnt = mesh.VertexColors.size();
 
 	// precompute which joint belongs to which weight array

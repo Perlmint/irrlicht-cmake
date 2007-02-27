@@ -202,7 +202,6 @@ static void RenderLine32_Decal (	video::IImage *t,
 	if ( dy < 0 )
 	{
 		yInc = -yInc;
-
 		dy = -dy;
 	}
 
@@ -211,8 +210,13 @@ static void RenderLine32_Decal (	video::IImage *t,
 
 	if ( dy > dx )
 	{
-		core::swap_xor ( dx, dy );
-		core::swap_xor ( xInc, yInc );
+		s32 tmp;
+		tmp = dx;
+		dx = dy;
+		dy = tmp;
+		tmp = xInc;
+		xInc = yInc;
+		yInc = tmp;
 	}
 
 	c = dx << 1;
@@ -266,7 +270,6 @@ static void RenderLine32_Blend (	video::IImage *t,
 	if ( dy < 0 )
 	{
 		yInc = -yInc;
-
 		dy = -dy;
 	}
 
@@ -275,8 +278,13 @@ static void RenderLine32_Blend (	video::IImage *t,
 
 	if ( dy > dx )
 	{
-		core::swap_xor ( dx, dy );
-		core::swap_xor ( xInc, yInc );
+		s32 tmp;
+		tmp = dx;
+		dx = dy;
+		dy = tmp;
+		tmp = xInc;
+		xInc = yInc;
+		yInc = tmp;
 	}
 
 	c = dx << 1;
@@ -335,8 +343,13 @@ static void RenderLine16_Decal (video::IImage *t,
 
 	if ( dy > dx )
 	{
-		core::swap_xor ( dx, dy );
-		core::swap_xor ( xInc, yInc );
+		s32 tmp;
+		tmp = dx;
+		dx = dy;
+		dy = tmp;
+		tmp = xInc;
+		xInc = yInc;
+		yInc = tmp;
 	}
 
 	c = dx << 1;
@@ -388,7 +401,6 @@ static void RenderLine16_Blend (video::IImage *t,
 	if ( dy < 0 )
 	{
 		yInc = -yInc;
-
 		dy = -dy;
 	}
 
@@ -397,8 +409,13 @@ static void RenderLine16_Blend (video::IImage *t,
 
 	if ( dy > dx )
 	{
-		core::swap_xor ( dx, dy );
-		core::swap_xor ( xInc, yInc );
+		s32 tmp;
+		tmp = dx;
+		dx = dy;
+		dy = tmp;
+		tmp = xInc;
+		xInc = yInc;
+		yInc = tmp;
 	}
 
 	c = dx << 1;
@@ -727,7 +744,6 @@ static tExecuteBlit getBlitter ( eBlitter operation,const video::IImage * dest,c
 	if ( dest )
 		destFormat = dest->getColorFormat ();
 
-
 	switch ( operation )
 	{
 		case BLITTER_TEXTURE:
@@ -787,6 +803,8 @@ static tExecuteBlit getBlitter ( eBlitter operation,const video::IImage * dest,c
 
 		} break;
 
+		case BLITTER_INVALID:
+		break;
 	}
 /*
 	char buf[64];

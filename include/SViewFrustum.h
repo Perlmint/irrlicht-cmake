@@ -313,7 +313,8 @@ namespace scene
 				Matrices[ETS_CURRENT_3].setbyproduct (  Matrices[ ETS_VIEW_PROJECTION_3 ],
 														Matrices[ video::ETS_WORLD]	);
 				break;
-
+			default:
+				break;
 		}
 	}
 

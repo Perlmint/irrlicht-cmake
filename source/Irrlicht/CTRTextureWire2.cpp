@@ -101,6 +101,14 @@ CTRTextureWire2::CTRTextureWire2(IDepthBuffer* zbuffer)
 }
 
 
+// swap integer with xor
+static inline void swap_xor ( s32 &a, s32 &b )
+{
+	a ^= b;
+	b ^= a;
+	a ^= b;
+}
+
 
 /*!
 */
@@ -153,9 +161,9 @@ void CTRTextureWire2::renderLine ( const s4DVertex *a,const s4DVertex *b ) const
 
 	if ( dy > dx )
 	{
-		core::swap_xor ( dx, dy );
-		core::swap_xor ( xInc0, yInc0 );
-		core::swap_xor ( xInc1, yInc1 );
+		swap_xor ( dx, dy );
+		swap_xor ( xInc0, yInc0 );
+		swap_xor ( xInc1, yInc1 );
 	}
 
 	if ( 0 == dx )

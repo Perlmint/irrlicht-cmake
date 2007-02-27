@@ -1291,6 +1291,8 @@ void CColladaFileLoader::readColladaParameters(io::IXMLReaderUTF8* reader,
 					break;
 
 				// TODO: other types of data (ints, bools or whatever)
+				default:
+					break;
 			}
 
 			// add param

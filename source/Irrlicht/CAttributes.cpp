@@ -1352,6 +1352,8 @@ bool CAttributes::read(irr::io::IXMLReader* reader, bool readCurrentElementOnly)
 			if (elementName == reader->getNodeName())
 				return true;
 			break;
+		default:
+			break;
 		}
 	}
 

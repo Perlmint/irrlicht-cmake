@@ -794,7 +794,7 @@ bool CXFileReader::parseDataObjectMeshMaterialList(SXMeshMaterialList& mlist,
 	}
 
 	// read material count
-	s32 nMaterials = readInt();
+	readInt();
 
 	// read non triangulated face material index count
 	s32 nFaceIndices = readInt();

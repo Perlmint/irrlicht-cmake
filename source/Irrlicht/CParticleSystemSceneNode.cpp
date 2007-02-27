@@ -470,6 +470,8 @@ void CParticleSystemSceneNode::deserializeAttributes(io::IAttributes* in, io::SA
 	case EPET_BOX:
 		Emitter = createBoxEmitter();
 		break;
+	default:
+		break;
 	}
 
 	s32 idx = 0;
@@ -503,6 +505,9 @@ void CParticleSystemSceneNode::deserializeAttributes(io::IAttributes* in, io::SA
 			break;
 		case EPAT_GRAVITY:
 			aff = createGravityAffector();
+			break;
+		case EPAT_NONE:
+		default:
 			break;
 		}
 
