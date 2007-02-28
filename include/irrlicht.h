@@ -32,7 +32,7 @@
 #include "IrrCompileConfig.h"
 #include "aabbox3d.h"
 #include "irrArray.h"
-//#include "irrMap.h"	// Compile Problems
+#include "irrMap.h"
 #include "SColor.h"
 #include "SLight.h"
 #include "dimension2d.h"
