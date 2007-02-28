@@ -223,6 +223,7 @@ int main()
 	Now draw everything and finish.
 	*/
 
+	u32 frames=0;
 	while(device->run())
 	{
 		driver->beginScene(true, true, video::SColor(0,100,100,100));
@@ -230,12 +231,16 @@ int main()
 		smgr->drawAll();
 
 		driver->endScene();
-		core::stringw str = L"Irrlicht Engine [";
-		str += driver->getName();
-		str += L"] Tris: ";
-		str += (s32)driver->getPrimitiveCountDrawn();
+		if (++frames==100)
+		{
+			core::stringw str = L"Irrlicht Engine [";
+			str += driver->getName();
+			str += L"] Tris: ";
+			str += (s32)driver->getPrimitiveCountDrawn();
 
-		device->setWindowCaption(str.c_str());
+			device->setWindowCaption(str.c_str());
+			frames=0;
+		}
 	}
 
 	device->drop();
