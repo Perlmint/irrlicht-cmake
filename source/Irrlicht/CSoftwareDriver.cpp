@@ -217,16 +217,13 @@ bool CSoftwareDriver::setTexture(video::ITexture* texture)
 void CSoftwareDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
-	setTexture(Material.Textures[0]);
 
-	s32 i;
-	for ( i = 0; i < core::s32_min ( 1, material.TextureMatrix.size() ); ++i)
+	for (u32 i = 0; i < 1; ++i)
 	{
-		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
-						material.TextureMatrix [ i ]
-					);
+		setTexture(Material.Textures[i]);
+		setTransform ((E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ),
+				material.getTextureMatrix(i));
 	}
-
 }
 
 

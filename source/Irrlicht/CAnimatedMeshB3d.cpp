@@ -265,9 +265,9 @@ bool CAnimatedMeshB3d::ReadChunkBRUS(io::IReadFile* file)
 		}
 
 		if (B3dMaterial.Textures[0] != 0)
-			B3dMaterial.Material->Texture1 = B3dMaterial.Textures[0]->Texture;
+			B3dMaterial.Material->Textures[0] = B3dMaterial.Textures[0]->Texture;
 		if (B3dMaterial.Textures[1] != 0)
-			B3dMaterial.Material->Texture2 = B3dMaterial.Textures[1]->Texture;
+			B3dMaterial.Material->Textures[1] = B3dMaterial.Textures[1]->Texture;
 
 		//the other textures are skipped, irrlicht I think can only have 2 Textures per Material
 
@@ -1726,7 +1726,7 @@ void CAnimatedMeshB3d::setBoundingBox( const core::aabbox3df& box)
 void CAnimatedMeshB3d::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 {
 	for (s32 i=0; i < (s32)Buffers.size(); ++i)
-		Buffers[i]->Material.Flags[flag] = newvalue;
+		Buffers[i]->Material.setFlag(flag, newvalue);
 }
 
 //! Returns the type of the animated mesh.

@@ -58,7 +58,6 @@ CGUIColorSelectDialog::CGUIColorSelectDialog( const wchar_t* title, IGUIEnvironm
 	Text = title;
 
 	IGUISkin* skin = Environment->getSkin();
-	video::ITexture* tex = 0;
 	core::rect<s32> rec;
 
 	s32 buttonw = environment->getSkin()->getSize(EGDS_WINDOW_BUTTON_WIDTH);

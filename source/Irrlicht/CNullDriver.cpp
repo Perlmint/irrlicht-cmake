@@ -1300,10 +1300,10 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	attr->addFloat("Param1", material.MaterialTypeParam);
 	attr->addFloat("Param2", material.MaterialTypeParam2);
 
-	attr->addTexture("Texture1", material.Texture1);
-	attr->addTexture("Texture2", material.Texture2);
-	attr->addTexture("Texture3", material.Texture3);
-	attr->addTexture("Texture4", material.Texture4);
+	attr->addTexture("Texture1", material.Textures[0]);
+	attr->addTexture("Texture2", material.Textures[1]);
+	attr->addTexture("Texture3", material.Textures[2]);
+	attr->addTexture("Texture4", material.Textures[3]);
 
 	attr->addBool("Wireframe", material.Wireframe);
 	attr->addBool("GouraudShading", material.GouraudShading);
@@ -1317,7 +1317,10 @@ io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& mat
 	attr->addBool("NormalizeNormals", material.NormalizeNormals);
 
 	attr->addInt("ZBuffer", material.ZBuffer);
-	attr->addEnum("TextureWrap", material.TextureWrap, aTextureClampNames);
+	attr->addEnum("TextureWrap1", material.TextureWrap[0], aTextureClampNames);
+	attr->addEnum("TextureWrap2", material.TextureWrap[1], aTextureClampNames);
+	attr->addEnum("TextureWrap3", material.TextureWrap[2], aTextureClampNames);
+	attr->addEnum("TextureWrap4", material.TextureWrap[3], aTextureClampNames);
 
 	return attr;
 }
@@ -1348,10 +1351,10 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 	outMaterial.MaterialTypeParam = attr->getAttributeAsFloat("Param1");
 	outMaterial.MaterialTypeParam2 = attr->getAttributeAsFloat("Param2");
 
-	outMaterial.Texture1 = attr->getAttributeAsTexture("Texture1");
-	outMaterial.Texture2 = attr->getAttributeAsTexture("Texture2");
-	outMaterial.Texture3 = attr->getAttributeAsTexture("Texture3");
-	outMaterial.Texture4 = attr->getAttributeAsTexture("Texture4");
+	outMaterial.Textures[0] = attr->getAttributeAsTexture("Texture1");
+	outMaterial.Textures[1] = attr->getAttributeAsTexture("Texture2");
+	outMaterial.Textures[2] = attr->getAttributeAsTexture("Texture3");
+	outMaterial.Textures[3] = attr->getAttributeAsTexture("Texture4");
 
 	outMaterial.Wireframe = attr->getAttributeAsBool("Wireframe");
 	outMaterial.GouraudShading = attr->getAttributeAsBool("GouraudShading");
@@ -1365,7 +1368,10 @@ void CNullDriver::fillMaterialStructureFromAttributes(video::SMaterial& outMater
 	outMaterial.NormalizeNormals = attr->getAttributeAsBool("NormalizeNormals");
 
 	outMaterial.ZBuffer = attr->getAttributeAsInt("ZBuffer");
-	outMaterial.TextureWrap = (E_TEXTURE_CLAMP)attr->getAttributeAsEnumeration("TextureWrap", aTextureClampNames);
+	outMaterial.TextureWrap[0] = (E_TEXTURE_CLAMP)attr->getAttributeAsEnumeration("TextureWrap1", aTextureClampNames);
+	outMaterial.TextureWrap[1] = (E_TEXTURE_CLAMP)attr->getAttributeAsEnumeration("TextureWrap2", aTextureClampNames);
+	outMaterial.TextureWrap[2] = (E_TEXTURE_CLAMP)attr->getAttributeAsEnumeration("TextureWrap3", aTextureClampNames);
+	outMaterial.TextureWrap[3] = (E_TEXTURE_CLAMP)attr->getAttributeAsEnumeration("TextureWrap4", aTextureClampNames);
 }
 
 

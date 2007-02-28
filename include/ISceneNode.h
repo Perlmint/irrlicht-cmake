@@ -332,7 +332,7 @@ namespace scene
 		void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 		{
 			for (u32 i=0; i<getMaterialCount(); ++i)
-				getMaterial(i).Flags[flag] = newvalue;
+				getMaterial(i).setFlag(flag, newvalue);
 		}
 
 

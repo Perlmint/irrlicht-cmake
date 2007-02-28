@@ -12,8 +12,6 @@ namespace scene
 {
 
 
-/*
-*/
 CQuake3ShaderSceneNode::CQuake3ShaderSceneNode(scene::ISceneNode* parent, scene::ISceneManager* mgr,s32 id,
 									   io::IFileSystem *fileSystem, 
 									   scene::IMeshBuffer *buffer, const quake3::SShader * shader
@@ -36,7 +34,6 @@ CQuake3ShaderSceneNode::CQuake3ShaderSceneNode(scene::ISceneNode* parent, scene:
 
 	// load all Textures in all stages
 	loadTextures ( fileSystem );
-
 }
 
 /*
@@ -75,7 +72,7 @@ void CQuake3ShaderSceneNode::clone ( scene::SMeshBufferLightMap * buffer )
 
 	MeshBuffer.recalculateBoundingBox ();
 	// used for sorting
-	MeshBuffer.Material.Texture1 = (video::ITexture*) Shader;
+	MeshBuffer.Material.Textures[0] = (video::ITexture*) Shader;
 }
 
 
@@ -109,7 +106,7 @@ void CQuake3ShaderSceneNode::loadTextures ( io::IFileSystem * fileSystem )
 		// our lightmap is passed in material.Texture[2]
 		if ( mapname == "$lightmap" )
 		{
-			Q3Texture [i].Texture.push_back ( Original.getMaterial().Texture2 );
+			Q3Texture [i].Texture.push_back ( Original.getMaterial().Textures[1] );
 		}
 		else
 		{
@@ -153,7 +150,6 @@ void CQuake3ShaderSceneNode::loadTextures ( io::IFileSystem * fileSystem )
 		pos = 0;
 		quake3::getTextures ( Q3Texture [i].Texture, clampmap, pos,fileSystem, SceneManager->getVideoDriver() );
 	}
-
 }
 
 /*
@@ -185,7 +181,6 @@ void CQuake3ShaderSceneNode::OnPreRender()
 		{
 			SceneManager->registerNodeForRendering(this, time );
 		}
-
 	}
 }
 
@@ -221,8 +216,8 @@ void CQuake3ShaderSceneNode::render()
 	SQ3Texture &q = Q3Texture [ stage];
 
 	material.Lighting = false;
-	material.Texture1 = q.Texture [ q.TextureIndex ];
-	material.Texture2 = 0;
+	material.Textures[0] = q.Texture [ q.TextureIndex ];
+	material.Textures[1] = 0;
 	material.ZBuffer = quake3::getDepthFunction ( group->get ( "depthfunc" ) );
 	material.ZWriteEnable = (0 == StageCall );
 	material.NormalizeNormals = false;
@@ -240,13 +235,11 @@ void CQuake3ShaderSceneNode::render()
 		transformtex ( texture, q.TextureAddressMode );
 	}
 */
-	material.TextureWrap = q.TextureAddressMode;
-
-	//material.Wireframe = true;
-	//material.setTransform ( video::ETS_TEXTURE_0, texture );
-	driver->setMaterial( material );
-
+	material.TextureWrap[0] = q.TextureAddressMode;
+	material.TextureWrap[1] = material.TextureWrap[0];
 	driver->setTransform ( video::ETS_TEXTURE_0, texture );
+
+	driver->setMaterial( material );
 
 	if ( 0 == StageCall )
 	{
@@ -282,7 +275,6 @@ void CQuake3ShaderSceneNode::vertextransform_wave ( f32 dt, quake3::SModifierFun
 		dst.Pos.Y = src.Pos.Y + f * src.Normal.Y;
 		dst.Pos.Z = src.Pos.Z + f * src.Normal.Z;
 	}
-
 }
 
 /*!
@@ -349,9 +341,7 @@ void CQuake3ShaderSceneNode::vertextransform_autosprite ( f32 dt, quake3::SModif
 		MeshBuffer.Vertices[ i + 1 ].Normal = view;
 		MeshBuffer.Vertices[ i + 2 ].Normal = view;
 		MeshBuffer.Vertices[ i + 3 ].Normal = view;
-
 	}
-
 }
 
 /*
@@ -442,7 +432,6 @@ u32 CQuake3ShaderSceneNode::tcgen ( f32 dt, quake3::SModifierFunction &function,
 			ret = 0;
 
 		} break;
-
 	}
 
 	return ret;
@@ -493,9 +482,7 @@ void CQuake3ShaderSceneNode::transformtex ( const core::matrix4 &m, const u32 ad
 			//tx.X = core::clamp ( tx1, 0.f, 1.f );
 			//tx.Y = core::clamp ( ty1, 0.f, 1.f );
 		}
-
 	}
-
 }
 
 
@@ -710,9 +697,9 @@ u32 CQuake3ShaderSceneNode::getMaterialCount()
 video::SMaterial& CQuake3ShaderSceneNode::getMaterial(u32 i)
 {
 	video::SMaterial& m = MeshBuffer.getMaterial();
-	m.Texture1 = 0;
+	m.Textures[0] = 0;
 	if ( Q3Texture [ i ].TextureIndex )
-		m.Texture1 = Q3Texture [ i ].Texture [ Q3Texture [ i ].TextureIndex ];
+		m.Textures[0] = Q3Texture [ i ].Texture [ Q3Texture [ i ].TextureIndex ];
 	return m;
 }	
 

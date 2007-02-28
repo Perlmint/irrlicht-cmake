@@ -211,16 +211,16 @@ void CSoftwareDriver2::setCurrentShader()
 			break;
 
 		case EMT_LIGHTMAP_LIGHTING_M4:
-			if ( Material.org.Texture2 )
+			if ( Material.org.Textures[1] )
 				shader = ETR_TEXTURE_GOURAUD_LIGHTMAP_M4;
 			break;
 		case EMT_LIGHTMAP_M4:
-			if ( Material.org.Texture2 )
+			if ( Material.org.Textures[1] )
 				shader = ETR_TEXTURE_LIGHTMAP_M4;
 			break;
 
 		case EMT_LIGHTMAP_ADD:
-			if ( Material.org.Texture2 )
+			if ( Material.org.Textures[1] )
 				shader = ETR_TEXTURE_GOURAUD_LIGHTMAP_ADD;
 			break;
 
@@ -238,7 +238,7 @@ void CSoftwareDriver2::setCurrentShader()
 		shader = ETR_TEXTURE_GOURAUD_NOZ;
 	}
 
-	if ( 0 == Material.org.Texture1 )
+	if ( 0 == Material.org.Textures[0] )
 	{
 		shader = ETR_GOURAUD;
 	}
@@ -266,7 +266,10 @@ void CSoftwareDriver2::setCurrentShader()
 				E_MODULATE_FUNC modulate;
 				unpack_texureBlendFunc ( srcFact, dstFact, modulate, Material.org.MaterialTypeParam );
 				CurrentShader->setParam ( 0, Material.org.MaterialTypeParam );
-			} break;
+			}
+			break;
+			default:
+			break;
 		}
 
 		CurrentShader->setRenderTarget(RenderTargetSurface, ViewPort);
@@ -350,6 +353,8 @@ void CSoftwareDriver2::setTransform(E_TRANSFORMATION_STATE state, const core::ma
 			}
 #endif
 			break;
+		default:
+			break;
 	}
 }
 
@@ -397,17 +402,12 @@ void CSoftwareDriver2::setMaterial(const SMaterial& material)
 	if (Material.SpecularEnabled)
 		Material.org.NormalizeNormals = true;
 
-	setTexture( 0, Material.org.Texture1 );
-	setTexture( 1, Material.org.Texture2 );
-
-	s32 i;
-	for ( i = 0; i < core::s32_min ( 2, material.TextureMatrix.size() ); ++i)
+	for (u32 i = 0; i < 2; ++i)
 	{
-		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
-						material.TextureMatrix [ i ]
-					);
+		setTexture( i, Material.org.Textures[i] );
+		setTransform((E_TRANSFORMATION_STATE) (ETS_TEXTURE_0 + i), 
+				material.getTextureMatrix(i));
 	}
-
 }
 
 
@@ -905,9 +905,8 @@ const SVSize CSoftwareDriver2::vSize[] =
 /*!
 	fill a cache line with transformed, light and clipp test triangles
 */
-void CSoftwareDriver2::VertexCache_fill ( const u32 sourceIndex,
-												const u32 destIndex
-											)
+void CSoftwareDriver2::VertexCache_fill(const u32 sourceIndex,
+					const u32 destIndex)
 {
 	u8 * source;
 	s4DVertex *dest;
@@ -966,7 +965,7 @@ void CSoftwareDriver2::VertexCache_fill ( const u32 sourceIndex,
 		for ( t = 0; t != vSize[VertexCache.vType].TexSize; ++t )
 		{
 			const f32 *M =  Transformation [ ETS_TEXTURE_0 + t ].m.M;
-			if ( Material.org.TextureWrap==ETC_REPEAT )
+			if ( Material.org.TextureWrap[0]==ETC_REPEAT )
 			{
 				dest->Tex[t].x = M[0] * src[t].X + M[4] * src[t].Y + M[8];
 				dest->Tex[t].y = M[1] * src[t].X + M[5] * src[t].Y + M[9];

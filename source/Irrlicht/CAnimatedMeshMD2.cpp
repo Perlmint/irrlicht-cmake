@@ -534,6 +534,8 @@ bool CAnimatedMeshMD2::loadFile(io::IReadFile* file)
 	// create Memory for indices and frames
 
 	TriangleCount = header.numTriangles;
+	if (FrameList)
+		delete [] FrameList;
 	FrameList = new core::array<video::S3DVertex>[header.numFrames];
 	FrameCount = header.numFrames;
 
@@ -750,7 +752,7 @@ void CAnimatedMeshMD2::calculateBoundingBox()
 //! sets a flag of all contained materials to a new value
 void CAnimatedMeshMD2::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 {
-	Material.Flags[flag] = newvalue;
+	Material.setFlag(flag, newvalue);
 }
 
 

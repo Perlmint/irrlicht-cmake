@@ -1553,14 +1553,11 @@ void COpenGLDriver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	s32 i;
-	for ( i = 0; i < core::s32_min ( MATERIAL_MAX_TEXTURES, material.TextureMatrix.size() ); ++i)
+	for (s32 i = 0; i < MaxTextureUnits; ++i)
 	{
-		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
-						material.TextureMatrix [ i ]
-					);
+		setTransform ((E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ),
+				material.getTextureMatrix(i));
 	}
-
 }
 
 
@@ -1658,7 +1655,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	{
 		GLfloat color[4];
 
-		f32 inv = 1.0f / 255.0f;
+		const f32 inv = 1.0f / 255.0f;
 
 		color[0] = material.AmbientColor.getRed() * inv;
 		color[1] = material.AmbientColor.getGreen() * inv;
@@ -1708,6 +1705,8 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			continue;
 		if (MultiTextureExtension)
 			extGlActiveTextureARB(GL_TEXTURE0_ARB + i);
+		else if (i>0)
+			break;
 
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 			(material.BilinearFilter || material.TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
@@ -1814,38 +1813,38 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	}
 
 	// texture address mode
-	if (resetAllRenderStates || lastmaterial.TextureWrap != material.TextureWrap)
+	for (s32 i=0; i<MaxTextureUnits; ++i)
 	{
-		GLint mode=GL_REPEAT;
-		switch (material.TextureWrap)
+		if (resetAllRenderStates || lastmaterial.TextureWrap[i] != material.TextureWrap[i])
 		{
-			case ETC_REPEAT:
-				mode=GL_REPEAT;
-				break;
-			case ETC_CLAMP:
-				mode=GL_CLAMP;
-				break;
-			case ETC_CLAMP_TO_EDGE:
-				mode=GL_CLAMP_TO_EDGE;
-				break;
-			case ETC_CLAMP_TO_BORDER:
-				mode=GL_CLAMP_TO_BORDER;
-				break;
-			case ETC_MIRROR:
-				mode=GL_MIRRORED_REPEAT;
-				break;
-		}
-
-		for (s32 i=0; i<MaxTextureUnits; ++i)
-		{
+			GLint mode=GL_REPEAT;
+			switch (material.TextureWrap[i])
+			{
+				case ETC_REPEAT:
+					mode=GL_REPEAT;
+					break;
+				case ETC_CLAMP:
+					mode=GL_CLAMP;
+					break;
+				case ETC_CLAMP_TO_EDGE:
+					mode=GL_CLAMP_TO_EDGE;
+					break;
+				case ETC_CLAMP_TO_BORDER:
+					mode=GL_CLAMP_TO_BORDER;
+					break;
+				case ETC_MIRROR:
+					mode=GL_MIRRORED_REPEAT;
+					break;
+			}
+	
 			if (MultiTextureExtension)
 				extGlActiveTextureARB(GL_TEXTURE0_ARB + i);
+			else if (i>0)
+				break;
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
 		}
 	}
-
-
 }
 
 

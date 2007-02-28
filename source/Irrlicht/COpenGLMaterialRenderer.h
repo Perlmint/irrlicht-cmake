@@ -75,7 +75,7 @@ public:
 		Driver->setTexture(0, material.Textures[0]);
 
 
-//		if (material.MaterialType != lastMaterial.MaterialType || 
+//		if (material.MaterialType != lastMaterial.MaterialType ||
 //			material.MaterialTypeParam != lastMaterial.MaterialTypeParam ||
 //			resetAllRenderstates)
 		{
@@ -124,17 +124,17 @@ public:
 		u32 getGLBlend ( E_BLEND_FACTOR factor ) const
 		{
 			u32 r = 0;
-    		switch ( factor )
+			switch ( factor )
 			{
-				case EBF_ZERO:					r = GL_ZERO; break;
-				case EBF_ONE:					r = GL_ONE; break;
-				case EBF_DST_COLOR:				r = GL_DST_COLOR; break;
+				case EBF_ZERO:			r = GL_ZERO; break;
+				case EBF_ONE:			r = GL_ONE; break;
+				case EBF_DST_COLOR:		r = GL_DST_COLOR; break;
 				case EBF_ONE_MINUS_DST_COLOR:	r = GL_ONE_MINUS_DST_COLOR; break;
-				case EBF_SRC_COLOR:				r = GL_SRC_COLOR; break;
+				case EBF_SRC_COLOR:		r = GL_SRC_COLOR; break;
 				case EBF_ONE_MINUS_SRC_COLOR:	r = GL_ONE_MINUS_SRC_COLOR; break;
-				case EBF_SRC_ALPHA:				r = GL_SRC_ALPHA; break;
+				case EBF_SRC_ALPHA:		r = GL_SRC_ALPHA; break;
 				case EBF_ONE_MINUS_SRC_ALPHA:	r = GL_ONE_MINUS_SRC_ALPHA; break;
-				case EBF_DST_ALPHA:				r = GL_DST_ALPHA; break;
+				case EBF_DST_ALPHA:		r = GL_DST_ALPHA; break;
 				case EBF_ONE_MINUS_DST_ALPHA:	r = GL_ONE_MINUS_DST_ALPHA; break;
 				case EBF_SRC_ALPHA_SATURATE:	r = GL_SRC_ALPHA_SATURATE; break;
 			}
@@ -143,14 +143,15 @@ public:
 
 		u32 getTexelAlpha ( E_BLEND_FACTOR factor ) const
 		{
-			u32 r = 0;
-    		switch ( factor )
+			u32 r;
+			switch ( factor )
 			{
-				case EBF_SRC_ALPHA:				r = 1; break;
+				case EBF_SRC_ALPHA:		r = 1; break;
 				case EBF_ONE_MINUS_SRC_ALPHA:	r = 1; break;
-				case EBF_DST_ALPHA:				r = 1; break;
+				case EBF_DST_ALPHA:		r = 1; break;
 				case EBF_ONE_MINUS_DST_ALPHA:	r = 1; break;
 				case EBF_SRC_ALPHA_SATURATE:	r = 1; break;
+				default:			r = 0; break;
 			}
 			return r;
 		}
@@ -612,8 +613,8 @@ public:
 
 				glEnable(GL_TEXTURE_GEN_S);
 				glEnable(GL_TEXTURE_GEN_T);
-			 }
-		 }
+			}
+		}
 	}
 
 	virtual void OnUnsetMaterial()

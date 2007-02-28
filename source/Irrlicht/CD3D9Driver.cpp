@@ -642,17 +642,12 @@ void CD3D9Driver::setMaterial(const SMaterial& material)
 {
 	Material = material;
 
-	s32 i;
-	for ( i=0; i<MATERIAL_MAX_TEXTURES; ++i)
-		setTexture(i, Material.Textures[i]);
-
-	for ( i = 0; i < core::s32_min ( MATERIAL_MAX_TEXTURES, material.TextureMatrix.size() ); ++i)
+	for (u32 i=0; i<MaxTextureUnits; ++i)
 	{
-		setTransform (	(E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ), 
-						material.TextureMatrix [ i ]
-					);
+		setTexture(i, Material.Textures[i]);
+		setTransform((E_TRANSFORMATION_STATE) ( ETS_TEXTURE_0 + i ),
+				material.getTextureMatrix(i));
 	}
-
 }
 
 
@@ -1373,28 +1368,29 @@ void CD3D9Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	}
 
 	// texture address mode
-	if (resetAllRenderstates || lastmaterial.TextureWrap != material.TextureWrap)
+	for (u32 st=0; st<MaxTextureUnits; ++st)
 	{
-		u32 mode = D3DTADDRESS_WRAP;
-		switch (material.TextureWrap)
+		if (resetAllRenderstates || lastmaterial.TextureWrap[i] != material.TextureWrap[i])
 		{
-			case ETC_REPEAT:
-				mode=D3DTADDRESS_WRAP;
-				break;
-			case ETC_CLAMP:
-			case ETC_CLAMP_TO_EDGE:
-				mode=D3DTADDRESS_CLAMP;
-				break;
-			case ETC_MIRROR:
-				mode=D3DTADDRESS_MIRROR;
-				break;
-			case ETC_CLAMP_TO_BORDER:
-				mode=D3DTADDRESS_BORDER;
-				break;
-		}
-
-		for (u32 st=0; st<MaxTextureUnits; ++st)
-		{
+			u32 mode;
+			u32 mode = D3DTADDRESS_WRAP;
+			switch (material.TextureWrap[i])
+			{
+				case ETC_REPEAT:
+					mode=D3DTADDRESS_WRAP;
+					break;
+				case ETC_CLAMP:
+				case ETC_CLAMP_TO_EDGE:
+					mode=D3DTADDRESS_CLAMP;
+					break;
+				case ETC_MIRROR:
+					mode=D3DTADDRESS_MIRROR;
+					break;
+				case ETC_CLAMP_TO_BORDER:
+					mode=D3DTADDRESS_BORDER;
+					break;
+			}
+	
 			pID3DDevice->SetSamplerState(st, D3DSAMP_ADDRESSU, mode );
 			pID3DDevice->SetSamplerState(st, D3DSAMP_ADDRESSV, mode );
 		}

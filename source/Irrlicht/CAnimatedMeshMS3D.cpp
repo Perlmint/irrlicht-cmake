@@ -286,7 +286,7 @@ bool CAnimatedMeshMS3D::loadFile(io::IReadFile* file)
 		tmpBuffer.Material.EmissiveColor = video::SColorf(material->Emissive[0], material->Emissive[1], material->Emissive[2], material->Emissive[3]).toSColor ();
 		tmpBuffer.Material.SpecularColor = video::SColorf(material->Specular[0], material->Specular[1], material->Specular[2], material->Specular[3]).toSColor ();
 		tmpBuffer.Material.Shininess = material->Shininess;
-		tmpBuffer.Material.Texture1 = Driver->getTexture((const c8*)material->Texture);
+		tmpBuffer.Material.Textures[0] = Driver->getTexture((const c8*)material->Texture);
 		tmpBuffer.BoundingBox = &BoundingBox;
 		tmpBuffer.Vertices = &AnimatedVertices;
 	}
@@ -699,7 +699,7 @@ void CAnimatedMeshMS3D::setBoundingBox( const core::aabbox3df& box)
 void CAnimatedMeshMS3D::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 {
 	for (s32 i=0; i<(int)Buffers.size(); ++i) 
-		Buffers[i].Material.Flags[flag] = newvalue;
+		Buffers[i].Material.setFlag(flag, newvalue);
 }
 
 

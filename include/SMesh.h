@@ -99,7 +99,7 @@ namespace scene
 		virtual void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 		{
 			for (u32 i=0; i<MeshBuffers.size(); ++i)
-				MeshBuffers[i]->getMaterial().Flags[flag] = newvalue;
+				MeshBuffers[i]->getMaterial().setFlag(flag, newvalue);
 		}
 
 		core::array<IMeshBuffer*> MeshBuffers;
