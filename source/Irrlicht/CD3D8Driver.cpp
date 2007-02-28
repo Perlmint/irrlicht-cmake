@@ -1372,10 +1372,10 @@ void CD3D8Driver::setBasicRenderStates(const SMaterial& material, const SMateria
 	// texture address mode
 	for (u32 st=0; st<MaxTextureUnits; ++st)
 	{
-		if (resetAllRenderstates || lastmaterial.TextureWrap[i] != material.TextureWrap[i])
+		if (resetAllRenderstates || lastmaterial.TextureWrap[st] != material.TextureWrap[st])
 		{
 			u32 mode = D3DTADDRESS_WRAP;
-			switch (material.TextureWrap[i])
+			switch (material.TextureWrap[st])
 			{
 				case ETC_REPEAT:
 					mode=D3DTADDRESS_WRAP;
