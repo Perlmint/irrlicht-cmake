@@ -16,8 +16,6 @@ all_linux: SYSTEM=Linux
 all_linux: LDFLAGS = -L/usr/X11R6/lib$(LIBSELECT) -L../../lib/$(SYSTEM) -lIrrlicht -lGL -lGLU -lXxf86vm -lXext -lX11
 
 all_win32 clean_win32: SYSTEM=Win32-gcc
-# Avoid namespace problems in iostream by using ansi c++
-all_win32: CPPFLAGS += -ansi -DWIN32
 all_win32: LDFLAGS = -L../../lib/$(SYSTEM) -lIrrlicht -lopengl32 -lglu32 -lm
 
 # if you enable sound add the proper library for linking

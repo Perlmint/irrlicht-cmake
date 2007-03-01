@@ -193,7 +193,7 @@ int IRRCALLCONV main(int argc, char* argv[])
 	if ( mesh )
 	{
 		// the additional mesh can be quite huge and is unoptimized
-		scene::IMesh * additional_mesh = mesh->getMesh ( scene::E_Q3_MESH_ITEMS );
+		scene::IMesh * additional_mesh = mesh->getMesh ( quake3::E_Q3_MESH_ITEMS );
 
 		for ( u32 i = 0; i!= additional_mesh->getMeshBufferCount (); ++i )
 		{
@@ -219,7 +219,7 @@ int IRRCALLCONV main(int argc, char* argv[])
 		}
 
 		// original mesh is not needed anymore
-		mesh->releaseMesh ( scene::E_Q3_MESH_ITEMS );
+		mesh->releaseMesh ( quake3::E_Q3_MESH_ITEMS );
 	}
 
 	/*
@@ -251,7 +251,7 @@ int IRRCALLCONV main(int argc, char* argv[])
 		s32 index = entityList.binary_search_const ( search );
 		if ( index >= 0 )
 		{
-			const scene::SVarGroup *group;
+			const quake3::SVarGroup *group;
 			s32 notEndList;
 			do
 			{

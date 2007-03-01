@@ -364,7 +364,7 @@ void CDemo::loadSceneData()
 		}
 
 		// the additional mesh can be quite huge and is unoptimized
-		scene::IMesh * additional_mesh = quakeLevelMesh->getMesh ( scene::E_Q3_MESH_ITEMS );
+		scene::IMesh * additional_mesh = quakeLevelMesh->getMesh ( scene::quake3::E_Q3_MESH_ITEMS );
 
 		for ( i = 0; i!= additional_mesh->getMeshBufferCount (); ++i )
 		{
@@ -385,7 +385,7 @@ void CDemo::loadSceneData()
 		}
 
 		// original mesh is not needed anymore
-		quakeLevelMesh->releaseMesh ( scene::E_Q3_MESH_ITEMS );
+		quakeLevelMesh->releaseMesh ( scene::quake3::E_Q3_MESH_ITEMS );
 
 	}
 

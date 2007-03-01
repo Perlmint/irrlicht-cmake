@@ -20,7 +20,9 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
+#ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
+#endif
 
 
 IrrlichtDevice *device = 0;
@@ -65,7 +67,7 @@ public:
 				{
 					s32 pos = ((IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
 					
-					for (s32 i=0; i<EGDC_COUNT ; ++i)
+					for (u32 i=0; i<EGDC_COUNT ; ++i)
 					{
 						SColor col = env->getSkin()->getColor((EGUI_DEFAULT_COLOR)i);
 						col.setAlpha(pos);
@@ -120,6 +122,8 @@ public:
 					return true;
 				}
 
+				break;
+			default:
 				break;
 			}
 		}
@@ -213,16 +217,15 @@ int main()
 	scrollbar->setMax(255);
 
 	// set scrollbar position to alpha value of an arbitrary element
-	scrollbar->setPos(env->getSkin()->getColor((EGUI_DEFAULT_COLOR)0).getAlpha());
+	scrollbar->setPos(env->getSkin()->getColor(EGDC_WINDOW).getAlpha());
 
 	env->addStaticText(L"Logging ListBox:", rect<s32>(50,80,250,100), true);
 	listbox = env->addListBox(rect<s32>(50, 110, 250, 180));
 	env->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
 
 	// add the engine logo
-	IGUIImage* img = env->addImage(
-		driver->getTexture("../../media/irrlichtlogo2.png"),
-		position2d<int>(10,10));
+	env->addImage(driver->getTexture("../../media/irrlichtlogo2.png"),
+			position2d<int>(10,10));
 
 
 	/*
