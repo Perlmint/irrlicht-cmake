@@ -363,7 +363,7 @@ namespace core
 
 
 } // end namespace core
-}// end namespace irr
+} // end namespace irr
 
 #endif
 

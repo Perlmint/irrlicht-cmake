@@ -27,7 +27,7 @@ CQ3LevelMesh::CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver, sce
 	#endif	
 
 	s32 i;
-	for ( i = 0; i!= E_Q3_MESH_SIZE; ++i )
+	for ( i = 0; i!= quake3::E_Q3_MESH_SIZE; ++i )
 	{
 		Mesh[i] = 0;
 	}
@@ -85,7 +85,7 @@ CQ3LevelMesh::~CQ3LevelMesh()
 		FileSystem->drop();
 
 	s32 i;
-	for ( i = 0; i!= E_Q3_MESH_SIZE; ++i )
+	for ( i = 0; i!= quake3::E_Q3_MESH_SIZE; ++i )
 	{
 		if (Mesh[i])
 			Mesh[i]->drop();
@@ -132,7 +132,7 @@ bool CQ3LevelMesh::loadFile(io::IReadFile* file)
 	#endif
 
 	s32 i;
-	for ( i = 0; i!= E_Q3_MESH_SIZE; ++i )
+	for ( i = 0; i!= quake3::E_Q3_MESH_SIZE; ++i )
 	{
 		Mesh[i] = new SMesh();
 	}
@@ -529,16 +529,16 @@ void CQ3LevelMesh::parser_parse ( const void * data, const u32 size, CQ3LevelMes
 	Parser.sourcesize = size;
 	Parser.index = 0;
 
-	SVarGroupList *groupList;
+	quake3::SVarGroupList *groupList;
 
 	s32 active;
 	s32 last;
 
-	SVariable entity;
+	quake3::SVariable entity;
 
-	groupList = new SVarGroupList ();
+	groupList = new quake3::SVarGroupList ();
 
-	groupList->VariableGroup.push_back ( SVarGroup () );
+	groupList->VariableGroup.push_back ( quake3::SVarGroup () );
 	active = last = 0;
 
 	do
@@ -551,7 +551,7 @@ void CQ3LevelMesh::parser_parse ( const void * data, const u32 size, CQ3LevelMes
 			{
 				//stack = core::min_ ( stack + 1, 7 );
 
-				groupList->VariableGroup.push_back ( SVarGroup () );
+				groupList->VariableGroup.push_back ( quake3::SVarGroup () );
 				last = active;
 				active = groupList->VariableGroup.size() - 1;
 				entity.clear ();
@@ -600,8 +600,8 @@ void CQ3LevelMesh::parser_parse ( const void * data, const u32 size, CQ3LevelMes
 
 					// new group
 					groupList->drop ();
-					groupList = new SVarGroupList ();
-					groupList->VariableGroup.push_back ( SVarGroup () );
+					groupList = new quake3::SVarGroupList ();
+					groupList->VariableGroup.push_back ( quake3::SVarGroup () );
 					last = 0;
 				}
 
@@ -654,12 +654,12 @@ s32 CQ3LevelMesh::setShaderMaterial ( video::SMaterial &material, const tBSPFace
 	// store shader ID
 	material.MaterialTypeParam2 = (f32) shaderState;
 
-	const SShader *shader = getShader ( shaderState );
+	const quake3::SShader *shader = getShader ( shaderState );
 	if ( 0 == shader )
 		return shaderState;
 
 
-	const SVarGroup *group;
+	const quake3::SVarGroup *group;
 
 	s32 index;
 
@@ -740,7 +740,7 @@ void CQ3LevelMesh::constructMesh2()
 	{
 		scene::SMeshBufferLightMap* buffer = new scene::SMeshBufferLightMap();
 
-		Mesh[E_Q3_MESH_GEOMETRY]->addMeshBuffer(buffer);
+		Mesh[quake3::E_Q3_MESH_GEOMETRY]->addMeshBuffer(buffer);
 		buffer->drop();
 	}
 
@@ -751,7 +751,7 @@ void CQ3LevelMesh::constructMesh2()
 		s32 shaderState = setShaderMaterial ( material, face );
 		toBuffer.clear ();
 
-		const SShader *shader = getShader ( shaderState );
+		const quake3::SShader *shader = getShader ( shaderState );
 
 		switch( Faces[i].type )
 		{
@@ -762,13 +762,13 @@ void CQ3LevelMesh::constructMesh2()
 					if ( 0 == shader )
 					{
 						item.takeVertexColor = material.Textures[0] == 0 || material.Textures[1] == 0;
-						item.index = E_Q3_MESH_GEOMETRY;
+						item.index = quake3::E_Q3_MESH_GEOMETRY;
 						toBuffer.push_back ( item );
 					}
 					else
 					{
 						item.takeVertexColor = 1;
-						item.index = E_Q3_MESH_ITEMS;
+						item.index = quake3::E_Q3_MESH_ITEMS;
 						toBuffer.push_back ( item );
 					}
 
@@ -781,26 +781,26 @@ void CQ3LevelMesh::constructMesh2()
 				if ( material.Textures[0] && 0 == shader )
 				{
 					item.takeVertexColor = material.Textures[1] == 0;
-					item.index = E_Q3_MESH_GEOMETRY;
+					item.index = quake3::E_Q3_MESH_GEOMETRY;
 					toBuffer.push_back ( item );
 				}
 				else
 				if ( material.Textures[0] )
 				{
 					item.takeVertexColor = material.Textures[1] == 0;
-					item.index = E_Q3_MESH_GEOMETRY;
+					item.index = quake3::E_Q3_MESH_GEOMETRY;
 					toBuffer.push_back ( item );
 					if ( 0 == (shaderState & 0xFFFF0000 ) )
 					{
 						item.takeVertexColor = 1;
-						item.index = E_Q3_MESH_ITEMS;
+						item.index = quake3::E_Q3_MESH_ITEMS;
 						toBuffer.push_back ( item );
 					}
 				}
 				else
 				{
 					item.takeVertexColor = 1;
-					item.index = E_Q3_MESH_ITEMS;
+					item.index = quake3::E_Q3_MESH_ITEMS;
 					toBuffer.push_back ( item );
 				}
 				break;
@@ -809,20 +809,20 @@ void CQ3LevelMesh::constructMesh2()
 				if ( material.Textures[0] && ( shaderState & 0xFFFF0000 ) == 0x00030000 )
 				{
 					item.takeVertexColor = material.Textures[1] == 0;
-					item.index = E_Q3_MESH_GEOMETRY;
+					item.index = quake3::E_Q3_MESH_GEOMETRY;
 					toBuffer.push_back ( item );
 				}
 				else
 				{
 					item.takeVertexColor = 1;
-					item.index = E_Q3_MESH_ITEMS;
+					item.index = quake3::E_Q3_MESH_ITEMS;
 					toBuffer.push_back ( item );
 				}
 				break;
 */
 			case 4: // billboards
 				item.takeVertexColor = 1;
-				item.index = E_Q3_MESH_ITEMS;
+				item.index = quake3::E_Q3_MESH_ITEMS;
 				toBuffer.push_back ( item );
 				break;
 		}
@@ -831,7 +831,7 @@ void CQ3LevelMesh::constructMesh2()
 		{
 			scene::SMeshBufferLightMap* buffer;
 
-			if ( toBuffer[g].index == E_Q3_MESH_GEOMETRY )
+			if ( toBuffer[g].index == quake3::E_Q3_MESH_GEOMETRY )
 			{
 				if ( 0 == toBuffer[g].takeVertexColor )
 				{
@@ -844,7 +844,7 @@ void CQ3LevelMesh::constructMesh2()
 
 				// there are lightmapsids and textureid with -1
 				s32 index = ((Faces[i].lightmapID+1) * (NumTextures+1)) + (Faces[i].textureID+1);
-				buffer = (SMeshBufferLightMap*) Mesh[E_Q3_MESH_GEOMETRY]->getMeshBuffer(index);
+				buffer = (SMeshBufferLightMap*) Mesh[quake3::E_Q3_MESH_GEOMETRY]->getMeshBuffer(index);
 				buffer->getMaterial() = material;
 			}
 			else
@@ -1430,7 +1430,7 @@ void CQ3LevelMesh::createCurvedSurface(SMeshBufferLightMap* meshBuffer, s32 i)
 }
 
 //! get's an interface to the entities
-const tQ3EntityList & CQ3LevelMesh::getEntityList ()
+const quake3::tQ3EntityList & CQ3LevelMesh::getEntityList ()
 {
 	Entity.sort();
 	return Entity;
@@ -1439,7 +1439,7 @@ const tQ3EntityList & CQ3LevelMesh::getEntityList ()
 
 /*!
 */
-const SShader * CQ3LevelMesh::getShader ( u32 index  ) const
+const quake3::SShader * CQ3LevelMesh::getShader ( u32 index  ) const
 {
 	index &= 0xFFFF;
 
@@ -1453,9 +1453,9 @@ const SShader * CQ3LevelMesh::getShader ( u32 index  ) const
 
 //! loads the shader definition
 //  either from file ( we assume /scripts on fileNameIsValid == 0 )
-const SShader * CQ3LevelMesh::getShader ( const c8 * filename, s32 fileNameIsValid )
+const quake3::SShader * CQ3LevelMesh::getShader ( const c8 * filename, s32 fileNameIsValid )
 {
-	SShader search;
+	quake3::SShader search;
 	search.name = filename;
 
 	s32 index;
@@ -1545,15 +1545,15 @@ void CQ3LevelMesh::InitShader ()
 {
 	ReleaseShader ();
 
-	SShader element;
+	quake3::SShader element;
 
-	SVarGroup group;
-	SVariable variable;
+	quake3::SVarGroup group;
+	quake3::SVariable variable;
 
 	variable.name = "noshader";
 	group.Variable.push_back ( variable );
 
-	element.VarGroup = new SVarGroupList ();
+	element.VarGroup = new quake3::SVarGroupList ();
 	element.VarGroup->VariableGroup.push_back ( group );
 	element.name = element.VarGroup->VariableGroup[0].Variable[0].name.c_str ();
 	Shader.push_back ( element );
@@ -1586,9 +1586,9 @@ void CQ3LevelMesh::ReleaseEntity ()
 
 
 // entity only has only one valid level.. and no assoziative name..
-void CQ3LevelMesh::scriptcallback_entity ( SVarGroupList *& grouplist )
+void CQ3LevelMesh::scriptcallback_entity ( quake3::SVarGroupList *& grouplist )
 {
-	SEntity element;
+	quake3::SEntity element;
 
 	if ( grouplist->VariableGroup.size () != 2 )
 		return;
@@ -1605,9 +1605,9 @@ void CQ3LevelMesh::scriptcallback_entity ( SVarGroupList *& grouplist )
 
 
 //!. script callback for shaders
-void CQ3LevelMesh::scriptcallback_shader ( SVarGroupList *& grouplist )
+void CQ3LevelMesh::scriptcallback_shader ( quake3::SVarGroupList *& grouplist )
 {
-	SShader element;
+	quake3::SShader element;
 
 	grouplist->grab ();
 
@@ -1713,7 +1713,7 @@ void CQ3LevelMesh::loadTextures()
 void CQ3LevelMesh::cleanMeshes ()
 {
 	// delete all buffers without geometry in it.
-	for ( u32 g = 0; g < E_Q3_MESH_SIZE; ++g )
+	for ( u32 g = 0; g < quake3::E_Q3_MESH_SIZE; ++g )
 	{
 		u32 i = 0;
 		bool texture0important = ( g == 0 );
@@ -1739,7 +1739,7 @@ void CQ3LevelMesh::cleanMeshes ()
 void CQ3LevelMesh::calcBoundingBoxes ()
 {
 	// create bounding box
-	for ( u32 g = 0; g != E_Q3_MESH_SIZE; ++g )
+	for ( u32 g = 0; g != quake3::E_Q3_MESH_SIZE; ++g )
 	{
 		for ( u32 j=0; j < Mesh[g]->MeshBuffers.size(); ++j)
 		{
@@ -1813,7 +1813,7 @@ void CQ3LevelMesh::loadTextures2()
 	// load textures
 	Tex.set_used( NumTextures+1 );
 	
-	const SShader * shader;
+	const quake3::SShader * shader;
 
 	core::stringc list;
 	core::stringc check;
@@ -1833,7 +1833,7 @@ void CQ3LevelMesh::loadTextures2()
 			Tex[t].ShaderID = shader->id;
 
 			// if texture name == stage1 Texture map
-			const SVarGroup * group;
+			const quake3::SVarGroup * group;
 
 			group = shader->getGroup ( 2 );
 			if ( group )

@@ -12,7 +12,7 @@ namespace irr
 namespace video
 {
 	class ITexture;
-}
+} // end namespace video
 namespace gui
 {
 	class IGUIButton;

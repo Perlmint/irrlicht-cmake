@@ -65,7 +65,7 @@ public:
 	virtual void tick() = 0;
 };
 
-} // end namespace
+} // end namespace irr
 
 #endif
 

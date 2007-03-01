@@ -9,7 +9,7 @@ namespace irr
 namespace io
 {
 	class IWriteFile;
-}
+} // end namespace io
 
 namespace video
 {

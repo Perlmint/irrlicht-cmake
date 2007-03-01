@@ -23,7 +23,7 @@ namespace irr
 namespace video
 {
 	class IVideoDriver;
-}
+} // end namespace video
 namespace scene
 {
 	class CAnimatedMeshB3d : public IAnimatedMeshB3d, public IMesh
@@ -487,11 +487,6 @@ private:
 		core::array<SB3DMeshBuffer*> Buffers;
 
 		video::IVideoDriver* Driver;
-
-
-
-
-
 	};
 
 } // end namespace scene

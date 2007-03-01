@@ -49,14 +49,14 @@ namespace scene
 		virtual E_ANIMATED_MESH_TYPE getMeshType() const;
 
 		//! loads the shader definition
-		virtual const SShader * getShader ( const c8 * filename, s32 fileNameIsValid );
+		virtual const quake3::SShader * getShader ( const c8 * filename, s32 fileNameIsValid );
 
 		//! returns a already loaded Shader
-		virtual const SShader * getShader ( u32 index  ) const;
+		virtual const quake3::SShader * getShader ( u32 index  ) const;
 
 
 		//! get's an interface to the entities
-		virtual const tQ3EntityList & getEntityList ();
+		virtual const quake3::tQ3EntityList & getEntityList ();
 
 	private:
 
@@ -338,7 +338,7 @@ namespace scene
 		tBSPBrush* Brushes;
 		s32 NumBrushes;
 
-		scene::SMesh* Mesh[E_Q3_MESH_SIZE];
+		scene::SMesh* Mesh[quake3::E_Q3_MESH_SIZE];
 		video::IVideoDriver* Driver;
 		core::stringc LevelName;
 		io::IFileSystem* FileSystem; // needs because there are no file extenstions stored in .bsp files.
@@ -370,18 +370,18 @@ namespace scene
 		SQ3Parser Parser;
 
 
-		typedef void ( CQ3LevelMesh::*tParserCallback ) ( SVarGroupList *& groupList );
+		typedef void ( CQ3LevelMesh::*tParserCallback ) ( quake3::SVarGroupList *& groupList );
 		void parser_parse ( const void * data, u32 size, tParserCallback callback );
 		void parser_nextToken ();
 
-		void dumpVarGroup ( const SVarGroup * group, s32 stack ) const;
+		void dumpVarGroup ( const quake3::SVarGroup * group, s32 stack ) const;
 
-		void scriptcallback_entity ( SVarGroupList *& grouplist );
-		tQ3EntityList Entity;
+		void scriptcallback_entity ( quake3::SVarGroupList *& grouplist );
+		quake3::tQ3EntityList Entity;
 
-		void scriptcallback_shader ( SVarGroupList *& grouplist );
-		core::array < SShader > Shader;
-		tStringList ShaderFile;
+		void scriptcallback_shader ( quake3::SVarGroupList *& grouplist );
+		core::array < quake3::SShader > Shader;
+		quake3::tStringList ShaderFile;
 		void InitShader ();
 		void ReleaseShader ();
 		void ReleaseEntity ();

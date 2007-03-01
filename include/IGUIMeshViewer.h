@@ -13,12 +13,12 @@ namespace irr
 namespace video
 {
 	struct SMaterial;
-}
+} // end namespace video
 
 namespace scene
 {
 	class IAnimatedMesh;
-}
+} // end namespace scene
 
 namespace gui
 {

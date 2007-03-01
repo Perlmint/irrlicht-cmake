@@ -147,9 +147,7 @@ namespace irr
 		const c8* DebugName;
 	};
 
-
-
-} // end namespace 
+} // end namespace irr
 
 #endif
 

@@ -219,7 +219,7 @@ public:
 };
 
 
-} // end namespace
+} // end namespace irr
 
 #endif
 

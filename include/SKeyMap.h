@@ -31,7 +31,7 @@ namespace irr
 		EKEY_CODE KeyCode;
 	};
 
-} // end namespace
+} // end namespace irr
 
 #endif
 

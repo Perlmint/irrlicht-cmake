@@ -61,7 +61,7 @@ typedef float				f32;
 typedef double				f64; 
 
 
-} // end namespace
+} // end namespace irr
 
 
 #include <wchar.h>

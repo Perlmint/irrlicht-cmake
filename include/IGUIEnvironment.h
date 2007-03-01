@@ -20,12 +20,12 @@ namespace irr
 		class IXMLWriter;
 		class IReadFile;
 		class IWriteFile;
-	}
+	} // end namespace io
 	namespace video
 	{
 		class IVideoDriver;
 		class ITexture;
-	}
+	} // end namespace video
 
 namespace gui
 {

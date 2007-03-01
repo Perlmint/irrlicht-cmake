@@ -20,10 +20,10 @@ namespace gui
 CGUIListBox::CGUIListBox(IGUIEnvironment* environment, IGUIElement* parent, 
 						 s32 id, core::rect<s32> rectangle, bool clip,
 						 bool drawBack, bool moveOverSelect)
-: IGUIListBox(environment, parent, id, rectangle), Selected(-1), ScrollBar(0), 
-	ItemHeight(0), TotalItemHeight(0), Selecting(false), Font(0), 
-	IconBank(0), ItemsIconWidth(0), DrawBack(drawBack), selectTime(0),
-	MoveOverSelect(moveOverSelect)
+: IGUIListBox(environment, parent, id, rectangle), Selected(-1), ItemHeight(0),
+	TotalItemHeight(0), ItemsIconWidth(0), Font(0), IconBank(0),
+	ScrollBar(0), Selecting(false), DrawBack(drawBack),
+	MoveOverSelect(moveOverSelect), selectTime(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIListBox");

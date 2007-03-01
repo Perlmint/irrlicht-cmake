@@ -45,8 +45,8 @@ namespace io
 	//! Internal function, please do not use.
 	IWriteFile* createWriteFile(const c8* fileName, bool append);
 
-} // end namespace irr
 } // end namespace io
+} // end namespace irr
 
 #endif
 

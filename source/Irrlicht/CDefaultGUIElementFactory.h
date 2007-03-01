@@ -59,7 +59,7 @@ namespace gui
 	};
 
 
-} // end namespace scene
+} // end namespace gui
 } // end namespace irr
 
 #endif

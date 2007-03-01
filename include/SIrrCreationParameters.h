@@ -134,7 +134,7 @@ namespace irr
 	};
 
 
-} // end namespace
+} // end namespace irr
 
 #endif
 

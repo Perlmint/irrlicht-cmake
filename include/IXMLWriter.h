@@ -70,8 +70,8 @@ namespace io
 		virtual void writeLineBreak() = 0;
 	};
 
-} // end namespace irr
 } // end namespace io
+} // end namespace irr
 
 #endif
 

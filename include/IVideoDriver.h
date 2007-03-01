@@ -29,11 +29,11 @@ namespace irr
 namespace io
 {
 	class IAttributes;
-}
+} // end namespace io
 namespace scene
 {
 	class IMeshBuffer;
-}
+} // end namespace scene
 
 namespace video
 {

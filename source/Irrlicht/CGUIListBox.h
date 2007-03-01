@@ -97,8 +97,8 @@ namespace gui
 		s32 ItemsIconWidth;
 		gui::IGUIFont* Font;
 		gui::IGUISpriteBank* IconBank;
-		bool Selecting;
 		gui::IGUIScrollBar* ScrollBar;
+		bool Selecting;
 		bool DrawBack;
 		bool MoveOverSelect;
 		u32 selectTime;

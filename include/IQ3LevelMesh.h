@@ -12,8 +12,6 @@ namespace irr
 {
 namespace scene
 {
-	using namespace quake3;
-
 	//! Interface for a Mesh wich can be loaded directly from a Quake3 .bsp-file.
 	/** The Mesh tries to load all textures of the map. There are currently 
 	no additional methods in this class, but maybe there will be some in later
@@ -30,13 +28,13 @@ namespace scene
 
 		//! loads the shader definition
 		//  either from file ( we assume /scripts on fileNameIsValid == 0 )
-		virtual const SShader * getShader ( const c8 * filename, s32 fileNameIsValid ) = 0;
+		virtual const quake3::SShader * getShader ( const c8 * filename, s32 fileNameIsValid ) = 0;
 
 		//! returns a already loaded Shader
-		virtual const SShader * getShader ( u32 index  ) const = 0;
+		virtual const quake3::SShader * getShader ( u32 index  ) const = 0;
 
 		//! get's an interface to the entities
-		virtual const tQ3EntityList & getEntityList () = 0;
+		virtual const quake3::tQ3EntityList & getEntityList () = 0;
 
 	};
 

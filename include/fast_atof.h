@@ -108,7 +108,7 @@ inline float fast_atof(const char* c)
 }
 
 } // end namespace core
-}// end namespace irr
+} // end namespace irr
 
 #endif
 

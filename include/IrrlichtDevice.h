@@ -163,7 +163,7 @@ while(device->run())
 		virtual void setResizeAble(bool resize=false) = 0;
 	};
 
-} // end namespace
+} // end namespace irr
 
 #endif
 

@@ -30,7 +30,7 @@ namespace irr
 namespace video
 {
 	class ITexture;
-}
+} // end namespace video
 namespace io
 {
 	class IXMLWriter;

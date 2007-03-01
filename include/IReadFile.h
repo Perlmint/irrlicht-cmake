@@ -53,8 +53,8 @@ namespace io
 	//! Internal function, please do not use.
 	IReadFile* createMemoryReadFile(void* memory, s32 size, const c8* fileName, bool deleteMemoryWhenDropped);
 
-} // end namespace irr
 } // end namespace io
+} // end namespace irr
 
 #endif
 

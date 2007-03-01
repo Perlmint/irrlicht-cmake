@@ -27,20 +27,18 @@ namespace io
 	class IReadFile;
 	class IAttributes;
 	class IWriteFile;
-}
+} // end namespace io
 
 namespace gui
 {
 	class IGUIFont;
 	class IGUIFontBitmap;
-}
+} // end namespace gui
 
 namespace video
 {
 	class IVideoDriver;
-}
-
-
+} // end namespace video
 
 namespace scene
 {
@@ -126,7 +124,7 @@ namespace scene
 	namespace quake3
 	{
 		class SShader;
-	}
+	} // end namespace quake3
 
 	//!	The Scene Manager manages scene nodes, mesh recources, cameras and all the other stuff.
 	/** All Scene nodes can be created only here. There is a always growing list of scene

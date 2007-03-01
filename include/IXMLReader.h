@@ -24,8 +24,8 @@ namespace io
 	//! For more informations on how to use the parser, see IIrrXMLReader
 	typedef IIrrXMLReader<c8, IUnknown> IXMLReaderUTF8;
 
-} // end namespace irr
 } // end namespace io
+} // end namespace irr
 
 #endif
 
