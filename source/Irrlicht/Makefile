@@ -47,7 +47,7 @@ CFLAGS := -fexpensive-optimizations -O3 -DPNG_NO_MMX_CODE
 #Linux specific options
 STATIC_LIB = libIrrlicht.a
 SHARED_LIB = libIrrlicht.so
-BIN_PATH = ../../bin/$(SYSTEM)
+IRRLICHT_DLL := ../../bin/Win32-gcc/Irrlicht.dll
 LIB_PATH = ../../lib/$(SYSTEM)
 INSTALL_DIR = /usr/local/lib
 staticlib sharedlib install: SYSTEM = Linux
@@ -55,7 +55,6 @@ staticlib sharedlib : LDFLAGS = -L/usr/X11R6/lib --no-export-all-symbols --add-s
 staticlib sharedlib : CXXINCS += -I/usr/X11R6/include
 
 #Windows specific options
-IRRLICHT_DLL = $(BIN_PATH)/Irrlicht.dll
 sharedlib_win32 staticlib_win32: SYSTEM = Win32-gcc
 sharedlib_win32: LDFLAGS = -lgdi32 -lwinspool -lcomdlg32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglu32 -lopengl32
 sharedlib_win32 staticlib_win32: CPPFLAGS += -D__GNUWIN32__ -D_WIN32 -DWIN32 -D_WINDOWS -D_MBCS -D_USRDLL
@@ -63,7 +62,7 @@ staticlib_win32: CPPFLAGS += -D_IRR_STATIC_LIB_
 
 ####################
 # All target, builds Irrlicht as static lib (libIrrlicht.a) and copies it into /lib/Linux
-all: staticlib
+all linux: staticlib
 
 # Builds Irrlicht as shared lib (libIrrlicht.so.versionNumber) and copies it into /lib/Linux
 sharedlib: $(LINKOBJ)
@@ -79,6 +78,7 @@ staticlib: $(STATIC_LIB)
 	cp $^ $(LIB_PATH)
 
 # Builds Irrlicht as dll (Irrlicht.dll) into ../../bin/Win32-gcc
+win32: sharedlib_win32
 sharedlib_win32: $(IRRLICHT_DLL)
 ../../bin/Win32-gcc/Irrlicht.dll: $(LINKOBJ)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -shared -o $@ $^ $(LDFLAGS) -Wl,--out-implib,../../lib/Win32-gcc/$(STATIC_LIB)
