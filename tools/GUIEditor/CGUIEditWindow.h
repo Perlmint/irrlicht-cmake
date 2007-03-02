@@ -4,6 +4,7 @@
 
 #include "IGUIWindow.h"
 #include "CGUIAttributeEditor.h"
+#include "IGUIStaticText.h"
 #include "irrArray.h"
 #include "IAttributes.h"
 

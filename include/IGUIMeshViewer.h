@@ -12,7 +12,7 @@ namespace irr
 
 namespace video
 {
-	struct SMaterial;
+	class SMaterial;
 } // end namespace video
 
 namespace scene

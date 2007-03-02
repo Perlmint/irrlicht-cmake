@@ -24,11 +24,29 @@
 		<Linker>
 			<Add option="../../lib/Win32-gcc/libIrrlicht.a"/>
 		</Linker>
+		<Unit filename="CGUIAttribute.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="CGUIAttributeEditor.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="CGUIAttributeEditor.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIBoolAttribute.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIColorAttribute.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -59,6 +77,18 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="CGUIEditWorkspace.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIEnumAttribute.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="CGUIStringAttribute.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

@@ -24,8 +24,7 @@ namespace gui
 	// custom events
 	enum EGUIEDIT_CUSTOM_EVENTS 
 	{
-		EGUIEDCE_ATTRIBUTE_CHANGED=35123, // some number hopefully nobody else is using
-		EGUIEDCE_ATTRIB_EDITOR,
+		EGUIEDCE_ATTRIB_EDITOR=35123, // some number hopefully nobody else is using
 		EGUIEDCE_OPTION_EDITOR,
 		EGUIEDCE_ENV_EDITOR,
 		EGUIEDCE_COUNT

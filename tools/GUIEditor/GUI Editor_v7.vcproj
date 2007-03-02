@@ -121,12 +121,6 @@
 		<Filter
 			Name="gui">
 			<File
-				RelativePath=".\CGUIAttributeEditor.cpp">
-			</File>
-			<File
-				RelativePath=".\CGUIAttributeEditor.h">
-			</File>
-			<File
 				RelativePath=".\CGUIEditFactory.cpp">
 			</File>
 			<File
@@ -144,6 +138,38 @@
 			<File
 				RelativePath=".\CGUIEditWorkspace.h">
 			</File>
+			<Filter
+				Name="GUIAttributes"
+				>
+				<File
+					RelativePath=".\CGUIAttribute.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CGUIAttributeEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CGUIAttributeEditor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CGUIBoolAttribute.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CGUIColorAttribute.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CGUIEnumAttribute.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CGUIStringAttribute.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\main.cpp">

@@ -10,6 +10,7 @@
 #include "CGUIEditWindow.h"
 #include "IGUIContextMenu.h"
 #include "IGUIFileOpenDialog.h"
+#include "CGUIAttribute.h"
 
 namespace irr
 {
@@ -239,7 +240,7 @@ bool CGUIEditWorkspace::OnEvent(SEvent e)
 		{
 			switch (e.UserEvent.UserData1)
 			{
-			case EGUIEDCE_ATTRIBUTE_CHANGED:
+			case ATTRIBEDIT_ATTRIB_CHANGED:
 				{
 					switch (e.UserEvent.UserData2)
 					{

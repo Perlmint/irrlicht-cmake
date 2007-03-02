@@ -536,7 +536,7 @@ namespace video
 				case EMF_LIGHTING:
 					return Lighting; break;
 				case EMF_ZBUFFER:
-					return ZBuffer; break;
+					return ZBuffer!=0; break;
 				case EMF_ZWRITE_ENABLE:
 					return ZWriteEnable; break;
 				case EMF_BACK_FACE_CULLING:

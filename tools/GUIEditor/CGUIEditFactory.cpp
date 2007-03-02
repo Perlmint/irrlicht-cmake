@@ -5,6 +5,10 @@
 #include "CGUIEditWorkspace.h"
 #include "CGUIEditWindow.h"
 #include "CGUIAttributeEditor.h"
+#include "CGUIStringAttribute.h"
+#include "CGUIBoolAttribute.h"
+#include "CGUIEnumAttribute.h"
+#include "CGUIColorAttribute.h"
 
 namespace irr
 {
@@ -16,6 +20,11 @@ enum EGUIEDIT_ELEMENT_TYPES
 	EGUIEDIT_GUIEDIT=0,
 	EGUIEDIT_GUIEDITWINDOW,
 	EGUIEDIT_ATTRIBUTEEDITOR,
+	EGUIEDIT_STRINGATTRIBUTE,
+	EGUIEDIT_BOOLATTRIBUTE,
+	EGUIEDIT_ENUMATTRIBUTE,
+	EGUIEDIT_COLORATTRIBUTE,
+	EGUIEDIT_COLORFATTRIBUTE,
 	EGUIEDIT_COUNT
 };
 
@@ -24,6 +33,11 @@ const c8* const GUIEditElementTypeNames[] =
 	"GUIEditor",
 	"GUIEditWindow",
 	"attributeEditor",
+	"string_attribute",
+	"bool_attribute",
+	"enum_attribute",
+	"color_attribute",
+	"colorf_attribute",
 	0
 };
 
@@ -65,9 +79,21 @@ IGUIElement* CGUIEditFactory::addGUIElement(const c8* typeName, IGUIElement* par
 	// editor window
 	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_GUIEDITWINDOW]))
 		ret = new CGUIEditWindow(Environment, core::rect<s32>(0,0,100,100), parent);
-	// attribute editor
+	// block of attribute editors
 	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_ATTRIBUTEEDITOR]))
 		ret = new CGUIAttributeEditor(Environment, -1, parent);
+	//! single attribute editors
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_STRINGATTRIBUTE]))
+		ret = new CGUIStringAttribute(Environment, parent);
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_BOOLATTRIBUTE]))
+		ret = new CGUIBoolAttribute(Environment, parent);
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_ENUMATTRIBUTE]))
+		ret = new CGUIEnumAttribute(Environment, parent);
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_COLORATTRIBUTE]))
+		ret = new CGUIColorAttribute(Environment, parent);
+	else if (elementType == core::stringc(GUIEditElementTypeNames[EGUIEDIT_COLORFATTRIBUTE]))
+		ret = new CGUIColorAttribute(Environment, parent);
+
 
 	// the environment now has the reference, so we can drop the element
 	if (ret)
