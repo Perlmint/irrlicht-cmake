@@ -60,7 +60,7 @@ public:
 		\param m: transformation matrix. */
 	virtual void transformMesh(scene::IMesh* mesh, const core::matrix4& m) const;
 
-	//! Clones a static IMesh into a modifyable SMesh.
+	//! Clones a static IMesh into a modifiable SMesh.
 	virtual SMesh* createMeshCopy(scene::IMesh* mesh) const;
 
 	//! Creates a planar texture mapping on the mesh

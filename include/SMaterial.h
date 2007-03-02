@@ -553,6 +553,7 @@ namespace video
 					return NormalizeNormals; break;
 				case EMF_TEXTURE_WRAP:
 					return !(TextureWrap[0] || TextureWrap[1] || TextureWrap[2] || TextureWrap[3]);
+				case EMF_MATERIAL_FLAG_COUNT:
 					break;
 			}
 		}
