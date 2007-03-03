@@ -11,7 +11,6 @@
 
 #include "ITerrainSceneNode.h"
 #include "SMesh.h"
-#include "SMaterial.h"
 #include "IReadFile.h"
 #include "ITextSceneNode.h"
 

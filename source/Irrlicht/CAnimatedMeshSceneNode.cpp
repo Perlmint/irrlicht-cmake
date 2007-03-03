@@ -379,7 +379,7 @@ void CAnimatedMeshSceneNode::render()
 				for ( i = 0; i != mb->getVertexCount(); ++i )
 				{
 					AlignToUpVector ( m2, v->Normal );
-					AbsoluteTransformation.transformVect ( &m2.M[12], v->Pos );
+					AbsoluteTransformation.transformVect ( m2.pointer(), v->Pos );
 
 					driver->setTransform(video::ETS_WORLD, m2 );
 					for ( u32 a = 0; a != mesh->getMeshBufferCount(); ++a )

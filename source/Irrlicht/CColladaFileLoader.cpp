@@ -545,7 +545,7 @@ core::matrix4 CColladaFileLoader::readMatrixNode(io::IXMLReaderUTF8* reader)
 	if (reader->isEmptyElement())
 		return mat;
 
-	readFloatsInsideElement(reader, mat.M, 16);
+	readFloatsInsideElement(reader, mat.pointer(), 16);
 
 	return mat;
 }

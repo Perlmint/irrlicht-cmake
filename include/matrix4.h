@@ -18,7 +18,6 @@ namespace irr
 namespace core
 {
 
-
 	//! 4x4 matrix. Mostly used as transformation matrix for 3d calculations.
 	/* Matrix4 is mainly used by the Irrlicht engine for doing transformations.
 	The matrix is a D3D style matrix, row major with translations in the 4th row.
@@ -42,13 +41,23 @@ namespace core
 			matrix4( const matrix4& other,eConstructor constructor = EM4CONST_COPY);
 
 			//! Simple operator for directly accessing every element of the matrix.
-			f32& operator()(const s32 row, const s32 col) { return M[ (row << 2 ) | col ]; }
+			f32& operator()(const s32 row, const s32 col) { definitelyIdentityMatrix=false; return M[ row * 4 + col ]; }
 
 			//! Simple operator for directly accessing every element of the matrix.
-			const f32& operator()(const s32 row, const s32 col) const { return M[(row << 2 ) | col]; }
+			const f32& operator()(const s32 row, const s32 col) const { return M[row * 4 + col]; }
+
+			//! Simple operator for linearly accessing every element of the matrix.
+			f32& operator[](unsigned int index) { definitelyIdentityMatrix=false; return M[index]; }
+
+			//! Simple operator for linearly accessing every element of the matrix.
+			const f32& operator[](unsigned int index) const { return M[index]; }
 
 			//! Sets this matrix equal to the other matrix.
 			inline matrix4& operator=(const matrix4 &other);
+
+			//! Returns pointer to internal array
+			const f32* const pointer() const { return M; }
+			f32* pointer() { definitelyIdentityMatrix=false; return M; }
 
 			//! Returns true if other matrix is equal to this matrix.
 			bool operator==(const matrix4 &other) const;
@@ -126,7 +135,7 @@ namespace core
 			//! An alternate transform vector method, writing into an array of 4 floats
 			void transformVect(f32 *out,const core::vector3df &in) const;
 
-			//! An alternate transform vector method, writing into an array of 4 floats
+			//! An alternate transform vector method, writing into an array of 3 floats
 			void rotateVect(f32 *out,const core::vector3df &in) const;
 
 			//! Translate a vector by the translation part of this matrix.
@@ -212,7 +221,7 @@ namespace core
 			matrix4 getTransposed() const;
 
 			//! returns transposed matrix to a plain 4x4 float matrix
-			inline void getTransposed( f32 * dest ) const;
+			inline void getTransposed( matrix4& dest ) const;
 
 			/*!
 				construct 2D Texture transformations
@@ -226,16 +235,17 @@ namespace core
 			void setTextureTranslate ( f32 x, f32 y );
 
 			void buildTextureTransform( f32 rotateRad,
-														const core::vector2df &rotatecenter,
-														const core::vector2df &translate,
-														const core::vector2df &scale
-													);
+					const core::vector2df &rotatecenter,
+					const core::vector2df &translate,
+					const core::vector2df &scale);
 
+		private:
 			//! Matrix data, stored in row-major order
 			f32 M[16];
+			bool definitelyIdentityMatrix;
 	};
 
-	inline matrix4::matrix4( matrix4::eConstructor constructor )
+	inline matrix4::matrix4( matrix4::eConstructor constructor ) : definitelyIdentityMatrix(false)
 	{
 		switch ( constructor )
 		{
@@ -250,7 +260,7 @@ namespace core
 		}
 	}
 
-	inline matrix4::matrix4( const matrix4& other,matrix4::eConstructor constructor)
+	inline matrix4::matrix4( const matrix4& other,matrix4::eConstructor constructor) : definitelyIdentityMatrix(false)
 	{
 		switch ( constructor )
 		{
@@ -263,7 +273,7 @@ namespace core
 				*this = other;
 				break;
 			case EM4CONST_TRANSPOSED:
-				other.getTransposed(M);
+				other.getTransposed(*this);
 				break;
 			case EM4CONST_INVERSE:
 				if (!other.getInverse(*this))
@@ -289,54 +299,11 @@ namespace core
 	//! multiply by another matrix
 	// set this matrix to the product of two other matrices
 	// goal is to reduce stack use and copy
-	inline void matrix4::setbyproduct(const matrix4& other_a,const matrix4& other_b )
-	{
-		if ( other_b.isIdentity () )
-		{
-			*this = other_a;
-			return;
-		}
-		else
-		if ( other_a.isIdentity () )
-		{
-			*this = other_b;
-			return;
-		}
-
-		const f32 *m1 = other_a.M;
-		const f32 *m2 = other_b.M;
-
-
-		M[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
-		M[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
-		M[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
-		M[3] = m1[3]*m2[0] + m1[7]*m2[1] + m1[11]*m2[2] + m1[15]*m2[3];
-
-		M[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7];
-		M[5] = m1[1]*m2[4] + m1[5]*m2[5] + m1[9]*m2[6] + m1[13]*m2[7];
-		M[6] = m1[2]*m2[4] + m1[6]*m2[5] + m1[10]*m2[6] + m1[14]*m2[7];
-		M[7] = m1[3]*m2[4] + m1[7]*m2[5] + m1[11]*m2[6] + m1[15]*m2[7];
-
-		M[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11];
-		M[9] = m1[1]*m2[8] + m1[5]*m2[9] + m1[9]*m2[10] + m1[13]*m2[11];
-		M[10] = m1[2]*m2[8] + m1[6]*m2[9] + m1[10]*m2[10] + m1[14]*m2[11];
-		M[11] = m1[3]*m2[8] + m1[7]*m2[9] + m1[11]*m2[10] + m1[15]*m2[11];
-
-		M[12] = m1[0]*m2[12] + m1[4]*m2[13] + m1[8]*m2[14] + m1[12]*m2[15];
-		M[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
-		M[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
-		M[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
-	}
-
-	//! multiply by another matrix
-	// set this matrix to the product of two other matrices
-	// goal is to reduce stack use and copy
 	inline void matrix4::setbyproduct_nocheck(const matrix4& other_a,const matrix4& other_b )
 	{
 		const f32 *m1 = other_a.M;
 		const f32 *m2 = other_b.M;
 
-
 		M[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
 		M[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
 		M[2] = m1[2]*m2[0] + m1[6]*m2[1] + m1[10]*m2[2] + m1[14]*m2[3];
@@ -356,32 +323,41 @@ namespace core
 		M[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
 		M[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
 		M[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
-
-
+		definitelyIdentityMatrix=false;
 	}
 
 
 	//! multiply by another matrix
-	inline matrix4 matrix4::operator*(const matrix4& other) const
+	// set this matrix to the product of two other matrices
+	// goal is to reduce stack use and copy
+	inline void matrix4::setbyproduct(const matrix4& other_a,const matrix4& other_b )
 	{
-		matrix4 tmtrx ( EM4CONST_NOTHING );
+		if ( other_a.isIdentity () )
+		{
+			*this = other_b;
+			return;
+		}
+		else
+		if ( other_b.isIdentity () )
+		{
+			*this = other_a;
+			return;
+		}
+		setbyproduct_nocheck(other_a,other_b);
+	}
 
+	//! multiply by another matrix
+	inline matrix4 matrix4::operator*(const matrix4& m2) const
+	{
 		// Testing purpose.. 
-		if ( this->isIdentity () )
-		{
-			tmtrx = other;
-			return tmtrx;
-		}
+		if ( this->isIdentity() )
+			return m2;
+		if ( m2.isIdentity() )
+			return *this;
 
-		if ( other.isIdentity () )
-		{
-			tmtrx = *this;
-			return tmtrx;
-		}
+		matrix4 m3 ( EM4CONST_NOTHING );
 
 		const f32 *m1 = M;
-		const f32 *m2 = other.M;
-		f32 *m3 = tmtrx.M;
 
 		m3[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3];
 		m3[1] = m1[1]*m2[0] + m1[5]*m2[1] + m1[9]*m2[2] + m1[13]*m2[3];
@@ -402,8 +378,7 @@ namespace core
 		m3[13] = m1[1]*m2[12] + m1[5]*m2[13] + m1[9]*m2[14] + m1[13]*m2[15];
 		m3[14] = m1[2]*m2[12] + m1[6]*m2[13] + m1[10]*m2[14] + m1[14]*m2[15];
 		m3[15] = m1[3]*m2[12] + m1[7]*m2[13] + m1[11]*m2[14] + m1[15]*m2[15];
-
-		return tmtrx;
+		return m3;
 	}
 
 
@@ -419,6 +394,7 @@ namespace core
 		M[12] = translation.X;
 		M[13] = translation.Y;
 		M[14] = translation.Z;
+		definitelyIdentityMatrix=false;
 	}
 
 	inline void matrix4::setInverseTranslation( const vector3df& translation )
@@ -426,6 +402,7 @@ namespace core
 		M[12] = -translation.X;
 		M[13] = -translation.Y;
 		M[14] = -translation.Z;
+		definitelyIdentityMatrix=false;
 	}
 
 	inline void matrix4::setScale( const vector3df& scale )
@@ -433,6 +410,7 @@ namespace core
 		M[0] = scale.X;
 		M[5] = scale.Y;
 		M[10] = scale.Z;
+		definitelyIdentityMatrix=false;
 	}
 
 	inline vector3df matrix4::getScale() const
@@ -473,6 +451,7 @@ namespace core
 		M[8] = (f32)( crsp*cy+sr*sy );
 		M[9] = (f32)( crsp*sy-sr*cy );
 		M[10] = (f32)( cr*cp );
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -539,6 +518,7 @@ namespace core
 		M[2] = (f32)( crsp*cy+sr*sy );
 		M[6] = (f32)( crsp*sy-sr*cy );
 		M[10] = (f32)( cr*cp );
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -548,15 +528,18 @@ namespace core
 	{
 		memset(M, 0, 16*sizeof(f32));
 		M[0] = M[5] = M[10] = M[15] = 1.0f;
+		definitelyIdentityMatrix=true;
 	}
 
 
 	/*
-		check identiy with epsilon
+		check identity with epsilon
 		solve floating range problems..
 	*/
 	inline bool matrix4::isIdentity() const
 	{
+		if (definitelyIdentityMatrix)
+			return true;
 		if (	!equals ( M[ 0], 1.f ) ||
 				!equals ( M[ 5], 1.f ) ||
 				!equals ( M[10], 1.f ) ||
@@ -583,27 +566,28 @@ namespace core
 	*/
 	inline bool matrix4::isIdentity_integer_base() const
 	{
+		if (definitelyIdentityMatrix)
+			return true;
 		if(IR(M[0])!=F32_VALUE_1)	return false;
-		if(IR(M[1])!=0)				return false;
-		if(IR(M[2])!=0)				return false;
-		if(IR(M[3])!=0)				return false;
+		if(IR(M[1])!=0)			return false;
+		if(IR(M[2])!=0)			return false;
+		if(IR(M[3])!=0)			return false;
 
-		if(IR(M[4])!=0)				return false;
+		if(IR(M[4])!=0)			return false;
 		if(IR(M[5])!=F32_VALUE_1)	return false;
-		if(IR(M[6])!=0)				return false;
-		if(IR(M[7])!=0)				return false;
+		if(IR(M[6])!=0)			return false;
+		if(IR(M[7])!=0)			return false;
 
-		if(IR(M[8])!=0)				return false;
-		if(IR(M[9])!=0)				return false;
+		if(IR(M[8])!=0)			return false;
+		if(IR(M[9])!=0)			return false;
 		if(IR(M[10])!=F32_VALUE_1)	return false;
-		if(IR(M[11])!=0)			return false;
+		if(IR(M[11])!=0)		return false;
 
-		if(IR(M[12])!=0)			return false;
-		if(IR(M[13])!=0)			return false;
-		if(IR(M[13])!=0)			return false;
+		if(IR(M[12])!=0)		return false;
+		if(IR(M[13])!=0)		return false;
+		if(IR(M[13])!=0)		return false;
 		if(IR(M[15])!=F32_VALUE_1)	return false;
 		return true;
-
 	}
 
 
@@ -616,7 +600,7 @@ namespace core
 		vect.Z = tmp.X*M[2] + tmp.Y*M[6] + tmp.Z*M[10];
 	}
 
-	//! An alternate transform vector method, writing into an array of 4 floats
+	//! An alternate transform vector method, writing into an array of 3 floats
 	inline void matrix4::rotateVect(f32 *out,const core::vector3df &in) const
 	{
 		out[0] = in.X*M[0] + in.Y*M[4] + in.Z*M[8];
@@ -645,12 +629,23 @@ namespace core
 		vect.Z = vector[2];
 	}
 
-	inline void matrix4::transformVect( vector3df& out,const vector3df& in) const
+	inline void matrix4::transformVect( vector3df& out, const vector3df& in) const
 	{
 		out.X = in.X*M[0] + in.Y*M[4] + in.Z*M[8] + M[12];
 		out.Y = in.X*M[1] + in.Y*M[5] + in.Z*M[9] + M[13];
 		out.Z = in.X*M[2] + in.Y*M[6] + in.Z*M[10] + M[14];
 	}
+
+
+	// transform (x,y,z,1)
+	inline void matrix4::transformVect(f32 *out,const vector3df &in) const
+	{
+		out[0] = in.X*M[0] + in.Y*M[4] + in.Z*M[8] + M[12];
+		out[1] = in.X*M[1] + in.Y*M[5] + in.Z*M[9] + M[13];
+		out[2] = in.X*M[2] + in.Y*M[6] + in.Z*M[10] + M[14];
+		out[3] = in.X*M[3] + in.Y*M[7] + in.Z*M[11] + M[15];
+	}
+
 
 	//! Transforms a plane by this matrix
 	inline void matrix4::transformPlane( core::plane3d<f32> &plane) const
@@ -703,9 +698,6 @@ namespace core
 	//! Transforms a axis aligned bounding box more accurately than transformBox()
 	inline void matrix4::transformBoxEx(core::aabbox3d<f32>& box) const
 	{
-
-		const matrix4 &m = *this;
-
 		f32 Amin[3];
 		f32 Amax[3];
 		f32 Bmin[3];
@@ -719,11 +711,13 @@ namespace core
 		Amax[1] = box.MaxEdge.Y;
 		Amax[2] = box.MaxEdge.Z;
 
-		Bmin[0] = Bmax[0] = m.M[12];
-		Bmin[1] = Bmax[1] = m.M[13];
-		Bmin[2] = Bmax[2] = m.M[14];
+		Bmin[0] = Bmax[0] = M[12];
+		Bmin[1] = Bmax[1] = M[13];
+		Bmin[2] = Bmax[2] = M[14];
 
 		u32 i, j;
+		const matrix4 &m = *this;
+
 		for (i = 0; i < 3; ++i) 
 		{
 			for (j = 0; j < 3; ++j) 
@@ -827,7 +821,7 @@ namespace core
 		out(3, 1) = d * (m(2, 0) * (m(0, 2) * m(3, 1) - m(0, 1) * m(3, 2)) + m(2, 1) * (m(0, 0) * m(3, 2) - m(0, 2) * m(3, 0)) + m(2, 2) * (m(0, 1) * m(3, 0) - m(0, 0) * m(3, 1)));
 		out(3, 2) = d * (m(3, 0) * (m(0, 2) * m(1, 1) - m(0, 1) * m(1, 2)) + m(3, 1) * (m(0, 0) * m(1, 2) - m(0, 2) * m(1, 0)) + m(3, 2) * (m(0, 1) * m(1, 0) - m(0, 0) * m(1, 1)));
 		out(3, 3) = d * (m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) + m(0, 1) * (m(1, 2) * m(2, 0) - m(1, 0) * m(2, 2)) + m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0)));
-
+		out.definitelyIdentityMatrix = definitelyIdentityMatrix;
 		return true;
 	}
 
@@ -855,6 +849,7 @@ namespace core
 		out.M[13]	= -(M[12]*M[4] + M[13]*M[5] + M[14]*M[6]);
 		out.M[14]	= -(M[12]*M[8] + M[13]*M[9] + M[14]*M[10]);
 		out.M[15]	= 1.0f;
+		out.definitelyIdentityMatrix = definitelyIdentityMatrix;
 		return true;
 	}
 
@@ -878,6 +873,7 @@ namespace core
 	inline matrix4& matrix4::operator=(const matrix4 &other)
 	{
 		memcpy(M, other.M, 16*sizeof(f32));
+		definitelyIdentityMatrix=other.definitelyIdentityMatrix;
 		return *this;
 	}
 
@@ -885,6 +881,8 @@ namespace core
 
 	inline bool matrix4::operator==(const matrix4 &other) const
 	{
+		if (definitelyIdentityMatrix && other.definitelyIdentityMatrix)
+			return true;
 		for (s32 i = 0; i < 16; ++i)
 			if (M[i] != other.M[i])
 				return false;
@@ -928,6 +926,7 @@ namespace core
 		M[14] = zNear*zFar/(zNear-zFar); // DirectX version
 //		M[14] = 2.0f*zNear*zFar/(zNear-zFar); // OpenGL version
 		M[15] = 0.0f;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -957,6 +956,7 @@ namespace core
 		M[13] = 0.0f;
 		M[14] = -zNear*zFar/(zFar-zNear);
 		M[15] = 0.0f;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -983,6 +983,7 @@ namespace core
 		M[13] = 0;
 		M[14] = zNear/(zNear-zFar);
 		M[15] = 1;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -1009,6 +1010,7 @@ namespace core
 		M[13] = 0;
 		M[14] = zNear/(zNear-zFar);
 		M[15] = -1;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -1034,6 +1036,7 @@ namespace core
 		M[13] = 0;
 		M[14] = zNear*zFar/(zNear-zFar);
 		M[15] = 0;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -1059,6 +1062,7 @@ namespace core
 		M[13] = 0;
 		M[14] = zNear*zFar/(zNear-zFar);
 		M[15] = 0;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -1087,6 +1091,7 @@ namespace core
 		M[13] = -plane.D * light.Y;
 		M[14] = -plane.D * light.Z;
 		M[15] = -plane.D * point + d; 
+		definitelyIdentityMatrix=false;
 	}
 
 	//! Builds a left-handed look-at matrix.
@@ -1122,6 +1127,7 @@ namespace core
 		M[13] = -yaxis.dotProduct(position);
 		M[14] = -zaxis.dotProduct(position);
 		M[15] = 1.0f;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -1159,6 +1165,7 @@ namespace core
 		M[13] = -yaxis.dotProduct(position);
 		M[14] = -zaxis.dotProduct(position);
 		M[15] = 1.0f;
+		definitelyIdentityMatrix=false;
 	}
 
 
@@ -1176,27 +1183,18 @@ namespace core
 			mat.M[i+3] = M[i+3] + ( b.M[i+3] - M[i+3] ) * time;
 		}
 		return mat;
-
-/*
-		f32 ntime = 1.0f - time;
-		matrix4 mat;
-		for (s32 i=0; i<16; ++i)
-			mat.M[i] = M[i]*ntime + b.M[i]*time;
-
-		return mat;
-*/
 	}
 
 	//! returns transposed matrix
 	inline matrix4 matrix4::getTransposed() const
 	{
 		matrix4 t ( EM4CONST_NOTHING );
-		getTransposed ( t.M );
+		getTransposed ( t );
 		return t;
 	}
 
 	//! returns transposed matrix
-	inline void matrix4::getTransposed( f32 * o ) const
+	inline void matrix4::getTransposed( matrix4& o ) const
 	{
 		o[ 0] = M[ 0];
 		o[ 1] = M[ 4];
@@ -1217,17 +1215,7 @@ namespace core
 		o[13] = M[ 7];
 		o[14] = M[11];
 		o[15] = M[15];
-	}
-
-
-
-	// transform (x,y,z,1)
-	inline void matrix4::transformVect(f32 *out,const vector3df &in) const
-	{
-		out[0] = in.X*M[0] + in.Y*M[4] + in.Z*M[8] + M[12];
-		out[1] = in.X*M[1] + in.Y*M[5] + in.Z*M[9] + M[13];
-		out[2] = in.X*M[2] + in.Y*M[6] + in.Z*M[10] + M[14];
-		out[3] = in.X*M[3] + in.Y*M[7] + in.Z*M[11] + M[15];
+		o.definitelyIdentityMatrix=definitelyIdentityMatrix;
 	}
 
 
@@ -1246,6 +1234,7 @@ namespace core
 		M[10] = zScale;
 		M[12] = dx;
 		M[13] = dy;
+		definitelyIdentityMatrix=false;
 	}
 
 	/*!
@@ -1286,6 +1275,7 @@ namespace core
 		M[13] = 0.f;
 		M[14] = 0.f;
 		M[15] = 1.f;
+		definitelyIdentityMatrix=false;
 	}
 
 	//! rotate about z axis, center ( 0.5, 0.5 )
@@ -1300,19 +1290,21 @@ namespace core
 		M[4] = -s;
 		M[5] = c;
 		M[6] = -0.5f * (-s + c) + 0.5f;
-
+		definitelyIdentityMatrix=false;
 	}
 
 	inline void matrix4::setTextureTranslate ( f32 x, f32 y )
 	{
 		M[2] = x;
 		M[6] = y;
+		definitelyIdentityMatrix=false;
 	}
 
 	inline void matrix4::setTextureScale ( f32 sx, f32 sy )
 	{
 		M[0] = sx;
 		M[5] = sy;
+		definitelyIdentityMatrix=false;
 	}
 
 	inline void matrix4::setTextureScaleCenter( f32 sx, f32 sy )
@@ -1321,6 +1313,7 @@ namespace core
 		M[2] = -0.5f * sx + 0.5f;
 		M[5] = sy;
 		M[6] = -0.5f * sy + 0.5f;
+		definitelyIdentityMatrix=false;
 	}
 
 	const matrix4 IdentityMatrix(matrix4::EM4CONST_IDENTITY);

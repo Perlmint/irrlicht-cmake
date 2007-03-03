@@ -349,7 +349,7 @@ void CSoftwareDriver2::setTransform(E_TRANSFORMATION_STATE state, const core::ma
 
 				core::matrix4 m2 ( Transformation[ETS_WORLD_VIEW].m );
 				m2.makeInverse ();
-				m2.getTransposed ( Transformation[ETS_WORLD_VIEW_INVERSE_TRANSPOSED].m.M );
+				m2.getTransposed ( Transformation[ETS_WORLD_VIEW_INVERSE_TRANSPOSED].m );
 			}
 #endif
 			break;
@@ -715,8 +715,8 @@ inline void CSoftwareDriver2::ndc_2_dc_and_project ( s4DVertex *dest,s4DVertex *
 		const f32 iw = core::reciprocal ( w );
 
 		// to device coordinates
-		dest[g].Pos.x = iw * ( source[g].Pos.x * Transformation [ ETS_CLIPSCALE ].m.M[ 0] + w * Transformation [ ETS_CLIPSCALE ].m.M[12] );
-		dest[g].Pos.y = iw * ( source[g].Pos.y * Transformation [ ETS_CLIPSCALE ].m.M[ 5] + w * Transformation [ ETS_CLIPSCALE ].m.M[13] );
+		dest[g].Pos.x = iw * ( source[g].Pos.x * Transformation [ ETS_CLIPSCALE ].m[ 0] + w * Transformation [ ETS_CLIPSCALE ].m[12] );
+		dest[g].Pos.y = iw * ( source[g].Pos.y * Transformation [ ETS_CLIPSCALE ].m[ 5] + w * Transformation [ ETS_CLIPSCALE ].m[13] );
 
 #ifndef SOFTWARE_DRIVER_2_USE_WBUFFER
 		dest[g].Pos.z = iw * source[g].Pos.z;
@@ -756,8 +756,8 @@ inline void CSoftwareDriver2::ndc_2_dc_and_project2 ( const s4DVertex **v, const
 		const f32 iw = core::reciprocal ( w );
 
 		// to device coordinates
-		a[1].Pos.x = iw * ( a->Pos.x * Transformation [ ETS_CLIPSCALE ].m.M[ 0] + w * Transformation [ ETS_CLIPSCALE ].m.M[12] );
-		a[1].Pos.y = iw * ( a->Pos.y * Transformation [ ETS_CLIPSCALE ].m.M[ 5] + w * Transformation [ ETS_CLIPSCALE ].m.M[13] );
+		a[1].Pos.x = iw * ( a->Pos.x * Transformation [ ETS_CLIPSCALE ].m[ 0] + w * Transformation [ ETS_CLIPSCALE ].m[12] );
+		a[1].Pos.y = iw * ( a->Pos.y * Transformation [ ETS_CLIPSCALE ].m[ 5] + w * Transformation [ ETS_CLIPSCALE ].m[13] );
 
 #ifndef SOFTWARE_DRIVER_2_USE_WBUFFER
 		a[1].Pos.z = a->Pos.z * iw;
@@ -964,7 +964,7 @@ void CSoftwareDriver2::VertexCache_fill(const u32 sourceIndex,
 
 		for ( t = 0; t != vSize[VertexCache.vType].TexSize; ++t )
 		{
-			const f32 *M =  Transformation [ ETS_TEXTURE_0 + t ].m.M;
+			const core::matrix4& M =  Transformation [ ETS_TEXTURE_0 + t ].m;
 			if ( Material.org.TextureWrap[0]==ETC_REPEAT )
 			{
 				dest->Tex[t].x = M[0] * src[t].X + M[4] * src[t].Y + M[8];

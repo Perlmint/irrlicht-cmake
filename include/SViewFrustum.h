@@ -245,43 +245,41 @@ namespace scene
 	//! and/or view matrix.
 	inline void SViewFrustum::setFrom(const core::matrix4& mat)
 	{
-		const f32 * m = mat.M;
-
 		// left clipping plane
-		planes[VF_LEFT_PLANE].Normal.X	= m[3 ] + m[0];
-		planes[VF_LEFT_PLANE].Normal.Y	= m[7 ] + m[4];
-		planes[VF_LEFT_PLANE].Normal.Z	= m[11] + m[8];
-		planes[VF_LEFT_PLANE].D			= m[15] + m[12];
+		planes[VF_LEFT_PLANE].Normal.X	= mat[3 ] + mat[0];
+		planes[VF_LEFT_PLANE].Normal.Y	= mat[7 ] + mat[4];
+		planes[VF_LEFT_PLANE].Normal.Z	= mat[11] + mat[8];
+		planes[VF_LEFT_PLANE].D		= mat[15] + mat[12];
 
 		// right clipping plane
-		planes[VF_RIGHT_PLANE].Normal.X = m[3 ] - m[0];
-		planes[VF_RIGHT_PLANE].Normal.Y = m[7 ] - m[4];
-		planes[VF_RIGHT_PLANE].Normal.Z = m[11] - m[8];
-		planes[VF_RIGHT_PLANE].D =        m[15] - m[12];
+		planes[VF_RIGHT_PLANE].Normal.X = mat[3 ] - mat[0];
+		planes[VF_RIGHT_PLANE].Normal.Y = mat[7 ] - mat[4];
+		planes[VF_RIGHT_PLANE].Normal.Z = mat[11] - mat[8];
+		planes[VF_RIGHT_PLANE].D =        mat[15] - mat[12];
 
 		// top clipping plane
-		planes[VF_TOP_PLANE].Normal.X = m[3 ] - m[1];
-		planes[VF_TOP_PLANE].Normal.Y = m[7 ] - m[5];
-		planes[VF_TOP_PLANE].Normal.Z = m[11] - m[9];
-		planes[VF_TOP_PLANE].D =        m[15] - m[13];
+		planes[VF_TOP_PLANE].Normal.X = mat[3 ] - mat[1];
+		planes[VF_TOP_PLANE].Normal.Y = mat[7 ] - mat[5];
+		planes[VF_TOP_PLANE].Normal.Z = mat[11] - mat[9];
+		planes[VF_TOP_PLANE].D =        mat[15] - mat[13];
 
 		// bottom clipping plane
-		planes[VF_BOTTOM_PLANE].Normal.X = m[3 ] + m[1];
-		planes[VF_BOTTOM_PLANE].Normal.Y = m[7 ] + m[5];
-		planes[VF_BOTTOM_PLANE].Normal.Z = m[11] + m[9];
-		planes[VF_BOTTOM_PLANE].D =        m[15] + m[13];
+		planes[VF_BOTTOM_PLANE].Normal.X = mat[3 ] + mat[1];
+		planes[VF_BOTTOM_PLANE].Normal.Y = mat[7 ] + mat[5];
+		planes[VF_BOTTOM_PLANE].Normal.Z = mat[11] + mat[9];
+		planes[VF_BOTTOM_PLANE].D =        mat[15] + mat[13];
 
 		// far clipping plane
-		planes[VF_FAR_PLANE].Normal.X = m[3 ] - m[2];
-		planes[VF_FAR_PLANE].Normal.Y = m[7 ] - m[6];
-		planes[VF_FAR_PLANE].Normal.Z = m[11] - m[10];
-		planes[VF_FAR_PLANE].D =        m[15] - m[14];
+		planes[VF_FAR_PLANE].Normal.X = mat[3 ] - mat[2];
+		planes[VF_FAR_PLANE].Normal.Y = mat[7 ] - mat[6];
+		planes[VF_FAR_PLANE].Normal.Z = mat[11] - mat[10];
+		planes[VF_FAR_PLANE].D =        mat[15] - mat[14];
 
 		// near clipping plane
-		planes[VF_NEAR_PLANE].Normal.X = m[2];
-		planes[VF_NEAR_PLANE].Normal.Y = m[6];
-		planes[VF_NEAR_PLANE].Normal.Z = m[10];
-		planes[VF_NEAR_PLANE].D =        m[14];
+		planes[VF_NEAR_PLANE].Normal.X = mat[2];
+		planes[VF_NEAR_PLANE].Normal.Y = mat[6];
+		planes[VF_NEAR_PLANE].Normal.Z = mat[10];
+		planes[VF_NEAR_PLANE].D =        mat[14];
 
 		
 		// normalize normals

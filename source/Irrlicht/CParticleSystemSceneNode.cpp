@@ -194,12 +194,12 @@ void CParticleSystemSceneNode::render()
 	f32 f;
 
 	f = 0.5f * ParticleSize.Width;
-	const core::vector3df horizontal ( m.M[0] * f, m.M[4] * f, m.M[8] * f );
+	const core::vector3df horizontal ( m[0] * f, m[4] * f, m[8] * f );
 
 	f = -0.5f * ParticleSize.Height;
-	const core::vector3df vertical ( m.M[1] * f, m.M[5] * f, m.M[9] * f );
+	const core::vector3df vertical ( m[1] * f, m[5] * f, m[9] * f );
 
-	const core::vector3df view ( -m.M[2], -m.M[6] , -m.M[10] );
+	const core::vector3df view ( -m[2], -m[6] , -m[10] );
 
 #endif
 

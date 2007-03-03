@@ -1348,8 +1348,8 @@ void CAnimatedMeshB3d::animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNo
 
 	if (Node->Bones.size())
 	{
-		core::matrix4 VerticesMatrixMove = Node->GlobalAnimatedMatrix * Node->GlobalInversedMatrix;
-		f32 *MoveRaw = VerticesMatrixMove.M;
+		core::matrix4 VerticesMatrixMove(core::matrix4::EM4CONST_NOTHING);
+		VerticesMatrixMove.setbyproduct(Node->GlobalAnimatedMatrix,Node->GlobalInversedMatrix);
 		core::vector3df ThisVertexMove, ThisNormalMove;
 		SB3dBone *Bone;
 
@@ -1361,9 +1361,9 @@ void CAnimatedMeshB3d::animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNo
 				Bone=&Node->Bones[i];
 				//Transform normal...
 				//Normal_Rotation=&Base_Vertex->Normal;
-				ThisNormalMove.X = Bone->normal.X*MoveRaw[0] + Bone->normal.Y*MoveRaw[4] + Bone->normal.Z*MoveRaw[8];
-				ThisNormalMove.Y = Bone->normal.X*MoveRaw[1] + Bone->normal.Y*MoveRaw[5] + Bone->normal.Z*MoveRaw[9];
-				ThisNormalMove.Z = Bone->normal.X*MoveRaw[2] + Bone->normal.Y*MoveRaw[6] + Bone->normal.Z*MoveRaw[10];
+				ThisNormalMove.X = Bone->normal.X*VerticesMatrixMove[0] + Bone->normal.Y*VerticesMatrixMove[4] + Bone->normal.Z*VerticesMatrixMove[8];
+				ThisNormalMove.Y = Bone->normal.X*VerticesMatrixMove[1] + Bone->normal.Y*VerticesMatrixMove[5] + Bone->normal.Z*VerticesMatrixMove[9];
+				ThisNormalMove.Z = Bone->normal.X*VerticesMatrixMove[2] + Bone->normal.Y*VerticesMatrixMove[6] + Bone->normal.Z*VerticesMatrixMove[10];
 
 				if (!Vertices_Moved[Bone->vertex_id])
 					Bone->vertex->Normal = ThisNormalMove*Bone->weight;
@@ -1379,9 +1379,9 @@ void CAnimatedMeshB3d::animateSkin(f32 frame,f32 startFrame, f32 endFrame,SB3dNo
 			Bone=&Node->Bones[i];
 
 			// Transform vector...
-			ThisVertexMove.X = MoveRaw[0]*Bone->pos.X + MoveRaw[4]*Bone->pos.Y + MoveRaw[8]*Bone->pos.Z + MoveRaw[12];
-			ThisVertexMove.Y = MoveRaw[1]*Bone->pos.X + MoveRaw[5]*Bone->pos.Y + MoveRaw[9]*Bone->pos.Z + MoveRaw[13];
-			ThisVertexMove.Z = MoveRaw[2]*Bone->pos.X + MoveRaw[6]*Bone->pos.Y + MoveRaw[10]*Bone->pos.Z + MoveRaw[14];
+			ThisVertexMove.X = VerticesMatrixMove[0]*Bone->pos.X + VerticesMatrixMove[4]*Bone->pos.Y + VerticesMatrixMove[8]*Bone->pos.Z + VerticesMatrixMove[12];
+			ThisVertexMove.Y = VerticesMatrixMove[1]*Bone->pos.X + VerticesMatrixMove[5]*Bone->pos.Y + VerticesMatrixMove[9]*Bone->pos.Z + VerticesMatrixMove[13];
+			ThisVertexMove.Z = VerticesMatrixMove[2]*Bone->pos.X + VerticesMatrixMove[6]*Bone->pos.Y + VerticesMatrixMove[10]*Bone->pos.Z + VerticesMatrixMove[14];
 
 			if (!Vertices_Moved[Bone->vertex_id])
 			{

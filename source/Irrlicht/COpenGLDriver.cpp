@@ -842,6 +842,9 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 	case ETS_TEXTURE_1:
 	case ETS_TEXTURE_2:
 	case ETS_TEXTURE_3:
+		if (mat.isIdentity())
+			return;
+
 		if (MultiTextureExtension)
 			extGlActiveTextureARB(GL_TEXTURE0_ARB + ( state - ETS_TEXTURE_0 ));
 
@@ -1509,20 +1512,20 @@ bool COpenGLDriver::disableTextures(s32 fromStage)
 //! creates a matrix in supplied GLfloat array to pass to OpenGL
 inline void COpenGLDriver::createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 {
-	memcpy ( gl_matrix, &m.M[0], 16 * sizeof(f32) );
+	memcpy ( gl_matrix, m.pointer(), 16 * sizeof(f32) );
 }
 
 
 //! creates a opengltexturematrix from a D3D style texture matrix
 inline void COpenGLDriver::createGLTextureMatrix(GLfloat *o, const core::matrix4& m)
 {
-	o[0] = m.M[0];
-	o[1] = m.M[1];
+	o[0] = m[0];
+	o[1] = m[1];
 	o[2] = 0.f;
 	o[3] = 0.f;
 
-	o[4] = m.M[4];
-	o[5] = m.M[5];
+	o[4] = m[4];
+	o[5] = m[5];
 	o[6] = 0.f;
 	o[7] = 0.f;
 
@@ -1531,8 +1534,8 @@ inline void COpenGLDriver::createGLTextureMatrix(GLfloat *o, const core::matrix4
 	o[10] = 1.f;
 	o[11] = 0.f;
 
-	o[12] = m.M[8];
-	o[13] = m.M[9];
+	o[12] = m[8];
+	o[13] = m[9];
 	o[14] = 0.f;
 	o[15] = 1.f;
 }

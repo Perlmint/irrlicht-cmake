@@ -309,7 +309,7 @@ void CQuake3ShaderSceneNode::vertextransform_bulge ( f32 dt, quake3::SModifierFu
 void CQuake3ShaderSceneNode::vertextransform_autosprite ( f32 dt, quake3::SModifierFunction &function )
 {
 	const core::matrix4 &m = SceneManager->getActiveCamera()->getViewFrustum()->Matrices [ video::ETS_VIEW ];
-	const core::vector3df view ( -m.M[2], -m.M[6] , -m.M[10] );
+	const core::vector3df view ( -m[2], -m[6] , -m[10] );
 
 	const u32 vsize = MeshBuffer.Vertices.size();
 
@@ -329,8 +329,8 @@ void CQuake3ShaderSceneNode::vertextransform_autosprite ( f32 dt, quake3::SModif
 		f32 sh = 0.5f * ( box.MaxEdge.Z - box.MinEdge.Z );
 		f32 sv = 0.5f * ( box.MaxEdge.Y - box.MinEdge.Y );
 
-		const core::vector3df h ( m.M[0] * sh, m.M[4] * sh, m.M[8] * sh );
-		const core::vector3df v ( m.M[1] * sv, m.M[5] * sv, m.M[9] * sv );
+		const core::vector3df h ( m[0] * sh, m[4] * sh, m[8] * sh );
+		const core::vector3df v ( m[1] * sv, m[5] * sv, m[9] * sv );
 
 		MeshBuffer.Vertices[ i + 0 ].Pos = c + h + v;
 		MeshBuffer.Vertices[ i + 1 ].Pos = c - h - v;
@@ -405,7 +405,7 @@ u32 CQuake3ShaderSceneNode::tcgen ( f32 dt, quake3::SModifierFunction &function,
 
 			// using eye linear, sphere map may be cooler;-)
 			// modelmatrix is identity
-			const core::matrix4 &view		 = SceneManager->getActiveCamera()->getViewFrustum()->Matrices [ video::ETS_VIEW ];
+			const core::matrix4 &view = SceneManager->getActiveCamera()->getViewFrustum()->Matrices [ video::ETS_VIEW ];
 			const core::matrix4 &viewinverse = SceneManager->getActiveCamera()->getViewFrustum()->Matrices [ SViewFrustum::ETS_VIEW_MODEL_INVERSE_3 ];
 
 			// eyePlane
@@ -439,7 +439,6 @@ u32 CQuake3ShaderSceneNode::tcgen ( f32 dt, quake3::SModifierFunction &function,
 
 
 
-
 /*
 	Transform Texture Coordinates
 */
@@ -451,16 +450,14 @@ void CQuake3ShaderSceneNode::transformtex ( const core::matrix4 &m, const u32 ad
 	f32 tx1;
 	f32 ty1;
 
-	const f32 *M =  m.M;
-
 	if ( addressMode )
 	{
 		for ( i = 0; i != vsize; ++i )
 		{
 			core::vector2df &tx = MeshBuffer.Vertices[i].TCoords;
 
-			tx1 = M[0] * tx.X + M[4] * tx.Y + M[8];
-			ty1 = M[1] * tx.X + M[5] * tx.Y + M[9];
+			tx1 = m[0] * tx.X + m[4] * tx.Y + m[8];
+			ty1 = m[1] * tx.X + m[5] * tx.Y + m[9];
 
 			tx.X = tx1;
 			tx.Y = ty1;
@@ -473,8 +470,8 @@ void CQuake3ShaderSceneNode::transformtex ( const core::matrix4 &m, const u32 ad
 		{
 			core::vector2df &tx = MeshBuffer.Vertices[i].TCoords;
 
-			tx1 = M[0] * tx.X + M[4] * tx.Y + M[8];
-			ty1 = M[1] * tx.X + M[5] * tx.Y + M[9];
+			tx1 = m[0] * tx.X + m[4] * tx.Y + m[8];
+			ty1 = m[1] * tx.X + m[5] * tx.Y + m[9];
 
 			tx.X = tx1 <= 0.f ? 0.f : tx1 >= 1.f ? 1.f : tx1;
 			tx.Y = ty1 <= 0.f ? 0.f : ty1 >= 1.f ? 1.f : ty1;
@@ -671,7 +668,7 @@ u32 CQuake3ShaderSceneNode::animate( u32 stage,core::matrix4 &texture )
 
 	if ( textureMatrixFound )
 	{
-		texturem.getTransposed ( texture.M );
+		texturem.getTransposed ( texture );
 	}
 
 	return textureMatrixFound;

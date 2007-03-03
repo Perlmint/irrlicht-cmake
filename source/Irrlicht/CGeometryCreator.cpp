@@ -126,7 +126,6 @@ IAnimatedMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 	video::SMaterial material;
 	c8 textureName[64];
 	c8 tmp[255];
-	
 
 	// debug border
 	s32 borderSkip = debugBorders ? 0 : 1;

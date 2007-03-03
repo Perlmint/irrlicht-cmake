@@ -57,9 +57,9 @@ public:
 		invWorld.makeInverse();
 
 		if (UseHighLevelShaders)
-			services->setVertexShaderConstant("mInvWorld", &invWorld.M[0], 16);
+			services->setVertexShaderConstant("mInvWorld", invWorld.pointer(), 16);
 		else
-			services->setVertexShaderConstant(&invWorld.M[0], 0, 4);
+			services->setVertexShaderConstant(invWorld.pointer(), 0, 4);
 
 		// set clip matrix
 
@@ -69,9 +69,9 @@ public:
 		worldViewProj *= driver->getTransform(video::ETS_WORLD);
 
 		if (UseHighLevelShaders)
-			services->setVertexShaderConstant("mWorldViewProj", &worldViewProj.M[0], 16);
+			services->setVertexShaderConstant("mWorldViewProj", worldViewProj.pointer(), 16);
 		else
-			services->setVertexShaderConstant(&worldViewProj.M[0], 4, 4);		
+			services->setVertexShaderConstant(worldViewProj.pointer(), 4, 4);		
 
 		// set camera position
 
@@ -98,9 +98,9 @@ public:
 		world = world.getTransposed();
 
 		if (UseHighLevelShaders)
-			services->setVertexShaderConstant("mTransWorld", &world.M[0], 16);
+			services->setVertexShaderConstant("mTransWorld", world.pointer(), 16);
 		else
-			services->setVertexShaderConstant(&world.M[0], 10, 4);
+			services->setVertexShaderConstant(world.pointer(), 10, 4);
 	}
 };
 

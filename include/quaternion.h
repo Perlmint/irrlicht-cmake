@@ -286,55 +286,49 @@ inline matrix4 quaternion::getMatrix() const
 //! Creates a matrix from this quaternion
 inline void quaternion::getMatrix( matrix4 &dest ) const
 {
-	f32 *m = dest.M;
+	dest[0] = 1.0f - 2.0f*Y*Y - 2.0f*Z*Z;
+	dest[1] = 2.0f*X*Y + 2.0f*Z*W;
+	dest[2] = 2.0f*X*Z - 2.0f*Y*W;
+	dest[3] = 0.0f;
 
-	m[0] = 1.0f - 2.0f*Y*Y - 2.0f*Z*Z;
-	m[1] = 2.0f*X*Y + 2.0f*Z*W;
-	m[2] = 2.0f*X*Z - 2.0f*Y*W;
-	m[3] = 0.0f;
+	dest[4] = 2.0f*X*Y - 2.0f*Z*W;
+	dest[5] = 1.0f - 2.0f*X*X - 2.0f*Z*Z;
+	dest[6] = 2.0f*Z*Y + 2.0f*X*W;
+	dest[7] = 0.0f;
 
-	m[4] = 2.0f*X*Y - 2.0f*Z*W;
-	m[5] = 1.0f - 2.0f*X*X - 2.0f*Z*Z;
-	m[6] = 2.0f*Z*Y + 2.0f*X*W;
-	m[7] = 0.0f;
+	dest[8] = 2.0f*X*Z + 2.0f*Y*W;
+	dest[9] = 2.0f*Z*Y - 2.0f*X*W;
+	dest[10] = 1.0f - 2.0f*X*X - 2.0f*Y*Y;
+	dest[11] = 0.0f;
 
-	m[8] = 2.0f*X*Z + 2.0f*Y*W;
-	m[9] = 2.0f*Z*Y - 2.0f*X*W;
-	m[10] = 1.0f - 2.0f*X*X - 2.0f*Y*Y;
-	m[11] = 0.0f;
-
-	m[12] = 0.f;
-	m[13] = 0.f;
-	m[14] = 0.f;
-	m[15] = 1.f;
-
+	dest[12] = 0.f;
+	dest[13] = 0.f;
+	dest[14] = 0.f;
+	dest[15] = 1.f;
 }
 
 //! Creates a matrix from this quaternion
 inline void quaternion::getMatrix_transposed( matrix4 &dest ) const
 {
-	f32 *m = dest.M;
+	dest[0] = 1.0f - 2.0f*Y*Y - 2.0f*Z*Z;
+	dest[4] = 2.0f*X*Y + 2.0f*Z*W;
+	dest[8] = 2.0f*X*Z - 2.0f*Y*W;
+	dest[12] = 0.0f;
 
-	m[0] = 1.0f - 2.0f*Y*Y - 2.0f*Z*Z;
-	m[4] = 2.0f*X*Y + 2.0f*Z*W;
-	m[8] = 2.0f*X*Z - 2.0f*Y*W;
-	m[12] = 0.0f;
+	dest[1] = 2.0f*X*Y - 2.0f*Z*W;
+	dest[5] = 1.0f - 2.0f*X*X - 2.0f*Z*Z;
+	dest[9] = 2.0f*Z*Y + 2.0f*X*W;
+	dest[13] = 0.0f;
 
-	m[1] = 2.0f*X*Y - 2.0f*Z*W;
-	m[5] = 1.0f - 2.0f*X*X - 2.0f*Z*Z;
-	m[9] = 2.0f*Z*Y + 2.0f*X*W;
-	m[13] = 0.0f;
+	dest[2] = 2.0f*X*Z + 2.0f*Y*W;
+	dest[6] = 2.0f*Z*Y - 2.0f*X*W;
+	dest[10] = 1.0f - 2.0f*X*X - 2.0f*Y*Y;
+	dest[14] = 0.0f;
 
-	m[2] = 2.0f*X*Z + 2.0f*Y*W;
-	m[6] = 2.0f*Z*Y - 2.0f*X*W;
-	m[10] = 1.0f - 2.0f*X*X - 2.0f*Y*Y;
-	m[14] = 0.0f;
-
-	m[3] = 0.f;
-	m[7] = 0.f;
-	m[11] = 0.f;
-	m[15] = 1.f;
-
+	dest[3] = 0.f;
+	dest[7] = 0.f;
+	dest[11] = 0.f;
+	dest[15] = 1.f;
 }
 
 

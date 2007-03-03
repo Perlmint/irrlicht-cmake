@@ -297,7 +297,7 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 
 	// set transposed world matrix
 	const core::matrix4& tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
-	services->setVertexShaderConstant(&tWorld.M[0], 0, 4);
+	services->setVertexShaderConstant(tWorld.pointer(), 0, 4);
 
 	// The  viewpoint is at (0., 0., 0.) in eye space.
 	// Turning this into a vector [0 0 0 1] and multiply it by
@@ -315,7 +315,7 @@ void COpenGLParallaxMapRenderer::OnSetConstants(IMaterialRendererServices* servi
 	worldViewProj *= driver->getTransform(video::ETS_VIEW);
 	worldViewProj *= driver->getTransform(video::ETS_WORLD);
 	core::matrix4 tr(worldViewProj.getTransposed());
-	services->setVertexShaderConstant(&tr.M[0], 8, 4);
+	services->setVertexShaderConstant(tr.pointer(), 8, 4);
 
 	// here we've got to fetch the fixed function lights from the driver
 	// and set them as constants
