@@ -211,10 +211,15 @@ bool CGUIListBox::OnEvent(SEvent event)
 				return true;
 
 			case EMIE_LMOUSE_PRESSED_DOWN:
+			{
+				IGUIElement *el = Environment->getRootGUIElement()->getElementFromPoint(
+					core::position2di(event.MouseInput.X, event.MouseInput.Y));
+
 				if (Environment->hasFocus(this) &&	
-					ScrollBar->getAbsolutePosition().isPointInside(p) &&
+					ScrollBar == el &&
 					ScrollBar->OnEvent(event))
 					return true;
+			}
 
 				Selecting = true;
 				Environment->setFocus(this);
