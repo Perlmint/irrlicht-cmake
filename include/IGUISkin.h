@@ -36,8 +36,6 @@ namespace gui
 		//! Burning's skin
 		EGST_BURNING_SKIN,
 
-		//! Count to say how many skins are available
-		EGST_COUNT,
 		//! An unknown skin, not serializable at present
 		EGST_UNKNOWN
 	};
@@ -48,6 +46,7 @@ namespace gui
 		"windowsClassic",
 		"windowsMetallic",
 		"burning",
+		"unknown",
 		0,
 	};
 
