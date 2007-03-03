@@ -671,7 +671,8 @@ void CIrrDeviceWin32::present(video::IImage* image, s32 windowId, core::rect<s32
 //! notifies the device that it should close itself
 void CIrrDeviceWin32::closeDevice()
 {
-	DestroyWindow(HWnd); 	//PostQuitMessage(0);
+	DestroyWindow(HWnd);
+	run(); // consume quit message
 }
 
 
