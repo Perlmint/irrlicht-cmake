@@ -26,7 +26,7 @@ namespace video
 CD3D9ShaderMaterialRenderer::CD3D9ShaderMaterialRenderer(IDirect3DDevice9* d3ddev, video::IVideoDriver* driver, 
 		s32& outMaterialTypeNr, const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 		IShaderConstantSetCallBack* callback, IMaterialRenderer* baseMaterial, s32 userData)
-: pID3DDevice(d3ddev), Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
+: pID3DDevice(d3ddev), Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 	VertexShader(0), OldVertexShader(0), PixelShader(0), UserData(userData)
 {
 	if (BaseMaterial)
@@ -43,12 +43,12 @@ CD3D9ShaderMaterialRenderer::CD3D9ShaderMaterialRenderer(IDirect3DDevice9* d3dde
 //! constructor only for use by derived classes who want to
 //! create a fall back material for example.
 CD3D9ShaderMaterialRenderer::CD3D9ShaderMaterialRenderer(IDirect3DDevice9* d3ddev,
-														 video::IVideoDriver* driver, 
-														 IShaderConstantSetCallBack* callback,
-														 IMaterialRenderer* baseMaterial,
-														 s32 userData)
-: pID3DDevice(d3ddev), Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
-	VertexShader(0), PixelShader(0), UserData(userData)
+						video::IVideoDriver* driver, 
+						IShaderConstantSetCallBack* callback,
+						IMaterialRenderer* baseMaterial,
+						s32 userData)
+: pID3DDevice(d3ddev), Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
+	VertexShader(0), OldVertexShader(0), PixelShader(0), UserData(userData)
 {
 	if (BaseMaterial)
 		BaseMaterial->grab();
@@ -59,7 +59,7 @@ CD3D9ShaderMaterialRenderer::CD3D9ShaderMaterialRenderer(IDirect3DDevice9* d3dde
 
 
 void CD3D9ShaderMaterialRenderer::init(s32& outMaterialTypeNr, const c8* vertexShaderProgram,
-									   const c8* pixelShaderProgram)
+					const c8* pixelShaderProgram)
 {
 	outMaterialTypeNr = -1;
 

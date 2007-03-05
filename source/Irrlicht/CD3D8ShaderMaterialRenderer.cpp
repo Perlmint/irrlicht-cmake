@@ -7,7 +7,7 @@
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
 #include <d3d8.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #pragma comment (lib, "d3dx8.lib")
 
 #include "IShaderConstantSetCallBack.h"
@@ -28,8 +28,8 @@ namespace video
 CD3D8ShaderMaterialRenderer::CD3D8ShaderMaterialRenderer(IDirect3DDevice8* d3ddev, video::IVideoDriver* driver, 
 		s32& outMaterialTypeNr, const c8* vertexShaderProgram, const c8* pixelShaderProgram,
 		IShaderConstantSetCallBack* callback, IMaterialRenderer* baseMaterial, s32 userData)
-: pID3DDevice(d3ddev), Driver(driver), BaseMaterial(baseMaterial), CallBack(callback),
-	OldVertexShader(0), VertexShader(0), PixelShader(0), UserData(userData)
+: pID3DDevice(d3ddev), Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
+	VertexShader(0), OldVertexShader(0), PixelShader(0), UserData(userData)
 {
 	if (BaseMaterial)
 		BaseMaterial->grab();

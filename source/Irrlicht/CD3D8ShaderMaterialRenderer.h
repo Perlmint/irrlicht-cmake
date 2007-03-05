@@ -10,7 +10,7 @@
 
 #ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
 #include <d3d8.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 
 #include "IMaterialRenderer.h"
 #include "S3DVertex.h"

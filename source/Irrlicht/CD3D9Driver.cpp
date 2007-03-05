@@ -2,15 +2,15 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#include "IrrCompileConfig.h"
+#ifdef _IRR_WINDOWS_
+
 #define _IRR_DONT_DO_MEMORY_DEBUGGING_HERE
 #include "CD3D9Driver.h"
 #include "os.h"
 #include "S3DVertex.h"
 #include "CD3D9Texture.h"
 #include "CImage.h"
-
-#include "IrrCompileConfig.h"
-#ifdef _IRR_WINDOWS_
 
 #ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
 
@@ -19,6 +19,7 @@
 #include "CD3D9NormalMapRenderer.h"
 #include "CD3D9ParallaxMapRenderer.h"
 #include "CD3D9HLSLMaterialRenderer.h"
+#include <float.h>
 
 namespace irr
 {
@@ -43,7 +44,7 @@ CD3D9Driver::CD3D9Driver(const core::dimension2d<s32>& screenSize, HWND window,
 
 	printVersion();
 
-	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+	for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 	{
 		CurrentTexture[i] = 0;
 		LastTextureMipMapsAvailable[i] = false;
@@ -61,7 +62,7 @@ CD3D9Driver::CD3D9Driver(const core::dimension2d<s32>& screenSize, HWND window,
 	SphereMapMatrixD3D9._43 = 0.0f; SphereMapMatrixD3D9._44 = 1.0f;
 
 	core::matrix4 mat;
-	UnitMatrixD3D9 = *(D3DMATRIX*)((void*)&mat);
+	UnitMatrixD3D9 = *(D3DMATRIX*)((void*)mat.pointer());
 
 	// init direct 3d is done in the factory function
 }
@@ -73,7 +74,7 @@ CD3D9Driver::~CD3D9Driver()
 {
 	deleteMaterialRenders();
 
-	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+	for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 		if (CurrentTexture[i])
 			CurrentTexture[i]->drop();
 
@@ -581,13 +582,13 @@ void CD3D9Driver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 	switch(state)
 	{
 	case ETS_VIEW:
-		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)&mat));
+		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)mat.pointer()));
 		break;
 	case ETS_WORLD:
-		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)&mat));
+		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)mat.pointer()));
 		break;
 	case ETS_PROJECTION:
-		pID3DDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)((void*)&mat));
+		pID3DDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)((void*)mat.pointer()));
 		break;
 	case ETS_TEXTURE_0:
 	case ETS_TEXTURE_1:
@@ -597,7 +598,9 @@ void CD3D9Driver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 			break;
 		pID3DDevice->SetTextureStageState( state - ETS_TEXTURE_0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 		pID3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+ ( state - ETS_TEXTURE_0 )),
-			(D3DMATRIX*)((void*)&mat));
+			(D3DMATRIX*)((void*)mat.pointer()));
+		break;
+	case ETS_COUNT:
 		break;
 	}
 
@@ -1027,7 +1030,6 @@ void CD3D9Driver::draw2DImage(video::ITexture* texture,
 	f32 yPlus = renderTargetSize.Height-(renderTargetSize.Height / 2.f);
 	f32 yFact = 1.0f / (renderTargetSize.Height / 2.f);
 
-	const core::dimension2d<s32>& sourceSurfaceSize = texture->getOriginalSize();
 	core::rect<f32> tcoords;
 	tcoords.UpperLeftCorner.X = (((f32)sourcePos.X)+0.5f) / texture->getOriginalSize().Width ;
 	tcoords.UpperLeftCorner.Y = (((f32)sourcePos.Y)+0.5f) / texture->getOriginalSize().Height;
@@ -1492,9 +1494,9 @@ void CD3D9Driver::setRenderStatesStencilFillMode(bool alpha)
 	if (CurrentRenderMode != ERM_STENCIL_FILL || Transformation3DChanged)
 	{
 		core::matrix4 mat;
-		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)&mat));
-		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)&mat));
-		pID3DDevice->SetTransform(D3DTS_PROJECTION, (D3DMATRIX*)((void*)&mat));
+		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)mat.pointer()));
+		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)mat.pointer()));
+		pID3DDevice->SetTransform(D3DTS_PROJECTION, (D3DMATRIX*)((void*)mat.pointer()));
 
 		pID3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 		pID3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -1507,15 +1509,15 @@ void CD3D9Driver::setRenderStatesStencilFillMode(bool alpha)
 		pID3DDevice->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		pID3DDevice->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
-		pID3DDevice->SetRenderState( D3DRS_STENCILREF, 0x1);
+		pID3DDevice->SetRenderState(D3DRS_STENCILREF, 0x1);
 		pID3DDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_LESSEQUAL);
 		//pID3DDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_GREATEREQUAL);
 		pID3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP );
-		pID3DDevice->SetRenderState( D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP );
-		pID3DDevice->SetRenderState( D3DRS_STENCILMASK,      0xffffffff );
-		pID3DDevice->SetRenderState( D3DRS_STENCILWRITEMASK, 0xffffffff );
+		pID3DDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP );
+		pID3DDevice->SetRenderState(D3DRS_STENCILMASK,      0xffffffff );
+		pID3DDevice->SetRenderState(D3DRS_STENCILWRITEMASK, 0xffffffff );
 
-		pID3DDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_CCW);
+		pID3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 		Transformation3DChanged = false;
 
@@ -1554,9 +1556,9 @@ void CD3D9Driver::setRenderStates2DMode(bool alpha, bool texture, bool alphaChan
 	if (CurrentRenderMode != ERM_2D || Transformation3DChanged)
 	{
 		core::matrix4 mat;
-		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)&mat));
-		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)&mat));
-		pID3DDevice->SetTransform(D3DTS_PROJECTION, (D3DMATRIX*)((void*)&mat));
+		pID3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)((void*)mat.pointer()));
+		pID3DDevice->SetTransform(D3DTS_WORLD, (D3DMATRIX*)((void*)mat.pointer()));
+		pID3DDevice->SetTransform(D3DTS_PROJECTION, (D3DMATRIX*)((void*)mat.pointer()));
 
 		pID3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 		//pID3DDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);
@@ -1907,7 +1909,7 @@ bool CD3D9Driver::reset()
 	ResetRenderStates = true;
 	LastVertexType = (E_VERTEX_TYPE)-1;
 
-	for (s32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+	for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 	{
 		if (CurrentTexture[i])
 			CurrentTexture[i]->drop();

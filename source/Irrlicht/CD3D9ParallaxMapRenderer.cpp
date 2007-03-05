@@ -330,8 +330,7 @@ namespace video
 		video::IVideoDriver* driver = services->getVideoDriver();
 
 		// set transposed world matrix
-		const core::matrix4& tWorld = driver->getTransform(video::ETS_WORLD).getTransposed();
-		services->setVertexShaderConstant(&tWorld.M[0], 0, 4);
+		services->setVertexShaderConstant(driver->getTransform(video::ETS_WORLD).getTransposed().pointer(), 0, 4);
 
 		// set eye position
 
@@ -351,8 +350,7 @@ namespace video
 		worldViewProj = driver->getTransform(video::ETS_PROJECTION);			
 		worldViewProj *= driver->getTransform(video::ETS_VIEW);
 		worldViewProj *= driver->getTransform(video::ETS_WORLD);
-		core::matrix4 tr = worldViewProj.getTransposed();
-		services->setVertexShaderConstant(&tr.M[0], 8, 4);
+		services->setVertexShaderConstant(worldViewProj.getTransposed().pointer(), 8, 4);
 
 		// here we've got to fetch the fixed function lights from the driver
 		// and set them as constants

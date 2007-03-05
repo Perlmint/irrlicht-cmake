@@ -246,13 +246,12 @@ namespace video
 		E_RENDER_MODE CurrentRenderMode;
 		D3DPRESENT_PARAMETERS present;
 
-		core::matrix4 Matrices[ETS_COUNT]; // matrices of the 3d mode we need to restore when we switch back from the 2d mode.
-
 		SMaterial Material, LastMaterial;
 		bool ResetRenderStates; // bool to make all renderstates be reseted if set.
 		bool Transformation3DChanged;
 		bool StencilBuffer;
 		ITexture* CurrentTexture[MATERIAL_MAX_TEXTURES];
+		core::matrix4 Matrices[ETS_COUNT]; // matrices of the 3d mode we need to restore when we switch back from the 2d mode.
 
 		HINSTANCE D3DLibrary;
 		IDirect3D8* pID3D;
