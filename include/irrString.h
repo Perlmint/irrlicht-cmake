@@ -546,12 +546,12 @@ public:
 
 	//! finds first occurrence of a character of a list in string
 	/** \param c: List of strings to find. For example if the method
-	should find the first occurance of 'a' or 'b', this parameter should be "ab".
+	should find the first occurrence of 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Ususally,
 	this should be strlen(ofParameter1)
 	\return Returns position where one of the character has been found,
 	or -1 if not found. */
-	s32 findFirstChar(T* c, u32 count) const
+	s32 findFirstChar(const T* const c, u32 count) const
 	{
 		if (!c)
 			return -1;
@@ -567,15 +567,15 @@ public:
 
 	//! Finds first position of a character not in a given list.
 	/** \param c: List of characters not to find. For example if the method
-	 should find the first occurance of a character not 'a' or 'b', this parameter should be "ab".
+	 should find the first occurrence of a character not 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Ususally,
 	this should be strlen(ofParameter1)
 	\return Returns position where the character has been found,
 	or -1 if not found. */
 	template <class B>
-	s32 findFirstCharNotInList(B* c, u32 count) const
+	s32 findFirstCharNotInList(const B* const c, u32 count) const
 	{
-		for (u32 i=0; i<used; ++i)
+		for (u32 i=0; i<used-1; ++i)
 		{
 			u32 j;
 			for (j=0; j<count; ++j)
@@ -591,13 +591,13 @@ public:
 
 	//! Finds last position of a character not in a given list.
 	/** \param c: List of characters not to find. For example if the method
-	 should find the first occurence of a character not 'a' or 'b', this parameter should be "ab".
+	 should find the first occurrence of a character not 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Ususally,
 	this should be strlen(ofParameter1)
 	\return Returns position where the character has been found,
 	or -1 if not found. */
 	template <class B>
-	s32 findLastCharNotInList(B* c, u32 count) const
+	s32 findLastCharNotInList(const B* const c, u32 count) const
 	{
 		for (s32 i=(s32)(used-2); i>=0; --i)
 		{
@@ -740,13 +740,14 @@ public:
 		const u32 whitespacecount = 4;
 
 		// find start and end of real string without whitespace
-		int begin = findFirstCharNotInList(whitespace, whitespacecount);
+		s32 begin = findFirstCharNotInList(whitespace, whitespacecount);
 		if (begin == -1)
+		{
+			*this="";
 			return;
+		}
 
-		int end = findLastCharNotInList(whitespace, whitespacecount);
-		if (end == -1)
-			return;
+		s32 end = findLastCharNotInList(whitespace, whitespacecount);
 
 		*this = subString(begin, (end +1) - begin);
 	}
