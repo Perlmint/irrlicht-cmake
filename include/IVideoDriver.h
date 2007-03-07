@@ -821,7 +821,7 @@ namespace video
 		//! Creates material attributes list from a material, usable for serialization and more.
 		/** Please note that the videodriver will use the material renderer names from
 		getMaterialRendererName() to write out the material type name, so they should be set before. */
-		virtual io::IAttributes* createAttributesFromMaterial(video::SMaterial& material) = 0;
+		virtual io::IAttributes* createAttributesFromMaterial(const video::SMaterial& material) = 0;
 
 		//! Fills an SMaterial structure from attributes.
 		/** Please note that for setting material types of the material, the video driver

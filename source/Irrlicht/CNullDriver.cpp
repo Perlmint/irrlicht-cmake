@@ -1277,7 +1277,7 @@ void CNullDriver::setMaterialRendererName(s32 idx, const char* name)
 
 
 //! Creates material attributes list from a material, usable for serialization and more.
-io::IAttributes* CNullDriver::createAttributesFromMaterial(video::SMaterial& material)
+io::IAttributes* CNullDriver::createAttributesFromMaterial(const video::SMaterial& material)
 {
 	io::CAttributes* attr = new io::CAttributes(this);
 

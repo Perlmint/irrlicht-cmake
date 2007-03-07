@@ -47,13 +47,16 @@ namespace core
 			const f32& operator()(const s32 row, const s32 col) const { return M[row * 4 + col]; }
 
 			//! Simple operator for linearly accessing every element of the matrix.
-			f32& operator[](unsigned int index) { definitelyIdentityMatrix=false; return M[index]; }
+			f32& operator[](u32 index) { definitelyIdentityMatrix=false; return M[index]; }
 
 			//! Simple operator for linearly accessing every element of the matrix.
-			const f32& operator[](unsigned int index) const { return M[index]; }
+			const f32& operator[](u32 index) const { return M[index]; }
 
 			//! Sets this matrix equal to the other matrix.
 			inline matrix4& operator=(const matrix4 &other);
+
+			//! Sets all elements of this matrix to the value.
+			inline matrix4& operator=(const f32 scalar);
 
 			//! Returns pointer to internal array
 			const f32* const pointer() const { return M; }
@@ -64,6 +67,18 @@ namespace core
 
 			//! Returns true if other matrix is not equal to this matrix.
 			bool operator!=(const matrix4 &other) const;
+
+			//! Add another matrix.
+			matrix4 operator+(const matrix4& other) const;
+
+			//! Add another matrix.
+			matrix4& operator+=(const matrix4& other);
+
+			//! Subtract another matrix.
+			matrix4 operator-(const matrix4& other) const;
+
+			//! Subtract another matrix.
+			matrix4& operator-=(const matrix4& other);
 
 			//! set this matrix to the product of two matrices
 			inline void setbyproduct(const matrix4& other_a,const matrix4& other_b );
@@ -76,7 +91,13 @@ namespace core
 			matrix4 operator*(const matrix4& other) const;
 
 			//! Multiply by another matrix.
-			void operator*=(const matrix4& other);
+			matrix4& operator*=(const matrix4& other);
+
+			//! Multiply by scalar.
+			matrix4 operator*(const f32 scalar) const;
+
+			//! Multiply by scalar.
+			matrix4& operator*=(const f32 scalar);
 
 			//! Set matrix to identity.
 			inline void makeIdentity();
@@ -288,12 +309,159 @@ namespace core
 		}
 	}
 
+	//! Add another matrix.
+	inline matrix4 matrix4::operator+(const matrix4& other) const
+	{
+		matrix4 temp ( EM4CONST_NOTHING );
+
+		temp[0] = M[0]+other[0];
+		temp[1] = M[1]+other[1];
+		temp[2] = M[2]+other[2];
+		temp[3] = M[3]+other[3];
+		temp[4] = M[4]+other[4];
+		temp[5] = M[5]+other[5];
+		temp[6] = M[6]+other[6];
+		temp[7] = M[7]+other[7];
+		temp[8] = M[8]+other[8];
+		temp[9] = M[9]+other[9];
+		temp[10] = M[10]+other[10];
+		temp[11] = M[11]+other[11];
+		temp[12] = M[12]+other[12];
+		temp[13] = M[13]+other[13];
+		temp[14] = M[14]+other[14];
+		temp[15] = M[15]+other[15];
+
+		return temp;
+	}
+
+	//! Add another matrix.
+	inline matrix4& matrix4::operator+=(const matrix4& other)
+	{
+		M[0]+=other[0];
+		M[1]+=other[1];
+		M[2]+=other[2];
+		M[3]+=other[3];
+		M[4]+=other[4];
+		M[5]+=other[5];
+		M[6]+=other[6];
+		M[7]+=other[7];
+		M[8]+=other[8];
+		M[9]+=other[9];
+		M[10]+=other[10];
+		M[11]+=other[11];
+		M[12]+=other[12];
+		M[13]+=other[13];
+		M[14]+=other[14];
+		M[15]+=other[15];
+
+		return *this;
+		matrix4 temp ( *this );
+		setbyproduct ( temp, other );
+		return *this;
+	}
+
+	//! Subtract another matrix.
+	inline matrix4 matrix4::operator-(const matrix4& other) const
+	{
+		matrix4 temp ( EM4CONST_NOTHING );
+
+		temp[0] = M[0]-other[0];
+		temp[1] = M[1]-other[1];
+		temp[2] = M[2]-other[2];
+		temp[3] = M[3]-other[3];
+		temp[4] = M[4]-other[4];
+		temp[5] = M[5]-other[5];
+		temp[6] = M[6]-other[6];
+		temp[7] = M[7]-other[7];
+		temp[8] = M[8]-other[8];
+		temp[9] = M[9]-other[9];
+		temp[10] = M[10]-other[10];
+		temp[11] = M[11]-other[11];
+		temp[12] = M[12]-other[12];
+		temp[13] = M[13]-other[13];
+		temp[14] = M[14]-other[14];
+		temp[15] = M[15]-other[15];
+
+		return temp;
+	}
+
+	//! Subtract another matrix.
+	inline matrix4& matrix4::operator-=(const matrix4& other)
+	{
+		M[0]-=other[0];
+		M[1]-=other[1];
+		M[2]-=other[2];
+		M[3]-=other[3];
+		M[4]-=other[4];
+		M[5]-=other[5];
+		M[6]-=other[6];
+		M[7]-=other[7];
+		M[8]-=other[8];
+		M[9]-=other[9];
+		M[10]-=other[10];
+		M[11]-=other[11];
+		M[12]-=other[12];
+		M[13]-=other[13];
+		M[14]-=other[14];
+		M[15]-=other[15];
+
+		return *this;
+	}
+
+	//! Multiply by scalar.
+	inline matrix4 matrix4::operator*(const f32 scalar) const
+	{
+		matrix4 temp ( EM4CONST_NOTHING );
+
+		temp[0] = M[0]*scalar;
+		temp[1] = M[1]*scalar;
+		temp[2] = M[2]*scalar;
+		temp[3] = M[3]*scalar;
+		temp[4] = M[4]*scalar;
+		temp[5] = M[5]*scalar;
+		temp[6] = M[6]*scalar;
+		temp[7] = M[7]*scalar;
+		temp[8] = M[8]*scalar;
+		temp[9] = M[9]*scalar;
+		temp[10] = M[10]*scalar;
+		temp[11] = M[11]*scalar;
+		temp[12] = M[12]*scalar;
+		temp[13] = M[13]*scalar;
+		temp[14] = M[14]*scalar;
+		temp[15] = M[15]*scalar;
+
+		return temp;
+	}
+
+	//! Multiply by scalar.
+	inline matrix4& matrix4::operator*=(const f32 scalar)
+	{
+		M[0]*=scalar;
+		M[1]*=scalar;
+		M[2]*=scalar;
+		M[3]*=scalar;
+		M[4]*=scalar;
+		M[5]*=scalar;
+		M[6]*=scalar;
+		M[7]*=scalar;
+		M[8]*=scalar;
+		M[9]*=scalar;
+		M[10]*=scalar;
+		M[11]*=scalar;
+		M[12]*=scalar;
+		M[13]*=scalar;
+		M[14]*=scalar;
+		M[15]*=scalar;
+
+		return *this;
+	}
 
 	//! Multiply by another matrix.
-	inline void matrix4::operator*=(const matrix4& other)
+	inline matrix4& matrix4::operator*=(const matrix4& other)
 	{
 		matrix4 temp ( *this );
 		setbyproduct ( temp, other );
+		return *this;
 	}
 
 	//! multiply by another matrix
@@ -872,6 +1040,8 @@ namespace core
 
 	inline matrix4& matrix4::operator=(const matrix4 &other)
 	{
+		if (this==&other)
+			return *this;
 		memcpy(M, other.M, 16*sizeof(f32));
 		definitelyIdentityMatrix=other.definitelyIdentityMatrix;
 		return *this;
@@ -1314,6 +1484,12 @@ namespace core
 		M[5] = sy;
 		M[6] = -0.5f * sy + 0.5f;
 		definitelyIdentityMatrix=false;
+	}
+
+	//! Multiply by scalar.
+	inline matrix4 operator*(const f32 scalar, const matrix4& mat)
+	{
+		return mat*scalar;
 	}
 
 	const matrix4 IdentityMatrix(matrix4::EM4CONST_IDENTITY);

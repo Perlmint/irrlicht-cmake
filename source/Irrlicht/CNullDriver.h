@@ -379,7 +379,7 @@ namespace video
 		virtual void setMaterialRendererName(s32 idx, const char* name);
 
 		//! Creates material attributes list from a material, usable for serialization and more.
-		virtual io::IAttributes* createAttributesFromMaterial(video::SMaterial& material);
+		virtual io::IAttributes* createAttributesFromMaterial(const video::SMaterial& material);
 
 		//! Fills an SMaterial structure from attributes.
 		virtual void fillMaterialStructureFromAttributes(video::SMaterial& outMaterial, io::IAttributes* attributes);
