@@ -91,7 +91,7 @@ void CLightSceneNode::setLightData(const video::SLight& light)
 
 
 //! \return Returns the light data.
-const video::SLight& CLightSceneNode::getLightData() const
+video::SLight& CLightSceneNode::getLightData()
 {
 	return LightData;
 }

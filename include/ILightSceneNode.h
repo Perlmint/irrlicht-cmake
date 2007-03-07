@@ -29,12 +29,12 @@ public:
 		const core::vector3df& position = core::vector3df(0,0,0))
 		: ISceneNode(parent, mgr, id, position) {}
 
-	//! Gets the light data associated with this ILightSceneNode
+	//! Sets the light data associated with this ILightSceneNode
 	virtual void setLightData(const video::SLight& light) = 0;
 
 	//! Gets the light data associated with this ILightSceneNode
 	//! \return Returns the light data.
-	virtual const video::SLight& getLightData() const = 0;
+	virtual video::SLight& getLightData() = 0;
 
 };
 
