@@ -146,11 +146,15 @@ public:
 
 	//! Constructor for copying a string from a pointer with a given length
 	template <class B>
-	string(const B* c, u32 length)
+	string(const B* const c, u32 length)
 	: array(0), allocated(0), used(0)
 	{
 		if (!c)
+		{
+			// correctly init the string to an empty one
+			*this="";
 			return;
+		}
 
 		allocated = used = length+1;
 		array = allocator.allocate(used); // new T[used];
@@ -165,7 +169,7 @@ public:
 
 	//! Constructor for unicode and ascii strings
 	template <class B>
-	string(const B* c)
+	string(const B* const c)
 	: array(0), allocated(0), used(0)
 	{
 		*this = c;
@@ -202,7 +206,7 @@ public:
 
 	//! Assignment operator for strings, ascii and unicode
 	template <class B>
-	string<T>& operator=(const B* c)
+	string<T>& operator=(const B* const c)
 	{
 		if (!c)
 		{
@@ -253,7 +257,7 @@ public:
 
 	//! Add operator for strings, ascii and unicode
 	template <class B>
-	string<T> operator+(const B* c) const
+	string<T> operator+(const B* const c) const
 	{
 		string<T> str(*this);
 		str.append(c);
@@ -273,7 +277,7 @@ public:
 
 
 	//! Comparison operator
-	bool operator ==(const T* str) const
+	bool operator ==(const T* const str) const
 	{
 		if (!str)
 			return false;
@@ -319,7 +323,7 @@ public:
 
 
 	//! Equals not operator
-	bool operator !=(const T* str) const
+	bool operator !=(const T* const str) const
 	{
 		return !(*this == str);
 	}
@@ -421,7 +425,7 @@ public:
 
 
 	//! compares the first n characters of the strings
-	bool equalsn(const T* str, int len) const
+	bool equalsn(const T* const str, int len) const
 	{
 		if (!str)
 			return false;
@@ -451,7 +455,7 @@ public:
 
 	//! Appends a char string to this string
 	/** \param other: Char string to append. */
-	void append(const T* other)
+	void append(const T* const other)
 	{
 		if (!other)
 			return;
@@ -648,7 +652,7 @@ public:
 	//! \return Returns positions where the string has been found, 
 	//! or -1 if not found.
 	template <class B>
-	s32 find(B* str) const
+	s32 find(const B* const str) const
 	{
 		if (str && *str)
 		{
@@ -704,7 +708,7 @@ public:
 		append(c);
 	}
 
-	void operator += (const T* c)
+	void operator += (const T* const c)
 	{
 		append(c);
 	}
