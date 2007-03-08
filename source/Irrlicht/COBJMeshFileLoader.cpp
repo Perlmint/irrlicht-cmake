@@ -56,7 +56,7 @@ bool COBJMeshFileLoader::isALoadableFileExtension(const c8* filename)
 //! See IUnknown::drop() for more information.
 IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 {
-	const s32 WORD_BUFFER_LENGTH = 255;
+	const u32 WORD_BUFFER_LENGTH = 512;
 	c8 wordBuffer[WORD_BUFFER_LENGTH];
 
 	if (Mesh)
@@ -71,7 +71,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 	pCurrMtl->name="";
 	materials.push_back(pCurrMtl);
 
-	s32 filesize = (s32)file->getSize();
+	u32 filesize = file->getSize();
 	if (!filesize)
 		return false;
 
@@ -95,11 +95,12 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 	// ********************************************************************
 
 	c8* pBuf = new c8[filesize];
+	memset(pBuf, 0, filesize);
 	file->read((void*)pBuf, filesize);
-	const c8* pBufEnd = pBuf+filesize;
+	const c8* const pBufEnd = pBuf+filesize;
 
 	// Process obj information
-	c8* pBufPtr = pBuf;
+	const c8* pBufPtr = pBuf;
 	SObjMtl *pUseMtl=0;
 	while(pBufPtr != pBufEnd)
 	{
@@ -175,7 +176,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 		{
 			c8 vertexWord[WORD_BUFFER_LENGTH]; // for retrieving vertex data
 			video::S3DVertex v;
-			s32 currentVertexCount = pCurrMtl->pMeshbuffer->Vertices.size();
+			u32 currentVertexCount = pCurrMtl->pMeshbuffer->Vertices.size();
 			u32 facePointCount = 0;	// number of vertices in this face
 
 			// Assign vertex color from currently active material's diffuse colour
@@ -183,25 +184,24 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 				v.Color = pCurrMtl->pMeshbuffer->Material.DiffuseColor;
 
 			// get all vertices data in this face (current line of obj file)
-			copyLine(wordBuffer, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
-			c8 * pLinePtr = wordBuffer;
+			u32 length = copyLine(wordBuffer, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
+			const c8* pLinePtr = wordBuffer;
+			const c8* const pEndPtr = wordBuffer+length;
 
 			// read in all vertices
-			pLinePtr = goNextWord(pLinePtr, pBufEnd);
+			pLinePtr = goNextWord(pLinePtr, pEndPtr);
 			while (0 != pLinePtr[0])
 			{
 				// Array to communicate with retrieveVertexIndices()
 				// sends the buffer sizes and gets the actual indices
 				// if index not set returns -1
 				s32 Idx[3];
-				Idx[0]=vertexBuffer.size();
-				Idx[1]=textureCoordBuffer.size();
-				Idx[2]=normalsBuffer.size();
+				Idx[0] = Idx[1] = Idx[2] = -1;
 
 				// read in next vertex's data
-				copyWord(vertexWord, pLinePtr, WORD_BUFFER_LENGTH, pBufEnd);
+				u32 wlength = copyWord(vertexWord, pLinePtr, WORD_BUFFER_LENGTH, pBufEnd);
 				// this function will also convert obj's 1-based index to c++'s 0-based index
-				retrieveVertexIndices(vertexWord, Idx, pBufEnd);
+				retrieveVertexIndices(vertexWord, Idx, vertexWord+wlength+1);
 				if ( -1 != Idx[0] )
 				{
 					v.Pos = vertexBuffer[Idx[0]];
@@ -218,7 +218,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 				++facePointCount;
 
 				// go to next vertex
-				pLinePtr = goNextWord(pLinePtr, pBufEnd);
+				pLinePtr = goNextWord(pLinePtr, pEndPtr);
 			}
 
 			// Add indices for first 3 vertices
@@ -277,7 +277,7 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 
 void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 {
-	const s32 WORD_BUFFER_LENGTH = 255;
+	const u32 WORD_BUFFER_LENGTH = 512;
 
 	io::IReadFile * pMtlReader;
 	if (FileSystem->existFile(pFileName))
@@ -288,7 +288,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 	if (!pMtlReader)	// fail to open and read file
 		return;
 
-	s32 filesize = pMtlReader->getSize();
+	u32 filesize = pMtlReader->getSize();
 	if (!filesize)
 		return;
 
@@ -298,7 +298,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 
 	SObjMtl* pCurrMaterial = 0;
 
-	c8* pBufPtr = pBuf;
+	const c8* pBufPtr = pBuf;
 	while(pBufPtr != pBufEnd)
 	{
 		switch(*pBufPtr)
@@ -320,7 +320,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 			case 'i': // illum - illumination
 			if ( pCurrMaterial )
 			{
-				const s32 COLOR_BUFFER_LENGTH = 16;
+				const u32 COLOR_BUFFER_LENGTH = 16;
 				c8 illumStr[COLOR_BUFFER_LENGTH];
 
 				pBufPtr = goAndCopyNextWord(illumStr, pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
@@ -330,7 +330,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 			case 'N': // Ns - shininess
 			if ( pCurrMaterial )
 			{
-				const s32 COLOR_BUFFER_LENGTH = 16;
+				const u32 COLOR_BUFFER_LENGTH = 16;
 				c8 nsStr[COLOR_BUFFER_LENGTH];
 
 				pBufPtr = goAndCopyNextWord(nsStr, pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
@@ -482,7 +482,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 			case 'd': // d - transparency
 			if ( pCurrMaterial )
 			{
-				const s32 COLOR_BUFFER_LENGTH = 16;
+				const u32 COLOR_BUFFER_LENGTH = 16;
 				c8 dStr[COLOR_BUFFER_LENGTH];
 
 				pBufPtr = goAndCopyNextWord(dStr, pBufPtr, COLOR_BUFFER_LENGTH, pBufEnd);
@@ -499,7 +499,7 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 				switch ( pBufPtr[1] )
 				{
 				case 'f':		// Tf - Transmitivity
-					const s32 COLOR_BUFFER_LENGTH = 16;
+					const u32 COLOR_BUFFER_LENGTH = 16;
 					c8 redStr[COLOR_BUFFER_LENGTH];
 					c8 greenStr[COLOR_BUFFER_LENGTH];
 					c8 blueStr[COLOR_BUFFER_LENGTH];
@@ -535,9 +535,9 @@ void COBJMeshFileLoader::readMTL(const c8* pFileName, core::stringc relPath)
 }
 
 //! Read RGB color
-c8* COBJMeshFileLoader::readColor(c8* pBufPtr, video::SColor& color, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::readColor(const c8* pBufPtr, video::SColor& color, const c8* const pBufEnd)
 {
-	const s32 COLOR_BUFFER_LENGTH = 16;
+	const u32 COLOR_BUFFER_LENGTH = 16;
 	c8 colStr[COLOR_BUFFER_LENGTH];
 
 	color.setAlpha(255);
@@ -552,9 +552,9 @@ c8* COBJMeshFileLoader::readColor(c8* pBufPtr, video::SColor& color, const c8* p
 
 
 //! Read 3d vector of floats
-c8* COBJMeshFileLoader::readVec3(c8* pBufPtr, core::vector3df& vec, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::readVec3(const c8* pBufPtr, core::vector3df& vec, const c8* const pBufEnd)
 {
-	const s32 WORD_BUFFER_LENGTH = 255;
+	const u32 WORD_BUFFER_LENGTH = 256;
 	c8 wordBuffer[WORD_BUFFER_LENGTH];
 
 	pBufPtr = goAndCopyNextWord(wordBuffer, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
@@ -568,9 +568,9 @@ c8* COBJMeshFileLoader::readVec3(c8* pBufPtr, core::vector3df& vec, const c8* pB
 
 
 //! Read 2d vector of floats
-c8* COBJMeshFileLoader::readVec2(c8* pBufPtr, core::vector2df& vec, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::readVec2(const c8* pBufPtr, core::vector2df& vec, const c8* const pBufEnd)
 {
-	const s32 WORD_BUFFER_LENGTH = 255;
+	const u32 WORD_BUFFER_LENGTH = 256;
 	c8 wordBuffer[WORD_BUFFER_LENGTH];
 
 	pBufPtr = goAndCopyNextWord(wordBuffer, pBufPtr, WORD_BUFFER_LENGTH, pBufEnd);
@@ -582,9 +582,9 @@ c8* COBJMeshFileLoader::readVec2(c8* pBufPtr, core::vector2df& vec, const c8* pB
 
 
 //! Read boolean value represented as 'on' or 'off'
-c8* COBJMeshFileLoader::readBool(c8* pBufPtr, bool& tf, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::readBool(const c8* pBufPtr, bool& tf, const c8* const pBufEnd)
 {
-	const s32 BUFFER_LENGTH = 8;
+	const u32 BUFFER_LENGTH = 8;
 	c8 tfStr[BUFFER_LENGTH];
 
 	pBufPtr = goAndCopyNextWord(tfStr, pBufPtr, BUFFER_LENGTH, pBufEnd);
@@ -633,7 +633,7 @@ COBJMeshFileLoader::SObjGroup * COBJMeshFileLoader::findOrAddGroup(const c8* pGr
 
 
 //! skip space characters and stop on first non-space
-c8* COBJMeshFileLoader::goFirstWord(c8* buf, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::goFirstWord(const c8* buf, const c8* const pBufEnd)
 {
 	// skip space characters
 	while((buf != pBufEnd) && core::isspace(*buf))
@@ -644,9 +644,9 @@ c8* COBJMeshFileLoader::goFirstWord(c8* buf, const c8* pBufEnd)
 
 
 //! skip current word and stop at beginning of next one
-c8* COBJMeshFileLoader::goNextWord(c8* buf, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::goNextWord(const c8* buf, const c8* const pBufEnd)
 {
-	// skip cuurent word
+	// skip current word
 	while(( buf != pBufEnd ) && !core::isspace(*buf))
 		++buf;
 
@@ -655,7 +655,7 @@ c8* COBJMeshFileLoader::goNextWord(c8* buf, const c8* pBufEnd)
 
 
 //! Read until line break is reached and stop at the next non-space character
-c8* COBJMeshFileLoader::goNextLine(c8* buf, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::goNextLine(const c8* buf, const c8* const pBufEnd)
 {
 	// look for newline characters
 	while(buf != pBufEnd)
@@ -669,32 +669,44 @@ c8* COBJMeshFileLoader::goNextLine(c8* buf, const c8* pBufEnd)
 }
 
 
-void COBJMeshFileLoader::copyWord(c8* outBuf, const c8* inBuf, s32 outBufLength, const c8* pBufEnd)
+u32 COBJMeshFileLoader::copyWord(c8* outBuf, const c8* const inBuf, u32 outBufLength, const c8* const pBufEnd)
 {
+	if (!outBufLength)
+		return 0;
 	if (!inBuf)
-		return;
+	{
+		*outBuf = 0;
+		return 0;
+	}
 
-	s32 i = 0;
+	u32 i = 0;
 	while(inBuf[i])
 	{
-		if (inBuf[i]==' ' || inBuf[i]=='\n' || inBuf[i]=='\r' || inBuf[i]=='\t' || &(inBuf[i]) == pBufEnd)
+		if (core::isspace(inBuf[i]) || &(inBuf[i]) == pBufEnd)
 			break;
 		++i;
 	}
 
-	for (s32 j=0; j<i && j<outBufLength-1; ++j)
+	u32 length = core::min_(i, outBufLength-1);
+	for (u32 j=0; j<length; ++j)
 		outBuf[j] = inBuf[j];
 
 	outBuf[i] = 0;
+	return length;
 }
 
 
-void COBJMeshFileLoader::copyLine(c8* outBuf, const c8* inBuf, s32 outBufLength, const c8* pBufEnd)
+u32 COBJMeshFileLoader::copyLine(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* pBufEnd)
 {
+	if (!outBufLength)
+		return 0;
 	if (!inBuf)
-		return;
+	{
+		*outBuf = 0;
+		return 0;
+	}
 
-	s32 i = 0;
+	u32 i = 0;
 	while(inBuf[i])
 	{
 		if (inBuf[i]=='\n' || inBuf[i]=='\r' || &(inBuf[i]) == pBufEnd)
@@ -702,14 +714,16 @@ void COBJMeshFileLoader::copyLine(c8* outBuf, const c8* inBuf, s32 outBufLength,
 		++i;
 	}
 
-	for (s32 j=0; j<i && j<outBufLength-1; ++j)
+	u32 length = core::min_(i, outBufLength-1);
+	for (u32 j=0; j<length; ++j)
 		outBuf[j] = inBuf[j];
 
 	outBuf[i] = 0;
+	return length;
 }
 
 
-c8* COBJMeshFileLoader::goAndCopyNextWord(c8* outBuf, c8* inBuf, s32 outBufLength, const c8* pBufEnd)
+const c8* COBJMeshFileLoader::goAndCopyNextWord(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* pBufEnd)
 {
 	inBuf = goNextWord(inBuf, pBufEnd);
 	copyWord(outBuf, inBuf, outBufLength, pBufEnd);
@@ -720,7 +734,7 @@ c8* COBJMeshFileLoader::goAndCopyNextWord(c8* outBuf, c8* inBuf, s32 outBufLengt
 bool COBJMeshFileLoader::retrieveVertexIndices(c8* pVertexData, s32* pIdx, const c8* pBufEnd)
 {
 	c8 word[16] = "";
-	c8* pChar = goFirstWord(pVertexData, pBufEnd);
+	const c8* pChar = goFirstWord(pVertexData, pBufEnd);
 	c8 idxType = 0;		// 0 = posIdx, 1 = texcoordIdx, 2 = normalIdx
 	s32 index;
 

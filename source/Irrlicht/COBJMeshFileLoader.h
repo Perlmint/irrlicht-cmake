@@ -68,27 +68,27 @@ private:
 	};
 
 	// returns a pointer to the first printable character available in the buffer
-	c8* goFirstWord(c8* buf, const c8* pBufEnd);
+	const c8* goFirstWord(const c8* buf, const c8* const pBufEnd);
 	// returns a pointer to the first printable character after the first non-printable
-	c8* goNextWord(c8* buf, const c8* pBufEnd);
+	const c8* goNextWord(const c8* buf, const c8* const pBufEnd);
 	// returns a pointer to the next printable character after the first line break
-	c8* goNextLine(c8* buf, const c8* pBufEnd);
+	const c8* goNextLine(const c8* buf, const c8* const pBufEnd);
 	// copies the current word from the inBuf to the outBuf
-	void copyWord(c8* outBuf, const c8* inBuf, s32 outBufLength, const c8* pBufEnd);
+	u32 copyWord(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* const pBufEnd);
 	// copies the current line from the inBuf to the outBuf
-	void copyLine(c8* outBuf, const c8* inBuf, s32 outBufLength, const c8* pBufEnd);
+	u32 copyLine(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* const pBufEnd);
 	// combination of goNextWord followed by copyWord
-	c8* goAndCopyNextWord(c8* outBuf, c8* inBuf, s32 outBufLength, const c8* pBufEnd);
+	const c8* goAndCopyNextWord(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* const pBufEnd);
 
 	void readMTL(const c8* pFileName, core::stringc relPath);
 	//! Read RGB color
-	c8* readColor(c8* pBufPtr, video::SColor& color, const c8* pBufEnd);
+	const c8* readColor(const c8* pBufPtr, video::SColor& color, const c8* const pBufEnd);
 	//! Read 3d vector of floats
-	c8* readVec3(c8* pBufPtr, core::vector3df& vec, const c8* pBufEnd);
+	const c8* readVec3(const c8* pBufPtr, core::vector3df& vec, const c8* const pBufEnd);
 	//! Read 2d vector of floats
-	c8* readVec2(c8* pBufPtr, core::vector2df& vec, const c8* pBufEnd);
+	const c8* readVec2(const c8* pBufPtr, core::vector2df& vec, const c8* const pBufEnd);
 	//! Read boolean value represented as 'on' or 'off'
-	c8* readBool(c8* pBufPtr, bool& tf, const c8* pBufEnd);
+	const c8* readBool(const c8* pBufPtr, bool& tf, const c8* const pBufEnd);
 	SObjMtl * findMtl(const c8* pMtlName);
 	SObjGroup * findGroup(const c8* pGroupName);
 	SObjGroup * findOrAddGroup(const c8* pGroupName);
