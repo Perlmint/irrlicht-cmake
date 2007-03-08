@@ -194,6 +194,35 @@ void CBillboardSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttrib
 	setSize(Size);
 }
 
+//! Set the color of all vertices of the billboard
+//! \param overallColor: the color to set
+void CBillboardSceneNode::setColor(const video::SColor & overallColor)
+{
+	for(u32 vertex = 0; vertex < 4; ++vertex)
+		vertices[0].Color = overallColor;
+}
+
+//! Set the color of the top and bottom vertices of the billboard
+//! \param topColor: the color to set the top vertices
+//! \param bottomColor: the color to set the bottom vertices
+void CBillboardSceneNode::setColor(const video::SColor & topColor, const video::SColor & bottomColor)
+{
+	vertices[0].Color = bottomColor;
+	vertices[1].Color = topColor;
+	vertices[2].Color = topColor;
+	vertices[3].Color = bottomColor;
+}
+
+//! Gets the color of the top and bottom vertices of the billboard
+//! \param[out] topColor: stores the color of the top vertices
+//! \param[out] bottomColor: stores the color of the bottom vertices
+void CBillboardSceneNode::getColor(video::SColor & topColor, video::SColor & bottomColor)
+{
+	bottomColor = vertices[0].Color;
+	topColor = vertices[1].Color;
+}
+
+
 } // end namespace scene
 } // end namespace irr
 

@@ -10,11 +10,6 @@ API changes:
 	  Now, Texture1..4 is removed - use Textures[i] instead
 	  The Flags[x] is replaced by setFlags(x, bool) resp. getFlags(x)
 
-- Fixed the getLightData method of ILightSceneNode by changing it from
-	'void getLightData(SLight&)' to 'const SLight& getLightData()'. This
-	avoids those cases where the SLight is changed
-	via the reference but does not update necessary internal states.
-
 - testing matrix4 for identity before multiply. faster check for identity for the positive case using an additional boolean flag.
 Some API changes: the internal array M is now private. Use mat[x] instead of mat.M[x]. The pointer to M is acquired by mat.pointer(), some methods take a matrix4 reference instead of a f32*.
 
