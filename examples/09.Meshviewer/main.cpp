@@ -71,7 +71,7 @@ void loadModel(const c8* fn)
 	core::stringc filename ( fn );
 
 	core::stringc extension;
-	getExtension ( extension, filename );
+	getFileNameExtension ( extension, filename );
 	extension.make_lower();
 
 	// if a texture is loaded apply it to the current model..
