@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -1816,12 +1816,12 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	}
 
 	// texture address mode
-	for (s32 i=0; i<MaxTextureUnits; ++i)
+	for (s32 u=0; u<MaxTextureUnits; ++u)
 	{
-		if (resetAllRenderStates || lastmaterial.TextureWrap[i] != material.TextureWrap[i])
+		if (resetAllRenderStates || lastmaterial.TextureWrap[u] != material.TextureWrap[u])
 		{
 			GLint mode=GL_REPEAT;
-			switch (material.TextureWrap[i])
+			switch (material.TextureWrap[u])
 			{
 				case ETC_REPEAT:
 					mode=GL_REPEAT;
@@ -1841,8 +1841,8 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 			}
 	
 			if (MultiTextureExtension)
-				extGlActiveTextureARB(GL_TEXTURE0_ARB + i);
-			else if (i>0)
+				extGlActiveTextureARB(GL_TEXTURE0_ARB + u);
+			else if (u>0)
 				break;
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);

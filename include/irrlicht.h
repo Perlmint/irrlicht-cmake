@@ -1,6 +1,6 @@
 /* irrlicht.h -- interface of the 'Irrlicht Engine'
 
-  Copyright (C) 2002-2006 Nikolaus Gebhardt
+  Copyright (C) 2002-2007 Nikolaus Gebhardt
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -136,9 +136,9 @@
 #include "SMeshBufferTangents.h"
 #include "SViewFrustum.h"
 #include "irrTypes.h"
+#include "coreutil.h"
 
-
-/*! \mainpage Irrlicht Engine 1.2 API documentation
+/*! \mainpage Irrlicht Engine 1.3beta API documentation
  *
  * <div align="center"><img src="logobig.png" ></div>
  *

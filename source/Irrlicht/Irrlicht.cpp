@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -52,7 +52,7 @@ namespace irr
 #if defined(_IRR_WINDOWS_) || defined(_XBOX)
 
 #ifdef _MSC_VER
-#pragma comment(exestr, "Irrlicht Engine (c) 2002-2006 Nikolaus Gebhardt")
+#pragma comment(exestr, "Irrlicht Engine (c) 2002-2007 Nikolaus Gebhardt")
 #endif
 
 BOOL APIENTRY DllMain( HANDLE hModule, 

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -1652,10 +1652,11 @@ void CAnimatedMeshB3d::animate(s32 intframe,s32 startFrameLoop, s32 endFrameLoop
 	if (AnimateMode & 2) // Update skin
 	{
 		// Reset skin
-		for (s32 i=0; i<(s32)Vertices_Moved.size(); ++i)
+		s32 i;
+		for (i=0; i<(s32)Vertices_Moved.size(); ++i)
 			Vertices_Moved[i]=false;
 
-		for (s32 i=0; i<(s32)RootNodes.size(); ++i)
+		for (i=0; i<(s32)RootNodes.size(); ++i)
 		{
 			animateSkin(frame, startFrame, endFrame, RootNodes[i], 0);
 		}

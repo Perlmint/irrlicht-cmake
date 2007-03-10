@@ -1,10 +1,11 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "CXFileReader.h"
 #include "os.h"
 #include "fast_atof.h"
+#include "coreutil.h"
 
 namespace irr
 {

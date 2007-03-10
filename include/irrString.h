@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine" and the "irrXML" project.
 // For conditions of distribution and use, see copyright notice in irrlicht.h and irrXML.h
 
@@ -822,50 +822,6 @@ typedef string<irr::c8> stringc;
 
 //! Typedef for wide character strings
 typedef string<wchar_t> stringw;
-
-// ----------------------------- some basic quite often used string function --------------------------
-
-//! a "Null" String
-static const core::stringc IrrEmptyStringc;
-static const core::stringw IrrEmptyStringw;
-
-
-// basic ascii to unicode conversion ( no locale )
-inline void stringc_to_stringw ( stringw &dest, const stringc & source )
-{
-	dest = IrrEmptyStringw;
-	for ( u32 i = 0; i!= source.size(); ++i )
-	{
-		dest.append ( (wchar_t) source[i] );
-	}
-}
-
-//! cut the filename extension from a string
-inline core::stringc &cutExtension ( core::stringc &dest, const core::stringc &source )
-{
-	s32 endPos = source.findLast ( '.' );
-	dest = source.subString ( 0, endPos < 0 ? source.size () : endPos );
-	return dest;
-}
-
-//! get the filename extension from a string
-inline core::stringc &getExtension ( core::stringc &dest, const core::stringc &source )
-{
-	s32 endPos = source.findLast ( '.' );
-	if ( endPos < 0 )
-		dest = IrrEmptyStringc;
-	else
-		dest = source.subString ( endPos, source.size () );
-	return dest;
-}
-
-//! some standard function ( to remove dependencies )
-#undef isdigit
-#undef isspace
-#undef isupper
-inline s32 isdigit(s32 c) { return c >= '0' && c <= '9'; }
-inline s32 isspace(s32 c) { return	c ==  ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v';	}
-inline s32 isupper(s32 c) { return c >= 'A' && c <= 'Z'; }
 
 } // end namespace core
 } // end namespace irr

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -1766,7 +1766,7 @@ video::ITexture* CQ3LevelMesh::loadTexture ( const tStringList &stringList )
 	{
 		for ( u32 g = 0; g != 2 ; ++g )
 		{
-			cutExtension ( loadFile, stringList[i] ).append ( extension[g] );
+			cutFilenameExtension ( loadFile, stringList[i] ).append ( extension[g] );
 
 			if ( FileSystem->existFile ( loadFile.c_str() ) )
 			{
@@ -1838,7 +1838,7 @@ void CQ3LevelMesh::loadTextures2()
 			group = shader->getGroup ( 2 );
 			if ( group )
 			{
-				if ( cutExtension ( check, group->get ( "map" ) ) == Textures[t].strName )
+				if ( core::cutFilenameExtension ( check, group->get ( "map" ) ) == Textures[t].strName )
 				{
 					list += check;
 				}

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2002-2007 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -225,7 +225,7 @@ void CTRTextureGouraudNoZ2::scanline_bilinear ( )
 			tx0 = f32_to_fixPoint ( line.t0[0].x );
 			ty0 = f32_to_fixPoint ( line.t0[0].y );
 #endif
-			dst[i] = getTexel_plain ( &IT[0], tx0, ty0 );
+			dst[i] = irr::getTexel_plain ( &IT[0], tx0, ty0 );
 
 /*
 			getSample_texture ( r0, g0, b0, &IT[0], tx0, ty0 );

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -337,22 +337,28 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 				switch (vType)
 				{
 					case EVT_STANDARD:
-						for (u32 i=0; i < primitiveCount-1; ++i)
-							draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
-								((S3DVertex*)vertices)[indexList[i+1]].Pos,
-								((S3DVertex*)vertices)[indexList[i]].Color);
+						{
+							for (u32 i=0; i < primitiveCount-1; ++i)
+								draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
+									((S3DVertex*)vertices)[indexList[i+1]].Pos,
+									((S3DVertex*)vertices)[indexList[i]].Color);
+						}
 						break;
 					case EVT_2TCOORDS:
-						for (u32 i=0; i < primitiveCount-1; ++i)
-							draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
-								((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
-								((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
+						{
+							for (u32 i=0; i < primitiveCount-1; ++i)
+								draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
+									((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
+									((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
+						}
 						break;
 					case EVT_TANGENTS:
-						for (u32 i=0; i < primitiveCount-1; ++i)
-							draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
-								((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
-								((S3DVertexTangents*)vertices)[indexList[i]].Color);
+						{
+							for (u32 i=0; i < primitiveCount-1; ++i)
+								draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
+									((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
+									((S3DVertexTangents*)vertices)[indexList[i]].Color);
+						}
 						break;
 				}
 			}
@@ -383,22 +389,28 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 				switch (vType)
 				{
 					case EVT_STANDARD:
-						for (u32 i=0; i < 2*primitiveCount; i+=2)
-							draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
-								((S3DVertex*)vertices)[indexList[i+1]].Pos,
-								((S3DVertex*)vertices)[indexList[i]].Color);
+						{
+							for (u32 i=0; i < 2*primitiveCount; i+=2)
+								draw3DLine(((S3DVertex*)vertices)[indexList[i]].Pos,
+									((S3DVertex*)vertices)[indexList[i+1]].Pos,
+									((S3DVertex*)vertices)[indexList[i]].Color);
+						}
 						break;
 					case EVT_2TCOORDS:
-						for (u32 i=0; i < 2*primitiveCount; i+=2)
-							draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
-								((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
-								((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
+						{
+							for (u32 i=0; i < 2*primitiveCount; i+=2)
+								draw3DLine(((S3DVertex2TCoords*)vertices)[indexList[i]].Pos,
+									((S3DVertex2TCoords*)vertices)[indexList[i+1]].Pos,
+									((S3DVertex2TCoords*)vertices)[indexList[i]].Color);
+						}
 						break;
 					case EVT_TANGENTS:
-						for (u32 i=0; i < 2*primitiveCount; i+=2)
-							draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
-								((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
-								((S3DVertexTangents*)vertices)[indexList[i]].Color);
+						{
+							for (u32 i=0; i < 2*primitiveCount; i+=2)
+								draw3DLine(((S3DVertexTangents*)vertices)[indexList[i]].Pos,
+									((S3DVertexTangents*)vertices)[indexList[i+1]].Pos,
+									((S3DVertexTangents*)vertices)[indexList[i]].Color);
+						}
 						break;
 				}
 			}

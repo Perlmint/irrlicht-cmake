@@ -366,6 +366,14 @@ SOURCE=.\BuiltInFont.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CDefaultGUIElementFactory.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDefaultGUIElementFactory.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CGUIButton.cpp
 # End Source File
 # Begin Source File
@@ -507,6 +515,14 @@ SOURCE=.\CGUISkin.cpp
 # Begin Source File
 
 SOURCE=.\CGUISkin.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CGUISpriteBank.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CGUISpriteBank.h
 # End Source File
 # Begin Source File
 
@@ -945,6 +961,14 @@ SOURCE=.\CD3D9Texture.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\CDepthBuffer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDepthBuffer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CSoftware2MaterialRenderer.h
 # End Source File
 # Begin Source File
@@ -977,6 +1001,10 @@ SOURCE=.\CTRGouraudAlphaNoZ2.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CTRTextureBlend.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CTRTextureDetailMap2.cpp
 # End Source File
 # Begin Source File
@@ -990,6 +1018,14 @@ SOURCE=.\CTRTextureGouraudAdd2.cpp
 # Begin Source File
 
 SOURCE=.\CTRTextureGouraudAddNoZ2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureGouraudAlpha.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CTRTextureGouraudAlphaNoZ.cpp
 # End Source File
 # Begin Source File
 
@@ -1029,23 +1065,15 @@ SOURCE=.\CTRTextureWire2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CZBuffer2.cpp
+SOURCE=.\IBurningShader.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CZBuffer2.h
+SOURCE=.\IBurningShader.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ITriangleRenderer2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ITriangleRenderer2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\IZBuffer2.h
+SOURCE=.\IDepthBuffer.h
 # End Source File
 # Begin Source File
 
@@ -1095,6 +1123,14 @@ SOURCE=.\CAnimatedMeshMD2.cpp
 # Begin Source File
 
 SOURCE=.\CAnimatedMeshMD2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CAnimatedMeshMD3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CAnimatedMeshMD3.h
 # End Source File
 # Begin Source File
 
@@ -1242,6 +1278,14 @@ SOURCE=.\CLMTSMeshFileLoader.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CMD3MeshFileLoader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CMD3MeshFileLoader.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CMeshCache.cpp
 # End Source File
 # Begin Source File
@@ -1375,6 +1419,14 @@ SOURCE=.\CQ3LevelMesh.cpp
 # Begin Source File
 
 SOURCE=.\CQ3LevelMesh.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CQuake3ShaderSceneNode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CQuake3ShaderSceneNode.h
 # End Source File
 # Begin Source File
 
@@ -2193,5 +2245,9 @@ SOURCE=.\os.h
 SOURCE=.\changes.txt
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\glxext.h
+# End Source File
 # End Target
 # End Project

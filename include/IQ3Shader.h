@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2002-2007 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -9,6 +9,7 @@
 #include "fast_atof.h"
 #include "IFileSystem.h"
 #include "IVideoDriver.h"
+#include "coreutil.h"
 
 namespace irr
 {
@@ -43,8 +44,8 @@ namespace quake3
 
 		void clear ()
 		{
-			name = core::IrrEmptyStringc;
-			content = core::IrrEmptyStringc;
+			name = core::irrEmtpyStringc;
+			content = core::irrEmtpyStringc;
 		}
 
 		s32 isValid () const
@@ -408,7 +409,7 @@ namespace quake3
 		{
 			s32 index = getIndex ( name );
 			if ( index < 0 )
-				return irr::core::IrrEmptyStringc;
+				return core::irrEmtpyStringc;
 
 			return Variable [ index ].content;
 		}
@@ -569,7 +570,7 @@ namespace quake3
 			video::ITexture* texture = 0;
 			for ( u32 g = 0; g != 2 ; ++g )
 			{
-				cutExtension ( loadFile, stringList[i] ).append ( extension[g] );
+				irr::core::cutFilenameExtension ( loadFile, stringList[i] ).append ( extension[g] );
 
 				if ( fileSystem->existFile ( loadFile.c_str() ) )
 				{

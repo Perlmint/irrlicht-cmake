@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2006 Nikolaus Gebhardt
+// Copyright (C) 2002-2007 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -101,8 +101,6 @@ public:
 	without its complete path.(should not use with Quake2 paks
 	\return Returns true if the archive was added successful, false if not. */
 	virtual bool addPakFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
-
-
 
 	//! Returns the string of the current working directory.
 	virtual const c8* getWorkingDirectory() = 0;

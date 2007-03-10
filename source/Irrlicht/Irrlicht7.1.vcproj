@@ -407,6 +407,9 @@
 					RelativePath=".\..\..\include\aabbox3d.h">
 				</File>
 				<File
+					RelativePath="..\..\include\coreutil.h">
+				</File>
+				<File
 					RelativePath=".\..\..\include\dimension2d.h">
 				</File>
 				<File
