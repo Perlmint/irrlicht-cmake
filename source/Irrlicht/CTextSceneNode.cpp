@@ -42,12 +42,12 @@ CTextSceneNode::~CTextSceneNode()
 		Font->drop();
 }
 
-void CTextSceneNode::OnPreRender()
+void CTextSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
 		SceneManager->registerNodeForRendering(this, ESNRP_TRANSPARENT);
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 
@@ -233,7 +233,7 @@ void CBillboardTextSceneNode::setText(const wchar_t* text)
 
 
 //! pre render event
-void CBillboardTextSceneNode::OnPreRender()
+void CBillboardTextSceneNode::OnRegisterSceneNode()
 {
 	if (!IsVisible || !Font || !Mesh)
 		return;
@@ -319,7 +319,7 @@ void CBillboardTextSceneNode::OnPreRender()
 	mat.transformBox(BBox);
 
 	SceneManager->registerNodeForRendering(this, ESNRP_TRANSPARENT);
-	ISceneNode::OnPreRender();
+	ISceneNode::OnRegisterSceneNode();
 }
 
 

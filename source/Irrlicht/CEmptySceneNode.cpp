@@ -24,12 +24,12 @@ CEmptySceneNode::CEmptySceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id)
 
 
 //! pre render event
-void CEmptySceneNode::OnPreRender()
+void CEmptySceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
 		SceneManager->registerNodeForRendering(this);
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 

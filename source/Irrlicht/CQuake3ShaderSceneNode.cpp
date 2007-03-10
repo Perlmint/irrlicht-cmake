@@ -155,7 +155,7 @@ void CQuake3ShaderSceneNode::loadTextures ( io::IFileSystem * fileSystem )
 /*
 	Register each texture stage, if first is visible
 */
-void CQuake3ShaderSceneNode::OnPreRender()
+void CQuake3ShaderSceneNode::OnRegisterSceneNode()
 {
 	PassedCulling = 0;
 	StageCall = 0;
@@ -675,7 +675,7 @@ u32 CQuake3ShaderSceneNode::animate( u32 stage,core::matrix4 &texture )
 }
 
 
-void CQuake3ShaderSceneNode::OnPostRender(u32 timeMs)
+void CQuake3ShaderSceneNode::OnAnimate(u32 timeMs)
 {
 	TimeAbs = f32( timeMs ) * ( 1.f/1000.f);
 }

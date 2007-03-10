@@ -86,7 +86,7 @@ public:
 
 
 	/*
-	Before it is drawn, the OnPreRender() method of every scene node in the scene 
+	Before it is drawn, the OnRegisterSceneNode() method of every scene node in the scene 
 	is called by the scene manager. If the scene node wishes to draw itself,
 	it may register itself in the scene manager to be drawn. This is necessary to
 	tell the scene manager when it should call the ::render method. For example
@@ -97,15 +97,15 @@ public:
 	So here we simply register the scene node to get render normally. If we would like
 	to let it be rendered like cameras or light, we would have to call
 	SceneManager->registerNodeForRendering(this, SNRT_LIGHT_AND_CAMERA);
-	After this, we call the OnPreRender-method of the base class ISceneNode,
+	After this, we call the OnRegisterSceneNode-method of the base class ISceneNode,
 	which simply lets also all the child scene nodes of this node register themselves.
 	*/
-	virtual void OnPreRender()
+	virtual void OnRegisterSceneNode()
 	{
 		if (IsVisible)
 			SceneManager->registerNodeForRendering(this);
 
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 
 	/*
@@ -172,7 +172,7 @@ int main()
 		case 'b': driverType = video::EDT_DIRECT3D8;break;
 		case 'c': driverType = video::EDT_OPENGL;   break;
 		case 'd': driverType = video::EDT_SOFTWARE; break;
-		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
+		case 'e': driverType = video::EDT_BURNINGSVIDEO; break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 0;
 	}
@@ -235,8 +235,8 @@ int main()
 		{
 			core::stringw str = L"Irrlicht Engine [";
 			str += driver->getName();
-			str += L"] Tris: ";
-			str += (s32)driver->getPrimitiveCountDrawn();
+			str += L"] FPS: ";
+			str += (s32)driver->getFPS();
 
 			device->setWindowCaption(str.c_str());
 			frames=0;

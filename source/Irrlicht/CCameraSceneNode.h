@@ -90,7 +90,7 @@ namespace scene
 		virtual void setFOV(f32 fovy);
 
 		//! PreRender event
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! Render
 		virtual void render();

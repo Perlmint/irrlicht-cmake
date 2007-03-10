@@ -119,7 +119,7 @@ namespace scene
 		//! SetCameraRotationDeltaThreshold functions.  This also determines if a given patch
 		//! for the scene node is within the view frustum and if it's not the indices are not
 		//! generated for that patch.
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! Render the scene node
 		virtual void render();

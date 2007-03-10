@@ -1014,7 +1014,7 @@ void CSceneManager::drawAll()
 	}
 
 	// do animations and other stuff.
-	OnPostRender(os::Timer::getTime());
+	OnAnimate(os::Timer::getTime());
 
 	/*!
 		First Scene Node for prerendering should be the active camera
@@ -1023,12 +1023,12 @@ void CSceneManager::drawAll()
 	camWorldPos.set(0,0,0);
 	if ( ActiveCamera )
 	{
-		ActiveCamera->OnPreRender();
+		ActiveCamera->OnRegisterSceneNode();
 		camWorldPos = ActiveCamera->getAbsolutePosition();
 	}
 
 	// let all nodes register themselves
-	OnPreRender();
+	OnRegisterSceneNode();
 
 	u32 i; // new ISO for scoping problem in some compilers
 
@@ -1123,9 +1123,6 @@ void CSceneManager::drawAll()
 			ShaderNodeList[g].clear();
 		}
 	}
-
-	// do animations and other stuff.
-	//OnPostRender(os::Timer::getTime());
 
 	clearDeletionList();
 

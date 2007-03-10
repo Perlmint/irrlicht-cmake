@@ -21,7 +21,7 @@ class CSkyDomeSceneNode : public ISceneNode
 		f64 texturePercentage, f64 spherePercentage, ISceneNode* root,
 		ISceneManager* smgr, s32 id);
 		virtual ~CSkyDomeSceneNode();
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 		virtual void render();
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 		virtual video::SMaterial& getMaterial(u32 i);

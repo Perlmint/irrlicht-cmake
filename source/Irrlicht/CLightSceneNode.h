@@ -25,7 +25,7 @@ public:
 	virtual ~CLightSceneNode();
 
 	//! pre render event
-	virtual void OnPreRender();
+	virtual void OnRegisterSceneNode();
 
 	//! render
 	virtual void render();

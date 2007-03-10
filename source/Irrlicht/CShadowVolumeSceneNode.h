@@ -28,7 +28,7 @@ namespace scene
 		virtual void setMeshToRenderFrom(IMesh* mesh);
 
 		//! pre render method
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! renders the node.
 		virtual void render();

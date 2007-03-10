@@ -13,12 +13,9 @@ API changes:
 - testing matrix4 for identity before multiply. faster check for identity for the positive case using an additional boolean flag.
 Some API changes: the internal array M is now private. Use mat[x] instead of mat.M[x]. The pointer to M is acquired by mat.pointer(), some methods take a matrix4 reference instead of a f32*.
 
-- Changed SceneManager:drawAll to
-	-> OnPostRender all
-	-> Active Camera->OnPreRender
-	-> OnPreRender All
-	reason: 
-		- incorrect Transformation, was always one frame off
+- the methods OnPreRender and OnPostRender of ISceneNode have been changed to OnAnimate and 
+  OnRegisterSceneNode(). Also, they are now called at different times: OnAnimate is called
+  every frame before anything else.
 
 Other changes:
 --------------

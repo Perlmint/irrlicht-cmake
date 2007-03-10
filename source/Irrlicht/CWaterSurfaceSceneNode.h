@@ -27,7 +27,7 @@ namespace scene
 		virtual ~CWaterSurfaceSceneNode();
 
 		//! frame
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() { return ESNT_WATER_SURFACE; }

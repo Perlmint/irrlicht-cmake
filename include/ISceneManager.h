@@ -816,7 +816,7 @@ namespace scene
 
 		//! Registers a node for rendering it at a specific time.
 		/** This method should only be used by SceneNodes when they get a
-		 ISceneNode::OnPreRender() call.
+		 ISceneNode::OnRegisterSceneNode() call.
 		 \param node: Node to register for drawing. Usually scene nodes would set 'this'
 		 as parameter here because they want to be drawn.
 		 \param pass: Specifies when the mode wants to be drawn in relation to the other nodes.

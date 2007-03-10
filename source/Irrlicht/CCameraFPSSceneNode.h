@@ -36,10 +36,10 @@ namespace scene
 		//! for changing their position, look at target or whatever. 
 		virtual bool OnEvent(SEvent event);
 
-		//! onPostRender is called just after rendering the whole scene.
+		//! OnAnimate() is called just before rendering the whole scene.
 		//! nodes may calculate or store animations here, and may do other useful things,
 		//! dependent on what they are.
-		virtual void OnPostRender(u32 timeMs);
+		virtual void OnAnimate(u32 timeMs);
 
 		//! sets the look at target of the camera
 		//! \param pos: Look at target of the camera.

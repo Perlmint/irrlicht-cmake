@@ -30,7 +30,7 @@ namespace scene
 		//! destructor
 		virtual ~CTextSceneNode();
 
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! renders the node.
 		virtual void render();
@@ -71,7 +71,7 @@ namespace scene
 		//! destructor
 		virtual ~CBillboardTextSceneNode();
 
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! renders the node.
 		virtual void render();

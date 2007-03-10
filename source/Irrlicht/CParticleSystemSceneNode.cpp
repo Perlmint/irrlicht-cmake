@@ -149,14 +149,14 @@ IParticleAffector* CParticleSystemSceneNode::createGravityAffector(
 
 
 //! pre render event
-void CParticleSystemSceneNode::OnPreRender()
+void CParticleSystemSceneNode::OnRegisterSceneNode()
 {
 	doParticleSystem(os::Timer::getTime());
 
 	if (IsVisible && (Particles.size() != 0))
 	{
 		SceneManager->registerNodeForRendering(this);
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 

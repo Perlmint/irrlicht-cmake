@@ -26,7 +26,7 @@ namespace scene
 		//! destructor
 		virtual ~CSkyBoxSceneNode();
 
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! renders the node.
 		virtual void render();

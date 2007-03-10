@@ -67,26 +67,37 @@ namespace scene
 
 
 		//! This method is called just before the rendering process of the whole scene.
-		//! Nodes may register themselves in the render pipeline during this call,
-		//! precalculate the geometry which should be renderered, and prevent their
-		//! children from being able to register them selfes if they are clipped by simply
-		//! not calling their OnPreRender-Method.
-		virtual void OnPreRender()
+		/** Nodes may register themselves in the render pipeline during this call,
+		 precalculate the geometry which should be renderered, and prevent their
+		 children from being able to register them selfes if they are clipped by simply
+		 not calling their OnRegisterSceneNode-Method. 
+		 If you are implementing your own scene node, you should overwrite this method
+		 with an implementtion code looking like this:
+		 \code
+		 if (IsVisible)
+			SceneManager->registerNodeForRendering(this);
+
+		 ISceneNode::OnRegisterSceneNode();
+		 \endcode
+	    */
+		virtual void OnRegisterSceneNode()
 		{
 			if (IsVisible)
 			{
 				core::list<ISceneNode*>::Iterator it = Children.begin();
 				for (; it != Children.end(); ++it)
-					(*it)->OnPreRender();
+					(*it)->OnRegisterSceneNode();
 			}
 		}
 
 
-		//! OnPostRender() is called just after rendering the whole scene.
+		//! OnAnimate() is called just before rendering the whole scene.
 		//! Nodes may calculate or store animations here, and may do other useful things,
-		//! dependent on what they are.
+		//! dependent on what they are. Also, OnAnimate() should be called for all
+		//! child scene nodes here. This method will called once per frame, independent
+		//! of if the scene node is visible or not.
 		//! \param timeMs: Current time in milli seconds.
-		virtual void OnPostRender(u32 timeMs)
+		virtual void OnAnimate(u32 timeMs)
 		{
 			if (IsVisible)
 			{
@@ -103,7 +114,7 @@ namespace scene
 
 				core::list<ISceneNode*>::Iterator it = Children.begin();
 				for (; it != Children.end(); ++it)
-					(*it)->OnPostRender(timeMs);
+					(*it)->OnAnimate(timeMs);
 			}
 		}
 
@@ -147,7 +158,7 @@ namespace scene
 		}
 
 
-		//! returns the absolute transformation of the node. Is recalculated every OnPostRender()-call.
+		//! returns the absolute transformation of the node. Is recalculated every OnAnimate()-call.
 		const core::matrix4& getAbsoluteTransformation() const
 		{
 			return AbsoluteTransformation;

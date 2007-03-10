@@ -87,10 +87,10 @@ bool CCameraMayaSceneNode::OnEvent(SEvent event)
 	return true;
 }
 
-//! onPostRender is called just after rendering the whole scene.
+//! OnAnimate() is called just before rendering the whole scene.
 //! nodes may calculate or store animations here, and may do other useful things,
 //! dependent on what they are.
-void CCameraMayaSceneNode::OnPostRender(u32 timeMs)
+void CCameraMayaSceneNode::OnAnimate(u32 timeMs)
 {
 	animate();
 

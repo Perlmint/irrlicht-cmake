@@ -431,20 +431,20 @@ namespace scene
 	//! SetCameraRotationDeltaThreshold functions.  This also determines if a given patch
 	//! for the scene node is within the view frustum and if it's not the indices are not
 	//! generated for that patch.
-	void CTerrainSceneNode::OnPreRender()
+	void CTerrainSceneNode::OnRegisterSceneNode()
 	{
 		if (!IsVisible || !SceneManager->getActiveCamera())
 			return;
 
 		preRenderLODCalculations();
 		preRenderIndicesCalculations();
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 
 	void CTerrainSceneNode::preRenderLODCalculations()
 	{
 		SceneManager->registerNodeForRendering( this );
-		// Do Not call ISceneNode::OnPreRender ( ), this node should have no children
+		// Do Not call ISceneNode::OnRegisterSceneNode ( ), this node should have no children
 
 		// Determine the camera rotation, based on the camera direction.
 		core::line3d<f32> line;
@@ -504,7 +504,7 @@ namespace scene
 	void CTerrainSceneNode::preRenderLODCalculations_old()
 	{
 		SceneManager->registerNodeForRendering( this );
-		// Do Not call ISceneNode::OnPreRender ( ), this node should have no children
+		// Do Not call ISceneNode::OnRegisterSceneNode ( ), this node should have no children
 
 		// Determine the camera rotation, based on the camera direction.
 		core::line3d<f32> line;

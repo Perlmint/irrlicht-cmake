@@ -25,7 +25,7 @@ namespace scene
 		//! destructor
 		virtual ~CCubeSceneNode();
 
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! renders the node.
 		virtual void render();

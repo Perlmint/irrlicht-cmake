@@ -195,7 +195,7 @@ void CCameraSceneNode::recalculateProjectionMatrix()
 
 
 //! prerender
-void CCameraSceneNode::OnPreRender()
+void CCameraSceneNode::OnRegisterSceneNode()
 {
 	// if upvector and vector to the target are the same, we have a
 	// problem. so solve this problem:
@@ -222,7 +222,7 @@ void CCameraSceneNode::OnPreRender()
 		SceneManager->registerNodeForRendering(this, ESNRP_CAMERA);
 
 	if (IsVisible)
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 }
 
 

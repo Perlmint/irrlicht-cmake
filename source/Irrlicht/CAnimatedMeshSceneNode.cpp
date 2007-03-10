@@ -111,7 +111,7 @@ u32 CAnimatedMeshSceneNode::buildFrameNr( u32 timeMs)
 }
 
 //! frame
-void CAnimatedMeshSceneNode::OnPreRender()
+void CAnimatedMeshSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
@@ -149,18 +149,18 @@ void CAnimatedMeshSceneNode::OnPreRender()
 		if (transparentCount)
 			SceneManager->registerNodeForRendering(this, scene::ESNRP_TRANSPARENT);
 
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 
 		for (s32 j=0; j<(s32)JointChildSceneNodes.size(); ++j)
 			if (JointChildSceneNodes[j])
-				JointChildSceneNodes[j]->OnPreRender();
+				JointChildSceneNodes[j]->OnRegisterSceneNode();
 	}
 }
 
 
 
-//! OnPostRender() is called just after rendering the whole scene.
-void CAnimatedMeshSceneNode::OnPostRender(u32 timeMs)
+//! OnAnimate() is called just before rendering the whole scene.
+void CAnimatedMeshSceneNode::OnAnimate(u32 timeMs)
 {
 	CurrentFrameNr = buildFrameNr ( timeMs );
 
@@ -174,7 +174,7 @@ void CAnimatedMeshSceneNode::OnPostRender(u32 timeMs)
 	}
 
 
-	IAnimatedMeshSceneNode::OnPostRender ( timeMs );
+	IAnimatedMeshSceneNode::OnAnimate ( timeMs );
 }
 
 

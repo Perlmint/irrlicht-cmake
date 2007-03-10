@@ -106,10 +106,10 @@ bool CCameraFPSSceneNode::OnEvent(SEvent event)
 
 
 
-//! onPostRender is called just after rendering the whole scene.
+//! OnAnimate() is called just before rendering the whole scene.
 //! nodes may calculate or store animations here, and may do other useful things,
 //! dependent on what they are.
-void CCameraFPSSceneNode::OnPostRender(u32 timeMs)
+void CCameraFPSSceneNode::OnAnimate(u32 timeMs)
 {
 	animate( timeMs );
 
@@ -122,7 +122,7 @@ void CCameraFPSSceneNode::OnPostRender(u32 timeMs)
 
 	core::list<ISceneNode*>::Iterator it = Children.begin();
 				for (; it != Children.end(); ++it)
-					(*it)->OnPostRender(timeMs);
+					(*it)->OnAnimate(timeMs);
 }
 
 

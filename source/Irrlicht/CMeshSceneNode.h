@@ -27,7 +27,7 @@ namespace scene
 		virtual ~CMeshSceneNode();
 
 		//! frame
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! renders the node.
 		virtual void render();

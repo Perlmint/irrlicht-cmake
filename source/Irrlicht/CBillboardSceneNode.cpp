@@ -55,12 +55,12 @@ CBillboardSceneNode::~CBillboardSceneNode()
 
 
 //! pre render event
-void CBillboardSceneNode::OnPreRender()
+void CBillboardSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
 		SceneManager->registerNodeForRendering(this);
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 

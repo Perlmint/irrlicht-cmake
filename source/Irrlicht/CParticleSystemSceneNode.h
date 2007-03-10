@@ -49,7 +49,7 @@ public:
 	virtual u32 getMaterialCount();
 
 	//! pre render event
-	virtual void OnPreRender();
+	virtual void OnRegisterSceneNode();
 
 	//! render
 	virtual void render();

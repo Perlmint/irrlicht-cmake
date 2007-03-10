@@ -43,7 +43,7 @@ CMeshSceneNode::~CMeshSceneNode()
 
 
 //! frame
-void CMeshSceneNode::OnPreRender()
+void CMeshSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
@@ -104,7 +104,7 @@ void CMeshSceneNode::OnPreRender()
 		if (transparentCount)
 			SceneManager->registerNodeForRendering(this, scene::ESNRP_TRANSPARENT);
 
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 

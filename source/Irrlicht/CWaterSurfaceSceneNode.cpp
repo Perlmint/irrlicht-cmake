@@ -47,7 +47,7 @@ CWaterSurfaceSceneNode::~CWaterSurfaceSceneNode()
 
 
 //! frame
-void CWaterSurfaceSceneNode::OnPreRender()
+void CWaterSurfaceSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
@@ -55,7 +55,7 @@ void CWaterSurfaceSceneNode::OnPreRender()
 
 		animateWaterSurface();
 
-		CMeshSceneNode::OnPreRender();
+		CMeshSceneNode::OnRegisterSceneNode();
 	}
 }
 

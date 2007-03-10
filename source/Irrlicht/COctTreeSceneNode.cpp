@@ -45,7 +45,7 @@ COctTreeSceneNode::~COctTreeSceneNode()
 
 
 
-void COctTreeSceneNode::OnPreRender()
+void COctTreeSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 	{
@@ -83,7 +83,7 @@ void COctTreeSceneNode::OnPreRender()
 		if (transparentCount)
 			SceneManager->registerNodeForRendering(this, scene::ESNRP_TRANSPARENT);
 
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 

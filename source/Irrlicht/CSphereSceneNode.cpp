@@ -213,12 +213,12 @@ const core::aabbox3d<f32>& CSphereSceneNode::getBoundingBox() const
 }
 
 
-void CSphereSceneNode::OnPreRender()
+void CSphereSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
 		SceneManager->registerNodeForRendering(this);
 
-	ISceneNode::OnPreRender();
+	ISceneNode::OnRegisterSceneNode();
 }
 
 

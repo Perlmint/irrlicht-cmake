@@ -28,9 +28,9 @@ public:
 
 	virtual ~CQuake3ShaderSceneNode ();
 
-	virtual void OnPreRender();
+	virtual void OnRegisterSceneNode();
 	virtual void render();
-	virtual void OnPostRender(u32 timeMs);
+	virtual void OnAnimate(u32 timeMs);
 	virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 	virtual u32 getMaterialCount();

@@ -23,7 +23,7 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 		//! This method is called just before the rendering process of the whole scene.
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
 		//! does nothing.
 		virtual void render();

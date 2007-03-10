@@ -30,13 +30,11 @@ namespace scene
 		//! sets the current frame. from now on the animation is played from this frame.
 		virtual void setCurrentFrame(s32 frame);
 
-		//! OnPostRender() is called just after rendering the whole scene.
-		//virtual void OnPostRender(u32 timeMs);
-
 		//! frame
-		virtual void OnPreRender();
+		virtual void OnRegisterSceneNode();
 
-		virtual void OnPostRender(u32 timeMs);
+		//! OnAnimate() is called just before rendering the whole scene.
+		virtual void OnAnimate(u32 timeMs);
 
 		//! renders the node.
 		virtual void render();

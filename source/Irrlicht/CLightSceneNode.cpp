@@ -36,14 +36,14 @@ CLightSceneNode::~CLightSceneNode()
 
 
 //! pre render event
-void CLightSceneNode::OnPreRender()
+void CLightSceneNode::OnRegisterSceneNode()
 {
 	doLightRecalc ();
 
 	if (IsVisible  )
 	{
 		SceneManager->registerNodeForRendering(this, ESNRP_LIGHT);
-		ISceneNode::OnPreRender();
+		ISceneNode::OnRegisterSceneNode();
 	}
 }
 
