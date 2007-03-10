@@ -672,7 +672,6 @@ void CIrrDeviceWin32::present(video::IImage* image, s32 windowId, core::rect<s32
 void CIrrDeviceWin32::closeDevice()
 {
 	DestroyWindow(HWnd);
-	run(); // consume quit message
 }
 
 
