@@ -71,11 +71,7 @@ void loadModel(const c8* fn)
 	core::stringc filename ( fn );
 
 	core::stringc extension;
-<<<<<<< .mine
 	core::getFileNameExtension ( extension, filename );
-=======
-	getFileNameExtension ( extension, filename );
->>>>>>> .r537
 	extension.make_lower();
 
 	// if a texture is loaded apply it to the current model..
@@ -132,6 +128,7 @@ void loadModel(const c8* fn)
 
 	Model = Device->getSceneManager()->addAnimatedMeshSceneNode(m);
 	Model->setMaterialFlag(video::EMF_LIGHTING, false);
+//	Model->setMaterialFlag(video::EMF_BACK_FACE_CULLING, false);
 	Model->setDebugDataVisible(scene::EDS_OFF);
 	Model->setAnimationSpeed(30);
 }
@@ -435,9 +432,10 @@ int main()
 
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
+	smgr->addLightSceneNode();
+	smgr->addLightSceneNode(0, core::vector3df(50,-50,100), video::SColorf(1.0f,1.0f,1.0f),20000);
 	// add our media directory as "search path"
 	Device->getFileSystem()->addFolderFileArchive ( "../../media/" );
-
 
 	/*
 		The next step is to read the configuration file. It is stored in the xml 
@@ -586,7 +584,7 @@ int main()
 
 	// create fps text 
 
-	IGUIStaticText* fpstext = env->addStaticText(L"", core::rect<s32>(400,4,470,23), true, false, bar);
+	IGUIStaticText* fpstext = env->addStaticText(L"", core::rect<s32>(400,4,570,23), true, false, bar);
 
 	// set window caption
 
@@ -640,8 +638,10 @@ int main()
 
 			driver->endScene();
 
-			core::stringw str = L"FPS: ";
-			str += driver->getFPS();
+			core::stringw str(L"FPS: ");
+			str.append(core::stringw(driver->getFPS()));
+			str += L" Tris: ";
+			str.append(core::stringw(driver->getPrimitiveCountDrawn()));
 			fpstext->setText(str.c_str());
 		}
 		else
