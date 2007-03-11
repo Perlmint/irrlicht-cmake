@@ -328,16 +328,21 @@ namespace video
 			}
 		}
 
+		SMaterial(const SMaterial& other)
+		{
+			// These pointers are checked during assignment
+			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+			{
+				TextureMatrix[i] = 0;
+			}
+			*this = other;
+		}
+
 		~SMaterial()
 		{
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 				if (TextureMatrix[i])
 					delete TextureMatrix[i];
-		}
-
-		SMaterial(const SMaterial& other)
-		{
-			*this = other;
 		}
 
 		SMaterial& operator=(const SMaterial& other)
@@ -355,10 +360,23 @@ namespace video
 			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 			{
 				Textures[i] = other.Textures[i];
-				if (other.TextureMatrix[i])
-					TextureMatrix[i] = new core::matrix4(*other.TextureMatrix[i]);
+				if (TextureMatrix[i])
+				{
+					if (other.TextureMatrix[i])
+						*TextureMatrix[i] = *other.TextureMatrix[i];
+					else
+					{
+						delete TextureMatrix[i];
+						TextureMatrix[i] = 0;
+					}
+				}
 				else
-					TextureMatrix[i] = 0;
+				{
+					if (other.TextureMatrix[i])
+						TextureMatrix[i] = new core::matrix4(*other.TextureMatrix[i]);
+					else
+						TextureMatrix[i] = 0;
+				}
 				TextureWrap[i] = other.TextureWrap[i];
 			}
 
