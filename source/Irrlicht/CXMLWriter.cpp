@@ -184,7 +184,7 @@ const CXMLWriter::XMLSpecialCharacters XMLWSChar[] =
 	{ L'<', L"&lt;" },
 	{ L'>', L"&gt;" },
 	{ L'"', L"&quot;" },
-	{ L'\0', 0}
+	{ L'\0', 0 }
 };
 
 

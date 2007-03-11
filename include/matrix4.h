@@ -59,7 +59,7 @@ namespace core
 			inline matrix4& operator=(const f32 scalar);
 
 			//! Returns pointer to internal array
-			const f32* const pointer() const { return M; }
+			const f32* pointer() const { return M; }
 			f32* pointer() { definitelyIdentityMatrix=false; return M; }
 
 			//! Returns true if other matrix is equal to this matrix.

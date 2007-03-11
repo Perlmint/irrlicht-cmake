@@ -524,6 +524,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	// connect glx context to window
 	if (isAvailableGLX && DriverType==video::EDT_OPENGL)
+	{
 	if (UseGLXWindow)
 	{
 		glxWin=glXCreateWindow(display,glxFBConfig,window,NULL);
@@ -564,6 +565,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		{
 			os::Printer::log("Could not create GLX rendering context.", ELL_WARNING);
 		}
+	}
 	}
 #endif // _IRR_COMPILE_WITH_OPENGL_
 

@@ -62,10 +62,10 @@ namespace video
 	//! build a nicer 32 Bit Color by extending dest lower bits with source high bits
 	inline u32 A1R5G5B5toA8R8G8B8(u32 color)
 	{
-		return	( ( -( (s32) color & 0x00008000 ) >> (s32) 31 ) & 0xFF000000 |
-				( color & 0x00007C00 ) << 9 | ( color & 0x00007000 ) << 4 |
-				( color & 0x000003E0 ) << 6 | ( color & 0x00000380 ) << 1 |
-				( color & 0x0000001F ) << 3 | ( color & 0x0000001C ) >> 2 
+		return	( (( -( (s32) color & 0x00008000 ) >> (s32) 31 ) & 0xFF000000 ) |
+				(( color & 0x00007C00 ) << 9) | (( color & 0x00007000 ) << 4) |
+				(( color & 0x000003E0 ) << 6) | (( color & 0x00000380 ) << 1) |
+				(( color & 0x0000001F ) << 3) | (( color & 0x0000001C ) >> 2) 
 				);
 	}
 

@@ -9,6 +9,7 @@
 #define __C_ANIMATED_MESH_B3D_H_INCLUDED__
 
 #include "IAnimatedMeshB3d.h"
+#include "IMesh.h"
 #include "IReadFile.h"
 
 #include "SMeshBuffer.h"

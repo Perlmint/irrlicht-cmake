@@ -736,7 +736,7 @@ bool COBJMeshFileLoader::retrieveVertexIndices(c8* pVertexData, s32* pIdx, const
 {
 	c8 word[16] = "";
 	const c8* pChar = goFirstWord(pVertexData, pBufEnd);
-	c8 idxType = 0;		// 0 = posIdx, 1 = texcoordIdx, 2 = normalIdx
+	u32 idxType = 0;	// 0 = posIdx, 1 = texcoordIdx, 2 = normalIdx
 	s32 index;
 
 	u32 i = 0;

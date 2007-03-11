@@ -56,7 +56,7 @@ namespace io
 		struct XMLSpecialCharacters
 		{
 			wchar_t Character;
-			wchar_t* Symbol;
+			const wchar_t* Symbol;
 		};
 
 	private:

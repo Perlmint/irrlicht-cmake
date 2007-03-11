@@ -92,9 +92,15 @@ core::stringc CAnimatedMeshB3d::stripPathString(core::string<c8> oldstring, bool
 	s32 lastB=oldstring.findLast('\\'); // back slash
 
 	if (!keepPath)
-		if (lastA==-1 && lastB==-1) return oldstring;
+	{
+		if (lastA==-1 && lastB==-1)
+			return oldstring;
+	}
 	else
-		if (lastA==-1 && lastB==-1) return core::stringc();
+	{
+		if (lastA==-1 && lastB==-1)
+			return core::stringc();
+	}
 
 
 	if (lastA > lastB)
