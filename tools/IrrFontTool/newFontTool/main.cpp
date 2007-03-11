@@ -289,6 +289,14 @@ void createGUI(IrrlichtDevice* device, CFontTool* fc)
 {
 	gui::IGUIEnvironment *env = device->getGUIEnvironment();
 
+	// change transparency of skin
+	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
+	{
+		video::SColor col = env->getSkin()->getColor((gui::EGUI_DEFAULT_COLOR)i);
+		col.setAlpha(255);
+		env->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
+	}
+
 	IGUIWindow *win = env->addWindow( core::rect<s32>(10,10,200,500), false, L"Font Creator");
 	win->getCloseButton()->setVisible(false);
 
