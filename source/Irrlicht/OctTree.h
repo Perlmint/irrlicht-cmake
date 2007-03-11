@@ -65,7 +65,7 @@ public:
 			IndexData[i].Indices = new u16[IndexData[i].MaxSize];
 
 			ic.MaterialId = meshes[i].MaterialId;
-			(*indexChunks).push_back(ic);
+			indexChunks->push_back(ic);
 
 			SIndexChunk& tic = (*indexChunks)[i];
 
@@ -82,7 +82,7 @@ public:
 	//! by this bounding box.
 	void calculatePolys(const core::aabbox3d<f32>& box)
 	{
-		for (s32 i=0; i<IndexDataCount; ++i)
+		for (u32 i=0; i<IndexDataCount; ++i)
 			IndexData[i].CurrentSize = 0;
 
 		Root->getPolys(box, IndexData, 0);
@@ -92,7 +92,7 @@ public:
 	//! by a view frustum.
 	void calculatePolys(const scene::SViewFrustum& frustum)
 	{
-		for (s32 i=0; i<IndexDataCount; ++i)
+		for (u32 i=0; i<IndexDataCount; ++i)
 			IndexData[i].CurrentSize = 0;
 
 		Root->getPolys(frustum, IndexData);
@@ -104,7 +104,7 @@ public:
 		return IndexData;
 	}
 
-	s32 getIndexDataCount()
+	u32 getIndexDataCount()
 	{
 		return IndexDataCount;
 	}
@@ -119,7 +119,7 @@ public:
 	//! destructor
 	~OctTree()
 	{
-		for (s32 i=0; i<IndexDataCount; ++i)
+		for (u32 i=0; i<IndexDataCount; ++i)
 			delete [] IndexData[i].Indices;
 
 		delete [] IndexData;
@@ -134,12 +134,12 @@ private:
 	public:
 
 		// constructor
-		OctTreeNode(u32& nodeCount, s32 currentdepth,
+		OctTreeNode(u32& nodeCount, u32 currentdepth,
 			const core::array<SMeshChunk>& allmeshdata,
 			core::array<SIndexChunk>* indices,
-			s32 minimalPolysPerNode) : IndexData(0)
+			s32 minimalPolysPerNode) : IndexData(0),
+			Depth(currentdepth+1)
 		{
-			depth = currentdepth+1;
 			++nodeCount;
 			
 			u32 i; // new ISO for scoping problem with different compilers
@@ -147,7 +147,7 @@ private:
 			for (i=0; i<8; ++i)
 				Children[i] = 0;
 
-			if ((*indices).empty())
+			if (indices->empty())
 			{
 				delete indices;
 				return;
@@ -157,7 +157,7 @@ private:
 
 			// find first point for bounding box
 
-			for (i=0; i<(*indices).size(); ++i)
+			for (i=0; i<indices->size(); ++i)
 			{
 				if (!(*indices)[i].Indices.empty())
 				{
@@ -175,8 +175,8 @@ private:
 
 			s32 totalPrimitives = 0;
 
-			// now letz calculate our bounding box
-			for (i=0; i<(*indices).size(); ++i)
+			// now lets calculate our bounding box
+			for (i=0; i<indices->size(); ++i)
 			{
 				totalPrimitives += (*indices)[i].Indices.size();
 				for (u32 j=0; j<(*indices)[i].Indices.size(); ++j)
@@ -205,7 +205,7 @@ private:
 				{
 					SIndexChunk ic;
 					ic.MaterialId = allmeshdata[i].MaterialId;
-					(*cindexChunks).push_back(ic);
+					cindexChunks->push_back(ic);
 
 					SIndexChunk& tic = (*cindexChunks)[i];
 
@@ -229,7 +229,7 @@ private:
 				}
 
 				if (added)
-					Children[ch] = new OctTreeNode(nodeCount, depth, 
+					Children[ch] = new OctTreeNode(nodeCount, Depth, 
 						allmeshdata, cindexChunks, minimalPolysPerNode);
 				else
 					delete cindexChunks;
@@ -246,7 +246,7 @@ private:
 		{
 			delete IndexData;
 
-			for (s32 i=0; i<8; ++i)
+			for (u32 i=0; i<8; ++i)
 				delete Children[i];
 		}
 
@@ -270,8 +270,8 @@ private:
 
 			//if (Box.intersectsWithBox(box))
 			{
-				s32 cnt = (*IndexData).size();
-				s32 i; // new ISO for scoping problem in some compilers
+				u32 cnt = IndexData->size();
+				u32 i; // new ISO for scoping problem in some compilers
 				
 				for (i=0; i<cnt; ++i)
 				{
@@ -325,7 +325,7 @@ private:
 
 			}
 
-			s32 cnt = (*IndexData).size();
+			s32 cnt = IndexData->size();
 			
 			for (i=0; i<cnt; ++i)
 			{
@@ -379,7 +379,7 @@ private:
 
 			}
 
-			s32 cnt = (*IndexData).size();
+			s32 cnt = IndexData->size();
 			
 			for (i=0; i<cnt; ++i)
 			{
@@ -407,7 +407,7 @@ private:
 			{
 				outBoxes.push_back(Box);
 				
-				for (s32 i=0; i<8; ++i)
+				for (u32 i=0; i<8; ++i)
 					if (Children[i])
 						Children[i]->renderBoundingBoxes(box, outBoxes);
 			}
@@ -415,15 +415,15 @@ private:
 
 	private:
 
-		core::aabbox3d<f32> Box;
+		core::aabbox3df Box;
 		core::array<SIndexChunk>* IndexData;
 		OctTreeNode* Children[8];
-		s32 depth;
+		u32 Depth;
 	};
 
 	OctTreeNode* Root;
 	SIndexData* IndexData;
-	s32 IndexDataCount;
+	u32 IndexDataCount;
 };
 
 } // end namespace

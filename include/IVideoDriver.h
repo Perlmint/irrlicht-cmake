@@ -14,7 +14,6 @@
 #include "position2d.h"
 #include "IReadFile.h"
 #include "SMaterial.h"
-#include "SLight.h"
 #include "IImageLoader.h"
 #include "IImageWriter.h"
 #include "IMeshBuffer.h"
@@ -40,6 +39,7 @@ namespace video
 	struct S3DVertex;
 	struct S3DVertex2TCoords;
 	struct S3DVertexTangents;
+	struct SLight;
 
 	//! enumeration for querying features of the video driver.
 	enum E_VIDEO_DRIVER_FEATURE

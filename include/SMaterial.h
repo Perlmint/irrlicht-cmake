@@ -335,6 +335,49 @@ namespace video
 					delete TextureMatrix[i];
 		}
 
+		SMaterial(const SMaterial& other)
+		{
+			*this = other;
+		}
+
+		SMaterial& operator=(const SMaterial& other)
+		{
+			MaterialType = other.MaterialType;
+
+			AmbientColor = other.AmbientColor;
+			DiffuseColor = other.DiffuseColor;
+			EmissiveColor = other.EmissiveColor;
+			SpecularColor = other.SpecularColor;
+			Shininess = other.Shininess;
+			MaterialTypeParam = other.MaterialTypeParam;
+			MaterialTypeParam2 = other.MaterialTypeParam2;
+			Thickness = other.Thickness;
+			for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+			{
+				Textures[i] = other.Textures[i];
+				if (other.TextureMatrix[i])
+					TextureMatrix[i] = new core::matrix4(*other.TextureMatrix[i]);
+				else
+					TextureMatrix[i] = 0;
+				TextureWrap[i] = other.TextureWrap[i];
+			}
+
+			Wireframe = other.Wireframe;
+			PointCloud = other.PointCloud;
+			GouraudShading = other.GouraudShading;
+			Lighting = other.Lighting;
+			ZBuffer = other.ZBuffer;
+			ZWriteEnable = other.ZWriteEnable;
+			BackfaceCulling = other.BackfaceCulling;
+			BilinearFilter = other.BilinearFilter;
+			TrilinearFilter = other.TrilinearFilter;
+			AnisotropicFilter = other.AnisotropicFilter;
+			FogEnable = other.FogEnable;
+			NormalizeNormals = other.NormalizeNormals;
+
+			return *this;
+		}
+
 		//! Type of the material. Specifies how everything is blended together
 		E_MATERIAL_TYPE MaterialType;
 

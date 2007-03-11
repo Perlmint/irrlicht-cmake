@@ -96,7 +96,7 @@ namespace core
 		return (a + tolerance > b) && (a - tolerance < b);
 	}
 
-	//! returns if a float equals the other one, taking floating 
+	//! returns if a float equals zero, taking floating 
 	//! point rounding errors into account
 	inline bool iszero(const f32 a, const f32 tolerance = ROUNDING_ERROR_32)
 	{
@@ -138,8 +138,8 @@ namespace core
 	#define F32_AS_U32(f)			(*((u32 *) &(f)))
 	#define F32_AS_U32_POINTER(f)	( ((u32 *) &(f)))
 
-	#define F32_VALUE_0				0x00000000
-	#define F32_VALUE_1				0x3f800000	
+	#define F32_VALUE_0			0x00000000
+	#define F32_VALUE_1			0x3f800000	
 	#define F32_SIGN_BIT			0x80000000U
 	#define F32_EXPON_MANTISSA		0x7FFFFFFFU
 

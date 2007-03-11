@@ -91,8 +91,8 @@ public:
 		allocator.deallocate(old_data); //delete [] old_data;
 	}
 
-	//! Adds an element at back of array. If the array is to small to
-	//! add this new element, the array is made bigger.
+	//! Adds an element at back of array. If the array is too small to
+	//! add this new element it is made bigger.
 	//! \param element: Element to add at the back of the array.
 	void push_back(const T& element)
 	{
@@ -107,14 +107,13 @@ public:
 			reallocate(used * 2 +1); // increase data block
 
 			allocator.construct(&data[used++], e); // data[used++] = e;  // push_back
-
-			is_sorted = false;
-			return;
 		}
-
-		//data[used++] = element;
-		// instead of using this here, we copy it the safe way:
-		allocator.construct(&data[used++], element);
+		else
+		{
+			//data[used++] = element;
+			// instead of using this here, we copy it the safe way:
+			allocator.construct(&data[used++], element);
+		}
 
 		is_sorted = false;
 	}
@@ -129,7 +128,7 @@ public:
 		if (used + 1 > allocated)
 			reallocate(used +1);
 
-		for (int i=(int)used; i>0; --i)
+		for (u32 i=used; i>0; --i)
 		{
 			//data[i] = data[i-1];
 			allocator.construct(&data[i], data[i-1]);
@@ -155,7 +154,7 @@ public:
 		if (used + 1 > allocated)
 			reallocate(used +1);
 
-		for (u32 i=used++; i>index; i--)
+		for (u32 i=used++; i>index; --i)
 			allocator.construct(&data[i], data[i-1]); // data[i] = data[i-1];
 
 		allocator.construct(&data[index], element); // data[index] = element;
@@ -443,7 +442,7 @@ public:
 	{
 		for (s32 i=used-1; i>=0; --i)
 			if (data[i] == element)
-				return (s32)i;
+				return i;
 
 		return -1;
 	}

@@ -16,6 +16,7 @@
 #include "IMeshBuffer.h"
 #include "CFPSCounter.h"
 #include "S3DVertex.h"
+#include "SLight.h"
 
 namespace irr
 {
