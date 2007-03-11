@@ -128,7 +128,6 @@ bool IrrlichtDevice::get_WindowActive()
 void IrrlichtDevice::CloseDevice()
 {
 	Device->closeDevice();
-	Device->run(); // eat WM_QUIT
 }
 
 System::String* IrrlichtDevice::get_Version()

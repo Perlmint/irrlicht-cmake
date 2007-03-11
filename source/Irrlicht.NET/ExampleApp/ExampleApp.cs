@@ -246,7 +246,9 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 		// draw everything
 
+		device.Run(); // fix for a temporary bug where quit messages are not be removed in the queue
 		while(device.Run())
+		{
 			if (device.WindowActive)
 			{
 				device.VideoDriver.BeginScene(true, true, new Color(255,0,0,50));
@@ -256,6 +258,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 				device.VideoDriver.EndScene();
 			}
+		}
 	}
 
 
@@ -373,6 +376,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 		int fps = 0;
 
+		device.Run(); // fix for a temporary bug where quit messages are not be removed in the queue
 		while(device.Run())
 			if (device.WindowActive)
 			{
@@ -456,6 +460,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 		// draw everything
 
+		device.Run(); // fix for a temporary bug where quit messages are not be removed in the queue
 		while(device.Run() && f.Visible)
 			if (device.WindowActive)
 			{
@@ -599,7 +604,7 @@ class ExampleApp : IEventReceiver, IShaderConstantSetCallBack
 
 		device.CursorControl.Visible = false;
 
-
+		device.Run(); // fix for a temporary bug where quit messages are not be removed in the queue
 		while(device.Run())
 			if (device.WindowActive)
 			{

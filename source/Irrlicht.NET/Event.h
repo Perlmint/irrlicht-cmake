@@ -47,6 +47,9 @@ namespace Irrlicht
 			//! A gui element has lost its focus.
 			ELEMENT_FOCUS_LOST = 0,
 
+			//! A gui element has got the focus.
+			ELEMENT_FOCUSED,
+
 			//! A gui element was hovered.
 			ELEMENT_HOVERED,
 
