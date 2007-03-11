@@ -9,6 +9,7 @@
 #include "IVideoDriver.h"
 #include "IMaterialRendererServices.h"
 #include "os.h"
+#include "SLight.h"
 
 namespace irr
 {
@@ -205,7 +206,7 @@ namespace video
 
 		for (u32 i=0; i<2; ++i)
 		{
-			video::SLight light; 
+			SLight light; 
 
 			if (i<cnt)
 				light = driver->getDynamicLight(i);

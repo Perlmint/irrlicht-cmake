@@ -138,7 +138,7 @@
 #include "irrTypes.h"
 #include "coreutil.h"
 
-/*! \mainpage Irrlicht Engine 1.3beta API documentation
+/*! \mainpage Irrlicht Engine 1.3 API documentation
  *
  * <div align="center"><img src="logobig.png" ></div>
  *
