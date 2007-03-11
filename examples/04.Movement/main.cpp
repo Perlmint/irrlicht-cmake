@@ -192,7 +192,7 @@ int main()
 	Add a colorful irrlicht logo
 	*/
 	device->getGUIEnvironment()->addImage(
-		driver->getTexture("../../media/irrlichtlogo2.png"),
+		driver->getTexture("../../media/irrlichtlogoalpha2.tga"),
 		core::position2d<s32>(10,10));
 
 	/*

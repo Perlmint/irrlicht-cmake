@@ -34,14 +34,9 @@ public:
 		Room = room;
 		Driver = driver;
 
-		// set new Skin
-		gui::IGUISkin* newskin = env->createSkin( gui::EGST_BURNING_SKIN);
-		env->setSkin(newskin);
-		newskin->drop();
-
 		// set a nicer font
 		gui::IGUISkin* skin = env->getSkin();
-		gui::IGUIFont* font = env->getFont("../../media/fontlucida.png");
+		gui::IGUIFont* font = env->getFont("../../media/fonthaettenschweiler.bmp");
 		if (font)
 			skin->setFont(font);
 

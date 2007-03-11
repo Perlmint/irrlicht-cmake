@@ -10,6 +10,9 @@ CDemo::CDemo(bool f, bool m, bool s, bool a, bool v, video::E_DRIVER_TYPE d)
  skyboxNode(0), mapSelector(0), metaSelector(0), campFire(0), device(0),
  additive(a), vsync(v)
 {
+#ifdef USE_IRRKLANG
+	irrKlang = 0;
+#endif
 }
 
 
@@ -574,7 +577,7 @@ void CDemo::createLoadingScreen()
 	// load bigger font
 
 	device->getGUIEnvironment()->getSkin()->setFont(
-		device->getGUIEnvironment()->getFont("../../media/fontlucida.png"));
+		device->getGUIEnvironment()->getFont("../../media/fonthaettenschweiler.bmp"));
 
 	// set new font color
 

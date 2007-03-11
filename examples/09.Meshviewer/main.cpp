@@ -71,7 +71,11 @@ void loadModel(const c8* fn)
 	core::stringc filename ( fn );
 
 	core::stringc extension;
+<<<<<<< .mine
+	core::getFileNameExtension ( extension, filename );
+=======
 	getFileNameExtension ( extension, filename );
+>>>>>>> .r537
 	extension.make_lower();
 
 	// if a texture is loaded apply it to the current model..
@@ -103,21 +107,6 @@ void loadModel(const c8* fn)
 		Device->getFileSystem()->addZipFileArchive( filename.c_str () );
 		return;
 	}
-
-/*
-
-	//c8 filename[1024];
-	//strcpy(filename, fn);
-	c8* found = 0;
-
-	if ((found = strstr(filename.c_str(), ".pk3")))
-	{
-		Device->getFileSystem()->addZipFileArchive( filename.c_str () );
-		strcpy(found +1, "bsp");
-	}
-*/
-	// if file is a texture apply it to a current model
-
 
 	// load a model into the engine
 
@@ -444,11 +433,6 @@ int main()
 	IGUIEnvironment* env = Device->getGUIEnvironment();
 	scene::ISceneManager* smgr = Device->getSceneManager();
 
-	// set new Skin
-	gui::IGUISkin* newskin = env->createSkin( gui::EGST_BURNING_SKIN);
-	env->setSkin(newskin);
-	newskin->drop();
-
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
 	// add our media directory as "search path"
@@ -514,7 +498,7 @@ int main()
 	// set a nicer font
 
 	IGUISkin* skin = env->getSkin();
-	IGUIFont* font = env->getFont("fontlucida.png");
+	IGUIFont* font = env->getFont("fonthaettenschweiler.bmp");
 	if (font)
 		skin->setFont(font);
 
@@ -558,19 +542,6 @@ int main()
 	// create toolbar
 
 	gui::IGUIToolBar* bar = env->addToolBar();
-/*
-	video::ITexture* image = driver->getTexture("../../media/open.bmp");
-	driver->makeColorKeyTexture(image, core::position2d<s32>(0,0));
-	bar->addButton(1102, 0, image, 0, false, true);
-
-	image = driver->getTexture("../../media/help.bmp");
-	driver->makeColorKeyTexture(image, core::position2d<s32>(0,0));
-	bar->addButton(1103, 0, image, 0, false, true);
-
-	image = driver->getTexture("../../media/tools.bmp");
-	driver->makeColorKeyTexture(image, core::position2d<s32>(0,0));
-	bar->addButton(1104, 0, image, 0, false, true);
-*/
 
 	video::ITexture* image = driver->getTexture("open.png");
 	bar->addButton(1102, 0, L"Open a model",image, 0, false, true);
@@ -580,7 +551,6 @@ int main()
 
 	image = driver->getTexture("zip.png");
 	bar->addButton(1105, 0, L"Set Model Archive",image, 0, false, true);
-
 
 	image = driver->getTexture("help.png");
 	bar->addButton(1103, 0, L"Open Help", image, 0, false, true);
@@ -602,14 +572,14 @@ int main()
 	*/
 
 	// disable alpha
-/*
+
 	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
 	{
 		video::SColor col = env->getSkin()->getColor((gui::EGUI_DEFAULT_COLOR)i);
 		col.setAlpha(255);
 		env->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
 	}
-*/
+
 	// add a tabcontrol
 
 	createToolBox();

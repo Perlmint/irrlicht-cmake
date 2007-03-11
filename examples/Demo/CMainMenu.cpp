@@ -99,7 +99,7 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 	newskin->drop();
 
 	// load font
-	gui::IGUIFont* font = guienv->getFont("../../media/fontlucida.png");
+	gui::IGUIFont* font = guienv->getFont("../../media/fonthaettenschweiler.bmp");
 	if (font)
 		guienv->getSkin()->setFont(font);
 

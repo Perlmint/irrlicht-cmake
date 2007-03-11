@@ -114,12 +114,7 @@ int main()
 	scene::ISceneNode* node = 0;
 	
 	if (mesh)
-	{
 		node = smgr->addOctTreeSceneNode(mesh->getMesh(0), 0, -1, 128);
-		//node = smgr->addMeshSceneNode ( mesh->getMesh ( 0 ) );
-		//((scene::IMeshSceneNode*)node )->setReadOnlyMaterials ( true );
-
-	}
 
 	/*
 	Because the level was modelled not around the origin (0,0,0), we translate
