@@ -169,22 +169,24 @@ namespace Scene
 
 	void ISceneNode::set_AutomaticCulling(bool enabled)
 	{
-		SceneNode->setAutomaticCulling(enabled);
+		// TODO: culling enum
+		SceneNode->setAutomaticCulling(enabled ? irr::scene::EAC_BOX : irr::scene::EAC_OFF);
 	}
 
 	bool ISceneNode::get_AutomaticCulling()
 	{
-		return SceneNode->getAutomaticCulling();
+		// TODO: culling enum
+		return SceneNode->getAutomaticCulling() != irr::scene::EAC_OFF;
 	}
 
 	void ISceneNode::set_DebugDataVisible(bool visible)
 	{
-		SceneNode->setDebugDataVisible(visible);
+		SceneNode->setDebugDataVisible(visible ? irr::scene::EDS_FULL : irr::scene::EDS_OFF);
 	}
 
 	bool ISceneNode::get_DebugDataVisible()
 	{
-		return SceneNode->isDebugDataVisible();
+		return SceneNode->isDebugDataVisible() != irr::scene::EDS_OFF;
 	}
 
 	void ISceneNode::set_IsDebugObject(bool debugObject)

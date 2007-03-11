@@ -599,6 +599,8 @@ namespace video
 				case EMF_MATERIAL_FLAG_COUNT:
 					break;
 			}
+
+			return false;
 		}
 
 		//! Compare operator

@@ -55,10 +55,9 @@ namespace GUI
 		/// adds an list item with an icon
 		/// </summary>
 		/// <param name="text">Text of list entry</param>
-		/// <param name="icon">Text of the Icon. This text can be for example one of the texts defined in
-		///  GUIIcons.h.</param>
+		/// <param name="icon">Icon index.</param>
 		/// <returns> returns the id of the new created item</returns>
-		int AddItem(System::String* text, System::String* icon);
+		int AddItem(System::String* text, int icon);
 
 		/// <summary>
 		/// Sets the font which should be used as icon font. This font is set to the Irrlicht engine
@@ -66,7 +65,7 @@ namespace GUI
 		/// An icon is a string, displayed with the icon font. When using the build-in-font of the
 		/// Irrlicht engine as icon font, the icon strings defined in GUIIcons.h can be used.
 		/// </summary>
-		__property void set_IconFont(IGUIFont* font);
+		//__property void set_IconFont(IGUIFont* font);
 
 		/// <summary>
 		/// clears the list, deletes all items in the listbox

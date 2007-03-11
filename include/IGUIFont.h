@@ -10,7 +10,7 @@
 #include "irrTypes.h"
 #include "SColor.h"
 #include "irrArray.h"
-#include <ITexture.h>
+#include "ITexture.h"
 
 namespace irr
 {

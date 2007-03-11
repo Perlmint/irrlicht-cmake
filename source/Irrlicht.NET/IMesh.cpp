@@ -32,7 +32,7 @@ namespace Scene
 
 	void IMesh::set_BoundingBox(Core::Box3D box)
 	{
-		Mesh->getBoundingBox() = irr::NativeConverter::getNativeBox(box);
+		Mesh->setBoundingBox( irr::NativeConverter::getNativeBox(box) );
 	}
 
 	void IMesh::setMaterialFlag(Video::MaterialFlag flag, bool newvalue)

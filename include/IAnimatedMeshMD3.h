@@ -5,7 +5,7 @@
 #ifndef __I_ANIMATED_MESH_MD3_H_INCLUDED__
 #define __I_ANIMATED_MESH_MD3_H_INCLUDED__
 
-#include <IAnimatedMesh.h>
+#include "IAnimatedMesh.h"
 #include "IQ3Shader.h"
 #include "quaternion.h"
 

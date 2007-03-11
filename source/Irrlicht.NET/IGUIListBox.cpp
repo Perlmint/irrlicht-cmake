@@ -38,17 +38,17 @@ namespace GUI
 		return get_NativeListBox()->addItem(pinchars);
 	}
 
-	int IGUIListBox::AddItem(System::String* text, System::String* icon)
+	int IGUIListBox::AddItem(System::String* text, int icon)
 	{
 		const wchar_t __pin* pinchars = PtrToStringChars(text); 
-		const wchar_t __pin* pinchars2 = PtrToStringChars(text); 
-		return get_NativeListBox()->addItem(pinchars, pinchars2);
+		return get_NativeListBox()->addItem(pinchars, icon);
 	}
 
-	void IGUIListBox::set_IconFont(IGUIFont* font)
+	// TODO: replace with sprite bank
+	/*void IGUIListBox::set_IconFont(IGUIFont* font)
 	{
 		get_NativeListBox()->setIconFont(font ? font->get_NativeFont() : 0);
-	}
+	}*/
 
 	void IGUIListBox::Clear()
 	{

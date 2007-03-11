@@ -55,7 +55,7 @@ public:
 	/// Sets the speed with witch the animation is played.
 	/// </summary>
 	/// <param name="framesPerSecond"/> Frames per second played.</param>
-	__property void set_AnimationSpeed(int framesPerSecond);
+	__property void set_AnimationSpeed(float framesPerSecond);
 
 	/// <summary>
 	/// Creates shadow volume scene node as child of this node

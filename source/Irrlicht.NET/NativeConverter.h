@@ -113,7 +113,7 @@ namespace irr
 		{
 			Irrlicht::Core::Matrix4 nmat;
 			for (int i=0; i<16; ++i)
-				nmat.Members[i] = mat.M[i];
+				nmat.Members[i] = mat[i];
 
 			return nmat;
 		}
@@ -122,7 +122,7 @@ namespace irr
 		{
 			irr::core::matrix4 nmat;
 			for (int i=0; i<16; ++i)
-				nmat.M[i] = mat.Members[i];
+				nmat[i] = mat.Members[i];
 
 			return nmat;
 		}
@@ -134,13 +134,13 @@ namespace irr
 			mat.DiffuseColor.color = material.DiffuseColor.color;
 			mat.EmissiveColor.color = material.EmissiveColor.color;
 			mat.Type = (Irrlicht::Video::MaterialType)material.MaterialType;
-			mat.Texture1 = material.Texture1 ? new Irrlicht::Video::ITexture(material.Texture1) : 0;
-			mat.Texture2 = material.Texture2 ? new Irrlicht::Video::ITexture(material.Texture2) : 0;
-			mat.Texture3 = material.Texture3 ? new Irrlicht::Video::ITexture(material.Texture3) : 0;
-			mat.Texture4 = material.Texture4 ? new Irrlicht::Video::ITexture(material.Texture4) : 0;
+			mat.Texture1 = material.Textures[0] ? new Irrlicht::Video::ITexture(material.Textures[0]) : 0;
+			mat.Texture2 = material.Textures[1] ? new Irrlicht::Video::ITexture(material.Textures[1]) : 0;
+			mat.Texture3 = material.Textures[2] ? new Irrlicht::Video::ITexture(material.Textures[2]) : 0;
+			mat.Texture4 = material.Textures[3] ? new Irrlicht::Video::ITexture(material.Textures[3]) : 0;
 
 			for (int i=0; i<irr::video::EMF_MATERIAL_FLAG_COUNT; ++i)
-				mat.Flags[i] = material.Flags[i];
+				mat.Flags[i] = material.getFlag((irr::video::E_MATERIAL_FLAG)i);
 
 			return mat;
 		}
@@ -152,13 +152,13 @@ namespace irr
 			mat.DiffuseColor.color = material.DiffuseColor.color;
 			mat.EmissiveColor.color = material.EmissiveColor.color;
 			mat.MaterialType = (irr::video::E_MATERIAL_TYPE)material.Type;
-			mat.Texture1 = material.Texture1 ? material.Texture1->get_NativeTexture() : 0;
-			mat.Texture2 = material.Texture2 ? material.Texture2->get_NativeTexture() : 0;
-			mat.Texture3 = material.Texture3 ? material.Texture3->get_NativeTexture() : 0;
-			mat.Texture4 = material.Texture4 ? material.Texture4->get_NativeTexture() : 0;
+			mat.Textures[0] = material.Texture1 ? material.Texture1->get_NativeTexture() : 0;
+			mat.Textures[1] = material.Texture2 ? material.Texture2->get_NativeTexture() : 0;
+			mat.Textures[2] = material.Texture3 ? material.Texture3->get_NativeTexture() : 0;
+			mat.Textures[3] = material.Texture4 ? material.Texture4->get_NativeTexture() : 0;
 
 			for (int i=0; i<irr::video::EMF_MATERIAL_FLAG_COUNT; ++i)
-				mat.Flags[i] = material.Flags[i];
+				mat.setFlag( (irr::video::E_MATERIAL_FLAG)i, material.Flags[i] );
 
 			return mat;
 		}

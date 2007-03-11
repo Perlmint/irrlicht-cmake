@@ -51,7 +51,7 @@ namespace Video
 	{
 		irr::core::matrix4 imat;
 		for (int i=0; i<16; ++i)
-			imat.M[i] = mat.Members[i];
+			imat[i] = mat.Members[i];
 
 		Driver->setTransform((irr::video::E_TRANSFORMATION_STATE)state, imat);
 	}
@@ -63,7 +63,7 @@ namespace Video
 		irr::core::matrix4 imat = Driver->getTransform((irr::video::E_TRANSFORMATION_STATE)state );
 
 		for (int i=0; i<16; ++i)
-			mat.Members[i] = imat.M[i];
+			mat.Members[i] = imat[i];
 
 		return mat;
 	}

@@ -30,7 +30,7 @@ namespace Scene
 		return getAnimatedMeshSceneNode()->setFrameLoop(begin, end);
 	}
 
-	void IAnimatedMeshSceneNode::set_AnimationSpeed(int framesPerSecond)
+	void IAnimatedMeshSceneNode::set_AnimationSpeed(float framesPerSecond)
 	{
 		getAnimatedMeshSceneNode()->setAnimationSpeed(framesPerSecond);
 	}
