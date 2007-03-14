@@ -1,50 +1,140 @@
-Changes in version 1.3 (?? ??? 2007)
+Changes in version 1.3 (15 Mar 2007)
 
-API changes:
-------------
-
-- SMaterial:
-	* Enable Irrlicht to change TextureAddress Mode (Clamping), for each layer separately
-	* Added Texture matrices to SMaterial for all texture layers
-	* Removed the anonymous union/struct access to textures and material flags.
+- SMaterial structure changed:
+   - Enable Irrlicht to change TextureAddress Mode (Clamping), for each layer separately
+   - Added Texture matrices to SMaterial for all texture layers
+   - Removed the anonymous union/struct access to textures and material flags.
 	  Now, Texture1..4 is removed - use Textures[i] instead
 	  The Flags[x] is replaced by setFlags(x, bool) resp. getFlags(x)
 
-- testing matrix4 for identity before multiply. faster check for identity for the positive case using an additional boolean flag.
-Some API changes: the internal array M is now private. Use mat[x] instead of mat.M[x]. The pointer to M is acquired by mat.pointer(), some methods take a matrix4 reference instead of a f32*.
-
-- the methods OnPreRender and OnPostRender of ISceneNode have been changed to OnAnimate and 
+- The methods OnPreRender and OnPostRender of ISceneNode have been changed to OnAnimate and 
   OnRegisterSceneNode(). Also, they are now called at different times: OnAnimate is called
-  every frame before anything else.
+  every frame before anything else, removing the one-frame-lag Irrlicht suffered until now.
+  To make most of your own scene nodes work again, it should be enough to rename OnPreRender()
+  to OnAnimate() and OnPostRender() to OnRegisterSceneNode() in most cases.
 
-Other changes:
---------------
-- XMLWriter fix for 32bit wchar_t (esp. for big endian)
-
-- Several alpha blend fixes in several drivers and methods
-
-- updated to latest PNG library
-
-- added _IRR_COMPILE_WITH_SOFTWARE_ and _IRR_COMPILE_WITH_BURNINGSVIDEO_ to compile config
+- matrix4 speed enhancement, testing for identity before multiply. faster check for identity
+  for the positive case using an additional boolean flag.
+  The internal array M is now private, changing the API. Use mat[x] instead of mat.M[x].
+  The pointer to M is acquired by mat.pointer(), some methods take a matrix4 reference 
+  instead of a f32*.
 
 - Some more suppport for tangent meshes
 
+- Several alpha blend fixes in several drivers and methods
+
+Font improvements:
+
+  - Changed built-in IGUIFont to IGUIFontBitmap and added options for more fonts.
+    CGUIFont now supports UCS-2 and may span many textures, loads from XML (Unicode support planned)
+
+  - Started a font tool for creating the new XML fonts, including generating vector fonts
+    (currently not backward compatible with old fonts, only works for Win2K+, some bugs still)
+   
+  - Font interface now supports kerning- kerning pairs, per letter and global kerning widths, 
+    although he internal font only supports global and per-letter.
+
+  - added _IRR_COMPILE_WITH_SOFTWARE_ and _IRR_COMPILE_WITH_BURNINGSVIDEO_ to compile config
+
+
+- GUI enhancements:
+
+  - GUI Serialization with loadGUI and saveGUI, and serializable custom GUI elements via factories
+
+  - Started a GUI Editor as a GUI element factory example (work in progress)
+
+  - New IGUIElement functions: isSubElement & setSubElement for child elements created by their parents 
+    (eg. a scrollbar on a list box). Set it if you don't want an element to be serialized
+
+  - New GUI event, EGET_ELEMENT_FOCUSED
+
+  - GUI environment ELEMENT_FOCUS_LOST event now sets the element as the caller, focus_lost events 
+    are now usually passed to parent elements, so elements now check if they are the caller before 
+    updating (so users can catch focus lost events without them being eaten by the elements)
+
+  - Buttons, checkboxes and tab controls now only activate when the mouse is released over them.
+
+  - Windows mouse-up events are now caught outside the window, so mouse coords may now be negative.
+    could cause problems with draggable user windows, as they may now be dragged off screen.
+
+  - Elements can now automatically resize to fit their parents, or align themselves to an edge:
+    setAlignment(left, right, top, bottom) - sets how each edge aligns to its parent, 
+    through EGUI_ALIGNMENT enum
+    EGUIA_UPPERLEFT - default behaviour, aligns to top or left edge
+    EGUIA_LOWERRIGHT - aligns to the lower or right edge
+    EGUIA_CENTER - moves relative to the center of its parent
+    EGUIA_SCALE - uses relative scale
+
+  - setMaxSize, setMinSize - sets the maximum and minimum sizes for automatic resizing, 
+    use 0 for no maximum size.
+
+  - setRelativePosition now takes a rect<f32> for relative positioning within their parents
+
+  - getFileSystem added to the GUI environment
+
+  - New IGUISpriteBank, used to hold 2d image data like fonts and GUI icons. 
+    Icons provided by the built-in font are now accessed through the skin's sprite bank.
+    Users can override the icons by setting a different sprite bank and setting new sprites.
+
+  - Skins are now serializable and are loaded/saved with the GUI.
+
+  - IGUIStaticText getter/setter functions patch by rogerborg.
+
+- added 3d TextSceneNode2. to view a Text in real 3D Space
+   in fact it is a combination of Billboard & TextSceneNode
+
+- Burning Video (the second but only complete software renderer)
+  - New Compile Config BURNINGVIDEO_RENDERER_ULTRA_FAST
+  - New Compile Config BURNINGVIDEO_RENDERER_FAST
+	touching the 20fps border in the demo ( P4 mobile 2Ghz ). 15fps average.
+	( Compile config Release Fast-FPU )
+		
+  - VertexCache for Tansformed & Light Vertices
+    boost small drawPrimitive Calls ( 2DRectangle, Billboard ) and Real Index Triangles
+		
+  - Bilinear Dither
+  - clipping test ( compare instead of generic plane normal )
+  - support for NOT using vertexcolor
+	#define SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
+
+- added vertex to color to billboard.
+	shade top & shade down.
+	to support some static lighting effect on billboards
+ 
 - Implemented line rendering for SoftwareDriver
 
+- XMLWriter fix for 32bit wchar_t (esp. for big endian)
+
+- updated to latest PNG library
+
 - implemented CImagerWriterJpeg::writeImage
+
+- The ISceneManager::addCameraSceneNodeFPS() has a new parameter named 'jumpSpeed'
+  and a Key Map Entry.
+
 - added param to IIImageWriteFile::writeImage
 	control Parameter for the backend ( e.g. jpeg compression level )
+
 - addContextMenu: CGUIEnvironment::addContextMenu set the focus on the submenu.
 
 - Added IFileSystem::createMemoryReadFile for accessing memory like a file.
 
-- Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. It was returning 0 for all implementations previously. User defined IMesh derivates will also have to implement it now due to the removed empty implementation.
+- Added core::map class submitted by Nastase Catalin (Kat'Oun)
+
+- Fix vertex colors for .x and .ms3d, alpha bug in .obj
+
+- Fixed 16bit depth screens under Windows.
+
+- Implemented getMeshBuffer(SMaterial) for all AnimatedMeshes. 
+  It was returning 0 for all implementations previously. User defined IMesh derivates
+  will also have to implement it now due to the removed empty implementation.
 
 - Added yield() method to IrrlichtDevice which allows to pause the Irrlicht process for
-	a very short time. This allows other processes to execute without a major
-	penalty for the Irrlicht application.
+  a very short time. This allows other processes to execute without a major
+  penalty for the Irrlicht application.
 
-- Added sleep() methd to IrrlichtDevice, for pausing the Irrlicht process for a longer amount of time.
+- Added sleep() methd to IrrlichtDevice, for pausing the Irrlicht process for a longer 
+  amount of time.
 
 - Auto-split mesh to 16bit buffers in 3ds loader
 
@@ -55,189 +145,103 @@ Other changes:
 - Fixed(?) the glXGetProcAddress problems with different drivers
 
 - B3D changes by Luke: 
-	Texture scaling bugfix, support for alpha blending, 
-	new option to normalise weights, animation code optimization, fixed memory leak
-
-- Fonts:
-	Changed built-in IGUIFont to IGUIFontBitmap and added options for more fonts.
-	CGUIFont now supports UCS-2 and may span many textures, loads from XML (Unicode support planned)
-	Started a font tool for creating the new XML fonts, including generating vector fonts
-	(currently not backward compatible with old fonts, only works for Win2K+, some bugs still)
-	Font interface now supports kerning- kerning pairs, per letter and global kerning widths, although
-	the internal font only supports global and per-letter.
-	
-
-- GUI:
-	GUI Serialization with loadGUI and saveGUI, and serializable custom GUI elements via factories
-
-	Started a GUI Editor as a GUI element factory example (work in progress)
-
-	New IGUIElement functions: isSubElement & setSubElement for child elements created by their parents 
-	(eg. a scrollbar on a list box). Set it if you don't want an element to be serialized
-
-	New GUI event, EGET_ELEMENT_FOCUSED
-
-	GUI environment ELEMENT_FOCUS_LOST event now sets the element as the caller, focus_lost events 
-	are now usually passed to parent elements, so elements now check if they are the caller before 
-	updating (so users can catch focus lost events without them being eaten by the elements)
-
-	Buttons, checkboxes and tab controls now only activate when the mouse is released over them.
-
-	Windows mouse-up events are now caught outside the window, so mouse coords may now be negative.
-	Could cause problems with draggable user windows, as they may now be dragged off screen.
-
-	Elements can now automatically resize to fit their parents, or align themselves to an edge:
-	setAlignment(left, right, top, bottom) - sets how each edge aligns to its parent, 
-	through EGUI_ALIGNMENT enum
-		EGUIA_UPPERLEFT - default behaviour, aligns to top or left edge
-		EGUIA_LOWERRIGHT - aligns to the lower or right edge
-		EGUIA_CENTER - moves relative to the center of its parent
-		EGUIA_SCALE - uses relative scale
-
-	setMaxSize, setMinSize - sets the maximum and minimum sizes for automatic resizing, 
-	use 0 for no maximum size.
-
-	setRelativePosition now takes a rect<f32> for relative positioning within their parents
-
-	getFileSystem added to the GUI environment
-
-	New IGUISpriteBank, used to hold 2d image data like fonts and GUI icons. 
-	Icons provided by the built-in font are now accessed through the skin's sprite bank.
-	Users can override the icons by setting a different sprite bank and setting new sprites.
-
-	Skins are now serializable and are loaded/saved with the GUI.
-
-	IGUIStaticText getter/setter functions patch by rogerborg.
-
+  Texture scaling bugfix, support for alpha blending, new option to normalise weights, 
+  animation code optimization, fixed memory leak
 
 - ROUNDING_ERROR is now ROUNDING_ERROR_32 or ROUNDING_ERROR_64
 
-- Material ZBuffer to u32
-	Reason: change ( off or on ) to , off, lequal, equal
-	Necessary for multi-pass if previous stage has had transparency
-- DebugDataVisible is now an enum of flags
-	show normals is supported ( uses the new build in arrowmesh )
-- New Function: GeometryCreator
-	addArrowMesh. build a closed cylinder and a cone
-	used to show normals as debug feature
-- New Function:
-		CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m) const
-		
-		transform VertexPosition and VertexNormal
+- Material ZBuffer flag changed to a u32 value 
+  Reason: change ( off or on ) to , off, lequal, equal
+  Necessary for multi-pass if previous stage has had transparency
 
-- BUGFIX:	CGUIButton notified Pressed when Mouse was clicked Inside ( correct )
-	but also left up outside rectangle ( incorrect)
+- DebugDataVisible is now an enum of flags
+  show normals is supported ( uses the new build in arrowmesh )
+
+- New Function: GeometryCreator
+  addArrowMesh. build a closed cylinder and a cone
+  used to show normals as debug feature
+
+- New Function:
+  CMeshManipulator::transformMesh(scene::IMesh* mesh, const core::matrix4& m) const
+  transforms VertexPosition and VertexNormal
+
+- BUGFIX: CGUIButton notified Pressed when Mouse was clicked Inside ( correct )
+  but also left up outside rectangle ( incorrect)
 
 - BUGFIX: Octree:getPolys(const scene::SViewFrustum& frustum, SIndexData* idxdata)
-	was recursive calling invisible children
+  was recursive calling invisible children
 
-- CFileList
-	Changed FileListEntry sorting to
-	a) Directory comes first
-	b) sorting ignores case
-	so it feel's more like common browers
+- CFileList: Changed FileListEntry sorting to
+  a) Directory comes first
+  b) sorting ignores case
+  so it feel's more like common browers
 
 - added a Texture transform to IVideoDriver::setTransform
 	
 - quaternion::getmatrix
-	in fact the getmatrix version is returning the transposed...
-	i'm quite sure that this is the wrong implementation...
-	so this should be verified... to remove the getmatrix_transposed version...
+  in fact the getmatrix version is returning the transposed.
+  i'm quite sure that this is the wrong implementation.
+  so this should be verified to remove the getmatrix_transposed version...
+
 - Quake3 Map Loader:
-	new loading method
-	- Bezier Patches with LOD more than 3
-	- Multiple Meshes, stay compatible with the previous version
-	- Indexed Triangle List
-	- initial support for quake3 Shaders and Entities
-	- Shaders are parsed. When it's possible to resolve a 2 Texture Scheme it's taken
-		Shaders exist in namespace scene::quake3
-	- The Example Quake3Map shows how to continue applying the Q3Shaders with SceneNodes
-	   ( for example animmap converts to TextureAnimator.)
-	   TODO: use the Irrlicht Variable Syntax to remove redundant code..
+  new loading method
+  - Bezier Patches with LOD more than 3
+  - Multiple Meshes, stay compatible with the previous version
+  - Indexed Triangle List
+  - initial support for quake3 Shaders and Entities
+  - Shaders are parsed. When it's possible to resolve a 2 Texture Scheme it's taken
+ 	Shaders exist in namespace scene::quake3
+  - The Example Quake3Map shows how to continue applying the Q3Shaders with SceneNodes
+     ( for example animmap converts to TextureAnimator.)
+     TODO: use the Irrlicht Variable Syntax to remove redundant code..
 	   
 - added getVertexPitch() to IMeshBuffer interface
 
-- added 3d TextSceneNode2. to view a Text in real 3D Space
-	- in fact it is a combination of Billboard & TextSceneNode
-- added generic isupper, isspace.. functions to irrstring to remove dependencies for ctype.h
-	( future: it's possibly to use binary comparison test..)
-	removed 1000's include of string.h and moved one to irrstring.h
-	in preparing of complete removing the MSVC...
-	several bugfixes in class
+- added generic isupper, isspace.. functions to coreutil.h to remove dependencies for ctype.h
+   ( future: it's possibly to use binary comparison test..)
+  removed 1000's include of string.h and moved one to irrstring.h
+  in preparing of complete removing the MSVC.
 
 - moved fast_atof.h to the public include
-	added strtol10 to remove dependencies for stdlib.h
-	anyway math.h is needed for powf
+  added strtol10 to remove dependencies for stdlib.h
+  anyway math.h is needed for powf
 	
 - core::vector3d
-	added getInterpolated_quadratic.
-	vector3d<T> getInterpolated_quadratic(const vector3d<T>& v2, const vector3d<T>& v3, const T d) const
-	// this*(1-d)*(1-d) + 2 * v2 * (1-d) + v3 * d * d;
+  added getInterpolated_quadratic.
+  vector3d<T> getInterpolated_quadratic(const vector3d<T>& v2, const vector3d<T>& v3, const T d) const
+  // this*(1-d)*(1-d) + 2 * v2 * (1-d) + v3 * d * d;
 	
 - irrstring: added param start to findLast(T c,  s32 start = -1 )
-	reason: to continue searching reverse on a specific position
-	(parameter is checked against boundaries )
-
+  reason: to continue searching reverse on a specific position
+  (parameter is checked against boundaries )
 
 - added operation reciprocal_squareroot to irrmath.
-
-	core::reciprocal_squareroot = 1.f / sqrtf ( x )
-	changed the core::vector3df normalize vector...
-	are specialized templates allowed in irrlicht?.. ( maybe not )
-	so it's only for f32 for now...
-	
-	a C function and a NVidia Version are in irrmath.h
-	or we use the famous Quake3 version...
+  core::reciprocal_squareroot = 1.f / sqrtf ( x )
+  changed the core::vector3df normalize vector.
+  specialized templates are not allowed in irrlicht currently, so it's only for f32 for now.
+  a C function and a NVidia Version are in irrmath.h
 	
 - add Primitives to CFPSCounter 
-	and changed interpolation to 1500ms instead of 2000ms
-	and rounding to ceiling..
+  and changed interpolation to 1500ms instead of 2000ms
+  and rounding to ceiling..
 
-- add Interface setAmbientLight to ISceneManager
-	it was a Bug, because SceneManager always calls Driver
-	therefore AmbientLight has to be set in SceneManager...
+- added Interface setAmbientLight to ISceneManager
+  it was a Bug, because SceneManager always calls Driver therefore AmbientLight has to be set in SceneManager.
 
-- Burning Video
-	- New Compile Config BURNINGVIDEO_RENDERER_ULTRA_FAST
-	- New Compile Config BURNINGVIDEO_RENDERER_FAST
-		touching the 20fps border in the demo ( P4 mobile 2Ghz ). 15fps average.
-		( Compile config Release Fast-FPU )
-		
-		people in the forum complain that burning video is slow...
-		BURNINGVIDEO_RENDERER_ULTRA_FAST has at least double speed as software renderer1
-		but with clipping, 32 Bit Z-Buffer, 2 Texture Stage + mipmapping + 32 Bit Texture and subpixel..
-		that means.. twice data load, ca. 1/4 more triangles, more division..
-		
-		you can compare it when now clipping is involved..
-		the movement example is a good candidate..
-		
-	- VertexCache for Tansformed & Light Vertices
-		boost small drawPrimitive Calls ( 2DRectangle, Billboard ) and Real Index Triangles
-		
-	- Bilinear Dither
-	- clipping test ( compare instead of generic plane normal )
-	- support for NOT using vertexcolor
-		#define SOFTWARE_DRIVER_2_USE_VERTEX_COLOR
-
-- changed GUIFont & FontTool to support kerning.. ( on a global basis )
-	
-	very basic mode.. apply an offset for position
-	useful for example if you want to apply an outline stroke in your favorite
-	and therefore let the texture grow..
-	and to correct the border back on drawing, specify the parameter in IGUIFont..
-	this is quite useful if you want to use more artistic fonts.
-	default = 0
-	
-	better kerning would need a seperate coordinate set for each symbol..
-	
-- added vertex to color to billboard.
-	shade top & shade down.
-	to support some static lighting effect on billboards
+- changed GUIFont & FontTool to support kerning ( on a global basis )
+   very basic mode.. apply an offset for position
+   useful for example if you want to apply an outline stroke in your favorite
+   and therefore let the texture grow.
+   and to correct the border back on drawing, specify the parameter in IGUIFont.
+   this is quite useful if you want to use more artistic fonts.
+   default = 0
+   better kerning would need a seperate coordinate set for each symbol.
 	
 - changed MD2_FRAME_SHIFT to lower framerate
 	-> lower IPol
 	problems can occur if somebody uses hardcoded frame-numbers instead
 	of Animation name...
+
 - changed spelling "frustrum" to "frustum"
 	-> changed also SViewFrustrum.h to SViewFrustum.h
 	
@@ -247,19 +251,8 @@ Other changes:
 	added Frustum culling ( it's a copy & paste from the octree )
 	added initial bounding sphere
 		used for culling point lights..
-	
-
-- The ISceneManager::addCameraSceneNodeFPS() has a new parameter named 'jumpSpeed'
-  and a Key Map Entry.
-  
-  
+	 
 - Added getSystemMemory and getProcessorSpeedMHz for Windows and Linux to the OSOperator, submitted by Vitek.
-
-- Added core::map class submitted by Nastase Catalin (Kat'Oun)
-
-- Fix vertex colors for .x and .ms3d, alpha bug in .obj
-
-- Fixed 16bit depth screens under Windows.
 
 -------------------------------------------
 Changes in version 1.2 (29 Nov 2006)
