@@ -16,6 +16,10 @@ namespace io
 CAttributes::CAttributes(video::IVideoDriver* driver)
 : Driver(driver)
 {
+	#ifdef _DEBUG
+	setDebugName("CAttributes");
+	#endif
+
 	if (Driver)
 		Driver->grab();
 }

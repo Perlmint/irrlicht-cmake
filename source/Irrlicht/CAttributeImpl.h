@@ -1837,6 +1837,16 @@ public:
 		return (Value != 0);
 	}
 
+	virtual core::stringw getStringW()
+	{
+		return core::stringw(Value ? Value->getName().c_str() : 0);
+	}
+
+	virtual core::stringc getString()
+	{
+		return Value ? Value->getName() : core::stringc();
+	}
+
 	virtual void getString(char* target)
 	{
 		if (Value)
