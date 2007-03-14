@@ -93,7 +93,7 @@ void CDemo::run()
 			static s32 lastfps = 0;
 			s32 nowfps = driver->getFPS();
 
-			swprintf(tmp, 255, L"%ls fps:%3d triangle:%0.3f million", 
+			swprintf(tmp, 255, L"%ls fps:%3d triangles:%0.3f mio", 
 								driver->getName(),
 								driver->getFPS(),
 								(f32) driver->getPrimitiveCountDrawn( 1 ) * ( 1.f / 1000000.f )
@@ -716,7 +716,17 @@ void CDemo::createParticleImpacts()
 			// play impact sound
 			#ifdef USE_IRRKLANG
 			if (irrKlang)
-				irrKlang->play3D(impactSound, Impacts[i].pos);
+			{
+				audio::ISound* sound = 
+					irrKlang->play3D(impactSound, Impacts[i].pos, false, false, true);
+
+				if (sound)
+				{
+					// adjust max value a bit to make to sound of an impact louder
+					sound->setMinDistance(200);
+					sound->drop();
+				}
+			}
 			#endif
 
 			#ifdef USE_SDL_MIXER
@@ -742,9 +752,9 @@ void CDemo::startIrrKlang()
 
 	// play music
 
-	audio::ISound* snd = irrKlang->play2D("IrrlichtTheme.ogg", true, false, true);
+	audio::ISound* snd = irrKlang->play2D("../../media/IrrlichtTheme.ogg", true, false, true);
 	if ( !snd )
-		snd = irrKlang->play2D("../../media/IrrlichtTheme.ogg", true, false, true);
+		snd = irrKlang->play2D("IrrlichtTheme.ogg", true, false, true);
 
 	if (snd)
 	{
