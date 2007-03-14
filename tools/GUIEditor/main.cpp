@@ -28,10 +28,20 @@ int main()
 
 	IGUISkin *skin = env->createSkin(EGST_WINDOWS_METALLIC);
 	env->setSkin(skin);
-	IGUIFont *font = env->getFont("lucida_latin.xml");
+
+	device->getFileSystem()->addFolderFileArchive ( "../../media/" );
+	IGUIFont *font = env->getFont("lucida.xml");
 	if (font)
 		skin->setFont(font);
 	skin->drop();
+
+	// change transparency of skin
+	for (s32 i=0; i<gui::EGDC_COUNT ; ++i)
+	{
+		video::SColor col = env->getSkin()->getColor((gui::EGUI_DEFAULT_COLOR)i);
+		col.setAlpha(250);
+		env->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, col);
+	}
 
 	/*
 		now we add the GUI Editor Workspace
