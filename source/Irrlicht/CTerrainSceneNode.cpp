@@ -1021,7 +1021,7 @@ namespace scene
 				if (x<TerrainData.Size-1 && z<TerrainData.Size-1)
 				{
 					a = pMeshBuffer->Vertices[x*TerrainData.Size+z+1].Pos;
-					b = pMeshBuffer->Vertices[x*TerrainData.Size+z+1].Pos;
+					b = pMeshBuffer->Vertices[x*TerrainData.Size+z].Pos;
 					c = pMeshBuffer->Vertices[(x+1)*TerrainData.Size+z+1].Pos;
 					b -= a;
 					c -= a;
