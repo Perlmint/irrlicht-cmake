@@ -1,5 +1,5 @@
-VERSION = 1.2.0
-# Irrlicht Engine 1.2
+VERSION = 1.3.0
+# Irrlicht Engine 1.3
 # Makefile for Linux, created by N.Gebhardt.
 # 
 # To use, just run:
