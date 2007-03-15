@@ -123,5 +123,5 @@ bool CImageWriterBMP::writeImage(io::IWriteFile* file, IImage* image, u32 param)
 	return y < 0;
 }
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr

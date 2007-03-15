@@ -130,5 +130,5 @@ bool CImageWriterTGA::writeImage(io::IWriteFile *file, IImage *image,u32 param)
 	return imageHeader.ImageHeight < y;
 }
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr

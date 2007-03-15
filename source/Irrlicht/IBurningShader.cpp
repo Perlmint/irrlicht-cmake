@@ -51,7 +51,7 @@ namespace video
 
 		if ( IT[1].Texture )
 			IT[1].Texture->drop();
-	};
+	}
 
 	//! sets a render target
 	void IBurningShader::setRenderTarget(video::IImage* surface, const core::rect<s32>& viewPort)

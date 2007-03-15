@@ -33,5 +33,5 @@ bool CImageWriterPSD::writeImage(io::IWriteFile *file, IImage *image,u32 param)
 	return false;
 }
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr

@@ -21,7 +21,7 @@ public:
 	virtual bool writeImage(io::IWriteFile *file, IImage *image, u32 param);
 };
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr
 
 #endif // _C_IMAGE_WRITER_BMP_H_INCLUDED__

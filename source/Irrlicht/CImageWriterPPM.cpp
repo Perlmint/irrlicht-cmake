@@ -64,5 +64,5 @@ bool CImageWriterPPM::writeImage(io::IWriteFile *file, IImage *image,u32 param)
 	return true;
 }
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr

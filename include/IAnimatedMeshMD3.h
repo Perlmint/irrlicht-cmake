@@ -20,7 +20,7 @@ namespace scene
 		EMD3_UPPER,
 		EMD3_LOWER,
 		EMD3_WEAPON,
-		EMD3_NUMMODELS,
+		EMD3_NUMMODELS
 	};
 
 
@@ -59,7 +59,7 @@ namespace scene
 		EMD3_LEGS_TURN,
 
 		//! Not an animation, but amount of animation types.
-		EMD3_ANIMATION_COUNT,
+		EMD3_ANIMATION_COUNT
 	};
 
 	struct SMD3AnimationInfo

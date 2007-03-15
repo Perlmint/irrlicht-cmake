@@ -141,8 +141,8 @@ void write_JPEG_memory (void *img_buf, s32 width, s32 height, u32 bpp, u32 pitch
 	jpeg_destroy_compress(&cinfo);
 }
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr
 
 #endif // _IRR_COMPILE_WITH_LIBJPEG_
 
@@ -227,6 +227,6 @@ bool CImageWriterJPG::writeImage(io::IWriteFile *file, IImage *input,u32 quality
 #endif
 }
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr
 

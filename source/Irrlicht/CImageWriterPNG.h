@@ -23,7 +23,7 @@ private:
 	u8** RowPointers; //Used to point to image rows
 };
 
-}; // namespace video
-}; // namespace irr
+} // namespace video
+} // namespace irr
 
 #endif // _C_IMAGE_WRITER_PNG_H_INCLUDED__
