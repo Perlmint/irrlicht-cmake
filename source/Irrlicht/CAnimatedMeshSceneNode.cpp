@@ -642,20 +642,19 @@ bool CAnimatedMeshSceneNode::removeChild(ISceneNode* child)
 		return true;
 	}
 
-	if (JointsUsed) //stop it doing weird things while the joints are being made
+	if (ISceneNode::removeChild(child))
 	{
-		if (ISceneNode::removeChild(child))
+		if (JointsUsed) //stop weird bugs caused while changing parents as the joints are being created
 		{
 			for (u32 i=0; i<JointChildSceneNodes.size(); ++i)
 			if (JointChildSceneNodes[i] == child)
 			{
-				//JointChildSceneNodes[i]->drop();
-				JointChildSceneNodes[i] = 0;
+				JointChildSceneNodes[i] = 0; //remove link to child
 				return true;
 			}
-
-			return true;
 		}
+
+		return true;
 	}
 
 	return false;
