@@ -21,7 +21,7 @@ namespace scene
 CSkinnedMesh::CSkinnedMesh()
 : SkinningBuffers(0), HasAnimation(0), PreparedForSkinning(0),
 	AnimationFrames(0.f), lastAnimatedFrame(0.f), lastSkinnedFrame(0.f),
-	BoneControlUsed(false), AnimateNormals(0), InterpolationMode(EIM_LINEAR)
+	BoneControlUsed(false), AnimateNormals(true), InterpolationMode(EIM_LINEAR)
 {
 	#ifdef _DEBUG
 	setDebugName("CSkinnedMesh");
@@ -614,8 +614,8 @@ bool CSkinnedMesh::useAnimationFrom(const ISkinnedMesh *mesh)
 
 
 //!Update Normals when Animating
-//!False= Don't (default)
-//!True= Update normals, slower
+//!False= Don't animate them, faster
+//!True= Update normals (default)
 void CSkinnedMesh::updateNormalsWhenAnimating(bool on)
 {
 	AnimateNormals = on;
@@ -794,7 +794,6 @@ void CSkinnedMesh::finalize()
 
 	lastAnimatedFrame=-1;
 	lastSkinnedFrame=-1;
-	AnimateNormals=false;
 
 	//calculate bounding box
 
