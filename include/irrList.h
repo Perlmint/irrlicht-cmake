@@ -65,7 +65,7 @@ public:
 		bool operator ==(const ConstIterator& other) const { return Current == other.Current; }
 		bool operator !=(const ConstIterator& other) const { return Current != other.Current; }
 
-		#if (_MSC_VER < 1300)
+		#if defined (_MSC_VER) && (_MSC_VER < 1300)
 			#pragma warning(disable:4284) // infix notation problem when using iterator operator ->
 		#endif 
 
