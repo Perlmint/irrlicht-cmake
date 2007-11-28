@@ -236,7 +236,10 @@ public:
 			pID3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCCOLOR);
 		}
 
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		SMaterial newmat = material;
+		newmat.ZWriteEnable = false;
+
+		services->setBasicRenderStates(newmat, lastMaterial, resetAllRenderstates);
 	}
 
 	//! Returns if the material is transparent. The scene management needs to know this
@@ -275,7 +278,10 @@ public:
 			pID3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 		}
 
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		SMaterial newmat = material;
+		newmat.ZWriteEnable = false;
+
+		services->setBasicRenderStates(newmat, lastMaterial, resetAllRenderstates);
 	}
 
 	//! Returns if the material is transparent. The scene managment needs to know this
@@ -324,7 +330,10 @@ public:
 
 		}
 
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		SMaterial newmat = material;
+		newmat.ZWriteEnable = false;
+
+		services->setBasicRenderStates(newmat, lastMaterial, resetAllRenderstates);
 	}
 
 	virtual void OnUnsetMaterial()
@@ -375,7 +384,10 @@ public:
 			pID3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 		}
 
-		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+		SMaterial newmat = material;
+		newmat.ZWriteEnable = false;
+
+		services->setBasicRenderStates(newmat, lastMaterial, resetAllRenderstates);
 	}
 
 	virtual void OnUnsetMaterial()
