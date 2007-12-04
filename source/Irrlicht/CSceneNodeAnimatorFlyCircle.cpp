@@ -17,15 +17,13 @@ CSceneNodeAnimatorFlyCircle::CSceneNodeAnimatorFlyCircle(u32 time, const core::v
 	setDebugName("CSceneNodeAnimatorFlyCircle");
 	#endif
 	Direction.normalize();
+	// avoid degeneration
+	if (fabsf(Direction.X)>=fabsf(Direction.Y))
+		VecU=core::vector3df(-Direction.Z, 0.f, Direction.X).normalize();
+	else
+		VecU=core::vector3df(0.f, Direction.Z, -Direction.Y).normalize();
+	VecV = Direction.crossProduct(VecU);
 }
-
-
-
-//! destructor
-CSceneNodeAnimatorFlyCircle::~CSceneNodeAnimatorFlyCircle()
-{
-}
-
 
 
 //! animates a scene node
@@ -36,10 +34,8 @@ void CSceneNodeAnimatorFlyCircle::animateNode(ISceneNode* node, u32 timeMs)
 
 	const f32 t = (timeMs-StartTime) * Speed;
 
-	core::vector3df circle(Radius * sinf(t), 0, Radius * cosf(t));
-	circle = circle.crossProduct ( Direction );
-
-	node->setPosition(Center + circle);
+	node->setPosition(Center +
+			VecV*(Radius * sinf(t)) + VecU*(Radius * cosf(t)));
 }
 
 
@@ -66,7 +62,6 @@ void CSceneNodeAnimatorFlyCircle::deserializeAttributes(io::IAttributes* in, io:
 	else
 		Direction.normalize();
 }
-
 
 
 } // end namespace scene
