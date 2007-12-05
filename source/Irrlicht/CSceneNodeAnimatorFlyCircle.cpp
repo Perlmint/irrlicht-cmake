@@ -25,10 +25,10 @@ void CSceneNodeAnimatorFlyCircle::init()
 	Direction.normalize();
 
 	if (Direction.Y != 0)
-		VecU = core::vector3df(50,0,0).crossProduct(Direction).normalize();
+		VecV = core::vector3df(50,0,0).crossProduct(Direction).normalize();
 	else
-		VecU = core::vector3df(0,50,0).crossProduct(Direction).normalize();
-	VecV = VecU.crossProduct(Direction).normalize();
+		VecV = core::vector3df(0,50,0).crossProduct(Direction).normalize();
+	VecU = VecV.crossProduct(Direction).normalize();
 }
 
 
