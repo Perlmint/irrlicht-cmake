@@ -16,13 +16,19 @@ CSceneNodeAnimatorFlyCircle::CSceneNodeAnimatorFlyCircle(u32 time, const core::v
 	#ifdef _DEBUG
 	setDebugName("CSceneNodeAnimatorFlyCircle");
 	#endif
+	init();
+}
+
+
+void CSceneNodeAnimatorFlyCircle::init()
+{
 	Direction.normalize();
-	// avoid degeneration
-	if (fabsf(Direction.X)>=fabsf(Direction.Y))
-		VecU=core::vector3df(-Direction.Z, 0.f, Direction.X).normalize();
+
+	if (Direction.Y != 0)
+		VecU = core::vector3df(50,0,0).crossProduct(Direction).normalize();
 	else
-		VecU=core::vector3df(0.f, Direction.Z, -Direction.Y).normalize();
-	VecV = Direction.crossProduct(VecU);
+		VecU = core::vector3df(0,50,0).crossProduct(Direction).normalize();
+	VecV = VecU.crossProduct(Direction).normalize();
 }
 
 
@@ -34,8 +40,7 @@ void CSceneNodeAnimatorFlyCircle::animateNode(ISceneNode* node, u32 timeMs)
 
 	const f32 t = (timeMs-StartTime) * Speed;
 
-	node->setPosition(Center +
-			VecV*(Radius * sinf(t)) + VecU*(Radius * cosf(t)));
+	node->setPosition(Center + Radius * ((VecU*cosf(t)) + (VecV*sinf(t))));
 }
 
 
@@ -56,11 +61,13 @@ void CSceneNodeAnimatorFlyCircle::deserializeAttributes(io::IAttributes* in, io:
 	Radius = in->getAttributeAsFloat("Radius");
 	Speed = in->getAttributeAsFloat("Speed");
 	Direction = in->getAttributeAsVector3d("Direction");
+	StartTime = 0;
 	
 	if (Direction.equals(core::vector3df(0,0,0)))
 		Direction.set(0,1,0); // irrlicht 1.1 backwards compatibility
 	else
 		Direction.normalize();
+	init();
 }
 
 

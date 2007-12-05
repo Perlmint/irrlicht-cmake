@@ -33,6 +33,9 @@ namespace scene
 		virtual ESCENE_NODE_ANIMATOR_TYPE getType() const { return ESNAT_FLY_CIRCLE; }
 
 	private:
+		// do some initial calculations
+		void init();
+
 		// circle center
 		core::vector3df Center;
 		// up-vector, normal to the circle's plane
