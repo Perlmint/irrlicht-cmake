@@ -45,12 +45,13 @@ namespace scene
 		void animateWaterSurface();
 		void addWave(core::vector3df& dest, const core::vector3df source, f32 time)
 		{
-			dest.Y = source.Y +
-			(sinf(((source.X/WaveLength) + time)) * WaveHeight) +
-			(cosf(((source.Z/WaveLength) + time)) * WaveHeight);
+			dest.Y = source.Y + WaveHeight*(
+				sinf(((source.X*OneByWaveLength) + time)) +
+				cosf(((source.Z*OneByWaveLength) + time)));
 		}
 
 		f32 WaveLength;
+		f32 OneByWaveLength;
 		f32 WaveSpeed;
 		f32 WaveHeight;
 		IMesh* OriginalMesh;

@@ -1,3 +1,16 @@
+Changes in version 1.4.1 (???)
+
+- Speed improvements for WaterSceneNode.
+
+- Bugfix getCurrentRenderTargetSize in D3D drivers. Due to signature differences a wrong virtual method was chosen. Thanks to Jiang for finding it.
+
+- FlyCircle animator now also works for upvectors (Direction parameter) which are not (0,1,0). Is also faster now, since most calculations are done on init. Thanks to Dorth for working on this.
+
+- The 3ds loader correctly creates a texture matrix when texture tiling properties are found in the file.
+
+- Fix for S3DVertex comparison operators. Used some wrong logic.
+
+-------------------------------------------
 Changes in version 1.4 (30.11.2007)
 
  - Major API change: All material properties which are available per texture layer (curently texture, texture matrix, texture filters, and texture wrap mode) are separated into a new struct SMaterialLayer. You can access them via the array TextureLayer[] in SMaterial. The texture matrix methods in SMaterial are still alive, and also textures can be accessed via methods in SMaterial now. But still, many places in user code need some update (usually changing material.Textures[i] to material.TextureLayer[i].Texture etc.)
