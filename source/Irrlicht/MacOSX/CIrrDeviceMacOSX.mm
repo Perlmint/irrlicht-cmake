@@ -2,7 +2,7 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
-#ifdef MACOSX
+#ifdef _IRR_USE_OSX_DEVICE_
 
 #import <Cocoa/Cocoa.h>
 #import <OpenGL/gl.h>
@@ -625,5 +625,5 @@ IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationP
 
 }
 
-#endif
+#endif // _IRR_USE_OSX_DEVICE_
 

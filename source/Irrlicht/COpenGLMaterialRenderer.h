@@ -11,8 +11,7 @@
 #include "COpenGLDriver.h"
 #include "IMaterialRenderer.h"
 #include "IMaterialRenderer.h"
-//Varmint: 2007/12/18
-#ifdef MACOSX
+#if defined(_IRR_USE_OSX_DEVICE_)
 	#define GL_COMBINE_EXT                    0x8570
 	#define GL_COMBINE_RGB_EXT                0x8571
 	#define GL_COMBINE_ALPHA_EXT              0x8572
