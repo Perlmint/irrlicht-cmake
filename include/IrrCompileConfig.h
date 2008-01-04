@@ -49,7 +49,7 @@
 #define MACOSX // legacy support
 #endif
 #define _IRR_OSX_PLATFORM_
-#if !defined(_IRR_LINUX_PLATFORM_) // for X11 windowing declare this
+#if !defined(_IRR_USE_LINUX_DEVICE_) // for X11 windowing declare this
 #define _IRR_USE_OSX_DEVICE_
 #endif
 #endif
