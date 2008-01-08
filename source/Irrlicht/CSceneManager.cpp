@@ -932,7 +932,6 @@ ICameraSceneNode* CSceneManager::getActiveCamera()
 }
 
 
-
 //! Sets the active camera. The previous active camera will be deactivated.
 //! \param camera: The new camera which should be active.
 void CSceneManager::setActiveCamera(ICameraSceneNode* camera)
@@ -945,8 +944,6 @@ void CSceneManager::setActiveCamera(ICameraSceneNode* camera)
 	if (ActiveCamera)
 		ActiveCamera->grab();
 }
-
-
 
 
 //! renders the node.
@@ -963,7 +960,6 @@ const core::aabbox3d<f32>& CSceneManager::getBoundingBox() const
 	// should never be used.
 	return *((core::aabbox3d<f32>*)0);
 }
-
 
 
 //! returns if node is culled
