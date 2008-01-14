@@ -722,9 +722,14 @@ core::matrix4 CColladaFileLoader::readRotateNode(io::IXMLReaderUTF8* reader)
 	f32 floats[4];
 	readFloatsInsideElement(reader, floats, 4);
 
-	core::quaternion q;
-	q.fromAngleAxis(floats[3]*core::DEGTORAD, core::vector3df(floats[0], floats[1], floats[2]));
-	return q.getMatrix();
+	if (!core::iszero(floats[3]))
+	{
+		core::quaternion q;
+		q.fromAngleAxis(floats[3]*core::DEGTORAD, core::vector3df(floats[0], floats[1], floats[2]));
+		return q.getMatrix();
+	}
+	else
+		return core::IdentityMatrix;
 }
 
 
