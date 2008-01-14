@@ -23,7 +23,18 @@ CIrrDeviceStub::CIrrDeviceStub(const char* version, IEventReceiver* recv)
 	FileSystem(io::createFileSystem()), InputReceivingSceneManager(0)
 {
 	Timer = new CTimer();
-	Logger = new CLogger(UserReceiver);
+	if (os::Printer::Logger)
+	{
+		os::Printer::Logger->grab();
+		Logger = (CLogger*)os::Printer::Logger;
+		Logger->setReceiver(UserReceiver);
+	}
+	else
+	{
+		Logger = new CLogger(UserReceiver);
+		os::Printer::Logger = Logger;
+	}
+
 	os::Printer::Logger = Logger;
 
 	core::stringc s = "Irrlicht Engine version ";
@@ -60,7 +71,8 @@ CIrrDeviceStub::~CIrrDeviceStub()
 
 	Timer->drop();
 
-	Logger->drop();
+	if (Logger->drop())
+		os::Printer::Logger = 0;
 }
 
 
