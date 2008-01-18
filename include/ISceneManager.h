@@ -1155,7 +1155,7 @@ namespace scene
 		virtual const c8* getSceneNodeTypeName(ESCENE_NODE_TYPE type) = 0;
 
 		//! Adds a scene node to the scene by name
-		virtual ISceneNode* addSceneNode(const char* sceneNodeTypeName, ISceneNode* parent) = 0;
+		virtual ISceneNode* addSceneNode(const char* sceneNodeTypeName, ISceneNode* parent=0) = 0;
 
 		//! Creates a new scene manager.
 		/** This can be used to easily draw and/or store two independent scenes at the same time.
