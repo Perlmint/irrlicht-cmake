@@ -47,10 +47,14 @@ void CDemo::run()
 
 	device = createDevice(driverType,resolution, 32, fullscreen, shadows, vsync, this);
 
-	device->getFileSystem()->addZipFileArchive("irrlicht.dat");
-	device->getFileSystem()->addZipFileArchive("../../media/irrlicht.dat");
-	device->getFileSystem()->addZipFileArchive("map-20kdm2.pk3");
-	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
+	if (device->getFileSystem()->existFile("irrlicht.dat"))
+		device->getFileSystem()->addZipFileArchive("irrlicht.dat");
+	else
+		device->getFileSystem()->addZipFileArchive("../../media/irrlicht.dat");
+	if (device->getFileSystem()->existFile("map-20kdm2.pk3"))
+		device->getFileSystem()->addZipFileArchive("map-20kdm2.pk3");
+	else
+		device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
 
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
