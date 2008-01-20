@@ -109,6 +109,9 @@ namespace scene
 		//! append the vertices and indices to the current buffer
 		virtual void append(const void* const vertices, u32 numVertices, const u16* const indices, u32 numIndices)
 		{
+			if (vertices == getVertices())
+				return;
+
 			const u32 vertexCount = getVertexCount();
 			u32 i;
 
@@ -129,6 +132,9 @@ namespace scene
 		//! append the meshbuffer to the current buffer
 		virtual void append(const IMeshBuffer* const other)
 		{
+			if (this==other)
+				return;
+
 			const u32 vertexCount = getVertexCount();
 			u32 i;
 
