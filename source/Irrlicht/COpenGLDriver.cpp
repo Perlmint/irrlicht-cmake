@@ -1217,11 +1217,11 @@ void COpenGLDriver::setRenderStates3DMode()
 		// unset old material
 
 		if (LastMaterial.MaterialType != Material.MaterialType &&
-			LastMaterial.MaterialType >= 0 && LastMaterial.MaterialType < static_cast<s32>(MaterialRenderers.size()))
+			static_cast<u32>(LastMaterial.MaterialType) < MaterialRenderers.size())
 			MaterialRenderers[LastMaterial.MaterialType].Renderer->OnUnsetMaterial();
 
 		// set new material.
-		if (Material.MaterialType >= 0 && Material.MaterialType < static_cast<s32>(MaterialRenderers.size()))
+		if (static_cast<u32>(Material.MaterialType) < MaterialRenderers.size())
 			MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(
 				Material, LastMaterial, ResetRenderStates, this);
 
@@ -1229,7 +1229,7 @@ void COpenGLDriver::setRenderStates3DMode()
 		ResetRenderStates = false;
 	}
 
-	if (Material.MaterialType >= 0 && Material.MaterialType < static_cast<s32>(MaterialRenderers.size()))
+	if (static_cast<u32>(Material.MaterialType) < MaterialRenderers.size())
 		MaterialRenderers[Material.MaterialType].Renderer->OnRender(this, video::EVT_STANDARD);
 
 	CurrentRenderMode = ERM_3D;
@@ -1496,8 +1496,8 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 	if (CurrentRenderMode != ERM_2D || Transformation3DChanged)
 	{
 		// unset last 3d material
-		if (CurrentRenderMode == ERM_3D && Material.MaterialType >= 0 &&
-				Material.MaterialType < static_cast<s32>(MaterialRenderers.size()))
+		if (CurrentRenderMode == ERM_3D &&
+				static_cast<u32>(Material.MaterialType) < MaterialRenderers.size())
 			MaterialRenderers[Material.MaterialType].Renderer->OnUnsetMaterial();
 
 		GLfloat glmat[16];
@@ -1757,7 +1757,7 @@ void COpenGLDriver::drawStencilShadowVolume(const core::vector3df* triangles, s3
 
 	// unset last 3d material
 	if (CurrentRenderMode == ERM_3D &&
-	Material.MaterialType >= 0 && Material.MaterialType < static_cast<s32>(MaterialRenderers.size()))
+		static_cast<u32>(Material.MaterialType) < MaterialRenderers.size())
 	{
 		MaterialRenderers[Material.MaterialType].Renderer->OnUnsetMaterial();
 		ResetRenderStates = true;
