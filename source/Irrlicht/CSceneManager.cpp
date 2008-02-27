@@ -270,8 +270,8 @@ CSceneManager::~CSceneManager()
 	if (MeshManipulator)
 		MeshManipulator->drop();
 
-	if ( GUIEnvironment )
-		GUIEnvironment->drop ();
+	if (GUIEnvironment)
+		GUIEnvironment->drop();
 
 	u32 i;
 
@@ -342,8 +342,9 @@ video::IVideoDriver* CSceneManager::getVideoDriver()
 	return Driver;
 }
 
+
 //! returns the GUI Environment
-gui::IGUIEnvironment* CSceneManager::getGUIEnvironment ()
+gui::IGUIEnvironment* CSceneManager::getGUIEnvironment()
 {
 	return GUIEnvironment;
 }
@@ -368,6 +369,7 @@ ITextSceneNode* CSceneManager::addTextSceneNode(gui::IGUIFont* font,
 	return t;
 }
 
+
 //! Adds a text scene node, which uses billboards
 ITextSceneNode* CSceneManager::addBillboardTextSceneNode(gui::IGUIFont* font,
 		const wchar_t* text, ISceneNode* parent,
@@ -391,12 +393,9 @@ ITextSceneNode* CSceneManager::addBillboardTextSceneNode(gui::IGUIFont* font,
 
 
 //! Adds a scene node, which can render a quake3 shader
-ISceneNode* CSceneManager::addQuake3SceneNode(	IMeshBuffer* meshBuffer,
-												const quake3::SShader * shader,
-												ISceneNode* parent,
-												s32 id
-											)
-
+ISceneNode* CSceneManager::addQuake3SceneNode(IMeshBuffer* meshBuffer,
+					const quake3::SShader * shader,
+					ISceneNode* parent, s32 id)
 {
 	if ( 0 == shader )
 		return 0;
@@ -404,18 +403,18 @@ ISceneNode* CSceneManager::addQuake3SceneNode(	IMeshBuffer* meshBuffer,
 	if (!parent)
 		parent = this;
 
-	CQuake3ShaderSceneNode* node = new CQuake3ShaderSceneNode ( parent, this, id, FileSystem, meshBuffer, shader );
+	CQuake3ShaderSceneNode* node = new CQuake3ShaderSceneNode( parent, this, id, FileSystem, meshBuffer, shader );
 	node->drop();
 
 	return node;
-
 }
 
 
 //! adds a test scene node for test purposes to the scene. It is a simple cube of (1,1,1) size.
 //! the returned pointer must not be dropped.
-ISceneNode* CSceneManager::addCubeSceneNode(f32 size, ISceneNode* parent, s32 id,
-	const core::vector3df& position, const core::vector3df& rotation, const core::vector3df& scale)
+ISceneNode* CSceneManager::addCubeSceneNode(f32 size, ISceneNode* parent,
+		s32 id, const core::vector3df& position,
+		const core::vector3df& rotation, const core::vector3df& scale)
 {
 	if (!parent)
 		parent = this;
@@ -426,11 +425,11 @@ ISceneNode* CSceneManager::addCubeSceneNode(f32 size, ISceneNode* parent, s32 id
 	return node;
 }
 
+
 //! Adds a sphere scene node for test purposes to the scene.
-ISceneNode* CSceneManager::addSphereSceneNode(f32 radius, s32 polyCount, ISceneNode* parent, s32 id,
-	const core::vector3df& position,
-	const core::vector3df& rotation,
-	const core::vector3df& scale)
+ISceneNode* CSceneManager::addSphereSceneNode(f32 radius, s32 polyCount,
+		ISceneNode* parent, s32 id, const core::vector3df& position,
+		const core::vector3df& rotation, const core::vector3df& scale)
 {
 	if (!parent)
 		parent = this;
@@ -479,7 +478,6 @@ ISceneNode* CSceneManager::addWaterSurfaceSceneNode(IMesh* mesh, f32 waveHeight,
 
 	return node;
 }
-
 
 
 //! adds a scene node for rendering an animated mesh model
@@ -561,7 +559,6 @@ ICameraSceneNode* CSceneManager::addCameraSceneNode(ISceneNode* parent,
 }
 
 
-
 //! Adds a camera scene node which is able to be controlle with the mouse similar
 //! like in the 3D Software Maya by Alias Wavefront.
 //! The returned pointer must not be dropped.
@@ -579,7 +576,6 @@ ICameraSceneNode* CSceneManager::addCameraSceneNodeMaya(ISceneNode* parent,
 
 	return node;
 }
-
 
 
 //! Adds a camera scene node which is able to be controled with the mouse and keys
@@ -601,7 +597,6 @@ ICameraSceneNode* CSceneManager::addCameraSceneNodeFPS(ISceneNode* parent,
 }
 
 
-
 //! Adds a dynamic light scene node. The light will cast dynamic light on all
 //! other scene nodes in the scene, which have the material flag video::MTF_LIGHTING
 //! turned on. (This is the default setting in most scene nodes).
@@ -616,7 +611,6 @@ ILightSceneNode* CSceneManager::addLightSceneNode(ISceneNode* parent,
 
 	return node;
 }
-
 
 
 //! Adds a billboard scene node to the scene. A billboard is like a 3d sprite: A 2d element,
@@ -703,13 +697,13 @@ ITerrainSceneNode* CSceneManager::addTerrainSceneNode(
 {
 	io::IReadFile* file = FileSystem->createAndOpenFile(heightMapFileName);
 
-	if(!file && !addAlsoIfHeightmapEmpty) 
-	{ 
-		os::Printer::log("Could not load terrain, because file could not be opened.", 
-		heightMapFileName, ELL_ERROR); 
-		return 0; 
-	} 
- 
+	if(!file && !addAlsoIfHeightmapEmpty)
+	{
+		os::Printer::log("Could not load terrain, because file could not be opened.",
+		heightMapFileName, ELL_ERROR);
+		return 0;
+	}
+
 	ITerrainSceneNode* terrain = addTerrainSceneNode(file, parent, id,
 		position, rotation, scale, vertexColor, maxLOD, patchSize,
 		smoothFactor, addAlsoIfHeightmapEmpty);
@@ -1234,9 +1228,9 @@ void CSceneManager::drawAll()
 
 		Driver->setAmbientLight(AmbientLight);
 
-		LightList.sort ();		// on distance to camera
+		LightList.sort();		// on distance to camera
 
-		u32 maxLights = core::min_ ( Driver->getMaximalDynamicLightAmount (), LightList.size () );
+		u32 maxLights = core::min_ ( Driver->getMaximalDynamicLightAmount(), LightList.size() );
 		for (i=0; i< maxLights; ++i)
 			LightList[i].node->render();
 
@@ -1262,7 +1256,7 @@ void CSceneManager::drawAll()
 		for (i=0; i<SolidNodeList.size(); ++i)
 			SolidNodeList[i].node->render();
 
-		Parameters.setAttribute ( "drawn", (s32) SolidNodeList.size () );
+		Parameters.setAttribute ( "drawn", (s32) SolidNodeList.size() );
 
 		SolidNodeList.set_used(0);
 	}
@@ -1297,7 +1291,7 @@ void CSceneManager::drawAll()
 		{
 			CurrentRendertime = (scene::E_SCENE_NODE_RENDER_PASS) (ESNRP_SHADER_0 + g);
 
-			const u32 size = ShaderNodeList[g].size ();
+			const u32 size = ShaderNodeList[g].size();
 			if ( 0 == size )
 				continue;
 
@@ -1507,7 +1501,7 @@ void CSceneManager::clearDeletionList()
 	if (DeletionList.empty())
 		return;
 
-	for (s32 i=0; i<(s32)DeletionList.size(); ++i)
+	for (u32 i=0; i<DeletionList.size(); ++i)
 	{
 		DeletionList[i]->remove();
 		DeletionList[i]->drop();
