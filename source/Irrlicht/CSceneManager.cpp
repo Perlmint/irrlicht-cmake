@@ -398,6 +398,7 @@ ISceneNode* CSceneManager::addQuake3SceneNode(IMeshBuffer* meshBuffer,
 					const quake3::SShader * shader,
 					ISceneNode* parent, s32 id)
 {
+#ifdef _IRR_COMPILE_WITH_BSP_LOADER_
 	if ( 0 == shader )
 		return 0;
 
@@ -408,6 +409,9 @@ ISceneNode* CSceneManager::addQuake3SceneNode(IMeshBuffer* meshBuffer,
 	node->drop();
 
 	return node;
+#else
+	return 0;
+#endif
 }
 
 
