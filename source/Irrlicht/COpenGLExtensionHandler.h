@@ -5,6 +5,10 @@
 #ifndef __C_OPEN_GL_FEATURE_MAP_H_INCLUDED__
 #define __C_OPEN_GL_FEATURE_MAP_H_INCLUDED__
 
+#include "IrrCompileConfig.h"
+
+#ifdef _IRR_COMPILE_WITH_OPENGL_
+
 #include "EDriverFeatures.h"
 #include "irrTypes.h"
 #include "os.h"
@@ -1325,6 +1329,8 @@ inline void COpenGLExtensionHandler::extGlActiveStencilFace(GLenum face)
 
 }
 }
+
+#endif
 
 #endif
 

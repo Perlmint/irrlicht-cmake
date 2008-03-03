@@ -13,6 +13,7 @@
 #include "ISceneUserDataSerializer.h"
 #include "IGUIEnvironment.h"
 #include "IMaterialRenderer.h"
+#include "IReadFile.h"
 
 #include "os.h"
 
