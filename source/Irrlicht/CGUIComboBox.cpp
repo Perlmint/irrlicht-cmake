@@ -52,8 +52,6 @@ CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 	ListButton->setSubElement(true);
 	ListButton->setTabStop(false);
 
-	setNotClipped(true);
-
 	// this element can be tabbed to
 	setTabStop(true);
 	setTabOrder(-1);

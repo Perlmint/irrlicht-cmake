@@ -58,7 +58,6 @@ namespace gui
 			if (outLiterals.size() > 0)
 			{
 				AttribComboBox = Environment->addComboBox(r2, this, -1);
-				AttribComboBox->setNotClipped(true);
 				for (u32 i=0; i<outLiterals.size(); ++i)
 					AttribComboBox->addItem( core::stringw(outLiterals[i].c_str()).c_str());
 
