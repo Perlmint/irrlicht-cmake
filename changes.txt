@@ -1,5 +1,7 @@
 Changes in version 1.4.1 (??? 2008)
 
+ - Fixed clipping of menu and toolbar GUI elements, reported by greenya
+
  - Made new scene managers use the original manager's GUIEnvironment, reported by MasterGod
 
  - Fixed IGUICheckBox::setEnabled, reported by Dorth
