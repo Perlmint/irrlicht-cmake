@@ -170,7 +170,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	if (CursorControl)
 		CursorControl->grab();
 
-	if ( GUIEnvironment )
+	if (GUIEnvironment)
 		GUIEnvironment->grab();
 
 	// create mesh cache if not there already
@@ -1660,7 +1660,7 @@ IMeshCache* CSceneManager::getMeshCache()
 //! Creates a new scene manager.
 ISceneManager* CSceneManager::createNewSceneManager(bool cloneContent)
 {
-	CSceneManager* manager = new CSceneManager(Driver, FileSystem, CursorControl, MeshCache);
+	CSceneManager* manager = new CSceneManager(Driver, FileSystem, CursorControl, MeshCache, GUIEnvironment);
 
 	if (cloneContent)
 		manager->cloneMembers(this, manager);

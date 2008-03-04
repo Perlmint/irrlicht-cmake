@@ -1,5 +1,7 @@
 Changes in version 1.4.1 (??? 2008)
 
+ - Made new scene managers use the original manager's GUIEnvironment, reported by MasterGod
+
  - Fixed IGUICheckBox::setEnabled, reported by Dorth
 
  - Fixed the FollowSpline animator to avoid crashes when only one waypoint is given.
