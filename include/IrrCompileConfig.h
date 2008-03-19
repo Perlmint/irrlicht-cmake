@@ -29,7 +29,7 @@
 //! WIN32 for Windows32
 //! WIN64 for Windows64
 // The windows platform and API support SDL and WINDOW device
-#if defined(WIN32) || defined(WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 #define _IRR_WINDOWS_
 #define _IRR_WINDOWS_API_
 #ifndef _IRR_USE_SDL_DEVICE_
