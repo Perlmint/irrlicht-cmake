@@ -221,10 +221,16 @@ namespace core
 			CMatrix4<T>& buildProjectionMatrixOrthoRH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar);
 
 			//! Builds a left-handed look-at matrix.
-			CMatrix4<T>& buildCameraLookAtMatrixLH(const vector3df& position, const vector3df& target, const vector3df& upVector);
+			CMatrix4<T>& buildCameraLookAtMatrixLH(
+					const vector3df& position,
+					const vector3df& target,
+					const vector3df& upVector);
 
 			//! Builds a right-handed look-at matrix.
-			CMatrix4<T>& buildCameraLookAtMatrixRH(const vector3df& position, const vector3df& target, const vector3df& upVector);
+			CMatrix4<T>& buildCameraLookAtMatrixRH(
+					const vector3df& position,
+					const vector3df& target,
+					const vector3df& upVector);
 
 			//! Builds a matrix that flattens geometry into a plane.
 			//! \param light: light source
@@ -786,9 +792,8 @@ namespace core
 
 		for (s32 i=0; i<4; ++i)
 			for (s32 j=0; j<4; ++j)
-				if (j != i)
-					if (!iszero((*this)(i,j)))
-						return false;
+				if ((j != i) && (!iszero((*this)(i,j))))
+					return false;
 
 		definitelyIdentityMatrix=true;
 		return true;
@@ -1071,22 +1076,54 @@ namespace core
 
 		d = core::reciprocal ( d );
 
-		out(0, 0) = d * (m(1, 1) * (m(2, 2) * m(3, 3) - m(2, 3) * m(3, 2)) + m(1, 2) * (m(2, 3) * m(3, 1) - m(2, 1) * m(3, 3)) + m(1, 3) * (m(2, 1) * m(3, 2) - m(2, 2) * m(3, 1)));
-		out(0, 1) = d * (m(2, 1) * (m(0, 2) * m(3, 3) - m(0, 3) * m(3, 2)) + m(2, 2) * (m(0, 3) * m(3, 1) - m(0, 1) * m(3, 3)) + m(2, 3) * (m(0, 1) * m(3, 2) - m(0, 2) * m(3, 1)));
-		out(0, 2) = d * (m(3, 1) * (m(0, 2) * m(1, 3) - m(0, 3) * m(1, 2)) + m(3, 2) * (m(0, 3) * m(1, 1) - m(0, 1) * m(1, 3)) + m(3, 3) * (m(0, 1) * m(1, 2) - m(0, 2) * m(1, 1)));
-		out(0, 3) = d * (m(0, 1) * (m(1, 3) * m(2, 2) - m(1, 2) * m(2, 3)) + m(0, 2) * (m(1, 1) * m(2, 3) - m(1, 3) * m(2, 1)) + m(0, 3) * (m(1, 2) * m(2, 1) - m(1, 1) * m(2, 2)));
-		out(1, 0) = d * (m(1, 2) * (m(2, 0) * m(3, 3) - m(2, 3) * m(3, 0)) + m(1, 3) * (m(2, 2) * m(3, 0) - m(2, 0) * m(3, 2)) + m(1, 0) * (m(2, 3) * m(3, 2) - m(2, 2) * m(3, 3)));
-		out(1, 1) = d * (m(2, 2) * (m(0, 0) * m(3, 3) - m(0, 3) * m(3, 0)) + m(2, 3) * (m(0, 2) * m(3, 0) - m(0, 0) * m(3, 2)) + m(2, 0) * (m(0, 3) * m(3, 2) - m(0, 2) * m(3, 3)));
-		out(1, 2) = d * (m(3, 2) * (m(0, 0) * m(1, 3) - m(0, 3) * m(1, 0)) + m(3, 3) * (m(0, 2) * m(1, 0) - m(0, 0) * m(1, 2)) + m(3, 0) * (m(0, 3) * m(1, 2) - m(0, 2) * m(1, 3)));
-		out(1, 3) = d * (m(0, 2) * (m(1, 3) * m(2, 0) - m(1, 0) * m(2, 3)) + m(0, 3) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) + m(0, 0) * (m(1, 2) * m(2, 3) - m(1, 3) * m(2, 2)));
-		out(2, 0) = d * (m(1, 3) * (m(2, 0) * m(3, 1) - m(2, 1) * m(3, 0)) + m(1, 0) * (m(2, 1) * m(3, 3) - m(2, 3) * m(3, 1)) + m(1, 1) * (m(2, 3) * m(3, 0) - m(2, 0) * m(3, 3)));
-		out(2, 1) = d * (m(2, 3) * (m(0, 0) * m(3, 1) - m(0, 1) * m(3, 0)) + m(2, 0) * (m(0, 1) * m(3, 3) - m(0, 3) * m(3, 1)) + m(2, 1) * (m(0, 3) * m(3, 0) - m(0, 0) * m(3, 3)));
-		out(2, 2) = d * (m(3, 3) * (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) + m(3, 0) * (m(0, 1) * m(1, 3) - m(0, 3) * m(1, 1)) + m(3, 1) * (m(0, 3) * m(1, 0) - m(0, 0) * m(1, 3)));
-		out(2, 3) = d * (m(0, 3) * (m(1, 1) * m(2, 0) - m(1, 0) * m(2, 1)) + m(0, 0) * (m(1, 3) * m(2, 1) - m(1, 1) * m(2, 3)) + m(0, 1) * (m(1, 0) * m(2, 3) - m(1, 3) * m(2, 0)));
-		out(3, 0) = d * (m(1, 0) * (m(2, 2) * m(3, 1) - m(2, 1) * m(3, 2)) + m(1, 1) * (m(2, 0) * m(3, 2) - m(2, 2) * m(3, 0)) + m(1, 2) * (m(2, 1) * m(3, 0) - m(2, 0) * m(3, 1)));
-		out(3, 1) = d * (m(2, 0) * (m(0, 2) * m(3, 1) - m(0, 1) * m(3, 2)) + m(2, 1) * (m(0, 0) * m(3, 2) - m(0, 2) * m(3, 0)) + m(2, 2) * (m(0, 1) * m(3, 0) - m(0, 0) * m(3, 1)));
-		out(3, 2) = d * (m(3, 0) * (m(0, 2) * m(1, 1) - m(0, 1) * m(1, 2)) + m(3, 1) * (m(0, 0) * m(1, 2) - m(0, 2) * m(1, 0)) + m(3, 2) * (m(0, 1) * m(1, 0) - m(0, 0) * m(1, 1)));
-		out(3, 3) = d * (m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) + m(0, 1) * (m(1, 2) * m(2, 0) - m(1, 0) * m(2, 2)) + m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0)));
+		out(0, 0) = d * (m(1, 1) * (m(2, 2) * m(3, 3) - m(2, 3) * m(3, 2)) +
+				m(1, 2) * (m(2, 3) * m(3, 1) - m(2, 1) * m(3, 3)) +
+				m(1, 3) * (m(2, 1) * m(3, 2) - m(2, 2) * m(3, 1)));
+		out(0, 1) = d * (m(2, 1) * (m(0, 2) * m(3, 3) - m(0, 3) * m(3, 2)) +
+				m(2, 2) * (m(0, 3) * m(3, 1) - m(0, 1) * m(3, 3)) +
+				m(2, 3) * (m(0, 1) * m(3, 2) - m(0, 2) * m(3, 1)));
+		out(0, 2) = d * (m(3, 1) * (m(0, 2) * m(1, 3) - m(0, 3) * m(1, 2)) +
+				m(3, 2) * (m(0, 3) * m(1, 1) - m(0, 1) * m(1, 3)) +
+				m(3, 3) * (m(0, 1) * m(1, 2) - m(0, 2) * m(1, 1)));
+		out(0, 3) = d * (m(0, 1) * (m(1, 3) * m(2, 2) - m(1, 2) * m(2, 3)) +
+				m(0, 2) * (m(1, 1) * m(2, 3) - m(1, 3) * m(2, 1)) +
+				m(0, 3) * (m(1, 2) * m(2, 1) - m(1, 1) * m(2, 2)));
+		out(1, 0) = d * (m(1, 2) * (m(2, 0) * m(3, 3) - m(2, 3) * m(3, 0)) +
+				m(1, 3) * (m(2, 2) * m(3, 0) - m(2, 0) * m(3, 2)) +
+				m(1, 0) * (m(2, 3) * m(3, 2) - m(2, 2) * m(3, 3)));
+		out(1, 1) = d * (m(2, 2) * (m(0, 0) * m(3, 3) - m(0, 3) * m(3, 0)) +
+				m(2, 3) * (m(0, 2) * m(3, 0) - m(0, 0) * m(3, 2)) +
+				m(2, 0) * (m(0, 3) * m(3, 2) - m(0, 2) * m(3, 3)));
+		out(1, 2) = d * (m(3, 2) * (m(0, 0) * m(1, 3) - m(0, 3) * m(1, 0)) +
+				m(3, 3) * (m(0, 2) * m(1, 0) - m(0, 0) * m(1, 2)) +
+				m(3, 0) * (m(0, 3) * m(1, 2) - m(0, 2) * m(1, 3)));
+		out(1, 3) = d * (m(0, 2) * (m(1, 3) * m(2, 0) - m(1, 0) * m(2, 3)) +
+				m(0, 3) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
+				m(0, 0) * (m(1, 2) * m(2, 3) - m(1, 3) * m(2, 2)));
+		out(2, 0) = d * (m(1, 3) * (m(2, 0) * m(3, 1) - m(2, 1) * m(3, 0)) +
+				m(1, 0) * (m(2, 1) * m(3, 3) - m(2, 3) * m(3, 1)) +
+				m(1, 1) * (m(2, 3) * m(3, 0) - m(2, 0) * m(3, 3)));
+		out(2, 1) = d * (m(2, 3) * (m(0, 0) * m(3, 1) - m(0, 1) * m(3, 0)) +
+				m(2, 0) * (m(0, 1) * m(3, 3) - m(0, 3) * m(3, 1)) +
+				m(2, 1) * (m(0, 3) * m(3, 0) - m(0, 0) * m(3, 3)));
+		out(2, 2) = d * (m(3, 3) * (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) +
+				m(3, 0) * (m(0, 1) * m(1, 3) - m(0, 3) * m(1, 1)) +
+				m(3, 1) * (m(0, 3) * m(1, 0) - m(0, 0) * m(1, 3)));
+		out(2, 3) = d * (m(0, 3) * (m(1, 1) * m(2, 0) - m(1, 0) * m(2, 1)) +
+				m(0, 0) * (m(1, 3) * m(2, 1) - m(1, 1) * m(2, 3)) +
+				m(0, 1) * (m(1, 0) * m(2, 3) - m(1, 3) * m(2, 0)));
+		out(3, 0) = d * (m(1, 0) * (m(2, 2) * m(3, 1) - m(2, 1) * m(3, 2)) +
+				m(1, 1) * (m(2, 0) * m(3, 2) - m(2, 2) * m(3, 0)) +
+				m(1, 2) * (m(2, 1) * m(3, 0) - m(2, 0) * m(3, 1)));
+		out(3, 1) = d * (m(2, 0) * (m(0, 2) * m(3, 1) - m(0, 1) * m(3, 2)) +
+				m(2, 1) * (m(0, 0) * m(3, 2) - m(0, 2) * m(3, 0)) +
+				m(2, 2) * (m(0, 1) * m(3, 0) - m(0, 0) * m(3, 1)));
+		out(3, 2) = d * (m(3, 0) * (m(0, 2) * m(1, 1) - m(0, 1) * m(1, 2)) +
+				m(3, 1) * (m(0, 0) * m(1, 2) - m(0, 2) * m(1, 0)) +
+				m(3, 2) * (m(0, 1) * m(1, 0) - m(0, 0) * m(1, 1)));
+		out(3, 3) = d * (m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) +
+				m(0, 1) * (m(1, 2) * m(2, 0) - m(1, 0) * m(2, 2)) +
+				m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0)));
 		out.definitelyIdentityMatrix = definitelyIdentityMatrix;
 		return true;
 	}
@@ -1188,7 +1225,8 @@ namespace core
 
 	//! Builds a right-handed perspective projection matrix based on a field of view
 	template <class T>
-	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveFovRH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
+	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveFovRH(
+			f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
 		const f64 h = 1.0/tan(fieldOfViewRadians/2.0);
 		const T w = h / aspectRatio;
@@ -1222,7 +1260,8 @@ namespace core
 
 	//! Builds a left-handed perspective projection matrix based on a field of view
 	template <class T>
-	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveFovLH(f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
+	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveFovLH(
+			f32 fieldOfViewRadians, f32 aspectRatio, f32 zNear, f32 zFar)
 	{
 		const f64 h = 1.0/tan(fieldOfViewRadians/2.0);
 		const T w = (T)(h / aspectRatio);
@@ -1253,7 +1292,8 @@ namespace core
 
 	//! Builds a left-handed orthogonal projection matrix.
 	template <class T>
-	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixOrthoLH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
+	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixOrthoLH(
+			f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
 		M[0] = (T)(2/widthOfViewVolume);
 		M[1] = 0;
@@ -1282,7 +1322,8 @@ namespace core
 
 	//! Builds a right-handed orthogonal projection matrix.
 	template <class T>
-	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixOrthoRH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
+	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixOrthoRH(
+			f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
 		M[0] = (T)(2/widthOfViewVolume);
 		M[1] = 0;
@@ -1310,7 +1351,8 @@ namespace core
 
 	//! Builds a right-handed perspective projection matrix.
 	template <class T>
-	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveRH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
+	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveRH(
+			f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
 		M[0] = (T)(2*zNear/widthOfViewVolume);
 		M[1] = 0;
@@ -1338,7 +1380,8 @@ namespace core
 
 	//! Builds a left-handed perspective projection matrix.
 	template <class T>
-	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveLH(f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
+	inline CMatrix4<T>& CMatrix4<T>::buildProjectionMatrixPerspectiveLH(
+			f32 widthOfViewVolume, f32 heightOfViewVolume, f32 zNear, f32 zFar)
 	{
 		M[0] = (T)(2*zNear/widthOfViewVolume);
 		M[1] = 0;
@@ -1556,9 +1599,9 @@ namespace core
 
 	template <class T>
 	inline CMatrix4<T>& CMatrix4<T>::buildTextureTransform( f32 rotateRad,
-					const core::vector2df &rotatecenter,
-					const core::vector2df &translate,
-					const core::vector2df &scale)
+			const core::vector2df &rotatecenter,
+			const core::vector2df &translate,
+			const core::vector2df &scale)
 	{
 		const f32 c = cosf(rotateRad);
 		const f32 s = sinf(rotateRad);
