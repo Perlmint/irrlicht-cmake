@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine" and the "irrXML" project.
 // For conditions of distribution and use, see copyright notice in irrlicht.h and irrXML.h
 
@@ -14,7 +14,7 @@ namespace irr
 namespace core
 {
 
-//!	Self reallocating template array (like stl vector) with additional features.
+//! Self reallocating template array (like stl vector) with additional features.
 /** Some features are: Heap sorting, binary search methods, easier debugging.
 */
 template <class T, typename TAlloc = irrAllocator<T> >
@@ -74,7 +74,7 @@ public:
 
 		// copy old data
 		s32 end = used < new_size ? used : new_size;
-		
+
 		for (s32 i=0; i<end; ++i)
 		{
 			// data[i] = old_data[i];

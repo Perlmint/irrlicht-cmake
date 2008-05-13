@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -14,7 +14,7 @@ namespace scene
 
 //! Dummy scene node for adding additional transformations to the scene graph.
 /** This scene node does not render itself, and does not respond to set/getPosition,
-set/getRotation and set/getScale. Its just a simple scene node that takes a 
+set/getRotation and set/getScale. Its just a simple scene node that takes a
 matrix as relative transformation, making it possible to insert any transformation
 anywhere into the scene graph.
 This scene node is for example used by the IAnimatedMeshSceneNode for emulating

@@ -1,4 +1,4 @@
-// Copyright 2006-2007 by Kat'Oun
+// Copyright 2006-2008 by Kat'Oun
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -98,13 +98,13 @@ class map
 		}
 
 
-		bool isRed()	const
+		bool isRed() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return  IsRed;
 		}
 
-		bool isBlack()	const
+		bool isBlack() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return !IsRed;
@@ -122,7 +122,7 @@ class map
 		ValueTypeRB	Value;
 
 		bool IsRed;
-	};
+	}; // RBTree
 
 	public:
 

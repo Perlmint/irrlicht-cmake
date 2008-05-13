@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -15,7 +15,8 @@ namespace irr
 namespace core
 {
 
-//! Quaternion class.
+//! Quaternion class for representing rotations. It provides cheap combinations
+//! and avoid gimbal locks. Also useful for interpolations.
 class quaternion
 {
 	public:
@@ -57,7 +58,7 @@ class quaternion
 		quaternion& operator*=(f32 s);
 
 		//! multiplication operator
-		vector3df operator* (const vector3df& v) const;
+		vector3df operator*(const vector3df& v) const;
 
 		//! multiplication operator
 		quaternion& operator*=(const quaternion& other);
@@ -99,7 +100,7 @@ class quaternion
 		void fromAngleAxis (f32 angle, const vector3df& axis);
 
 		//! Fills an angle (radians) around an axis (unit vector)
-		void toAngleAxis (f32 &angle, vector3df& axis) const;
+		void toAngleAxis (f32 &angle, core::vector3df& axis) const;
 
 		//! Output this quaternion to an euler angle (radians)
 		void toEuler(vector3df& euler) const;

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -16,14 +16,14 @@ namespace irr
 	{
 		//! An event of the graphical user interface.
 		/** GUI events are created by the GUI environment or the GUI elements in response
-		to mouse or keyboard events. When a GUI element receives an event it will either 
+		to mouse or keyboard events. When a GUI element receives an event it will either
 		process it and return true, or pass the event to its parent. If an event is not absorbed
 		before it reaches the root element then it will then be passed to the user receiver. */
 		EET_GUI_EVENT = 0,
 
 		//! A mouse input event.
-		/** Mouse events are created by the device and passed to IrrlichtDevice::postEventFromUser 
-		in response to mouse input received from the operating system. 
+		/** Mouse events are created by the device and passed to IrrlichtDevice::postEventFromUser
+		in response to mouse input received from the operating system.
 		Mouse events are first passed to the user receiver, then to the GUI environment (and possibly
 		many GUI elements), then finally the input receiving scene manager (and possibly the active
 		camera) */
@@ -68,7 +68,7 @@ namespace irr
 		//! The mouse cursor changed its position.
 		EMIE_MOUSE_MOVED,
 
-		//! The mouse wheel was moved. Use Wheel value in event data to find out 
+		//! The mouse wheel was moved. Use Wheel value in event data to find out
 		//! in what direction and how fast.
 		EMIE_MOUSE_WHEEL,
 
@@ -85,7 +85,7 @@ namespace irr
 		enum EGUI_EVENT_TYPE
 		{
 			//! A gui element has lost its focus.
-			//! GUIEvent.Caller is losing the focus to GUIEvent.Element. 
+			//! GUIEvent.Caller is losing the focus to GUIEvent.Element.
 			//! If the event is absorbed then the focus will not be changed.
 			EGET_ELEMENT_FOCUS_LOST = 0,
 
@@ -114,10 +114,10 @@ namespace irr
 			EGET_CHECKBOX_CHANGED,
 
 			//! A new item in a listbox was seleted.
-			EGET_LISTBOX_CHANGED, 
+			EGET_LISTBOX_CHANGED,
 
 			//! An item in the listbox was selected, which was already selected.
-			EGET_LISTBOX_SELECTED_AGAIN, 
+			EGET_LISTBOX_SELECTED_AGAIN,
 
 			//! A file has been selected in the file dialog
 			EGET_FILE_SELECTED,
@@ -182,7 +182,7 @@ struct SEvent
 
 		//! mouse wheel delta, usually 1.0 or -1.0.
 		/** Only valid if event was EMIE_MOUSE_WHEEL */
-		f32 Wheel; 
+		f32 Wheel;
 
 		//! type of mouse event
 		EMOUSE_INPUT_EVENT Event;
@@ -191,19 +191,19 @@ struct SEvent
 	struct SKeyInput
 	{
 		//! Character corresponding to the key (0, if not a character)
-		wchar_t Char; 
+		wchar_t Char;
 
 		//! Key which has been pressed or released
-		EKEY_CODE Key; 
+		EKEY_CODE Key;
 
 		//! if not pressed, then the key was left up
-		bool PressedDown; 
+		bool PressedDown;
 
 		//! true if shift was also pressed
-		bool Shift; 
+		bool Shift;
 
 		//! true if ctrl was also pressed
-		bool Control; 
+		bool Control;
 	};
 
 	struct SLogEvent
@@ -218,13 +218,13 @@ struct SEvent
 	struct SUserEvent
 	{
 		//! Some user specified data as int
-		s32 UserData1; 
+		s32 UserData1;
 
 		//! Another user specified data as int
-		s32 UserData2; 
+		s32 UserData2;
 
 		//! Some user specified data as float
-		f32 UserData3; 
+		f32 UserData3;
 	};
 
 	EEVENT_TYPE EventType;
@@ -241,7 +241,7 @@ struct SEvent
 
 //! Interface of an object which can receive events.
 /** Many of the engine's classes inherit IEventReceiver so they are able to process events.
-Events usually start at a postEventFromUser function and are passed down through a chain of 
+Events usually start at a postEventFromUser function and are passed down through a chain of
 event receivers until OnEvent returns true.
 See irr::EEVENT_TYPE for a description of where each type of event starts, and the path it takes
 through the system. */

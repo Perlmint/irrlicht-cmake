@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -215,7 +215,7 @@ namespace scene
 		planes[SViewFrustum::VF_LEFT_PLANE].Normal.X = -(mat(0,3) + mat(0,0));
 		planes[SViewFrustum::VF_LEFT_PLANE].Normal.Y = -(mat(1,3) + mat(1,0));
 		planes[SViewFrustum::VF_LEFT_PLANE].Normal.Z = -(mat(2,3) + mat(2,0));
-		planes[SViewFrustum::VF_LEFT_PLANE].D =		  -(mat(3,3) + mat(3,0));
+		planes[SViewFrustum::VF_LEFT_PLANE].D = -(mat(3,3) + mat(3,0));
 
 		// right clipping plane
 		planes[SViewFrustum::VF_RIGHT_PLANE].Normal.X = -(mat(0,3) - mat(0,0));
@@ -266,10 +266,10 @@ namespace scene
 	inline void SViewFrustum::setFrom(const core::matrix4& mat)
 	{
 		// left clipping plane
-		planes[VF_LEFT_PLANE].Normal.X	= mat[3 ] + mat[0];
-		planes[VF_LEFT_PLANE].Normal.Y	= mat[7 ] + mat[4];
-		planes[VF_LEFT_PLANE].Normal.Z	= mat[11] + mat[8];
-		planes[VF_LEFT_PLANE].D		= mat[15] + mat[12];
+		planes[VF_LEFT_PLANE].Normal.X = mat[3 ] + mat[0];
+		planes[VF_LEFT_PLANE].Normal.Y = mat[7 ] + mat[4];
+		planes[VF_LEFT_PLANE].Normal.Z = mat[11] + mat[8];
+		planes[VF_LEFT_PLANE].D =        mat[15] + mat[12];
 
 		// right clipping plane
 		planes[VF_RIGHT_PLANE].Normal.X = mat[3 ] - mat[0];

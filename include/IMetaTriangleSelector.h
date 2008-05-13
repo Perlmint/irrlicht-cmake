@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -14,7 +14,7 @@ namespace scene
 
 //! Interface for making multiple triangle selectors work as one big selector.
 /** This is nothing more than a collection of one or more triangle selectors
-providing together the interface of one triangle selector. In this way, 
+providing together the interface of one triangle selector. In this way,
 collision tests can be done with different triangle soups in one pass.
 */
 class IMetaTriangleSelector : public ITriangleSelector
@@ -24,9 +24,9 @@ public:
 	//! Adds a triangle selector to the collection of triangle selectors
 	//! in this metaTriangleSelector.
 	//! \param toAdd: Pointer to an triangle selector to add to the list.
-	virtual void addTriangleSelector(ITriangleSelector* toAdd) = 0; 
+	virtual void addTriangleSelector(ITriangleSelector* toAdd) = 0;
 
-	//! Removes a specific triangle selector which was added before	from the collection.
+	//! Removes a specific triangle selector which was added before from the collection.
 	//! \param toRemove: Pointer to an triangle selector which is in the list
 	//! but will be removed.
 	//! \return Returns true if successful, false if not.

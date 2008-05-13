@@ -1,11 +1,11 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-// The code for the TerrainSceneNode is based on the terrain renderer by Soconne and
-// the GeoMipMapSceneNode developed by Spintz.  They made their code available for Irrlicht 
-// and allowed it to be  distributed under this licence. I only modified some parts.
-// A lot of thanks go to them. 
+// The code for the TerrainSceneNode is based on the terrain renderer by
+// Soconne and the GeoMipMapSceneNode developed by Spintz. They made their
+// code available for Irrlicht and allowed it to be distributed under this
+// licence. I only modified some parts. A lot of thanks go to them.
 
 #ifndef __I_TERRAIN_SCENE_NODE_H__
 #define __I_TERRAIN_SCENE_NODE_H__
@@ -22,14 +22,14 @@ namespace scene
 	class IMesh;
 
 	//! A scene node for displaying terrain using the geo mip map algorithm.
-	/** The code for the TerrainSceneNode is based on the Terrain renderer by Soconne and 
-	 * the GeoMipMapSceneNode developed by Spintz. They made their code available for Irrlicht 
+	/** The code for the TerrainSceneNode is based on the Terrain renderer by Soconne and
+	 * the GeoMipMapSceneNode developed by Spintz. They made their code available for Irrlicht
 	 * and allowed it to be  distributed under this licence. I only modified some parts.
-	 * A lot of thanks go to them. 
+	 * A lot of thanks go to them.
 	 *
 	 * This scene node is capable of very quickly loading
 	 * terrains and updating the indices at runtime to enable viewing very large terrains.  It uses a
-	 * CLOD ( Continuous Level of Detail ) algorithm which updates the indices for each patch based on 
+	 * CLOD ( Continuous Level of Detail ) algorithm which updates the indices for each patch based on
 	 * a LOD ( Level of Detail ) which is determined based on a patch's distance from the camera.
 	 *
 	 * The Patch Size of the terrain must always be a size of ( 2^N+1, i.e. 8+1(9), 16+1(17), etc. ).
@@ -37,7 +37,7 @@ namespace scene
 	 * of the indices to draw all the triangles at the max detail for a patch.  As each LOD goes up by 1
 	 * the step taken, in generating indices increases by - 2^LOD, so for LOD 1, the step taken is 2, for
 	 * LOD 2, the step taken is 4, LOD 3 - 8, etc.  The step can be no larger than the size of the patch,
-	 * so having a LOD of 8, with a patch size of 17, is asking the algoritm to generate indices every 
+	 * so having a LOD of 8, with a patch size of 17, is asking the algoritm to generate indices every
 	 * 2^8 ( 256 ) vertices, which is not possible with a patch size of 17.  The maximum LOD for a patch
 	 * size of 17 is 2^4 ( 16 ).  So, with a MaxLOD of 5, you'll have LOD 0 ( full detail ), LOD 1 ( every
 	 * 2 vertices ), LOD 2 ( every 4 vertices ), LOD 3 ( every 8 vertices ) and LOD 4 ( every 16 vertices ).
@@ -47,22 +47,25 @@ namespace scene
 	public:
 
 		//! constructor
-		ITerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id, 
+		ITerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 			const core::vector3df& position = core::vector3df(0.0f, 0.0f, 0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f, 0.0f, 0.0f),
-			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f) ) 
+			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f) )
 			: ISceneNode (parent, mgr, id, position, rotation, scale) {}
 
 		//! destructor
 		virtual ~ITerrainSceneNode() {}
 
-		//! \return: Returns the bounding box of the entire terrain.
-		virtual const core::aabbox3d<f32>& getBoundingBox ( ) const = 0;
+		//! Get the bounding box of the terrain.
+		//! \return: The bounding box of the entire terrain.
+		virtual const core::aabbox3d<f32>& getBoundingBox() const = 0;
 
 		//! Returns the bounding box of a patch
-		virtual const core::aabbox3d<f32>& getBoundingBox (s32 patchX, s32 patchZ) const = 0;
+		//! \return: The bounding box of the chosen patch.
+		virtual const core::aabbox3d<f32>& getBoundingBox(s32 patchX, s32 patchZ) const = 0;
 
 		//! Returns the number of indices currently in the meshbuffer for this scene node.
+		//! \return: The index count.
 		virtual u32 getIndexCount() const = 0;
 
 		//! Returns pointer to the mesh
@@ -70,23 +73,23 @@ namespace scene
 
 		//! Gets the meshbuffer data based on a specified level of detail.
 		/** \param mb: A reference to an SMeshBuffer object
-		 \param LOD: the level of detail you want the indices from. */
+		\param LOD: the level of detail you want the indices from. */
 		virtual void getMeshBufferForLOD(SMeshBufferLightMap& mb, s32 LOD) const = 0;
 
-		//! Gets the indices for a specified patch at a specified Level of Detail.  
+		//! Gets the indices for a specified patch at a specified Level of Detail.
 		/** \param indices: A reference to an array of u32 indices.
 		\param patchX: Patch x coordinate.
 		\param patchZ: Patch z coordinate.
-		\param LOD: The level of detail to get for that patch.  If -1, then get 
+		\param LOD: The level of detail to get for that patch.  If -1, then get
 		the CurrentLOD.  If the CurrentLOD is set to -1, meaning it's not shown,
 		then it will retrieve the triangles at the highest LOD ( 0 ).
 		\return: Number if indices put into the buffer. */
-		virtual s32 getIndicesForPatch(core::array<u32>& indices, 
+		virtual s32 getIndicesForPatch(core::array<u32>& indices,
 			s32 patchX, s32 patchZ, s32 LOD = 0 ) = 0;
 
 		//! Populates an array with the CurrentLOD of each patch.
 		/** \param LODs: A reference to a core::array<s32> to hold the values
-		 \return: Returns the number of elements in the array */
+		\return: Returns the number of elements in the array */
 		virtual s32 getCurrentLODOfPatches(core::array<s32>& LODs) const = 0;
 
 		//! Manually sets the LOD of a patch
@@ -103,7 +106,7 @@ namespace scene
 
 		//! Sets the movement camera threshold.
 		/** It is used to determine when to recalculate
-		 indices for the scene node.  The default value is 10.0f. */
+		indices for the scene node.  The default value is 10.0f. */
 		virtual void setCameraMovementDelta(f32 delta) = 0;
 
 		//! Sets the rotation camera threshold.
@@ -124,10 +127,10 @@ namespace scene
 		virtual bool overrideLODDistance(s32 LOD, f64 newDistance) = 0;
 
 		//! Scales the base texture, similar to makePlanarTextureMapping.
-		/** \param scale: The scaling amount.  Values above 1.0 increase the number of time the 
+		/** \param scale: The scaling amount.  Values above 1.0 increase the number of time the
 		texture is drawn on the terrain.  Values below 0 will decrease the number of times the
 		texture is drawn on the terrain.  Using negative values will flip the texture, as
-		well as still scaling it. 
+		well as still scaling it.
 		\param scale2: If set to 0 (default value), this will set the second texture coordinate set
 		to the same values as in the first set. If this is another value than zero, it will scale
 		the second texture coordinate set by this value. */

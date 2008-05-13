@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -18,11 +18,11 @@ namespace irr
 
 	When you create an object in the Irrlicht engine, calling a method
 	which starts with 'create', an object is created, and you get a pointer
-	to the new object. If you no longer need the object, you have 
+	to the new object. If you no longer need the object, you have
 	to call drop(). This will destroy the object, if grab() was not called
 	in another part of you program, because this part still needs the object.
 	Note, that you only need to call drop() to the object, if you created it,
-	and the method had a 'create' in it. 
+	and the method had a 'create' in it.
 
 	A simple example:
 
@@ -63,11 +63,11 @@ namespace irr
 		//!
 		//! When you create an object in the Irrlicht engine, calling a method
 		//! which starts with 'create', an object is created, and you get a pointer
-		//! to the new object. If you no longer need the object, you have 
+		//! to the new object. If you no longer need the object, you have
 		//! to call drop(). This will destroy the object, if grab() was not called
 		//! in another part of you program, because this part still needs the object.
 		//! Note, that you only need to call drop() to the object, if you created it,
-		//! and the method had a 'create' in it. 
+		//! and the method had a 'create' in it.
 		//!
 		//! A simple example:
 		//!
@@ -91,11 +91,11 @@ namespace irr
 		//!
 		//! When you create an object in the Irrlicht engine, calling a method
 		//! which starts with 'create', an object is created, and you get a pointer
-		//! to the new object. If you no longer need the object, you have 
+		//! to the new object. If you no longer need the object, you have
 		//! to call drop(). This will destroy the object, if grab() was not called
 		//! in another part of you program, because this part still needs the object.
 		//! Note, that you only need to call drop() to the object, if you created it,
-		//! and the method had a 'create' in it. 
+		//! and the method had a 'create' in it.
 		//!
 		//! A simple example:
 		//!

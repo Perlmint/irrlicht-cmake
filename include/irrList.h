@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -67,7 +67,7 @@ public:
 
 		#if defined (_MSC_VER) && (_MSC_VER < 1300)
 			#pragma warning(disable:4284) // infix notation problem when using iterator operator ->
-		#endif 
+		#endif
 
 		T & operator * () { return Current->Element;  }
 		T * operator ->() { return &Current->Element; }

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -22,7 +22,7 @@ class IBillboardSceneNode : public ISceneNode
 public:
 
 	//! constructor
-	IBillboardSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id, 
+	IBillboardSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 		const core::vector3df& position = core::vector3df(0,0,0))
 		: ISceneNode(parent, mgr, id, position) {}
 

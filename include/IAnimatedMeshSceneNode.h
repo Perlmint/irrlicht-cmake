@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -38,8 +38,8 @@ namespace scene
 
 	//! Callback interface for catching events of ended animations.
 	/** Implement this interface and use
-	 IAnimatedMeshSceneNode::setAnimationEndCallback to be able to
-	 be notified if an animation playback has ended.
+	IAnimatedMeshSceneNode::setAnimationEndCallback to be able to
+	be notified if an animation playback has ended.
 	**/
 	class IAnimationEndCallBack : public virtual IReferenceCounted
 	{
@@ -196,7 +196,7 @@ namespace scene
 		virtual void setJointMode(E_JOINT_UPDATE_ON_RENDER mode)=0;
 
 		//! Sets the transition time in seconds (note: This needs to enable joints, and setJointmode maybe set to 2)
-		//! you must call animateJoints(), or the mesh will not ani\mate
+		//! you must call animateJoints(), or the mesh will not animate
 		virtual void setTransitionTime(f32 Time) =0;
 
 		//! animates the joints in the mesh based on the current frame (also takes in to account transitions)

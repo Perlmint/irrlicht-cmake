@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -112,10 +112,10 @@ namespace scene
 		};
 
 		//! Joints
-	  	struct SJoint
+		struct SJoint
 		{
 			SJoint() : UseAnimationFrom(0), LocalAnimatedMatrix_Animated(false), GlobalSkinningSpace(false),
-				   positionHint(-1),scaleHint(-1),rotationHint(-1)
+				positionHint(-1),scaleHint(-1),rotationHint(-1)
 			{
 			}
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -15,7 +15,7 @@ namespace scene
 	//! Special scene node animator for doing automatic collision detection and response.
 	/** This scene node animator can be attached to any scene node modifying it in that
 	way, that it cannot move through walls of the world, is influenced by gravity and
-	acceleration. This animator is useful for example for first person shooter 
+	acceleration. This animator is useful for example for first person shooter
 	games. Attach it for example to a first person shooter camera, and the camera will
 	behave as the player control in a first person shooter game: The camera stops and
 	slides at walls, walks up stairs, falls down if there is no floor under it, and so on.
@@ -30,7 +30,7 @@ namespace scene
 		//! Returns if the attached scene node is falling, which means that
 		//! there is no blocking wall from the scene node in the direction of
 		//! the gravity. The implementation of this method is very fast,
-		//! no collision detection is done when invoking it. 
+		//! no collision detection is done when invoking it.
 		//! \return Returns true if the scene node is falling, false if not.
 		virtual bool isFalling() const = 0;
 
@@ -65,7 +65,7 @@ namespace scene
 		//! the center of the scene node, which means that the ellipsoid surrounds
 		//! it completely. If this is not what you want, you may specify a translation
 		//! for the ellipsoid.
-		//! \param translation: Translation of the ellipsoid relative 
+		//! \param translation: Translation of the ellipsoid relative
 		//! to the position of the scene node.
 		virtual void setEllipsoidTranslation(const core::vector3df &translation) = 0;
 

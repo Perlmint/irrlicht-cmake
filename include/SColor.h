@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -42,7 +42,7 @@ namespace video
 	//! Converts a 32bit (X8R8G8B8) color to a 16bit A1R5G5B5 color
 	inline u16 X8R8G8B8toA1R5G5B5(u32 color)
 	{
-		return (	0x8000 |
+		return (0x8000 |
 			( color & 0x00F80000) >> 9 |
 			( color & 0x0000F800) >> 6 |
 			( color & 0x000000F8) >> 3);
@@ -72,10 +72,10 @@ namespace video
 	//! build a nicer 32bit Color by extending dest lower bits with source high bits
 	inline u32 A1R5G5B5toA8R8G8B8(u16 color)
 	{
-		return	( (( -( (s32) color & 0x00008000 ) >> (s32) 31 ) & 0xFF000000 ) |
+		return ( (( -( (s32) color & 0x00008000 ) >> (s32) 31 ) & 0xFF000000 ) |
 				(( color & 0x00007C00 ) << 9) | (( color & 0x00007000 ) << 4) |
 				(( color & 0x000003E0 ) << 6) | (( color & 0x00000380 ) << 1) |
-				(( color & 0x0000001F ) << 3) | (( color & 0x0000001C ) >> 2) 
+				(( color & 0x0000001F ) << 3) | (( color & 0x0000001C ) >> 2)
 				);
 	}
 
@@ -183,7 +183,7 @@ namespace video
 		//! Constructs the color from 4 values representing the alpha, red, green and
 		//! blue components of the color. Must be values between 0 and 255.
 		SColor (u32 a, u32 r, u32 g, u32 b)
-			: color(((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff))	{}
+			: color(((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff)) {}
 
 		//! Constructs the color from a 32 bit value. Could be another color.
 		SColor(u32 clr)
@@ -319,7 +319,7 @@ namespace video
 
 		//! Returns interpolated color. ( quadratic )
 		/** \param c1: first color to interpolate with
-		    \param c2: second color to interpolate with
+		\param c2: second color to interpolate with
 		\param d: value between 0.0f and 1.0f. */
 		SColor getInterpolated_quadratic(const SColor& c1, const SColor& c2, f32 d) const
 		{
@@ -347,7 +347,7 @@ namespace video
 
 
 	//! Class representing a color with four floats.
-	/**	The color values for red, green, blue
+	/** The color values for red, green, blue
 	and alpha are each stored in a 32 bit floating point variable.
 	So all four values may be between 0.0f and 1.0f.
 	Another, faster way to define colors is using the class SColor, which
@@ -433,10 +433,10 @@ namespace video
 			const f32 mul1 = 2.f * d * inv;
 			const f32 mul2 = d * d;
 
-			return SColorf ( r * mul0 + c1.r * mul1 + c2.r * mul2,
-					 g * mul0 + c1.g * mul1 + c2.g * mul2,
-					 g * mul0 + c1.b * mul1 + c2.b * mul2,
-					 a * mul0 + c1.a * mul1 + c2.a * mul2);
+			return SColorf (r * mul0 + c1.r * mul1 + c2.r * mul2,
+					g * mul0 + c1.g * mul1 + c2.g * mul2,
+					g * mul0 + c1.b * mul1 + c2.b * mul2,
+					a * mul0 + c1.a * mul1 + c2.a * mul2);
 		}
 
 
@@ -479,7 +479,7 @@ namespace video
 
 
 	//! Class representing a color in HSV format
-	/**	The color values for hue, saturation, value
+	/** The color values for hue, saturation, value
 	are stored in a 32 bit floating point variable.
 	*/
 	class SColorHSL
@@ -511,18 +511,18 @@ namespace video
 			return;
 		}
 
-		f32 rm1, rm2;
-			
+		f32 rm2;
+
 		if ( Luminance <= 0.5f )
 		{
-			rm2 = Luminance + Luminance * Saturation;  
+			rm2 = Luminance + Luminance * Saturation;
 		}
 		else
 		{
 			rm2 = Luminance + Saturation - Luminance * Saturation;
 		}
 
-		rm1 = 2.0f * Luminance - rm2;   
+		const f32 rm1 = 2.0f * Luminance - rm2;
 
 		color.setRed ( toRGB1(rm1, rm2, Hue + (120.0f * core::DEGTORAD )) );
 		color.setGreen ( toRGB1(rm1, rm2, Hue) );
@@ -545,7 +545,7 @@ namespace video
 		else if (rh < 240.0f * core::DEGTORAD )
 			rm1 = rm1 + (rm2 - rm1) * ( ( 240.0f * core::DEGTORAD ) - rh) /
 				(60.0f * core::DEGTORAD);
-		                
+
 		return (u32) (rm1 * 255.f);
 	}
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -71,18 +71,18 @@ namespace scene
 
 		//! This method is called just before the rendering process of the whole scene.
 		/** Nodes may register themselves in the render pipeline during this call,
-		 precalculate the geometry which should be renderered, and prevent their
-		 children from being able to register themselves if they are clipped by simply
-		 not calling their OnRegisterSceneNode method. 
-		 If you are implementing your own scene node, you should overwrite this method
-		 with an implementation code looking like this:
-		 \code
-		 if (IsVisible)
+		precalculate the geometry which should be renderered, and prevent their
+		children from being able to register themselves if they are clipped by simply
+		not calling their OnRegisterSceneNode method.
+		If you are implementing your own scene node, you should overwrite this method
+		with an implementation code looking like this:
+		\code
+		if (IsVisible)
 			SceneManager->registerNodeForRendering(this);
 
-		 ISceneNode::OnRegisterSceneNode();
-		 \endcode
-	    */
+		ISceneNode::OnRegisterSceneNode();
+		\endcode
+		*/
 		virtual void OnRegisterSceneNode()
 		{
 			if (IsVisible)
@@ -204,7 +204,7 @@ namespace scene
 
 
 		//! Sets if the node should be visible or not. All children of this node won't be visible either, when set to true.
-		//! \param isVisisble If the node shall be visible.
+		//! \param isVisible If the node shall be visible.
 		virtual void setVisible(bool isVisible)
 		{
 			IsVisible = isVisible;
@@ -244,7 +244,8 @@ namespace scene
 
 		//! Removes a child from this scene node.
 		//! \param child A pointer to the new child.
-		//! \return True if the child could be removed, and false if not.
+		//! \return True if the child was removed, and false if not,
+		//! e.g. because it couldn't be found in the children list.
 		virtual bool removeChild(ISceneNode* child)
 		{
 			core::list<ISceneNode*>::Iterator it = Children.begin();
@@ -470,7 +471,7 @@ namespace scene
 
 		//! Sets if debug data like bounding boxes should be drawn.
 		/** A bitwise OR of the types is supported.
-		  Please note that not all scene nodes support this feature.
+		Please note that not all scene nodes support this feature.
 		\param state The debug data visibility state to be used. */
 		virtual void setDebugDataVisible(s32 state)
 		{
@@ -646,8 +647,8 @@ namespace scene
 		//! \param newParent An optional new parent.
 		//! \param newManager An optional new scene manager.
 		//! \return The newly created clone of this node.
-		virtual ISceneNode* clone(ISceneNode* newParent=0, ISceneManager* newManager=0) 
-		{ 
+		virtual ISceneNode* clone(ISceneNode* newParent=0, ISceneManager* newManager=0)
+		{
 			return 0; // to be implemented by derived classes
 		}
 
@@ -655,7 +656,7 @@ namespace scene
 
 		//! A clone function for the ISceneNode members.
 		//! this method can be used by clone() implementations of derived classes
-		//! \param topCopyFrom The node from which the values are copied
+		//! \param toCopyFrom The node from which the values are copied
 		//! \param newManager The new scene manager.
 		void cloneMembers(ISceneNode* toCopyFrom, ISceneManager* newManager)
 		{
@@ -663,7 +664,7 @@ namespace scene
 			AbsoluteTransformation = toCopyFrom->AbsoluteTransformation;
 			RelativeTranslation = toCopyFrom->RelativeTranslation;
 			RelativeRotation = toCopyFrom->RelativeRotation;
-			RelativeScale = toCopyFrom->RelativeScale;			
+			RelativeScale = toCopyFrom->RelativeScale;
 			ID = toCopyFrom->ID;
 			setTriangleSelector(toCopyFrom->TriangleSelector);
 			AutomaticCullingState = toCopyFrom->AutomaticCullingState;

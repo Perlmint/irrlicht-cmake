@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -89,7 +89,7 @@ class line2d
 			out.Y = a1 + b1*out.X;
 
 			// did the lines cross?
-			if (	(start.X-out.X) *(out.X-end.X)	 >= -ROUNDING_ERROR_32 &&
+			if ((start.X-out.X) *(out.X-end.X)   >= -ROUNDING_ERROR_32 &&
 				(l.start.X-out.X)*(out.X-l.end.X)>= -ROUNDING_ERROR_32 &&
 				(start.Y-out.Y)  *(out.Y-end.Y)  >= -ROUNDING_ERROR_32 &&
 				(l.start.Y-out.Y)*(out.Y-l.end.Y)>= -ROUNDING_ERROR_32 )
@@ -114,18 +114,18 @@ class line2d
 			return vect.getAngleWith(vect2);
 		}
 
-		//! Tells us if the given point lies to the left, 
+		//! Tells us if the given point lies to the left,
 		//! right, or on the direction of the line
 		//! \return Returns 0 if the point is on the line
 		//! <0 if to the left, or >0 if to the right.
 		T getPointOrientation(const vector2d<T>& point) const
 		{
-			return ( (end.X   - start.X) * (point.Y - start.Y) - 
-					 (point.X - start.X) * (end.Y   - start.Y) );
+			return ( (end.X   - start.X) * (point.Y - start.Y) -
+					(point.X - start.X) * (end.Y   - start.Y) );
 		}
 
 		//! Returns if the given point is a member of the line
-		//! \return Returns true if 
+		//! \return Returns true if
 		bool isPointOnLine(const vector2d<T>& point) const
 		{
 			T d = getPointOrientation(point);

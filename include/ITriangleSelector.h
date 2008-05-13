@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -17,12 +17,12 @@ namespace scene
 {
 
 //! Interface to return triangles with specific properties.
-/** Every ISceneNode may have a triangle selector, available with 
- ISceneNode::getTriangleScelector() or ISceneManager::createTriangleSelector.
- This is used for doing collision detection: For example if you know, that a
- collision may have happened in the area between (1,1,1) and (10,10,10), you
- can get all triangles of the scene node in this area with the
- ITriangleSelector easily and check every triangle if it collided. */
+/** Every ISceneNode may have a triangle selector, available with
+ISceneNode::getTriangleScelector() or ISceneManager::createTriangleSelector.
+This is used for doing collision detection: For example if you know, that a
+collision may have happened in the area between (1,1,1) and (10,10,10), you
+can get all triangles of the scene node in this area with the
+ITriangleSelector easily and check every triangle if it collided. */
 class ITriangleSelector : public virtual IReferenceCounted
 {
 public:
@@ -61,7 +61,7 @@ public:
 	//! down into an ellipsoid space. If this pointer is null, no
 	//! transformation will be done.
 	virtual void getTriangles(core::triangle3df* triangles, s32 arraySize,
-		s32& outTriangleCount, const core::aabbox3d<f32>& box, 
+		s32& outTriangleCount, const core::aabbox3d<f32>& box,
 		const core::matrix4* transform=0) const = 0;
 
 	//! Gets all triangles which have or may have contact with a 3d line.
@@ -79,7 +79,7 @@ public:
 	//! down into an ellipsoid space. If this pointer is null, no
 	//! transformation will be done.
 	virtual void getTriangles(core::triangle3df* triangles, s32 arraySize,
-		s32& outTriangleCount, const core::line3d<f32>& line, 
+		s32& outTriangleCount, const core::line3d<f32>& line,
 		const core::matrix4* transform=0) const = 0;
 };
 

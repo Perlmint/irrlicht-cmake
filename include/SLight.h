@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -42,16 +42,16 @@ struct SLight
 		Radius(100.f), OuterCone(45.f), InnerCone(0.f), Falloff(2.f),
 		Position(0.f,0.f,0.f), Direction(0.f,0.f,1.f),
 		Type(ELT_POINT), CastShadows(true)
-		 {};
+		{}
 
 	//! Ambient color emitted by the light
 	SColorf AmbientColor;
 
 	//! Diffuse color emitted by the light.
 	//! This is the primary color you want to set.
-	SColorf DiffuseColor; 
+	SColorf DiffuseColor;
 
-	//! Specular color emitted by the light. 
+	//! Specular color emitted by the light.
 	//! For details how to use specular highlights, see SMaterial::Shininess
 	SColorf SpecularColor;
 
