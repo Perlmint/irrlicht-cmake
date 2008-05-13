@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -14,14 +14,13 @@
 namespace irr
 {
 
-
 namespace scene
 {
 	class ISceneNode;
 	class ICameraSceneNode;
 	class ITriangleSelector;
 
-	//!	The Scene Collision Manager provides methods for performing collision tests and picking on scene nodes.
+	//! The Scene Collision Manager provides methods for performing collision tests and picking on scene nodes.
 	class ISceneCollisionManager : public virtual IReferenceCounted
 	{
 	public:
@@ -32,7 +31,7 @@ namespace scene
 		//! Finds the collision point of a line and lots of triangles, if there is one.
 		//! \param ray: Line with witch collisions are tested.
 		//! \param selector: TriangleSelector containing the triangles. It can
-		//! be created for example using ISceneManager::createTriangleSelector() or 
+		//! be created for example using ISceneManager::createTriangleSelector() or
 		//! ISceneManager::createTriangleOctTreeSelector().
 		//! \param outCollisionPoint: If a collision is detected, this will contain the
 		//! position of the nearest collision.
@@ -50,13 +49,13 @@ namespace scene
 		//! position is based on the paper "Improved Collision detection and Response"
 		//! by Kasper Fauerby.
 		//! \param selector: TriangleSelector containing the triangles of the world.
-		//! It can be created for example using ISceneManager::createTriangleSelector() or 
+		//! It can be created for example using ISceneManager::createTriangleSelector() or
 		//! ISceneManager::createTriangleOctTreeSelector().
 		//! \param ellipsoidPosition: Position of the ellipsoid.
 		//! \param ellipsoidRadius: Radius of the ellipsoid.
-		//! \param ellipsoidDirectionAndSpeed: Direction and speed of 
+		//! \param ellipsoidDirectionAndSpeed: Direction and speed of
 		//! the movement of the ellipsoid.
-		//! \param triout: Optional parameter where the last triangle causing a 
+		//! \param triout: Optional parameter where the last triangle causing a
 		//! collision is stored, if there is a collision.
 		//! \param outFalling: Is set to true if the ellipsoid is falling down, caused
 		//! by gravity.
@@ -66,18 +65,18 @@ namespace scene
 		virtual core::vector3df getCollisionResultPosition(
 			ITriangleSelector* selector,
 			const core::vector3df &ellipsoidPosition,
-			const core::vector3df& ellipsoidRadius, 
+			const core::vector3df& ellipsoidRadius,
 			const core::vector3df& ellipsoidDirectionAndSpeed,
 			core::triangle3df& triout,
 			bool& outFalling,
 			f32 slidingSpeed = 0.0005f,
-			const core::vector3df& gravityDirectionAndSpeed 
+			const core::vector3df& gravityDirectionAndSpeed
 			= core::vector3df(0.0f, 0.0f, 0.0f)) = 0;
 
 		//! Returns a 3d ray which would go through the 2d screen coodinates.
 		//! \param pos: Screen coordinates in pixels.
 		//! \param camera: Camera from which the ray starts. If null, the
-		//! active camera is used. 
+		//! active camera is used.
 		//! \return Returns a ray starting from the position of the camera
 		//! and ending at a length of the far value of the camera at a position
 		//! which would be behind the 2d screen coodinates.
@@ -89,8 +88,8 @@ namespace scene
 		//! 2d.
 		//! \param camera: Camera to be used. If null, the currently active
 		//! camera is used.
-		//! \return Returns the 2d screen coordinates which a object in the 
-		//! 3d world would have if it would be rendered to the screen. If the 
+		//! \return Returns the 2d screen coordinates which a object in the
+		//! 3d world would have if it would be rendered to the screen. If the
 		//! 3d position is behind the camera, it is set to (-10000,-10000). In
 		//! most cases you can ignore this fact, because if you use this method
 		//! for drawing a decorator over a 3d object, it will be clipped by the
@@ -98,7 +97,7 @@ namespace scene
 		virtual core::position2d<s32> getScreenCoordinatesFrom3DPosition(
 			core::vector3df pos, ICameraSceneNode* camera=0) = 0;
 
-		//! Returns the scene node, which is currently visible under the overgiven 
+		//! Returns the scene node, which is currently visible under the overgiven
 		//! screencoordinates, viewed from the currently active camera. The collision
 		//! tests are done using a bounding box for each scene node.
 		//! \param pos: Position in pixel screen coordinates, under which the returned
@@ -112,7 +111,7 @@ namespace scene
 		virtual ISceneNode* getSceneNodeFromScreenCoordinatesBB(core::position2d<s32> pos,
 			s32 idBitMask=0, bool bNoDebugObjects = false) = 0;
 
-		//! Returns the nearest scene node which collides with a 3d ray and 
+		//! Returns the nearest scene node which collides with a 3d ray and
 		//! which id matches a bitmask. The collision tests are done using a bounding
 		//! box for each scene node.
 		//! \param ray: Line with witch collisions are tested.
@@ -123,7 +122,7 @@ namespace scene
 		//! \return Returns the scene node nearest to ray.start, which collides with the
 		//! ray and matches the idBitMask, if the mask is not null. If no scene
 		//! node is found, 0 is returned.
-		virtual ISceneNode* getSceneNodeFromRayBB(core::line3d<f32> ray, 
+		virtual ISceneNode* getSceneNodeFromRayBB(core::line3d<f32> ray,
 			s32 idBitMask=0, bool bNoDebugObjects = false) = 0;
 
 		//! Returns the scene node, at which the overgiven camera is looking at and

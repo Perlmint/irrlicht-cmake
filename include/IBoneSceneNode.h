@@ -54,7 +54,7 @@ namespace scene
 	public:
 
 		IBoneSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id=-1) :
-		  ISceneNode(parent, mgr, id),positionHint(-1),scaleHint(-1),rotationHint(-1) { }
+			ISceneNode(parent, mgr, id),positionHint(-1),scaleHint(-1),rotationHint(-1) { }
 
 		//! Returns the name of the bone
 		virtual const c8* getBoneName() const = 0;

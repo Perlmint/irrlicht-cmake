@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -28,8 +28,8 @@ namespace io
 		//! Changes position in file, returns true if successful.
 		//! \param finalPos: Destination position in the file.
 		//! \param relativeMovement: If set to true, the position in the file is
-		//! changed relative to current position. Otherwise the position is changed 
-		//! from begin of file.		
+		//! changed relative to current position. Otherwise the position is changed
+		//! from begin of file.
 		//! \return Returns true if successful, otherwise false.
 		virtual bool seek(long finalPos, bool relativeMovement = false) = 0;
 

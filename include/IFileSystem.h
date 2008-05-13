@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -50,17 +50,17 @@ public:
 	\param memory: A pointer to the start of the file in memory
 	\param len: The length of the memory in bytes
 	\param fileName: The name given to this file
-	\param deleteMemoryWhenDropped: True if the memory should be deleted 
+	\param deleteMemoryWhenDropped: True if the memory should be deleted
 	along with the IReadFile when it is dropped.
 	\return Returns a pointer to the created file interface.
 	The returned pointer should be dropped when no longer needed.
-	See IReferenceCounted::drop() for more information. 
+	See IReferenceCounted::drop() for more information.
 	*/
 	virtual IReadFile* createMemoryReadFile(void* memory, s32 len, const c8* fileName, bool deleteMemoryWhenDropped=false) = 0;
 
 	//! Opens a file for write access.
 	/** \param filename: Name of file to open.
-	\param append: If the file already exist, all write operations are 
+	\param append: If the file already exist, all write operations are
 	appended to the file.
 	\return Returns a pointer to the created file interface. 0 is returned, if the
 	file could not created or opened for writing.
@@ -69,9 +69,9 @@ public:
 	virtual IWriteFile* createAndWriteFile(const c8* filename, bool append=false) = 0;
 
 	//! Adds an zip archive to the file system.
-	/** After calling this, the Irrlicht Engine will search and open files directly from this archive too. 
-	 This is useful for hiding data from the end user, speeding up file access and making it possible to
-	 access for example Quake3 .pk3 files, which are nothing different than .zip files.
+	/** After calling this, the Irrlicht Engine will search and open files directly from this archive too.
+	This is useful for hiding data from the end user, speeding up file access and making it possible to
+	access for example Quake3 .pk3 files, which are nothing different than .zip files.
 	\param filename: Filename of the zip archive to add to the file system.
 	\param ignoreCase: If set to true, files in the archive can be accessed without
 	writing all letters in the right case.
@@ -89,11 +89,11 @@ public:
 	without its complete path.
 	\return Returns true if the archive was added successful, false if not. */
 	virtual bool addFolderFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
-	
+
 	//! Adds an pak archive to the file system.
-	/** After calling this, the Irrlicht Engine will search and open files directly from this archive too. 
-	 This is useful for hiding data from the end user, speeding up file access and making it possible to
-	 access for example Quake2/KingPin/Hexen2 .pak files
+	/** After calling this, the Irrlicht Engine will search and open files directly from this archive too.
+	This is useful for hiding data from the end user, speeding up file access and making it possible to
+	access for example Quake2/KingPin/Hexen2 .pak files
 	\param filename: Filename of the pak archive to add to the file system.
 	\param ignoreCase: If set to true, files in the archive can be accessed without
 	writing all letters in the right case.

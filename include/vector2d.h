@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -39,14 +39,14 @@ public:
 	vector2d<T> operator-(const T v) const { return vector2d<T>(X - v, Y - v); }
 	vector2d<T>& operator-=(const T v) { X-=v; Y-=v; return *this; }
 
-	vector2d<T> operator*(const vector2d<T>& other) const { return vector2d<T>(X * other.X, Y * other.Y);	}
+	vector2d<T> operator*(const vector2d<T>& other) const { return vector2d<T>(X * other.X, Y * other.Y); }
 	vector2d<T>& operator*=(const vector2d<T>& other) { X*=other.X; Y*=other.Y; return *this; }
-	vector2d<T> operator*(const T v) const { return vector2d<T>(X * v, Y * v);	}
+	vector2d<T> operator*(const T v) const { return vector2d<T>(X * v, Y * v); }
 	vector2d<T>& operator*=(const T v) { X*=v; Y*=v; return *this; }
 
-	vector2d<T> operator/(const vector2d<T>& other) const { return vector2d<T>(X / other.X, Y / other.Y);	}
+	vector2d<T> operator/(const vector2d<T>& other) const { return vector2d<T>(X / other.X, Y / other.Y); }
 	vector2d<T>& operator/=(const vector2d<T>& other) { X/=other.X; Y/=other.Y; return *this; }
-	vector2d<T> operator/(const T v) const { return vector2d<T>(X / v, Y / v);	}
+	vector2d<T> operator/(const T v) const { return vector2d<T>(X / v, Y / v); }
 	vector2d<T>& operator/=(const T v) { X/=v; Y/=v; return *this; }
 
 	bool operator<=(const vector2d<T>&other) const { return X<=other.X && Y<=other.Y; }
@@ -146,15 +146,15 @@ public:
 				return 360.0-atan(-Y/X) * RADTODEG64;
 			else
 				return 180.0+atan(-Y/-X) * RADTODEG64;
-	} 
+	}
 
 	//! Calculates the angle of this vector in grad in the counter trigonometric sense.
 	//! \return Returns a value between 0 and 360.
 	inline f64 getAngle() const
 	{
 		if (Y == 0)  // corrected thanks to a suggestion by Jox
-			return X < 0 ? 180 : 0; 
-		else if (X == 0) 
+			return X < 0 ? 180 : 0;
+		else if (X == 0)
 			return Y < 0 ? 90 : 270;
 
 		f64 tmp = Y / getLength();
@@ -199,7 +199,7 @@ public:
 	bool isBetweenPoints(const vector2d<T>& begin, const vector2d<T>& end) const
 	{
 		T f = (end - begin).getLengthSQ();
-		return getDistanceFromSQ(begin) < f && 
+		return getDistanceFromSQ(begin) < f &&
 			getDistanceFromSQ(end) < f;
 	}
 

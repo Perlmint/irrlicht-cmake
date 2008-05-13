@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -15,7 +15,7 @@ namespace core
 
 	//! Simple class for holding 2d coordinates.
 	/** Not supposed for doing geometric calculations.
-	use vector2d instead for things like that. 
+	use vector2d instead for things like that.
 	*/
 	template <class T>
 	class position2d
@@ -94,7 +94,7 @@ namespace core
 				return position2d<T>(X-other.Width, Y-other.Height);
 			}
 
-			const position2d<T>& operator=(const position2d<T>& other) 
+			const position2d<T>& operator=(const position2d<T>& other)
 			{
 				X = other.X;
 				Y = other.Y;

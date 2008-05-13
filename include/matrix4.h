@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -19,9 +19,7 @@ namespace core
 {
 
 	//! 4x4 matrix. Mostly used as transformation matrix for 3d calculations.
-	/* Matrix4 is mainly used by the Irrlicht engine for doing transformations.
-	The matrix is a D3D style matrix, row major with translations in the 4th row.
-	*/
+	//! The matrix is a D3D style matrix, row major with translations in the 4th row.
 	template <class T>
 	class CMatrix4
 	{
@@ -152,7 +150,7 @@ namespace core
 			void rotateVect( vector3df& vect ) const;
 
 			//! An alternate transform vector method, writing into a second vector
-			void rotateVect(vector3df& out,const core::vector3df& in) const;
+			void rotateVect(core::vector3df& out, const core::vector3df& in) const;
 
 			//! An alternate transform vector method, writing into an array of 3 floats
 			void rotateVect(T *out,const core::vector3df &in) const;
@@ -309,6 +307,8 @@ namespace core
 			mutable bool definitelyIdentityMatrix;
 	};
 
+	//! Default constructor
+	//! \param constructor Choose the initialization style
 	template <class T>
 	inline CMatrix4<T>::CMatrix4( eConstructor constructor ) : definitelyIdentityMatrix(false)
 	{
@@ -325,6 +325,9 @@ namespace core
 		}
 	}
 
+	//! Copy constructor
+	//! \param other Other matrix to copy from
+	//! \param constructor Choose the initialization style
 	template <class T>
 	inline CMatrix4<T>::CMatrix4( const CMatrix4<T>& other, eConstructor constructor) : definitelyIdentityMatrix(false)
 	{
@@ -786,11 +789,10 @@ namespace core
 	{
 		if (definitelyIdentityMatrix)
 			return true;
-		if (	!equals ( M[ 0], (T)1 ) ||
-				!equals ( M[ 5], (T)1 ) ||
-				!equals ( M[10], (T)1 ) ||
-				!equals ( M[15], (T)1 )
-			)
+		if (!equals( M[ 0], (T)1 ) ||
+				!equals( M[ 5], (T)1 ) ||
+				!equals( M[10], (T)1 ) ||
+				!equals( M[15], (T)1 ))
 			return false;
 
 		for (s32 i=0; i<4; ++i)
@@ -897,7 +899,7 @@ namespace core
 
 
 	template <class T>
-	inline void CMatrix4<T>::transformVect(T *out,const vector3df &in) const
+	inline void CMatrix4<T>::transformVect(T *out, const core::vector3df &in) const
 	{
 		out[0] = in.X*M[0] + in.Y*M[4] + in.Z*M[8] + M[12];
 		out[1] = in.X*M[1] + in.Y*M[5] + in.Z*M[9] + M[13];
@@ -1137,25 +1139,25 @@ namespace core
 	template <class T>
 	inline bool CMatrix4<T>::getInversePrimitive ( CMatrix4<T>& out ) const
 	{
-		out.M[0 ]	= M[0];
-		out.M[1 ]	= M[4];
-		out.M[2 ]	= M[8];
-		out.M[3 ]	= 0;
+		out.M[0 ] = M[0];
+		out.M[1 ] = M[4];
+		out.M[2 ] = M[8];
+		out.M[3 ] = 0;
 
-		out.M[4 ]	= M[1];
-		out.M[5 ]	= M[5];
-		out.M[6 ]	= M[9];
-		out.M[7 ]	= 0;
+		out.M[4 ] = M[1];
+		out.M[5 ] = M[5];
+		out.M[6 ] = M[9];
+		out.M[7 ] = 0;
 
-		out.M[8 ]	= M[2];
-		out.M[9 ]	= M[6];
-		out.M[10]	= M[10];
-		out.M[11]	= 0;
+		out.M[8 ] = M[2];
+		out.M[9 ] = M[6];
+		out.M[10] = M[10];
+		out.M[11] = 0;
 
-		out.M[12]	= (T)-(M[12]*M[0] + M[13]*M[1] + M[14]*M[2]);
-		out.M[13]	= (T)-(M[12]*M[4] + M[13]*M[5] + M[14]*M[6]);
-		out.M[14]	= (T)-(M[12]*M[8] + M[13]*M[9] + M[14]*M[10]);
-		out.M[15]	= 1;
+		out.M[12] = (T)-(M[12]*M[0] + M[13]*M[1] + M[14]*M[2]);
+		out.M[13] = (T)-(M[12]*M[4] + M[13]*M[5] + M[14]*M[6]);
+		out.M[14] = (T)-(M[12]*M[8] + M[13]*M[9] + M[14]*M[10]);
+		out.M[15] = 1;
 		out.definitelyIdentityMatrix = definitelyIdentityMatrix;
 		return true;
 	}

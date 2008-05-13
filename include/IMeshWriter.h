@@ -20,19 +20,25 @@ namespace scene
 	{
 	public:
 
+		//! Destructor
 		virtual ~IMeshWriter() {}
 
-		//! Returns the type of the mesh writer
-		/** For own implementations, use  MAKE_IRR_ID as shown in the EMESH_WRITER_TYPE
-		enumeration to return your own unique mesh type id.*/
+		//! Get the type of the mesh writer
+		/** For own implementations, use MAKE_IRR_ID as shown in the
+		EMESH_WRITER_TYPE enumeration to return your own unique mesh
+		type id.
+		\return Type of the mesh writer. */
 		virtual EMESH_WRITER_TYPE getType() const = 0;
 
-		//! writes a static mesh
-		/** \return Returns true if sucessful */
+		//! Write a static mesh.
+		/** \param file File handle to write the mesh to.
+		\param mesh Pointer to mesh to be written.
+		\param flags Optional flags to set properties of the writer.
+		\return True if sucessful */
 		virtual bool writeMesh(io::IWriteFile* file, scene::IMesh* mesh,
 							s32 flags=EMWF_NONE) = 0;
 
-		// writes an animated mesh
+		// Writes an animated mesh
 		// for future use, no writer is able to write animated meshes currently
 		/* \return Returns true if sucessful */
 		//virtual bool writeAnimatedMesh(io::IWriteFile* file,

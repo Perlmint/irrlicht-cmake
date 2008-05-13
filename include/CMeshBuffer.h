@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -41,13 +41,13 @@ namespace scene
 		virtual const void* getVertices() const
 		{
 			return Vertices.const_pointer();
-		} 
+		}
 
 		//! returns pointer to vertices
 		virtual void* getVertices()
 		{
 			return Vertices.pointer();
-		} 
+		}
 
 		//! returns amount of vertices
 		virtual u32 getVertexCount() const
@@ -105,7 +105,7 @@ namespace scene
 			return T().getType();
 		}
 
-	
+
 		//! append the vertices and indices to the current buffer
 		virtual void append(const void* const vertices, u32 numVertices, const u16* const indices, u32 numIndices)
 		{

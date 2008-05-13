@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -15,7 +15,7 @@ namespace io
 {
 
 	//! Interface providing methods for making it easier to write XML files.
-	/** This XML Writer only writes UTF-16 xml files, because these are parsed 
+	/** This XML Writer only writes UTF-16 xml files, because these are parsed
 	faster than all other formats by IXMLReader.
 	*/
 	class IXMLWriter : public virtual IReferenceCounted

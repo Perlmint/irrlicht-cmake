@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -26,7 +26,7 @@ public:
 
 	//! gets text from the clipboard
 	//! \return Returns 0 if no string is in there.
-	virtual c8* getTextFromClipboard() const = 0;	
+	virtual c8* getTextFromClipboard() const = 0;
 
 	//! gets the processor speed in megahertz
 	//! \param MHz: The integer variable to store the speed in.

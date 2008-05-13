@@ -26,9 +26,6 @@ namespace gui
 		virtual ~IGUISpinBox() {}
 
 		//! Access the edit box used in the spin control
-		/** \param enable: If set to true, the override color, which can be set
-		 with IGUIEditBox::setOverrideColor is used, otherwise the
-		 EGDC_BUTTON_TEXT color of the skin. */
 		virtual IGUIEditBox* getEditBox() const = 0;
 
 		//! set the current value of the spinbox

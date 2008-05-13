@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -14,7 +14,7 @@ namespace video
 {
 
 	//! A list of all available video modes.
-	/** You can get a list via IrrlichtDevice::getVideoModeList(). If you are confused 
+	/** You can get a list via IrrlichtDevice::getVideoModeList(). If you are confused
 	now, because you think you have to create an Irrlicht Device with a video
 	mode before being able to get the video mode list, let me tell you that
 	there is no need to start up an Irrlicht Device with EDT_DIRECT3D8, EDT_OPENGL or

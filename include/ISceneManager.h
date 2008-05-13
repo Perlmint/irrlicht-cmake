@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -129,7 +129,7 @@ namespace scene
 		class SShader;
 	} // end namespace quake3
 
-	//!	The Scene Manager manages scene nodes, mesh recources, cameras and all the other stuff.
+	//! The Scene Manager manages scene nodes, mesh recources, cameras and all the other stuff.
 	/** All Scene nodes can be created only here. There is a always growing
 	list of scene nodes for lots of purposes: Indoor rendering scene nodes
 	like the Octree (addOctTreeSceneNode()) or the terrain renderer
@@ -286,7 +286,7 @@ namespace scene
 		 *        directory of the SDK. Thanks to Murphy McCauley for
 		 *        creating all this.</TD>
 		 *    </TR>
-		 *	  <TR>
+		 *    <TR>
 		 *      <TD>OGRE Meshes (.mesh)</TD>
 		 *      <TD>Ogre .mesh files contain 3D data for the OGRE 3D
 		 *        engine. Irrlicht can read and display them directly
@@ -810,7 +810,7 @@ namespace scene
 		//! a position in three dimensional space
 		virtual ITextSceneNode* addTextSceneNode(gui::IGUIFont* font, const wchar_t* text,
 			video::SColor color=video::SColor(100,255,255,255),
-			ISceneNode* parent = 0,	const core::vector3df& position = core::vector3df(0,0,0),
+			ISceneNode* parent = 0, const core::vector3df& position = core::vector3df(0,0,0),
 			s32 id=-1) = 0;
 
 		//! Adds a text scene node, which uses billboards
@@ -849,7 +849,7 @@ namespace scene
 		 This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
 		virtual IAnimatedMesh* addHillPlaneMesh(const c8* name,
 			const core::dimension2d<f32>& tileSize, const core::dimension2d<u32>& tileCount,
-			video::SMaterial* material = 0,	f32 hillHeight = 0.0f,
+			video::SMaterial* material = 0, f32 hillHeight = 0.0f,
 			const core::dimension2d<f32>& countHills = core::dimension2d<f32>(0.0f, 0.0f),
 			const core::dimension2d<f32>& textureRepeatCount = core::dimension2d<f32>(1.0f, 1.0f)) = 0;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -30,7 +30,7 @@ enum E_ATTRIBUTE_READ_WRITE_FLAGS
 };
 
 
-//! struct holding data describing options 
+//! struct holding data describing options
 struct SAttributeReadWriteOptions
 {
 	//! constructor
@@ -40,7 +40,7 @@ struct SAttributeReadWriteOptions
 	}
 
 	//! Combination of E_ATTRIBUTE_READ_WRITE_FLAGS or other, custom ones
-	s32 Flags; 
+	s32 Flags;
 
 	//! optional filename
 	const c8* Filename;
@@ -53,12 +53,12 @@ class IAttributeExchangingObject : public virtual IReferenceCounted
 public:
 
 	//! Writes attributes of the object.
-	//! Implement this to expose the attributes of your scene node animator for 
+	//! Implement this to expose the attributes of your scene node animator for
 	//! scripting languages, editors, debuggers or xml serialization purposes.
 	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const {}
 
 	//! Reads attributes of the object.
-	//! Implement this to set the attributes of your scene node animator for 
+	//! Implement this to set the attributes of your scene node animator for
 	//! scripting languages, editors, debuggers or xml deserialization purposes.
 	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0) {}
 

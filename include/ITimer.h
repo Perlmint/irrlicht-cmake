@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2007 Nikolaus Gebhardt
+// Copyright (C) 2002-2008 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -18,29 +18,29 @@ public:
 	//! destructor
 	virtual ~ITimer() {}
 
-	//! Returns current real time in milliseconds of the system. 
+	//! Returns current real time in milliseconds of the system.
 	/** This value does not start with 0 when the application starts.
-	For example in one implementation the value returned could be the 
+	For example in one implementation the value returned could be the
 	amount of milliseconds which have elapsed since the system was started. */
 	virtual u32 getRealTime() const = 0;
 
-	//! Returns current virtual time in milliseconds. 
+	//! Returns current virtual time in milliseconds.
 	/** This value starts with 0 and can be manipulated using setTime(), stopTimer(),
-	startTimer(), etc. This value depends on the set speed of the timer if the timer 
+	startTimer(), etc. This value depends on the set speed of the timer if the timer
 	is stopped, etc. If you need the system time, use getRealTime() */
 	virtual u32 getTime() const = 0;
 
 	//! sets current virtual time
 	virtual void setTime(u32 time) = 0;
 
-	//! Stops the virtual timer. 
-	/** The timer is reference counted, which means everything which calls 
+	//! Stops the virtual timer.
+	/** The timer is reference counted, which means everything which calls
 	stop() will also have to call start(), otherwise the timer may not start/stop
 	corretly again. */
 	virtual void stop() = 0;
 
 	//! Starts the virtual timer.
-	/** The timer is reference counted, which means everything which calls 
+	/** The timer is reference counted, which means everything which calls
 	stop() will also have to call start(), otherwise the timer may not start/stop
 	corretly again. */
 	virtual void start() = 0;
