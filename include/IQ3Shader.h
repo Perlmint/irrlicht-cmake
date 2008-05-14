@@ -132,6 +132,7 @@ namespace quake3
 
 	}
 
+	//! A blend function for a q3 shader.
 	struct SBlendFunc
 	{
 		SBlendFunc () : type ( video::EMT_SOLID ), param ( 0.f ) {}
@@ -442,6 +443,7 @@ namespace quake3
 		core::array < SVarGroup > VariableGroup;
 	};
 
+
 	//! A Parsed Shader Holding Variables ordered in Groups
 	class SShader
 	{
@@ -593,9 +595,7 @@ namespace quake3
 	}
 
 
-	/*!
-		Manages various Quake3 Shader Styles
-	*/
+	//! Manages various Quake3 Shader Styles
 	class IShaderManager : public IReferenceCounted
 	{
 	};

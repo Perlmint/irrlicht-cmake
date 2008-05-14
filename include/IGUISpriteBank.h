@@ -18,12 +18,14 @@ namespace video
 namespace gui
 {
 
+//! A single sprite frame.
 struct SGUISpriteFrame
 {
 	u32 textureNumber;
 	u32 rectNumber;
 };
 
+//! A sprite composed of several frames.
 struct SGUISprite
 {
 	SGUISprite() : Frames(), frameTime(0) { };

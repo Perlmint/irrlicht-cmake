@@ -92,19 +92,21 @@ namespace scene
 		};
 
 
-		//! Animation keyframe which describes a new position, scale or rotation
+		//! Animation keyframe which describes a new position
 		struct SPositionKey
 		{
 			f32 frame;
 			core::vector3df position;
 		};
 
+		//! Animation keyframe which describes a new scale
 		struct SScaleKey
 		{
 			f32 frame;
 			core::vector3df scale;
 		};
 
+		//! Animation keyframe which describes a new rotation
 		struct SRotationKey
 		{
 			f32 frame;

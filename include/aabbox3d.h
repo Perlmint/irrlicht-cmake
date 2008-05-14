@@ -32,8 +32,13 @@ class aabbox3d
 		aabbox3d(T minx, T miny, T minz, T maxx, T maxy, T maxz): MinEdge(minx, miny, minz), MaxEdge(maxx, maxy, maxz) {}
 
 		// operators
-
+		//! Equality operator
+		/** \param other box to compare with.
+		\return True if both boxes are equal, else false. */
 		inline bool operator==(const aabbox3d<T>& other) const { return (MinEdge == other.MinEdge && other.MaxEdge == MaxEdge);};
+		//! Inequality operator
+		/** \param other box to compare with.
+		\return True if both boxes are different, else false. */
 		inline bool operator!=(const aabbox3d<T>& other) const { return !(MinEdge == other.MinEdge && other.MaxEdge == MaxEdge);};
 
 		// functions
@@ -229,7 +234,7 @@ class aabbox3d
 		}
 
 
-		//! stores all 8 edges of the box into a array
+		//! Stores all 8 edges of the box into an array
 		/** \param edges: Pointer to array of 8 edges. */
 		void getEdges(vector3d<T> *edges) const
 		{

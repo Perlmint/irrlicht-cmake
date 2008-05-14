@@ -25,7 +25,7 @@ namespace gui
 		virtual void setVisible(bool visible) = 0;
 
 		//! Returns if the cursor is currently visible.
-		//! \return True if the cursor is visible, false if not.
+		/** \return True if the cursor is visible, false if not. */
 		virtual bool isVisible() const = 0;
 
 		//! Sets the new position of the cursor.
@@ -50,8 +50,8 @@ namespace gui
 		virtual void setPosition(const core::position2d<s32> &pos) = 0;
 
 		//! Sets the new position of the cursor.
-		//! \param x New x-coord of the cursor. The coordinates are pixel units.
-		//! \param y New y-coord of the cursor. The coordinates are pixel units.
+		/** \param x New x-coord of the cursor. The coordinates are pixel units.
+		\param y New y-coord of the cursor. The coordinates are pixel units. */
 		virtual void setPosition(s32 x, s32 y) = 0;
 
 		//! Returns the current position of the mouse cursor.

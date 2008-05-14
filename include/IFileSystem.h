@@ -25,17 +25,14 @@ class IXMLWriter;
 class IAttributes;
 
 //! The FileSystem manages files and archives and provides access to them.
-/**
-	It manages where files are, so that modules which
-	use the the IO do not need to know where every file is located. A file
-	could be in a .zip-Archive or as file on disk, using the IFileSystem
-	makes no difference to this.
-*/
+/** It manages where files are, so that modules which use the the IO do not
+need to know where every file is located. A file could be in a .zip-Archive or
+as file on disk, using the IFileSystem makes no difference to this. */
 class IFileSystem : public virtual IReferenceCounted
 {
 public:
 
-	//! destructor
+	//! Destructor
 	virtual ~IFileSystem() {}
 
 	//! Opens a file for read access.
@@ -102,21 +99,25 @@ public:
 	\return Returns true if the archive was added successful, false if not. */
 	virtual bool addPakFileArchive(const c8* filename, bool ignoreCase = true, bool ignorePaths = true) = 0;
 
-	//! Returns the string of the current working directory.
+	//! Get the current working directory.
+	/** \return Current working directory as a string. */
 	virtual const c8* getWorkingDirectory() = 0;
 
-	//! Changes the current Working Directory.
+	//! Changes the current working directory.
 	/** \param newDirectory: A string specifying the new working directory.
 	The string is operating system dependent. Under Windows it has
 	the form "<drive>:\<directory>\<sudirectory>\<..>". An example would be: "C:\Windows\"
-	\return Returns true if successful, otherwise false. */
+	\return True if successful, otherwise false. */
 	virtual bool changeWorkingDirectoryTo(const c8* newDirectory) = 0;
 
 	//! Converts a relative path to an absolute (unique) path, resolving symbolic links if required
+	/** \param filename Possibly relative filename begin queried.
+	\result Absolute filename which points to the same file. */
 	virtual core::stringc getAbsolutePath(const core::stringc& filename) const = 0;
 
 	//! Returns the directory a file is located in.
-	/** \param filename: The file to get the directory from */
+	/** \param filename: The file to get the directory from.
+	\return String containing the directory of the file. */
 	virtual core::stringc getFileDir(const core::stringc& filename) const = 0;
 
 	//! Creates a list of files and directories in the current working directory and returns it.
