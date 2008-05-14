@@ -17,21 +17,26 @@ namespace core
 	class dimension2d
 	{
 		public:
+			//! Default constructor for empty dimension
 			dimension2d() : Width(0), Height(0) {}
-
+			//! Constructor with width and height
 			dimension2d(const T& width, const T& height)
 				: Width(width), Height(height) {}
 
-			bool operator == (const dimension2d<T>& other) const
+			//! Equality operator
+			bool operator==(const dimension2d<T>& other) const
 			{
 				return Width == other.Width && Height == other.Height;
 			}
 
-			bool operator != (const dimension2d<T>& other) const
+			//! Inequality operator
+			bool operator!=(const dimension2d<T>& other) const
 			{
 				return ! (*this == other);
 			}
 
+
+			//! Set to new values
 			dimension2d<T>& set(const T& width, const T& height)
 			{
 				Width = width;
@@ -39,6 +44,7 @@ namespace core
 				return *this;
 			}
 
+			//! Divide width and height by scalar
 			dimension2d<T>& operator/=(const T& scale)
 			{
 				Width /= scale;
@@ -46,11 +52,13 @@ namespace core
 				return *this;
 			}
 
+			//! Divide width and height by scalar
 			dimension2d<T> operator/(const T& scale) const
 			{
 				return dimension2d<T>(Width/scale, Height/scale);
 			}
 
+			//! Multiply width and height by scalar
 			dimension2d<T>& operator*=(const T& scale)
 			{
 				Width *= scale;
@@ -58,20 +66,25 @@ namespace core
 				return *this;
 			}
 
+			//! Multiply width and height by scalar
 			dimension2d<T> operator*(const T& scale) const
 			{
 				return dimension2d<T>(Width*scale, Height*scale);
 			}
 
+			//! Get area
 			T getArea() const
 			{
 				return Width*Height;
 			}
 
-			T Width, Height;
+			//! Width of the dimension.
+			T Width;
+			//! Height of the dimension.
+			T Height;
 	};
 
-	//! Typedef for a f32 dimension.
+	//! Typedef for an f32 dimension.
 	typedef dimension2d<f32> dimension2df;
 	//! Typedef for an integer dimension.
 	typedef dimension2d<s32> dimension2di;

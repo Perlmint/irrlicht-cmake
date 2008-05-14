@@ -21,6 +21,7 @@ namespace core
 	class position2d
 	{
 		public:
+			//! Default constructor for (0,0).
 			position2d() : X(0), Y(0) {}
 			position2d(T x, T y) : X(x), Y(y) {}
 			position2d(const position2d<T>& other)
@@ -101,10 +102,13 @@ namespace core
 				return *this;
 			}
 
-			T X, Y;
+			//! X coordinate of the position.
+			T X;
+			//! Y coordinate of the position.
+			T Y;
 	};
 
-	//! Typedef for a f32 position.
+	//! Typedef for an f32 position.
 	typedef position2d<f32> position2df;
 	//! Typedef for an integer position.
 	typedef position2d<s32> position2di;

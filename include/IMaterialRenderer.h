@@ -17,18 +17,18 @@ namespace video
 class IVideoDriver;
 class IMaterialRendererServices;
 
-//! Interface for material rendering. Can be used to extend the engine with
-//! new materials. Refer to IVideoDriver::addMaterialRenderer() for more
-//! informations on how to extend the engine with new materials.
+//! Interface for material rendering.
+/** Can be used to extend the engine with new materials. Refer to
+IVideoDriver::addMaterialRenderer() for more informations on how to extend the
+engine with new materials. */
 class IMaterialRenderer : public virtual IReferenceCounted
 {
 public:
 
-	//! destructor
+	//! Destructor
 	virtual ~IMaterialRenderer() {}
 
-	//! Called by the IVideoDriver implementation the let the renderer set
-	//! its needed render states.
+	//! Called by the IVideoDriver implementation the let the renderer set its needed render states.
 	/** This is called during the IVideoDriver::setMaterial() call.
 	When overriding this, you can set some renderstates or for example a
 	vertex or pixel shader if you like.
@@ -53,8 +53,7 @@ public:
 	virtual void OnSetMaterial(const SMaterial& material, const SMaterial& lastMaterial,
 		bool resetAllRenderstates, IMaterialRendererServices* services) {};
 
-	//! Called every time before a new bunch of geometry is being drawn
-	//! using this material with for example drawIndexedTriangleList() call.
+	//! Called every time before a new bunch of geometry is being drawn using this material with for example drawIndexedTriangleList() call.
 	/** OnSetMaterial should normally only be called if the renderer decides
 	that the renderstates should be changed, it won't be called if for
 	example two drawIndexedTriangleList() will be called with the same
