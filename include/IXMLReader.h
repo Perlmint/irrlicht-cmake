@@ -12,16 +12,16 @@ namespace irr
 {
 namespace io
 {
-	//! A xml reader for wide characters, derived from IReferenceCounted.
-	//! This XML Parser can read any type of text files from any source where irrlicht
-	//! can read. Just call IFileSystem::createXMLReader().
-	//! For more informations on how to use the parser, see IIrrXMLReader
+	//! An xml reader for wide characters, derived from IReferenceCounted.
+	/** This XML Parser can read any type of text files from any source
+	Irrlicht can read. Just call IFileSystem::createXMLReader().  For more
+	informations on how to use the parser, see IIrrXMLReader */
 	typedef IIrrXMLReader<wchar_t, IReferenceCounted> IXMLReader;
 
-	//! A xml reader for ASCII or UTF-8 characters, derived from IReferenceCounted.
-	//! This XML Parser can read any type of text files from any source where irrlicht
-	//! can read. Just call IFileSystem::createXMLReaderUTF8().
-	//! For more informations on how to use the parser, see IIrrXMLReader
+	//! An xml reader for ASCII or UTF-8 characters, derived from IReferenceCounted.
+	/** This XML Parser can read any type of text files from any source
+	Irrlicht can read. Just call IFileSystem::createXMLReaderUTF8().  For
+	more informations on how to use the parser, see IIrrXMLReader */
 	typedef IIrrXMLReader<c8, IReferenceCounted> IXMLReaderUTF8;
 
 } // end namespace io

@@ -30,13 +30,12 @@ namespace scene
 		//! Current color of the particle
 		video::SColor color;
 
-		//! Original color of the particle. That's the color
-		//! of the particle it had when it was emitted.
+		//! Original color of the particle.
+		/** That's the color of the particle it had when it was emitted. */
 		video::SColor startColor;
 
-		//! Original direction and speed of the particle,
-		//! the direction and speed the particle had when
-		//! it was emitted.
+		//! Original direction and speed of the particle.
+		/** The direction and speed the particle had when it was emitted. */
 		core::vector3df startVector;
 	};
 

@@ -57,32 +57,26 @@ namespace scene
 		//! Copy Constructor
 		SViewFrustum(const SViewFrustum& other);
 
-		//! This constructor creates a view frustum based on a
-		//! projection and/or view matrix.
+		//! This constructor creates a view frustum based on a projection and/or view matrix.
 		SViewFrustum(const core::matrix4& mat);
 
-		//! This constructor creates a view frustum based on a projection
-		//! and/or view matrix.
+		//! This constructor creates a view frustum based on a projection and/or view matrix.
 		inline void setFrom(const core::matrix4& mat);
 
 		//! transforms the frustum by the matrix
-		//! \param mat: Matrix by which the view frustum is transformed.
+		/** \param mat: Matrix by which the view frustum is transformed.*/
 		void transform(const core::matrix4& mat);
 
-		//! returns the point which is on the far left upper corner inside the
-		//! the view frustum.
+		//! returns the point which is on the far left upper corner inside the the view frustum.
 		core::vector3df getFarLeftUp() const;
 
-		//! returns the point which is on the far left bottom corner inside the
-		//! the view frustum.
+		//! returns the point which is on the far left bottom corner inside the the view frustum.
 		core::vector3df getFarLeftDown() const;
 
-		//! returns the point which is on the far right top corner inside the
-		//! the view frustum.
+		//! returns the point which is on the far right top corner inside the the view frustum.
 		core::vector3df getFarRightUp() const;
 
-		//! returns the point which is on the far right bottom corner inside the
-		//! the view frustum.
+		//! returns the point which is on the far right bottom corner inside the the view frustum.
 		core::vector3df getFarRightDown() const;
 
 		//! returns a bounding box enclosing the whole view frustum
@@ -107,7 +101,6 @@ namespace scene
 	};
 
 
-	//! Construct from another view frustum
 	inline SViewFrustum::SViewFrustum(const SViewFrustum& other)
 	{
 		cameraPosition=other.cameraPosition;
@@ -121,16 +114,12 @@ namespace scene
 			Matrices[i]=other.Matrices[i];
 	}
 
-	//! This constructor creates a view frustum based on a projection
-	//! and/or view matrix.
 	inline SViewFrustum::SViewFrustum(const core::matrix4& mat)
 	{
 		setFrom ( mat );
 	}
 
 
-	//! transforms the frustum by the matrix
-	//! \param Matrix by which the view frustum is transformed.
 	inline void SViewFrustum::transform(const core::matrix4& mat)
 	{
 		for (u32 i=0; i<VF_PLANE_COUNT; ++i)
@@ -141,8 +130,6 @@ namespace scene
 	}
 
 
-	//! returns the point which is on the far left upper corner inside the
-	//! the view frustum.
 	inline core::vector3df SViewFrustum::getFarLeftUp() const
 	{
 		core::vector3df p;
@@ -153,8 +140,6 @@ namespace scene
 		return p;
 	}
 
-	//! returns the point which is on the far left bottom corner inside the
-	//! the view frustum.
 	inline core::vector3df SViewFrustum::getFarLeftDown() const
 	{
 		core::vector3df p;
@@ -165,8 +150,6 @@ namespace scene
 		return p;
 	}
 
-	//! returns the point which is on the far right top corner inside the
-	//! the view frustum.
 	inline core::vector3df SViewFrustum::getFarRightUp() const
 	{
 		core::vector3df p;
@@ -177,8 +160,6 @@ namespace scene
 		return p;
 	}
 
-	//! returns the point which is on the far right bottom corner inside the
-	//! the view frustum.
 	inline core::vector3df SViewFrustum::getFarRightDown() const
 	{
 		core::vector3df p;
@@ -189,13 +170,11 @@ namespace scene
 		return p;
 	}
 
-	//! returns a bounding box enclosing the whole view frustum
 	inline const core::aabbox3d<f32> &SViewFrustum::getBoundingBox() const
 	{
 		return boundingBox;
 	}
 
-	//! recalculates the bounding box member based on the planes
 	inline void SViewFrustum::recalculateBoundingBox()
 	{
 		boundingBox.reset ( cameraPosition );
@@ -261,8 +240,6 @@ namespace scene
 	}
 */
 
-	//! This constructor creates a view frustum based on a projection
-	//! and/or view matrix.
 	inline void SViewFrustum::setFrom(const core::matrix4& mat)
 	{
 		// left clipping plane

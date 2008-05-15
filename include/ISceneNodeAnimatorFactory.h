@@ -15,7 +15,7 @@ namespace scene
 	class ISceneNode;
 	class ISceneNodeAnimator;
 
-	//! Interface making it possible to dynamicly create scene nodes animators
+	//! Interface for dynamic creation of scene node animators
 	/** To be able to add custom scene node animators to Irrlicht and to make it possible for the
 	scene manager to save and load those external animators, simply implement this
 	interface and register it in you scene manager via ISceneManager::registerSceneNodeAnimatorFactory.

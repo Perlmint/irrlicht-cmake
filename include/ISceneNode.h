@@ -95,11 +95,11 @@ namespace scene
 
 
 		//! OnAnimate() is called just before rendering the whole scene.
-		//! Nodes may calculate or store animations here, and may do other useful things,
-		//! depending on what they are. Also, OnAnimate() should be called for all
-		//! child scene nodes here. This method will be called once per frame, independent
-		//! of whether the scene node is visible or not.
-		//! \param timeMs Current time in milliseconds.
+		/** Nodes may calculate or store animations here, and may do other useful things,
+		depending on what they are. Also, OnAnimate() should be called for all
+		child scene nodes here. This method will be called once per frame, independent
+		of whether the scene node is visible or not.
+		\param timeMs Current time in milliseconds. */
 		virtual void OnAnimate(u32 timeMs)
 		{
 			if (IsVisible)
@@ -127,7 +127,7 @@ namespace scene
 
 
 		//! Returns the name of the node.
-		//! \return Name as character string.
+		/** \return Name as character string. */
 		virtual const c8* getName() const
 		{
 			return Name.c_str();
@@ -135,26 +135,26 @@ namespace scene
 
 
 		//! Sets the name of the node.
-		//! \param name New name of the scene node.
+		/** \param name New name of the scene node. */
 		virtual void setName(const c8* name)
 		{
 			Name = name;
 		}
 
 
-		//! Returns the axis aligned, not transformed bounding box of this node.
-		//! This means that if this node is an animated 3d character, moving in a room,
-		//! the bounding box will always be around the origin. To get the box in
-		//! real world coordinates, just transform it with the matrix you receive with
-		//! getAbsoluteTransformation() or simply use getTransformedBoundingBox(),
-		//! which does the same.
-		//! \return The non-transformed bounding box.
+		//! Get the axis aligned, not transformed bounding box of this node.
+		/** This means that if this node is an animated 3d character,
+		moving in a room, the bounding box will always be around the
+		origin. To get the box in real world coordinates, just
+		transform it with the matrix you receive with
+		getAbsoluteTransformation() or simply use
+		getTransformedBoundingBox(), which does the same.
+		\return The non-transformed bounding box. */
 		virtual const core::aabbox3d<f32>& getBoundingBox() const = 0;
 
 
-		//! Returns the axis aligned, transformed and animated absolute bounding box
-		//! of this node.
-		//! \return The transformed bounding box.
+		//! Get the axis aligned, transformed and animated absolute bounding box of this node.
+		/** \return The transformed bounding box. */
 		virtual const core::aabbox3d<f32> getTransformedBoundingBox() const
 		{
 			core::aabbox3d<f32> box = getBoundingBox();
@@ -163,7 +163,7 @@ namespace scene
 		}
 
 
-		//! returns the absolute transformation of the node. Is recalculated every OnAnimate()-call.
+		//! Get the absolute transformation of the node. Is recalculated every OnAnimate()-call.
 		//! \return The absolute transformation matrix.
 		const core::matrix4& getAbsoluteTransformation() const
 		{
@@ -172,10 +172,10 @@ namespace scene
 
 
 		//! Returns the relative transformation of the scene node.
-		//! The relative transformation is stored internally as 3 vectors:
-		//! translation, rotation and scale. To get the relative transformation
-		//! matrix, it is calculated from these values.
-		//! \return The relative transformation matrix.
+		/** The relative transformation is stored internally as 3
+		vectors: translation, rotation and scale. To get the relative
+		transformation matrix, it is calculated from these values.
+		\return The relative transformation matrix. */
 		virtual core::matrix4 getRelativeTransformation() const
 		{
 			core::matrix4 mat;
@@ -193,9 +193,10 @@ namespace scene
 		}
 
 
-		//! Returns true if the node is visible. This is only an option
-		//! set by the user, but has nothing to do with geometry culling
-		//! \return The visibility of the node, true means visible.
+		//! Returns true if the node is visible.
+		/** This is only an option set by the user, but has nothing to
+		do with geometry culling
+		\return The visibility of the node, true means visible. */
 		virtual bool isVisible() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
@@ -203,33 +204,38 @@ namespace scene
 		}
 
 
-		//! Sets if the node should be visible or not. All children of this node won't be visible either, when set to true.
-		//! \param isVisible If the node shall be visible.
+		//! Sets if the node should be visible or not.
+		/** All children of this node won't be visible either, when set
+		to true.
+		\param isVisible If the node shall be visible. */
 		virtual void setVisible(bool isVisible)
 		{
 			IsVisible = isVisible;
 		}
 
 
-		//! Returns the id of the scene node. This id can be used to identify the node.
-		//! \return The id.
+		//! Get the id of the scene node.
+		/** This id can be used to identify the node.
+		\return The id. */
 		virtual s32 getID() const
 		{
 			return ID;
 		}
 
 
-		//! Sets the id of the scene node. This id can be used to identify the node.
-		//! \param id The new id.
+		//! Sets the id of the scene node.
+		/** This id can be used to identify the node.
+		\param id The new id. */
 		virtual void setID(s32 id)
 		{
 			ID = id;
 		}
 
 
-		//! Adds a child to this scene node. If the scene node already
-		//! has a parent it is first removed from the other parent.
-		//! \param child A pointer to the new child.
+		//! Adds a child to this scene node.
+		/** If the scene node already has a parent it is first removed
+		from the other parent.
+		\param child A pointer to the new child. */
 		virtual void addChild(ISceneNode* child)
 		{
 			if (child && (child != this))
@@ -243,9 +249,9 @@ namespace scene
 
 
 		//! Removes a child from this scene node.
-		//! \param child A pointer to the new child.
-		//! \return True if the child was removed, and false if not,
-		//! e.g. because it couldn't be found in the children list.
+		/** \param child A pointer to the new child.
+		\return True if the child was removed, and false if not,
+		e.g. because it couldn't be found in the children list. */
 		virtual bool removeChild(ISceneNode* child)
 		{
 			core::list<ISceneNode*>::Iterator it = Children.begin();
@@ -286,7 +292,7 @@ namespace scene
 
 
 		//! Adds an animator which should animate this node.
-		//! \param animator A pointer to the new animator.
+		/** \param animator A pointer to the new animator. */
 		virtual void addAnimator(ISceneNodeAnimator* animator)
 		{
 			if (animator)
@@ -297,8 +303,8 @@ namespace scene
 		}
 
 
-		//! Returns a const reference to the list of all scene node animators.
-		//! \return The list of animators attached to this node.
+		//! Get a list of all scene node animators.
+		/** \return The list of animators attached to this node. */
 		const core::list<ISceneNodeAnimator*>& getAnimators() const
 		{
 			return Animators;
@@ -306,7 +312,7 @@ namespace scene
 
 
 		//! Removes an animator from this scene node.
-		//! \param animator A pointer to the animator to be deleted.
+		/** \param animator A pointer to the animator to be deleted. */
 		virtual void removeAnimator(ISceneNodeAnimator* animator)
 		{
 			core::list<ISceneNodeAnimator*>::Iterator it = Animators.begin();
@@ -331,31 +337,33 @@ namespace scene
 		}
 
 
-		//! Returns the material based on the zero based index i. To get the amount
-		//! of materials used by this scene node, use getMaterialCount().
-		//! This function is needed for inserting the node into the scene hierarchy at an
-		//! optimal position for minimizing renderstate changes, but can also be used
-		//! to directly modify the material of a scene node.
-		//! \param num Zero based index. The maximal value is getMaterialCount() - 1.
-		//! \return The material at that index.
+		//! Returns the material based on the zero based index i.
+		/** To get the amount of materials used by this scene node, use
+		getMaterialCount().  This function is needed for inserting the
+		node into the scene hierarchy at an optimal position for
+		minimizing renderstate changes, but can also be used to
+		directly modify the material of a scene node.
+		\param num Zero based index. The maximal value is getMaterialCount() - 1.
+		\return The material at that index. */
 		virtual video::SMaterial& getMaterial(u32 num)
 		{
 			return *((video::SMaterial*)0);
 		}
 
 
-		//! Returns amount of materials used by this scene node.
-		//! \return Current amount of materials used by this scene node.
+		//! Get amount of materials used by this scene node.
+		/** \return Current amount of materials of this scene node. */
 		virtual u32 getMaterialCount() const
 		{
 			return 0;
 		}
 
 
-		//! Sets all material flags at once to a new value. Useful, for
-		//! example, if you want the whole mesh to be affected by light.
-		//! \param flag Which flag of all materials to be set.
-		//! \param newvalue New value of that flag.
+		//! Sets all material flags at once to a new value.
+		/** Useful, for example, if you want the whole mesh to be
+		affected by light.
+		\param flag Which flag of all materials to be set.
+		\param newvalue New value of that flag. */
 		void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
 		{
 			for (u32 i=0; i<getMaterialCount(); ++i)
@@ -363,11 +371,10 @@ namespace scene
 		}
 
 
-		//! Sets the texture of the specified layer in all materials of this
-		//! scene node to the new texture.
-		//! \param textureLayer Layer of texture to be set. Must be a
-		//! value smaller than MATERIAL_MAX_TEXTURES.
-		//! \param texture New texture to be used.
+		//! Sets the texture of the specified layer in all materials of this scene node to the new texture.
+		/** \param textureLayer Layer of texture to be set. Must be a
+		value smaller than MATERIAL_MAX_TEXTURES.
+		\param texture New texture to be used. */
 		void setMaterialTexture(u32 textureLayer, video::ITexture* texture)
 		{
 			if (textureLayer >= video::MATERIAL_MAX_TEXTURES)
@@ -378,9 +385,8 @@ namespace scene
 		}
 
 
-		//! Sets the material type of all materials in this scene node
-		//! to a new material type.
-		//! \param newType New type of material to be set.
+		//! Sets the material type of all materials in this scene node to a new material type.
+		/** \param newType New type of material to be set. */
 		void setMaterialType(video::E_MATERIAL_TYPE newType)
 		{
 			for (u32 i=0; i<getMaterialCount(); ++i)
@@ -441,7 +447,7 @@ namespace scene
 
 
 		//! Gets the abolute position of the node.
-		//! \return The current absolute position of the scene node.
+		/** \return The current absolute position of the scene node. */
 		virtual core::vector3df getAbsolutePosition() const
 		{
 			return AbsoluteTransformation.getTranslation();
@@ -531,29 +537,30 @@ namespace scene
 
 
 		//! Returns the triangle selector attached to this scene node.
-		//! The Selector can be used by the engine for doing collision
-		//! detection. You can create a TriangleSelector with
-		//! ISceneManager::createTriangleSelector() or
-		//! ISceneManager::createOctTreeTriangleSelector and set it with
-		//! ISceneNode::setTriangleSelector(). If a scene node got no triangle
-		//! selector, but collision tests should be done with it, a triangle
-		//! selector is created using the bounding box of the scene node.
-		//! \return A pointer to the TriangleSelector or 0, if there
-		//! is none.
+		/** The Selector can be used by the engine for doing collision
+		detection. You can create a TriangleSelector with
+		ISceneManager::createTriangleSelector() or
+		ISceneManager::createOctTreeTriangleSelector and set it with
+		ISceneNode::setTriangleSelector(). If a scene node got no triangle
+		selector, but collision tests should be done with it, a triangle
+		selector is created using the bounding box of the scene node.
+		\return A pointer to the TriangleSelector or 0, if there
+		is none. */
 		virtual ITriangleSelector* getTriangleSelector() const
 		{
 			return TriangleSelector;
 		}
 
 
-		//! Sets the triangle selector of the scene node. The Selector can be
-		//! used by the engine for doing collision detection. You can create a
-		//! TriangleSelector with ISceneManager::createTriangleSelector() or
-		//! ISceneManager::createOctTreeTriangleSelector(). Some nodes may
-		//! create their own selector by default, so it would be good to
-		//! check if there is already a selector in this node by calling
-		//! ISceneNode::getTriangleSelector().
-		//! \param selector New triangle selector for this scene node.
+		//! Sets the triangle selector of the scene node.
+		/** The Selector can be used by the engine for doing collision
+		detection. You can create a TriangleSelector with
+		ISceneManager::createTriangleSelector() or
+		ISceneManager::createOctTreeTriangleSelector(). Some nodes may
+		create their own selector by default, so it would be good to
+		check if there is already a selector in this node by calling
+		ISceneNode::getTriangleSelector().
+		\param selector New triangle selector for this scene node. */
 		virtual void setTriangleSelector(ITriangleSelector* selector)
 		{
 			if (TriangleSelector)
@@ -565,7 +572,7 @@ namespace scene
 		}
 
 
-		//! updates the absolute position based on the relative and the parents position
+		//! Updates the absolute position based on the relative and the parents position
 		virtual void updateAbsolutePosition()
 		{
 			if (Parent)
@@ -579,7 +586,7 @@ namespace scene
 
 
 		//! Returns the parent of this scene node
-		//! \return A pointer to the parent.
+		/** \return A pointer to the parent. */
 		scene::ISceneNode* getParent() const
 		{
 			return Parent;
@@ -587,7 +594,7 @@ namespace scene
 
 
 		//! Returns type of the scene node
-		//! \return The type of this node.
+		/** \return The type of this node. */
 		virtual ESCENE_NODE_TYPE getType() const
 		{
 			return ESNT_UNKNOWN;
@@ -595,10 +602,12 @@ namespace scene
 
 
 		//! Writes attributes of the scene node.
-		//! Implement this to expose the attributes of your scene node for
-		//! scripting languages, editors, debuggers or xml serialization purposes.
-		//! \param out The attribute container to write into.
-		//! \param options Additional options which might influence the serialization.
+		/** Implement this to expose the attributes of your scene node
+		for scripting languages, editors, debuggers or xml
+		serialization purposes.
+		\param out The attribute container to write into.
+		\param options Additional options which might influence the
+		serialization. */
 		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const
 		{
 			if (!out)
@@ -618,10 +627,12 @@ namespace scene
 
 
 		//! Reads attributes of the scene node.
-		//! Implement this to set the attributes of your scene node for
-		//! scripting languages, editors, debuggers or xml deserialization purposes.
-		//! \param in The attribute container to read from.
-		//! \param options Additional options which might influence the deserialization.
+		/** Implement this to set the attributes of your scene node for
+		scripting languages, editors, debuggers or xml deserialization
+		purposes.
+		\param in The attribute container to read from.
+		\param options Additional options which might influence the
+		deserialization. */
 		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)
 		{
 			if (!in)
@@ -644,9 +655,9 @@ namespace scene
 		}
 
 		//! Creates a clone of this scene node and its children.
-		//! \param newParent An optional new parent.
-		//! \param newManager An optional new scene manager.
-		//! \return The newly created clone of this node.
+		/** \param newParent An optional new parent.
+		\param newManager An optional new scene manager.
+		\return The newly created clone of this node. */
 		virtual ISceneNode* clone(ISceneNode* newParent=0, ISceneManager* newManager=0)
 		{
 			return 0; // to be implemented by derived classes
@@ -655,9 +666,10 @@ namespace scene
 	protected:
 
 		//! A clone function for the ISceneNode members.
-		//! this method can be used by clone() implementations of derived classes
-		//! \param toCopyFrom The node from which the values are copied
-		//! \param newManager The new scene manager.
+		/** This method can be used by clone() implementations of
+		derived classes
+		\param toCopyFrom The node from which the values are copied
+		\param newManager The new scene manager. */
 		void cloneMembers(ISceneNode* toCopyFrom, ISceneManager* newManager)
 		{
 			Name = toCopyFrom->Name;
@@ -697,19 +709,19 @@ namespace scene
 			}
 		}
 
-		//! name of the scene node.
+		//! Name of the scene node.
 		core::stringc Name;
 
-		//! absolute transformation of the node.
+		//! Absolute transformation of the node.
 		core::matrix4 AbsoluteTransformation;
 
-		//! relative translation of the scene node.
+		//! Relative translation of the scene node.
 		core::vector3df RelativeTranslation;
 
-		//! relative rotation of the scene node.
+		//! Relative rotation of the scene node.
 		core::vector3df RelativeRotation;
 
-		//! relative scale of the scene node.
+		//! Relative scale of the scene node.
 		core::vector3df RelativeScale;
 
 		//! Pointer to the parent
@@ -721,25 +733,25 @@ namespace scene
 		//! List of all animator nodes
 		core::list<ISceneNodeAnimator*> Animators;
 
-		//! id of the node.
+		//! ID of the node.
 		s32 ID;
 
-		//! pointer to the scene manager
+		//! Pointer to the scene manager
 		ISceneManager* SceneManager;
 
-		//! pointer to the triangle selector
+		//! Pointer to the triangle selector
 		ITriangleSelector* TriangleSelector;
 
-		//! automatic culling
+		//! Automatic culling state
 		E_CULLING_TYPE AutomaticCullingState;
 
-		//! is the node visible?
+		//! Is the node visible?
 		bool IsVisible;
 
-		//! flag if debug data should be drawn, such as Bounding Boxes.
+		//! Flag if debug data should be drawn, such as Bounding Boxes.
 		s32 DebugDataVisible;
 
-		//! is debug object?
+		//! Is debug object?
 		bool IsDebugObject;
 	};
 

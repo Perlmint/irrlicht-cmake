@@ -34,8 +34,8 @@ struct SExposedVideoData
 			//! Pointer to the IDirect3D9 interface
 			IDirect3DDevice9* D3DDev9;
 
-			//! Window handle. Get with for example
-			//! HWND h = reinterpret_cast<HWND>(exposedData.D3D9.HWnd)
+			//! Window handle.
+			/** Get with for example HWND h = reinterpret_cast<HWND>(exposedData.D3D9.HWnd) */
 			s32 HWnd;
 
 		} D3D9;
@@ -48,24 +48,24 @@ struct SExposedVideoData
 			//! Pointer to the IDirect3D8 interface
 			IDirect3DDevice8* D3DDev8;
 
-			//! Window handle. Get with for example with:
-			//! HWND h = reinterpret_cast<HWND>(exposedData.D3D8.HWnd)
+			//! Window handle.
+			/** Get with for example with: HWND h = reinterpret_cast<HWND>(exposedData.D3D8.HWnd) */
 			s32 HWnd;
 
 		} D3D8;
 
 		struct
 		{
-			//! Private GDI Device Context. Get if for example with:
-			//! HDC h = reinterpret_cast<HDC>(exposedData.OpenGLWin32.HDc)
+			//! Private GDI Device Context.
+			/** Get if for example with: HDC h = reinterpret_cast<HDC>(exposedData.OpenGLWin32.HDc) */
 			s32 HDc;
 
-			//! Permanent Rendering Context. Get if for example with:
-			//! HGLRC h = reinterpret_cast<HGLRC>(exposedData.OpenGLWin32.HRc)
+			//! Permanent Rendering Context.
+			/** Get if for example with: HGLRC h = reinterpret_cast<HGLRC>(exposedData.OpenGLWin32.HRc) */
 			s32 HRc;
 
-			//! Window handle. Get with for example with:
-			//! HWND h = reinterpret_cast<HWND>(exposedData.OpenGLWin32.HWnd)
+			//! Window handle.
+			/** Get with for example with: HWND h = reinterpret_cast<HWND>(exposedData.OpenGLWin32.HWnd) */
 			s32 HWnd;
 		} OpenGLWin32;
 

@@ -16,7 +16,7 @@ namespace io
 	class IWriteFile : public virtual IReferenceCounted
 	{
 	public:
-
+		//! Destructor
 		virtual ~IWriteFile() {}
 
 		//! Writes an amount of bytes to the file.
@@ -38,7 +38,7 @@ namespace io
 		virtual long getPos() const = 0;
 
 		//! Get name of file.
-		//! \return File name as zero terminated character string. */
+		/** \return File name as zero terminated character string. */
 		virtual const c8* getFileName() const = 0;
 	};
 
