@@ -29,15 +29,15 @@ public:
 		: ISceneNode(parent, mgr, id, position) {}
 
 	//! Sets the light data associated with this ILightSceneNode
-	//! \param light The new light data.
+	/** \param light The new light data. */
 	virtual void setLightData(const video::SLight& light) = 0;
 
 	//! Gets the light data associated with this ILightSceneNode
-	//! \return Returns the light data.
+	/** \return The light data. */
 	virtual const video::SLight& getLightData() const = 0;
 
 	//! Gets the light data associated with this ILightSceneNode
-	//! \return Returns the light data.
+	/** \return The light data. */
 	virtual video::SLight& getLightData() = 0;
 };
 

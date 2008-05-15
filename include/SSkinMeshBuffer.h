@@ -15,10 +15,10 @@ namespace scene
 {
 
 
-//! A mesh buffer able to choose between
-//! S3DVertex2TCoords, S3DVertex and S3DVertexTangents at runtime
+//! A mesh buffer able to choose between S3DVertex2TCoords, S3DVertex and S3DVertexTangents at runtime
 struct SSkinMeshBuffer : public IMeshBuffer
 {
+	//! Default constructor
 	SSkinMeshBuffer(video::E_VERTEX_TYPE vt=video::EVT_STANDARD) : VertexType(vt)
 	{
 		#ifdef _DEBUG
@@ -26,18 +26,19 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		#endif
 	}
 
-	virtual ~SSkinMeshBuffer() {}
-
+	//! Get Material of this buffer.
 	virtual const video::SMaterial& getMaterial() const
 	{
 		return Material;
 	}
 
+	//! Get Material of this buffer.
 	virtual video::SMaterial& getMaterial()
 	{
 		return Material;
 	}
 
+	//! Get standard vertex at given index
 	virtual video::S3DVertex *getVertex(u32 index)
 	{
 		switch (VertexType)
@@ -51,6 +52,7 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		}
 	}
 
+	//! Get pointer to vertex array
 	virtual const void* getVertices() const
 	{
 		switch (VertexType)
@@ -64,6 +66,7 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		}
 	}
 
+	//! Get pointer to vertex array
 	virtual void* getVertices()
 	{
 		switch (VertexType)
@@ -77,6 +80,7 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		}
 	}
 
+	//! Get vertex count
 	virtual u32 getVertexCount() const
 	{
 		switch (VertexType)
@@ -90,31 +94,37 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		}
 	}
 
+	//! Get pointer to index array
 	virtual const u16* getIndices() const
 	{
 		return Indices.const_pointer();
 	}
 
+	//! Get pointer to index array
 	virtual u16* getIndices()
 	{
 		return Indices.pointer();
 	}
 
+	//! Get index count
 	virtual u32 getIndexCount() const
 	{
 		return Indices.size();
 	}
 
+	//! Get bounding box
 	virtual const core::aabbox3d<f32>& getBoundingBox() const
 	{
 		return BoundingBox;
 	}
 
+	//! Set bounding box
 	virtual void setBoundingBox( const core::aabbox3df& box)
 	{
 		BoundingBox = box;
 	}
 
+	//! Recalculate bounding box
 	virtual void recalculateBoundingBox()
 	{
 		switch (VertexType)
@@ -158,11 +168,13 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		}
 	}
 
+	//! Get vertex type
 	virtual video::E_VERTEX_TYPE getVertexType() const
 	{
 		return VertexType;
 	}
 
+	//! Convert to 2tcoords vertex type
 	virtual void MoveTo_2TCoords()
 	{
 		if (VertexType==video::EVT_STANDARD)
@@ -181,6 +193,7 @@ struct SSkinMeshBuffer : public IMeshBuffer
 		}
 	}
 
+	//! Convert to tangents vertex type
 	virtual void MoveTo_Tangents()
 	{
 		if (VertexType==video::EVT_STANDARD)

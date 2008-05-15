@@ -16,7 +16,7 @@ namespace io
 
 class IAttributes;
 
-//! Enumation flags passed through SAttributeReadWriteOptions to the IAttributeExchangingObject object
+//! Enumeration flags passed through SAttributeReadWriteOptions to the IAttributeExchangingObject object
 enum E_ATTRIBUTE_READ_WRITE_FLAGS
 {
 	//! Serialization/Deserializion is done for an xml file
@@ -33,7 +33,7 @@ enum E_ATTRIBUTE_READ_WRITE_FLAGS
 //! struct holding data describing options
 struct SAttributeReadWriteOptions
 {
-	//! constructor
+	//! Constructor
 	SAttributeReadWriteOptions()
 		: Flags(0), Filename(0)
 	{
@@ -42,7 +42,7 @@ struct SAttributeReadWriteOptions
 	//! Combination of E_ATTRIBUTE_READ_WRITE_FLAGS or other, custom ones
 	s32 Flags;
 
-	//! optional filename
+	//! Optional filename
 	const c8* Filename;
 };
 
@@ -53,13 +53,13 @@ class IAttributeExchangingObject : public virtual IReferenceCounted
 public:
 
 	//! Writes attributes of the object.
-	//! Implement this to expose the attributes of your scene node animator for
-	//! scripting languages, editors, debuggers or xml serialization purposes.
+	/** Implement this to expose the attributes of your scene node animator for
+	scripting languages, editors, debuggers or xml serialization purposes. */
 	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const {}
 
 	//! Reads attributes of the object.
-	//! Implement this to set the attributes of your scene node animator for
-	//! scripting languages, editors, debuggers or xml deserialization purposes.
+	/** Implement this to set the attributes of your scene node animator for
+	scripting languages, editors, debuggers or xml deserialization purposes. */
 	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0) {}
 
 };

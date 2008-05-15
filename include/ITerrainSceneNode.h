@@ -46,62 +46,65 @@ namespace scene
 	{
 	public:
 
-		//! constructor
+		//! Constructor
 		ITerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 			const core::vector3df& position = core::vector3df(0.0f, 0.0f, 0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f, 0.0f, 0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f) )
 			: ISceneNode (parent, mgr, id, position, rotation, scale) {}
 
-		//! destructor
+		//! Destructor
 		virtual ~ITerrainSceneNode() {}
 
 		//! Get the bounding box of the terrain.
-		//! \return: The bounding box of the entire terrain.
+		/** \return The bounding box of the entire terrain. */
 		virtual const core::aabbox3d<f32>& getBoundingBox() const = 0;
 
-		//! Returns the bounding box of a patch
-		//! \return: The bounding box of the chosen patch.
+		//! Get the bounding box of a patch
+		/** \return The bounding box of the chosen patch. */
 		virtual const core::aabbox3d<f32>& getBoundingBox(s32 patchX, s32 patchZ) const = 0;
 
-		//! Returns the number of indices currently in the meshbuffer for this scene node.
-		//! \return: The index count.
+		//! Get the number of indices currently in the meshbuffer
+		/** \return The index count. */
 		virtual u32 getIndexCount() const = 0;
 
-		//! Returns pointer to the mesh
+		//! Get pointer to the mesh
+		/** \return Pointer to the mesh. */
 		virtual IMesh* getMesh() = 0;
 
 		//! Gets the meshbuffer data based on a specified level of detail.
-		/** \param mb: A reference to an SMeshBuffer object
-		\param LOD: the level of detail you want the indices from. */
+		/** \param mb A reference to an SMeshBuffer object
+		\param LOD The level of detail you want the indices from. */
 		virtual void getMeshBufferForLOD(SMeshBufferLightMap& mb, s32 LOD) const = 0;
 
 		//! Gets the indices for a specified patch at a specified Level of Detail.
-		/** \param indices: A reference to an array of u32 indices.
-		\param patchX: Patch x coordinate.
-		\param patchZ: Patch z coordinate.
-		\param LOD: The level of detail to get for that patch.  If -1, then get
-		the CurrentLOD.  If the CurrentLOD is set to -1, meaning it's not shown,
-		then it will retrieve the triangles at the highest LOD ( 0 ).
-		\return: Number if indices put into the buffer. */
+		/** \param indices A reference to an array of u32 indices.
+		\param patchX Patch x coordinate.
+		\param patchZ Patch z coordinate.
+		\param LOD The level of detail to get for that patch.  If -1,
+		then get the CurrentLOD.  If the CurrentLOD is set to -1,
+		meaning it's not shown, then it will retrieve the triangles at
+		the highest LOD ( 0 ).
+		\return Number if indices put into the buffer. */
 		virtual s32 getIndicesForPatch(core::array<u32>& indices,
 			s32 patchX, s32 patchZ, s32 LOD = 0 ) = 0;
 
 		//! Populates an array with the CurrentLOD of each patch.
-		/** \param LODs: A reference to a core::array<s32> to hold the values
-		\return: Returns the number of elements in the array */
+		/** \param LODs A reference to a core::array<s32> to hold the
+		values
+		\return Number of elements in the array */
 		virtual s32 getCurrentLODOfPatches(core::array<s32>& LODs) const = 0;
 
 		//! Manually sets the LOD of a patch
-		/** \param patchX: Patch x coordinate.
-		\param patchZ: Patch z coordinate.
-		\param LOD: The level of detail to set the patch to. */
+		/** \param patchX Patch x coordinate.
+		\param patchZ Patch z coordinate.
+		\param LOD The level of detail to set the patch to. */
 		virtual void setLODOfPatch( s32 patchX, s32 patchZ, s32 LOD ) = 0;
 
-		//! Returns center of terrain.
+		//! Get center of terrain.
 		virtual const core::vector3df& getTerrainCenter() const = 0;
 
-		//! Returns height of a point of the terrain.
+		//! Get height of a point of the terrain.
 		virtual f32 getHeight( f32 x, f32 y ) const = 0;
 
 		//! Sets the movement camera threshold.
@@ -119,20 +122,23 @@ namespace scene
 		virtual void setDynamicSelectorUpdate(bool bVal) = 0;
 
 		//! Override the default generation of distance thresholds.
-		/** For determining the LOD a patch
-		is rendered at. If any LOD is overridden, then the scene node will no longer apply
-		scaling factors to these values.  If you override these distances, and then apply
-		a scale to the scene node, it is your responsibility to update the new distances to
-		work best with your new terrain size. */
+		/** For determining the LOD a patch is rendered at. If any LOD
+		is overridden, then the scene node will no longer apply scaling
+		factors to these values.  If you override these distances, and
+		then apply a scale to the scene node, it is your responsibility
+		to update the new distances to work best with your new terrain
+		size. */
 		virtual bool overrideLODDistance(s32 LOD, f64 newDistance) = 0;
 
 		//! Scales the base texture, similar to makePlanarTextureMapping.
-		/** \param scale: The scaling amount.  Values above 1.0 increase the number of time the
-		texture is drawn on the terrain.  Values below 0 will decrease the number of times the
-		texture is drawn on the terrain.  Using negative values will flip the texture, as
-		well as still scaling it.
-		\param scale2: If set to 0 (default value), this will set the second texture coordinate set
-		to the same values as in the first set. If this is another value than zero, it will scale
+		/** \param scale The scaling amount.  Values above 1.0
+		increase the number of time the texture is drawn on the
+		terrain.  Values below 0 will decrease the number of times the
+		texture is drawn on the terrain.  Using negative values will
+		flip the texture, as well as still scaling it.
+		\param scale2 If set to 0 (default value), this will set the
+		second texture coordinate set to the same values as in the
+		first set. If this is another value than zero, it will scale
 		the second texture coordinate set by this value. */
 		virtual void scaleTexture(f32 scale = 1.0f, f32 scale2 = 0.0f) = 0;
 	};
@@ -141,4 +147,5 @@ namespace scene
 } // end namespace irr
 
 
-#endif // __IGEOMIPMAPSCENENODE_H__
+#endif // __I_TERRAIN_SCENE_NODE_H__
+

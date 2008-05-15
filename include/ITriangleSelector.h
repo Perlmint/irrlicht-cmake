@@ -27,57 +27,57 @@ class ITriangleSelector : public virtual IReferenceCounted
 {
 public:
 
-	//! destructor
+	//! Destructor
 	virtual ~ITriangleSelector() {}
 
 	//! Returns amount of all available triangles in this selector
 	virtual s32 getTriangleCount() const = 0;
 
 	//! Gets all triangles.
-	//! \param triangles: Array where the resulting triangles will be
-	//! written to.
-	//! \param arraySize: Size of the target array.
-	//! \param outTriangleCount: Amount of triangles which have been
-	//! written into the array.
-	//! \param transform: Pointer to matrix for transforming the triangles
-	//! before they are returned. Useful for example to scale all triangles
-	//! down into an ellipsoid space. If this pointer is null, no
-	//! transformation will be done.
+	/** \param triangles: Array where the resulting triangles will be
+	written to.
+	\param arraySize: Size of the target array.
+	\param outTriangleCount: Amount of triangles which have been written
+	into the array.
+	\param transform: Pointer to matrix for transforming the triangles
+	before they are returned. Useful for example to scale all triangles
+	down into an ellipsoid space. If this pointer is null, no
+	transformation will be done. */
 	virtual void getTriangles(core::triangle3df* triangles, s32 arraySize,
 		s32& outTriangleCount, const core::matrix4* transform=0) const = 0;
 
 	//! Gets all triangles which lie within a specific bounding box.
-	//! Please note that unoptimized triangle selectors also may return
-	//! triangles which are not in the specific box at all.
-	//! \param triangles: Array where the resulting triangles will be
-	//! written to.
-	//! \param arraySize: Size of the target array.
-	//! \param outTriangleCount: Amount of triangles which have been
-	//! written into the array.
-	//! \param box: Only triangles which are in this axis aligned bounding
-	//! box will be written into the array.
-	//! \param transform: Pointer to matrix for transforming the triangles
-	//! before they are returned. Useful for example to scale all triangles
-	//! down into an ellipsoid space. If this pointer is null, no
-	//! transformation will be done.
+	/** Please note that unoptimized triangle selectors also may return
+	triangles which are not in the specific box at all.
+	\param triangles: Array where the resulting triangles will be written
+	to.
+	\param arraySize: Size of the target array.
+	\param outTriangleCount: Amount of triangles which have been written
+	into the array.
+	\param box: Only triangles which are in this axis aligned bounding box
+	will be written into the array.
+	\param transform: Pointer to matrix for transforming the triangles
+	before they are returned. Useful for example to scale all triangles
+	down into an ellipsoid space. If this pointer is null, no
+	transformation will be done. */
 	virtual void getTriangles(core::triangle3df* triangles, s32 arraySize,
 		s32& outTriangleCount, const core::aabbox3d<f32>& box,
 		const core::matrix4* transform=0) const = 0;
 
 	//! Gets all triangles which have or may have contact with a 3d line.
-	//! Please note that unoptimized triangle selectors also may return
-	//! triangles which are not in contact at all with the 3d line.
-	//! \param triangles: Array where the resulting triangles will be
-	//! written to.
-	//! \param arraySize: Size of the target array.
-	//! \param outTriangleCount: Amount of triangles which have been
-	//! written into the array.
-	//! \param line: Only triangles which may be in contact with this 3d
-	//! line will be written into the array.
-	//! \param transform: Pointer to matrix for transforming the triangles
-	//! before they are returned. Useful for example to scale all triangles
-	//! down into an ellipsoid space. If this pointer is null, no
-	//! transformation will be done.
+	/** Please note that unoptimized triangle selectors also may return
+	triangles which are not in contact at all with the 3d line.
+	\param triangles: Array where the resulting triangles will be written
+	to.
+	\param arraySize: Size of the target array.
+	\param outTriangleCount: Amount of triangles which have been written
+	into the array.
+	\param line: Only triangles which may be in contact with this 3d line
+	will be written into the array.
+	\param transform: Pointer to matrix for transforming the triangles
+	before they are returned. Useful for example to scale all triangles
+	down into an ellipsoid space. If this pointer is null, no
+	transformation will be done. */
 	virtual void getTriangles(core::triangle3df* triangles, s32 arraySize,
 		s32& outTriangleCount, const core::line3d<f32>& line,
 		const core::matrix4* transform=0) const = 0;

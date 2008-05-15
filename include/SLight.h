@@ -48,15 +48,15 @@ struct SLight
 	SColorf AmbientColor;
 
 	//! Diffuse color emitted by the light.
-	//! This is the primary color you want to set.
+	/** This is the primary color you want to set. */
 	SColorf DiffuseColor;
 
 	//! Specular color emitted by the light.
-	//! For details how to use specular highlights, see SMaterial::Shininess
+	/** For details how to use specular highlights, see SMaterial::Shininess */
 	SColorf SpecularColor;
 
 	//! Attenuation factors (constant, linear, quadratic)
-	//! Changes the light strength fading over distance
+	/** Changes the light strength fading over distance */
 	core::vector3df Attenuation;
 
 	//! Radius of light. Everything within this radius be be lighted.
@@ -71,12 +71,12 @@ struct SLight
 	//! The light strength's decrease between Outer and Inner cone.
 	f32 Falloff;
 
-	//! Read-ONLY! Position of the light. If Type is ELT_DIRECTIONAL,
-	//! it is ignored. Changed via light scene node's position.
+	//! Read-ONLY! Position of the light.
+	/** If Type is ELT_DIRECTIONAL, it is ignored. Changed via light scene node's position. */
 	core::vector3df Position;
 
-	//! Read-ONLY! Direction of the light. If Type is ELT_POINT,
-	//! it is ignored. Changed via light scene node's rotation.
+	//! Read-ONLY! Direction of the light.
+	/** If Type is ELT_POINT, it is ignored. Changed via light scene node's rotation. */
 	core::vector3df Direction;
 
 	//! Type of the light. Default: ELT_POINT

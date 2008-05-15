@@ -16,7 +16,7 @@ namespace io
 	class IReadFile : public virtual IReferenceCounted
 	{
 	public:
-
+		//! Destructor
 		virtual ~IReadFile() {}
 
 		//! Reads an amount of bytes from the file.

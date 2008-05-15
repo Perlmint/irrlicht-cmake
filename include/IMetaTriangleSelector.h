@@ -21,15 +21,14 @@ class IMetaTriangleSelector : public ITriangleSelector
 {
 public:
 
-	//! Adds a triangle selector to the collection of triangle selectors
-	//! in this metaTriangleSelector.
-	//! \param toAdd: Pointer to an triangle selector to add to the list.
+	//! Adds a triangle selector to the collection of triangle selectors.
+	/** \param toAdd: Pointer to an triangle selector to add to the list. */
 	virtual void addTriangleSelector(ITriangleSelector* toAdd) = 0;
 
-	//! Removes a specific triangle selector which was added before from the collection.
-	//! \param toRemove: Pointer to an triangle selector which is in the list
-	//! but will be removed.
-	//! \return Returns true if successful, false if not.
+	//! Removes a specific triangle selector from the collection.
+	/** \param toRemove: Pointer to an triangle selector which is in the
+	list but will be removed.
+	\return True if successful, false if not. */
 	virtual bool removeTriangleSelector(ITriangleSelector* toRemove) = 0;
 
 	//! Removes all triangle selectors from the collection.

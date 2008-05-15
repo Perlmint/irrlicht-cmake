@@ -50,8 +50,7 @@ namespace scene
 	specifying when the mode wants to be drawn in relation to the other nodes. */
 	enum E_SCENE_NODE_RENDER_PASS
 	{
-		//! Camera pass. The active view is set up here.
-		//! The very first pass.
+		//! Camera pass. The active view is set up here. The very first pass.
 		ESNRP_CAMERA,
 
 		//! In this pass, lights are transformed into camera space and added to the driver
@@ -61,15 +60,18 @@ namespace scene
 		ESNRP_SKY_BOX,
 
 		//! All normal objects can use this for registering themselves.
-		//! This value will never be returned by ISceneManager::getSceneNodeRenderPass().
-		//! The scene manager will determine by itself if an object is
-		//! transparent or solid and register the object as SNRT_TRANSPARENT or
-		//! SNRT_SOLD automatically if you call registerNodeForRendering with this
-		//! value (which is default). Note that it will register the node only as ONE type.
-		//! If your scene node has both solid and transparent material types register
-		//! it twice (one time as SNRT_SOLID, the other time as SNRT_TRANSPARENT) and
-		//! in the render() method call getSceneNodeRenderPass() to find out the current
-		//! render pass and render only the corresponding parts of the node.
+		/** This value will never be returned by
+		ISceneManager::getSceneNodeRenderPass().  The scene manager
+		will determine by itself if an object is transparent or solid
+		and register the object as SNRT_TRANSPARENT or SNRT_SOLD
+		automatically if you call registerNodeForRendering with this
+		value (which is default). Note that it will register the node
+		only as ONE type.  If your scene node has both solid and
+		transparent material types register it twice (one time as
+		SNRT_SOLID, the other time as SNRT_TRANSPARENT) and in the
+		render() method call getSceneNodeRenderPass() to find out the
+		current render pass and render only the corresponding parts of
+		the node. */
 		ESNRP_AUTOMATIC,
 
 		//! Solid scene nodes or special scene nodes without materials.
@@ -78,8 +80,7 @@ namespace scene
 		//! Drawn after the transparent nodes, the time for drawing shadow volumes
 		ESNRP_SHADOW,
 
-		//! Transparent scene nodes, drawn after shadow nodes. They are sorted from back
-		//! to front and drawn in that order.
+		//! Transparent scene nodes, drawn after shadow nodes. They are sorted from back to front and drawn in that order.
 		ESNRP_TRANSPARENT,
 
 		//! Scene Nodes with special support
@@ -151,7 +152,7 @@ namespace scene
 	{
 	public:
 
-		//! destructor
+		//! Destructor
 		virtual ~ISceneManager() {}
 
 		//! Returns pointer to an animateable mesh. Loads the file if not loaded already.
@@ -445,19 +446,19 @@ namespace scene
 
 		//! Adds a scene node for rendering a animated water surface mesh.
 		/** Looks really good when the Material type EMT_TRANSPARENT_REFLECTION
-		 is used.
-		 \param waveHeight: Height of the water waves.
-		 \param waveSpeed: Speed of the water waves.
-		 \param waveLength: Lenght of a water wave.
-		 \param mesh: Pointer to the loaded static mesh to be displayed with water waves on it.
-		 \param parent: Parent of the scene node. Can be NULL if no parent.
-		 \param id: Id of the node. This id can be used to identify the scene node.
-		 \param position: Position of the space relative to its parent where the
-		 scene node will be placed.
-		 \param rotation: Initital rotation of the scene node.
-		 \param scale: Initial scale of the scene node.
-		 \return Returns pointer to the created scene node.
-		 This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
+		is used.
+		\param waveHeight: Height of the water waves.
+		\param waveSpeed: Speed of the water waves.
+		\param waveLength: Lenght of a water wave.
+		\param mesh: Pointer to the loaded static mesh to be displayed with water waves on it.
+		\param parent: Parent of the scene node. Can be NULL if no parent.
+		\param id: Id of the node. This id can be used to identify the scene node.
+		\param position: Position of the space relative to its parent where the
+		scene node will be placed.
+		\param rotation: Initital rotation of the scene node.
+		\param scale: Initial scale of the scene node.
+		\return Pointer to the created scene node.
+		This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
 		virtual ISceneNode* addWaterSurfaceSceneNode(IMesh* mesh,
 			f32 waveHeight=2.0f, f32 waveSpeed=300.0f, f32 waveLength=10.0f,
 			ISceneNode* parent=0, s32 id=-1,
@@ -477,24 +478,24 @@ namespace scene
 		 If a node gets less polys than this value it will not be split into
 		 smaller nodes.
 		\param alsoAddIfMeshPointerZero: Add the scene node even if a 0 pointer is passed.
-		 \return Returns the pointer to the OctTree if successful, otherwise 0.
+		 \return Pointer to the OctTree if successful, otherwise 0.
 		 This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
 		virtual ISceneNode* addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent=0,
 			s32 id=-1, s32 minimalPolysPerNode=256, bool alsoAddIfMeshPointerZero=false) = 0;
 
 		//! Adds a scene node for rendering using a octtree to the scene graph.
-		/** This a good method for rendering
-		 scenes with lots of geometry. The Octree is built on the fly from the mesh, much
-		 faster then a bsp tree.
-		 \param mesh: The mesh containing all geometry from which the octtree will be build.
-		 \param parent: Parent node of the octtree node.
-		 \param id: id of the node. This id can be used to identify the node.
-		 \param minimalPolysPerNode: Specifies the minimal polygons contained a octree node.
-		 If a node gets less polys than this value it will not be split into
-		 smaller nodes.
+		/** This a good method for rendering scenes with lots of
+		geometry. The Octree is built on the fly from the mesh, much
+		faster then a bsp tree.
+		\param mesh: The mesh containing all geometry from which the octtree will be build.
+		\param parent: Parent node of the octtree node.
+		\param id: id of the node. This id can be used to identify the node.
+		\param minimalPolysPerNode: Specifies the minimal polygons contained a octree node.
+		If a node gets less polys than this value it will not be split into
+		smaller nodes.
 		\param alsoAddIfMeshPointerZero: Add the scene node even if a 0 pointer is passed.
-		 \return Returns the pointer to the octtree if successful, otherwise 0.
-		 This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
+		\return Pointer to the octtree if successful, otherwise 0.
+		This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
 		virtual ISceneNode* addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent=0,
 			s32 id=-1, s32 minimalPolysPerNode=256, bool alsoAddIfMeshPointerZero=false) = 0;
 
@@ -527,8 +528,7 @@ namespace scene
 			f32 rotateSpeed = -1500.0f, f32 zoomSpeed = 200.0f,
 			f32 translationSpeed = 1500.0f, s32 id=-1) = 0;
 
-		//! Adds a camera scene node which is able to be controlled
-		//! with the mouse and keys like in most first person shooters (FPS).
+		//! Adds a camera scene node which is able to be controlled with the mouse and keys like in most first person shooters (FPS).
 		/** Look with the mouse, move with cursor keys. If you do not like the default
 		 key layout, you may want to specify your own. For example to make the camera
 		 be controlled by the cursor keys AND the keys W,A,S, and D, do something
@@ -806,8 +806,7 @@ namespace scene
 		virtual IDummyTransformationSceneNode* addDummyTransformationSceneNode(
 			ISceneNode* parent=0, s32 id=-1) = 0;
 
-		//! Adds a text scene node, which is able to display 2d text at
-		//! a position in three dimensional space
+		//! Adds a text scene node, which is able to display 2d text at a position in three dimensional space
 		virtual ITextSceneNode* addTextSceneNode(gui::IGUIFont* font, const wchar_t* text,
 			video::SColor color=video::SColor(100,255,255,255),
 			ISceneNode* parent = 0, const core::vector3df& position = core::vector3df(0,0,0),
@@ -930,7 +929,7 @@ namespace scene
 		 and null if no scene node could be found. */
 		virtual ISceneNode* getSceneNodeFromType(scene::ESCENE_NODE_TYPE type, ISceneNode* start=0) = 0;
 
-		//! returns scene nodes by type.
+		//! Get scene nodes by type.
 		/** \param type: Type of scene node to find.
 		\param outNodes: array to be filled with results.
 		\param start: Scene node to start from. All children of this scene
@@ -940,7 +939,7 @@ namespace scene
 				core::array<scene::ISceneNode*>& outNodes,
 				ISceneNode* start=0) = 0;
 
-		//! Returns the current active camera.
+		//! Get the current active camera.
 		/** \return The active camera is returned. Note that this can be NULL, if there
 		 was no camera created yet. */
 		virtual ICameraSceneNode* getActiveCamera() = 0;
@@ -977,7 +976,7 @@ namespace scene
 
 		//! Creates a rotation animator, which rotates the attached scene node around itself.
 		/** \param rotationPerSecond: Specifies the speed of the animation
-		 \return Returns the animator. Attach it to a scene node with ISceneNode::addAnimator()
+		 \return The animator. Attach it to a scene node with ISceneNode::addAnimator()
 		 and the animator will animate it.
 		 If you no longer need the animator, you should call ISceneNodeAnimator::drop().
 		 See IReferenceCounted::drop() for more information. */
@@ -988,7 +987,7 @@ namespace scene
 		 \param radius: Radius of the circle.
 		 \param speed: Specifies the speed of the flight.
 		 \param direction: Specifies the upvector used for alignment of the mesh.
-		 \return Returns the animator. Attach it to a scene node with ISceneNode::addAnimator()
+		 \return The animator. Attach it to a scene node with ISceneNode::addAnimator()
 		 and the animator will animate it.
 		 If you no longer need the animator, you should call ISceneNodeAnimator::drop().
 		 See IReferenceCounted::drop() for more information. */
@@ -996,8 +995,7 @@ namespace scene
 				f32 radius, f32 speed=0.001f,
 				const core::vector3df& direction=core::vector3df ( 0.f, 1.f, 0.f ) ) = 0;
 
-		//! Creates a fly straight animator, which lets the attached
-		//! scene node fly or move along a line between two points.
+		//! Creates a fly straight animator, which lets the attached scene node fly or move along a line between two points.
 		/** \param startPoint: Start point of the line.
 		 \param endPoint: End point of the line.
 		 \param timeForWay: Time in milli seconds how long the node should need to
@@ -1011,8 +1009,7 @@ namespace scene
 		virtual ISceneNodeAnimator* createFlyStraightAnimator(const core::vector3df& startPoint,
 			const core::vector3df& endPoint, u32 timeForWay, bool loop=false) = 0;
 
-		//! Creates a texture animator, which switches the textures of
-		//! the target scene node based on a list of textures.
+		//! Creates a texture animator, which switches the textures of the target scene node based on a list of textures.
 		/** \param textures: List of textures to use.
 		 \param timePerFrame: Time in milliseconds, how long any texture in the list
 		 should be visible.
@@ -1220,8 +1217,7 @@ namespace scene
 		//! Returns a scene node factory by index
 		virtual ISceneNodeFactory* getSceneNodeFactory(u32 index) = 0;
 
-		//! Returns the default scene node animator factory which can
-		//! create all built-in scene node animators
+		//! Returns the default scene node animator factory which can create all built-in scene node animators
 		virtual ISceneNodeAnimatorFactory* getDefaultSceneNodeAnimatorFactory() = 0;
 
 		//! Adds a scene node animator factory to the scene manager.

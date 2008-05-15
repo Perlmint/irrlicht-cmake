@@ -15,7 +15,7 @@ namespace scene
 {
 	class ISceneNode;
 
-	//! Interface making it possible to dynamicly create scene nodes
+	//! Interface for dynamic creation of scene nodes
 	/** To be able to add custom scene nodes to Irrlicht and to make it possible for the
 	scene manager to save and load those external scene nodes, simply implement this
 	interface and register it in you scene manager via ISceneManager::registerSceneNodeFactory.

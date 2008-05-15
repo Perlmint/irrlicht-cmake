@@ -214,7 +214,7 @@ namespace io
 	{
 	public:
 
-		//! virtual destructor
+		//! Destructor
 		virtual ~IFileReadCallBack() {}
 
 		//! Reads an amount of bytes from the file.

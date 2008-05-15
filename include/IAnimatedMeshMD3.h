@@ -23,8 +23,7 @@ namespace scene
 		EMD3_NUMMODELS
 	};
 
-
-	// Animation list
+	//! Animation list
 	enum EMD3_ANIMATION_TYPE
 	{
 		// Animations for both lower and upper parts of the player
@@ -82,7 +81,7 @@ namespace scene
 #	error compiler not supported
 #endif
 
-	// this holds the header info of the MD3 file
+	//! this holds the header info of the MD3 file
 	struct SMD3Header
 	{
 		c8	headerID[4];	//id of file, always "IDP3"
@@ -98,6 +97,7 @@ namespace scene
 		s32	fileSize;
 	};
 
+	//! this holds the header info of an MD3 mesh section
 	struct SMD3MeshHeader
 	{
 		c8 meshID[4];		//id, must be IDP3
@@ -123,7 +123,7 @@ namespace scene
 		u8 normal[2];
 	};
 
-	//! Texure Coordinate
+	//! Texture Coordinate
 	struct SMD3TexCoord
 	{
 		f32 u;
@@ -156,7 +156,7 @@ namespace scene
 	};
 
 	//! hold a tag info for connecting meshes
-	//! basically its an alternate way to describe a transformation
+	/** Basically its an alternate way to describe a transformation. */
 	struct SMD3QuaterionTag
 	{
 		SMD3QuaterionTag() {}
@@ -196,7 +196,7 @@ namespace scene
 		core::quaternion rotation;
 	};
 
-	// holds a assoziative list of named quaternions
+	//! holds a associative list of named quaternions
 	struct SMD3QuaterionTagList : public virtual IReferenceCounted
 	{
 		SMD3QuaterionTag* get ( const core::stringc& name )
@@ -243,11 +243,13 @@ namespace scene
 	{
 	public:
 
-		//! tune how many frames you want to render inbetween
+		//! tune how many frames you want to render inbetween.
 		virtual void setInterpolationShift ( u32 shift, u32 loopMode ) = 0;
 
+		//! get the tag list of the mesh.
 		virtual SMD3QuaterionTagList *getTagList(s32 frame, s32 detailLevel, s32 startFrameLoop, s32 endFrameLoop) = 0;
 
+		//! get the original md3 mesh.
 		virtual SMD3Mesh * getOriginalMesh () = 0;
 	};
 

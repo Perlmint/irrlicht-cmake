@@ -23,6 +23,7 @@ namespace scene
 			#endif
 		}
 
+		//! constructor
 		SSharedMeshBuffer(core::array<video::S3DVertex> *vertices) : IMeshBuffer(), Vertices(vertices)
 		{
 			#ifdef _DEBUG
@@ -127,10 +128,14 @@ namespace scene
 		//! append the meshbuffer to the current buffer
 		virtual void append(const IMeshBuffer* const other) {}
 
-		video::SMaterial Material;		//! material of this meshBuffer
-		core::array<video::S3DVertex> *Vertices;//! Shared Array of vertices
-		core::array<u16> Indices;		//! Array of Indices
-		core::aabbox3df BoundingBox;		//! Bounding box
+		//! material of this meshBuffer
+		video::SMaterial Material;
+		//! Shared Array of vertices
+		core::array<video::S3DVertex> *Vertices;
+		//! Array of Indices
+		core::array<u16> Indices;
+		//! Bounding box
+		core::aabbox3df BoundingBox;
 	};
 
 
