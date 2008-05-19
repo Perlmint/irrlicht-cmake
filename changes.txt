@@ -1,4 +1,6 @@
-Changes in version 1.4.1 (??.4.2008)
+Changes in version 1.4.1 (??.5.2008)
+
+ - MD3 meshes are movable again.
 
  - New JPG image writer version by Vitek.
 
