@@ -69,7 +69,7 @@ public:
 			#pragma warning(disable:4284) // infix notation problem when using iterator operator ->
 		#endif
 
-		T & operator * () { return Current->Element;  }
+		T & operator * () { return Current->Element; }
 		T * operator ->() { return &Current->Element; }
 
 	private:

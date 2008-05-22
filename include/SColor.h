@@ -264,17 +264,17 @@ namespace video
 		/** Constructs the color from 4 values representing the alpha,
 		red, green and blue components of the color. Must be values
 		between 0 and 255.
-		\param a: Alpha component of the color.  The alpha component
-		defines how transparent a color should be.  Has to be a value
-		between 0 and 255.  255 means not transparent (opaque), 0 means
+		\param a: Alpha component of the color. The alpha component
+		defines how transparent a color should be. Has to be a value
+		between 0 and 255. 255 means not transparent (opaque), 0 means
 		fully transparent.
-		\param r: Sets the red component of the Color.  Has to be a
-		value between 0 and 255.  0 means no red, 255 means full red.
-		\param g: Sets the green component of the Color.  Has to be a
-		value between 0 and 255.  0 means no green, 255 means full
+		\param r: Sets the red component of the Color. Has to be a
+		value between 0 and 255. 0 means no red, 255 means full red.
+		\param g: Sets the green component of the Color. Has to be a
+		value between 0 and 255. 0 means no green, 255 means full
 		green.
-		\param b: Sets the blue component of the Color.  Has to be a
-		value between 0 and 255.  0 means no blue, 255 means full blue.  */
+		\param b: Sets the blue component of the Color. Has to be a
+		value between 0 and 255. 0 means no blue, 255 means full blue. */
 		void set(u32 a, u32 r, u32 g, u32 b)
 		{
 			color = (((a & 0xff)<<24) | ((r & 0xff)<<16) | ((g & 0xff)<<8) | (b & 0xff));
@@ -364,8 +364,8 @@ namespace video
 		meaning no green and 1.0f, meaning full green.
 		\param b: Blue color component. Should be a value between 0.0f
 		meaning no blue and 1.0f, meaning full blue.
-		\param a: Alpha color component of the color.  The alpha
-		component defines how transparent a color should be.  Has to be
+		\param a: Alpha color component of the color. The alpha
+		component defines how transparent a color should be. Has to be
 		a value between 0.0f and 1.0f, 1.0f means not transparent
 		(opaque), 0.0f means fully transparent. */
 		SColorf(f32 r=0.f, f32 g=0.f, f32 b=0.f, f32 a=1.f) : r(r), g(g), b(b), a(a) {}
@@ -539,7 +539,7 @@ namespace video
 		while ( rh < 0.f )
 			rh += 2.f * core::PI;
 
-		if (rh <  60.0f * core::DEGTORAD )
+		if (rh < 60.0f * core::DEGTORAD )
 			rm1 = rm1 + (rm2 - rm1) * rh / (60.0f * core::DEGTORAD);
 		else if (rh < 180.0f * core::DEGTORAD )
 			rm1 = rm2;

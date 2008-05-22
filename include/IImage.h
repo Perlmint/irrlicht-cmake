@@ -50,7 +50,7 @@ public:
 	/** After you don't need the pointer anymore, you must call unlock().
 	\return Pointer to the image data. What type of data is pointed to
 	depends on the color format of the image. For example if the color
-	format is ECF_A8R8G8B8, it is of u32.  Be sure to call unlock() after
+	format is ECF_A8R8G8B8, it is of u32. Be sure to call unlock() after
 	you don't need the pointer any more. */
 	virtual void* lock() = 0;
 

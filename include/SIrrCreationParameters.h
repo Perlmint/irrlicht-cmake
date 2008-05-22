@@ -40,7 +40,7 @@ namespace irr
 		u32 Bits;
 
 		//! Should be set to true if the device should run in fullscreen.
-		/** Otherwise the device runs in windowed mode. Default: false.  */
+		/** Otherwise the device runs in windowed mode. Default: false. */
 		bool Fullscreen;
 
 		//! Specifies if the stencil buffer should be enabled.

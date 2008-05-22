@@ -168,7 +168,7 @@ public:
 	\return Returns a value between 0 and 360. */
 	inline f64 getAngle() const
 	{
-		if (Y == 0)  // corrected thanks to a suggestion by Jox
+		if (Y == 0) // corrected thanks to a suggestion by Jox
 			return X < 0 ? 180 : 0;
 		else if (X == 0)
 			return Y < 0 ? 90 : 270;

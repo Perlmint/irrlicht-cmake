@@ -213,7 +213,7 @@ inline quaternion& quaternion::operator=(const matrix4& m)
 		{
 			// 3rd element of diag is greatest value
 			// find scale according to 3rd element, and double it
-			scale  = sqrtf( 1.0f + m(2,2) - m(0,0) - m(1,1)) * 2.0f;
+			scale = sqrtf( 1.0f + m(2,2) - m(0,0) - m(1,1)) * 2.0f;
 
 			// TODO: speed this up
 			X = (m(0,2) + m(2,0)) / scale;
@@ -435,7 +435,7 @@ inline void quaternion::slerp( quaternion q1, quaternion q2, f32 time)
 
 	if ((angle + 1.0f) > 0.05f)
 	{
-		if ((1.0f - angle) >= 0.05f)  // spherical interpolation
+		if ((1.0f - angle) >= 0.05f) // spherical interpolation
 		{
 			f32 theta = (f32)acos(angle);
 			f32 invsintheta = 1.0f / (f32)sin(theta);

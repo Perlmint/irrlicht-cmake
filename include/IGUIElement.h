@@ -136,9 +136,9 @@ public:
 		const core::dimension2di& d = Parent->getAbsolutePosition().getSize();
 
 		DesiredRect = core::rect<s32>(
-					core::floor32((f32)d.Width  * r.UpperLeftCorner.X),
+					core::floor32((f32)d.Width * r.UpperLeftCorner.X),
 					core::floor32((f32)d.Height * r.UpperLeftCorner.Y),
-					core::floor32((f32)d.Width  * r.LowerRightCorner.X),
+					core::floor32((f32)d.Width * r.LowerRightCorner.X),
 					core::floor32((f32)d.Height * r.LowerRightCorner.Y));
 
 		ScaleRect = r;
@@ -392,7 +392,7 @@ public:
 		if (child)
 		{
 			child->grab();
-			child->remove();  // remove from old parent
+			child->remove(); // remove from old parent
 			child->LastParentRect = getAbsolutePosition();
 			child->Parent = this;
 			Children.push_back(child);
@@ -750,7 +750,7 @@ public:
 					if (closest)
 					{
 						closestOrder = closest->getTabOrder();
-						if (  ( reverse && currentOrder > closestOrder && currentOrder < startOrder)
+						if ( ( reverse && currentOrder > closestOrder && currentOrder < startOrder)
 							||(!reverse && currentOrder < closestOrder && currentOrder > startOrder))
 						{
 							closest = *it;

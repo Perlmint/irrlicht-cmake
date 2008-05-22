@@ -48,7 +48,7 @@ namespace irr
 		/** Also increments the virtual timer by calling
 		ITimer::tick();. You can prevent this
 		by calling ITimer::stop(); before and ITimer::start() after
-		calling IrrlichtDevice::run().  Returns false if device wants
+		calling IrrlichtDevice::run(). Returns false if device wants
 		to be deleted. Use it in this way:
 		\code
 		while(device->run())

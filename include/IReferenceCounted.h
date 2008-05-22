@@ -56,7 +56,7 @@ namespace irr
 		//! Grabs the object. Increments the reference counter by one.
 		/** Someone who calls grab() to an object, should later also
 		call drop() to it. If an object never gets as much drop() as
-		grab() calls, it will never be destroyed.  The
+		grab() calls, it will never be destroyed. The
 		IReferenceCounted class provides a basic reference counting
 		mechanism with its methods grab() and drop(). Most objects of
 		the Irrlicht Engine are derived from IReferenceCounted, and so
@@ -67,7 +67,7 @@ namespace irr
 		you get a pointer to the new object. If you no longer need the
 		object, you have to call drop(). This will destroy the object,
 		if grab() was not called in another part of you program,
-		because this part still needs the object.  Note, that you only
+		because this part still needs the object. Note, that you only
 		need to call drop() to the object, if you created it, and the
 		method had a 'create' in it.
 
@@ -96,7 +96,7 @@ namespace irr
 		you get a pointer to the new object. If you no longer need the
 		object, you have to call drop(). This will destroy the object,
 		if grab() was not called in another part of you program,
-		because this part still needs the object.  Note, that you only
+		because this part still needs the object. Note, that you only
 		need to call drop() to the object, if you created it, and the
 		method had a 'create' in it.
 

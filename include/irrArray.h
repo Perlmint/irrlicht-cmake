@@ -108,7 +108,7 @@ public:
 			T e(element);
 			reallocate(used * 2 +1); // increase data block
 
-			allocator.construct(&data[used++], e); // data[used++] = e;  // push_back
+			allocator.construct(&data[used++], e); // data[used++] = e; // push_back
 		}
 		else
 		{

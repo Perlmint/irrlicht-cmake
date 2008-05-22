@@ -80,7 +80,7 @@ namespace scene
 		outside of this loop.
 		If startFrameLoop and endFrameLoop are both -1, they are ignored.
 		\param endFrameLoop: see startFrameLoop.
-		\return Returns the animated mesh based on a detail level.  */
+		\return Returns the animated mesh based on a detail level. */
 		virtual IMesh* getMesh(s32 frame, s32 detailLevel=255, s32 startFrameLoop=-1, s32 endFrameLoop=-1) = 0;
 
 		//! Returns the type of the animated mesh.

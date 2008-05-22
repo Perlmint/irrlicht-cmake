@@ -63,15 +63,19 @@ namespace scene
 
 	struct SMD3AnimationInfo
 	{
-		s32 first;     // First frame
-		s32 num;       // Last frame
-		s32 looping;   // Looping frames
-		s32 fps;       // Frames per second
+		//! First frame
+		s32 first;
+		//! Last frame
+		s32 num;
+		//! Looping frames
+		s32 looping;
+		//! Frames per second
+		s32 fps;
 	};
 
 
 // byte-align structures
-#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
 #	pragma pack( push, packing )
 #	pragma pack( 1 )
 #	define PACK_STRUCT
@@ -138,7 +142,7 @@ namespace scene
 
 
 // Default alignment
-#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
 #	pragma pack( pop, packing )
 #endif
 

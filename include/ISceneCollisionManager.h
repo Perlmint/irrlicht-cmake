@@ -50,7 +50,7 @@ namespace scene
 		is based on the paper "Improved Collision detection and
 		Response" by Kasper Fauerby.
 		\param selector: TriangleSelector containing the triangles of
-		the world.  It can be created for example using
+		the world. It can be created for example using
 		ISceneManager::createTriangleSelector() or
 		ISceneManager::createTriangleOctTreeSelector().
 		\param ellipsoidPosition: Position of the ellipsoid.

@@ -155,7 +155,7 @@ Compiler version defines: VC6.0 : 1200, VC7.0 : 1300, VC7.1 : 1310, VC8.0 : 1400
 
 	#define CRTDBG_MAP_ALLOC
 	#define _CRTDBG_MAP_ALLOC
-	#define DEBUG_CLIENTBLOCK   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+	#define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
 	#include <stdlib.h>
 	#include <crtdbg.h>
 	#define new DEBUG_CLIENTBLOCK
@@ -179,8 +179,8 @@ Compiler version defines: VC6.0 : 1200, VC7.0 : 1300, VC7.1 : 1310, VC8.0 : 1400
 //! creates four CC codes used in Irrlicht for simple ids
 /** some compilers can create those by directly writing the
 code like 'code', but some generate warnings so we use this macro here */
-#define MAKE_IRR_ID(c0, c1, c2, c3)                       \
-		((u32)(u8)(c0) | ((u32)(u8)(c1) << 8) |   \
+#define MAKE_IRR_ID(c0, c1, c2, c3) \
+		((u32)(u8)(c0) | ((u32)(u8)(c1) << 8) | \
 		((u32)(u8)(c2) << 16) | ((u32)(u8)(c3) << 24 ))
 
 
