@@ -179,7 +179,7 @@ public:
 	gui elements. You'll never need to use this method, unless you are
 	creating your own gui elements, trying to add them to the gui elements
 	without a parent.
-	\return Pointer to the root element of the GUI.  The returned pointer
+	\return Pointer to the root element of the GUI. The returned pointer
 	should not be dropped. See IReferenceCounted::drop() for more
 	information. */
 	virtual IGUIElement* getRootGUIElement() = 0;

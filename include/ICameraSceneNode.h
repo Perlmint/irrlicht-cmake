@@ -39,7 +39,7 @@ namespace scene
 		to build a projection matrix. e.g: core::matrix4::buildProjectionMatrixPerspectiveFovLH.
 		Note that the matrix will only stay as set by this method until one of
 		the following Methods are called: setNearValue, setFarValue, setAspectRatio, setFOV.
-		\param projection: The new projection matrix of the camera.  */
+		\param projection: The new projection matrix of the camera. */
 		virtual void setProjectionMatrix(const core::matrix4& projection) = 0;
 
 		//! Gets the current projection matrix of the camera.
@@ -55,7 +55,7 @@ namespace scene
 		may ignore this input, but camera scene nodes which are created for
 		example with ISceneManager::addMayaCameraSceneNode or
 		ISceneManager::addMeshViewerCameraSceneNode, may want to get this input
-		for changing their position, look at target or whatever.  */
+		for changing their position, look at target or whatever. */
 		virtual bool OnEvent(const SEvent& event) = 0;
 
 		//! Sets the look at target of the camera

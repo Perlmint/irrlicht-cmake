@@ -169,7 +169,7 @@ namespace quake3
 			return 1;
 
 		u32 ret = 1;
-		static const c8 * funclist[] = { "lequal","equal"  };
+		static const c8 * funclist[] = { "lequal","equal" };
 
 		u32 pos = 0;
 		switch ( isEqual ( string, pos, funclist, 2 ) )

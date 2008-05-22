@@ -123,7 +123,7 @@
 	Copyright (C) 2002-2008 Nikolaus Gebhardt
 
 	This software is provided 'as-is', without any express or implied
-	warranty.  In no event will the authors be held liable for any damages
+	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
 	Permission is granted to anyone to use this software for any purpose,
@@ -279,7 +279,7 @@ namespace io
 		virtual ~IIrrXMLReader() {}
 
 		//! Reads forward to the next xml node.
-		/** \return Returns false, if there was no further node.  */
+		/** \return Returns false, if there was no further node. */
 		virtual bool read() = 0;
 
 		//! Returns the type of the current XML node.
@@ -389,7 +389,7 @@ namespace io
 	The file to read can be in any format, it will be converted to UTF-16 if it is not
 	in this format.
 	Create an instance of this with createIrrXMLReaderUTF16();
-	See IIrrXMLReader for description on how to use it.  */
+	See IIrrXMLReader for description on how to use it. */
 	typedef IIrrXMLReader<char16, IXMLBase> IrrXMLReaderUTF16;
 
 	//! A UTF-32 xml parser.

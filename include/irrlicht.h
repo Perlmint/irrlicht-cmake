@@ -330,7 +330,7 @@ namespace irr
 }
 
 /*! \file irrlicht.h
-    \brief Main header file of the irrlicht, the only file needed to include.
+	\brief Main header file of the irrlicht, the only file needed to include.
 */
 
 #endif

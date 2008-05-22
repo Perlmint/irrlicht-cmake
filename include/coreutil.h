@@ -42,7 +42,7 @@ inline stringc& getFileNameExtension ( stringc &dest, const stringc &source )
 #undef isspace
 #undef isupper
 inline s32 isdigit(s32 c) { return c >= '0' && c <= '9'; }
-inline s32 isspace(s32 c) { return c ==  ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v'; }
+inline s32 isspace(s32 c) { return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v'; }
 inline s32 isupper(s32 c) { return c >= 'A' && c <= 'Z'; }
 
 

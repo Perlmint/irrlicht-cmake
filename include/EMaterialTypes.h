@@ -93,7 +93,7 @@ namespace video
 		//! channel value as blend factor. Only first texture is used.
 		//! If you are using this material with small textures, it is a
 		//! good idea to load the texture in 32 bit mode
-		//! (video::IVideoDriver::setTextureCreationFlag()).  Also, an
+		//! (video::IVideoDriver::setTextureCreationFlag()). Also, an
 		//! alpha ref is used, which can be manipulated using
 		//! SMaterial::MaterialTypeParam. If set to 0, the alpha ref
 		//! gets its default value which is 0.5f and means that
@@ -171,7 +171,7 @@ namespace video
 		//! Just like EMT_NORMAL_MAP_SOLID, but uses parallax mapping
 		//! too, which looks a lot more realistic. This only works when
 		//! the hardware supports at least vertex shader 1.1 and pixel
-		//! shader 1.4. First texture is the color map, the  second
+		//! shader 1.4. First texture is the color map, the second
 		//! should be the normal map. The normal map texture should
 		//! contain the height value in the alpha component. The
 		//! IVideoDriver::makeNormalMapTexture() method writes this

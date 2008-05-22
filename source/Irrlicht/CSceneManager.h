@@ -301,7 +301,7 @@ namespace scene
 			f32 slidingValue = 0.0005f);
 
 		//! Creates a follow spline animator.
-        virtual ISceneNodeAnimator* createFollowSplineAnimator(s32 startTime,
+		virtual ISceneNodeAnimator* createFollowSplineAnimator(s32 startTime,
 			const core::array< core::vector3df >& points,
 			f32 speed = 1.0f, f32 tightness = 0.5f);
 

@@ -89,13 +89,13 @@ class line2d
 				b2 = (l.end.Y-l.start.Y)/(l.end.X-l.start.X);
 
 			// calculate position
-			a1 = start.Y   - b1 *  start.X;
+			a1 = start.Y   - b1 * start.X;
 			a2 = l.start.Y - b2 * l.start.X;
 			out.X = - (a1-a2)/(b1-b2);
 			out.Y = a1 + b1*out.X;
 
 			// did the lines cross?
-			if ((start.X-out.X) *(out.X-end.X)   >= -ROUNDING_ERROR_32 &&
+			if ((start.X-out.X) *(out.X-end.X) >= -ROUNDING_ERROR_32 &&
 				(l.start.X-out.X)*(out.X-l.end.X)>= -ROUNDING_ERROR_32 &&
 				(start.Y-out.Y)  *(out.Y-end.Y)  >= -ROUNDING_ERROR_32 &&
 				(l.start.Y-out.Y)*(out.Y-l.end.Y)>= -ROUNDING_ERROR_32 )
@@ -128,8 +128,8 @@ class line2d
 		<0 if to the left, or >0 if to the right. */
 		T getPointOrientation(const vector2d<T>& point) const
 		{
-			return ( (end.X   - start.X) * (point.Y - start.Y) -
-					(point.X - start.X) * (end.Y   - start.Y) );
+			return ( (end.X - start.X) * (point.Y - start.Y) -
+					(point.X - start.X) * (end.Y - start.Y) );
 		}
 
 		//! Check if the given point is a member of the line

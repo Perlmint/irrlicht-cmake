@@ -28,7 +28,7 @@ namespace io
 		//! Writes an xml 1.0 header.
 		/** Looks like &lt;?xml version="1.0"?&gt;. This should always
 		be called before writing anything other, because also the text
-		file header for unicode texts is written out with this method.  */
+		file header for unicode texts is written out with this method. */
 		virtual void writeXMLHeader() = 0;
 
 		//! Writes an xml element with maximal 5 attributes like "<foo />" or

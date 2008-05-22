@@ -67,10 +67,10 @@ public:
 	optimized shaders or if this is an incompatible vertex type for this
 	renderer, to refuse rendering for example.
 	\return Returns true if everything is ok, and false if nothing should
-	be rendered.  The material renderer can choose to return false for
+	be rendered. The material renderer can choose to return false for
 	example if he doesn't support the specified vertex type. This is
 	actually done in D3D8 and D3D9 when using a normal mapped material with
-	a vertex type other than EVT_TANGENTS.  */
+	a vertex type other than EVT_TANGENTS. */
 	virtual bool OnRender(IMaterialRendererServices* service, E_VERTEX_TYPE vtxtype) { return true; };
 
 	//! Called by the IVideoDriver to unset this material.

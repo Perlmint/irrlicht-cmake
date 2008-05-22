@@ -24,7 +24,7 @@ namespace core
 
 		// operators
 
-		vector3d<T> operator-() const { return vector3d<T>(-X, -Y, -Z);   }
+		vector3d<T> operator-() const { return vector3d<T>(-X, -Y, -Z); }
 
 		vector3d<T>& operator=(const vector3d<T>& other) { X = other.X; Y = other.Y; Z = other.Z; return *this; }
 
@@ -123,7 +123,7 @@ namespace core
 
 		//! Normalizes the vector.
 		/** In case of the 0 vector the result is still 0, otherwise
-		  the length of the vector will be 1.
+		the length of the vector will be 1.
 		TODO: 64 Bit template doesnt work.. need specialized template
 		\return Reference to this vector after normalization. */
 		vector3d<T>& normalize()

@@ -24,22 +24,22 @@ namespace scene
 	//! A scene node for displaying terrain using the geo mip map algorithm.
 	/** The code for the TerrainSceneNode is based on the Terrain renderer by Soconne and
 	 * the GeoMipMapSceneNode developed by Spintz. They made their code available for Irrlicht
-	 * and allowed it to be  distributed under this licence. I only modified some parts.
+	 * and allowed it to be distributed under this licence. I only modified some parts.
 	 * A lot of thanks go to them.
 	 *
 	 * This scene node is capable of very quickly loading
-	 * terrains and updating the indices at runtime to enable viewing very large terrains.  It uses a
+	 * terrains and updating the indices at runtime to enable viewing very large terrains. It uses a
 	 * CLOD ( Continuous Level of Detail ) algorithm which updates the indices for each patch based on
 	 * a LOD ( Level of Detail ) which is determined based on a patch's distance from the camera.
 	 *
 	 * The Patch Size of the terrain must always be a size of ( 2^N+1, i.e. 8+1(9), 16+1(17), etc. ).
-	 * The MaxLOD available is directly dependent on the patch size of the terrain.  LOD 0 contains all
-	 * of the indices to draw all the triangles at the max detail for a patch.  As each LOD goes up by 1
+	 * The MaxLOD available is directly dependent on the patch size of the terrain. LOD 0 contains all
+	 * of the indices to draw all the triangles at the max detail for a patch. As each LOD goes up by 1
 	 * the step taken, in generating indices increases by - 2^LOD, so for LOD 1, the step taken is 2, for
-	 * LOD 2, the step taken is 4, LOD 3 - 8, etc.  The step can be no larger than the size of the patch,
+	 * LOD 2, the step taken is 4, LOD 3 - 8, etc. The step can be no larger than the size of the patch,
 	 * so having a LOD of 8, with a patch size of 17, is asking the algoritm to generate indices every
-	 * 2^8 ( 256 ) vertices, which is not possible with a patch size of 17.  The maximum LOD for a patch
-	 * size of 17 is 2^4 ( 16 ).  So, with a MaxLOD of 5, you'll have LOD 0 ( full detail ), LOD 1 ( every
+	 * 2^8 ( 256 ) vertices, which is not possible with a patch size of 17. The maximum LOD for a patch
+	 * size of 17 is 2^4 ( 16 ). So, with a MaxLOD of 5, you'll have LOD 0 ( full detail ), LOD 1 ( every
 	 * 2 vertices ), LOD 2 ( every 4 vertices ), LOD 3 ( every 8 vertices ) and LOD 4 ( every 16 vertices ).
 	 **/
 	class ITerrainSceneNode : public ISceneNode
@@ -81,8 +81,8 @@ namespace scene
 		/** \param indices A reference to an array of u32 indices.
 		\param patchX Patch x coordinate.
 		\param patchZ Patch z coordinate.
-		\param LOD The level of detail to get for that patch.  If -1,
-		then get the CurrentLOD.  If the CurrentLOD is set to -1,
+		\param LOD The level of detail to get for that patch. If -1,
+		then get the CurrentLOD. If the CurrentLOD is set to -1,
 		meaning it's not shown, then it will retrieve the triangles at
 		the highest LOD ( 0 ).
 		\return Number if indices put into the buffer. */
@@ -109,12 +109,12 @@ namespace scene
 
 		//! Sets the movement camera threshold.
 		/** It is used to determine when to recalculate
-		indices for the scene node.  The default value is 10.0f. */
+		indices for the scene node. The default value is 10.0f. */
 		virtual void setCameraMovementDelta(f32 delta) = 0;
 
 		//! Sets the rotation camera threshold.
 		/** It is used to determine when to recalculate
-		indices for the scene node.  The default value is 1.0f. */
+		indices for the scene node. The default value is 1.0f. */
 		virtual void setCameraRotationDelta(f32 delta) = 0;
 
 		//! Sets whether or not the node should dynamically update its associated selector when the geomipmap data changes.
@@ -124,17 +124,17 @@ namespace scene
 		//! Override the default generation of distance thresholds.
 		/** For determining the LOD a patch is rendered at. If any LOD
 		is overridden, then the scene node will no longer apply scaling
-		factors to these values.  If you override these distances, and
+		factors to these values. If you override these distances, and
 		then apply a scale to the scene node, it is your responsibility
 		to update the new distances to work best with your new terrain
 		size. */
 		virtual bool overrideLODDistance(s32 LOD, f64 newDistance) = 0;
 
 		//! Scales the base texture, similar to makePlanarTextureMapping.
-		/** \param scale The scaling amount.  Values above 1.0
+		/** \param scale The scaling amount. Values above 1.0
 		increase the number of time the texture is drawn on the
-		terrain.  Values below 0 will decrease the number of times the
-		texture is drawn on the terrain.  Using negative values will
+		terrain. Values below 0 will decrease the number of times the
+		texture is drawn on the terrain. Using negative values will
 		flip the texture, as well as still scaling it.
 		\param scale2 If set to 0 (default value), this will set the
 		second texture coordinate set to the same values as in the

@@ -383,7 +383,7 @@ public:
 	//! Gets an attribute as enumeration
 	/** \param attributeName: Name of the attribute to get.
 	\param enumerationLiteralsToUse: Use these enumeration literals to get
-	the index value instead of the set ones.  This is useful when the
+	the index value instead of the set ones. This is useful when the
 	attribute list maybe was read from an xml file, and only contains the
 	enumeration string, but no information about its index.
 	\return Returns value of the attribute previously set by setAttribute()
@@ -393,7 +393,7 @@ public:
 	//! Gets an attribute as enumeration
 	/** \param index: Index value, must be between 0 and getAttributeCount()-1.
 	\param enumerationLiteralsToUse: Use these enumeration literals to get
-	the index value instead of the set ones.  This is useful when the
+	the index value instead of the set ones. This is useful when the
 	attribute list maybe was read from an xml file, and only contains the
 	enumeration string, but no information about its index.
 	\return Returns value of the attribute previously set by setAttribute()

@@ -98,7 +98,7 @@ namespace scene
 		zfail method, if not, zpass is used.
 		\param infinity: Value used by the shadow volume algorithm to
 		scale the shadow volume.
-		\return Pointer to the created shadow scene node.  This pointer
+		\return Pointer to the created shadow scene node. This pointer
 		should not be dropped. See IReferenceCounted::drop() for more
 		information. */
 		virtual IShadowVolumeSceneNode* addShadowVolumeSceneNode(s32 id=-1,

@@ -162,8 +162,7 @@ struct S3DVertex2TCoords : public S3DVertex
 
 
 //! Vertex with a tangent and binormal vector.
-/**  Usually used for tangent space normal mapping.
-*/
+/** Usually used for tangent space normal mapping. */
 struct S3DVertexTangents : public S3DVertex
 {
 	//! default constructor

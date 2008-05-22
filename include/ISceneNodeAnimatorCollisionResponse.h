@@ -54,7 +54,7 @@ namespace scene
 		//! Sets the gravity of the environment.
 		/** A good example value would be core::vector3df(0,-100.0f,0)
 		for letting gravity affect all object to fall down. For bigger
-		gravity, make increase the length of the vector.  You can
+		gravity, make increase the length of the vector. You can
 		disable gravity by setting it to core::vector3df(0,0,0);
 		\param gravity: New gravity vector. */
 		virtual void setGravity(const core::vector3df& gravity) = 0;

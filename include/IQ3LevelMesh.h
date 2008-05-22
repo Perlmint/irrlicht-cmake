@@ -24,11 +24,11 @@ namespace scene
 		virtual void releaseMesh ( s32 index ) = 0;
 
 		//! loads the shader definition
-		//  either from file ( we assume /scripts on fileNameIsValid == 0 )
+		/** Either from file ( we assume /scripts on fileNameIsValid == 0 ) */
 		virtual const quake3::SShader * getShader ( const c8 * filename, s32 fileNameIsValid ) = 0;
 
 		//! returns a already loaded Shader
-		virtual const quake3::SShader * getShader ( u32 index  ) const = 0;
+		virtual const quake3::SShader * getShader ( u32 index ) const = 0;
 
 		//! get's an interface to the entities
 		virtual const quake3::tQ3EntityList & getEntityList () = 0;

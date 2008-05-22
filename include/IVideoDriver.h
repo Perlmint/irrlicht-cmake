@@ -138,7 +138,7 @@ namespace video
 		imageformats, such as BMP, JPG, TGA, PCX, PNG, and PSD.
 		\param filename Filename of the texture to be loaded.
 		\return Pointer to the texture, or 0 if the texture
-		could not be loaded.  This pointer should not be dropped. See
+		could not be loaded. This pointer should not be dropped. See
 		IReferenceCounted::drop() for more information. */
 		virtual ITexture* getTexture(const c8* filename) = 0;
 
@@ -150,7 +150,7 @@ namespace video
 		imageformats, such as BMP, JPG, TGA, PCX, PNG, and PSD.
 		\param file Pointer to an already opened file.
 		\return Pointer to the texture, or 0 if the texture
-		could not be loaded.  This pointer should not be dropped. See
+		could not be loaded. This pointer should not be dropped. See
 		IReferenceCounted::drop() for more information. */
 		virtual ITexture* getTexture(io::IReadFile* file) = 0;
 
@@ -245,7 +245,7 @@ namespace video
 		with useAlphachannel==true.
 		\param texture Texture whose alpha channel is modified.
 		\param colorKeyPixelPos Position of a pixel with the color key
-		color.  Every pixel with this color will become transparent as
+		color. Every pixel with this color will become transparent as
 		described above. */
 		virtual void makeColorKeyTexture(video::ITexture* texture,
 			core::position2d<s32> colorKeyPixelPos) const = 0;
@@ -273,7 +273,7 @@ namespace video
 
 		driver->setRenderTarget(target); // set render target
 		// .. draw stuff here
-		driver->setRenderTarget(0);     // set previous render target
+		driver->setRenderTarget(0); // set previous render target
 		\endcode
 		Please note that you cannot render 3D or 2D geometry with a
 		render target as texture on it when you are rendering the scene
@@ -531,7 +531,7 @@ namespace video
 		transparent the rectangle will be.
 		\param pos Position of the rectangle.
 		\param clip Pointer to rectangle against which the rectangle
-		will be clipped.  If the pointer is null, no clipping will be
+		will be clipped. If the pointer is null, no clipping will be
 		performed. */
 		virtual void draw2DRectangle(const core::rect<s32>& pos,
 				SColor colorLeftUp, SColor colorRightUp,
@@ -796,7 +796,7 @@ namespace video
 		\param renderer A pointer to the new renderer.
 		\param name Optional name for the material renderer entry.
 		\return The number of the material type which can be set in
-		SMaterial::MaterialType to use the renderer.  -1 is returned if
+		SMaterial::MaterialType to use the renderer. -1 is returned if
 		an error occured. For example if you tried to add an material
 		renderer to the software renderer or the null device, which do
 		not accept material renderers. */
@@ -871,7 +871,7 @@ namespace video
 		//! Clears the ZBuffer.
 		/** Note that you usually need not to call this method, as it
 		is automatically done in IVideoDriver::beginScene() or
-		IVideoDriver::setRenderTarget() if you enable zBuffer.  But if
+		IVideoDriver::setRenderTarget() if you enable zBuffer. But if
 		you have to render some special things, you can clear the
 		zbuffer during the rendering process with this method any time.
 		*/

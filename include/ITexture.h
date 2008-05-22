@@ -47,7 +47,7 @@ enum E_TEXTURE_CREATION_FLAG
 	//! When using this flag, it does not make sense to use the flags
 	//! ETCF_ALWAYS_16_BIT, ETCF_ALWAYS_32_BIT,
 	//! or ETCF_OPTIMIZED_FOR_SPEED at the same time.
-	ETCF_OPTIMIZED_FOR_QUALITY  = 0x00000004,
+	ETCF_OPTIMIZED_FOR_QUALITY = 0x00000004,
 
 	//! Lets the driver decide in which format the textures are created and
 	//! tries to create them maximizing render speed.

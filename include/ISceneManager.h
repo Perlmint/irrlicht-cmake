@@ -61,12 +61,12 @@ namespace scene
 
 		//! All normal objects can use this for registering themselves.
 		/** This value will never be returned by
-		ISceneManager::getSceneNodeRenderPass().  The scene manager
+		ISceneManager::getSceneNodeRenderPass(). The scene manager
 		will determine by itself if an object is transparent or solid
 		and register the object as SNRT_TRANSPARENT or SNRT_SOLD
 		automatically if you call registerNodeForRendering with this
 		value (which is default). Note that it will register the node
-		only as ONE type.  If your scene node has both solid and
+		only as ONE type. If your scene node has both solid and
 		transparent material types register it twice (one time as
 		SNRT_SOLID, the other time as SNRT_TRANSPARENT) and in the
 		render() method call getSceneNodeRenderPass() to find out the
@@ -349,14 +349,12 @@ namespace scene
 		virtual IAnimatedMesh* getMesh(const c8* filename) = 0;
 
 		//! Returns pointer to an animateable mesh. Loads the file if not loaded already.
-		/**
-		 * Works just as getMesh(const char* filename)
-		 * If you want to remove a loaded mesh from the cache again, use removeMesh().
-		 *  \param file: File handle of the mesh to load.
-		 *  \return Returns NULL if failed and the pointer to the mesh if
-		 *  successful.
-		 *  This pointer should not be dropped. See IReferenceCounted::drop() for more information.
-		 **/
+		/** Works just as getMesh(const char* filename). If you want to
+		remove a loaded mesh from the cache again, use removeMesh().
+		\param file File handle of the mesh to load.
+		\return NULL if failed and pointer to the mesh if successful.
+		This pointer should not be dropped. See
+		IReferenceCounted::drop() for more information. */
 		virtual IAnimatedMesh* getMesh(io::IReadFile* file) = 0;
 
 		//! Returns an interface to the mesh cache which is shared beween all existing scene managers.
@@ -384,8 +382,9 @@ namespace scene
 		 scene node will be placed.
 		\param rotation: Initital rotation of the scene node.
 		\param scale: Initial scale of the scene node.
-		\return Returns pointer to the created test scene node.
-	     This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
+		\return Returns pointer to the created test scene node. This
+		pointer should not be dropped. See IReferenceCounted::drop()
+		for more information. */
 		virtual ISceneNode* addCubeSceneNode(f32 size=10.0f, ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0,0,0),
 			const core::vector3df& rotation = core::vector3df(0,0,0),
@@ -401,8 +400,9 @@ namespace scene
 		 scene node will be placed.
 		\param rotation: Initital rotation of the scene node.
 		\param scale: Initial scale of the scene node.
-		\return Returns pointer to the created test scene node.
-	     This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
+		\return Returns pointer to the created test scene node. This
+		pointer should not be dropped. See IReferenceCounted::drop()
+		for more information. */
 		virtual ISceneNode* addSphereSceneNode(f32 radius=5.0f, s32 polyCount=16,
 				ISceneNode* parent=0, s32 id=-1,
 				const core::vector3df& position = core::vector3df(0,0,0),
@@ -604,7 +604,7 @@ namespace scene
 		 \param parent: Parent scene node of the billboard. Can be null. If the parent moves,
 		 the billboard will move too.
 		 \param position: Position of the space relative to its parent
-		  where the billboard will be placed.
+		 where the billboard will be placed.
 		 \param size: Size of the billboard. This size is 2 dimensional because a billboard only has
 		 width and height.
 		 \param id: An id of the node. This id can be used to identify the node.
@@ -643,10 +643,10 @@ namespace scene
 		 \param horiRes: Number of vertices of a horizontal layer of the sphere.
 		 \param vertRes: Number of vertices of a vertical layer of the sphere.
 		 \param texturePercentage: How much of the height of the
-		  texture is used. Should be between 0 and 1.
+		 texture is used. Should be between 0 and 1.
 		 \param spherePercentage: How much of the sphere is drawn.
-		  Value should be between 0 and 2, where 1 is an exact
-		  half-sphere and 2 is a full sphere.
+		 Value should be between 0 and 2, where 1 is an exact
+		 half-sphere and 2 is a full sphere.
 		 \param parent: Parent scene node of the dome. A dome usually has no parent,
 		 so this should be null. Note: If a parent is set, the dome will not
 		 change how it is drawn.
@@ -696,15 +696,15 @@ namespace scene
 		 The patch size of the terrain must always be a size of 2^N+1,
 		 i.e. 8+1(9), 16+1(17), etc.
 		 The MaxLOD available is directly dependent on the patch size
-		 of the terrain.  LOD 0 contains all of the indices to draw all
-		 the triangles at the max detail for a patch.  As each LOD goes
+		 of the terrain. LOD 0 contains all of the indices to draw all
+		 the triangles at the max detail for a patch. As each LOD goes
 		 up by 1 the step taken, in generating indices increases by
 		 -2^LOD, so for LOD 1, the step taken is 2, for LOD 2, the step
-		 taken is 4, LOD 3 - 8, etc.  The step can be no larger than
+		 taken is 4, LOD 3 - 8, etc. The step can be no larger than
 		 the size of the patch, so having a LOD of 8, with a patch size
 		 of 17, is asking the algoritm to generate indices every 2^8 (
 		 256 ) vertices, which is not possible with a patch size of 17.
-		 The maximum LOD for a patch size of 17 is 2^4 ( 16 ).  So,
+		 The maximum LOD for a patch size of 17 is 2^4 ( 16 ). So,
 		 with a MaxLOD of 5, you'll have LOD 0 ( full detail ), LOD 1 (
 		 every 2 vertices ), LOD 2 ( every 4 vertices ), LOD 3 ( every
 		 8 vertices ) and LOD 4 ( every 16 vertices ).
@@ -714,11 +714,11 @@ namespace scene
 		 \param id: Id of the node. This id can be used to identify the scene node.
 		 \param position: The absolute position of this node.
 		 \param rotation: The absolute rotation of this node. ( NOT YET IMPLEMENTED )
-		 \param scale: The scale factor for the terrain.  If you're
-		  using a heightmap of size 129x129 and would like your terrain
-		  to be 12900x12900 in game units, then use a scale factor of (
-		  core::vector ( 100.0f, 100.0f, 100.0f ).  If you use a Y
-		  scaling factor of 0.0f, then your terrain will be flat.
+		 \param scale: The scale factor for the terrain. If you're
+		 using a heightmap of size 129x129 and would like your terrain
+		 to be 12900x12900 in game units, then use a scale factor of (
+		 core::vector ( 100.0f, 100.0f, 100.0f ). If you use a Y
+		 scaling factor of 0.0f, then your terrain will be flat.
 		 \param vertexColor: The default color of all the vertices. If no texture is associated
 		 with the scene node, then all vertices will be this color. Defaults to white.
 		 \param maxLOD: The maximum LOD (level of detail) for the node. Only change if you
@@ -728,10 +728,10 @@ namespace scene
 		 \param smoothFactor: The number of times the vertices are smoothed.
 		 \param addAlsoIfHeightmapEmpty: Add terrain node even with empty heightmap.
 		 \return Returns pointer to the created scene node. Can be null
-		  if the terrain could not be created, for example because the
-		  heightmap could not be loaded.  The returned pointer should
-		  not be dropped. See IReferenceCounted::drop() for more
-		  information. */
+		 if the terrain could not be created, for example because the
+		 heightmap could not be loaded. The returned pointer should
+		 not be dropped. See IReferenceCounted::drop() for more
+		 information. */
 		virtual ITerrainSceneNode* addTerrainSceneNode(
 				const c8* heightMapFileName,
 				ISceneNode* parent=0, s32 id=-1,
@@ -752,11 +752,11 @@ namespace scene
 		 \param id: Id of the node. This id can be used to identify the scene node.
 		 \param position: The absolute position of this node.
 		 \param rotation: The absolute rotation of this node. ( NOT YET IMPLEMENTED )
-		 \param scale: The scale factor for the terrain.  If you're
-		  using a heightmap of size 129x129 and would like your terrain
-		  to be 12900x12900 in game units, then use a scale factor of (
-		  core::vector ( 100.0f, 100.0f, 100.0f ).  If you use a Y
-		  scaling factor of 0.0f, then your terrain will be flat.
+		 \param scale: The scale factor for the terrain. If you're
+		 using a heightmap of size 129x129 and would like your terrain
+		 to be 12900x12900 in game units, then use a scale factor of (
+		 core::vector ( 100.0f, 100.0f, 100.0f ). If you use a Y
+		 scaling factor of 0.0f, then your terrain will be flat.
 		 \param vertexColor: The default color of all the vertices. If no texture is associated
 		 with the scene node, then all vertices will be this color. Defaults to white.
 		 \param maxLOD: The maximum LOD (level of detail) for the node. Only change if you
@@ -766,10 +766,10 @@ namespace scene
 		 \param smoothFactor: The number of times the vertices are smoothed.
 		 \param addAlsoIfHeightmapEmpty: Add terrain node even with empty heightmap.
 		 \return Returns pointer to the created scene node. Can be null
-		  if the terrain could not be created, for example because the
-		  heightmap could not be loaded.  The returned pointer should
-		  not be dropped. See IReferenceCounted::drop() for more
-		  information. */
+		 if the terrain could not be created, for example because the
+		 heightmap could not be loaded. The returned pointer should
+		 not be dropped. See IReferenceCounted::drop() for more
+		 information. */
 		virtual ITerrainSceneNode* addTerrainSceneNode(
 			io::IReadFile* heightMapFile,
 			ISceneNode* parent=0, s32 id=-1,
@@ -982,7 +982,7 @@ namespace scene
 		 See IReferenceCounted::drop() for more information. */
 		virtual ISceneNodeAnimator* createRotationAnimator(const core::vector3df& rotationPerSecond) = 0;
 
-		//! Creates a fly circle animator, which lets the attached scene node fly  around a center.
+		//! Creates a fly circle animator, which lets the attached scene node fly around a center.
 		/** \param center: Center of the circle.
 		 \param radius: Radius of the circle.
 		 \param speed: Specifies the speed of the flight.
@@ -1039,7 +1039,7 @@ namespace scene
 		 to the scene node, the scene node will not be able to move through walls and is
 		 affected by gravity.
 		 \param ellipsoidRadius: Radius of the ellipsoid with which collision detection and
-		 response is done.  If you have got a scene node, and you are unsure about
+		 response is done. If you have got a scene node, and you are unsure about
 		 how big the radius should be, you could use the following code to determine
 		 it:
 		 \code
@@ -1072,7 +1072,7 @@ namespace scene
 		 It uses a subset of hermite splines: either cardinal splines
 		 (tightness != 0.5) or catmull-rom-splines (tightness == 0.5).
 		 The animator moves from one control point to the next in
-		 1/speed seconds.  This code was sent in by Matthias Gall. */
+		 1/speed seconds. This code was sent in by Matthias Gall. */
 		virtual ISceneNodeAnimator* createFollowSplineAnimator(s32 startTime,
 			const core::array< core::vector3df >& points,
 			f32 speed = 1.0f, f32 tightness = 0.5f) = 0;
@@ -1239,13 +1239,13 @@ namespace scene
 
 		//! Creates a new scene manager.
 		/** This can be used to easily draw and/or store two
-		independent scenes at the same time.  The mesh cache will be
+		independent scenes at the same time. The mesh cache will be
 		shared between all existing scene managers, which means if you
 		load a mesh in the original scene manager using for example
 		getMesh(), the mesh will be available in all other scene
 		managers too, without loading.
 		The original/main scene manager will still be there and
-		accessible via IrrlichtDevice::getSceneManager().  If you need
+		accessible via IrrlichtDevice::getSceneManager(). If you need
 		input event in this new scene manager, for example for FPS
 		cameras, you'll need to forward input to this manually: Just
 		implement an IEventReceiver and call

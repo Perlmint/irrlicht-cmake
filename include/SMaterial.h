@@ -53,9 +53,9 @@ namespace video
 			E_MODULATE_FUNC &modulo, const f32 param )
 	{
 		const u32 state = (u32)param;
-		modulo	= E_MODULATE_FUNC  ( ( state & 0x00FF0000 ) >> 16 );
-		srcFact = E_BLEND_FACTOR   ( ( state & 0x0000FF00 ) >> 8  );
-		dstFact = E_BLEND_FACTOR   ( ( state & 0x000000FF )       );
+		modulo	= E_MODULATE_FUNC( ( state & 0x00FF0000 ) >> 16 );
+		srcFact = E_BLEND_FACTOR ( ( state & 0x0000FF00 ) >> 8 );
+		dstFact = E_BLEND_FACTOR ( ( state & 0x000000FF ) );
 	}
 
 	//! Maximum number of texture an SMaterial can have.
@@ -140,7 +140,7 @@ namespace video
 
 		//! Value affecting the size of specular highlights.
 		/** A value of 20 is common. If set to 0, no specular
-		highlights are being used.  To activate, simply set the
+		highlights are being used. To activate, simply set the
 		shininess of a material to a value other than 0:
 		\code
 		sceneNode->getMaterial(0).Shininess = 20.0f;
