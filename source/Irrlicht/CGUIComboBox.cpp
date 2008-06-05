@@ -265,14 +265,10 @@ bool CGUIComboBox::OnEvent(const SEvent& event)
 				// send to list box
 				if (ListBox && ListBox->getAbsolutePosition().isPointInside(p) &&
 					ListBox->OnEvent(event))
-					return true;
 				else
-				{
 					openCloseMenu();
-					return true;
-				}
+				return true;
 			}
-			break;
 		case EMIE_MOUSE_WHEEL:
 			{
 				s32 oldSelected = Selected;
