@@ -263,9 +263,9 @@ bool CGUIComboBox::OnEvent(const SEvent& event)
 				core::position2d<s32> p(event.MouseInput.X, event.MouseInput.Y);
 
 				// send to list box
-				if (ListBox && ListBox->getAbsolutePosition().isPointInside(p) &&
-					ListBox->OnEvent(event))
-				else
+				if (!(ListBox &&
+						ListBox->getAbsolutePosition().isPointInside(p) &&
+						ListBox->OnEvent(event)))
 					openCloseMenu();
 				return true;
 			}
