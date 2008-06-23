@@ -1006,6 +1006,7 @@ void CAnimatedMeshSceneNode::beginTransition()
 
 		Transiting = core::reciprocal((f32)TransitionTime);
 	}
+	TransitingBlend = 0.f;
 }
 
 
