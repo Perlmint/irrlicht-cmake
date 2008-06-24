@@ -41,15 +41,8 @@ class CScreenShotFactory : public IEventReceiver
 public:
 
 	CScreenShotFactory( IrrlichtDevice *device, const c8 * templateName )
+		: Device(device), Number(0), FilenameTemplate(templateName)
 	{
-		// store pointer to device so we can use it
-		Device = device;
-
-		// start with zero
-		Number = 0;
-
-		Filename.reserve ( 256 );
-		FilenameTemplate = templateName;
 	}
 
 	bool OnEvent(const SEvent& event)
@@ -62,12 +55,12 @@ public:
 			video::IImage* image = Device->getVideoDriver()->createScreenShot();
 			if (image)
 			{
-				sprintf (	(c8*) Filename.c_str() ,
-							"%s_shot%04d.jpg",
-							FilenameTemplate.c_str (),
-							Number++
-						);
-				Device->getVideoDriver()->writeImageToFile(image, Filename.c_str(), 85 );
+				c8 buf[256];
+				snprintf (buf, 256,
+					"%s_shot%04d.jpg",
+					FilenameTemplate.c_str(),
+					++Number);
+				Device->getVideoDriver()->writeImageToFile(image, buf, 85 );
 				image->drop();
 			}
 		}
@@ -77,8 +70,7 @@ public:
 private:
 	IrrlichtDevice *Device;
 	u32 Number;
-	core::stringc Filename;
-	core::stringc FilenameTemplate;
+	const core::stringc FilenameTemplate;
 };
 
 
