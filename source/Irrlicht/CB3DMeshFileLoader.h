@@ -30,9 +30,6 @@ public:
 	//! Constructor
 	CB3DMeshFileLoader(scene::ISceneManager* smgr);
 
-	//! destructor
-	virtual ~CB3DMeshFileLoader();
-
 	//! returns true if the file maybe is able to be loaded by this class
 	//! based on the file extension (e.g. ".bsp")
 	virtual bool isALoadableFileExtension(const c8* fileName) const;
