@@ -72,7 +72,7 @@ private:
 
 	struct SB3dMaterial
 	{
-		video::SMaterial* Material;
+		video::SMaterial Material;
 		f32 red, green, blue, alpha;
 		f32 shininess;
 		s32 blend,fx;
