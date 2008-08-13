@@ -1216,9 +1216,30 @@ IImage* CNullDriver::createImageFromData(ECOLOR_FORMAT format,
 }
 
 
+//! Creates an empty software image.
+IImage* CNullDriver::createImage(ECOLOR_FORMAT format, const core::dimension2d<s32>& size)
+{
+        return new CImage(format, size);
+}
+
+
+//! Creates a software image from another image.
+IImage* CNullDriver::createImage(ECOLOR_FORMAT format, IImage *imageToCopy)
+{
+        return new CImage(format, imageToCopy);
+}
+
+
+//! Creates a software image from part of another image.
+IImage* CNullDriver::createImage(IImage* imageToCopy, const core::position2d<s32>& pos, const core::dimension2d<s32>& size)
+{
+        return new CImage(imageToCopy, pos, size);
+}
+
+
 //! Sets the fog mode.
-void CNullDriver::setFog(SColor color, bool linearFog, f32 start, f32 end, f32 density,
-						bool pixelFog, bool rangeFog)
+void CNullDriver::setFog(SColor color, bool linearFog, f32 start, f32 end,
+		f32 density, bool pixelFog, bool rangeFog)
 {
 	FogColor = color;
 	LinearFog = linearFog;
