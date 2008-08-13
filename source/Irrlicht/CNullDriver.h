@@ -393,6 +393,9 @@ namespace video
 			E_MATERIAL_TYPE baseMaterial = video::EMT_SOLID,
 			s32 userData=0); 
 
+		//! Returns a pointer to the mesh manipulator.
+		virtual scene::IMeshManipulator* getMeshManipulator();
+		
 		//! Clears the ZBuffer. 
 		virtual void clearZBuffer();
 
@@ -512,6 +515,9 @@ namespace video
 		core::array<SMaterialRenderer> MaterialRenderers;
 
 		io::IFileSystem* FileSystem;
+
+		//! mesh manipulator
+		scene::IMeshManipulator* MeshManipulator;
 
 		core::rect<s32> ViewPort;
 		core::dimension2d<s32> ScreenSize;
