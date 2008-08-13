@@ -29,6 +29,7 @@ namespace io
 namespace scene
 {
 	class IMeshBuffer;
+	class IMeshManipulator;
 } // end namespace scene
 
 namespace video
@@ -896,6 +897,9 @@ namespace video
 		if the video driver does not support this. For example the
 		Software driver and the Null driver will always return 0. */
 		virtual IGPUProgrammingServices* getGPUProgrammingServices() = 0;
+
+		//! Returns a pointer to the mesh manipulator.
+		virtual scene::IMeshManipulator* getMeshManipulator() = 0;
 
 		//! Clears the ZBuffer.
 		/** Note that you usually need not to call this method, as it

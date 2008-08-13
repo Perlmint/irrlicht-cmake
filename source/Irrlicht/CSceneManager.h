@@ -574,9 +574,6 @@ namespace scene
 		//! collision manager
 		ISceneCollisionManager* CollisionManager;
 
-		//! mesh manipulator
-		IMeshManipulator* MeshManipulator;
-
 		//! render pass lists
 		core::array<ISceneNode*> CameraList;
 		core::array<DistanceNodeEntry> LightList;

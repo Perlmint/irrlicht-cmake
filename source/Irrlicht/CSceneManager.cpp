@@ -120,7 +120,6 @@
 #include "CDefaultSceneNodeFactory.h"
 
 #include "CSceneCollisionManager.h"
-#include "CMeshManipulator.h"
 #include "CTriangleSelector.h"
 #include "COctTreeTriangleSelector.h"
 #include "CTriangleBBSelector.h"
@@ -151,7 +150,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 		gui::ICursorControl* cursorControl, IMeshCache* cache,
 		gui::IGUIEnvironment* gui)
 : ISceneNode(0, 0), Driver(driver), FileSystem(fs), GUIEnvironment(gui),
-	CursorControl(cursorControl), CollisionManager(0), MeshManipulator(0),
+	CursorControl(cursorControl), CollisionManager(0),
 	ActiveCamera(0), ShadowColor(150,0,0,0), AmbientLight(0,0,0,0),
 	MeshCache(cache), CurrentRendertime(ESNRP_COUNT),
 	IRR_XML_FORMAT_SCENE(L"irr_scene"), IRR_XML_FORMAT_NODE(L"node"), IRR_XML_FORMAT_NODE_ATTR_TYPE(L"type")
@@ -182,9 +181,6 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	// create collision manager
 	CollisionManager = new CSceneCollisionManager(this, Driver);
 
-	// create manipulator
-	MeshManipulator = new CMeshManipulator();
-
 	// add file format loaders
 
 	#ifdef _IRR_COMPILE_WITH_IRR_MESH_LOADER_
@@ -200,7 +196,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	MeshLoaderList.push_back(new CMS3DMeshFileLoader(Driver));
 	#endif
 	#ifdef _IRR_COMPILE_WITH_3DS_LOADER_
-	MeshLoaderList.push_back(new C3DSMeshFileLoader(MeshManipulator,FileSystem, Driver));
+	MeshLoaderList.push_back(new C3DSMeshFileLoader(FileSystem, Driver));
 	#endif
 	#ifdef _IRR_COMPILE_WITH_X_LOADER_
 	MeshLoaderList.push_back(new CXMeshFileLoader(this));
@@ -224,7 +220,7 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 	MeshLoaderList.push_back(new CDMFLoader(Driver, this));
 	#endif
 	#ifdef _IRR_COMPILE_WITH_OGRE_LOADER_
-	MeshLoaderList.push_back(new COgreMeshFileLoader(MeshManipulator, FileSystem, Driver));
+	MeshLoaderList.push_back(new COgreMeshFileLoader(FileSystem, Driver));
 	#endif
 	#ifdef _IRR_COMPILE_WITH_OBJ_LOADER_
 	MeshLoaderList.push_back(new COBJMeshFileLoader(FileSystem, Driver));
@@ -267,9 +263,6 @@ CSceneManager::~CSceneManager()
 
 	if (CollisionManager)
 		CollisionManager->drop();
-
-	if (MeshManipulator)
-		MeshManipulator->drop();
 
 	if (GUIEnvironment)
 		GUIEnvironment->drop();
@@ -1462,7 +1455,6 @@ void CSceneManager::addExternalMeshLoader(IMeshLoader* externalLoader)
 }
 
 
-
 //! Returns a pointer to the scene collision manager.
 ISceneCollisionManager* CSceneManager::getSceneCollisionManager()
 {
@@ -1473,7 +1465,7 @@ ISceneCollisionManager* CSceneManager::getSceneCollisionManager()
 //! Returns a pointer to the mesh manipulator.
 IMeshManipulator* CSceneManager::getMeshManipulator()
 {
-	return MeshManipulator;
+	return Driver->getMeshManipulator();
 }
 
 
