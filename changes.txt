@@ -1,5 +1,9 @@
 Changes in version 1.4.2 (x.x.2008)
 
+ - Fixed rounding problem in getScreenCoordinatesFrom3DPosition
+
+ - Fixed Software renderer color flicker, was a shift bug I believe.
+
  - irrMap fix to make root node always black, by rogerborg.
 
  - Possible core dump fixed in particle system node, by CuteAlien.
