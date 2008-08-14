@@ -1424,6 +1424,11 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 	{
 		if (resetAllRenderStates || lastmaterial.TextureLayer[u].TextureWrap != material.TextureLayer[u].TextureWrap)
 		{
+			if (MultiTextureExtension)
+				extGlActiveTexture(GL_TEXTURE0_ARB + u);
+			else if (u>0)
+				break; // stop loop
+
 			GLint mode=GL_REPEAT;
 			switch (material.TextureLayer[u].TextureWrap)
 			{
@@ -1464,7 +1469,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 					else
 #endif
 						// fallback
-						mode=GL_CLAMP_TO_EDGE;
+						mode=GL_CLAMP;
 					break;
 				case ETC_MIRROR:
 #ifdef GL_VERSION_1_4
@@ -1486,10 +1491,6 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 					break;
 			}
 
-			if (MultiTextureExtension)
-				extGlActiveTexture(GL_TEXTURE0_ARB + u);
-			else if (u>0)
-				break;
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
 		}
