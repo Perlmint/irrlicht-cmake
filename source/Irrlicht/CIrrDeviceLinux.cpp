@@ -47,7 +47,10 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 #ifdef _IRR_COMPILE_WITH_X11_
 	display(0), visual(0), screennr(0), window(0), StdHints(0), SoftwareImage(0),
 #endif
-	Context(0), Fullscreen(fullscreen), StencilBuffer(sbuffer),
+#ifdef _IRR_COMPILE_WITH_OPENGL_
+	Context(0),
+#endif
+	Fullscreen(fullscreen), StencilBuffer(sbuffer),
 	AntiAlias(antiAlias), DriverType(driverType),
 	Width(windowSize.Width), Height(windowSize.Height), Depth(24), 
 	Close(false), WindowActive(false), WindowMinimized(false),
