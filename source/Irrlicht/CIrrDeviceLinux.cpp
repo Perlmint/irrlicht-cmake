@@ -47,9 +47,12 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 #ifdef _IRR_COMPILE_WITH_X11_
 	display(0), visual(0), screennr(0), window(0), StdHints(0), SoftwareImage(0),
 #endif
-	Fullscreen(fullscreen), StencilBuffer(sbuffer), AntiAlias(antiAlias), DriverType(driverType),
+	Context(0), Fullscreen(fullscreen), StencilBuffer(sbuffer),
+	AntiAlias(antiAlias), DriverType(driverType),
 	Width(windowSize.Width), Height(windowSize.Height), Depth(24), 
-	Close(false), WindowActive(false), WindowMinimized(false), UseXVidMode(false), UseXRandR(false), UseGLXWindow(false), AutorepeatSupport(0)
+	Close(false), WindowActive(false), WindowMinimized(false),
+	UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
+	AutorepeatSupport(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CIrrDeviceLinux");
@@ -96,7 +99,6 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 }
 
 
-
 //! destructor
 CIrrDeviceLinux::~CIrrDeviceLinux()
 {
@@ -113,7 +115,6 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 			glXDestroyContext(display, Context);
 			if (UseGLXWindow)
 				glXDestroyWindow(display, glxWin);
-			Context = 0;
 		}
 		#endif // #ifdef _IRR_COMPILE_WITH_OPENGL_
 
@@ -1113,6 +1114,7 @@ video::IVideoModeList* CIrrDeviceLinux::getVideoModeList()
 		if (display && temporaryDisplay)
 		{
 			XCloseDisplay(display);
+			display=0;
 		}
 	}
 #endif
