@@ -439,6 +439,10 @@
 					RelativePath="..\..\include\SMaterial.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\include\SMaterialLayer.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="core"
@@ -1876,14 +1880,6 @@
 					>
 				</File>
 				<File
-					RelativePath="CCameraSceneNode.cpp"
-					>
-				</File>
-				<File
-					RelativePath="CCameraSceneNode.h"
-					>
-				</File>
-				<File
 					RelativePath="CCameraFPSSceneNode.cpp"
 					>
 				</File>
@@ -1897,6 +1893,14 @@
 				</File>
 				<File
 					RelativePath="CCameraMayaSceneNode.h"
+					>
+				</File>
+				<File
+					RelativePath="CCameraSceneNode.cpp"
+					>
+				</File>
+				<File
+					RelativePath="CCameraSceneNode.h"
 					>
 				</File>
 				<File
