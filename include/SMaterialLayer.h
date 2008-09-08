@@ -41,11 +41,11 @@ namespace video
 	public:
 		//! Default constructor
 		SMaterialLayer()
-			: Texture(0), TextureMatrix(0),
+			: Texture(0),
 				TextureWrap(ETC_REPEAT),
 				BilinearFilter(true),
 				TrilinearFilter(false),
-				AnisotropicFilter(false)
+				AnisotropicFilter(false), TextureMatrix(0)
 			{}
 
 		//! Copy constructor
