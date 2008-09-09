@@ -430,6 +430,9 @@ namespace video
 		//! \param enable: If true, enable the clipping plane else disable it.
 		virtual void enableClipPlane(u32 index, bool enable);
 
+		virtual void setDisableZWriteOnTransparent(bool flag=true)
+		{ DisableZWriteOnTransparent=flag; }
+
 	protected:
 
 		//! deletes all textures
@@ -529,13 +532,15 @@ namespace video
 
 		u32 TextureCreationFlags;
 
-		bool LinearFog;
 		f32 FogStart;
 		f32 FogEnd;
 		f32 FogDensity;
+		SColor FogColor;
+		bool LinearFog;
 		bool PixelFog;
 		bool RangeFog;
-		SColor FogColor;
+
+		bool DisableZWriteOnTransparent;
 
 		SExposedVideoData ExposedData;
 	};
