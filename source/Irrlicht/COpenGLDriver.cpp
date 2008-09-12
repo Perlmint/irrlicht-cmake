@@ -437,6 +437,7 @@ bool COpenGLDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
 	if (zBuffer)
 	{
 		glDepthMask(GL_TRUE);
+		LastMaterial.ZWriteEnable=true;
 		mask |= GL_DEPTH_BUFFER_BIT;
 	}
 
@@ -1507,10 +1508,10 @@ void COpenGLDriver::setRenderStates2DMode(bool alpha, bool texture, bool alphaCh
 		{
 			if (static_cast<u32>(Material.MaterialType) < MaterialRenderers.size())
 				MaterialRenderers[Material.MaterialType].Renderer->OnUnsetMaterial();
-			setBasicRenderStates(SMaterial(), SMaterial(), true);
-			// everything that is wrongly set by SMaterial default
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_LIGHTING);
+			SMaterial mat;
+			mat.Lighting=false;
+			mat.ZBuffer=false;
+			setBasicRenderStates(mat, SMaterial(), true);
 		}
 
 		GLfloat glmat[16];
@@ -2216,6 +2217,7 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 	if (clearZBuffer)
 	{
 		glDepthMask(GL_TRUE);
+		LastMaterial.ZWriteEnable=true;
 		mask |= GL_DEPTH_BUFFER_BIT;
 	}
 
