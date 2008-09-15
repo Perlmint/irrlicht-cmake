@@ -1,5 +1,5 @@
-// This is a Demo of the Irrlicht Engine (c) 2005 by N.Gebhardt.
-// This file is not documentated.
+// This is a Demo of the Irrlicht Engine (c) 2005-2008 by N.Gebhardt.
+// This file is not documented.
 
 #include "CDemo.h"
 
@@ -46,6 +46,8 @@ void CDemo::run()
 	}
 
 	device = createDevice(driverType,resolution, 32, fullscreen, shadows, vsync, this);
+	if (!device)
+		return;
 
 	if (device->getFileSystem()->existFile("irrlicht.dat"))
 		device->getFileSystem()->addZipFileArchive("irrlicht.dat");
