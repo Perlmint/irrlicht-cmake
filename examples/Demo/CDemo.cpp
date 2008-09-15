@@ -469,7 +469,7 @@ void CDemo::loadSceneData()
 	for (s32 g=1; g<8; ++g)
 	{
 		char tmp[64];
-		sprintf(tmp, "../../media/portal%d.bmp", g);
+		snprintf(tmp, 64, "../../media/portal%d.bmp", g);
 		video::ITexture* t = driver->getTexture(tmp);
 		textures.push_back(t);
 	}
