@@ -1232,7 +1232,7 @@ void CSceneManager::drawAll()
 		driver->setTransform ( video::ETS_TEXTURE_3, identity );
 	}
 
-	driver->setDisableZWriteOnTransparent(Parameters.getAttributeAsBool( DISABLE_ZWRITE_ON_TRANSPARENT) );
+	driver->setAllowZWriteOnTransparent(Parameters.getAttributeAsBool( ALLOW_ZWRITE_ON_TRANSPARENT) );
 
 	// do animations and other stuff.
 	OnAnimate(os::Timer::getTime());

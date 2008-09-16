@@ -430,8 +430,8 @@ namespace video
 		//! \param enable: If true, enable the clipping plane else disable it.
 		virtual void enableClipPlane(u32 index, bool enable);
 
-		virtual void setDisableZWriteOnTransparent(bool flag=true)
-		{ DisableZWriteOnTransparent=flag; }
+		virtual void setAllowZWriteOnTransparent(bool flag)
+		{ AllowZWriteOnTransparent=flag; }
 
 	protected:
 
@@ -540,7 +540,7 @@ namespace video
 		bool PixelFog;
 		bool RangeFog;
 
-		bool DisableZWriteOnTransparent;
+		bool AllowZWriteOnTransparent;
 
 		SExposedVideoData ExposedData;
 	};
