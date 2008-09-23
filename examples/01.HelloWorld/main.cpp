@@ -8,7 +8,7 @@ understand everything if you are using a different one or even another
 operating system than windows.
 
 You have to include the header file <irrlicht.h> in order to use the engine. The
-header file can be found in the Irrlicht Engine SDK directory /c include. To let
+header file can be found in the Irrlicht Engine SDK directory \c include. To let
 the compiler find this header file, the directory where it is located has to be
 specified. This is different for every IDE and compiler you use. Let's explain
 shortly how to do this in Microsoft Visual Studio:
@@ -83,33 +83,33 @@ This is the main method. We can now use main() on every platform.
 int main()
 {
 	/*
-	The most important function of the engine is the 'createDevice'
-	function. The Irrlicht Device is created by it, which is the root
+	The most important function of the engine is the createDevice()
+	function. The IrrlichtDevice is created by it, which is the root
 	object for doing anything with the engine. createDevice() has 7
 	parameters:
 
-	* deviceType: Type of the device. This can currently be the Null-device,
+	- deviceType: Type of the device. This can currently be the Null-device,
 	   one of the two software renderers, D3D8, D3D9, or OpenGL. In this
 	   example we use EDT_SOFTWARE, but to try out, you might want to
 	   change it to EDT_BURNINGSVIDEO, EDT_NULL, EDT_DIRECT3D8,
 	   EDT_DIRECT3D9, or EDT_OPENGL.
 
-	* windowSize: Size of the Window or screen in FullScreenMode to be
+	- windowSize: Size of the Window or screen in FullScreenMode to be
 	   created. In this example we use 640x480.
 
-	* bits: Amount of color bits per pixel. This should be 16 or 32. The
+	- bits: Amount of color bits per pixel. This should be 16 or 32. The
 	   parameter is often ignored when running in windowed mode.
 
-	* fullscreen: Specifies if we want the device to run in fullscreen mode
+	- fullscreen: Specifies if we want the device to run in fullscreen mode
 	   or not.
 
-	* stencilbuffer: Specifies if we want to use the stencil buffer (for
+	- stencilbuffer: Specifies if we want to use the stencil buffer (for
 	   drawing shadows).
 
-	* vsync: Specifies if we want to have vsync enabled, this is only useful
+	- vsync: Specifies if we want to have vsync enabled, this is only useful
 	   in fullscreen mode.
 
-	* eventReceiver: An object to receive events. We do not want to use this
+	- eventReceiver: An object to receive events. We do not want to use this
 	   parameter here, and set it to 0.
 
 	Always check the return value to cope with unsupported drivers,
