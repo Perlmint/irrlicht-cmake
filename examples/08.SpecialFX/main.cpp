@@ -1,13 +1,16 @@
-/* This tutorials describes how to do special effects. It shows how to use stencil
-buffer shadows, the particle system, billboards, dynamic light and the water
+/** Example 008 SpecialFX
+
+This tutorials describes how to do special effects. It shows how to use stencil
+buffer shadows, the particle system, billboards, dynamic light, and the water
 surface scene node.
 
-We start like in some tutorials before. Please note that this time, the 'shadows' flag in
-createDevice() is set to true, for we want to have a dynamic shadow casted from
-an animated character. If your this example runs to slow, set it to false.
-The Irrlicht Engine checks if your hardware doesn't support the stencil
-buffer, and disables shadows by itself, but just in case the demo runs slow
-on your hardware.*/
+We start like in some tutorials before. Please note that this time, the
+'shadows' flag in createDevice() is set to true, for we want to have a dynamic
+shadow casted from an animated character. If this example runs too slow,
+set it to false. The Irrlicht Engine checks if your hardware doesn't support
+the stencil buffer, and disables shadows by itself, but just in case the demo
+runs slow on your hardware.
+*/
 
 #include <irrlicht.h>
 #include <iostream>
@@ -62,15 +65,16 @@ int main()
 
 	/*
 	For our environment, we load a .3ds file. It is a small room I modelled
-	with Anim8or and exported it into the 3ds format because the Irrlicht Engine
-	did not support the .an8 format when I wrote this tutorial. I am a very bad
-	3d graphic artist, and so the texture mapping is not very nice in this model.
-	Luckily I am a better programmer than artist, and so the Irrlicht Engine
-	is able to create a cool texture mapping for me: Just use the mesh manipulator
-	and create a planar texture mapping for the mesh. If you want to see the mapping
-	I made with Anim8or, uncomment this line. I also did not figure out how to
-	set the material right in Anim8or, it has a specular light color which I don't really
-	like. I'll switch it off too with this code.
+	with Anim8or and exported into the 3ds format because the Irrlicht
+	Engine does not support the .an8 format. I am
+	a very bad 3d graphic artist, and so the texture mapping is not very
+	nice in this model. Luckily I am a better programmer than artist, and
+	so the Irrlicht Engine is able to create a cool texture mapping for me:
+	Just use the mesh manipulator and create a planar texture mapping for
+	the mesh. If you want to see the mapping I made with Anim8or, uncomment
+	this line. I also did not figure out how to set the material right in
+	Anim8or, it has a specular light color which I don't really like. I'll
+	switch it off too with this code.
 	*/
 
 	scene::IAnimatedMesh* mesh = smgr->getMesh(
@@ -86,16 +90,15 @@ int main()
 	node->getMaterial(0).SpecularColor.set(0,0,0,0);
 
 	/*
-	Now, for the first special effect: Animated water. It works like this: The
-	WaterSurfaceSceneNode takes a mesh as input and makes
-	it wave like a water surface. And if we let this scene node use a nice
-	material like the EMT_REFLECTION_2_LAYER, it looks really cool. We are
-	doing this with the next few lines of code. As input mesh, we create a hill
-	plane mesh, without hills. But any other mesh could be used for this, you could
-	even use the room.3ds (which would look really strange) if you wanted to.
+	Now, for the first special effect: Animated water. It works like this:
+	The WaterSurfaceSceneNode takes a mesh as input and makes it wave like
+	a water surface. And if we let this scene node use a nice material like
+	the EMT_REFLECTION_2_LAYER, it looks really cool. We are doing this
+	with the next few lines of code. As input mesh, we create a hill plane
+	mesh, without hills. But any other mesh could be used for this, you
+	could even use the room.3ds (which would look really strange) if you
+	want to.
 	*/
-
-	// add animated water
 
 	mesh = smgr->addHillPlaneMesh("myHill",
 		core::dimension2d<f32>(20,20),
@@ -112,10 +115,10 @@ int main()
 	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
 
 	/*
-	The second special effect is very basic, I bet you saw it already in some
-	Irrlicht Engine demos: A transparent billboard combined with a dynamic light.
-	We simply create a light scene node, let it fly around, an to make it look
-	more cool, we attach a billboard scene node to it.
+	The second special effect is very basic, I bet you saw it already in
+	some Irrlicht Engine demos: A transparent billboard combined with a
+	dynamic light. We simply create a light scene node, let it fly around,
+	and to make it look more cool, we attach a billboard scene node to it.
 	*/
 
 	// create light
@@ -135,30 +138,38 @@ int main()
 	node->setMaterialTexture(0, driver->getTexture("../../media/particlewhite.bmp"));
 
 	/*
-	The next special effect is a lot more interesting: A particle system. The particle
-	system in the Irrlicht Engine is quit modular and extensible and yet easy to use.
-	There is a particle system scene node into which you can put particle emitters, which
-	make particles come out of nothing. These emitters are quite flexible and usually have
-	lots of parameters like direction, amount and color of the particles they should create.
-	There are different emitters, for example a point emitter which lets particles pop out
-	at a fixed point. If the particle emitters available in the engine are not enough for
-	you, you can easily create your own ones, you'll simply have to create a class derived
-	from the IParticleEmitter interface and attach it to the particle system using setEmitter().
-	In this example we create a box particle emitter, which creates particles randomly
-	inside a box. The parameters define the box, direction of the particles, minimal and
-	maximal new particles per second, color and minimal and maximal livetime of the particles.
+	The next special effect is a lot more interesting: A particle system.
+	The particle system in the Irrlicht Engine is quite modular and
+	extensible, but yet easy to use. There is a particle system scene node
+	into which you can put a particle emitter, which makes particles come out
+	of nothing. These emitters are quite flexible and usually have lots of
+	parameters like direction, amount, and color of the particles they
+	create.
 
-	Because only with emitters particle system would be a little bit boring,
-	there are particle affectors, which modify particles during they fly around. They can
-	be added to the particle system, simulating additional effects like gravity or wind.
-	The particle affector we use in this example is an affector, which modifies the color
-	of the particles: It lets them fade out. Like the particle emitters, additional
-	particle affectors can also be implemented by you, simply derive a class from
-	IParticleAffector and add it with addAffector().
+	There are different emitters, for example a point emitter which lets
+	particles pop out at a fixed point. If the particle emitters available
+	in the engine are not enough for you, you can easily create your own
+	ones, you'll simply have to create a class derived from the
+	IParticleEmitter interface and attach it to the particle system using
+	setEmitter(). In this example we create a box particle emitter, which
+	creates particles randomly inside a box. The parameters define the box,
+	direction of the particles, minimal and maximal new particles per
+	second, color, and minimal and maximal lifetime of the particles.
 
-	After we set a nice material to the particle system, we have a cool looking camp fire.
-	By adjusting material, texture, particle emitter and affector parameters, it is also
-	easily possible to create smoke, rain, explosions, snow, and so on.
+	Because only with emitters particle system would be a little bit
+	boring, there are particle affectors which modify particles while
+	they fly around. Affectors can be added to a particle system for
+	simulating additional effects like gravity or wind.
+	The particle affector we use in this example is an affector which
+	modifies the color of the particles: It lets them fade out. Like the
+	particle emitters, additional particle affectors can also be
+	implemented by you, simply derive a class from IParticleAffector and
+	add it with addAffector().
+
+	After we set a nice material to the particle system, we have a cool
+	looking camp fire. By adjusting material, texture, particle emitter,
+	and affector parameters, it is also easily possible to create smoke,
+	rain, explosions, snow, and so on.
 	*/
 
 	// create a particle system
@@ -264,3 +275,5 @@ int main()
 	return 0;
 }
 
+/*
+**/

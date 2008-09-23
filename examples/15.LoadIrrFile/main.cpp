@@ -1,8 +1,9 @@
-/*
+/** Example 015 Loading Scenes from .irr Files
+
 Since version 1.1, Irrlicht is able to save and load
 the full scene graph into an .irr file, an xml based
 format. There is an editor available to edit
-those files, named irrEdit on http://www.ambiera.com/irredit,
+those files, named irrEdit (http://www.ambiera.com/irredit)
 which can also be used as world and particle editor.
 This tutorial shows how to use .irr files.
 
@@ -13,7 +14,9 @@ Lets start: Create an Irrlicht device and setup the window.
 #include <iostream>
 using namespace irr;
 
+#ifdef _MSC_VER
 #pragma comment(lib, "Irrlicht.lib")
+#endif
 
 int main()
 {
@@ -53,21 +56,22 @@ int main()
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 
-	/* Now load our .irr file.
-	.irr files can store the whole scene graph including animators, materials
-	and particle systems. And there is also the possibility to store arbitrary
-	user data for every scene node in that file. To keep this 
-	example simple, we are simply loading the scene here. See the documentation
-	at ISceneManager::loadScene and ISceneManager::saveScene for more information.
-	So to load and display a complicated huge scene, we only need a single call
-	to loadScene().
+	/*
+	Now load our .irr file.
+	.irr files can store the whole scene graph including animators,
+	materials and particle systems. And there is also the possibility to
+	store arbitrary user data for every scene node in that file. To keep
+	this example simple, we are simply loading the scene here. See the
+	documentation at ISceneManager::loadScene and ISceneManager::saveScene
+	for more information. So to load and display a complicated huge scene,
+	we only need a single call to loadScene().
 	*/
 
 	// load the scene
 
 	smgr->loadScene("../../media/example.irr");
 
-	/* 
+	/*
 	That was it already. Now add a camera and draw the scene
 	*/
 
@@ -90,13 +94,13 @@ int main()
 
 		if (lastFPS != fps)
 		{
-		  core::stringw str = L"Load Irrlicht File example - Irrlicht Engine [";
-		  str += driver->getName();
-		  str += "] FPS:";
-		  str += fps;
+			core::stringw str = L"Load Irrlicht File example - Irrlicht Engine [";
+			str += driver->getName();
+			str += "] FPS:";
+			str += fps;
 
-		  device->setWindowCaption(str.c_str());
-		  lastFPS = fps;
+			device->setWindowCaption(str.c_str());
+			lastFPS = fps;
 		}
 
 	}
@@ -106,3 +110,5 @@ int main()
 	return 0;
 }
 
+/*
+**/
