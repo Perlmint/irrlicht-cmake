@@ -36,12 +36,12 @@ scene node, but a simple tetraeder, a 3d object consisting of 4
 connected vertices, which only draws itself and does nothing more.
 Note that this scenario does not require a custom scene node in Irrlicht.
 Instead one would create a mesh from the geometry and pass it to a
-MeshSceneNode. This example just illustrates creation of a custom scene
-node in a very simple setting.
+irr::scene::IMeshSceneNode. This example just illustrates creation of a custom
+scene node in a very simple setting.
 
 To let our scene node be able to be inserted into the Irrlicht
 Engine scene, the class we create needs to be derived from the
-ISceneNode class and has to override some methods.
+irr::scene::ISceneNode class and has to override some methods.
 */
 
 class CSampleSceneNode : public scene::ISceneNode
@@ -90,19 +90,22 @@ public:
 	}
 
 	/*
-	Before it is drawn, the OnRegisterSceneNode() method of every scene node in the scene
-	is called by the scene manager. If the scene node wishes to draw itself,
-	it may register itself in the scene manager to be drawn. This is necessary to
-	tell the scene manager when it should call the ::render method. For example
-	normal scene nodes render their content one after another, while
-	stencil buffer shadows would like to be drawn after all other scene nodes. And
-	camera or light scene nodes need to be rendered before all other scene
-	nodes (if at all).
-	So here we simply register the scene node to render normally. If we would like
-	to let it be rendered like cameras or light, we would have to call
+	Before it is drawn, the irr::scene::ISceneNode::OnRegisterSceneNode()
+	method of every scene node in the scene is called by the scene manager.
+	If the scene node wishes to draw itself, it may register itself in the
+	scene manager to be drawn. This is necessary to tell the scene manager
+	when it should call the irr::scene::ISceneNode::render method. For
+	example normal scene nodes render their content one after another,
+	while stencil buffer shadows would like to be drawn after all other
+	scene nodes. And camera or light scene nodes need to be rendered before
+	all other scene nodes (if at all).  So here we simply register the
+	scene node to render normally. If we would like to let it be rendered
+	like cameras or light, we would have to call
 	SceneManager->registerNodeForRendering(this, SNRT_LIGHT_AND_CAMERA);
-	After this, we call the OnRegisterSceneNode() method of the base class ISceneNode,
-	which simply lets also all the child scene nodes of this node register themselves.
+	After this, we call the actual
+	irr::scene::ISceneNode::OnRegisterSceneNode() method of the base class,
+	which simply lets also all the child scene nodes of this node register
+	themselves.
 	*/
 	virtual void OnRegisterSceneNode()
 	{

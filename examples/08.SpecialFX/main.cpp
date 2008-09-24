@@ -17,7 +17,9 @@ runs slow on your hardware.
 
 using namespace irr;
 
+#ifdef _MSC_VER
 #pragma comment(lib, "Irrlicht.lib")
+#endif
 
 int main()
 {
@@ -27,7 +29,7 @@ int main()
 	printf("Please press 'y' if you want to use realtime shadows.\n");
 
 	std::cin >> i;
-	bool shadows = (i == 'y');
+	const bool shadows = (i == 'y');
 
 	// ask user for driver
 
@@ -51,7 +53,10 @@ int main()
 		default: return 1;
 	}
 
-	// create device and exit if creation failed
+	/*
+	Create device and exit if creation failed. We make the stencil flag
+	optional to avoid slow screen modes for runs without shadows.
+	*/
 
 	IrrlichtDevice *device =
 		createDevice(driverType, core::dimension2d<s32>(640, 480),
@@ -66,27 +71,25 @@ int main()
 	/*
 	For our environment, we load a .3ds file. It is a small room I modelled
 	with Anim8or and exported into the 3ds format because the Irrlicht
-	Engine does not support the .an8 format. I am
-	a very bad 3d graphic artist, and so the texture mapping is not very
-	nice in this model. Luckily I am a better programmer than artist, and
-	so the Irrlicht Engine is able to create a cool texture mapping for me:
-	Just use the mesh manipulator and create a planar texture mapping for
-	the mesh. If you want to see the mapping I made with Anim8or, uncomment
-	this line. I also did not figure out how to set the material right in
-	Anim8or, it has a specular light color which I don't really like. I'll
-	switch it off too with this code.
+	Engine does not support the .an8 format. I am a very bad 3d graphic
+	artist, and so the texture mapping is not very nice in this model.
+	Luckily I am a better programmer than artist, and so the Irrlicht
+	Engine is able to create a cool texture mapping for me: Just use the
+	mesh manipulator and create a planar texture mapping for the mesh. If
+	you want to see the mapping I made with Anim8or, uncomment this line. I
+	also did not figure out how to set the material right in Anim8or, it
+	has a specular light color which I don't really like. I'll switch it
+	off too with this code.
 	*/
 
-	scene::IAnimatedMesh* mesh = smgr->getMesh(
-		"../../media/room.3ds");
+	scene::IAnimatedMesh* mesh = smgr->getMesh("../../media/room.3ds");
 
-	smgr->getMeshManipulator()->makePlanarTextureMapping(
-		mesh->getMesh(0), 0.004f);
+	smgr->getMeshManipulator()->makePlanarTextureMapping(mesh->getMesh(0), 0.004f);
 
 	scene::ISceneNode* node = 0;
 
 	node = smgr->addAnimatedMeshSceneNode(mesh);
-	node->setMaterialTexture(0,	driver->getTexture("../../media/wall.jpg"));
+	node->setMaterialTexture(0, driver->getTexture("../../media/wall.jpg"));
 	node->getMaterial(0).SpecularColor.set(0,0,0,0);
 
 	/*
@@ -174,27 +177,26 @@ int main()
 
 	// create a particle system
 
-	scene::IParticleSystemSceneNode* ps = 0;
-	ps = smgr->addParticleSystemSceneNode(false);
+	scene::IParticleSystemSceneNode* ps =
+		smgr->addParticleSystemSceneNode(false);
 	ps->setPosition(core::vector3df(-70,60,40));
 	ps->setScale(core::vector3df(2,2,2));
-
 	ps->setParticleSize(core::dimension2d<f32>(20.0f, 20.0f));
 
 	scene::IParticleEmitter* em = ps->createBoxEmitter(
-		core::aabbox3d<f32>(-7,0,-7,7,1,7),
-		core::vector3df(0.0f,0.06f,0.0f),
-		80,100,
-		video::SColor(0,255,255,255), video::SColor(0,255,255,255),
-		800,2000);
+		core::aabbox3d<f32>(-7,0,-7,7,1,7), // emitter size
+		core::vector3df(0.0f,0.06f,0.0f),   // initial direction
+		80,100,                             // emit rate
+		video::SColor(0,255,255,255),       // darkest color
+		video::SColor(0,255,255,255),       // brightest color
+		800,2000);                          // min and max age
 
-	ps->setEmitter(em);
-	em->drop();
+	ps->setEmitter(em); // this grabs the emitter
+	em->drop(); // so we can drop it here without deleting it
 
-	scene::IParticleAffector* paf =
-		ps->createFadeOutParticleAffector();
+	scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
 
-	ps->addAffector(paf);
+	ps->addAffector(paf); // same goes for the affector
 	paf->drop();
 
 	ps->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -203,17 +205,19 @@ int main()
 	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
 
 	/*
-	As our last special effect, we want a dynamic shadow be casted from an animated
-	character. For this we load a DirectX .x model and place it into our world.
-	For creating the shadow, we simply need to call addShadowVolumeSceneNode().
-	The color of shadows is only adjustable globally for all shadows, by calling
-	ISceneManager::setShadowColor(). Voila, here is our dynamic shadow.
+	As our last special effect, we want a dynamic shadow be casted from an
+	animated character. For this we load a DirectX .x model and place it
+	into our world. For creating the shadow, we simply need to call
+	addShadowVolumeSceneNode(). The color of shadows is only adjustable
+	globally for all shadows, by calling ISceneManager::setShadowColor().
+	Voila, here is our dynamic shadow.
 
-	Because the character is a little bit too small for this scene, we make it bigger
-	using setScale(). And because the character is lighted by a dynamic light, we need
-	to normalize the normals to make the lighting on it correct. This is always necessary if
-	the scale of a dynamic lighted model is not (1,1,1). Otherwise it would get too dark or
-	too bright because the normals will be scaled too.
+	Because the character is a little bit too small for this scene, we make
+	it bigger using setScale(). And because the character is lighted by a
+	dynamic light, we need to normalize the normals to make the lighting on
+	it correct. This is always necessary if the scale of a dynamic lighted
+	model is not (1,1,1). Otherwise it would get too dark or too bright
+	because the normals will be scaled too.
 	*/
 
 	// add animated character
@@ -230,7 +234,7 @@ int main()
 	smgr->setShadowColor(video::SColor(150,0,0,0));
 
 	// make the model a little bit bigger and normalize its normals
-	// because of this for correct lighting
+	// because of the scaling, for correct lighting
 	anode->setScale(core::vector3df(2,2,2));
 	anode->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
 
@@ -244,8 +248,7 @@ int main()
 	// disable mouse cursor
 	device->getCursorControl()->setVisible(false);
 
-
-	int lastFPS = -1;
+	const s32 lastFPS = -1;
 
 	while(device->run())
 	if (device->isWindowActive())
@@ -256,7 +259,7 @@ int main()
 
 		driver->endScene();
 
-		int fps = driver->getFPS();
+		const s32 fps = driver->getFPS();
 
 		if (lastFPS != fps)
 		{

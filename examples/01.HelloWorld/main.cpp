@@ -146,17 +146,18 @@ int main()
 	/*
 	We add a hello world label to the window, using the GUI environment.
 	The text is placed at the position (10,10) as top left corner and
-	(200,22) as lower right corner.
+	(260,22) as lower right corner.
 	*/
 	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
 		rect<s32>(10,10,260,22), true);
 
 	/*
 	To show something interesting, we load a Quake 2 model and display it.
-	We only have to get the Mesh from the Scene Manager (getMesh()) and add
-	a SceneNode to display the mesh (addAnimatedMeshSceneNode()). We
+	We only have to get the Mesh from the Scene Manager with getMesh() and add
+	a SceneNode to display the mesh with addAnimatedMeshSceneNode(). We
 	check the return value of getMesh() to become aware of loading problems
 	and other errors.
+
 	Instead of writing the filename sydney.md2, it would also be possible
 	to load a Maya object file (.obj), a complete Quake3 map (.bsp) or any
 	other supported file format. By the way, that cool Quake 2 model
@@ -184,7 +185,8 @@ int main()
 
 	/*
 	To look at the mesh, we place a camera into 3d space at the position
-	(0, 30, -40). The camera looks from there to (0,5,0).
+	(0, 30, -40). The camera looks from there to (0,5,0), which is
+	approximately the place where our md2 model is.
 	*/
 	smgr->addCameraSceneNode(0, vector3df(0,30,-40), vector3df(0,5,0));
 

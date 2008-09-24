@@ -19,9 +19,8 @@ using namespace irr;
 #endif
 
 /*
-At first, we let the user select the driver type, then
-start up the engine, set a caption, and get a pointer
-to the video driver.
+At first, we let the user select the driver type, then start up the engine, set
+a caption, and get a pointer to the video driver.
 */
 int main()
 {
@@ -62,25 +61,26 @@ int main()
 
 	/*
 	All 2d graphics in this example are put together into one texture,
-	2ddemo.bmp. Because we want to draw colorkey based sprites, we need
-	to load this texture and tell the engine, which
-	part of it should be transparent based on a colorkey. In this example,
-	we don't tell it the color directly, we just say "Hey Irrlicht Engine,
-	you'll find the color I want at position (0,0) on the texture.".
-	Instead, it would be also possible to call
+	2ddemo.bmp. Because we want to draw colorkey based sprites, we need to
+	load this texture and tell the engine, which part of it should be
+	transparent based on a colorkey.
+
+	In this example, we don't tell it the color directly, we just say "Hey
+	Irrlicht Engine, you'll find the color I want at position (0,0) on the
+	texture.". Instead, it would be also possible to call
 	driver->makeColorKeyTexture(images, video::SColor(0,0,0,0)), to make
-	e.g. all black pixels transparent. Please note, that makeColorKeyTexture
-	just creates an alpha channel based on the color.
+	e.g. all black pixels transparent. Please note that
+	makeColorKeyTexture just creates an alpha channel based on the color.
 	*/
 	video::ITexture* images = driver->getTexture("../../media/2ddemo.bmp");
 	driver->makeColorKeyTexture(images, core::position2d<s32>(0,0));
 
 	/*
 	To be able to draw some text with two different fonts, we first load
-	them.  Ok, we load just one. As the first font we just use the default
-	font which is built into the engine.
-	Also, we define two rectangles which specify the position of the
-	images of the red imps (little flying creatures) in the texture.
+	them. Ok, we load just one. As the first font we just use the default
+	font which is built into the engine. Also, we define two rectangles
+	which specify the position of the images of the red imps (little flying
+	creatures) in the texture.
 	*/
 	gui::IGUIFont* font = device->getGUIEnvironment()->getBuiltInFont();
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("../../media/fonthaettenschweiler.bmp");
@@ -90,10 +90,10 @@ int main()
 
 	/*
 	Everything is prepared, now we can draw everything in the draw loop,
-	between the begin scene and end scene calls. In this example, we
-	are just doing 2d graphics, but it would be no problem to mix them
-	with 3d graphics. Just try it out, and draw some 3d vertices or set
-	up a scene with the scene manager and draw it.
+	between the begin scene and end scene calls. In this example, we are
+	just doing 2d graphics, but it would be no problem to mix them with 3d
+	graphics. Just try it out, and draw some 3d vertices or set up a scene
+	with the scene manager and draw it.
 	*/
 	while(device->run() && driver)
 	{
@@ -111,7 +111,7 @@ int main()
 			color, with which the sprite should be colored.
 			(255,255,255,255) is full white, so the sprite will
 			look like the original. The third sprite is drawn
-			colored based on the time.
+			with the red channel modulated based on the time.
 			*/
 
 			// draw fire & dragons background world
