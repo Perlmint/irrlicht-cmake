@@ -165,7 +165,7 @@ int main()
 	*/
 	IAnimatedMesh* mesh = smgr->getMesh("../../media/sydney.md2");
 	if (!mesh)
-		return;
+		return 1;
 	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
 
 	/*

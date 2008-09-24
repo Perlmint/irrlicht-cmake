@@ -248,7 +248,7 @@ int main()
 	// disable mouse cursor
 	device->getCursorControl()->setVisible(false);
 
-	const s32 lastFPS = -1;
+	s32 lastFPS = -1;
 
 	while(device->run())
 	if (device->isWindowActive())
