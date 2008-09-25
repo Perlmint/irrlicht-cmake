@@ -19,6 +19,10 @@ shortly how to do this in Microsoft Visual Studio:
   directories. Now the compiler will find the Irrlicht.h header file. We also
   need the irrlicht.lib to be found, so stay in that dialog, select 'Libraries'
   in the combo box and add the \c lib/VisualStudio directory.
+  \image html "vc6optionsdir.jpg"
+  \image latex "vc6optionsdir.jpg"
+  \image html "vc6include.jpg"
+  \image latex "vc6include.jpg"
 
 - If your IDE is Visual Studio .NET, select Tools -> Options.
   Select the projects entry and then select VC++ directories. Select 'show
@@ -27,6 +31,8 @@ shortly how to do this in Microsoft Visual Studio:
   compiler will find the Irrlicht.h header file. We also need the irrlicht.lib
   to be found, so stay in that dialog, select 'show directories for Library
   files' and add the \c lib/VisualStudio directory.
+  \image html "vcnetinclude.jpg"
+  \image latex "vcnetinclude.jpg"
 
 That's it. With your IDE set up like this, you will now be able to develop
 applications with the Irrlicht Engine.
