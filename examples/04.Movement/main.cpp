@@ -17,12 +17,12 @@ using namespace irr;
 #endif
 
 /*
-To receive events like mouse and keyboard input, or GUI events like
-"the OK button has been clicked", we need an object which is derived from the
-IEventReceiver object. There is only one method to override: OnEvent.
-This method will be called by the engine once when an event happens.
-What we really want to know is whether a key is being held down,
-and so we will remember the current state of each key.
+To receive events like mouse and keyboard input, or GUI events like "the OK
+button has been clicked", we need an object which is derived from the
+irr::IEventReceiver object. There is only one method to override:
+irr::IEventReceiver::OnEvent(). This method will be called by the engine once
+when an event happens. What we really want to know is whether a key is being
+held down, and so we will remember the current state of each key.
 */
 class MyEventReceiver : public IEventReceiver
 {
@@ -56,10 +56,11 @@ private:
 
 
 /*
-The event receiver for moving a scene node is ready. So lets just create
-an Irrlicht Device and the scene node we want to move. We also create some
-other additional scene nodes, to show that there are also some different
-possibilities to move and animate scene nodes.
+The event receiver for keeping the pressed keys is ready, the actual responses
+will be made inside the render loop, right before drawing the scene. So lets
+just create an irr::IrrlichtDevice and the scene node we want to move. We also
+create some other additional scene nodes, to show that there are also some
+different possibilities to move and animate scene nodes.
 */
 int main()
 {
@@ -95,14 +96,12 @@ int main()
 	if (device == 0)
 		return 1; // could not create selected driver.
 
-
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 
-
 	/*
-	Create the node for moving it with the 'W' and 'S' key. We create a
-	sphere node, which is a built in geometry primitive. We place the node
+	Create the node which will be moved with the 'W' and 'S' key. We create a
+	sphere node, which is a built-in geometry primitive. We place the node
 	at (0,0,30) and assign a texture to it to let it look a little bit more
 	interesting. Because we have no dynamic lights in this scene we disable
 	lighting for each model (otherwise the models would be black).
@@ -115,9 +114,8 @@ int main()
 		node->setMaterialFlag(video::EMF_LIGHTING, false);
 	}
 
-
 	/*
-	Now we create another node, moving using a scene node animator. Scene
+	Now we create another node, movable using a scene node animator. Scene
 	node animators modify scene nodes and can be attached to any scene node
 	like mesh scene nodes, billboards, lights and even camera scene nodes.
 	Scene node animators are not only able to modify the position of a

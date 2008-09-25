@@ -172,14 +172,14 @@ int main()
 	To let the mesh look a little bit nicer, we change its material. We
 	disable lighting because we do not have a dynamic light in here, and
 	the mesh would be totally black otherwise. Then we set the frame loop,
-	such that the animation is looped between the frames 0 and 310. And
-	last, we apply a texture to the mesh. Without it the mesh would be
-	drawn using only a color.
+	such that the predefined STAND animation is used. And last, we apply a
+	texture to the mesh. Without it the mesh would be drawn using only a
+	color.
 	*/
 	if (node)
 	{
 		node->setMaterialFlag(EMF_LIGHTING, false);
-		node->setMD2Animation ( scene::EMAT_STAND );
+		node->setMD2Animation(scene::EMAT_STAND);
 		node->setMaterialTexture( 0, driver->getTexture("../../media/sydney.bmp") );
 	}
 
@@ -218,9 +218,8 @@ int main()
 	Device created before with createDevice(). In the Irrlicht Engine, you
 	have to delete all objects you created with a method or function which
 	starts with 'create'. The object is simply deleted by calling ->drop().
-	See the documentation at
-	http://irrlicht.sourceforge.net/docu/classirr_1_1_i_reference_counted.html#a0
-	for more information.
+	See the documentation at irr::IReferenceCounted::drop() for more
+	information.
 	*/
 	device->drop();
 

@@ -6,7 +6,7 @@ controlled camera.
 
 Please note that you should know the basics of the engine before starting this
 tutorial. Just take a short look at the first tutorial, if you haven't done
-this yet: http://irrlicht.sourceforge.net/tut001.html
+this yet: http://irrlicht.sourceforge.net/tut001.html 
 
 Lets start like the HelloWorld example: We include the irrlicht header files
 and an additional file to be able to ask the user for a driver type using the
@@ -82,8 +82,8 @@ int main()
 
 	/*
 	Get a pointer to the video driver and the SceneManager so that
-	we do not always have to write device->getVideoDriver() and
-	device->getSceneManager().
+	we do not always have to call irr::IrrlichtDevice::getVideoDriver() and
+	irr::IrrlichtDevice::getSceneManager().
 	*/
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
@@ -91,27 +91,31 @@ int main()
 	/*
 	To display the Quake 3 map, we first need to load it. Quake 3 maps
 	are packed into .pk3 files which are nothing else than .zip files.
-	So we add the .pk3 file to our FileSystem. After it was added,
+	So we add the .pk3 file to our irr::io::IFileSystem. After it was added,
 	we are able to read from the files in that archive as if they are
 	directly stored on the disk.
 	*/
 	device->getFileSystem()->addZipFileArchive("../../media/map-20kdm2.pk3");
 
 	/*
-	Now we can load the mesh by calling getMesh(). We get a pointer returned
-	to a IAnimatedMesh. As you know, Quake 3 maps are not really animated,
-	they are only a huge chunk of static geometry with some materials
-	attached. Hence the IAnimated mesh consists of only one frame,
-	so we get the "first frame" of the "animation", which is our quake level
-	and create an OctTree scene node with it, using addOctTreeSceneNode().
+	Now we can load the mesh by calling
+	irr::scene::ISceneManager::getMesh(). We get a pointer returned to an
+	irr::scene::IAnimatedMesh. As you might know, Quake 3 maps are not
+	really animated, they are only a huge chunk of static geometry with
+	some materials attached. Hence the IAnimatedMesh consists of only one
+	frame, so we get the "first frame" of the "animation", which is our
+	quake level and create an OctTree scene node with it, using
+	irr::scene::ISceneManager::addOctTreeSceneNode().
 	The OctTree optimizes the scene a little bit, trying to draw only geometry
 	which is currently visible. An alternative to the OctTree would be a
-	MeshSceneNode, which would always draw the complete geometry of
-	the mesh, without optimization. Try it: Write addMeshSceneNode
-	instead of addOctTreeSceneNode and compare the primitives drawn by the
-	video driver. (There is a getPrimitiveCountDrawn() method in the
-	IVideoDriver class). Note that this optimization with the OctTree is only
-	useful when drawing huge meshes consisting of lots of geometry.
+	irr::scene::IMeshSceneNode, which would always draw the complete
+	geometry of the mesh, without optimization. Try it: Use
+	irr::scene::ISceneManager::addMeshSceneNode() instead of
+	addOctTreeSceneNode() and compare the primitives drawn by the video
+	driver. (There is a irr::video::IVideoDriver::getPrimitiveCountDrawn()
+	method in the irr::video::IVideoDriver class). Note that this
+	optimization with the OctTree is only useful when drawing huge meshes
+	consisting of lots of geometry.
 	*/
 	scene::IAnimatedMesh* mesh = smgr->getMesh("20kdm2.bsp");
 	scene::ISceneNode* node = 0;
@@ -120,8 +124,12 @@ int main()
 		node = smgr->addOctTreeSceneNode(mesh->getMesh(0), 0, -1, 128);
 
 	/*
-	Because the level was not modelled around the origin (0,0,0), we translate
-	the whole level a little bit.
+	Because the level was not modelled around the origin (0,0,0), we
+	translate the whole level a little bit. This is done on
+	irr::scene::ISceneNode level using the methods
+	irr::scene::ISceneNode::setPosition() (in this case),
+	irr::scene::ISceneNode::setRotation(), and
+	irr::scene::ISceneNode::setScale().
 	*/
 	if (node)
 		node->setPosition(core::vector3df(-1300,-144,-1249));
@@ -130,47 +138,56 @@ int main()
 	Now we only need a camera to look at the Quake 3 map.
 	We want to create a user controlled camera. There are some
 	cameras available in the Irrlicht engine. For example the
-	Maya Camera which can be controlled like the camera in Maya:
+	MayaCamera which can be controlled like the camera in Maya:
 	Rotate with left mouse button pressed, Zoom with both buttons pressed,
 	translate with right mouse button pressed. This could be created with
-	addCameraSceneNodeMaya(). But for this example, we want to create a
-	camera which behaves like the ones in first person shooter games (FPS).
+	irr::scene::ISceneManager::addCameraSceneNodeMaya(). But for this
+	example, we want to create a camera which behaves like the ones in
+	first person shooter games (FPS) and hence use
+	irr::scene::ISceneManager::addCameraSceneNodeFPS().
 	*/
 	smgr->addCameraSceneNodeFPS();
 
 	/*
-	The mouse cursor needs not be visible, so we hide it.
+	The mouse cursor needs not be visible, so we hide it via the
+	irr::IrrlichtDevice::ICursorControl.
 	*/
 	device->getCursorControl()->setVisible(false);
 
 	/*
 	We have done everything, so lets draw it. We also write the current
 	frames per second and the primitives drawn into the caption of the
-	window. The 'if (device->isWindowActive())' line is optional, but
-	prevents the engine to grab the mouse cursor
-	after task switching when other program are active.
+	window. The test for irr::IrrlichtDevice::isWindowActive() is optional,
+	but prevents the engine to grab the mouse cursor after task switching
+	when other programs are active. The call to
+	irr::IrrlichtDevice::yield() will avoid the busy loop to eat up all CPU
+	cycles when the window is not active.
 	*/
 	int lastFPS = -1;
 
 	while(device->run())
-	if (device->isWindowActive())
 	{
-		driver->beginScene(true, true, video::SColor(255,200,200,200));
-		smgr->drawAll();
-		driver->endScene();
-
-		int fps = driver->getFPS();
-
-		if (lastFPS != fps)
+		if (device->isWindowActive())
 		{
-			core::stringw str = L"Irrlicht Engine - Quake 3 Map example [";
-			str += driver->getName();
-			str += "] FPS:";
-			str += fps;
+			driver->beginScene(true, true, video::SColor(255,200,200,200));
+			smgr->drawAll();
+			driver->endScene();
 
-			device->setWindowCaption(str.c_str());
-			lastFPS = fps;
+			int fps = driver->getFPS();
+
+			if (lastFPS != fps)
+			{
+				core::stringw str = L"Irrlicht Engine - Quake 3 Map example [";
+				str += driver->getName();
+				str += "] FPS:";
+				str += fps;
+
+				device->setWindowCaption(str.c_str());
+				lastFPS = fps;
+			}
 		}
+		else
+			device->yield();
 	}
 
 	/*
