@@ -46,9 +46,9 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
  : CIrrDeviceStub(version, receiver),
 #ifdef _IRR_COMPILE_WITH_X11_
 	display(0), visual(0), screennr(0), window(0), StdHints(0), SoftwareImage(0),
-#endif
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	Context(0),
+#endif
 #endif
 	Fullscreen(fullscreen), StencilBuffer(sbuffer),
 	AntiAlias(antiAlias), DriverType(driverType),
