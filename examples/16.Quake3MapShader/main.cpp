@@ -158,8 +158,10 @@ int IRRCALLCONV main(int argc, char* argv[])
 	IVideoDriver class). Note that this optimization with the Octree is only
 	useful when drawing huge meshes consisting of lots of geometry.
 	*/
-	scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
-	//scene::IQ3LevelMesh* mesh = (scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm14.bsp");
+	scene::IQ3LevelMesh* mesh =
+		(scene::IQ3LevelMesh*) smgr->getMesh("maps/20kdm2.bsp");
+	//scene::IQ3LevelMesh* mesh =
+	//(scene::IQ3LevelMesh*) smgr->getMesh("maps/q3dm14.bsp");
 
 	// create an event receiver for making screenshots
 	CScreenShotFactory screenshotFactory ( device, "20kdm2" );
@@ -203,8 +205,10 @@ int IRRCALLCONV main(int argc, char* argv[])
 				continue;
 			}
 
-			// we can dump the shader to the console in it's original but already parsed layout
-			// in a pretty printers way.. commented out, because the console would be full...
+			// we can dump the shader to the console in it's
+			// original but already parsed layout in a pretty
+			// printers way.. commented out, because the console
+			// would be full...
 			// quake3::dumpShader ( Shader );
 
 			// Now add the MeshBuffer(s) with the current Shader to the Manager
@@ -230,7 +234,8 @@ int IRRCALLCONV main(int argc, char* argv[])
 
 	/*
 		so we need a good starting Position in the level.
-		we can ask the Quake3 Loader for all entities with class_name "info_player_deathmatch"
+		we can ask the Quake3 Loader for all entities with class_name
+		"info_player_deathmatch"
 		we choose a random launch
 		
 	*/
@@ -251,7 +256,8 @@ int IRRCALLCONV main(int argc, char* argv[])
 				group = entityList[ index ].getGroup(1);
 
 				u32 parsepos = 0;
-				core::vector3df pos = quake3::getAsVector3df ( group->get ( "origin" ), parsepos );
+				core::vector3df pos =
+					quake3::getAsVector3df ( group->get ( "origin" ), parsepos );
 
 				parsepos = 0;
 				f32 angle = quake3::getAsFloat ( group->get ( "angle"), parsepos );
@@ -281,7 +287,8 @@ int IRRCALLCONV main(int argc, char* argv[])
 
 	// load the engine logo
 	gui::IGUIEnvironment* env = device->getGUIEnvironment();
-	env->addImage(driver->getTexture("irrlichtlogo2.png"),core::position2d<s32>(10, 10));
+	env->addImage(driver->getTexture("irrlichtlogo2.png"),
+			core::position2d<s32>(10, 10));
 
 	// show the driver logo
 	core::position2di pos ( videoDim.Width - 128, videoDim.Height - 64 );
