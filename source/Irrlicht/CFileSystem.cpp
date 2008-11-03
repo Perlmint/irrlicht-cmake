@@ -84,8 +84,9 @@ IReadFile* CFileSystem::createAndOpenFile(const c8* filename)
 			return file;
 	}
 
-	file = createReadFile(filename);
-	return file;
+	// Create the file using an absolute path so that it matches
+	// the scheme used by CNullDriver::getTexture().
+	return createReadFile(getAbsolutePath(filename).c_str());
 }
 
 //! Creates an IReadFile interface for treating memory like a file.
