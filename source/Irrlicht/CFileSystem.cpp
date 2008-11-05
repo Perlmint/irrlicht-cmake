@@ -196,9 +196,6 @@ const c8* CFileSystem::getWorkingDirectory()
 
 
 //! Changes the current Working Directory to the given string.
-//! The string is operating system dependent. Under Windows it will look
-//! like this: "drive:\directory\sudirectory\"
-//! \return Returns true if successful, otherwise false.
 bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 {
 	bool success=false;
@@ -209,6 +206,7 @@ bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 #endif
 	return success;
 }
+
 
 core::stringc CFileSystem::getAbsolutePath(const core::stringc& filename) const
 {
@@ -222,14 +220,28 @@ core::stringc CFileSystem::getAbsolutePath(const core::stringc& filename) const
 #elif (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_))
 
 	c8 fpath[4096];
+	fpath[0]=0;
 	p = realpath(filename.c_str(), fpath);
 	if (!p)
-		return filename;
+	{
+		// content in fpath is undefined at this point
+		if ('0'==fpath[0]) // seems like fpath wasn't altered
+		{
+			// at least remove a ./ prefix
+			if ('.'==filename[0] && '/'==filename[1])
+				return filename.subString(2, filename.size()-2);
+			else
+				return filename;
+		}
+		else
+			return core::stringc(fpath);
+	}
 
 #endif
 
 	return core::stringc(p);
 }
+
 
 core::stringc CFileSystem::getFileDir(const core::stringc& filename) const
 {
