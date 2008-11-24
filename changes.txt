@@ -1,4 +1,4 @@
-Changes in version 1.5 (... 2008)
+Changes in version 1.5 (...12.2008)
 
  - Terrain heightmap and texture were flipped in order to draw them as expected (looking onto the terrain from high above will just look like the actual texture/heightmap).
 
