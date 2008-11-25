@@ -135,7 +135,7 @@ int main()
 	scene::ICameraSceneNode* camera =
 		smgr->addCameraSceneNodeFPS(0,100.0f,1200.f);
 
-	camera->setPosition(core::vector3df(1900*2,255*2,3700*2));
+	camera->setPosition(core::vector3df(2700*2,255*2,2600*2));
 	camera->setTarget(core::vector3df(2397*2,343*2,2700*2));
 	camera->setFarValue(12000.0f);
 
