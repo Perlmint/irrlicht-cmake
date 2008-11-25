@@ -238,7 +238,11 @@ IMesh * CAnimatedMeshSceneNode::getMeshForCurrentFrame(bool forceRecalcOfControl
 				{
 					JointChildSceneNodes[n]->updateAbsolutePositionOfAllChildren(); //temp, should be an option
 				}
-
+		}
+		else
+		{
+			// For EJUOR_READ meshes, this is done by calling animateMesh()
+			skinnedMesh->updateBoundingBox();
 		}
 
 		MeshForCurrentFrame = skinnedMesh;
