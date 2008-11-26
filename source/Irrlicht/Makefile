@@ -82,11 +82,10 @@ staticlib sharedlib: CXXINCS += -I/usr/X11R6/include
 #OSX specific options
 staticlib_osx sharedlib_osx install_osx: SYSTEM = MacOSX
 staticlib_osx sharedlib_osx: IRROTHEROBJ += MacOSX/CIrrDeviceMacOSX.o MacOSX/OSXClipboard.o MacOSX/AppDelegate.o
-staticlib_osx sharedlib_osx: CPPFLAGS += -IMacOSX
+staticlib_osx sharedlib_osx: CXXINCS += -IMacOSX -I/usr/X11R6/include
 sharedlib_osx: SHARED_LIB = libIrrlicht.dylib
 staticlib_osx sharedlib_osx: LDFLAGS = --no-export-all-symbols --add-stdcall-alias
 sharedlib_osx: LDFLAGS += -L/usr/X11R6/lib$(LIBSELECT) -lGL -lXxf86vm
-staticlib_osx sharedlib_osx: CXXINCS += -I/usr/X11R6/include
 
 #Windows specific options
 sharedlib_win32 staticlib_win32: SYSTEM = Win32-gcc
