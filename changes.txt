@@ -1,5 +1,7 @@
 Changes in version 1.5 (...12.2008)
 
+ - Dirty fix for OSX device setResizable and a bug fix to do with resizing the device.
+
  - Terrain heightmap and texture were flipped in order to draw them as expected (looking onto the terrain from high above will just look like the actual texture/heightmap).
 
  - Significant internal change to the way that FPS camera jump speed and collision response animator gravity interact.  The behaviour is now much more realistic, but it will require you to adjust your jump speed and gravity.
