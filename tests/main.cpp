@@ -1,5 +1,8 @@
 // This is the entry point for the Irrlicht test suite.
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
+#include <time.h>
 
 // This is an MSVC pragma to link against the Irrlicht library.
 // Other builds must link against it in the project files.
@@ -29,7 +32,16 @@ int main()
 	RUN_TEST(fast_atof);
 	RUN_TEST(line2dIntersectWith);
 
-	(void)printf("\n\nTests finished. %d test failed.\n", fails);
+	(void)printf("\nTests finished. %d test failed.\n", fails);
+	
+	if(0 == fails)
+	{
+		time_t rawtime;
+		struct tm * timeinfo;
+		(void)time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		(void)printf("\nTest suite pass at %s\n", asctime(timeinfo));
+	}
 
 	return fails;
 }

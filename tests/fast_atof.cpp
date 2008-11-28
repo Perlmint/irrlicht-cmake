@@ -160,9 +160,9 @@ bool fast_atof(void)
 	(void)printf("         atof time = %d\n    fast_atof Time = %d\nold fast_atof time = %d\n",
 		atofTime, fastAtofTime, oldFastAtofTime);
 
-	if(fastAtofTime * 3 > atofTime)
+	if(fastAtofTime > atofTime)
 	{
-		(void)printf("The fast method isn't at least three times as fast as atof()\n");
+		(void)printf("The fast method is slower than atof()\n");
 		return false;
 	}
 

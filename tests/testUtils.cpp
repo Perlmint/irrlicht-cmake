@@ -78,8 +78,13 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 	irr::video::IImage * screenshot = driver->createScreenShot();
 	if(screenshot)
 	{
+		irr::core::stringc driverName = driver->getName();
+		// For OpenGL (only), chop the version number out. Other drivers have more stable version numbers.
+		if(driverName.find("OpenGL") > -1)
+			driverName = "OpenGL";
+
 		irr::core::stringc filename = "results/";
-		filename += driver->getName();
+		filename += driverName;
 		filename += fileName;
 		bool written = driver->writeImageToFile(screenshot, filename.c_str());
 		screenshot->drop();
@@ -91,7 +96,7 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 		}
 
 		irr::core::stringc referenceFilename = "media/";
-		referenceFilename += driver->getName();
+		referenceFilename += driverName;
 		referenceFilename += fileName;
 		return binaryCompareFiles(filename.c_str(), referenceFilename.c_str());
 	}
