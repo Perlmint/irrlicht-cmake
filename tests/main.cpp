@@ -20,7 +20,7 @@
 	if(!testEntryPoint()) \
 	{\
 		(void)printf("\n\n\n******** Test failure ********\nTest '" #testEntryPoint "' failed\n"\
-		"******** Test failure ********\n\nHit any key to proceed\n\a\a\a");\
+		"******** Test failure ********\n\nPress return to continue\n\a\a\a");\
 		(void)getc(stdin);\
 		fails++;\
 	}
