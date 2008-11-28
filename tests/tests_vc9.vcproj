@@ -168,7 +168,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\drawPicsel.cpp"
+				RelativePath=".\drawPixel.cpp"
 				>
 			</File>
 			<File

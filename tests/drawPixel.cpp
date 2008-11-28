@@ -51,7 +51,7 @@ static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 }
 
 
-bool drawPicsel(void)
+bool drawPixel(void)
 {
 	bool passed = true;
 

@@ -5,7 +5,6 @@
 	Name="tests"
 	ProjectGUID="{2A1DE18B-F678-4A94-A996-E848E20B2983}"
 	RootNamespace="tests"
-	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -80,6 +79,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -151,6 +153,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -168,7 +173,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\drawPicsel.cpp"
+				RelativePath=".\drawPixel.cpp"
 				>
 			</File>
 			<File

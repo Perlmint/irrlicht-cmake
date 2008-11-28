@@ -25,7 +25,7 @@ int main()
 	RUN_TEST(planeMatrix);
 	RUN_TEST(screenshots);
 	RUN_TEST(disambiguateTextures);
-	RUN_TEST(drawPicsel);
+	RUN_TEST(drawPixel);
 	RUN_TEST(fast_atof);
 	RUN_TEST(line2dIntersectWith);
 
