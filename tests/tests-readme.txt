@@ -13,6 +13,9 @@ working directory to /tests.
 
 testUtils.cpp provides some functions for creating screenshots and comparing files (including images).
 
-Validation images should go im the /media subdirectory.
+Validation images should go im the /media subdirectory.  Since the tests rely on the presence of /media
+and /empty/empty subdirectories, the working directory must be the /tests directory, not /bin/$PLATFORM.
+This means that you cannot run /bin/$PLATFORM/texts.exe from there.  You can however cd to /tests and
+run ../bin/$PLATFORM/tests.exe
 
 The overall test application will return a count of the number of test that failed, i.e. 0 is success.
