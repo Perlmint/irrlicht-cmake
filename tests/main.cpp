@@ -17,7 +17,13 @@
  */
 #define RUN_TEST(testEntryPoint)\
 	extern bool testEntryPoint(void);\
-	if(!testEntryPoint()) fails++;
+	if(!testEntryPoint()) \
+	{\
+		(void)printf("\n\n\n******** Test failure ********\nTest '" #testEntryPoint "' failed\n"\
+		"******** Test failure ********\n\nHit any key to proceed\n\a\a\a");\
+		(void)getc(stdin);\
+		fails++;\
+	}
 
 //! This is the main entry point for the Irrlicht test suite.
 /** \return The number of test that failed, i.e. 0 is success. */
