@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <float.h>
 #include <limits.h>
-#include <windows.h>
 
 using namespace irr;
 using namespace core;
@@ -137,29 +136,35 @@ bool fast_atof(void)
 		return false;
 	}
 
+	IrrlichtDevice* device = createDevice(video::EDT_NULL);
+	if (!device)
+		return false;
+	ITimer* timer = device->getTimer();
+
 	enum { ITERATIONS = 1000000 };
 	int i;
 	
 	f32 value;
-	u32 then = GetTickCount();
+	u32 then = timer->getRealTime();
 	for(i = 0; i < ITERATIONS; ++i)
 		value = (f32)atof("-340282346638528859811704183484516925440.000000");
 
-	const u32 atofTime = GetTickCount() - then;
+	const u32 atofTime = timer->getRealTime() - then;
 
 	then += atofTime;
 	for(i = 0; i < ITERATIONS; ++i)
 		value = fast_atof("-340282346638528859811704183484516925440.000000");
-	const u32 fastAtofTime = GetTickCount() - then;
+	const u32 fastAtofTime = timer->getRealTime() - then;
 
 	then += fastAtofTime;
 	for(i = 0; i < ITERATIONS; ++i)
 		value = old_fast_atof("-340282346638528859811704183484516925440.000000");
-	const u32 oldFastAtofTime = GetTickCount() - then;
+	const u32 oldFastAtofTime = timer->getRealTime() - then;
 
 	(void)printf("         atof time = %d\n    fast_atof Time = %d\nold fast_atof time = %d\n",
 		atofTime, fastAtofTime, oldFastAtofTime);
 
+	device->drop();
 	if(fastAtofTime > atofTime)
 	{
 		(void)printf("The fast method is slower than atof()\n");

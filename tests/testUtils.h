@@ -18,4 +18,4 @@ extern bool binaryCompareFiles(const char * fileName1, const char * fileName2);
 bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver, const char * fileName);
 
 
-#endif _TEST_UTILS_H_
+#endif // _TEST_UTILS_H_

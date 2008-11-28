@@ -107,3 +107,4 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 
 	return false;
 }
+

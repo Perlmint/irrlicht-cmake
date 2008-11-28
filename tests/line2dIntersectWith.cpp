@@ -223,3 +223,4 @@ bool line2dIntersectWith(void)
 
 	return allExpected;
 } 
+

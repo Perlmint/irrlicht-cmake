@@ -13,7 +13,7 @@ using namespace gui;
 
 static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 {
-	IrrlichtDevice *device = createDevice( driverType, dimension2d<s32>(640, 480));
+	IrrlichtDevice *device = createDevice(driverType, dimension2d<s32>(640, 480));
 	if (!device)
 		return true; // Treat a failure to create a driver as benign; this saves a lot of #ifdefs
 	
