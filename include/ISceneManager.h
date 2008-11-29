@@ -47,7 +47,7 @@ namespace scene
 
 	//! Enumeration for render passes.
 	/** A parameter passed to the registerNodeForRendering() method of the ISceneManager,
-	specifying when the mode wants to be drawn in relation to the other nodes. */
+	specifying when the node wants to be drawn in relation to the other nodes. */
 	enum E_SCENE_NODE_RENDER_PASS
 	{
 		//! Camera pass. The active view is set up here. The very first pass.
