@@ -31,14 +31,15 @@ int main()
 {
 	int fails = 0;
 
-	RUN_TEST(md2Animation);
+	RUN_TEST(testVector2d);
 	RUN_TEST(planeMatrix);
-	RUN_TEST(disambiguateTextures);
-	RUN_TEST(drawPixel);
 	RUN_TEST(fast_atof);
 	RUN_TEST(line2dIntersectWith);
+	RUN_TEST(disambiguateTextures);
+	RUN_TEST(drawPixel);
+	RUN_TEST(md2Animation);
 
-	(void)printf("\nTests finished. %d test failed.\n", fails);
+	(void)printf("\nTests finished. %d test%s failed.\n", fails, 1 == fails ? "" : "s");
 	
 	if(0 == fails)
 	{
