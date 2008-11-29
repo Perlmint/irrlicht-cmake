@@ -141,7 +141,7 @@ bool fast_atof(void)
 		return false;
 	ITimer* timer = device->getTimer();
 
-	enum { ITERATIONS = 1000000 };
+	enum { ITERATIONS = 100000 };
 	int i;
 	
 	f32 value;

@@ -32,7 +32,6 @@ int main()
 	int fails = 0;
 
 	RUN_TEST(planeMatrix);
-	RUN_TEST(screenshots);
 	RUN_TEST(disambiguateTextures);
 	RUN_TEST(drawPixel);
 	RUN_TEST(fast_atof);
@@ -45,8 +44,8 @@ int main()
 		time_t rawtime;
 		struct tm * timeinfo;
 		(void)time(&rawtime);
-		timeinfo = localtime(&rawtime);
-		(void)printf("\nTest suite pass at %s\n", asctime(timeinfo));
+		timeinfo = gmtime(&rawtime);
+		(void)printf("\nTest suite pass at GMT %s\n", asctime(timeinfo));
 	}
 
 	return fails;

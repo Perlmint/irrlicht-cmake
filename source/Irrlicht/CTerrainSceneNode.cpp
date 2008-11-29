@@ -352,7 +352,7 @@ namespace scene
 							mb->drop();
 							return false;
 						}
-						vertex.Pos.Y=val;
+						vertex.Pos.Y=(f32)val;
 					}
 					break;
 				}
