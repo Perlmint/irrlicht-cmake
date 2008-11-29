@@ -15,7 +15,7 @@ static bool compareVectors(const core::vector2d<T> & compare,
 {
 	if(compare != with)
 	{
-		(void)printf("\nERROR: vector2d %f, %f != vector2d %f, %f\n", 
+		(void)printf("\nERROR: vector2d %.16f, %.16f != vector2d %.16f, %.16f\n", 
 			(f64)compare.X, (f64)compare.Y, (f64)with.X, (f64)with.Y);
 		assert(compare == with);
 		return false;

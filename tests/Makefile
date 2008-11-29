@@ -3,7 +3,8 @@ Target = tests
 Sources = $(wildcard *.cpp)
 
 CPPFLAGS = -I../include -I/usr/X11R6/include -pipe
-CXXFLAGS = -Wall -O3 -ffast-math
+# CXXFLAGS += -Wall -O3
+CXXFLAGS += -g -D_DEBUG
 
 ifeq ($(HOSTTYPE), x86_64)
 LIBSELECT=64
