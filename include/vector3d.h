@@ -141,9 +141,9 @@ namespace core
 		vector3d<T>& normalize()
 		{
 			f32 length = (f32)(X*X + Y*Y + Z*Z);
-			if (length == 0)
+			if (core::equals(length, 0.f))
 				return *this;
-			length = reciprocal_squareroot ( (f32)length );
+			length = core::reciprocal_squareroot ( (f32)length );
 			X = (T)(X * length);
 			Y = (T)(Y * length);
 			Z = (T)(Z * length);
