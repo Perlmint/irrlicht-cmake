@@ -268,7 +268,7 @@ public:
 	\param d Interpolation value between 0.0f (all vector b) and 1.0f (all vector a)
 	Note that this is the opposite direction of interpolation to getInterpolated_quadratic()
 	*/
-	vector2d<T>& interpolate(const vector2d<T>& a, const vector2d<T>& b, const f64 d)
+	vector2d<T>& interpolate(const vector2d<T>& a, const vector2d<T>& b, f64 d)
 	{
 		X = (T)((f64)b.X + ( ( a.X - b.X ) * d ));
 		Y = (T)((f64)b.Y + ( ( a.Y - b.Y ) * d ));

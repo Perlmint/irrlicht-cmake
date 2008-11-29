@@ -137,17 +137,16 @@ namespace core
 		//! Normalizes the vector.
 		/** In case of the 0 vector the result is still 0, otherwise
 		the length of the vector will be 1.
-		TODO: 64 Bit template doesnt work.. need specialized template
 		\return Reference to this vector after normalization. */
 		vector3d<T>& normalize()
 		{
-			T l = X*X + Y*Y + Z*Z;
-			if (l == 0)
+			f32 length = (f32)(X*X + Y*Y + Z*Z);
+			if (length == 0)
 				return *this;
-			l = (T) reciprocal_squareroot ( (f32)l );
-			X *= l;
-			Y *= l;
-			Z *= l;
+			length = reciprocal_squareroot ( (f32)length );
+			X = (T)(X * length);
+			Y = (T)(Y * length);
+			Z = (T)(Z * length);
 			return *this;
 		}
 
@@ -173,11 +172,11 @@ namespace core
 		void rotateXZBy(f64 degrees, const vector3d<T>& center=vector3d<T>())
 		{
 			degrees *= DEGTORAD64;
-			T cs = (T)cos(degrees);
-			T sn = (T)sin(degrees);
+			f64 cs = cos(degrees);
+			f64 sn = sin(degrees);
 			X -= center.X;
 			Z -= center.Z;
-			set(X*cs - Z*sn, Y, X*sn + Z*cs);
+			set((T)(X*cs - Z*sn), Y, (T)(X*sn + Z*cs));
 			X += center.X;
 			Z += center.Z;
 		}
@@ -188,11 +187,11 @@ namespace core
 		void rotateXYBy(f64 degrees, const vector3d<T>& center=vector3d<T>())
 		{
 			degrees *= DEGTORAD64;
-			T cs = (T)cos(degrees);
-			T sn = (T)sin(degrees);
+			f64 cs = cos(degrees);
+			f64 sn = sin(degrees);
 			X -= center.X;
 			Y -= center.Y;
-			set(X*cs - Y*sn, X*sn + Y*cs, Z);
+			set((T)(X*cs - Y*sn), (T)(X*sn + Y*cs), Z);
 			X += center.X;
 			Y += center.Y;
 		}
@@ -203,40 +202,59 @@ namespace core
 		void rotateYZBy(f64 degrees, const vector3d<T>& center=vector3d<T>())
 		{
 			degrees *= DEGTORAD64;
-			T cs = (T)cos(degrees);
-			T sn = (T)sin(degrees);
+			f64 cs = cos(degrees);
+			f64 sn = sin(degrees);
 			Z -= center.Z;
 			Y -= center.Y;
-			set(X, Y*cs - Z*sn, Y*sn + Z*cs);
+			set(X, (T)(Y*cs - Z*sn), (T)(Y*sn + Z*cs));
 			Z += center.Z;
 			Y += center.Y;
 		}
 
-		//! Returns interpolated vector.
-		/** \param other Other vector to interpolate between
-		\param d Value between 0.0f and 1.0f. */
-		vector3d<T> getInterpolated(const vector3d<T>& other, const T d) const
+		//! Creates an interpolated vector between this vector and another vector.
+		/** \param other The other vector to interpolate with.
+		\param d Interpolation value between 0.0f (all the other vector) and 1.0f (all this vector).
+		Note that this is the opposite direction of interpolation to getInterpolated_quadratic()
+		\return An interpolated vector.  This vector is not modified. */
+		vector3d<T> getInterpolated(const vector3d<T>& other, f64 d) const
 		{
-			const T inv = (T) 1.0 - d;
-			return vector3d<T>(other.X*inv + X*d, other.Y*inv + Y*d, other.Z*inv + Z*d);
+			const f64 inv = 1.0 - d;
+			return vector3d<T>((T)(other.X*inv + X*d), (T)(other.Y*inv + Y*d), (T)(other.Z*inv + Z*d));
 		}
 
-		//! Returns interpolated vector. ( quadratic )
-		/** \param v2 Second vector to interpolate with
-		\param v3 Third vector to interpolate with
-		\param d Value between 0.0f and 1.0f. */
-		vector3d<T> getInterpolated_quadratic(const vector3d<T>& v2, const vector3d<T>& v3, const T d) const
+		//! Creates a quadratically interpolated vector between this and two other vectors.
+		/** \param v2 Second vector to interpolate with.
+		\param v3 Third vector to interpolate with (maximum at 1.0f)
+		\param d Interpolation value between 0.0f (all this vector) and 1.0f (all the 3rd vector).
+		Note that this is the opposite direction of interpolation to getInterpolated() and interpolate()
+		\return An interpolated vector. This vector is not modified. */
+		vector3d<T> getInterpolated_quadratic(const vector3d<T>& v2, const vector3d<T>& v3, f64 d) const
 		{
 			// this*(1-d)*(1-d) + 2 * v2 * (1-d) + v3 * d * d;
-			const T inv = (T) 1.0 - d;
-			const T mul0 = inv * inv;
-			const T mul1 = (T) 2.0 * d * inv;
-			const T mul2 = d * d;
+			const f64 inv = (T) 1.0 - d;
+			const f64 mul0 = inv * inv;
+			const f64 mul1 = (T) 2.0 * d * inv;
+			const f64 mul2 = d * d;
 
-			return vector3d<T> ( X * mul0 + v2.X * mul1 + v3.X * mul2,
-					Y * mul0 + v2.Y * mul1 + v3.Y * mul2,
-					Z * mul0 + v2.Z * mul1 + v3.Z * mul2);
+			return vector3d<T> ((T)(X * mul0 + v2.X * mul1 + v3.X * mul2),
+					(T)(Y * mul0 + v2.Y * mul1 + v3.Y * mul2),
+					(T)(Z * mul0 + v2.Z * mul1 + v3.Z * mul2));
 		}
+
+		//! Sets this vector to the linearly interpolated vector between a and b.
+		/** \param a first vector to interpolate with, maximum at 1.0f
+		\param b second vector to interpolate with, maximum at 0.0f
+		\param d Interpolation value between 0.0f (all vector b) and 1.0f (all vector a)
+		Note that this is the opposite direction of interpolation to getInterpolated_quadratic()
+		*/
+		vector3d<T>& interpolate(const vector3d<T>& a, const vector3d<T>& b, f64 d)
+		{
+			X = (T)((f64)b.X + ( ( a.X - b.X ) * d ));
+			Y = (T)((f64)b.Y + ( ( a.Y - b.Y ) * d ));
+			Z = (T)((f64)b.Z + ( ( a.Z - b.Z ) * d ));
+			return *this;
+		}
+
 
 		//! Get the rotations that would make a (0,0,1) direction vector point in the same direction as this direction vector.
 		/** Thanks to Arras on the Irrlicht forums for this method.  This utility method is very useful for

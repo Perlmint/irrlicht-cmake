@@ -31,6 +31,7 @@ int main()
 {
 	int fails = 0;
 
+	RUN_TEST(testVector3d);
 	RUN_TEST(testVector2d);
 	RUN_TEST(planeMatrix);
 	RUN_TEST(fast_atof);
