@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\md2Animation.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\planeMatrix.cpp"
 				>
 			</File>

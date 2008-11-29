@@ -31,6 +31,7 @@ int main()
 {
 	int fails = 0;
 
+	RUN_TEST(md2Animation);
 	RUN_TEST(planeMatrix);
 	RUN_TEST(disambiguateTextures);
 	RUN_TEST(drawPixel);
@@ -46,6 +47,12 @@ int main()
 		(void)time(&rawtime);
 		timeinfo = gmtime(&rawtime);
 		(void)printf("\nTest suite pass at GMT %s\n", asctime(timeinfo));
+		FILE * testsLastPassedAtFile = fopen("tests-last-passed-at.txt", "w");
+		if(testsLastPassedAtFile)
+		{
+			(void)fprintf(testsLastPassedAtFile, "Test suite pass at GMT %s\n", asctime(timeinfo));
+			(void)fclose(testsLastPassedAtFile);
+		}
 	}
 
 	return fails;
