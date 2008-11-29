@@ -46,7 +46,7 @@
 #include "EHardwareBufferFlags.h"
 #include "EMaterialFlags.h"
 #include "EMaterialTypes.h"
-#include "EMeshWriterTypes.h"
+#include "EMeshWriterEnums.h"
 #include "EMessageBoxFlags.h"
 #include "ESceneNodeAnimatorTypes.h"
 #include "ESceneNodeTypes.h"
