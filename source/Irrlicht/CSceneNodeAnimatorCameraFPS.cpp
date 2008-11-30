@@ -311,7 +311,7 @@ ISceneNodeAnimator* CSceneNodeAnimatorCameraFPS::createClone(ISceneNode* node, I
 }
 
 
-void setKeyMap(const core::array<SCamKeyMap>& keymap)
+void CSceneNodeAnimatorCameraFPS::setKeyMap(const core::array<SCamKeyMap>& keymap)
 {
 	KeyMap=keymap;
 }
