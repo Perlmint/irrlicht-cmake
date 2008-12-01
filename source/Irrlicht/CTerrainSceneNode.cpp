@@ -231,9 +231,11 @@ namespace scene
 
 
 	//! Initializes the terrain data. Loads the vertices from the heightMapFile
-	bool CTerrainSceneNode::loadHeightMapRAW( io::IReadFile* file, s32 bitsPerPixel, video::SColor vertexColor, s32 smoothFactor )
+	bool CTerrainSceneNode::loadHeightMapRAW( io::IReadFile* file, s32 bitsPerPixel, bool signedData, bool floatVals, video::SColor vertexColor, s32 smoothFactor )
 	{
-		if( !file )
+		if (!file)
+			return false;
+		if (floatVals && bitsPerPixel != 32)
 			return false;
 
 		Mesh.MeshBuffers.clear();
@@ -316,45 +318,78 @@ namespace scene
 			float fz2=0.f;
 			for( s32 z = 0; z < TerrainData.Size; ++z )
 			{
+				bool failure=false;
 				vertex.Pos.X = fx;
-				switch (bytesPerPixel)
+				if (floatVals)
 				{
-					case 1:
+					if( file->read( &vertex.Pos.Y, bytesPerPixel ) != bytesPerPixel )
+						failure=true;
+				}
+				else if (signedData)
+				{
+					switch (bytesPerPixel)
 					{
-						s8 val;
-						if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+						case 1:
 						{
-							os::Printer::log("Error reading heightmap RAW file.");
-							mb->drop();
-							return false;
+							s8 val;
+							if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+								failure=true;
+							vertex.Pos.Y=val;
 						}
-						vertex.Pos.Y=val;
+						break;
+						case 2:
+						{
+							s16 val;
+							if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+								failure=true;
+							vertex.Pos.Y=val/256.f;
+						}
+						break;
+						case 4:
+						{
+							s32 val;
+							if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+								failure=true;
+							vertex.Pos.Y=val/16777216.f;
+						}
+						break;
 					}
-					break;
-					case 2:
+				}
+				else
+				{
+					switch (bytesPerPixel)
 					{
-						s16 val;
-						if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+						case 1:
 						{
-							os::Printer::log("Error reading heightmap RAW file.");
-							mb->drop();
-							return false;
+							u8 val;
+							if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+								failure=true;
+							vertex.Pos.Y=val;
 						}
-						vertex.Pos.Y=val;
-					}
-					break;
-					case 4:
-					{
-						s32 val;
-						if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+						break;
+						case 2:
 						{
-							os::Printer::log("Error reading heightmap RAW file.");
-							mb->drop();
-							return false;
+							u16 val;
+							if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+								failure=true;
+							vertex.Pos.Y=val/256.f;
 						}
-						vertex.Pos.Y=(f32)val;
+						break;
+						case 4:
+						{
+							u32 val;
+							if( file->read( &val, bytesPerPixel ) != bytesPerPixel )
+								failure=true;
+							vertex.Pos.Y=val/16777216.f;
+						}
+						break;
 					}
-					break;
+				}
+				if (failure)
+				{
+					os::Printer::log("Error reading heightmap RAW file.");
+					mb->drop();
+					return false;
 				}
 				vertex.Pos.Z = fz;
 
