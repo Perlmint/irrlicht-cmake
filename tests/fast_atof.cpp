@@ -1,5 +1,6 @@
 // Test the accuracy and speed of 
 
+#include "testUtils.h"
 #include "irrlicht.h"
 #include <assert.h>
 #include <float.h>
@@ -89,13 +90,13 @@ static bool testCalculation(const char * valueString)
 	const f32 oldFastValue = old_fast_atof(valueString);
 	const f32 atofValue = (f32)atof(valueString);
 
-	(void)printf("\n String '%s'\n New fast %.40f\n Old fast %.40f\n     atof %.40f\n",
+	logTestString("\n String '%s'\n New fast %.40f\n Old fast %.40f\n     atof %.40f\n",
 		valueString, newFastValue, oldFastValue, atofValue);
 
 	bool accurate = fabs(newFastValue - atofValue) <= fabs(oldFastValue - atofValue);
 
 	if(!accurate)
-		(void)printf("*** ERROR - less accurate than old method ***\n\n");
+		logTestString("*** ERROR - less accurate than old method ***\n\n");
 
 	return accurate;
 }
@@ -132,7 +133,7 @@ bool fast_atof(void)
 
 	if(!accurate)
 	{
-		(void)printf("Calculation is not accurate, so the speed is irrelevant\n");
+		logTestString("Calculation is not accurate, so the speed is irrelevant\n");
 		return false;
 	}
 
@@ -161,13 +162,13 @@ bool fast_atof(void)
 		value = old_fast_atof("-340282346638528859811704183484516925440.000000");
 	const u32 oldFastAtofTime = timer->getRealTime() - then;
 
-	(void)printf("         atof time = %d\n    fast_atof Time = %d\nold fast_atof time = %d\n",
+	logTestString("         atof time = %d\n    fast_atof Time = %d\nold fast_atof time = %d\n",
 		atofTime, fastAtofTime, oldFastAtofTime);
 
 	device->drop();
 	if(fastAtofTime > atofTime)
 	{
-		(void)printf("The fast method is slower than atof()\n");
+		logTestString("The fast method is slower than atof()\n");
 		return false;
 	}
 

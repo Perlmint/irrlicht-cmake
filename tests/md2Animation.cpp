@@ -11,9 +11,12 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
+/** Tests MD2 animations.  At the moment, this just verifies that the last frame of the
+	animation produces the expected bitmap. */
 bool md2Animation(void)
 {
-	IrrlichtDevice *device = createDevice( EDT_OPENGL, dimension2d<s32>(640, 480));
+	// Make it small since we're using .png here and don't want a large image
+	IrrlichtDevice *device = createDevice( EDT_BURNINGSVIDEO, dimension2d<s32>(640, 480));
 	assert(device);
 	if (!device)
 		return false;
@@ -57,7 +60,7 @@ bool md2Animation(void)
 		}
 	}
 
-	bool result = takeScreenshotAndCompareAgainstReference(driver, "-md2Animation.jpg");
+	bool result = takeScreenshotAndCompareAgainstReference(driver, "-md2Animation.png");
 	device->drop();
 
 	return result;

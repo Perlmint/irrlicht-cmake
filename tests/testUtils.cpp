@@ -7,6 +7,11 @@
 #include <memory.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdarg.h>
+
+#if defined(_MSC_VER) && !defined(NDEBUG)
+#include <windows.h>
+#endif // #if defined(_MSC_VER) && !defined(NDEBUG)
 
 bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 {
@@ -16,19 +21,19 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 		return false;
 
 	FILE * file1 = fopen(fileName1, "rb");
-	assert(file1);
 	if(!file1)
 	{
 		(void)printf("binaryCompareFiles: File '%s' cannot be opened\n", fileName1);
+		assert(file1);
 		return false;
 	}
 
 	FILE * file2 = fopen(fileName2, "rb");
-	assert(file2);
 	if(!file2)
 	{
 		(void)printf("binaryCompareFiles: File '%s' cannot be opened\n", fileName2);
 		(void)fclose(file1);
+		assert(file2);
 		return false;
 	}
 
@@ -108,3 +113,44 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 	return false;
 }
 
+static FILE * logFile = 0;
+
+bool openTestLog(const char * filename)
+{
+	closeTestLog();
+
+	logFile = fopen(filename, "w");
+	assert(logFile);
+	if(!logFile)
+		logTestString("\nWARNING: unable to open the test log file %s\n", filename);
+	
+	return (logFile != 0);
+}
+
+void closeTestLog(void)
+{
+	if(logFile)
+		(void)fclose(logFile);
+}
+
+
+void logTestString(const char * format, ...)
+{
+	char logString[1024];
+
+	va_list arguments;
+	va_start(arguments, format);
+	vsprintf(logString, format, arguments);
+	va_end(arguments);
+
+	(void)printf(logString);
+	if(logFile)
+	{
+		(void)fprintf(logFile, logString);
+		(void)fflush(logFile);
+	}
+
+#if defined(_MSC_VER) && !defined(NDEBUG)
+	OutputDebugStringA(logString);
+#endif // #if defined(_MSC_VER) && !defined(NDEBUG)
+}

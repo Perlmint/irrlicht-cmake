@@ -3,6 +3,7 @@
 // Note that all reference vector3d<T>s are creating using double precision
 // values cast to (T), as we need to test <f64>.
 
+#include "testUtils.h"
 #include "irrlicht.h"
 #include <assert.h>
 
@@ -15,7 +16,7 @@ static bool compareVectors(const core::vector3d<T> & compare,
 {
 	if(compare != with)
 	{
-		(void)printf("\nERROR: vector3d %.16f, %.16f, %.16f != vector3d %.16f, %.16f, %.16f\n", 
+		logTestString("\nERROR: vector3d %.16f, %.16f, %.16f != vector3d %.16f, %.16f, %.16f\n", 
 			(f64)compare.X, (f64)compare.Y, (f64)compare.Z,
 			(f64)with.X, (f64)with.Y, (f64)with.Z);
 		assert(compare == with);
@@ -35,7 +36,7 @@ static bool doTests()
 	vector3d<T> otherVec(10, 20, 0);
 	if(!equals(vec.getDistanceFrom(otherVec), (T)15.8113883))
 	{
-		(void)printf("vector3d::getDistanceFrom() failed\n");
+		logTestString("vector3d::getDistanceFrom() failed\n");
 		assert(0);
 		return false;
 	}
@@ -123,21 +124,21 @@ bool testVector3d(void)
 {
 	bool f32Success = doTests<f32>();
 	if(f32Success)
-		(void)printf("vector3df tests passed\n\n");
+		logTestString("vector3df tests passed\n\n");
 	else
-		(void)printf("\n*** vector3df tests failed ***\n\n");
+		logTestString("\n*** vector3df tests failed ***\n\n");
 
 	bool f64Success = doTests<f64>();
 	if(f64Success)
-		(void)printf("vector3d<f64> tests passed\n\n");
+		logTestString("vector3d<f64> tests passed\n\n");
 	else
-		(void)printf("\n*** vector3d<f64> tests failed ***\n\n");
+		logTestString("\n*** vector3d<f64> tests failed ***\n\n");
 
 	bool s32Success = doTests<s32>();
 	if(s32Success)
-		(void)printf("vector3di tests passed\n\n");
+		logTestString("vector3di tests passed\n\n");
 	else
-		(void)printf("\n*** vector3di tests failed ***\n\n");
+		logTestString("\n*** vector3di tests failed ***\n\n");
 
 	return f32Success && f64Success && s32Success;
 }
