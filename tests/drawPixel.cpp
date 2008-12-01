@@ -43,7 +43,7 @@ static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 
 	driver->endScene();
 
-	bool result = takeScreenshotAndCompareAgainstReference(driver, "-drawPixel.jpg");
+	bool result = takeScreenshotAndCompareAgainstReference(driver, "-drawPixel.png");
 
 	device->drop();
 
@@ -55,12 +55,10 @@ bool drawPixel(void)
 {
 	bool passed = true;
 
-	passed |= runTestWithDriver(EDT_NULL);
-	passed |= runTestWithDriver(EDT_SOFTWARE);
-	passed |= runTestWithDriver(EDT_BURNINGSVIDEO);
-	passed |= runTestWithDriver(EDT_OPENGL);
-	passed |= runTestWithDriver(EDT_DIRECT3D8);
-	passed |= runTestWithDriver(EDT_DIRECT3D9);
+	passed &= runTestWithDriver(EDT_BURNINGSVIDEO);
+	passed &= runTestWithDriver(EDT_OPENGL);
+	passed &= runTestWithDriver(EDT_DIRECT3D8);
+	passed &= runTestWithDriver(EDT_DIRECT3D9);
 	
 	return passed;
 } 

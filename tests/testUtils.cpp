@@ -13,6 +13,8 @@
 #include <windows.h>
 #endif // #if defined(_MSC_VER) && !defined(NDEBUG)
 
+using namespace irr;
+
 bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 {
 	assert(fileName1);
@@ -23,7 +25,7 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 	FILE * file1 = fopen(fileName1, "rb");
 	if(!file1)
 	{
-		(void)printf("binaryCompareFiles: File '%s' cannot be opened\n", fileName1);
+		logTestString("binaryCompareFiles: File '%s' cannot be opened\n", fileName1);
 		assert(file1);
 		return false;
 	}
@@ -31,7 +33,7 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 	FILE * file2 = fopen(fileName2, "rb");
 	if(!file2)
 	{
-		(void)printf("binaryCompareFiles: File '%s' cannot be opened\n", fileName2);
+		logTestString("binaryCompareFiles: File '%s' cannot be opened\n", fileName2);
 		(void)fclose(file1);
 		assert(file2);
 		return false;
@@ -42,7 +44,7 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 	(void)fseek(file2, 0, SEEK_END);
 	if(ftell(file1) != ftell(file2))
 	{
-		(void)printf("binaryCompareFiles: Files are different sizes\n");
+		logTestString("binaryCompareFiles: Files are different sizes\n");
 		(void)fclose(file1);
 		(void)fclose(file2);
 		return false;
@@ -60,13 +62,13 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 			||(fread(file1Buffer, sizeof(file1Buffer), 1, file1) !=
 			fread(file2Buffer, sizeof(file2Buffer), 1, file2)))
 		{
-			(void)printf("binaryCompareFiles: Error during file reading\n");
+			logTestString("binaryCompareFiles: Error during file reading\n");
 			break;
 		}
 
 		if(memcmp(file1Buffer, file2Buffer, sizeof(file1Buffer)))
 		{
-			(void)printf("binaryCompareFiles: Error during file reading\n");
+			logTestString("binaryCompareFiles: files are different\n");
 			break;
 		}
 	}
@@ -78,16 +80,87 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 	return filesAreIdentical;
 }
 
+
+//! Compare two images, returning the degree to which they match.
+/** \param image1 The first image to compare.
+	\param image2 The second image to compare.
+	\return The match, from 0.f to 100.f */
+static float fuzzyCompareImages(irr::video::IImage * image1,
+								irr::video::IImage * image2)
+{
+	assert(image1);
+	assert(image2);
+	if(!image1 || !image2)
+		return 0.f;
+
+	if(image1->getDimension() != image2->getDimension())
+	{
+		logTestString("fuzzyCompareImages: images are different sizes\n");
+		return 0.f;
+	}
+
+	video::ECOLOR_FORMAT format1 = image1->getColorFormat();
+	if(video::ECF_A8R8G8B8 != format1 && video::ECF_R8G8B8 != format1)
+	{
+		logTestString("fuzzyCompareImages: image 1 must be ECF_A8R8G8B8 or ECF_R8G8B8\n");
+		return 0.f;
+	}
+
+	video::ECOLOR_FORMAT format2 = image2->getColorFormat();
+	if(video::ECF_A8R8G8B8 != format2 && video::ECF_R8G8B8 != format2)
+	{
+		logTestString("fuzzyCompareImages: image 2 must be ECF_AR8G8B8 or ECF_R8G8B8\n");
+		return 0.f;
+	}
+
+	u8 * image1Data = (u8*)image1->lock();
+	u8 * image2Data = (u8*)image2->lock();
+
+	const u32 pixels = (image1->getPitch() * image1->getDimension().Height) / 4;
+	u32 mismatchedPixels = 0;
+	for(u32 pixel = 0; pixel < pixels; ++pixel)
+	{
+		if(video::ECF_A8R8G8B8 == format1)
+			image1Data++;
+
+		const u8 r1 = *(image1Data++);
+		const u8 g1 = *(image1Data++);
+		const u8 b1 = *(image1Data++);
+
+		if(video::ECF_A8R8G8B8 == format2)
+			image2Data++;
+
+		const u8 r2 = *(image2Data++);
+		const u8 g2 = *(image2Data++);
+		const u8 b2 = *(image2Data++);
+
+		// Empirically, some OpenGL screenshots have up to 2 shades difference per pixel.
+		if(abs(r1 - r2) > 2 || abs(g1 - g2) > 2 || abs(b1 - b2) > 2)
+			++mismatchedPixels;
+	}
+
+	image1->unlock();
+	image2->unlock();
+	
+	return 100.f * (pixels - mismatchedPixels) / pixels;
+}
+
+
 bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver, const char * fileName)
 {
 	irr::video::IImage * screenshot = driver->createScreenShot();
-	if(screenshot)
+	if(!screenshot)
 	{
-		irr::core::stringc driverName = driver->getName();
-		// For OpenGL (only), chop the version number out. Other drivers have more stable version numbers.
-		if(driverName.find("OpenGL") > -1)
-			driverName = "OpenGL";
+		logTestString("Failed to take screenshot\n");
+		return false;
+	}
 
+	irr::core::stringc driverName = driver->getName();
+	// For OpenGL (only), chop the version number out. Other drivers have more stable version numbers.
+	if(driverName.find("OpenGL") > -1)
+		driverName = "OpenGL";
+
+/*
 		irr::core::stringc filename = "results/";
 		filename += driverName;
 		filename += fileName;
@@ -96,21 +169,32 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 
 		if(!written)
 		{
-			(void)printf("Failed to write screenshot to file '%s'\n", filename.c_str());
+			logTestString("Failed to write screenshot to file '%s'\n", filename.c_str());
 			return false;
 		}
+*/
 
-		irr::core::stringc referenceFilename = "media/";
-		referenceFilename += driverName;
-		referenceFilename += fileName;
-		return binaryCompareFiles(filename.c_str(), referenceFilename.c_str());
-	}
-	else
+	irr::core::stringc referenceFilename = "media/";
+	referenceFilename += driverName;
+	referenceFilename += fileName;
+	irr::video::IImage * reference = driver->createImageFromFile(referenceFilename.c_str());
+	if(!reference)
 	{
-		(void)printf("Failed to take screenshot\n");
+		logTestString("\n*** Failed to load reference image '%s'\n*** Creating from screenshot - please check this image.\n\n",
+			referenceFilename.c_str());
+		(void)driver->writeImageToFile(screenshot, referenceFilename.c_str());
+		screenshot->drop();
+		return false;
 	}
 
-	return false;
+	float match = fuzzyCompareImages(screenshot, reference);
+
+	screenshot->drop();
+	reference->drop();
+
+	logTestString("Image match: %f%%\n", match);
+
+	return (match > 97.f);
 }
 
 static FILE * logFile = 0;

@@ -42,21 +42,13 @@ bool md2Animation(void)
 
 			(void)smgr->addCameraSceneNode();
 
-			// We could just jump to the last frame, but where's the fun in that? 
-			// Let's watch the animation, doing the initial run() first so that we
-			// don't miss any of the fun.
-			device->run();
-
+			// Jump to the last frame to ensure that we get a consistent state.
 			node->setMD2Animation(EMAT_DEATH_FALLBACK);
-			const s32 endFrame = node->getEndFrame();
-
-			while((s32)node->getFrameNr() < endFrame)
-			{
-				device->run();
-				driver->beginScene(true, true, SColor(255, 255, 255, 0));
-				smgr->drawAll();
-				driver->endScene();
-			}
+			node->setCurrentFrame((f32)(node->getEndFrame()));
+			device->run();
+			driver->beginScene(true, true, SColor(255, 255, 255, 0));
+			smgr->drawAll();
+			driver->endScene();
 		}
 	}
 
