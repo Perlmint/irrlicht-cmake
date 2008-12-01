@@ -191,14 +191,16 @@ void createToolBox()
 	IGUITab* t1 = tab->addTab(L"Config");
 
 	// add some edit boxes and a button to tab one
-	env->addStaticText(L"X:", core::rect<s32>(19,52,40,70), false, false, t1);
-	env->addEditBox(L"1.0", core::rect<s32>(40,50,130,70), true, t1, 901);
-	env->addStaticText(L"Y:", core::rect<s32>(19,82,40,100), false, false, t1);
-	env->addEditBox(L"1.0", core::rect<s32>(40,80,130,100), true, t1, 902);
-	env->addStaticText(L"Z:", core::rect<s32>(19,112,40,130), false, false, t1);
-	env->addEditBox(L"1.0", core::rect<s32>(40,110,130,130), true, t1, 903);
+	env->addStaticText(L"Scale:",
+			core::rect<s32>(10,20,150,45), false, false, t1);
+	env->addStaticText(L"X:", core::rect<s32>(22,48,40,66), false, false, t1);
+	env->addEditBox(L"1.0", core::rect<s32>(40,46,130,66), true, t1, 901);
+	env->addStaticText(L"Y:", core::rect<s32>(22,82,40,100), false, false, t1);
+	env->addEditBox(L"1.0", core::rect<s32>(40,76,130,96), true, t1, 902);
+	env->addStaticText(L"Z:", core::rect<s32>(22,108,40,126), false, false, t1);
+	env->addEditBox(L"1.0", core::rect<s32>(40,106,130,126), true, t1, 903);
 
-	env->addButton(core::rect<s32>(10,140,90,175), t1, 1101, L"Set");
+	env->addButton(core::rect<s32>(10,134,85,165), t1, 1101, L"Set");
 
 	// add transparency control
 	env->addStaticText(L"GUI Transparency Control:",
@@ -397,7 +399,7 @@ public:
 				{
 					const s32 pos = ((IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
 					if (scene::ESNT_ANIMATED_MESH == Model->getType())
-						((scene::IAnimatedMeshSceneNode*)Model)->setAnimationSpeed(pos);
+						((scene::IAnimatedMeshSceneNode*)Model)->setAnimationSpeed((f32)pos);
 				}
 				break;
 
@@ -794,18 +796,19 @@ int main(int argc, char* argv[])
 			str.append(core::stringw(driver->getPrimitiveCountDrawn()));
 			fpstext->setText(str.c_str());
 
+			scene::ICameraSceneNode* cam = Device->getSceneManager()->getActiveCamera();
 			str = L"Pos: ";
-			str.append(core::stringw(Camera[1]->getPosition().X));
+			str.append(core::stringw(cam->getPosition().X));
 			str += L" ";
-			str.append(core::stringw(Camera[1]->getPosition().Y));
+			str.append(core::stringw(cam->getPosition().Y));
 			str += L" ";
-			str.append(core::stringw(Camera[1]->getPosition().Z));
+			str.append(core::stringw(cam->getPosition().Z));
 			str += L" Tgt: ";
-			str.append(core::stringw(Camera[1]->getTarget().X));
+			str.append(core::stringw(cam->getTarget().X));
 			str += L" ";
-			str.append(core::stringw(Camera[1]->getTarget().Y));
+			str.append(core::stringw(cam->getTarget().Y));
 			str += L" ";
-			str.append(core::stringw(Camera[1]->getTarget().Z));
+			str.append(core::stringw(cam->getTarget().Z));
 			postext->setText(str.c_str());
 		}
 		else
