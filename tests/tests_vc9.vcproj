@@ -178,6 +178,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\guiDisabledMenu.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\line2dIntersectWith.cpp"
 				>
 			</File>
