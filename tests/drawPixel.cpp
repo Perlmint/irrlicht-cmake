@@ -1,8 +1,5 @@
-// Tests IVideoDriver::drawPixel().
-// Expect to see two diagonal lines overlaying a wall texture cube.
-// One line should run from red at the top left to green at the bottom right.
-// The other should run from cyan 100% transparent at the bottom left to
-// cyan 100% opaque at the top right.
+// Copyright (C) 2008 Colin MacDonald
+// No rights reserved: this software is in the public domain.
 
 #include "irrlicht.h"
 #include "testUtils.h"
@@ -14,16 +11,21 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
+//! Tests IVideoDriver::drawPixel().
+/** Expect to see two diagonal lines overlaying a wall texture cube.
+	One line should run from green at the top left to red at the bottom right.
+	The other should run from cyan 100% transparent at the bottom left to
+	cyan 100% opaque at the top right. */
 static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 {
-	IrrlichtDevice *device = createDevice( driverType, dimension2d<s32>(640, 480));
+	IrrlichtDevice *device = createDevice( driverType, dimension2d<s32>(640, 480), 32);
 	if (!device)
 		return true; // Treat a failure to create a driver as benign; this saves a lot of #ifdefs
 	
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager * smgr = device->getSceneManager();
 	
-	// Draw a cube to check that the pixels' alpha is working.
+	// Draw a cube background so that we can check that the pixels' alpha is working.
 	ISceneNode * cube = smgr->addCubeSceneNode(50.f, 0, -1, vector3df(0, 0, 60));
 	cube->setMaterialTexture(0, driver->getTexture("../media/wall.bmp"));
 	cube->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -32,7 +34,7 @@ static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 	driver->beginScene(true, true, SColor(255,100,101,140));
 	smgr->drawAll();
 
-	// Test for offscreen values as well as onscreen.
+	// Test for benign handling of offscreen pixel values as well as onscreen ones.
 	for(s32 x = -10; x < 650; ++x)
 	{
 		s32 y = 480 * x / 640;
@@ -55,6 +57,7 @@ bool drawPixel(void)
 {
 	bool passed = true;
 
+	// Don't use the NULL or SOFTWARE drivers since they produce no image, and a 16 bit screenshot respectively.
 	passed &= runTestWithDriver(EDT_BURNINGSVIDEO);
 	passed &= runTestWithDriver(EDT_OPENGL);
 	passed &= runTestWithDriver(EDT_DIRECT3D8);

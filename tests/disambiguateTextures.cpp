@@ -1,3 +1,5 @@
+// Copyright (C) 2008 Colin MacDonald
+// No rights reserved: this software is in the public domain.
 
 #include "testUtils.h"
 #include <irrlicht.h>
@@ -15,8 +17,7 @@ using namespace gui;
 bool disambiguateTextures(void)
 {
 	IrrlichtDevice *device =
-		createDevice( video::EDT_NULL, dimension2d<s32>(640, 480), 16,
-			false, false, false, 0);
+		createDevice( video::EDT_NULL, dimension2d<s32>(640, 480));
 
 	if (!device)
 	{

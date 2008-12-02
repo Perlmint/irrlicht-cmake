@@ -2,7 +2,6 @@
 // No rights reserved: this software is in the public domain.
 
 #define _CRT_SECURE_NO_WARNINGS
-
 #include "testUtils.h"
 #include <memory.h>
 #include <stdio.h>
@@ -160,20 +159,6 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 	if(driverName.find("OpenGL") > -1)
 		driverName = "OpenGL";
 
-/*
-		irr::core::stringc filename = "results/";
-		filename += driverName;
-		filename += fileName;
-		bool written = driver->writeImageToFile(screenshot, filename.c_str());
-		screenshot->drop();
-
-		if(!written)
-		{
-			logTestString("Failed to write screenshot to file '%s'\n", filename.c_str());
-			return false;
-		}
-*/
-
 	irr::core::stringc referenceFilename = "media/";
 	referenceFilename += driverName;
 	referenceFilename += fileName;
@@ -194,7 +179,7 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 
 	logTestString("Image match: %f%%\n", match);
 
-	return (match > 97.f);
+	return (match > 99.f); // Require a very confident match.
 }
 
 static FILE * logFile = 0;

@@ -1,4 +1,5 @@
-// Test the accuracy and speed of 
+// Copyright (C) 2008 Colin MacDonald
+// No rights reserved: this software is in the public domain.
 
 #include "testUtils.h"
 #include "irrlicht.h"
@@ -9,6 +10,7 @@
 using namespace irr;
 using namespace core;
 
+//! This was an older Irrlicht implementation, tested against for reference.
 static inline u32 old_strtol10(const char* in, const char** out=0)
 {
 	u32 value = 0;
@@ -23,9 +25,7 @@ static inline u32 old_strtol10(const char* in, const char** out=0)
 	return value;
 }
 
-//! Provides a fast function for converting a string into a float,
-//! about 6 times faster than atof in win32.
-// If you find any bugs, please send them to me, niko (at) irrlicht3d.org.
+//! This was an older Irrlicht implementation, tested against for reference.
 static inline const char* old_fast_atof_move( const char* c, float& out)
 {
 	bool inv = false;
@@ -76,6 +76,7 @@ static inline const char* old_fast_atof_move( const char* c, float& out)
 	return c;
 }
 
+//! This was an older Irrlicht implementation, tested against for reference.
 static inline float old_fast_atof(const char* c)
 {
 	float ret;
@@ -101,6 +102,7 @@ static bool testCalculation(const char * valueString)
 	return accurate;
 }
 
+//! Test both the accuracy and speed of Irrlicht's fast_atof() implementation.
 bool fast_atof(void)
 {
 	bool accurate = true;

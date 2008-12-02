@@ -1,7 +1,5 @@
-// Test the functionality of vector3d<T>, particularly methods that
-// involve calculations done using different precision than <T>.
-// Note that all reference vector3d<T>s are creating using double precision
-// values cast to (T), as we need to test <f64>.
+// Copyright (C) 2008 Colin MacDonald
+// No rights reserved: this software is in the public domain.
 
 #include "testUtils.h"
 #include "irrlicht.h"
@@ -120,6 +118,10 @@ static bool doTests()
 }
 
 
+/** Test the functionality of vector3d<T>, particularly methods that
+	involve calculations done using different precision than <T>.
+	Note that all reference vector3d<T>s are creating using double precision
+	values cast to (T), as we need to test <f64>. */
 bool testVector3d(void)
 {
 	bool f32Success = doTests<f32>();

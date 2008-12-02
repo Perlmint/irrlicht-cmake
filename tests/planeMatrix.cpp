@@ -1,4 +1,5 @@
-// Test the ability to transform a plane with a matrix.
+// Copyright (C) 2008 Colin MacDonald
+// No rights reserved: this software is in the public domain.
 
 #include "testUtils.h"
 #include "irrlicht.h"
@@ -11,7 +12,7 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-// There's all sorts of FP accuracy errors here, so use a sloppy comparison.
+// There's all sorts of minor and inevitable FP accuracy errors here, so use a sloppy comparison.
 static bool sloppyComparePlanes(const plane3df plane1, const plane3df plane2)
 {
 	return(equals(plane1.D, plane2.D, 0.001f) &&
@@ -36,11 +37,6 @@ static bool transformPlane(const vector3df & point, const vector3df & normal,
 	logTestString("Expected: (%.3ff,%.3ff,%.3ff), %.3ff\n", 
 		expected.Normal.X, expected.Normal.Y, expected.Normal.Z, expected.D);
 
-//	logTestString("success &= transformPlane(vector3df(%d, %d, %d), vector3df(%d, %d, %d), matrix, plane3df(vector3df(%.3ff,%.3ff,%.3ff), %.3ff));\n",
-//		(int)point.X, (int)point.Y, (int)point.Z,
-//		(int)normal.X, (int)normal.Y, (int)normal.Z,
-//		plane.Normal.X, plane.Normal.Y, plane.Normal.Z, plane.D);
-
 	assert(sloppyComparePlanes(plane, expected));
 	if(!sloppyComparePlanes(plane, expected))
 	{
@@ -51,6 +47,7 @@ static bool transformPlane(const vector3df & point, const vector3df & normal,
 	return true;
 }
 
+// Test the ability to transform a plane with a matrix.
 bool planeMatrix(void)
 {
 	matrix4 rotationMatrix;

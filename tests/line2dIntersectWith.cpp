@@ -1,6 +1,5 @@
-// Test the functionality of line2d>T>::intersectWith().
-// Validation is done with asserts() on back-of-an-envelope
-// expected results.
+// Copyright (C) 2008 Colin MacDonald
+// No rights reserved: this software is in the public domain.
 
 #include "testUtils.h"
 #include <irrlicht.h>
@@ -116,6 +115,8 @@ static bool testLines(line2df const & line1,
 	return gotExpectedResult;
 }
 
+// Test the functionality of line2d>T>::intersectWith().
+/** Validation is done with asserts() against expected results. */
 bool line2dIntersectWith(void)
 {
 	bool allExpected = true;
