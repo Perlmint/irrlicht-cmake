@@ -38,7 +38,6 @@ int main()
 	int fails = 0;
 
 	RUN_TEST(disambiguateTextures); // Run this first, since it validates the WD.
-	RUN_TEST(exports);
 	RUN_TEST(testVector3d);
 	RUN_TEST(testVector2d);
 	RUN_TEST(planeMatrix);
