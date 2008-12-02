@@ -709,8 +709,8 @@ namespace core
 	}
 
 
-	//! Returns a rotation that is equivalent to that set by setRotationDegrees(). 
-	/** This code was sent in by Chev.  Note that it does not necessarily return 
+	//! Returns a rotation that is equivalent to that set by setRotationDegrees().
+	/** This code was sent in by Chev.  Note that it does not necessarily return
 	the *same* Euler angles as those set by setRotationDegrees(), but the rotation will
 	be equivalent, i.e. will have the same result when used to rotate a vector or node. */
 	template <class T>
@@ -1726,7 +1726,7 @@ namespace core
 	//! Typedef for f32 matrix
 	typedef CMatrix4<f32> matrix4;
 	//! global const identity matrix
-	extern const matrix4 IdentityMatrix;
+	IRRLICHT_API extern const matrix4 IdentityMatrix;
 
 } // end namespace core
 } // end namespace irr
