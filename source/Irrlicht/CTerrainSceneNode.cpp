@@ -231,24 +231,33 @@ namespace scene
 
 
 	//! Initializes the terrain data. Loads the vertices from the heightMapFile
-	bool CTerrainSceneNode::loadHeightMapRAW( io::IReadFile* file, s32 bitsPerPixel, bool signedData, bool floatVals, video::SColor vertexColor, s32 smoothFactor )
+	bool CTerrainSceneNode::loadHeightMapRAW( io::IReadFile* file, s32 bitsPerPixel, bool signedData, bool floatVals, s32 width, video::SColor vertexColor, s32 smoothFactor )
 	{
 		if (!file)
 			return false;
 		if (floatVals && bitsPerPixel != 32)
 			return false;
 
-		Mesh.MeshBuffers.clear();
 		// start reading
 		const u32 startTime = os::Timer::getTime();
 
-		// get file size
-		const long fileSize = file->getSize();
-		// TODO: Currently no floats are supported
+		Mesh.MeshBuffers.clear();
+
 		const s32 bytesPerPixel = bitsPerPixel / 8;
 
 		// Get the dimension of the heightmap data
-		TerrainData.Size = core::floor32(sqrtf( (f32)( fileSize / bytesPerPixel ) ));
+		const s32 filesize = file->getSize();
+		if (!width)
+			TerrainData.Size = core::floor32(sqrtf( (f32)( filesize / bytesPerPixel ) ));
+		else
+		{
+			if ((filesize-file->getPos())/bytesPerPixel>width*width)
+			{
+				os::Printer::log("Error reading heightmap RAW file", "File is too small.");
+				return false;
+			}
+			TerrainData.Size = width;
+		}
 
 		switch( TerrainData.PatchSize )
 		{
