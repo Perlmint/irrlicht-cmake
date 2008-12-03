@@ -18,7 +18,7 @@ using namespace gui;
 	cyan 100% opaque at the top right. */
 static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 {
-	IrrlichtDevice *device = createDevice( driverType, dimension2d<s32>(640, 480), 32);
+	IrrlichtDevice *device = createDevice( driverType, dimension2d<s32>(160, 120), 32);
 	if (!device)
 		return true; // Treat a failure to create a driver as benign; this saves a lot of #ifdefs
 	
@@ -35,11 +35,11 @@ static bool runTestWithDriver(E_DRIVER_TYPE driverType)
 	smgr->drawAll();
 
 	// Test for benign handling of offscreen pixel values as well as onscreen ones.
-	for(s32 x = -10; x < 650; ++x)
+	for(s32 x = -10; x < 170; ++x)
 	{
-		s32 y = 480 * x / 640;
+		s32 y = 120 * x / 160;
 		driver->drawPixel((u32)x, (u32)y, SColor(255, 255 * x / 640, 255 * (640 - x) / 640, 0));
-		y = 480 - y;
+		y = 120 - y;
 		driver->drawPixel((u32)x, (u32)y, SColor(255 * x / 640, 0, 255, 255));
 	}
 

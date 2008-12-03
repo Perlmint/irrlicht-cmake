@@ -17,7 +17,7 @@ using namespace gui;
 bool md2Animation(void)
 {
 	// Use EDT_BURNINGSVIDEO since it is not dependent on (e.g.) OpenGL driver versions.
-	IrrlichtDevice *device = createDevice( EDT_BURNINGSVIDEO, dimension2d<s32>(640, 480), 32);
+	IrrlichtDevice *device = createDevice( EDT_BURNINGSVIDEO, dimension2d<s32>(320, 240), 32);
 	assert(device);
 	if (!device)
 		return false;
