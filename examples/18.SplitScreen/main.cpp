@@ -94,7 +94,7 @@ int main()
 		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 1;
-	}	
+	}
 
 	//Instance of the EventReceiver
 	MyEventReceiver receiver;
@@ -243,7 +243,7 @@ Sounds a little complicated, but you'll see it isn't:
 		{
 		lastFPS = driver->getFPS();
 		wchar_t tmp[1024];
-		swprintf( tmp, 1024, L"Irrlicht SplitScreen-Example (FPS: %d)", lastFPS);
+		swprintf( tmp, L"Irrlicht SplitScreen-Example (FPS: %d)", lastFPS);
 		device->setWindowCaption(tmp);
 		}
 	}

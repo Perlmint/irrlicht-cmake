@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Build all examples">
+		<Project filename="01.HelloWorld\HelloWorld-win32.cbp" active="1" />
+		<Project filename="02.Quake3Map\Quake3Map-win32.cbp" />
+		<Project filename="03.CustomSceneNode\CustomSceneNode-win32.cbp" />
+		<Project filename="04.Movement\Movement-win32.cbp" />
+		<Project filename="05.UserInterface\UserInterface-win32.cbp" />
+		<Project filename="06.2DGraphics\2DGraphics-win32.cbp" />
+		<Project filename="07.Collision\Collision-win32.cbp" />
+		<Project filename="08.SpecialFX\SpecialFX-win32.cbp" />
+		<Project filename="09.Meshviewer\Meshviewer-win32.cbp" />
+		<Project filename="10.Shaders\Shaders-win32.cbp" />
+		<Project filename="11.PerPixelLighting\PerPixelLighting-win32.cbp" />
+		<Project filename="12.TerrainRendering\TerrainRendering-win32.cbp" />
+		<Project filename="13.RenderToTexture\RenderToTexture-win32.cbp" />
+		<Project filename="14.Win32Window\Win32Window-win32.cbp" />
+		<Project filename="15.LoadIrrFile\LoadIrrFile-win32.cbp" />
+		<Project filename="16.Quake3MapShader\Quake3MapShader-win32.cbp" />
+		<Project filename="18.SplitScreen\SplitScreen-win32.cbp" />
+		<Project filename="19.MouseAndJoystick\MouseAndJoystick-win32.cbp" />
+		<Project filename="Demo\demo-win32.cbp" />
+		<Project filename="..\source\Irrlicht\Irrlicht_Win32-gcc.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

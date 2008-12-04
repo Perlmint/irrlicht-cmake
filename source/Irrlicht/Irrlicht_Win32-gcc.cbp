@@ -6,17 +6,20 @@
 		<Option pch_mode="0" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
+			<Target title="Debug - dll">
 				<Option output="..\..\bin\Win32-gcc\Irrlicht.dll" prefix_auto="0" extension_auto="0" />
-				<Option object_output="..\obj\IrrDebuggcc" />
+				<Option object_output="..\obj\win32-gcc-debug-dll" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-W" />
+					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-O0" />
+					<Add option="-Wextra" />
+					<Add option="-Wno-unused-parameters" />
 					<Add option="-DWIN32" />
 					<Add option="-D_DEBUG" />
 					<Add option="-D_WINDOWS" />
@@ -40,10 +43,13 @@
 					<Add library="opengl32" />
 					<Add library="winmm" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="mv ../../bin/Win32-gcc/libIrrlicht.a ../../lib/Win32-gcc/libIrrlicht.a" />
+				</ExtraCommands>
 			</Target>
-			<Target title="Release">
+			<Target title="Release - accurate math - dll">
 				<Option output="..\..\bin\Win32-gcc\Irrlicht.dll" prefix_auto="0" extension_auto="0" />
-				<Option object_output="obj\IrrReleasegcc" />
+				<Option object_output="..\obj\win32-gcc-release-dll" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -51,6 +57,8 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-W" />
+					<Add option="-Wall" />
+					<Add option="-Wno-unused-parameters" />
 					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
 					<Add option="-D_WINDOWS" />
@@ -74,10 +82,13 @@
 					<Add library="opengl32" />
 					<Add library="winmm" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="mv ../../bin/Win32-gcc/libIrrlicht.a ../../lib/Win32-gcc/libIrrlicht.a" />
+				</ExtraCommands>
 			</Target>
-			<Target title="Release - Fast FPU">
+			<Target title="Release - fast math - dll">
 				<Option output="..\..\bin\Win32-gcc\Irrlicht.dll" prefix_auto="0" extension_auto="0" />
-				<Option object_output="Release - Fast FPU" />
+				<Option object_output="..\obj\win32-gcc-release-fast-dll" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -85,6 +96,9 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-W" />
+					<Add option="-Wall" />
+					<Add option="-ffast-math" />
+					<Add option="-Wno-unused-parameters" />
 					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
 					<Add option="-D_WINDOWS" />
@@ -108,10 +122,13 @@
 					<Add library="opengl32" />
 					<Add library="winmm" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="mv ../../bin/Win32-gcc/libIrrlicht.a ../../lib/Win32-gcc/libIrrlicht.a" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="All" targets="Debug;Release;Release - Fast FPU;" />
+			<Add alias="All" targets="Debug - dll;Release - accurate math - dll;Release - fast math - dll;" />
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-D__GNUWIN32__" />

@@ -123,7 +123,7 @@ int main()
 		case 'e': driverType = video::EDT_BURNINGSVIDEO;break;
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 0;
-	}	
+	}
 
 	// create device
 	MyEventReceiver receiver;
@@ -172,7 +172,7 @@ int main()
 	}
 
 	wchar_t tmp[1024];
-	swprintf(tmp, 1024, L"Irrlicht Joystick Example (%u joysticks)", joystickInfo.size());
+	swprintf(tmp, L"Irrlicht Joystick Example (%u joysticks)", joystickInfo.size());
 	device->setWindowCaption(tmp);
 
 	video::IVideoDriver* driver = device->getVideoDriver();
@@ -209,12 +209,12 @@ int main()
 			const SEvent::SJoystickEvent & joystickData = receiver.GetJoystickState();
 
 			// Use the analog range of the axes, and a 5% dead zone
-			moveHorizontal = 
+			moveHorizontal =
 				(f32)joystickData.Axis[SEvent::SJoystickEvent::AXIS_X] / 32767.f;
 			if(fabs(moveHorizontal) < 0.05f)
 				moveHorizontal = 0.f;
 
-			moveVertical = 
+			moveVertical =
 				(f32)joystickData.Axis[SEvent::SJoystickEvent::AXIS_Y] / -32767.f;
 			if(fabs(moveVertical) < 0.05f)
 				moveVertical = 0.f;
@@ -267,7 +267,7 @@ int main()
 		}
 
 		node->setPosition(nodePosition);
-		
+
 		// Turn lighting on and off depending on whether the left mouse button is down.
 		if(receiver.GetMouseState().LeftButtonDown)
 			node->setMaterialFlag(video::EMF_LIGHTING, true);
@@ -283,6 +283,6 @@ int main()
 	In the end, delete the Irrlicht device.
 	*/
 	device->drop();
-	
+
 	return 0;
 }
