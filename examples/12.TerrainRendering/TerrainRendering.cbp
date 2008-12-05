@@ -2,19 +2,15 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Irrlicht Example 02 Quake Map" />
+		<Option title="Irrlicht Example 12 Terrain Rendering" />
 		<Option pch_mode="0" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="default">
-				<Option output="..\..\bin\Win32-gcc\02.Quake3Map.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\..\lib\gcc\TerrainRendering" prefix_auto="0" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="1" />
-				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
-				</Compiler>
 			</Target>
 		</Build>
 		<VirtualTargets>
@@ -26,7 +22,8 @@
 			<Add directory="..\..\include" />
 		</Compiler>
 		<Linker>
-			<Add option="../../lib/Win32-gcc/libIrrlicht.a" />
+			<Add library="Irrlicht" />
+			<Add directory="..\..\lib\gcc" />
 		</Linker>
 		<Unit filename="main.cpp" />
 		<Extensions>

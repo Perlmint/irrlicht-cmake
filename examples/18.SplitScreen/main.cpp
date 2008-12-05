@@ -241,10 +241,11 @@ Sounds a little complicated, but you'll see it isn't:
 		//Get and show fps
 		if (driver->getFPS() != lastFPS)
 		{
-		lastFPS = driver->getFPS();
-		wchar_t tmp[1024];
-		swprintf( tmp, L"Irrlicht SplitScreen-Example (FPS: %d)", lastFPS);
-		device->setWindowCaption(tmp);
+			lastFPS = driver->getFPS();
+			core::stringw tmp = L"Irrlicht SplitScreen-Example (FPS: ";
+			tmp += lastFPS;
+			tmp += ")";
+			device->setWindowCaption(tmp.c_str());
 		}
 	}
 	//Delete device

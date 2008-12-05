@@ -2,6 +2,6 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="tests">
 		<Project filename="tests.cbp" active="1" />
-		<Project filename="..\source\Irrlicht\Irrlicht_Win32-gcc.cbp" />
+		<Project filename="..\source\Irrlicht\Irrlicht-gcc.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
