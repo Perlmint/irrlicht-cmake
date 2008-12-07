@@ -270,10 +270,7 @@ int main()
 		node->setPosition(nodePosition);
 
 		// Turn lighting on and off depending on whether the left mouse button is down.
-		if(receiver.GetMouseState().LeftButtonDown)
-			node->setMaterialFlag(video::EMF_LIGHTING, true);
-		else
-			node->setMaterialFlag(video::EMF_LIGHTING, false);
+		node->setMaterialFlag(video::EMF_LIGHTING, receiver.GetMouseState().LeftButtonDown);
 
 		driver->beginScene(true, true, video::SColor(255,113,113,133));
 		smgr->drawAll(); // draw the 3d scene
