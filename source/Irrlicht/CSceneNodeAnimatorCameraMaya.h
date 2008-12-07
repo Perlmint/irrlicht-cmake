@@ -21,8 +21,8 @@ namespace scene
 {
 
 	//! Special scene node animator for FPS cameras
-	/** This scene node animator can be attached to a camera to make it act like a first
-	person shooter 
+	/** This scene node animator can be attached to a camera to make it act
+	like a 3d modelling tool camera
 	*/
 	class CSceneNodeAnimatorCameraMaya : public ISceneNodeAnimatorCameraMaya 
 	{
@@ -110,3 +110,4 @@ namespace scene
 } // end namespace irr
 
 #endif
+
