@@ -525,71 +525,77 @@ namespace scene
 			const core::vector3df& lookat = core::vector3df(0,0,100), s32 id=-1) = 0;
 
 		//! Adds a maya style user controlled camera scene node to the scene graph.
-		/** This is a standard camera with an animator that provides mouse control similar
-		 to camera in the 3D Software Maya by Alias Wavefront.
-		 \param parent: Parent scene node of the camera. Can be null.
-		 \param rotateSpeed: Rotation speed of the camera.
-		 \param zoomSpeed: Zoom speed of the camera.
-		 \param translationSpeed: TranslationSpeed of the camera.
-		 \param id: id of the camera. This id can be used to identify the camera.
-		 \return Returns a pointer to the interface of the camera if successful, otherwise 0.
-		 This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
+		/** This is a standard camera with an animator that provides
+		mouse control similar to camera in the 3D Software Maya.
+		\param parent: Parent scene node of the camera. Can be null.
+		\param rotateSpeed: Rotation speed of the camera.
+		\param zoomSpeed: Zoom speed of the camera.
+		\param translationSpeed: Translation speed of the camera.
+		\param id: id of the camera. This id can be used to identify the camera.
+		\return Pointer to the interface of the camera if successful, otherwise 0.
+		This pointer should not be dropped. See
+		IReferenceCounted::drop() for more information. */
 		virtual ICameraSceneNode* addCameraSceneNodeMaya(ISceneNode* parent = 0,
 			f32 rotateSpeed = -1500.0f, f32 zoomSpeed = 200.0f,
 			f32 translationSpeed = 1500.0f, s32 id=-1) = 0;
 
 		//! Adds a camera scene node with an animator which provides mouse and keyboard control appropriate for first person shooters (FPS).
-		/** This FPS camera is intended to provide a demonstration of a camera that behaves
-		 like a typical First Person Shooter. It is useful for simple demos and prototyping but is not 
-		 intended to provide a full solution for a production quality game. It binds the camera scene node 
-		 rotation to the look-at target; @see ICameraSceneNode::bindTargetAndRotation().
-		 With this camera, you look with the mouse, and move with cursor keys. If you want to 
-		 change the key layout, you can specify your own keymap. For example to make the camera
-		 be controlled by the cursor keys AND the keys W,A,S, and D, do something
-		 like this:
-		 \code
-		 SKeyMap keyMap[8];
-		 keyMap[0].Action = EKA_MOVE_FORWARD;
-		 keyMap[0].KeyCode = KEY_UP;
-		 keyMap[1].Action = EKA_MOVE_FORWARD;
-		 keyMap[1].KeyCode = KEY_KEY_W;
+		/** This FPS camera is intended to provide a demonstration of a
+		camera that behaves like a typical First Person Shooter. It is
+		useful for simple demos and prototyping but is not intended to
+		provide a full solution for a production quality game. It binds
+		the camera scene node rotation to the look-at target; @see
+		ICameraSceneNode::bindTargetAndRotation().  With this camera,
+		you look with the mouse, and move with cursor keys. If you want
+		to change the key layout, you can specify your own keymap. For
+		example to make the camera be controlled by the cursor keys AND
+		the keys W,A,S, and D, do something like this:
+		\code
+		SKeyMap keyMap[8];
+		keyMap[0].Action = EKA_MOVE_FORWARD;
+		keyMap[0].KeyCode = KEY_UP;
+		keyMap[1].Action = EKA_MOVE_FORWARD;
+		keyMap[1].KeyCode = KEY_KEY_W;
 
-		 keyMap[2].Action = EKA_MOVE_BACKWARD;
-		 keyMap[2].KeyCode = KEY_DOWN;
-		 keyMap[3].Action = EKA_MOVE_BACKWARD;
-		 keyMap[3].KeyCode = KEY_KEY_S;
+		keyMap[2].Action = EKA_MOVE_BACKWARD;
+		keyMap[2].KeyCode = KEY_DOWN;
+		keyMap[3].Action = EKA_MOVE_BACKWARD;
+		keyMap[3].KeyCode = KEY_KEY_S;
 
-		 keyMap[4].Action = EKA_STRAFE_LEFT;
-		 keyMap[4].KeyCode = KEY_LEFT;
-		 keyMap[5].Action = EKA_STRAFE_LEFT;
-		 keyMap[5].KeyCode = KEY_KEY_A;
+		keyMap[4].Action = EKA_STRAFE_LEFT;
+		keyMap[4].KeyCode = KEY_LEFT;
+		keyMap[5].Action = EKA_STRAFE_LEFT;
+		keyMap[5].KeyCode = KEY_KEY_A;
 
-		 keyMap[6].Action = EKA_STRAFE_RIGHT;
-		 keyMap[6].KeyCode = KEY_RIGHT;
-		 keyMap[7].Action = EKA_STRAFE_RIGHT;
-		 keyMap[7].KeyCode = KEY_KEY_D;
+		keyMap[6].Action = EKA_STRAFE_RIGHT;
+		keyMap[6].KeyCode = KEY_RIGHT;
+		keyMap[7].Action = EKA_STRAFE_RIGHT;
+		keyMap[7].KeyCode = KEY_KEY_D;
 
-		 camera = sceneManager->addCameraSceneNodeFPS(0, 100, 500, -1, keyMap, 8);
-		 \endcode
-		 \param parent: Parent scene node of the camera. Can be null.
-		 \param rotateSpeed: Speed with which the camera is rotated. This can be done
-		 only with the mouse.
-		 \param moveSpeed: Speed with which the camera is moved. Movement is done with
-		 the cursor keys.
-		 \param id: id of the camera. This id can be used to identify the camera.
-		 \param keyMapArray: Optional pointer to an array of a keymap, specifying what
-		 keys should be used to move the camera. If this is null, the default keymap
-		 is used. You can define actions more then one time in the array, to bind
-		 multiple keys to the same action.
-		 \param keyMapSize: Amount of items in the keymap array.
-		 \param noVerticalMovement: Setting this to true makes the camera only move within a
-		 horizontal plane, and disables vertical movement as known from most ego shooters. Default
-		 is 'false', with which it is possible to fly around in space, if no gravity is there.
-		 \param jumpSpeed: Speed with which the camera is moved when jumping.
-		 \return Returns a pointer to the interface of the camera if successful, otherwise 0.
-		 This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
+		camera = sceneManager->addCameraSceneNodeFPS(0, 100, 500, -1, keyMap, 8);
+		\endcode
+		\param parent: Parent scene node of the camera. Can be null.
+		\param rotateSpeed: Speed in degress with which the camera is
+		rotated. This can be done only with the mouse.
+		\param moveSpeed: Speed in units per millisecond with which
+		the camera is moved. Movement is done with the cursor keys.
+		\param id: id of the camera. This id can be used to identify the camera.
+		\param keyMapArray: Optional pointer to an array of a keymap, specifying what
+		keys should be used to move the camera. If this is null, the default keymap
+		is used. You can define actions more then one time in the array, to bind
+		multiple keys to the same action.
+		\param keyMapSize: Amount of items in the keymap array.
+		\param noVerticalMovement: Setting this to true makes the
+		camera only move within a horizontal plane, and disables
+		vertical movement as known from most ego shooters. Default is
+		'false', with which it is possible to fly around in space, if
+		no gravity is there.
+		\param jumpSpeed: Speed with which the camera is moved when jumping.
+		\return Pointer to the interface of the camera if successful, otherwise 0.
+		This pointer should not be dropped. See
+		IReferenceCounted::drop() for more information. */
 		virtual ICameraSceneNode* addCameraSceneNodeFPS(ISceneNode* parent = 0,
-			f32 rotateSpeed = 100.0f, f32 moveSpeed = 500.0f, s32 id=-1,
+			f32 rotateSpeed = 100.0f, f32 moveSpeed = .5f, s32 id=-1,
 			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false,
 			f32 jumpSpeed = 0.f) = 0;
 
