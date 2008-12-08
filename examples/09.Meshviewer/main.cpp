@@ -760,10 +760,14 @@ int main(int argc, char* argv[])
 	// add a camera scene node
 	Camera[0] = smgr->addCameraSceneNodeMaya();
 	Camera[0]->setFarValue(20000.f);
-	Camera[0]->setPosition(core::vector3df(0,0,-100));
+	// Maya cameras reposition themselves relative to their target, so target the location
+	// where the mesh scene node is placed.
+	Camera[0]->setTarget(core::vector3df(0,0,0));
+
 	Camera[1] = smgr->addCameraSceneNodeFPS();
 	Camera[1]->setFarValue(20000.f);
-	Camera[1]->setPosition(core::vector3df(0,0,-100));
+	Camera[1]->setPosition(core::vector3df(0,0,-70));
+	Camera[0]->setTarget(core::vector3df(0,0,0));
 
 	setActiveCamera(Camera[0]);
 
