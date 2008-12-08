@@ -81,7 +81,6 @@ namespace scene
 		void allKeysUp();
 		void animate();
 		bool isMouseKeyDown(s32 key);
-		void updateAnimationState();
 
 		bool MouseKeys[3];
 
@@ -99,7 +98,6 @@ namespace scene
 		f32 TranslateStartX, TranslateStartY;
 		f32 CurrentZoom;
 		f32 RotX, RotY;
-		core::vector3df Target;
 		core::vector3df OldTarget;
 		scene::ICameraSceneNode* OldCamera;
 

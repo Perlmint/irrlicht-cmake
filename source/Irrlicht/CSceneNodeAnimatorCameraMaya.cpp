@@ -103,7 +103,7 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 		OldCamera = camera;
 	}
 
-	Target = camera->getTarget();
+	core::vector3df target = camera->getTarget();
 
 	const SViewFrustum* va = camera->getViewFrustum();
 
@@ -148,12 +148,12 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 
 	core::vector3df translate(OldTarget), UpVector(camera->getUpVector());
 
-	core::vector3df tvectX = Pos - Target;
+	core::vector3df tvectX = Pos - target;
 	tvectX = tvectX.crossProduct(UpVector);
 	tvectX.normalize();
 
 	core::vector3df tvectY = (va->getFarLeftDown() - va->getFarRightDown());
-	tvectY = tvectY.crossProduct(UpVector.Y > 0 ? Pos - Target : Target - Pos);
+	tvectY = tvectY.crossProduct(UpVector.Y > 0 ? Pos - target : target - Pos);
 	tvectY.normalize();
 	
 
@@ -208,14 +208,14 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 
 	// Set Pos ------------------------------------
 
-	Target = translate;
+	target = translate;
 
-	Pos.X = nZoom + Target.X;
-	Pos.Y = Target.Y;
-	Pos.Z = Target.Z;
+	Pos.X = nZoom + target.X;
+	Pos.Y = target.Y;
+	Pos.Z = target.Z;
 
-	Pos.rotateXYBy(nRotY, Target);
-	Pos.rotateXZBy(-nRotX, Target);
+	Pos.rotateXYBy(nRotY, target);
+	Pos.rotateXZBy(-nRotX, target);
 
 	// Rotation Error ----------------------------
 
@@ -225,7 +225,7 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	UpVector.rotateXZBy(-nRotX+180.f);
 
 	camera->setPosition(Pos);
-	camera->setTarget(Target);
+	camera->setTarget(target);
 	camera->setUpVector(UpVector);
 }
 
@@ -240,25 +240,6 @@ void CSceneNodeAnimatorCameraMaya::allKeysUp()
 {
 	for (s32 i=0; i<3; ++i)
 		MouseKeys[i] = false;
-}
-
-
-// function added by jox
-void CSceneNodeAnimatorCameraMaya::updateAnimationState() 
-{
-	core::vector3df pos(Pos - Target);
-
-	// X rotation
-	core::vector2df vec2d(pos.X, pos.Z);
-	RotX = (f32)vec2d.getAngle();
-
-	// Y rotation
-	pos.rotateXZBy(RotX);
-	vec2d.set(pos.X, pos.Y);
-	RotY = -(f32)vec2d.getAngle();
-
-	// Zoom
-	CurrentZoom = (f32)Pos.getDistanceFrom(Target);
 }
 
 
