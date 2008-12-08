@@ -37,6 +37,7 @@
 			<Add library="Irrlicht" />
 			<Add directory="../lib/gcc" />
 		</Linker>
+		<Unit filename="b3dAnimation.cpp" />
 		<Unit filename="disambiguateTextures.cpp" />
 		<Unit filename="drawPixel.cpp" />
 		<Unit filename="exports.cpp" />
