@@ -93,15 +93,15 @@ namespace scene
 		f32 ZoomSpeed;
 		f32 RotateSpeed;
 		f32 TranslateSpeed;
-		f32 RotateStartX, RotateStartY;
-		f32 ZoomStartX, ZoomStartY;
-		f32 TranslateStartX, TranslateStartY;
+		core::position2df RotateStart;
+		core::position2df ZoomStart;
+		core::position2df TranslateStart;
 		f32 CurrentZoom;
 		f32 RotX, RotY;
 		core::vector3df OldTarget;
 		scene::ICameraSceneNode* OldCamera;
 
-		core::position2d<f32> MousePos;
+		core::position2df MousePos;
 	};
 
 } // end namespace scene

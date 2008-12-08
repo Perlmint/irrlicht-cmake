@@ -14,11 +14,9 @@ namespace scene
 
 //! constructor
 CSceneNodeAnimatorCameraMaya::CSceneNodeAnimatorCameraMaya(gui::ICursorControl* cursor, f32 rotate, f32 zoom, f32 translate)
- :	CursorControl(cursor), Zooming(false), Rotating(false), Moving(false), Translating(false),
-	ZoomSpeed(zoom), RotateSpeed(rotate), TranslateSpeed(translate),
-	RotateStartX(0.0f), RotateStartY(0.0f), ZoomStartX(0.0f), ZoomStartY(0.0f),
-	TranslateStartX(0.0f), TranslateStartY(0.0f), CurrentZoom(70.0f), RotX(0.0f), RotY(0.0f), 
-	OldCamera(0), MousePos(0.5f, 0.5f)
+	: CursorControl(cursor), Zooming(false), Rotating(false), Moving(false),
+	Translating(false), ZoomSpeed(zoom), RotateSpeed(rotate), TranslateSpeed(translate),
+	CurrentZoom(70.0f), RotX(0.0f), RotY(0.0f), OldCamera(0), MousePos(0.5f, 0.5f)
 {
 	#ifdef _DEBUG
 	setDebugName("CSceneNodeAnimatorCameraMaya");
@@ -105,8 +103,6 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 
 	core::vector3df target = camera->getTarget();
 
-	const SViewFrustum* va = camera->getViewFrustum();
-
 	f32 nRotX = RotX;
 	f32 nRotY = RotY;
 	f32 nZoom = CurrentZoom;
@@ -115,28 +111,23 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	{
 		if (!Zooming)
 		{
-			ZoomStartX = MousePos.X;
-			ZoomStartY = MousePos.Y;
+			ZoomStart = MousePos;
 			Zooming = true;
 			nZoom = CurrentZoom;
 		}
 		else
 		{
-			f32 old = nZoom;
-			nZoom += (ZoomStartX - MousePos.X) * ZoomSpeed;
+			const f32 targetMinDistance = 0.1f;
+			nZoom += (ZoomStart.X - MousePos.X) * ZoomSpeed;
 
-			f32 targetMinDistance = 0.1f;
 			if (nZoom < targetMinDistance) // jox: fixed bug: bounce back when zooming to close
 				nZoom = targetMinDistance;
-
-			if (nZoom < 0)
-				nZoom = old;
 		}
 	}
 	else if (Zooming)
 	{
-		f32 old = CurrentZoom;
-		CurrentZoom = CurrentZoom + (ZoomStartX - MousePos.X ) * ZoomSpeed;
+		const f32 old = CurrentZoom;
+		CurrentZoom = CurrentZoom + (ZoomStart.X - MousePos.X ) * ZoomSpeed;
 		nZoom = CurrentZoom;
 
 		if (nZoom < 0)
@@ -146,35 +137,34 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 
 	// Translation ---------------------------------
 
-	core::vector3df translate(OldTarget), UpVector(camera->getUpVector());
+	core::vector3df translate(OldTarget), upVector(camera->getUpVector());
 
 	core::vector3df tvectX = Pos - target;
-	tvectX = tvectX.crossProduct(UpVector);
+	tvectX = tvectX.crossProduct(upVector);
 	tvectX.normalize();
 
+	const SViewFrustum* const va = camera->getViewFrustum();
 	core::vector3df tvectY = (va->getFarLeftDown() - va->getFarRightDown());
-	tvectY = tvectY.crossProduct(UpVector.Y > 0 ? Pos - target : target - Pos);
+	tvectY = tvectY.crossProduct(upVector.Y > 0 ? Pos - target : target - Pos);
 	tvectY.normalize();
-	
 
 	if (isMouseKeyDown(2) && !Zooming)
 	{
 		if (!Translating)
 		{
-			TranslateStartX = MousePos.X;
-			TranslateStartY = MousePos.Y;
+			TranslateStart = MousePos;
 			Translating = true;
 		}
 		else
 		{
-			translate +=  tvectX * (TranslateStartX - MousePos.X)*TranslateSpeed + 
-			              tvectY * (TranslateStartY - MousePos.Y)*TranslateSpeed;
+			translate +=  tvectX * (TranslateStart.X - MousePos.X)*TranslateSpeed + 
+			              tvectY * (TranslateStart.Y - MousePos.Y)*TranslateSpeed;
 		}
 	}
 	else if (Translating)
 	{
-		translate += tvectX * (TranslateStartX - MousePos.X)*TranslateSpeed + 
-		             tvectY * (TranslateStartY - MousePos.Y)*TranslateSpeed;
+		translate += tvectX * (TranslateStart.X - MousePos.X)*TranslateSpeed + 
+		             tvectY * (TranslateStart.Y - MousePos.Y)*TranslateSpeed;
 		OldTarget = translate;
 		Translating = false;
 	}
@@ -185,22 +175,21 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	{
 		if (!Rotating)
 		{
-			RotateStartX = MousePos.X;
-			RotateStartY = MousePos.Y;
+			RotateStart = MousePos;
 			Rotating = true;
 			nRotX = RotX;
 			nRotY = RotY;
 		}
 		else
 		{
-			nRotX += (RotateStartX - MousePos.X) * RotateSpeed;
-			nRotY += (RotateStartY - MousePos.Y) * RotateSpeed;
+			nRotX += (RotateStart.X - MousePos.X) * RotateSpeed;
+			nRotY += (RotateStart.Y - MousePos.Y) * RotateSpeed;
 		}
 	}
 	else if (Rotating)
 	{
-		RotX = RotX + (RotateStartX - MousePos.X) * RotateSpeed;
-		RotY = RotY + (RotateStartY - MousePos.Y) * RotateSpeed;
+		RotX += (RotateStart.X - MousePos.X) * RotateSpeed;
+		RotY += (RotateStart.Y - MousePos.Y) * RotateSpeed;
 		nRotX = RotX;
 		nRotY = RotY;
 		Rotating = false;
@@ -220,13 +209,13 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	// Rotation Error ----------------------------
 
 	// jox: fixed bug: jitter when rotating to the top and bottom of y
-	UpVector.set(0,1,0);
-	UpVector.rotateXYBy(-nRotY);
-	UpVector.rotateXZBy(-nRotX+180.f);
+	upVector.set(0,1,0);
+	upVector.rotateXYBy(-nRotY);
+	upVector.rotateXZBy(-nRotX+180.f);
 
 	camera->setPosition(Pos);
 	camera->setTarget(target);
-	camera->setUpVector(UpVector);
+	camera->setUpVector(upVector);
 }
 
 
