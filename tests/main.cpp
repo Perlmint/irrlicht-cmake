@@ -37,7 +37,6 @@ int main()
 
 	int fails = 0;
 
-	RUN_TEST(b3dAnimation);
 	RUN_TEST(disambiguateTextures); // Run this first, since it validates the WD.
 	RUN_TEST(exports);
 	RUN_TEST(testVector3d);
@@ -47,6 +46,7 @@ int main()
 	RUN_TEST(line2dIntersectWith);
 	RUN_TEST(drawPixel);
 	RUN_TEST(md2Animation);
+	RUN_TEST(b3dAnimation);
 	RUN_TEST(guiDisabledMenu);
 
 	(void)printf("\nTests finished. %d test%s failed.\n", fails, 1 == fails ? "" : "s");
