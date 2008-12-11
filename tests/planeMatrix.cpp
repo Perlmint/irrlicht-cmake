@@ -47,6 +47,47 @@ static bool transformPlane(const vector3df & point, const vector3df & normal,
 	return true;
 }
 
+
+static bool drawScaledOctTree(void)
+{
+	bool result = false;
+	IrrlichtDevice *device = createDevice(video::EDT_OPENGL, dimension2d<s32>(160, 120), 32);
+	if (!device)
+		return false;
+
+	video::IVideoDriver* driver = device->getVideoDriver();
+	ISceneManager * smgr = device->getSceneManager();
+
+	bool added = device->getFileSystem()->addZipFileArchive("../media/map-20kdm2.pk3");
+	assert(added);
+
+	if(added)
+	{
+		ISceneNode * node = smgr->addOctTreeSceneNode(smgr->getMesh("20kdm2.bsp")->getMesh(0), 0, -1, 1024);
+		assert(node);
+	
+		if (node)
+		{
+			node->setMaterialFlag(EMF_LIGHTING, false);
+			node->setPosition(core::vector3df(-1300,-820,-1249));
+			node->setScale(core::vector3df(1, 5, 1));
+
+			(void)smgr->addCameraSceneNode(0, core::vector3df(0,0,0), core::vector3df(40,100,30));
+
+			driver->beginScene(true, true, video::SColor(255,255,255,0));
+			smgr->drawAll();
+			driver->endScene();
+
+			result = takeScreenshotAndCompareAgainstReference(driver, "-planeMatrix-scaledClip.png");
+		}
+	}
+
+	device->drop();
+
+	return result;
+}
+
+
 // Test the ability to transform a plane with a matrix.
 bool planeMatrix(void)
 {
@@ -188,6 +229,8 @@ bool planeMatrix(void)
 	success &= transformPlane(vector3df(0, 1, 0), vector3df(1, 1, 0), matrix, plane3df(vector3df(0.447f,-0.000f,0.894f), -3.801f));
 	success &= transformPlane(vector3df(0, 1, 0), vector3df(-1, 1, 0), matrix, plane3df(vector3df(-0.447f,-0.000f,0.894f), -3.801f));
 	success &= transformPlane(vector3df(0, 1, 0), vector3df(1, -1, 0), matrix, plane3df(vector3df(0.447f,0.000f,-0.894f), 3.801f));
+
+	success &= drawScaledOctTree();
 
 	return success;
 }

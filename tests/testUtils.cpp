@@ -86,7 +86,7 @@ bool binaryCompareFiles(const char * fileName1, const char * fileName2)
 	\return The match, from 0.f to 100.f */
 static float fuzzyCompareImages(irr::video::IImage * image1,
 								irr::video::IImage * image2)
-{
+{	
 	assert(image1);
 	assert(image2);
 	if(!image1 || !image2)
@@ -99,9 +99,9 @@ static float fuzzyCompareImages(irr::video::IImage * image1,
 	}
 
 	video::ECOLOR_FORMAT format1 = image1->getColorFormat();
-	if(video::ECF_A8R8G8B8 != format1 && video::ECF_R8G8B8 != format1)
+	if(video::ECF_R8G8B8 != format1)
 	{
-		logTestString("fuzzyCompareImages: image 1 must be ECF_A8R8G8B8 or ECF_R8G8B8\n");
+		logTestString("fuzzyCompareImages: image 1 must be ECF_R8G8B8\n");
 		return 0.f;
 	}
 
@@ -119,9 +119,6 @@ static float fuzzyCompareImages(irr::video::IImage * image1,
 	u32 mismatchedPixels = 0;
 	for(u32 pixel = 0; pixel < pixels; ++pixel)
 	{
-		if(video::ECF_A8R8G8B8 == format1)
-			image1Data++;
-
 		const u8 r1 = *(image1Data++);
 		const u8 g1 = *(image1Data++);
 		const u8 b1 = *(image1Data++);
@@ -151,7 +148,24 @@ bool takeScreenshotAndCompareAgainstReference(irr::video::IVideoDriver * driver,
 	if(!screenshot)
 	{
 		logTestString("Failed to take screenshot\n");
+		assert(false);
 		return false;
+	}
+
+	const video::ECOLOR_FORMAT format = screenshot->getColorFormat();
+	if(format != video::ECF_R8G8B8)
+	{
+		irr::video::IImage * fixedScreenshot = driver->createImage(video::ECF_R8G8B8, screenshot);
+		screenshot->drop();
+
+		if(!fixedScreenshot)
+		{
+			logTestString("Failed to convert screenshot to ECF_A8R8G8B8\n");
+			assert(false);
+			return false;
+		}
+
+		screenshot = fixedScreenshot;
 	}
 
 	irr::core::stringc driverName = driver->getName();

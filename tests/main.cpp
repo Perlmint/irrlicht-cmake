@@ -13,7 +13,7 @@
 #endif // _MSC_VER
 
 /* Each test must have the same signature.  Test should (but are not
- * required to) live in a .cpp file of the same name.  There is no 
+ * required to) live in a .cpp file of the same name.  There is no
  * need to #include anything since the test entry points can be
  * declared as extern before calling them.
  */
@@ -28,6 +28,7 @@
 		fails++;\
 	}
 
+
 //! This is the main entry point for the Irrlicht test suite.
 /** \return The number of test that failed, i.e. 0 is success. */
 int main()
@@ -38,6 +39,7 @@ int main()
 	int fails = 0;
 
 	RUN_TEST(disambiguateTextures); // Run this first, since it validates the WD.
+	RUN_TEST(softwareDevice);
 	RUN_TEST(exports);
 	RUN_TEST(testVector3d);
 	RUN_TEST(testVector2d);
@@ -50,7 +52,7 @@ int main()
 	RUN_TEST(guiDisabledMenu);
 
 	(void)printf("\nTests finished. %d test%s failed.\n", fails, 1 == fails ? "" : "s");
-	
+
 	if(0 == fails)
 	{
 		time_t rawtime;
