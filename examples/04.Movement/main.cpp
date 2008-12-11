@@ -190,7 +190,7 @@ int main()
 	To be able to look at and move around in this scene, we create a first
 	person shooter style camera and make the mouse cursor invisible.
 	*/
-	smgr->addCameraSceneNodeFPS(0, 100.0f, 100.0f);
+	smgr->addCameraSceneNodeFPS(0, 100.0f, .1f);
 	device->getCursorControl()->setVisible(false);
 
 	/*
