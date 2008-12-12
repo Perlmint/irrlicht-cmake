@@ -74,9 +74,9 @@ int main(int argumentCount, char * arguments[])
 		TEST(line2dIntersectWith),
 		TEST(drawPixel),
 		TEST(md2Animation),
-		TEST(guiDisabledMenu)
-		//softwareDevice, FIXME Rogerborg - add the .cpp to SVN!
-		//b3dAnimation, FIXME Rogerborg - add the .cpp to SVN!
+		TEST(guiDisabledMenu),
+		TEST(softwareDevice),
+		TEST(b3dAnimation)
 	};
 	static const unsigned int numberOfTests = sizeof tests / sizeof tests[0];
 
