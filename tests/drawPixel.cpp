@@ -57,8 +57,7 @@ bool drawPixel(void)
 {
 	bool passed = true;
 
-	// Don't use the NULL or SOFTWARE drivers since they produce no image,
-	// and a 16 bit screenshot respectively.
+	passed &= runTestWithDriver(EDT_SOFTWARE);
 	passed &= runTestWithDriver(EDT_BURNINGSVIDEO);
 	passed &= runTestWithDriver(EDT_DIRECT3D9);
 	passed &= runTestWithDriver(EDT_DIRECT3D8);

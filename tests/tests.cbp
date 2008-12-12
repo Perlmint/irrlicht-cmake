@@ -2,13 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tests - Win32" />
+		<Option title="tests" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/Win32-gcc/tests" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug/" />
+				<Option output="../bin/gcc/tests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="./Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -16,12 +16,12 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/Win32-gcc/tests" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Release/" />
+				<Option output="../bin/gcc/tests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="./Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O3" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -35,7 +35,7 @@
 		</Compiler>
 		<Linker>
 			<Add library="Irrlicht" />
-			<Add directory="../bin/Win32-gcc" />
+			<Add directory="../lib/gcc" />
 		</Linker>
 		<Unit filename="disambiguateTextures.cpp" />
 		<Unit filename="drawPixel.cpp" />
