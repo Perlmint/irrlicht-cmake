@@ -2,13 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tests" />
+		<Option title="tests - Win32" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\gcc\tests" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug\" />
+				<Option output="../bin/Win32-gcc/tests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -16,12 +16,12 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\gcc\tests" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Release\" />
+				<Option output="../bin/Win32-gcc/tests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O3" />
+					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -31,13 +31,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add directory="..\include" />
+			<Add directory="../include" />
 		</Compiler>
 		<Linker>
 			<Add library="Irrlicht" />
-			<Add directory="..\lib\gcc" />
+			<Add directory="../bin/Win32-gcc" />
 		</Linker>
-		<Unit filename="b3dAnimation.cpp" />
 		<Unit filename="disambiguateTextures.cpp" />
 		<Unit filename="drawPixel.cpp" />
 		<Unit filename="exports.cpp" />
@@ -47,7 +46,6 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="md2Animation.cpp" />
 		<Unit filename="planeMatrix.cpp" />
-		<Unit filename="softwareDevice.cpp" />
 		<Unit filename="testUtils.cpp" />
 		<Unit filename="testVector2d.cpp" />
 		<Unit filename="testVector3d.cpp" />

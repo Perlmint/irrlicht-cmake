@@ -7,23 +7,26 @@
 		<Option pch_mode="0" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
+			<Target title="Debug - dynamic">
 				<Option platforms="Unix;" />
-				<Option output="../../bin/Linux/Irrlicht.so" prefix_auto="0" extension_auto="1" />
-				<Option object_output="../obj/IrrDebuggcc" />
+				<Option output="../../bin/Linux/Irrlicht.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="../obj/linux-gcc-debug-dynamic" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-W" />
+					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-Wextra" />
+					<Add option="-Wno-unused-parameter" />
 				</Compiler>
 			</Target>
-			<Target title="Release">
+			<Target title="Release (accurate) - dynamic">
 				<Option platforms="Unix;" />
-				<Option output="../../bin/Linux/Irrlicht.so" prefix_auto="0" extension_auto="1" />
-				<Option object_output="../obj/IrrReleasegcc" />
+				<Option output="../../bin/Linux/Irrlicht" prefix_auto="0" extension_auto="1" />
+				<Option object_output="../obj/linux-gcc-release-dynamic" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -36,10 +39,10 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Release - Fast FPU">
+			<Target title="Release (fast) - dynamic">
 				<Option platforms="Unix;" />
-				<Option output="../../bin/Linux/Irrlicht.so" prefix_auto="0" extension_auto="1" />
-				<Option object_output="../obj/IrrReleasegcc" />
+				<Option output="../../bin/Linux/Irrlicht" prefix_auto="0" extension_auto="1" />
+				<Option object_output="../obj/linux-gcc-release-fast-dynamic" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -47,11 +50,12 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-W" />
+					<Add option="-ffast-math" />
 				</Compiler>
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="All" targets="Debug;Release;Release - Fast FPU;" />
+			<Add alias="All" targets="Debug - dynamic;Release (accurate) - dynamic;Release (fast) - dynamic;" />
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-I../../include -Izlib -Ilibpng" />
@@ -431,6 +435,8 @@
 		<Unit filename="CNullDriver.h" />
 		<Unit filename="COBJMeshFileLoader.cpp" />
 		<Unit filename="COBJMeshFileLoader.h" />
+		<Unit filename="COBJMeshWriter.cpp" />
+		<Unit filename="COBJMeshWriter.h" />
 		<Unit filename="COCTLoader.cpp" />
 		<Unit filename="COCTLoader.h" />
 		<Unit filename="COSOperator.cpp" />
@@ -470,8 +476,6 @@
 		<Unit filename="CParticleFadeOutAffector.h" />
 		<Unit filename="CParticleGravityAffector.cpp" />
 		<Unit filename="CParticleGravityAffector.h" />
-		<Unit filename="CParticleScaleAffector.cpp" />
-		<Unit filename="CParticleScaleAffector.h" />
 		<Unit filename="CParticleMeshEmitter.cpp" />
 		<Unit filename="CParticleMeshEmitter.h" />
 		<Unit filename="CParticlePointEmitter.cpp" />
@@ -480,6 +484,8 @@
 		<Unit filename="CParticleRingEmitter.h" />
 		<Unit filename="CParticleRotationAffector.cpp" />
 		<Unit filename="CParticleRotationAffector.h" />
+		<Unit filename="CParticleScaleAffector.cpp" />
+		<Unit filename="CParticleScaleAffector.h" />
 		<Unit filename="CParticleSphereEmitter.cpp" />
 		<Unit filename="CParticleSphereEmitter.h" />
 		<Unit filename="CParticleSystemSceneNode.cpp" />
@@ -494,8 +500,6 @@
 		<Unit filename="CSTLMeshFileLoader.h" />
 		<Unit filename="CSTLMeshWriter.cpp" />
 		<Unit filename="CSTLMeshWriter.h" />
-		<Unit filename="COBJMeshWriter.cpp" />
-		<Unit filename="COBJMeshWriter.h" />
 		<Unit filename="CSceneCollisionManager.cpp" />
 		<Unit filename="CSceneCollisionManager.h" />
 		<Unit filename="CSceneManager.cpp" />
@@ -853,6 +857,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

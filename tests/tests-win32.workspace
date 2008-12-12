@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="tests - Win32">
+		<Project filename="tests-win32.cbp" active="1" />
+		<Project filename="../source/Irrlicht/Irrlicht_Win32-gcc.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>
