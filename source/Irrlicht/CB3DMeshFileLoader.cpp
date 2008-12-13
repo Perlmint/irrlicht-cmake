@@ -701,26 +701,25 @@ bool CB3DMeshFileLoader::readChunkKEYS(CSkinnedMesh::SJoint *InJoint)
 		frame = os::Byteswap::byteswap(frame);
 		#endif
 
-		core::vector3df position = core::vector3df(positionData[0], positionData[1], positionData[2]);
-		core::vector3df scale = core::vector3df(scaleData[0], scaleData[1], scaleData[2]);
-		core::quaternion rotation = core::quaternion(rotationData[1], rotationData[2], rotationData[3], rotationData[0]); // meant to be in this order
-
 		// Add key frame
 
 		if (flags & 1)
 		{
+			core::vector3df position = core::vector3df(positionData[0], positionData[1], positionData[2]);
 			CSkinnedMesh::SPositionKey *Key=AnimatedMesh->createPositionKey(InJoint);
 			Key->frame = (f32)frame;
 			Key->position = position;
 		}
 		if (flags & 2)
 		{
+			core::vector3df scale = core::vector3df(scaleData[0], scaleData[1], scaleData[2]);
 			CSkinnedMesh::SScaleKey *Key=AnimatedMesh->createScaleKey(InJoint);
 			Key->frame = (f32)frame;
 			Key->scale=scale;
 		}
 		if (flags & 4)
 		{
+			core::quaternion rotation = core::quaternion(rotationData[1], rotationData[2], rotationData[3], rotationData[0]); // meant to be in this order
 			CSkinnedMesh::SRotationKey *Key=AnimatedMesh->createRotationKey(InJoint);
 			Key->frame = (f32)frame;
 			Key->rotation = rotation;
