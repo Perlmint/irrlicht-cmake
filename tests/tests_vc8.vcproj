@@ -206,11 +206,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\softwareDevice.cpp"
+				RelativePath=".\planeMatrix.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\planeMatrix.cpp"
+				RelativePath=".\sceneCollisionManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\softwareDevice.cpp"
 				>
 			</File>
 			<File
