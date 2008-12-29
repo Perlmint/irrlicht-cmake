@@ -1,4 +1,5 @@
 // This is the entry point for the Irrlicht test suite.
+
 // This is an MSVC pragma to link against the Irrlicht library.
 // Other builds must link against it in the project files.
 #if defined(_MSC_VER)
@@ -10,22 +11,19 @@
 #include <stdio.h>
 #include <time.h>
 #include <assert.h>
+#include <vector>
 
-/* Each test must have the same signature.  Test should (but are not
- * required to) live in a .cpp file of the same name.  There is no
- * need to #include anything since the test entry points can be
- * declared as extern before calling them.
- */
-#define RUN_TEST(testEntryPoint)\
-	extern bool testEntryPoint(void);\
-	logTestString("\nStarting test '" #testEntryPoint "'\n");\
-	if(!testEntryPoint()) \
-	{\
-		(void)printf("\n\n\n******** Test failure ********\nTest '" #testEntryPoint "' failed\n"\
-		"******** Test failure ********\n\nPress return to continue\n");\
-		(void)getc(stdin);\
-		fails++;\
-	}
+// This is an MSVC pragma to link against the Irrlicht library.
+// Other builds must link against it in the project files.
+#if defined(_MSC_VER)
+#pragma comment(lib, "Irrlicht.lib")
+#endif // _MSC_VER
+
+typedef struct _STestDefinition
+{
+	bool(*testSignature)(void);
+	const char * testName;
+} STestDefinition;
 
 //! This is the main entry point for the Irrlicht test suite.
 /** \return The number of test that failed, i.e. 0 is success. */
@@ -41,45 +39,38 @@ int main(int argumentCount, char * arguments[])
 		return 9999;
 	}
 
-	extern bool disambiguateTextures(void);
-	extern bool softwareDevice(void);
-	extern bool exports(void);
-	extern bool testVector3d(void);
-	extern bool testVector2d(void);
-	extern bool planeMatrix(void);
-	extern bool fast_atof(void);
-	extern bool line2dIntersectWith(void);
-	extern bool drawPixel(void);
-	extern bool md2Animation(void);
-	extern bool b3dAnimation(void);
-	extern bool guiDisabledMenu(void);
-	extern bool textureRenderStates(void);
 
-	typedef struct _STest
-	{
-		bool(*testSignature)(void);
-		const char * testName;
-	} STest;
+	#define TEST(x)\
+	{\
+		extern bool x(void);\
+		STestDefinition newTest;\
+		newTest.testSignature = x;\
+		newTest.testName = #x;\
+		tests.push_back(newTest);\
+	}
 
-	#define TEST(x) { x, #x }
+	std::vector<STestDefinition> tests;
 
-	static const STest tests[] =
-	{
-		TEST(disambiguateTextures), // Run this first, since it validates the WD.
-		TEST(exports),
-		TEST(testVector3d),
-		TEST(testVector2d),
-		TEST(planeMatrix),
-		TEST(fast_atof),
-		TEST(line2dIntersectWith),
-		TEST(drawPixel),
-		TEST(md2Animation),
-		TEST(guiDisabledMenu),
-		TEST(softwareDevice),
-		TEST(b3dAnimation),
-		TEST(textureRenderStates)
-	};
-	static const unsigned int numberOfTests = sizeof tests / sizeof tests[0];
+	// Note that to interactively debug a test, you will generally want to move it
+	// (temporarily) to the beginning of the list, since each test runs in its own
+	// process.
+	TEST(disambiguateTextures); // Normally you should run this first, since it validates the working directory.
+	TEST(exports);
+	TEST(sceneCollisionManager);
+	TEST(testVector3d);
+	TEST(testVector2d);
+	TEST(planeMatrix);
+	TEST(fast_atof);
+	TEST(line2dIntersectWith);
+	TEST(testDimension2d);
+	TEST(drawPixel);
+	TEST(md2Animation);
+	TEST(guiDisabledMenu);
+	TEST(softwareDevice);
+	TEST(b3dAnimation);
+	TEST(textureRenderStates);
+
+	const unsigned int numberOfTests = tests.size();
 
 	unsigned int testToRun = 0;
 	unsigned int fails = 0;
@@ -113,10 +104,22 @@ int main(int argumentCount, char * arguments[])
 	}
 
 	testToRun++;
-
-	if(testToRun == numberOfTests)
+	if(testToRun < numberOfTests)
 	{
-		logTestString("\nTests finished. %d test%s failed.\n", fails, 1 == fails ? "" : "s");
+		closeTestLog();
+		char runNextTest[256];
+		(void)sprintf(runNextTest, "\"%s\" %d %d", arguments[0], testToRun, fails);
+		fails = system(runNextTest);
+	}
+
+	if(1 == testToRun)
+	{
+		(void)openTestLog(false);
+		const int passed = numberOfTests - fails;
+
+		logTestString("\nTests finished. %d test%s of %d passed.\n",
+			passed, 1 == passed ? "" : "s", numberOfTests);
+
 		if(0 == fails)
 		{
 			time_t rawtime;
@@ -133,13 +136,7 @@ int main(int argumentCount, char * arguments[])
 		}
 		closeTestLog();
 	}
-	else
-	{
-		closeTestLog();
-		char runNextTest[256];
-		(void)sprintf(runNextTest, "\"%s\" %d %d", arguments[0], testToRun, fails);
-		fails = system(runNextTest);
-	}
 
 	return fails;
 }
+

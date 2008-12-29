@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\testDimension2d.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\testUtils.cpp"
 				>
 			</File>
@@ -227,6 +231,10 @@
 			</File>
 			<File
 				RelativePath=".\testVector3d.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\textureRenderStates.cpp"
 				>
 			</File>
 		</Filter>

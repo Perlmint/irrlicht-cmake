@@ -94,6 +94,36 @@ static bool testGetSceneNodeFromScreenCoordinatesBB(IrrlichtDevice * device,
 	return result;
 }
 
+static bool getScaledPickedNodeBB(IrrlichtDevice * device,
+									ISceneManager * smgr,
+									ISceneCollisionManager * collMgr)
+{
+    ISceneNode* farTarget = smgr->addCubeSceneNode(1.f);
+    farTarget->setScale(vector3df(100.f, 100.f, 10.f));
+    farTarget->setPosition(vector3df(0.f, 0.f, 500.f));
+    farTarget->updateAbsolutePosition();
+
+    ISceneNode* nearTarget = smgr->addCubeSceneNode(10.f);
+    nearTarget->setPosition(vector3df(0.f, 0.f, 100.f));
+    nearTarget->updateAbsolutePosition();
+
+	line3df ray(0.f, 0.f, 0.f, 0.f, 0.f, 500.f);
+
+	const ISceneNode * const hit = collMgr->getSceneNodeFromRayBB(ray);
+
+	bool result = (hit == nearTarget);
+
+	if(hit == 0)
+		logTestString("getSceneNodeFromRayBB() didn't hit anything.\n");
+	else if(hit == farTarget)
+		logTestString("getSceneNodeFromRayBB() hit the far (scaled) target.\n");
+
+	if(!result)
+		assert(false);
+
+	return result;
+}
+
 
 /** Test functionality of the sceneCollisionManager */
 bool sceneCollisionManager(void)
@@ -107,6 +137,8 @@ bool sceneCollisionManager(void)
 	ISceneCollisionManager * collMgr = smgr->getSceneCollisionManager();
 
 	bool result = testGetSceneNodeFromScreenCoordinatesBB(device, smgr, collMgr);
+
+	result &= getScaledPickedNodeBB(device, smgr, collMgr);
 
 	device->drop();
 	return result;
