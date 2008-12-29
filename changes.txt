@@ -1,3 +1,7 @@
+Changes in version 1.5.1 (??.?? 2009)
+
+ - MD2 mesh loader: Now uses much less memory, fixed buffer overflow in animation names, reduced number of allocations when loading meshes.
+
 Changes in version 1.5 (15.12.2008)
 
  - Construction calls for FPS camera changed to take speed in units/milliseconds, just as the setSpeed method does.
