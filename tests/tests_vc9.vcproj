@@ -227,6 +227,10 @@
 				RelativePath=".\testVector3d.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\textureRenderStates.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

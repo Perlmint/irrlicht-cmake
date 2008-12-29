@@ -53,6 +53,7 @@ int main(int argumentCount, char * arguments[])
 	extern bool md2Animation(void);
 	extern bool b3dAnimation(void);
 	extern bool guiDisabledMenu(void);
+	extern bool textureRenderStates(void);
 
 	typedef struct _STest
 	{
@@ -75,7 +76,8 @@ int main(int argumentCount, char * arguments[])
 		TEST(md2Animation),
 		TEST(guiDisabledMenu),
 		TEST(softwareDevice),
-		TEST(b3dAnimation)
+		TEST(b3dAnimation),
+		TEST(textureRenderStates)
 	};
 	static const unsigned int numberOfTests = sizeof tests / sizeof tests[0];
 
