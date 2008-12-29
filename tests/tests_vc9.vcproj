@@ -58,6 +58,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="..\lib\Win32-visualstudio\Irrlicht.lib"
 				OutputFile="..\bin\Win32-VisualStudio\$(ProjectName).exe"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
@@ -128,6 +129,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="..\lib\Win32-visualstudio\Irrlicht.lib"
 				OutputFile="..\bin\Win32-VisualStudio\$(ProjectName).exe"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"

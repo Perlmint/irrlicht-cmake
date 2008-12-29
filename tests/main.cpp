@@ -1,16 +1,15 @@
 // This is the entry point for the Irrlicht test suite.
+// This is an MSVC pragma to link against the Irrlicht library.
+// Other builds must link against it in the project files.
+#if defined(_MSC_VER)
+#pragma comment(lib, "Irrlicht.lib")
 #define _CRT_SECURE_NO_WARNINGS
+#endif // _MSC_VER
 
 #include "testUtils.h"
 #include <stdio.h>
 #include <time.h>
 #include <assert.h>
-
-// This is an MSVC pragma to link against the Irrlicht library.
-// Other builds must link against it in the project files.
-#if defined(_MSC_VER)
-#pragma comment(lib, "Irrlicht.lib")
-#endif // _MSC_VER
 
 /* Each test must have the same signature.  Test should (but are not
  * required to) live in a .cpp file of the same name.  There is no
@@ -136,10 +135,9 @@ int main(int argumentCount, char * arguments[])
 	{
 		closeTestLog();
 		char runNextTest[256];
-		(void)sprintf(runNextTest, "%s %d %d", arguments[0], testToRun, fails);
+		(void)sprintf(runNextTest, "\"%s\" %d %d", arguments[0], testToRun, fails);
 		fails = system(runNextTest);
 	}
 
 	return fails;
 }
-
