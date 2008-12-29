@@ -39,6 +39,7 @@ namespace scene
 	OverrideDistanceThreshold(false), UseDefaultRotationPivot(true), ForceRecalculation(false),
 	OldCameraPosition(core::vector3df(-99999.9f, -99999.9f, -99999.9f)),
 	OldCameraRotation(core::vector3df(-99999.9f, -99999.9f, -99999.9f)),
+	OldCameraUp(core::vector3df(-99999.9f, -99999.9f, -99999.9f)),
 	CameraMovementDelta(10.0f), CameraRotationDelta(1.0f),CameraFOVDelta(0.1f),
 	TCoordScale1(1.0f), TCoordScale2(1.0f), FileSystem(fs)
 	{
@@ -557,19 +558,27 @@ namespace scene
 
 	void CTerrainSceneNode::preRenderLODCalculations()
 	{
+		scene::ICameraSceneNode * camera = SceneManager->getActiveCamera();
+		if(!camera)
+			return;
+
 		SceneManager->registerNodeForRendering(this);
 		// Do Not call ISceneNode::OnRegisterSceneNode(), this node should have no children
 
 		// Determine the camera rotation, based on the camera direction.
-		const core::vector3df cameraPosition = SceneManager->getActiveCamera()->getAbsolutePosition();
-		const core::vector3df cameraRotation = core::line3d<f32>(cameraPosition, SceneManager->getActiveCamera()->getTarget()).getVector().getHorizontalAngle();
+		const core::vector3df cameraPosition = camera->getAbsolutePosition();
+		const core::vector3df cameraRotation = core::line3d<f32>(cameraPosition, camera->getTarget()).getVector().getHorizontalAngle();
+		core::vector3df cameraUp = camera->getUpVector();
+		cameraUp.normalize();
 		const f32 CameraFOV = SceneManager->getActiveCamera()->getFOV();
 
 		// Only check on the Camera's Y Rotation
 		if (!ForceRecalculation)
 		{
 			if ((fabsf(cameraRotation.X - OldCameraRotation.X) < CameraRotationDelta) &&
-				(fabsf(cameraRotation.Y - OldCameraRotation.Y) < CameraRotationDelta))
+				(fabsf(cameraRotation.Y - OldCameraRotation.Y) < CameraRotationDelta) &&
+				cameraUp.dotProduct(OldCameraUp) > (1.f - (CameraRotationDelta * 0.001f)) // This multiplier is approximate
+				)
 			{
 				if ((fabs(cameraPosition.X - OldCameraPosition.X) < CameraMovementDelta) &&
 					(fabs(cameraPosition.Y - OldCameraPosition.Y) < CameraMovementDelta) &&
@@ -585,6 +594,7 @@ namespace scene
 
 		OldCameraPosition = cameraPosition;
 		OldCameraRotation = cameraRotation;
+		OldCameraUp = cameraUp;
 		OldCameraFOV = CameraFOV;
 
 		const SViewFrustum* frustum = SceneManager->getActiveCamera()->getViewFrustum();

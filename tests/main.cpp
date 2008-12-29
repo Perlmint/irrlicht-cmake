@@ -69,6 +69,7 @@ int main(int argumentCount, char * arguments[])
 	TEST(softwareDevice);
 	TEST(b3dAnimation);
 	TEST(textureRenderStates);
+	TEST(terrainSceneNode);
 
 	const unsigned int numberOfTests = tests.size();
 
