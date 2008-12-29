@@ -576,15 +576,14 @@ namespace scene
 		if (!ForceRecalculation)
 		{
 			if ((fabsf(cameraRotation.X - OldCameraRotation.X) < CameraRotationDelta) &&
-				(fabsf(cameraRotation.Y - OldCameraRotation.Y) < CameraRotationDelta) &&
-				cameraUp.dotProduct(OldCameraUp) > (1.f - (CameraRotationDelta * 0.001f)) // This multiplier is approximate
-				)
+				(fabsf(cameraRotation.Y - OldCameraRotation.Y) < CameraRotationDelta))
 			{
 				if ((fabs(cameraPosition.X - OldCameraPosition.X) < CameraMovementDelta) &&
 					(fabs(cameraPosition.Y - OldCameraPosition.Y) < CameraMovementDelta) &&
 					(fabs(cameraPosition.Z - OldCameraPosition.Z) < CameraMovementDelta))
 				{
-					if (fabs(CameraFOV-OldCameraFOV) < CameraFOVDelta)
+					if (fabs(CameraFOV-OldCameraFOV) < CameraFOVDelta &&
+						cameraUp.dotProduct(OldCameraUp) > (1.f - (cos(core::DEGTORAD * CameraRotationDelta))))
 					{
 						return;
 					}
