@@ -172,6 +172,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\burningsVideo.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\disambiguateTextures.cpp"
 				>
 			</File>
