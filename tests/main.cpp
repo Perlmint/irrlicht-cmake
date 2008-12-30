@@ -70,6 +70,7 @@ int main(int argumentCount, char * arguments[])
 	TEST(b3dAnimation);
 	TEST(textureRenderStates);
 	TEST(terrainSceneNode);
+	TEST(burningsVideo);
 
 	const unsigned int numberOfTests = tests.size();
 
