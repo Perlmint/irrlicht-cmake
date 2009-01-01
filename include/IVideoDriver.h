@@ -282,8 +282,14 @@ namespace video
 		color values may not be exactly the same in the engine and for
 		example in picture edit programs. To avoid this problem, you
 		could use the makeColorKeyTexture method, which takes the
-		position of a pixel instead a color value. */
-		virtual void makeColorKeyTexture(video::ITexture* texture, video::SColor color) const = 0;
+		position of a pixel instead a color value.
+		\param \deprecated zeroTexels If set to true, then any texels that match
+		the color key will have their color, as well as their alpha, set to zero
+		(i.e. black). This behaviour matches the legacy (buggy) behaviour prior
+		to release 1.5 and is provided for backwards compatibility only.*/
+		virtual void makeColorKeyTexture(video::ITexture* texture,
+										video::SColor color,
+										bool zeroTexels = false) const = 0;
 
 		//! Sets a boolean alpha channel on the texture based on the color at a position.
 		/** This makes the texture fully transparent at the texels where
@@ -292,9 +298,14 @@ namespace video
 		\param texture Texture whose alpha channel is modified.
 		\param colorKeyPixelPos Position of a pixel with the color key
 		color. Every texel with this color will become fully transparent as
-		described above. */
+		described above.
+		\param \deprecated zeroTexels If set to true, then any texels that match
+		the color key will have their color, as well as their alpha, set to zero
+		(i.e. black). This behaviour matches the legacy (buggy) behaviour prior
+		to release 1.5 and is provided for backwards compatibility only.*/
 		virtual void makeColorKeyTexture(video::ITexture* texture,
-			core::position2d<s32> colorKeyPixelPos) const = 0;
+			core::position2d<s32> colorKeyPixelPos,
+			bool zeroTexels = false) const = 0;
 
 		//! Creates a normal map from a height map texture.
 		/** If the target texture has 32 bit, the height value is

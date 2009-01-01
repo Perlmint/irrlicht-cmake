@@ -9,9 +9,13 @@ using namespace core;
 using namespace scene;
 using namespace video;
 
-bool makeColorKeyTexture(void)
+/** Test the behaviour of makeColorKeyTexture() using both 16 bit (software)
+	and 32 bit (Burning) textures, with the new behaviour and the legacy
+	behaviour. */
+static bool doTestWith(E_DRIVER_TYPE driverType,
+						bool zeroTexels)
 {
-	IrrlichtDevice *device = createDevice( EDT_BURNINGSVIDEO,
+	IrrlichtDevice *device = createDevice( driverType,
 											dimension2d<s32>(160, 120), 32);
 	if (!device)
 		return false;
@@ -26,10 +30,12 @@ bool makeColorKeyTexture(void)
 
 	ITexture * Texture = device->getVideoDriver()->getTexture("../media/portal2.bmp");
 
-	// This should result in only the centre of the texture being transparent,
-	// not the black around the edges as well.
-	device->getVideoDriver()->makeColorKeyTexture(Texture,position2d<s32>(64,64));
-	device->getVideoDriver()->makeColorKeyTexture(Texture,position2d<s32>(64,64));
+	device->getVideoDriver()->makeColorKeyTexture(Texture,
+												  position2d<s32>(64,64),
+												  zeroTexels);
+	device->getVideoDriver()->makeColorKeyTexture(Texture,
+												  position2d<s32>(64,64),
+												  zeroTexels);
 
 	(void)smgr->addCameraSceneNode();
 
@@ -44,9 +50,23 @@ bool makeColorKeyTexture(void)
 						true);
 	driver->endScene();
 
-	bool result = takeScreenshotAndCompareAgainstReference(driver, "-makeColorKeyTexture.png");
+	char screenshotName[256];
+	(void)sprintf(screenshotName, "-makeColorKeyTexture-%s.png",
+		zeroTexels? "old" : "new");
+
+	bool result = takeScreenshotAndCompareAgainstReference(driver, screenshotName);
 
 	device->drop();
+
+	return result;
+}
+
+bool makeColorKeyTexture(void)
+{
+	bool result = doTestWith(EDT_SOFTWARE, false);
+	result &= doTestWith(EDT_BURNINGSVIDEO, false);
+	result &= doTestWith(EDT_SOFTWARE, true);
+	result &= doTestWith(EDT_BURNINGSVIDEO, true);
 
 	return result;
 }

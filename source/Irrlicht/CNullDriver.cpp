@@ -854,7 +854,9 @@ const SLight& CNullDriver::getDynamicLight(u32 idx) const
 
 
 //! Creates a boolean alpha channel of the texture based of an color key.
-void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor color) const
+void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
+									video::SColor color,
+									bool zeroTexels) const
 {
 	if (!texture)
 		return;
@@ -883,12 +885,18 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor co
 		const s16 refZeroAlpha = (0x7fff & color.toA1R5G5B5());
 
 		const s32 pixels = pitch * dim.Height;
+
 		for (s32 pixel = 0; pixel < pixels; ++ pixel)
 		{
 			// If the colour matches the reference colour, ignoring alphas,
 			// set the alpha to zero.
 			if(((*p) & 0x7fff) == refZeroAlpha)
-				(*p) = refZeroAlpha;
+			{
+				if(zeroTexels)
+					(*p) = 0;
+				else
+					(*p) = refZeroAlpha;
+			}
 
 			++p;
 		}
@@ -917,7 +925,12 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor co
 			// If the colour matches the reference colour, ignoring alphas,
 			// set the alpha to zero.
 			if(((*p) & 0x00ffffff) == refZeroAlpha)
-				(*p) = refZeroAlpha;
+			{
+				if(zeroTexels)
+					(*p) = 0;
+				else
+					(*p) = refZeroAlpha;
+			}
 
 			++p;
 		}
@@ -930,7 +943,8 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor co
 
 //! Creates an boolean alpha channel of the texture based of an color key position.
 void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
-					core::position2d<s32> colorKeyPixelPos) const
+					core::position2d<s32> colorKeyPixelPos,
+					bool zeroTexels) const
 {
 	if (!texture)
 		return;
@@ -975,7 +989,7 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 	}
 
 	texture->unlock();
-	makeColorKeyTexture(texture, colorKey);
+	makeColorKeyTexture(texture, colorKey, zeroTexels);
 }
 
 
