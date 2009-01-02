@@ -227,7 +227,7 @@ void CNullDriver::disableFeature(E_VIDEO_DRIVER_FEATURE feature, bool flag)
 {
 	FeatureEnabled[feature]=!flag;
 }
-
+ 
 
 //! queries the features of the driver, returns true if feature is available
 bool CNullDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature) const
@@ -853,10 +853,8 @@ const SLight& CNullDriver::getDynamicLight(u32 idx) const
 }
 
 
-//! Creates a boolean alpha channel of the texture based of an color key.
-void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
-									video::SColor color,
-									bool zeroTexels) const
+//! Creates an 1bit alpha channel of the texture based of an color key.
+void CNullDriver::makeColorKeyTexture(video::ITexture* texture, video::SColor color) const
 {
 	if (!texture)
 		return;
@@ -878,27 +876,19 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 			return;
 		}
 
-		const core::dimension2d<s32> dim = texture->getSize();
-		const s32 pitch = texture->getPitch() / 2;
+		core::dimension2d<s32> dim = texture->getSize();
+		s32 pitch = texture->getPitch() / 2;
 
-		// color with alpha disabled (i.e. fully transparent)
-		const s16 refZeroAlpha = (0x7fff & color.toA1R5G5B5());
+		// color with alpha enabled (color opaque)
+		s16 ref = (0x1<<15) | (0x7fff & color.toA1R5G5B5());
 
-		const s32 pixels = pitch * dim.Height;
-
-		for (s32 pixel = 0; pixel < pixels; ++ pixel)
+		for (s32 y=0; y<dim.Height; ++y)
 		{
-			// If the colour matches the reference colour, ignoring alphas,
-			// set the alpha to zero.
-			if(((*p) & 0x7fff) == refZeroAlpha)
+			for (s32 x=0; x<pitch; ++x)
 			{
-				if(zeroTexels)
-					(*p) = 0;
-				else
-					(*p) = refZeroAlpha;
+				s16 c = (0x1<<15) | (0x7fff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
 			}
-
-			++p;
 		}
 
 		texture->unlock();
@@ -916,23 +906,16 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 4;
 
-		// color with alpha disabled (fully transparent)
-		const s32 refZeroAlpha = 0x00ffffff & color.color;
+		// color with alpha enabled (color opaque)
+		s32 ref = 0xff000000 | (0x00ffffff & color.color);
 
-		const s32 pixels = pitch * dim.Height;
-		for (s32 pixel = 0; pixel < pixels; ++ pixel)
+		for (s32 y=0; y<dim.Height; ++y)
 		{
-			// If the colour matches the reference colour, ignoring alphas,
-			// set the alpha to zero.
-			if(((*p) & 0x00ffffff) == refZeroAlpha)
+			for (s32 x=0; x<pitch; ++x)
 			{
-				if(zeroTexels)
-					(*p) = 0;
-				else
-					(*p) = refZeroAlpha;
+				s32 c = (0xff<<24) | (0x00ffffff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
 			}
-
-			++p;
 		}
 
 		texture->unlock();
@@ -941,10 +924,9 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 
 
 
-//! Creates an boolean alpha channel of the texture based of an color key position.
+//! Creates an 1bit alpha channel of the texture based of an color key position.
 void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
-					core::position2d<s32> colorKeyPixelPos,
-					bool zeroTexels) const
+					core::position2d<s32> colorKeyPixelPos) const
 {
 	if (!texture)
 		return;
@@ -956,8 +938,6 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 		return;
 	}
 
-	SColor colorKey;
-
 	if (texture->getColorFormat() == ECF_A1R5G5B5)
 	{
 		s16 *p = (s16*)texture->lock();
@@ -968,11 +948,21 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 			return;
 		}
 
+		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 2;
 
-		const s16 key16Bit = 0x7fff & p[colorKeyPixelPos.Y*pitch + colorKeyPixelPos.X];
+		s16 ref = (0x1<<15) | (0x7fff & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
 
-		colorKey = video::A1R5G5B5toA8R8G8B8(key16Bit);
+		for (s32 y=0; y<dim.Height; ++y)
+		{
+			for (s32 x=0; x<pitch; ++x)
+			{
+				s16 c = (0x1<<15) | (0x7fff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
+			}
+		}
+
+		texture->unlock();
 	}
 	else
 	{
@@ -984,12 +974,22 @@ void CNullDriver::makeColorKeyTexture(video::ITexture* texture,
 			return;
 		}
 
+		core::dimension2d<s32> dim = texture->getSize();
 		s32 pitch = texture->getPitch() / 4;
-		colorKey = 0x00ffffff & p[colorKeyPixelPos.Y*pitch + colorKeyPixelPos.X];
-	}
 
-	texture->unlock();
-	makeColorKeyTexture(texture, colorKey, zeroTexels);
+		s32 ref = (0xff<<24) | (0x00ffffff & p[colorKeyPixelPos.Y*dim.Width + colorKeyPixelPos.X]);
+
+		for (s32 y=0; y<dim.Height; ++y)
+		{
+			for (s32 x=0; x<pitch; ++x)
+			{
+				s32 c = (0xff<<24) | (0x00ffffff & p[y*pitch + x]);
+				p[y*pitch + x] = (c == ref) ? 0 : c;
+			}
+		}
+
+		texture->unlock();
+	}
 }
 
 

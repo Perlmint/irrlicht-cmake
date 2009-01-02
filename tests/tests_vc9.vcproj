@@ -204,10 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\makeColorKeyTexture.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\md2Animation.cpp"
 				>
 			</File>

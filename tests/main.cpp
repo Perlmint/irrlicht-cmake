@@ -71,7 +71,6 @@ int main(int argumentCount, char * arguments[])
 	TEST(textureRenderStates);
 	TEST(terrainSceneNode);
 	TEST(burningsVideo);
-	TEST(makeColorKeyTexture);
 
 	const unsigned int numberOfTests = tests.size();
 
