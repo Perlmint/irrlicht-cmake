@@ -96,9 +96,12 @@ namespace irr
 			//! Changes the visible state of the mouse cursor.
 			virtual void setVisible(bool visible)
 			{
-				IsVisible = visible;
-				updateInternalCursorPosition();
-				setPosition(CursorPos.X, CursorPos.Y);
+				if(visible != IsVisible)
+				{
+					IsVisible = visible;
+					updateInternalCursorPosition();
+					setPosition(CursorPos.X, CursorPos.Y);
+				}
 			}
 
 			//! Returns if the cursor is currently visible.

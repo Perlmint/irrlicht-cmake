@@ -71,6 +71,7 @@ int main(int argumentCount, char * arguments[])
 	TEST(textureRenderStates);
 	TEST(terrainSceneNode);
 	TEST(burningsVideo);
+	TEST(cursorSetVisible);
 
 	const unsigned int numberOfTests = tests.size();
 
@@ -93,7 +94,7 @@ int main(int argumentCount, char * arguments[])
 		fails = (unsigned int)atoi(arguments[2]);
 
 	logTestString("\nStarting test %d, '%s'\n",
-				testToRun, tests[testToRun].testName);
+				testToRun + 1, tests[testToRun].testName);
 
 	bool success = tests[testToRun].testSignature();
 
@@ -101,7 +102,7 @@ int main(int argumentCount, char * arguments[])
 	{
 		logTestString("\n\n\n******** Test failure ********\nTest %d '%s' failed\n"\
 		"******** Test failure ********\n",
-						testToRun, tests[testToRun].testName);
+						testToRun + 1, tests[testToRun].testName);
 		fails++;
 	}
 

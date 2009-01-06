@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\cursorSetVisible.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\disambiguateTextures.cpp"
 				>
 			</File>

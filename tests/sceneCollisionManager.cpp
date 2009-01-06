@@ -1,4 +1,4 @@
-// Copyright (C) 2008 Colin MacDonald
+// Copyright (C) 2008-2009 Colin MacDonald
 // No rights reserved: this software is in the public domain.
 
 #include "testUtils.h"
@@ -41,7 +41,7 @@ static bool testGetSceneNodeFromScreenCoordinatesBB(IrrlichtDevice * device,
 		result = false;
 	}
 
-	// Make cubeNode1 the parent of cubeNode2.  
+	// Make cubeNode1 the parent of cubeNode2.
 	cubeNode2->setParent(cubeNode1);
 
 	// Check visibility.
