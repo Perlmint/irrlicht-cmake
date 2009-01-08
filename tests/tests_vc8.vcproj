@@ -253,6 +253,10 @@
 				RelativePath=".\transparentAlphaChannelRef.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\drawRectOutline.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

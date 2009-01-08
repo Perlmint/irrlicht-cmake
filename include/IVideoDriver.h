@@ -558,7 +558,7 @@ namespace video
 		virtual void draw2DRectangle(SColor color, const core::rect<s32>& pos,
 			const core::rect<s32>* clip = 0) = 0;
 
-		//! Draws an 2d rectangle with a gradient.
+		//! Draws a 2d rectangle with a gradient.
 		/** \param colorLeftUp Color of the upper left corner to draw.
 		The alpha component will not be ignored and specifies how
 		transparent the rectangle will be.
@@ -580,20 +580,28 @@ namespace video
 				SColor colorLeftDown, SColor colorRightDown,
 				const core::rect<s32>* clip = 0) = 0;
 
+		//! Draws the outline of a 2D rectangle.
+		/** \param pos Position of the rectangle.
+		\param color Color of the rectangle to draw. The alpha component
+		specifies how transparent the rectangle outline will be. */
+		virtual void draw2DRectangleOutline(const core::recti& pos,
+				SColor color=SColor(255,255,255,255)) = 0 ;
+
 		//! Draws a 2d line.
-		/** \param start: Screen coordinates of the start of the line
+		/** \param start Screen coordinates of the start of the line
 		in pixels.
-		\param end: Screen coordinates of the start of the line in
+		\param end Screen coordinates of the start of the line in
 		pixels.
-		\param color: Color of the line to draw. */
+		\param color Color of the line to draw. */
 		virtual void draw2DLine(const core::position2d<s32>& start,
 					const core::position2d<s32>& end,
 					SColor color=SColor(255,255,255,255)) = 0;
 
 		//! Draws a pixel.
-		/** \param position: the position of the pixel.
-		\param color: Color of the pixel to draw. */
-		virtual void drawPixel(u32 x, u32 y, const SColor & color) = 0; 
+		/** \param x The x-position of the pixel.
+		\param y The y-position of the pixel.
+		\param color Color of the pixel to draw. */
+		virtual void drawPixel(u32 x, u32 y, const SColor& color) = 0; 
 
 		//! Draws a non filled concyclic regular 2d polyon.
 		/** This method can be used to draw circles, but also
@@ -654,8 +662,8 @@ namespace video
 			video::SColor rightDownEdge = video::SColor(255,0,0,0)) = 0;
 
 		//! Draws a mesh buffer
-		/** \param mb: Buffer to draw; */
-		virtual void drawMeshBuffer( const scene::IMeshBuffer* mb) = 0;
+		/** \param mb Buffer to draw; */
+		virtual void drawMeshBuffer(const scene::IMeshBuffer* mb) = 0;
 
 		//! Sets the fog mode.
 		/** These are global values attached to each 3d object rendered,

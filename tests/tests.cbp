@@ -58,6 +58,7 @@
 		<Unit filename="testVector3d.cpp" />
 		<Unit filename="textureRenderStates.cpp" />
 		<Unit filename="transparentAlphaChannelRef.cpp" />
+		<Unit filename="drawRectOutline.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -73,6 +73,7 @@ int main(int argumentCount, char * arguments[])
 	TEST(burningsVideo);
 	TEST(cursorSetVisible);
 	TEST(transparentAlphaChannelRef);
+	TEST(drawRectOutline);
 
 	const unsigned int numberOfTests = tests.size();
 
