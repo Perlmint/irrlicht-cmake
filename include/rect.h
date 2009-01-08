@@ -252,6 +252,8 @@ namespace core
 		position2d<T> LowerRightCorner;
 	};
 
+	typedef rect<f32> rectf;
+	typedef rect<s32> recti;
 
 } // end namespace core
 } // end namespace irr
