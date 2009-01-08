@@ -247,6 +247,10 @@
 				RelativePath=".\textureRenderStates.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\transparentAlphaChannelRef.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -72,6 +72,7 @@ int main(int argumentCount, char * arguments[])
 	TEST(terrainSceneNode);
 	TEST(burningsVideo);
 	TEST(cursorSetVisible);
+	TEST(transparentAlphaChannelRef);
 
 	const unsigned int numberOfTests = tests.size();
 
