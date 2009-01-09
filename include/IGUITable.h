@@ -79,8 +79,6 @@ namespace gui
 		EGTDF_COUNT
 	};
 
-	class IGUIFont;
-
 	//! Default list box GUI element.
 	class IGUITable : public IGUIElement
 	{

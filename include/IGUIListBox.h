@@ -12,7 +12,6 @@ namespace irr
 {
 namespace gui
 {
-	class IGUIFont;
 	class IGUISpriteBank;
 
 	//! Enumeration for listbox colors
