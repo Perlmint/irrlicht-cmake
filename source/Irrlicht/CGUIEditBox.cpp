@@ -84,6 +84,9 @@ CGUIEditBox::~CGUIEditBox()
 //! Sets another skin independent font.
 void CGUIEditBox::setOverrideFont(IGUIFont* font)
 {
+	if (OverrideFont == font)
+		return;
+
 	if (OverrideFont)
 		OverrideFont->drop();
 

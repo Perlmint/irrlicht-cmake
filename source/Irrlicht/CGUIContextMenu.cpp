@@ -530,8 +530,7 @@ void CGUIContextMenu::draw()
 
 void CGUIContextMenu::recalculateSize()
 {
-	IGUISkin* skin = Environment->getSkin();
-	IGUIFont* font = skin->getFont(EGDF_MENU);
+	IGUIFont* font = Environment->getSkin()->getFont(EGDF_MENU);
 
 	if (!font)
 		return;

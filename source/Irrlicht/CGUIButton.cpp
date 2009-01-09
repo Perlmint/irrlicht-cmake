@@ -291,6 +291,9 @@ void CGUIButton::draw()
 //! sets another skin independent font. if this is set to zero, the button uses the font of the skin.
 void CGUIButton::setOverrideFont(IGUIFont* font)
 {
+	if (OverrideFont == font)
+		return;
+
 	if (OverrideFont)
 		OverrideFont->drop();
 
