@@ -88,8 +88,7 @@ enum EGUI_ELEMENT_TYPE
 	//! Unknown type.
 	EGUIET_ELEMENT,
 
-	//! This enum is never used, it only forces the compiler to
-	//! compile these enumeration values to 32 bit.
+	//! This enum is never used, it only forces the compiler to compile this enumeration to 32 bit.
 	EGUIET_FORCE_32_BIT = 0x7fffffff
 
 };

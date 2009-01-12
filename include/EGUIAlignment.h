@@ -35,3 +35,4 @@ const c8* const GUIAlignmentNames[] =
 } // namespace irr
 
 #endif // __E_GUI_ALIGNMENT_H_INCLUDED__
+

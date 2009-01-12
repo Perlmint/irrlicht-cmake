@@ -358,7 +358,7 @@ struct SJoystickInfo
 	//! The ID of the joystick
 	/** This is an internal Irrlicht index; it does not map directly
 	 * to any particular hardware joystick. It corresponds to the 
-	 * @ref SJoystickEvent Joystick ID. */
+	 * irr::SJoystickEvent Joystick ID. */
 	u8				Joystick;
 
 	//! The name that the joystick uses to identify itself.

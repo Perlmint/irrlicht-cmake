@@ -146,7 +146,7 @@ namespace scene
 		setTarget() will update its rotation so that its +Z axis will
 		point at the target point. FPS camera use this binding by
 		default; other cameras do not.
-		\param binding true to bind the camera's scene node rotation
+		\param bound True to bind the camera's scene node rotation
 		and targetting, false to unbind them.
 		@see getTargetAndRotationBinding() */
 		virtual void bindTargetAndRotation(bool bound) = 0;

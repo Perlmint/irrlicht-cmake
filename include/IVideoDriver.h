@@ -353,19 +353,19 @@ namespace video
 		virtual const core::rect<s32>& getViewPort() const = 0;
 
 		//! Draws a vertex primitive list
-		/** Note that there may be at maximum 65536 vertices, because
-		the index list is an array of 16 bit values each with a maximum
-		value of 65536. If there are more than 65536 vertices in the
-		list, results of this operation are not defined.
+		/** Note that, depending on the index type, some vertices might be not
+		accessible through the index list. The limit is at 65535 vertices for 16bit
+		indices.
 		\param vertices Pointer to array of vertices.
 		\param vertexCount Amount of vertices in the array.
 		\param indexList Pointer to array of indices.
 		\param primCount Amount of Primitives
-		\param vType Vertex type, e.g. EVT_STANDARD for S3DVertex.
-		\param pType Primitive type, e.g. EPT_TRIANGLE_FAN for a triangle fan. */
+		\param vType Vertex type, e.g. video::EVT_STANDARD for S3DVertex.
+		\param pType Primitive type, e.g. scene::EPT_TRIANGLE_FAN for a triangle fan.
+		\param iType Index type, e.g. video::EIT_16BIT for a triangle fan. */
 		virtual void drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
 				const void* indexList, u32 primCount,
-				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType) = 0;
+				E_VERTEX_TYPE vType=EVT_STANDARD, scene::E_PRIMITIVE_TYPE pType=scene::EPT_TRIANGLES, E_INDEX_TYPE iType=EIT_16BIT) = 0;
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because

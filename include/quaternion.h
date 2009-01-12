@@ -115,7 +115,10 @@ class quaternion
 		quaternion& rotationFromTo(const vector3df& from, const vector3df& to);
 
 		//! Quaternion elements.
-		f32 X, Y, Z, W;
+		f32 X; // vectorial (imaginary) part
+		f32 Y;
+		f32 Z;
+		f32 W; // real part
 };
 
 

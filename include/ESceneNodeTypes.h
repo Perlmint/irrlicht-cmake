@@ -70,11 +70,11 @@ namespace scene
 		ESNT_MD3_SCENE_NODE  = MAKE_IRR_ID('m','d','3','_'),
 
 		//! Maya Camera Scene Node
-		//! Legacy, for loading version <= 1.4.x .irr files
+		/** Legacy, for loading version <= 1.4.x .irr files */
 		ESNT_CAMERA_MAYA    = MAKE_IRR_ID('c','a','m','M'),
 
 		//! First Person Shooter Camera
-		//! Legacy, for loading version <= 1.4.x .irr files
+		/** Legacy, for loading version <= 1.4.x .irr files */
 		ESNT_CAMERA_FPS     = MAKE_IRR_ID('c','a','m','F'),
 
 		//! Unknown scene node
