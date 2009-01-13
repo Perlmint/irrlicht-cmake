@@ -10,6 +10,53 @@ using namespace core;
 using namespace scene;
 using namespace video;
 
+// Test that getCollisionPoint() actually uses the closest point, not the closest triangle.
+static bool getCollisionPoint_ignoreTriangleVertices(IrrlichtDevice * device,
+													ISceneManager * smgr,
+													ISceneCollisionManager * collMgr)
+{
+	// Create a cube with a Z face at 5, but corners close to 0
+	ISceneNode * farSmallCube = smgr->addCubeSceneNode(10, 0, -1, vector3df(0, 0, 10));
+
+	// Create a cube with a Z face at 0, but corners far from 0
+	ISceneNode * nearBigCube = smgr->addCubeSceneNode(100, 0, -1, vector3df(0, 0, 50));
+
+	IMetaTriangleSelector * meta = smgr->createMetaTriangleSelector();
+
+	ITriangleSelector * selector = smgr->createTriangleSelectorFromBoundingBox(farSmallCube);
+	meta->addTriangleSelector(selector);
+	selector->drop();
+
+	// We should expect a hit on this cube
+	selector = smgr->createTriangleSelectorFromBoundingBox(nearBigCube);
+	meta->addTriangleSelector(selector);
+	selector->drop();
+
+	line3df ray(0, 0, -5, 0, 0, 100);
+	vector3df hitPosition;
+	triangle3df hitTriangle;
+
+	bool collision = collMgr->getCollisionPoint(ray, meta, hitPosition, hitTriangle);
+
+	meta->drop();
+
+	if(!collision)
+	{
+		logTestString("getCollisionPoint_ignoreTriangleVertices: didn't get a hit.\n");
+		return false;
+	}
+
+	if(hitPosition != vector3df(0, 0, 0))
+	{
+		logTestString("getCollisionPoint_ignoreTriangleVertices: unexpected hit position %f %f %f.\n",
+			hitPosition.X, hitPosition.Y, hitPosition.Z );
+		return false;
+	}
+
+	return true;
+}
+
+
 static bool testGetSceneNodeFromScreenCoordinatesBB(IrrlichtDevice * device,
 													ISceneManager * smgr,
 													ISceneCollisionManager * collMgr)
@@ -139,6 +186,8 @@ bool sceneCollisionManager(void)
 	bool result = testGetSceneNodeFromScreenCoordinatesBB(device, smgr, collMgr);
 
 	result &= getScaledPickedNodeBB(device, smgr, collMgr);
+
+	result &= getCollisionPoint_ignoreTriangleVertices(device, smgr, collMgr);
 
 	device->drop();
 	return result;
