@@ -1029,7 +1029,7 @@ namespace scene
 		//! Creates a fly circle animator, which lets the attached scene node fly around a center.
 		/** \param center: Center of the circle.
 		 \param radius: Radius of the circle.
-		 \param speed: Specifies the speed of the flight.
+		 \param speed: The orbital speed, in radians per millisecond.
 		 \param direction: Specifies the upvector used for alignment of the mesh.
 		 \return The animator. Attach it to a scene node with ISceneNode::addAnimator()
 		 and the animator will animate it.
