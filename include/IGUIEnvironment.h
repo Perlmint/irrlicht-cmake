@@ -62,8 +62,7 @@ class IGUIEnvironment : public virtual IReferenceCounted
 {
 public:
 
-	//! Draws all gui elements by traversing the GUI environment starting
-	//! at the root node.
+	//! Draws all gui elements by traversing the GUI environment starting at the root node.
 	virtual void drawAll() = 0;
 
 	//! Sets the focus to an element.
@@ -75,7 +74,7 @@ public:
 	virtual bool setFocus(IGUIElement* element) = 0;
 
 	//! Returns the element which holds the focus.
-	//! \return Pointer to the element with focus.
+	/** \return Pointer to the element with focus. */
 	virtual IGUIElement* getFocus() const = 0;
 
 	//! Removes the focus from an element.
@@ -91,15 +90,15 @@ public:
 	virtual bool hasFocus(IGUIElement* element) const = 0;
 
 	//! Returns the current video driver.
-	//! \return Pointer to the video driver.
+	/** \return Pointer to the video driver. */
 	virtual video::IVideoDriver* getVideoDriver() const = 0;
 
 	//! Returns the file system.
-	//! \return Pointer to the file system.
+	/** \return Pointer to the file system. */
 	virtual io::IFileSystem* getFileSystem() const = 0;
 
 	//! returns a pointer to the OS operator
-	//! \return Pointer to the OS operator.
+	/** \return Pointer to the OS operator. */
 	virtual IOSOperator* getOSOperator() const = 0;
 
 	//! Removes all elements from the environment.
@@ -119,7 +118,7 @@ public:
 	virtual void setUserEventReceiver(IEventReceiver* evr) = 0;
 
 	//! Returns pointer to the current gui skin.
-	//! \return Pointer to the GUI skin.
+	/** \return Pointer to the GUI skin. */
 	virtual IGUISkin* getSkin() const = 0;
 
 	//! Sets a new GUI Skin
@@ -208,10 +207,10 @@ public:
 	virtual IGUIWindow* addWindow(const core::rect<s32>& rectangle, bool modal = false,
 		const wchar_t* text=0, IGUIElement* parent=0, s32 id=-1) = 0;
 
-	//! Adds a modal screen. This control stops its parent's members from
-	//! being able to recieve input until its last child is removed, it
-	//! then deletes itself.
-	/** \param parent Parent gui element of the modal.
+	//! Adds a modal screen.
+	/** This control stops its parent's members from being able to recieve
+	input until its last child is removed, it then deletes itself.
+	\param parent Parent gui element of the modal.
 	\return Pointer to the created modal. Returns 0 if an error occured.
 	This pointer should not be dropped. See IReferenceCounted::drop() for
 	more information. */
@@ -467,7 +466,7 @@ public:
 		IGUIElement* parent=0, s32 id=-1) = 0;
 
 	//! Adds a table to the environment
-	virtual IGUITable* addTable(const core::rect<s32>& rectangle, 
+	virtual IGUITable* addTable(const core::rect<s32>& rectangle,
 		IGUIElement* parent=0, s32 id=-1, bool drawBackground = false) = 0;
 
 	//! Returns the default element factory which can create all built in elements
@@ -484,7 +483,7 @@ public:
 	virtual void registerGUIElementFactory(IGUIElementFactory* factoryToAdd) = 0;
 
 	//! Returns amount of registered gui element factories.
-	//! \return Amount of registered gui element factories.
+	/** \return Amount of registered gui element factories. */
 	virtual u32 getRegisteredGUIElementFactoryCount() const = 0;
 
 	//! Returns a gui element factory by index
@@ -494,23 +493,23 @@ public:
 	virtual IGUIElement* addGUIElement(const c8* elementName, IGUIElement* parent=0) = 0;
 
 	//! Saves the current gui into a file.
-	//! \param filename Name of the file.
-	//! \param start The GUIElement to start with. Root if 0.
+	/** \param filename Name of the file.
+	\param start The GUIElement to start with. Root if 0. */
 	virtual bool saveGUI(const c8* filename, IGUIElement* start=0) = 0;
 
 	//! Saves the current gui into a file.
-	//! \param file The file to write to.
-	//! \param start The GUIElement to start with. Root if 0.
+	/** \param file The file to write to.
+	\param start The GUIElement to start with. Root if 0. */
 	virtual bool saveGUI(io::IWriteFile* file, IGUIElement* start=0) = 0;
 
 	//! Loads the gui. Note that the current gui is not cleared before.
-	//! \param filename Name of the file .
-	//! \param parent Parent for the loaded GUI, root if 0.
+	/** \param filename Name of the file .
+	\param parent Parent for the loaded GUI, root if 0. */
 	virtual bool loadGUI(const c8* filename, IGUIElement* parent=0) = 0;
 
 	//! Loads the gui. Note that the current gui is not cleared before.
-	//! \param file The file to load from.
-	//! \param parent Parent for the loaded GUI, root if 0.
+	/** \param file The file to load from.
+	\param parent Parent for the loaded GUI, root if 0. */
 	virtual bool loadGUI(io::IReadFile* file, IGUIElement* parent=0) = 0;
 
 	//! Writes attributes of the gui environment
