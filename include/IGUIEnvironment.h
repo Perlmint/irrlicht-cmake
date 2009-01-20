@@ -172,10 +172,10 @@ public:
 	virtual IGUISpriteBank* addEmptySpriteBank(const c8 *name) = 0;
 
 	//! Returns the root gui element.
-	/** This is the first gui element, parent of all other
-	gui elements. You'll never need to use this method, unless you are
-	creating your own gui elements, trying to add them to the gui elements
-	without a parent.
+	/** This is the first gui element, the (direct or indirect) parent of all 
+	other gui elements.  It is a valid IGUIElement, with dimensions the same 
+	size as the screen.	You should not need to use this method directly, unless 
+	you wish to reparent GUI elements to the top level.
 	\return Pointer to the root element of the GUI. The returned pointer
 	should not be dropped. See IReferenceCounted::drop() for more
 	information. */
@@ -208,7 +208,7 @@ public:
 		const wchar_t* text=0, IGUIElement* parent=0, s32 id=-1) = 0;
 
 	//! Adds a modal screen.
-	/** This control stops its parent's members from being able to recieve
+	/** This control stops its parent's members from being able to receive
 	input until its last child is removed, it then deletes itself.
 	\param parent Parent gui element of the modal.
 	\return Pointer to the created modal. Returns 0 if an error occured.
