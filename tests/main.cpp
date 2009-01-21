@@ -13,12 +13,6 @@
 #include <assert.h>
 #include <vector>
 
-// This is an MSVC pragma to link against the Irrlicht library.
-// Other builds must link against it in the project files.
-#if defined(_MSC_VER)
-#pragma comment(lib, "Irrlicht.lib")
-#endif // _MSC_VER
-
 typedef struct _STestDefinition
 {
 	bool(*testSignature)(void);
@@ -140,6 +134,7 @@ int main(int argumentCount, char * arguments[])
 			}
 		}
 		closeTestLog();
+		(void)system("tests.log");
 	}
 
 	return fails;
