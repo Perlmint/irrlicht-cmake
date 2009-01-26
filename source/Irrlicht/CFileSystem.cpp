@@ -207,7 +207,9 @@ core::stringc CFileSystem::getAbsolutePath(const core::stringc& filename) const
 	c8 *p=0;
 
 #ifdef _IRR_WINDOWS_API_
-	#if !defined ( _WIN32_WCE )
+	#if defined ( _WIN32_WCE )
+	return filename;
+	#else
 	c8 fpath[_MAX_PATH];
 	p = _fullpath( fpath, filename.c_str(), _MAX_PATH);
 	#endif

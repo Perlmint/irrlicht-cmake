@@ -123,33 +123,48 @@ public:
 			E_MODULATE_FUNC modulate;
 			unpack_texureBlendFunc ( srcFact, dstFact, modulate, material.MaterialTypeParam );
 
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
-
-			glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, (f32) modulate );
+#ifdef GL_EXT_texture_env_combine
+			if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine) ||
+				Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_EXT_texture_env_combine))
+			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
+				glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, (f32) modulate );
+			}
+#endif
 
 			glBlendFunc( getGLBlend(srcFact), getGLBlend(dstFact) );
 			glEnable(GL_ALPHA_TEST);
 			glAlphaFunc(GL_GREATER, 0.f);
 			glEnable(GL_BLEND);
 
-			if ( getTexelAlpha(srcFact) || getTexelAlpha(dstFact) )
+#ifdef GL_EXT_texture_env_combine
+			if ((Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine) ||
+				Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine)) &&
+				( getTexelAlpha(srcFact) || getTexelAlpha(dstFact) ))
 			{
 				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
 				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE);
 
 				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PRIMARY_COLOR_EXT);
 			}
+#endif
 		}
 	}
 
 	virtual void OnUnsetMaterial()
 	{
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, 1.f );
-		glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
+#ifdef GL_EXT_texture_env_combine
+		if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine) ||
+				Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine))
+		{
+			glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, 1.f );
+			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
+		}
+#endif
 
 		glDisable(GL_BLEND);
 		glDisable(GL_ALPHA_TEST);
@@ -293,14 +308,21 @@ public:
 
 		if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 		{
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+#ifdef GL_EXT_texture_env_combine
+			if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine) ||
+				Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine))
+			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
 
-			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_PRIMARY_COLOR_EXT );
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_REPLACE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_PRIMARY_COLOR_EXT);
 
-			glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT );
-			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
+	//			glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT );
+				glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+			}
+#endif
 
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
@@ -310,14 +332,7 @@ public:
 	virtual void OnUnsetMaterial()
 	{
 		// default values
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_MODULATE );
-		glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_TEXTURE );
-		glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_EXT, GL_PREVIOUS_EXT );
-		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE );
-		glTexEnvf(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
-
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glDisable(GL_BLEND);
 	}
 
@@ -358,7 +373,6 @@ public:
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
-
 			glAlphaFunc(GL_GREATER, material.MaterialTypeParam);
 		}
 	}
@@ -375,7 +389,6 @@ public:
 		return true;
 	}
 };
-
 
 
 //! Transparent alpha channel material renderer
@@ -450,7 +463,10 @@ public:
 					break;
 			}
 
-			if (Driver->queryFeature(EVDF_MULTITEXTURE))
+#ifdef GL_EXT_texture_env_combine
+			if (Driver->queryFeature(EVDF_MULTITEXTURE) &&
+				(Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine) ||
+				Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine)))
 			{
 				// lightmap
 
@@ -483,19 +499,24 @@ public:
 						glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, 1.0f);
 				}
 			}
+#endif
 		}
 	}
 
 	virtual void OnUnsetMaterial()
 	{
-		if (Driver->queryFeature(EVDF_MULTITEXTURE))
+#ifdef GL_EXT_texture_env_combine
+		if (Driver->queryFeature(EVDF_MULTITEXTURE) &&
+			(Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine) ||
+				Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_ARB_texture_env_combine)))
 		{
 			Driver->extGlActiveTexture(GL_TEXTURE1_ARB);
 			glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_EXT, 1.f );
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			Driver->extGlActiveTexture(GL_TEXTURE0_ARB);
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
+#endif
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 };
 
