@@ -21,7 +21,7 @@ COpenGLExtensionHandler::COpenGLExtensionHandler() :
 		MultiTextureExtension(false), MultiSamplingExtension(false), AnisotropyExtension(false),
 		TextureCompressionExtension(false),
 		MaxTextureUnits(1), MaxLights(1), MaxIndices(65535),
-		MaxAnisotropy(1.0f), MaxUserClipPlanes(0),
+		MaxAnisotropy(1.0f), MaxUserClipPlanes(0), MaxMultipleRenderTargets(1),
 		Version(0), ShaderLanguageVersion(0)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	,pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
@@ -45,6 +45,7 @@ COpenGLExtensionHandler::COpenGLExtensionHandler() :
 	pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
 	pGlBindRenderbufferEXT(0), pGlDeleteRenderbuffersEXT(0), pGlGenRenderbuffersEXT(0),
 	pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0),
+	pGlDrawBuffersARB(0), pGlDrawBuffersATI(0),
 	pGlGenBuffersARB(0), pGlBindBufferARB(0), pGlBufferDataARB(0), pGlDeleteBuffersARB(0),
 	pGlBufferSubDataARB(0), pGlGetBufferSubDataARB(0), pGlMapBufferARB(0), pGlUnmapBufferARB(0),
 	pGlIsBufferARB(0), pGlGetBufferParameterivARB(0), pGlGetBufferPointervARB(0)
@@ -163,6 +164,8 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 	pGlGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC) wglGetProcAddress("glGenRenderbuffersEXT");
 	pGlRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress("glRenderbufferStorageEXT");
 	pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) wglGetProcAddress("glFramebufferRenderbufferEXT");
+	pGlDrawBuffersARB = (PFNGLDRAWBUFFERSARBPROC) wglGetProcAddress("glDrawBuffersARB");
+	pGlDrawBuffersATI = (PFNGLDRAWBUFFERSATIPROC) wglGetProcAddress("glDrawBuffersATI");
 
 	// get vertex buffer extension
 	pGlGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wglGetProcAddress("glGenBuffersARB");
@@ -352,6 +355,12 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 	pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)
 	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glFramebufferRenderbufferEXT"));
 
+	pGlDrawBuffersARB = (PFNGLDRAWBUFFERSARBPROC)
+	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDrawBuffersARB"));
+
+	pGlDrawBuffersATI = (PFNGLDRAWBUFFERSATIPROC)
+	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDrawBuffersATI"));
+
 	pGlGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
 	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenBuffersARB"));
 
@@ -406,6 +415,19 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 #ifdef GL_VERSION_1_2
 	if (Version>101)
 		glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &MaxIndices);
+#endif
+#ifdef ARB_draw_buffers
+	if (FeatureAvailable[IRR_ARB_draw_buffers])
+	{
+		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ARB, reinterpret_cast<GLint*>(&MaxUserClipPlanes));
+		MaxMultipleRenderTargets = static_cast<u8>(MaxUserClipPlanes);
+	}
+#elif defined(ATI_draw_buffers)
+	if (FeatureAvailable[IRR_ATI_draw_buffers])
+	{
+		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ATI, reinterpret_cast<GLint*>(&MaxUserClipPlanes));
+		MaxMultipleRenderTargets = static_cast<u8>(MaxUserClipPlanes);
+	}
 #endif
 	glGetIntegerv(GL_MAX_CLIP_PLANES, reinterpret_cast<GLint*>(&MaxUserClipPlanes));
 #if defined(GL_ARB_shading_language_100) || defined (GL_VERSION_2_0)
