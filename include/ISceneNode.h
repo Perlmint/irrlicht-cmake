@@ -406,8 +406,11 @@ namespace scene
 		}
 
 
-		//! Gets the relative scale of the scene node.
-		/** \return The scale of the scene node. */
+		//! Gets the scale of the scene node relative to its parent.
+		/** This is the scale of this node relative to its parent. 
+        If you want the absolute scale, use 
+        getAbsoluteTransformation().getScale()
+        \return The scale of the scene node. */
 		virtual const core::vector3df& getScale() const
 		{
 			return RelativeScale;
@@ -415,15 +418,17 @@ namespace scene
 
 
 		//! Sets the relative scale of the scene node.
-		/** \param scale New scale of the node */
+		/** \param scale New scale of the node, relative to its parent. */
 		virtual void setScale(const core::vector3df& scale)
 		{
 			RelativeScale = scale;
 		}
 
 
-		//! Gets the rotation of the node.
+		//! Gets the rotation of the node relative to its parent.
 		/** Note that this is the relative rotation of the node.
+        If you want the absolute rotation, use
+        getAbsoluteTransformation().getRotation()
 		\return Current relative rotation of the scene node. */
 		virtual const core::vector3df& getRotation() const
 		{
@@ -431,7 +436,7 @@ namespace scene
 		}
 
 
-		//! Sets the rotation of the node.
+		//! Sets the rotation of the node relative to its parent.
 		/** This only modifies the relative rotation of the node.
 		\param rotation New rotation of the node in degrees. */
 		virtual void setRotation(const core::vector3df& rotation)
@@ -440,8 +445,9 @@ namespace scene
 		}
 
 
-		//! Gets the position of the node.
-		/** Note that the position is relative to the parent.
+		//! Gets the position of the node relative to its parent.
+		/** Note that the position is relative to the parent. If you want
+        the position in world coordinates, use getAbsolutePosition() instead.
 		\return The current position of the node relative to the parent. */
 		virtual const core::vector3df& getPosition() const
 		{
@@ -449,17 +455,19 @@ namespace scene
 		}
 
 
-		//! Sets the position of the node.
+		//! Sets the position of the node relative to its parent.
 		/** Note that the position is relative to the parent.
-		\param newpos New relative postition of the scene node. */
+		\param newpos New relative position of the scene node. */
 		virtual void setPosition(const core::vector3df& newpos)
 		{
 			RelativeTranslation = newpos;
 		}
 
 
-		//! Gets the abolute position of the node.
-		/** \return The current absolute position of the scene node. */
+		//! Gets the absolute position of the node in world coordinates.
+		/** If you want the position of the node relative to its parent,
+        use getPosition() instead.
+        \return The current absolute position of the scene node. */
 		virtual core::vector3df getAbsolutePosition() const
 		{
 			return AbsoluteTransformation.getTranslation();
