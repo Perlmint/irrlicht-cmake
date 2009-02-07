@@ -49,6 +49,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="md2Animation.cpp" />
 		<Unit filename="planeMatrix.cpp" />
+		<Unit filename="removeCustomAnimator.cpp" />
 		<Unit filename="sceneCollisionManager.cpp" />
 		<Unit filename="softwareDevice.cpp" />
 		<Unit filename="terrainSceneNode.cpp" />

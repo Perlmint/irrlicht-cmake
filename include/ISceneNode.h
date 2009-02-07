@@ -107,8 +107,15 @@ namespace scene
 				// animate this node with all animators
 
 				core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
-				for (; ait != Animators.end(); ++ait)
-					(*ait)->animateNode(this, timeMs);
+				while (ait != Animators.end())
+					{
+					// continue to the next node before calling animateNode()
+					// so that the animator may remove itself from the scene
+					// node without the iterator becoming invalid
+					ISceneNodeAnimator* anim = *ait;
+					++ait;
+					anim->animateNode(this, timeMs);
+				} 
 
 				// update absolute position
 				updateAbsolutePosition();

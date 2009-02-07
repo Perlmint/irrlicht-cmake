@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\drawRectOutline.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\exports.cpp"
 				>
 			</File>
@@ -213,6 +217,10 @@
 			</File>
 			<File
 				RelativePath=".\planeMatrix.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\removeCustomAnimator.cpp"
 				>
 			</File>
 			<File
@@ -249,10 +257,6 @@
 			</File>
 			<File
 				RelativePath=".\transparentAlphaChannelRef.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\drawRectOutline.cpp"
 				>
 			</File>
 		</Filter>
