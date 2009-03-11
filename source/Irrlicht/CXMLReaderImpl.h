@@ -612,7 +612,7 @@ private:
 			convertTextData(data16+1, data8, (size/2)-1); // data16+1 because we need to skip the header
 		}
 		else
-		if (size >= 3 && data8[0] == UTF8[0] && data8[1] == UTF8[1] && data8[2] == UTF8[2])
+		if (size >= 3 && memcmp(data8,UTF8,3)==0)
 		{
 			// UTF-8
 			SourceFormat = ETF_UTF8;
