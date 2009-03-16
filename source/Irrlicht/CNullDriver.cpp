@@ -195,6 +195,10 @@ void CNullDriver::addExternalImageWriter(IImageWriter* writer)
 //! deletes all textures
 void CNullDriver::deleteAllTextures()
 {
+	// we need to remove previously set textures which might otherwise be kept in the
+	// last set material member. Could be optimized to reduce state changes.
+	setMaterial(SMaterial());
+
 	for (u32 i=0; i<Textures.size(); ++i)
 		Textures[i].Surface->drop();
 
