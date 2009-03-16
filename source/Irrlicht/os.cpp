@@ -69,11 +69,9 @@ namespace os
 	void Printer::print(const c8* message)
 	{
 #if !defined (_WIN32_WCE )
-		c8* tmp = new c8[strlen(message) + 2];
-		sprintf(tmp, "%s\n", message);
-		OutputDebugString(tmp);
-		printf(tmp);
-		delete [] tmp;
+		OutputDebugString(message);
+		OutputDebugString("\n");
+		printf("%s\n", message);
 #endif
 	}
 
