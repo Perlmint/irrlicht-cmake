@@ -2532,20 +2532,23 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
 
 	glBegin(GL_QUADS);
 
 	glColor4ub(leftDownEdge.getRed(), leftDownEdge.getGreen(), leftDownEdge.getBlue(), leftDownEdge.getAlpha());
-	glVertex3f(-1.1f,-1.1f,0.9f);
+	glVertex3f(-1.f,-1.f,-0.9f);
 
 	glColor4ub(leftUpEdge.getRed(), leftUpEdge.getGreen(), leftUpEdge.getBlue(), leftUpEdge.getAlpha());
-	glVertex3f(-1.1f, 1.1f,0.9f);
+	glVertex3f(-1.f, 1.f,-0.9f);
 
 	glColor4ub(rightUpEdge.getRed(), rightUpEdge.getGreen(), rightUpEdge.getBlue(), rightUpEdge.getAlpha());
-	glVertex3f(1.1f, 1.1f,0.9f);
+	glVertex3f(1.f, 1.f,-0.9f);
 
 	glColor4ub(rightDownEdge.getRed(), rightDownEdge.getGreen(), rightDownEdge.getBlue(), rightDownEdge.getAlpha());
-	glVertex3f(1.1f,-1.1f,0.9f);
+	glVertex3f(1.f,-1.f,-0.9f);
 
 	glEnd();
 
@@ -2553,6 +2556,8 @@ void COpenGLDriver::drawStencilShadow(bool clearStencilBuffer, video::SColor lef
 		glClear(GL_STENCIL_BUFFER_BIT);
 
 	// restore settings
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	glPopAttrib();
 }
