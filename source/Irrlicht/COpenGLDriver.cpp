@@ -539,6 +539,10 @@ bool COpenGLDriver::genericDriverInit(const core::dimension2d<s32>& screenSize, 
 	// create matrix for flipping textures
 	TextureFlipMatrix.buildTextureTransform(0.0f, core::vector2df(0,0), core::vector2df(0,1.0f), core::vector2df(1.0f,-1.0f));
 
+	// We need to reset once more at the beginning of the first rendering.
+	// This fixes problems with intermediate changes to the material during texture load.
+	ResetRenderStates = true;
+
 	return true;
 }
 
