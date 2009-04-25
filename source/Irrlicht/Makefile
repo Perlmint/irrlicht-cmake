@@ -1,5 +1,5 @@
-VERSION = 1.5
-# Irrlicht Engine 1.5
+VERSION = 1.5.1-SVN
+# Irrlicht Engine 1.5.1-SVN
 # Makefile for Linux
 #
 # To use, just run:
