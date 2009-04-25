@@ -264,10 +264,14 @@ core::stringc CFileSystem::getFileBasename(const core::stringc& filename, bool k
 	s32 lastSlash = filename.findLast('/');
 	const s32 lastBackSlash = filename.findLast('\\');
 	lastSlash = core::max_(lastSlash, lastBackSlash);
+
+	// get number of chars after last dot
 	s32 end = 0;
 	if (!keepExtension)
 	{
-		end = filename.findLast('.');
+		// take care to search only after last slash to check only for
+		// dots in the filename
+		end = filename.findLast('.', lastSlash);
 		if (end == -1)
 			end=0;
 		else
