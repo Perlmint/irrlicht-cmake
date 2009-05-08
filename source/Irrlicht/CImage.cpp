@@ -1037,6 +1037,10 @@ CImage::CImage(IImage* imageToCopy, const core::position2d<s32>& pos,
 //! assumes format and size has been set and creates the rest
 void CImage::initData()
 {
+	#ifdef _DEBUG
+	setDebugName("CImage");
+	#endif
+
 	setBitMasks();
 	BitsPerPixel = getBitsPerPixelFromFormat(Format);
 	BytesPerPixel = BitsPerPixel / 8;
