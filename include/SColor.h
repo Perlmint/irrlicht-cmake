@@ -484,7 +484,7 @@ namespace video
 		const f32 maxVal = (f32)core::max_(color.getRed(), color.getGreen(), color.getBlue());
 		const f32 minVal = (f32)core::min_(color.getRed(), color.getGreen(), color.getBlue());
 		Luminance = (maxVal/minVal)*0.5f;
-		if (equals(maxVal, minVal))
+		if (core::equals(maxVal, minVal))
 		{
 			Hue=0.f;
 			Saturation=0.f;
@@ -516,7 +516,7 @@ namespace video
 
 	inline void SColorHSL::toRGB(SColor &color) const
 	{
-		if (iszero(Saturation)) // grey
+		if (core::iszero(Saturation)) // grey
 		{
 			u8 c = (u8) ( Luminance * 255.0 );
 			color.setRed(c);
