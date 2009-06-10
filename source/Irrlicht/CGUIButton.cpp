@@ -305,15 +305,14 @@ void CGUIButton::setOverrideFont(IGUIFont* font)
 //! Sets an image which should be displayed on the button when it is in normal state.
 void CGUIButton::setImage(video::ITexture* image)
 {
+    if (image)
+        image->grab();
 	if (Image)
 		Image->drop();
 
 	Image = image;
 	if (image)
 		ImageRect = core::rect<s32>(core::position2d<s32>(0,0), image->getOriginalSize());
-
-	if (Image)
-		Image->grab();
 
 	if (!PressedImage)
 		setPressedImage(Image);
@@ -323,14 +322,13 @@ void CGUIButton::setImage(video::ITexture* image)
 //! Sets the image which should be displayed on the button when it is in its normal state.
 void CGUIButton::setImage(video::ITexture* image, const core::rect<s32>& pos)
 {
+    if (image)
+        image->grab();
 	if (Image)
 		Image->drop();
 
 	Image = image;
 	ImageRect = pos;
-
-	if (Image)
-		Image->grab();
 
 	if (!PressedImage)
 		setPressedImage(Image, pos);
@@ -340,29 +338,28 @@ void CGUIButton::setImage(video::ITexture* image, const core::rect<s32>& pos)
 //! Sets an image which should be displayed on the button when it is in pressed state.
 void CGUIButton::setPressedImage(video::ITexture* image)
 {
+    if (image)
+        image->grab();
+
 	if (PressedImage)
 		PressedImage->drop();
 
 	PressedImage = image;
 	if (image)
 		PressedImageRect = core::rect<s32>(core::position2d<s32>(0,0), image->getOriginalSize());
-
-	if (PressedImage)
-		PressedImage->grab();
 }
 
 
 //! Sets the image which should be displayed on the button when it is in its pressed state.
 void CGUIButton::setPressedImage(video::ITexture* image, const core::rect<s32>& pos)
 {
+     if (image)
+         image->grab();
 	if (PressedImage)
 		PressedImage->drop();
 
 	PressedImage = image;
 	PressedImageRect = pos;
-
-	if (PressedImage)
-		PressedImage->grab();
 }
 
 
