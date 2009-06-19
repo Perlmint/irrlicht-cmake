@@ -1435,6 +1435,7 @@ IGUISpriteBank* CGUIEnvironment::addEmptySpriteBank(const c8 *name)
 		b.Filename = "";
 	else
 		b.Filename = name;
+	b.Filename.make_lower();
 
 	const s32 index = Banks.binary_search(b);
 	if (index != -1)

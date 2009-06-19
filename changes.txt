@@ -1,5 +1,13 @@
 Changes in version 1.5.1 (??.?? 2009)
 
+ - bugfix: Use make_lower throughout for spritebank filenames (found and patched by Ion Dune)
+
+ - bugfix: CUnZipReader::openFile no longer returns true for empty files. Corresponding test added.
+
+ - Fixed problem with highlighting menus when mouse was outside sub-menu area. 
+
+ - bugfix (2796207): menu acted (wrongly) on left-click down instead of left-click up.
+
  - Fix loading of Collada files from irrEdit 1.2
 
  - Update to libpng 1.2.35, fixed issues on 64bit machines with system's libpng.
