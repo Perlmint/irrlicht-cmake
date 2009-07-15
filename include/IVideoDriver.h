@@ -681,8 +681,8 @@ namespace video
 		you want per-pixel fog.
 		\param rangeFog Set this to true to enable range-based vertex
 		fog. The distance from the viewer is used to compute the fog,
-		not the z-coordinate. This is better, but slower. This is only
-		available with D3D and vertex fog. */
+		not the z-coordinate. This is better, but slower. This might not
+		be available with all drivers and fog settings. */
 		virtual void setFog(SColor color=SColor(0,255,255,255),
 				bool linearFog=true, f32 start=50.0f, f32 end=100.0f,
 				f32 density=0.01f,
