@@ -112,8 +112,7 @@ int main(int argumentCount, char * arguments[])
 		(void)sprintf(runNextTest, "\"%s\" %d %d", arguments[0], testToRun, fails);
 		fails = system(runNextTest);
 	}
-
-	if(1 == testToRun)
+	else
 	{
 		(void)openTestLog(false);
 		const int passed = numberOfTests - fails;
@@ -136,7 +135,11 @@ int main(int argumentCount, char * arguments[])
 			}
 		}
 		closeTestLog();
+#ifdef WIN32
 		(void)system("tests.log");
+#else
+		(void)system("$PAGER tests.log");
+#endif
 	}
 
 	return fails;
