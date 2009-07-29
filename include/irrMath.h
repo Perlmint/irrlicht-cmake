@@ -183,6 +183,12 @@ namespace core
 	}
 
 	//! returns if a equals zero, taking rounding errors into account
+	inline bool iszero(const f64 a, const f64 tolerance = ROUNDING_ERROR_64)
+	{
+		return fabs(a) <= tolerance;
+	}
+
+	//! returns if a equals zero, taking rounding errors into account
 	inline bool iszero(const f32 a, const f32 tolerance = ROUNDING_ERROR_32)
 	{
 		return fabsf ( a ) <= tolerance;
