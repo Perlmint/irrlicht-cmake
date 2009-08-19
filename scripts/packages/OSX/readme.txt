@@ -12,9 +12,7 @@ Build steps are as follows-
 
  * Choose release mode and build Irrlicht.framework
 
- * Close the project and open the one in examples/BuildAllExamples.XCode
-
- * Build the All target in release mode
+ ** For the moment it's not worth installing the sample binaries, they can't be launched due to console input
 
 3) Build the documentation
 
