@@ -10,7 +10,11 @@ Build steps are as follows-
 
  * Navigate to source/Irrlicht/MacOSX and open the XCode project
 
- * Choose release mode, and build each of the examples in turn.
+ * Choose release mode and build Irrlicht.framework
+
+ * Close the project and open the one in examples/BuildAllExamples.XCode
+
+ * Build the All target in release mode
 
 3) Build the documentation
 
@@ -20,7 +24,7 @@ Build steps are as follows-
 
   sudo apt-get install doxygen
 
- *  Now run the makedocumentation bash script:
+ * Now run the makedocumentation bash script:
   ./makedocumentation.sh
 
 4) Now double click the package file and build it.
