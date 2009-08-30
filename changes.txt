@@ -1,5 +1,7 @@
 Changes in version 1.5.1 (??.?? 2009)
 
+ - Fix cursor problems found by buffer and by rvl2 as described in http://irrlicht.sourceforge.net/phpBB2/viewtopic.php?t=34823&highlight=
+
  - Make sure a missing font does not corrupt the skin.
 
  - Fix getAngle in vector2d as suggested by xray. This has only a minor impact on s32 vectors.
