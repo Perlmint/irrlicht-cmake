@@ -170,6 +170,7 @@ IAnimatedMesh* CLWOMeshFileLoader::createMesh(io::IReadFile* file)
 		const core::array<u32>& poly = Indices[polyIndex];
 		const u32 polySize=poly.size();
 		video::S3DVertex vertex;
+		vertex.Color=0xffffffff;
 		for (u32 i=0; i<polySize; ++i)
 		{
 			const s32 j=poly[i];
@@ -428,6 +429,7 @@ void CLWOMeshFileLoader::readObj1(u32 size)
 	u16 numVerts, vertIndex;
 	s16 material;
 	video::S3DVertex vertex;
+	vertex.Color=0xffffffff;
 
 	while (size!=0)
 	{
