@@ -1453,7 +1453,6 @@ void CBurningVideoDriver::lightVertex ( s4DVertex *dest, const S3DVertex *source
 		sVec4 vp;			// unit vector vertex to light
 		sVec4 lightHalf;		// blinn-phong reflection
 
-
 		switch ( light.org.Type )
 		{
 			case video::ELT_POINT:
@@ -1503,7 +1502,11 @@ void CBurningVideoDriver::lightVertex ( s4DVertex *dest, const S3DVertex *source
 			} break;
 
 			default:
-				break;
+			{
+				// initialize to some dummy
+				vp=sVec4(0.f,0.f,1.f,1.f);
+				lightHalf=sVec4(0.f,0.f,1.f,1.f);
+			} break;
 		}
 
 		// build diffuse reflection
