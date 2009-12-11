@@ -5,7 +5,6 @@
 #include "testUtils.h"
 #include <memory.h>
 #include <stdio.h>
-#include <assert.h>
 #include <stdarg.h>
 
 #if defined(_MSC_VER) && !defined(NDEBUG)

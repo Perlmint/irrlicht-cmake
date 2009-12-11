@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="tests"
 	ProjectGUID="{2A1DE18B-F678-4A94-A996-E848E20B2983}"
 	RootNamespace="tests"
@@ -197,6 +197,10 @@
 			</File>
 			<File
 				RelativePath=".\fast_atof.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\filesystem.cpp"
 				>
 			</File>
 			<File

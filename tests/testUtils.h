@@ -3,6 +3,7 @@
 #define _TEST_UTILS_H_ 1
 
 #include "irrlicht.h"
+#include <assert.h>
 
 //! Compare two files
 /** \param fileName1 The first file for comparison.

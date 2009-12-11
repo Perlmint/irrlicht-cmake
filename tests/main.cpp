@@ -135,7 +135,7 @@ int main(int argumentCount, char * arguments[])
 			}
 		}
 		closeTestLog();
-#ifdef WIN32
+#ifdef _WIN32
 		(void)system("tests.log");
 #else
 		(void)system("$PAGER tests.log");
