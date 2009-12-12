@@ -212,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\loadTextures.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
