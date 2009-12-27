@@ -1,4 +1,4 @@
-Changes in version 1.5.2 (??.??.2009)
+Changes in version 1.5.2 (16.12.2009)
 
  - Properly check boundaries in getFont and setFont.
 
