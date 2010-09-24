@@ -74,7 +74,8 @@ CD3D9Driver::~CD3D9Driver()
 	deleteAllTextures();
 
 	// drop the main depth buffer
-	DepthBuffers[0]->drop();
+	if (DepthBuffers.size())
+		DepthBuffers[0]->drop();
 
 	// drop d3d9
 
