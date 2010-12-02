@@ -387,7 +387,7 @@ ITexture* CNullDriver::getTexture(const io::path& filename)
 	// Now try to open the file using the complete path.
 	io::IReadFile* file = FileSystem->createAndOpenFile(absolutePath);
 
-	if(!file)
+	if (!file)
 	{
 		// Try to open it using the raw filename.
 		file = FileSystem->createAndOpenFile(filename);
@@ -442,10 +442,10 @@ ITexture* CNullDriver::getTexture(io::IReadFile* file)
 			addTexture(texture);
 			texture->drop(); // drop it because we created it, one grab too much
 		}
-	}
 
-	if (!texture)
-		os::Printer::log("Could not load texture", file->getFileName(), ELL_WARNING);
+		if (!texture)
+			os::Printer::log("Could not load texture", file->getFileName(), ELL_WARNING);
+	}
 
 	return texture;
 }
