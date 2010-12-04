@@ -110,7 +110,7 @@ ISceneNode* CDefaultSceneNodeFactory::addSceneNode(ESCENE_NODE_TYPE type, IScene
 	case ESNT_PARTICLE_SYSTEM:
 		return Manager->addParticleSystemSceneNode(true, parent);
 	case ESNT_VOLUME_LIGHT:
-		return Manager->addVolumeLightSceneNode(parent);
+		return (ISceneNode*)Manager->addVolumeLightSceneNode(parent);
 	default:
 		break;
 	}
