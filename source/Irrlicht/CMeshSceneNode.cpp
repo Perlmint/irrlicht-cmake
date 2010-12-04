@@ -281,15 +281,15 @@ u32 CMeshSceneNode::getMaterialCount() const
 //! Sets a new mesh
 void CMeshSceneNode::setMesh(IMesh* mesh)
 {
-	if (!mesh)
-		return; // won't set null mesh
+	if (mesh)
+	{
+		mesh->grab();
+		if (Mesh)
+			Mesh->drop();
 
-    mesh->grab();
-	if (Mesh)
-		Mesh->drop();
-
-	Mesh = mesh;
-	copyMaterials();
+		Mesh = mesh;
+		copyMaterials();
+	}
 }
 
 
