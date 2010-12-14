@@ -1,3 +1,5 @@
+ - Fix crash in multiline-editbox when selecting with mouse (thx @ ceyron for reporting and testcase)
+
  - Q3 maps no longer crash when faces try accessing lightmaps which are not mentioned to be loaded in the file.
 
  - Get particles saved before 1.7.2 (for example in irrEdit) working again (thx to smashly for problem reporting)
