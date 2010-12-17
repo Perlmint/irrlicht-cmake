@@ -1,3 +1,7 @@
+ - ModalScreen now no longer takes focus itself, but tries to give it first child when possible to fix modal windows losing focus all the time
+
+ - Modal screens no longer blinks when gui-elements call removeFocus on themself (thx @ yaten for reporting+testcase)
+
  - Fix crash in multiline-editbox when selecting with mouse (thx @ ceyron for reporting and testcase)
 
  - Q3 maps no longer crash when faces try accessing lightmaps which are not mentioned to be loaded in the file.
