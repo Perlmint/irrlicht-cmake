@@ -1,4 +1,8 @@
- - ModalScreen now no longer takes focus itself, but tries to give it first child when possible to fix modal windows losing focus all the time
+ - Tab-positions care now about the borders correctly
+
+ - TabControl now respositions it's tabs when setTabVerticalAlignment is changed (thx @ ceyron for reporting+testcase)
+
+ - CGUIModalScreen now no longer takes focus itself, but tries to give it first child when possible to fix modal windows losing focus all the time
 
  - Modal screens no longer blinks when gui-elements call removeFocus on themself (thx @ yaten for reporting+testcase)
 
