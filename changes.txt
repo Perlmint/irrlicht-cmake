@@ -1,3 +1,5 @@
+Changes in 1.7.3 (??.??.2011)
+
  - Tab-positions care now about the borders correctly
 
  - TabControl now respositions it's tabs when setTabVerticalAlignment is changed (thx @ ceyron for reporting+testcase)
@@ -21,7 +23,7 @@
  - Treeview can now be disabled
 
 -----------------------------
-Changes in 1.7.2 (??.??.2010)
+Changes in 1.7.2 (15.11.2010)
 
  - Fix blend mode setup in OpenGL driver, when using the material2d override, as pointed out by Auria
 
