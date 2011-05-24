@@ -1,5 +1,11 @@
 Changes in 1.7.3 (??.??.2011)
 
+ - Fix array::erase which did destroy objects more than once when used with a range (thx @ RedDragCZ for reporting + testcase).
+
+ - Copy now all membervariables for CCameraSceneNode when cloning.
+
+ - ICameraSceneNode::IsOrthogonal is correctly serialized and cloned now.
+
  - CGUIScrollBar passes unused mousemove-events now to parent element. Fixes focus-bug in ComboBox reported by REDDemon here: http://irrlicht.sourceforge.net/phpBB2/viewtopic.php?t=43474&highlight=
 
  - Fix clipping in CGUITabControl
