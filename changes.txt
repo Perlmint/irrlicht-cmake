@@ -1,5 +1,8 @@
 Changes in 1.7.3 (??.??.2011)
- - Fix problems in Textwrapping in CGUIStaticText. Did use wrong size and did ignore last word of the text in wrapping (thx @ Reiko for bugreport)
+
+ - EMIE_MOUSE_WHEEL messages now handled correctly in several gui-element when wheel isn't just 1.0 or -1.0 (thx @ Reiko for reporting)
+
+ - Fix problems in Textwrapping in CGUIStaticText. Did use wrong size and did ignore last word of the text (thx @ Reiko for bugreport)
 
  - Fix crash in collada (.dae) loading
   
