@@ -267,7 +267,9 @@ void CGUIStaticText::breakText()
 	core::stringw whitespace;
 	s32 size = Text.size();
 	s32 length = 0;
-	s32 elWidth = RelativeRect.getWidth() - 6;
+	s32 elWidth = RelativeRect.getWidth();
+	if (Border)
+		elWidth -= 2*skin->getSize(EGDS_TEXT_DISTANCE_X);
 	wchar_t c;
 
 	for (s32 i=0; i<size; ++i)
@@ -291,8 +293,16 @@ void CGUIStaticText::breakText()
 			c = '\0';
 		}
 
-		if (c == L' ' || c == 0 || i == (size-1))
+		bool isWhitespace = (c == L' ' || c == 0);
+		if ( !isWhitespace )
 		{
+			// part of a word
+			word += c;
+		}
+
+		if ( isWhitespace || i == (size-1))
+		{
+
 			if (word.size())
 			{
 				// here comes the next whitespace, look if
@@ -319,7 +329,10 @@ void CGUIStaticText::breakText()
 				whitespace = L"";
 			}
 
-			whitespace += c;
+			if ( isWhitespace )
+			{
+				whitespace += c;
+			}
 
 			// compute line break
 			if (lineBreak)
@@ -332,11 +345,6 @@ void CGUIStaticText::breakText()
 				whitespace = L"";
 				length = 0;
 			}
-		}
-		else
-		{
-			// yippee this is a word..
-			word += c;
 		}
 	}
 
