@@ -1109,33 +1109,30 @@ void CGUIEditBox::breakText()
 
 		if (c == L' ' || c == 0 || i == (size-1))
 		{
-			if (word.size())
+			// here comes the next whitespace, look if
+			// we can break the last word to the next line.
+			s32 whitelgth = font->getDimension(whitespace.c_str()).Width;
+			s32 worldlgth = font->getDimension(word.c_str()).Width;
+
+			if (WordWrap && length + worldlgth + whitelgth > elWidth)
 			{
-				// here comes the next whitespace, look if
-				// we can break the last word to the next line.
-				s32 whitelgth = font->getDimension(whitespace.c_str()).Width;
-				s32 worldlgth = font->getDimension(word.c_str()).Width;
-
-				if (WordWrap && length + worldlgth + whitelgth > elWidth)
-				{
-					// break to next line
-					length = worldlgth;
-					BrokenText.push_back(line);
-					BrokenTextPositions.push_back(lastLineStart);
-					lastLineStart = i - (s32)word.size();
-					line = word;
-				}
-				else
-				{
-					// add word to line
-					line += whitespace;
-					line += word;
-					length += whitelgth + worldlgth;
-				}
-
-				word = L"";
-				whitespace = L"";
+				// break to next line
+				length = worldlgth;
+				BrokenText.push_back(line);
+				BrokenTextPositions.push_back(lastLineStart);
+				lastLineStart = i - (s32)word.size();
+				line = word;
 			}
+			else
+			{
+				// add word to line
+				line += whitespace;
+				line += word;
+				length += whitelgth + worldlgth;
+			}
+
+			word = L"";
+			whitespace = L"";
 
 			whitespace += c;
 
