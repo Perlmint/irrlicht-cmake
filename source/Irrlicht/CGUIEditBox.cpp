@@ -55,17 +55,7 @@ CGUIEditBox::CGUIEditBox(const wchar_t* text, bool border,
 	setTabStop(true);
 	setTabOrder(-1);
 
-	IGUISkin *skin = 0;
-	if (Environment)
-		skin = Environment->getSkin();
-	if (Border && skin)
-	{
-		FrameRect.UpperLeftCorner.X += skin->getSize(EGDS_TEXT_DISTANCE_X)+1;
-		FrameRect.UpperLeftCorner.Y += skin->getSize(EGDS_TEXT_DISTANCE_Y)+1;
-		FrameRect.LowerRightCorner.X -= skin->getSize(EGDS_TEXT_DISTANCE_X)+1;
-		FrameRect.LowerRightCorner.Y -= skin->getSize(EGDS_TEXT_DISTANCE_Y)+1;
-	}
-
+	calculateFrameRect();
 	breakText();
 
 	calculateScrollPos();
@@ -137,7 +127,9 @@ void CGUIEditBox::updateAbsolutePosition()
 	IGUIElement::updateAbsolutePosition();
 	if ( oldAbsoluteRect != AbsoluteRect )
 	{
+		calculateFrameRect();
         breakText();
+        calculateScrollPos();
 	}
 }
 
@@ -691,20 +683,16 @@ void CGUIEditBox::draw()
 	if (!skin)
 		return;
 
-	FrameRect = AbsoluteRect;
-
 	// draw the border
 
 	if (Border)
 	{
 		skin->draw3DSunkenPane(this, skin->getColor(EGDC_WINDOW),
-			false, true, FrameRect, &AbsoluteClippingRect);
+			false, true, AbsoluteRect, &AbsoluteClippingRect);
 
-		FrameRect.UpperLeftCorner.X += skin->getSize(EGDS_TEXT_DISTANCE_X)+1;
-		FrameRect.UpperLeftCorner.Y += skin->getSize(EGDS_TEXT_DISTANCE_Y)+1;
-		FrameRect.LowerRightCorner.X -= skin->getSize(EGDS_TEXT_DISTANCE_X)+1;
-		FrameRect.LowerRightCorner.Y -= skin->getSize(EGDS_TEXT_DISTANCE_Y)+1;
+		calculateFrameRect();
 	}
+
 	core::rect<s32> localClipRect = FrameRect;
 	localClipRect.clipAgainst(AbsoluteClippingRect);
 
@@ -1345,6 +1333,21 @@ void CGUIEditBox::calculateScrollPos()
 		VScrollPos = 0;
 
 	// todo: adjust scrollbar
+}
+
+void CGUIEditBox::calculateFrameRect()
+{
+	FrameRect = AbsoluteRect;
+	IGUISkin *skin = 0;
+	if (Environment)
+		skin = Environment->getSkin();
+	if (Border && skin)
+	{
+		FrameRect.UpperLeftCorner.X += skin->getSize(EGDS_TEXT_DISTANCE_X)+1;
+		FrameRect.UpperLeftCorner.Y += skin->getSize(EGDS_TEXT_DISTANCE_Y)+1;
+		FrameRect.LowerRightCorner.X -= skin->getSize(EGDS_TEXT_DISTANCE_X)+1;
+		FrameRect.LowerRightCorner.Y -= skin->getSize(EGDS_TEXT_DISTANCE_Y)+1;
+	}
 }
 
 //! set text markers
