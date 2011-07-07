@@ -1,6 +1,8 @@
 Changes in 1.7.3 (??.??.2011)
 
  - Recalculate FrameRect and ScrollPos in CGUIEditBox when AbsoluteRect gets changed (thx @ serengeor for report + testcase)
+ 
+ - Fix 'k' in bigfont.png (thx @ Scrappi for reporting)
 
  - fix serialization for CBillboardSceneNode, it had missed 2 color (thx for finding + patch from pc0de)
 
