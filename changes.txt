@@ -1,5 +1,7 @@
 Changes in 1.7.3 (??.??.2011)
 
+ - triangle3d::isPointInside can now work with larger integers, old version failed already with values in the 3-digit range. It got also faster. (thx @ Eigen for report + testcase and REDDemon for patch proposal).
+
  - Fix focus problem when removing an unfocused modal dialog reported by Reiko here: http://irrlicht.sourceforge.net/forum/viewtopic.php?f=7&t=44358
 
  - Add integer template specialization for vector3d::getSphericalCoordinateAngles which rounds angles to nearest integer now.
