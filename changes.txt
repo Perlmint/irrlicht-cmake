@@ -1,5 +1,9 @@
 Changes in 1.7.3 (??.??.2011)
 
+ - editbox no longer moves text into next line when it fails wrapping creating senseless empty lines which mess up scrolling.
+
+ - Fix crash in editbox when scrolling up with empty first lines caused by textwrapping.
+
  - triangle3d::isPointInside can now work with larger integers, old version failed already with values in the 3-digit range. It got also faster. (thx @ Eigen for report + testcase and REDDemon for patch proposal).
 
  - Fix focus problem when removing an unfocused modal dialog reported by Reiko here: http://irrlicht.sourceforge.net/forum/viewtopic.php?f=7&t=44358

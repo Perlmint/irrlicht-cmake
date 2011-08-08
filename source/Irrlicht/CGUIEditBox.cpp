@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2010 Nikolaus Gebhardt
+// Copyright (C) 2002-2011 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -488,7 +488,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			{
 				s32 cp = CursorPos - BrokenTextPositions[lineNo];
 				if ((s32)BrokenText[lineNo-1].size() < cp)
-					CursorPos = BrokenTextPositions[lineNo-1] + (s32)BrokenText[lineNo-1].size()-1;
+					CursorPos = BrokenTextPositions[lineNo-1] + core::max_((u32)1, BrokenText[lineNo-1].size())-1;
 				else
 					CursorPos = BrokenTextPositions[lineNo-1] + cp;
 			}
@@ -519,7 +519,7 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			{
 				s32 cp = CursorPos - BrokenTextPositions[lineNo];
 				if ((s32)BrokenText[lineNo+1].size() < cp)
-					CursorPos = BrokenTextPositions[lineNo+1] + BrokenText[lineNo+1].size()-1;
+					CursorPos = BrokenTextPositions[lineNo+1] + core::max_((u32)1, BrokenText[lineNo+1].size())-1;
 				else
 					CursorPos = BrokenTextPositions[lineNo+1] + cp;
 			}
@@ -1102,7 +1102,7 @@ void CGUIEditBox::breakText()
 			s32 whitelgth = font->getDimension(whitespace.c_str()).Width;
 			s32 worldlgth = font->getDimension(word.c_str()).Width;
 
-			if (WordWrap && length + worldlgth + whitelgth > elWidth)
+			if (WordWrap && length + worldlgth + whitelgth > elWidth && line.size() > 0)
 			{
 				// break to next line
 				length = worldlgth;
