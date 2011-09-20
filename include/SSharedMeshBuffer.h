@@ -88,6 +88,12 @@ namespace scene
 			return Indices.size();
 		}
 
+		//! Get type of index data which is stored in this meshbuffer.
+		virtual video::E_INDEX_TYPE getIndexType() const
+		{
+			return video::EIT_16BIT;
+		}
+
 		//! returns an axis aligned bounding box
 		virtual const core::aabbox3d<f32>& getBoundingBox() const
 		{
