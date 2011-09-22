@@ -163,7 +163,7 @@ namespace scene
 			if (Vertices)
 				return (*Vertices)[Indices[i]].TCoords;
 			else
-				return core::vector3df();
+				return core::vector2df();
 		}
 
 		//! returns texture coord of vertex i
