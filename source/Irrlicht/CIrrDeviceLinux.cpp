@@ -1002,7 +1002,10 @@ bool CIrrDeviceLinux::run()
 					const s32 idx = KeyMap.binary_search(mp);
 
 					if (idx != -1)
+					{
 						irrevent.KeyInput.Key = (EKEY_CODE)KeyMap[idx].Win32Key;
+//						os::Printer::log("mp.X11Key", core::stringc((int)mp.X11Key).c_str(), ELL_WARNING);
+					}
 					else
 					{
 						// Usually you will check keysymdef.h and add the corresponding key to createKeyMap.
@@ -1471,7 +1474,7 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_exclam, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_quotedbl, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_section, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_numbersign, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_numbersign, KEY_OEM_2));
 	KeyMap.push_back(SKeyMap(XK_dollar, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_percent, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_ampersand, 0)); //?
@@ -1496,7 +1499,7 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_9, KEY_KEY_9));
 	KeyMap.push_back(SKeyMap(XK_colon, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_semicolon, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_less, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_less, KEY_OEM_102));
 	KeyMap.push_back(SKeyMap(XK_equal, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_greater, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_question, 0)); //?
@@ -1535,11 +1538,11 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_bracketleft, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_backslash, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_bracketright, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_asciicircum, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_asciicircum, KEY_OEM_5)); //?
 	KeyMap.push_back(SKeyMap(XK_degree, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_underscore, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_grave, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_acute, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_acute, KEY_OEM_6));
 	KeyMap.push_back(SKeyMap(XK_quoteleft, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_a, KEY_KEY_A));
 	KeyMap.push_back(SKeyMap(XK_b, KEY_KEY_B));
@@ -1567,10 +1570,10 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_x, KEY_KEY_X));
 	KeyMap.push_back(SKeyMap(XK_y, KEY_KEY_Y));
 	KeyMap.push_back(SKeyMap(XK_z, KEY_KEY_Z));
-	KeyMap.push_back(SKeyMap(XK_ssharp, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_adiaeresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_odiaeresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_udiaeresis, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_ssharp, KEY_OEM_4));
+	KeyMap.push_back(SKeyMap(XK_adiaeresis, KEY_OEM_7));
+	KeyMap.push_back(SKeyMap(XK_odiaeresis, KEY_OEM_3));
+	KeyMap.push_back(SKeyMap(XK_udiaeresis, KEY_OEM_1));
 
 	KeyMap.sort();
 #endif
