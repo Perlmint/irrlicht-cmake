@@ -999,25 +999,42 @@ bool CIrrDeviceLinux::run()
 					char buf[8]={0};
 					XLookupString(&event.xkey, buf, sizeof(buf), &mp.X11Key, NULL);
 
-					const s32 idx = KeyMap.binary_search(mp);
-
-					if (idx != -1)
-					{
-						irrevent.KeyInput.Key = (EKEY_CODE)KeyMap[idx].Win32Key;
-//						os::Printer::log("mp.X11Key", core::stringc((int)mp.X11Key).c_str(), ELL_WARNING);
-					}
-					else
-					{
-						// Usually you will check keysymdef.h and add the corresponding key to createKeyMap.
-						irrevent.KeyInput.Key = (EKEY_CODE)0;
-						os::Printer::log("Could not find win32 key for x11 key.", core::stringc((int)mp.X11Key).c_str(), ELL_WARNING);
-					}
 					irrevent.EventType = irr::EET_KEY_INPUT_EVENT;
 					irrevent.KeyInput.PressedDown = (event.type == KeyPress);
 //					mbtowc(&irrevent.KeyInput.Char, buf, sizeof(buf));
 					irrevent.KeyInput.Char = ((wchar_t*)(buf))[0];
 					irrevent.KeyInput.Control = (event.xkey.state & ControlMask) != 0;
 					irrevent.KeyInput.Shift = (event.xkey.state & ShiftMask) != 0;
+
+					event.xkey.state = 0; // ignore shift-ctrl states for figuring out the key
+					XLookupString(&event.xkey, buf, sizeof(buf), &mp.X11Key, NULL);
+                    const s32 idx = KeyMap.binary_search(mp);
+					if (idx != -1)
+					{
+						irrevent.KeyInput.Key = (EKEY_CODE)KeyMap[idx].Win32Key;
+					}
+					else
+					{
+						irrevent.KeyInput.Key = (EKEY_CODE)0;
+                    }
+                    if (irrevent.KeyInput.Key == 0)
+                    {
+                        // 1:1 mapping to windows-keys would require testing for keyboard type (us, ger, ...)
+                        // So unless we do that we will have some unknown keys here.
+                        if (idx == -1)
+                        {
+                            os::Printer::log("Could not find EKEY_CODE, using orig. X11 keycode instead", core::stringc(event.xkey.keycode).c_str(), ELL_INFORMATION);
+                        }
+                        else
+                        {
+                            os::Printer::log("EKEY_CODE is 0, using orig. X11 keycode instead", core::stringc(event.xkey.keycode).c_str(), ELL_INFORMATION);
+                        }
+                        // Any value is better than none, that allows at least using the keys.
+                        // Worst case is that some keys will be identical, still better than _all_
+                        // unknown keys being identical.
+                        irrevent.KeyInput.Key = (EKEY_CODE)event.xkey.keycode;
+                    }
+
 					postEventFromUser(irrevent);
 				}
 				break;
@@ -1478,7 +1495,7 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_dollar, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_percent, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_ampersand, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_apostrophe, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_apostrophe, KEY_OEM_7));
 	KeyMap.push_back(SKeyMap(XK_parenleft, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_parenright, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_asterisk, 0)); //?
@@ -1486,7 +1503,7 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_comma, KEY_COMMA)); //?
 	KeyMap.push_back(SKeyMap(XK_minus, KEY_MINUS)); //?
 	KeyMap.push_back(SKeyMap(XK_period, KEY_PERIOD)); //?
-	KeyMap.push_back(SKeyMap(XK_slash, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_slash, KEY_OEM_2)); //?
 	KeyMap.push_back(SKeyMap(XK_0, KEY_KEY_0));
 	KeyMap.push_back(SKeyMap(XK_1, KEY_KEY_1));
 	KeyMap.push_back(SKeyMap(XK_2, KEY_KEY_2));
@@ -1498,12 +1515,12 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_8, KEY_KEY_8));
 	KeyMap.push_back(SKeyMap(XK_9, KEY_KEY_9));
 	KeyMap.push_back(SKeyMap(XK_colon, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_semicolon, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_semicolon, KEY_OEM_1));
 	KeyMap.push_back(SKeyMap(XK_less, KEY_OEM_102));
-	KeyMap.push_back(SKeyMap(XK_equal, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_equal, KEY_PLUS));
 	KeyMap.push_back(SKeyMap(XK_greater, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_question, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_at, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_at, KEY_KEY_2)); //?
 	KeyMap.push_back(SKeyMap(XK_mu, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_EuroSign, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_A, KEY_KEY_A));
@@ -1532,18 +1549,14 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_X, KEY_KEY_X));
 	KeyMap.push_back(SKeyMap(XK_Y, KEY_KEY_Y));
 	KeyMap.push_back(SKeyMap(XK_Z, KEY_KEY_Z));
-	KeyMap.push_back(SKeyMap(XK_Adiaeresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_Odiaeresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_Udiaeresis, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_bracketleft, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_backslash, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_bracketright, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_asciicircum, KEY_OEM_5)); //?
+	KeyMap.push_back(SKeyMap(XK_bracketleft, KEY_OEM_4));
+	KeyMap.push_back(SKeyMap(XK_backslash, KEY_OEM_5));
+	KeyMap.push_back(SKeyMap(XK_bracketright, KEY_OEM_6));
+	KeyMap.push_back(SKeyMap(XK_asciicircum, KEY_OEM_5));
 	KeyMap.push_back(SKeyMap(XK_degree, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_underscore, 0)); //?
-	KeyMap.push_back(SKeyMap(XK_grave, 0)); //?
+	KeyMap.push_back(SKeyMap(XK_underscore, KEY_MINUS)); //?
+	KeyMap.push_back(SKeyMap(XK_grave, KEY_OEM_3));
 	KeyMap.push_back(SKeyMap(XK_acute, KEY_OEM_6));
-	KeyMap.push_back(SKeyMap(XK_quoteleft, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_a, KEY_KEY_A));
 	KeyMap.push_back(SKeyMap(XK_b, KEY_KEY_B));
 	KeyMap.push_back(SKeyMap(XK_c, KEY_KEY_C));
@@ -1574,6 +1587,8 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_adiaeresis, KEY_OEM_7));
 	KeyMap.push_back(SKeyMap(XK_odiaeresis, KEY_OEM_3));
 	KeyMap.push_back(SKeyMap(XK_udiaeresis, KEY_OEM_1));
+	KeyMap.push_back(SKeyMap(XK_Super_L, KEY_LWIN));
+	KeyMap.push_back(SKeyMap(XK_Super_R, KEY_RWIN));
 
 	KeyMap.sort();
 #endif
