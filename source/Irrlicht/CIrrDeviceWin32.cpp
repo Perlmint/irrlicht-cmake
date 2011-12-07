@@ -1053,6 +1053,8 @@ typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 #define PRODUCT_HOME_PREMIUM_N                      0x0000001A
 #define PRODUCT_ENTERPRISE_N                        0x0000001B
 #define PRODUCT_ULTIMATE_N                          0x0000001C
+#endif
+#ifndef PRODUCT_STARTER_N
 #define PRODUCT_STARTER_N                           0x0000002F
 #endif
 #ifndef PRODUCT_PROFESSIONAL
