@@ -1284,55 +1284,113 @@ void CGUIEditBox::inputChar(wchar_t c)
 	calculateScrollPos();
 }
 
-
+// calculate autoscroll
 void CGUIEditBox::calculateScrollPos()
 {
 	if (!AutoScroll)
 		return;
 
-	// calculate horizontal scroll position
+	IGUISkin* skin = Environment->getSkin();
+	if (!skin)
+		return;
+	IGUIFont* font = OverrideFont ? OverrideFont : skin->getFont();
+	if (!font)
+		return;
+
+	irr::u32 lineHeight = font->getDimension(L"A").Height + font->getKerningHeight();
 	s32 cursLine = getLineFromPos(CursorPos);
-	setTextRect(cursLine);
 
-	// don't do horizontal scrolling when wordwrap is enabled.
-	if (!WordWrap)
+
+	// check horizonal scrolling
 	{
-		// get cursor position
-		IGUISkin* skin = Environment->getSkin();
-		if (!skin)
-			return;
-		IGUIFont* font = OverrideFont ? OverrideFont : skin->getFont();
-		if (!font)
-			return;
-
+		// get cursor area
+		irr::u32 cursorWidth = font->getDimension(L"_ ").Width;
 		core::stringw *txtLine = MultiLine ? &BrokenText[cursLine] : &Text;
 		s32 cPos = MultiLine ? CursorPos - BrokenTextPositions[cursLine] : CursorPos;
-
 		s32 cStart = CurrentTextRect.UpperLeftCorner.X + HScrollPos +
-			font->getDimension(txtLine->subString(0, cPos).c_str()).Width;
+				font->getDimension(txtLine->subString(0, cPos).c_str()).Width;
+		s32 cEnd = cStart + cursorWidth;
 
-		s32 cEnd = cStart + font->getDimension(L"_ ").Width;
-
-		if (FrameRect.LowerRightCorner.X < cEnd)
-			HScrollPos = cEnd - FrameRect.LowerRightCorner.X;
-		else if (FrameRect.UpperLeftCorner.X > cStart)
-			HScrollPos = cStart - FrameRect.UpperLeftCorner.X;
-		else
+		if (	FrameRect.LowerRightCorner.X < cEnd
+			||	FrameRect.UpperLeftCorner.X > cStart)
+		{
+			cStart -= HScrollPos;
+			cEnd -= HScrollPos;
 			HScrollPos = 0;
+			setTextRect(cursLine);
 
-		// todo: adjust scrollbar
+			if (FrameRect.LowerRightCorner.X < cEnd)
+			{
+				HScrollPos = cEnd - FrameRect.LowerRightCorner.X;
+			}
+			else if (FrameRect.UpperLeftCorner.X > cStart)
+			{
+				HScrollPos = cStart - FrameRect.UpperLeftCorner.X;
+			}
+		}
 	}
 
-	// vertical scroll position
-	if (FrameRect.LowerRightCorner.Y < CurrentTextRect.LowerRightCorner.Y + VScrollPos)
-		VScrollPos = CurrentTextRect.LowerRightCorner.Y - FrameRect.LowerRightCorner.Y + VScrollPos;
+	// calculate vertical scrolling
+	if (WordWrap || MultiLine)
+	{
+		// only up to 1 line fits?
+		if ( lineHeight >= (irr::u32)FrameRect.getHeight() )
+		{
+			VScrollPos = 0;
+			setTextRect(cursLine);
+			s32 unscrolledPos = CurrentTextRect.UpperLeftCorner.Y;
+			s32 pivot = FrameRect.UpperLeftCorner.Y;
+			switch (VAlign)
+			{
+				case EGUIA_CENTER:
+					pivot += FrameRect.getHeight()/2;
+					unscrolledPos += lineHeight/2;
+					break;
+				case EGUIA_LOWERRIGHT:
+					pivot += FrameRect.getHeight();
+					unscrolledPos += lineHeight;
+					break;
+				default:
+					break;
+			}
+			VScrollPos = unscrolledPos-pivot;
+			setTextRect(cursLine);
+		}
+		else
+		{
+			// First 2 checks are necessary when people delete lines
+			setTextRect(0);
+			if ( CurrentTextRect.UpperLeftCorner.Y > FrameRect.UpperLeftCorner.Y && VAlign != EGUIA_LOWERRIGHT)
+			{
+				// first line is leaving a gap on top
+				VScrollPos = 0;
+			}
+			else if (VAlign != EGUIA_UPPERLEFT)
+			{
+				u32 lastLine = BrokenTextPositions.empty() ? 0 : BrokenTextPositions.size()-1;
+				setTextRect(lastLine);
+				if ( CurrentTextRect.LowerRightCorner.Y < FrameRect.LowerRightCorner.Y)
+				{
+					// last line is leaving a gap on bottom
+					VScrollPos -= FrameRect.LowerRightCorner.Y-CurrentTextRect.LowerRightCorner.Y;
+				}
+			}
 
-	else if (FrameRect.UpperLeftCorner.Y > CurrentTextRect.UpperLeftCorner.Y + VScrollPos)
-		VScrollPos = CurrentTextRect.UpperLeftCorner.Y - FrameRect.UpperLeftCorner.Y + VScrollPos;
-	else
-		VScrollPos = 0;
-
-	// todo: adjust scrollbar
+			setTextRect(cursLine);
+			if ( CurrentTextRect.UpperLeftCorner.Y < FrameRect.UpperLeftCorner.Y )
+			{
+				// text above valid area
+				VScrollPos -= FrameRect.UpperLeftCorner.Y-CurrentTextRect.UpperLeftCorner.Y;
+				setTextRect(cursLine);
+			}
+			else if ( CurrentTextRect.LowerRightCorner.Y > FrameRect.LowerRightCorner.Y)
+			{
+				// text below valid area
+				VScrollPos += CurrentTextRect.LowerRightCorner.Y-FrameRect.LowerRightCorner.Y;
+				setTextRect(cursLine);
+			}
+		}
+	}
 }
 
 void CGUIEditBox::calculateFrameRect()
