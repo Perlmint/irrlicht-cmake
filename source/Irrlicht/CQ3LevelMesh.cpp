@@ -1710,7 +1710,7 @@ void CQ3LevelMesh::cleanMeshes()
 
 		u32 i = 0;
 		s32 blockstart = -1;
-		s32 blockcount;
+		s32 blockcount = 0s;
 
 		while( i < m->MeshBuffers.size())
 		{
