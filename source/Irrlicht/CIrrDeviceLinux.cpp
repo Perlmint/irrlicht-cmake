@@ -170,9 +170,9 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 #endif // #ifdef _IRR_COMPILE_WITH_X11_
 
 #if defined(_IRR_COMPILE_WITH_JOYSTICK_EVENTS_)
-	for(u32 joystick = 0; joystick < ActiveJoysticks.size(); ++joystick)
+	for (u32 joystick = 0; joystick < ActiveJoysticks.size(); ++joystick)
 	{
-		if(ActiveJoysticks[joystick].fd >= 0)
+		if (ActiveJoysticks[joystick].fd >= 0)
 		{
 			close(ActiveJoysticks[joystick].fd);
 		}
@@ -1111,7 +1111,7 @@ bool CIrrDeviceLinux::run()
 	}
 #endif //_IRR_COMPILE_WITH_X11_
 
-	if(!Close)
+	if (!Close)
 		pollJoysticks();
 
 	return !Close;
@@ -1601,7 +1601,7 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 	joystickInfo.clear();
 
 	u32 joystick;
-	for(joystick = 0; joystick < 32; ++joystick)
+	for (joystick = 0; joystick < 32; ++joystick)
 	{
 		// The joystick device could be here...
 		core::stringc devName = "/dev/js";
@@ -1611,14 +1611,14 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 		JoystickInfo info;
 
 		info.fd = open(devName.c_str(), O_RDONLY);
-		if(-1 == info.fd)
+		if (-1 == info.fd)
 		{
 			// ...but Ubuntu and possibly other distros
 			// create the devices in /dev/input
 			devName = "/dev/input/js";
 			devName += joystick;
 			info.fd = open(devName.c_str(), O_RDONLY);
-			if(-1 == info.fd)
+			if (-1 == info.fd)
 			{
 				// and BSD here
 				devName = "/dev/joy";
@@ -1627,7 +1627,7 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 			}
 		}
 
-		if(-1 == info.fd)
+		if (-1 == info.fd)
 			continue;
 
 #ifdef __FREE_BSD_
@@ -1663,7 +1663,7 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 		joystickInfo.push_back(returnInfo);
 	}
 
-	for(joystick = 0; joystick < joystickInfo.size(); ++joystick)
+	for (joystick = 0; joystick < joystickInfo.size(); ++joystick)
 	{
 		char logString[256];
 		(void)sprintf(logString, "Found joystick %u, %u axes, %u buttons '%s'",
@@ -1682,24 +1682,23 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 void CIrrDeviceLinux::pollJoysticks()
 {
 #if defined (_IRR_COMPILE_WITH_JOYSTICK_EVENTS_)
-	if(0 == ActiveJoysticks.size())
+	if (0 == ActiveJoysticks.size())
 		return;
 
-	u32 j;
-	for(j= 0; j< ActiveJoysticks.size(); ++j)
+	for (u32 j= 0; j< ActiveJoysticks.size(); ++j)
 	{
 		JoystickInfo & info =  ActiveJoysticks[j];
 
 #ifdef __FREE_BSD_
 		struct joystick js;
-		if( read( info.fd, &js, JS_RETURN ) == JS_RETURN )
+		if (read(info.fd, &js, JS_RETURN) == JS_RETURN)
 		{
 			info.persistentData.JoystickEvent.ButtonStates = js.buttons; /* should be a two-bit field */
 			info.persistentData.JoystickEvent.Axis[0] = js.x; /* X axis */
 			info.persistentData.JoystickEvent.Axis[1] = js.y; /* Y axis */
 #else
 		struct js_event event;
-		while(sizeof(event) == read(info.fd, &event, sizeof(event)))
+		while (sizeof(event) == read(info.fd, &event, sizeof(event)))
 		{
 			switch(event.type & ~JS_EVENT_INIT)
 			{
@@ -1711,7 +1710,8 @@ void CIrrDeviceLinux::pollJoysticks()
 				break;
 
 			case JS_EVENT_AXIS:
-				info.persistentData.JoystickEvent.Axis[event.number] = event.value;
+				if (event.number < SEvent::SJoystickEvent::NUMBER_OF_AXES)
+					info.persistentData.JoystickEvent.Axis[event.number] = event.value;
 				break;
 
 			default:
