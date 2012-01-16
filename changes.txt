@@ -1,5 +1,7 @@
 Changes in 1.7.3 (??.??.2011)
 
+ - editbox no longer displays cursor when disabled
+
  - editbox autoscrolling now at least works good enough to actually show the text which the user is typing in.
 
  - editbox no longer moves text into next line when it fails wrapping creating senseless empty lines which mess up scrolling.

@@ -834,25 +834,27 @@ void CGUIEditBox::draw()
 		}
 
 		// draw cursor
-
-		if (WordWrap || MultiLine)
+		if ( IsEnabled )
 		{
-			cursorLine = getLineFromPos(CursorPos);
-			txtLine = &BrokenText[cursorLine];
-			startPos = BrokenTextPositions[cursorLine];
-		}
-		s = txtLine->subString(0,CursorPos-startPos);
-		charcursorpos = font->getDimension(s.c_str()).Width +
-			font->getKerningWidth(L"_", CursorPos-startPos > 0 ? &((*txtLine)[CursorPos-startPos-1]) : 0);
+			if (WordWrap || MultiLine)
+			{
+				cursorLine = getLineFromPos(CursorPos);
+				txtLine = &BrokenText[cursorLine];
+				startPos = BrokenTextPositions[cursorLine];
+			}
+			s = txtLine->subString(0,CursorPos-startPos);
+			charcursorpos = font->getDimension(s.c_str()).Width +
+				font->getKerningWidth(L"_", CursorPos-startPos > 0 ? &((*txtLine)[CursorPos-startPos-1]) : 0);
 
-		if (focus && (os::Timer::getTime() - BlinkStartTime) % 700 < 350)
-		{
-			setTextRect(cursorLine);
-			CurrentTextRect.UpperLeftCorner.X += charcursorpos;
+			if (focus && (os::Timer::getTime() - BlinkStartTime) % 700 < 350)
+			{
+				setTextRect(cursorLine);
+				CurrentTextRect.UpperLeftCorner.X += charcursorpos;
 
-			font->draw(L"_", CurrentTextRect,
-				OverrideColorEnabled ? OverrideColor : skin->getColor(EGDC_BUTTON_TEXT),
-				false, true, &localClipRect);
+				font->draw(L"_", CurrentTextRect,
+					OverrideColorEnabled ? OverrideColor : skin->getColor(EGDC_BUTTON_TEXT),
+					false, true, &localClipRect);
+			}
 		}
 	}
 
