@@ -1151,7 +1151,10 @@ void CGUIEditBox::breakText()
 	BrokenTextPositions.push_back(lastLineStart);
 }
 
-
+// TODO: that function does interpret VAlign according to line-index (indexed line is placed on top-center-bottom)
+// but HAlign according to line-width (pixels) and not by row.
+// Intuitively I suppose HAlign handling is better as VScrollPos should handle the line-scrolling.
+// But please no one change this without also rewriting (and this time fucking testing!!!) autoscrolling (I noticed this when fixing the old autoscrolling).
 void CGUIEditBox::setTextRect(s32 line)
 {
 	core::dimension2du d;
@@ -1284,55 +1287,123 @@ void CGUIEditBox::inputChar(wchar_t c)
 	calculateScrollPos();
 }
 
-
+// calculate autoscroll
 void CGUIEditBox::calculateScrollPos()
 {
 	if (!AutoScroll)
 		return;
 
-	// calculate horizontal scroll position
+	IGUISkin* skin = Environment->getSkin();
+	if (!skin)
+		return;
+	IGUIFont* font = OverrideFont ? OverrideFont : skin->getFont();
+	if (!font)
+		return;
+
 	s32 cursLine = getLineFromPos(CursorPos);
-	setTextRect(cursLine);
+	bool hasBrokenText = MultiLine || WordWrap;
 
-	// don't do horizontal scrolling when wordwrap is enabled.
-	if (!WordWrap)
+	// Check horizonal scrolling
+	// NOTE: Calculations different to vertical scrolling because setTextRect interprets VAlign relative to line but HAlign not relative to row
 	{
-		// get cursor position
-		IGUISkin* skin = Environment->getSkin();
-		if (!skin)
-			return;
-		IGUIFont* font = OverrideFont ? OverrideFont : skin->getFont();
-		if (!font)
-			return;
+		setTextRect(cursLine);
 
-		core::stringw *txtLine = MultiLine ? &BrokenText[cursLine] : &Text;
-		s32 cPos = MultiLine ? CursorPos - BrokenTextPositions[cursLine] : CursorPos;
+		// get cursor area
+		irr::u32 cursorWidth = font->getDimension(L"_").Width;
+		core::stringw *txtLine = hasBrokenText ? &BrokenText[cursLine] : &Text;
+		s32 cPos = hasBrokenText ? CursorPos - BrokenTextPositions[cursLine] : CursorPos;	// column
+		s32 cStart = font->getDimension(txtLine->subString(0, cPos).c_str()).Width;		// pixels from text-start
+		s32 cEnd = cStart + cursorWidth;
+		s32 txtWidth = font->getDimension(txtLine->c_str()).Width;
 
-		s32 cStart = CurrentTextRect.UpperLeftCorner.X + HScrollPos +
-			font->getDimension(txtLine->subString(0, cPos).c_str()).Width;
+		if ( txtWidth < FrameRect.getWidth() )
+		{
+			// TODO: Needs a clean left and right gap removal depending on HAlign, similar to vertical scrolling tests for top/bottom.
+			// This check just fixes the case where it was most noticable (text smaller than clipping area).
 
-		s32 cEnd = cStart + font->getDimension(L"_ ").Width;
-
-		if (FrameRect.LowerRightCorner.X < cEnd)
-			HScrollPos = cEnd - FrameRect.LowerRightCorner.X;
-		else if (FrameRect.UpperLeftCorner.X > cStart)
-			HScrollPos = cStart - FrameRect.UpperLeftCorner.X;
-		else
 			HScrollPos = 0;
+			setTextRect(cursLine);
+		}
 
-		// todo: adjust scrollbar
+		if ( CurrentTextRect.UpperLeftCorner.X+cStart < FrameRect.UpperLeftCorner.X )
+		{
+			// cursor to the left of the clipping area
+			HScrollPos -= FrameRect.UpperLeftCorner.X-(CurrentTextRect.UpperLeftCorner.X+cStart);
+			setTextRect(cursLine);
+
+			// TODO: should show more characters to the left when we're scrolling left
+			//	and the cursor reaches the border.
+		}
+		else if ( CurrentTextRect.UpperLeftCorner.X+cEnd > FrameRect.LowerRightCorner.X)
+		{
+			// cursor to the right of the clipping area
+			HScrollPos += (CurrentTextRect.UpperLeftCorner.X+cEnd)-FrameRect.LowerRightCorner.X;
+			setTextRect(cursLine);
+		}
 	}
 
-	// vertical scroll position
-	if (FrameRect.LowerRightCorner.Y < CurrentTextRect.LowerRightCorner.Y + VScrollPos)
-		VScrollPos = CurrentTextRect.LowerRightCorner.Y - FrameRect.LowerRightCorner.Y + VScrollPos;
+	// calculate vertical scrolling
+	if (hasBrokenText)
+	{
+		irr::u32 lineHeight = font->getDimension(L"A").Height + font->getKerningHeight();
+		// only up to 1 line fits?
+		if ( lineHeight >= (irr::u32)FrameRect.getHeight() )
+		{
+			VScrollPos = 0;
+			setTextRect(cursLine);
+			s32 unscrolledPos = CurrentTextRect.UpperLeftCorner.Y;
+			s32 pivot = FrameRect.UpperLeftCorner.Y;
+			switch (VAlign)
+			{
+				case EGUIA_CENTER:
+					pivot += FrameRect.getHeight()/2;
+					unscrolledPos += lineHeight/2;
+					break;
+				case EGUIA_LOWERRIGHT:
+					pivot += FrameRect.getHeight();
+					unscrolledPos += lineHeight;
+					break;
+				default:
+					break;
+			}
+			VScrollPos = unscrolledPos-pivot;
+			setTextRect(cursLine);
+		}
+		else
+		{
+			// First 2 checks are necessary when people delete lines
+			setTextRect(0);
+			if ( CurrentTextRect.UpperLeftCorner.Y > FrameRect.UpperLeftCorner.Y && VAlign != EGUIA_LOWERRIGHT)
+			{
+				// first line is leaving a gap on top
+				VScrollPos = 0;
+			}
+			else if (VAlign != EGUIA_UPPERLEFT)
+			{
+				u32 lastLine = BrokenTextPositions.empty() ? 0 : BrokenTextPositions.size()-1;
+				setTextRect(lastLine);
+				if ( CurrentTextRect.LowerRightCorner.Y < FrameRect.LowerRightCorner.Y)
+				{
+					// last line is leaving a gap on bottom
+					VScrollPos -= FrameRect.LowerRightCorner.Y-CurrentTextRect.LowerRightCorner.Y;
+				}
+			}
 
-	else if (FrameRect.UpperLeftCorner.Y > CurrentTextRect.UpperLeftCorner.Y + VScrollPos)
-		VScrollPos = CurrentTextRect.UpperLeftCorner.Y - FrameRect.UpperLeftCorner.Y + VScrollPos;
-	else
-		VScrollPos = 0;
-
-	// todo: adjust scrollbar
+			setTextRect(cursLine);
+			if ( CurrentTextRect.UpperLeftCorner.Y < FrameRect.UpperLeftCorner.Y )
+			{
+				// text above valid area
+				VScrollPos -= FrameRect.UpperLeftCorner.Y-CurrentTextRect.UpperLeftCorner.Y;
+				setTextRect(cursLine);
+			}
+			else if ( CurrentTextRect.LowerRightCorner.Y > FrameRect.LowerRightCorner.Y)
+			{
+				// text below valid area
+				VScrollPos += CurrentTextRect.LowerRightCorner.Y-FrameRect.LowerRightCorner.Y;
+				setTextRect(cursLine);
+			}
+		}
+	}
 }
 
 void CGUIEditBox::calculateFrameRect()
