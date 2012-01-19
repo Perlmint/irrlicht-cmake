@@ -1,5 +1,7 @@
 Changes in 1.7.3 (??.??.2011)
 
+ - example 09.Meshviewer no longer catches keys while a modal dialog is open
+
  - editbox no longer displays cursor when disabled
 
  - editbox autoscrolling now at least works good enough to actually show the text which the user is typing in.
