@@ -1,5 +1,7 @@
 Changes in 1.7.3 (??.??.2011)
 
+ - Fix crash in multiline editbox when pasting several lines into it on Windows.
+
  - example 09.Meshviewer no longer catches keys while a modal dialog is open
 
  - editbox no longer displays cursor when disabled
