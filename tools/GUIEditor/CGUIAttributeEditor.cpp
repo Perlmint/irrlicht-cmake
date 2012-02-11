@@ -111,9 +111,6 @@ void CGUIAttributeEditor::refreshAttribs()
 		AttribList[i]->setAttrib(Attribs, i);
 		r += position2di(0, AttribList[i]->getRelativePosition().getHeight() + 5);
 	}
-
-	//force update
-	setVScrollBarMode(this->getVScrollBarMode());
 }
 
 void CGUIAttributeEditor::updateAttribs()
