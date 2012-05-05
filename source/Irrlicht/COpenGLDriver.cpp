@@ -146,9 +146,9 @@ bool COpenGLDriver::initDriver(irr::SIrrlichtCreationParameters params, CIrrDevi
 		0,                                         // No Alpha Buffer
 		0,                                         // Shift Bit Ignored
 		0,                                         // No Accumulation Buffer
-		0, 0, 0, 0,	                               // Accumulation Bits Ignored
+		0, 0, 0, 0,	                           // Accumulation Bits Ignored
 		params.ZBufferBits,                        // Z-Buffer (Depth Buffer)
-		params.Stencilbuffer ? 1 : 0,              // Stencil Buffer Depth
+		BYTE(params.Stencilbuffer ? 1 : 0),        // Stencil Buffer Depth
 		0,                                         // No Auxiliary Buffer
 		PFD_MAIN_PLANE,                            // Main Drawing Layer
 		0,                                         // Reserved
