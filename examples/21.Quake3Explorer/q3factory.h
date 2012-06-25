@@ -1,14 +1,11 @@
 /*!
 	Model Factory.
-	create the additional scenenodes for ( bullets, health... ) 
+	create the additional scenenodes for ( bullets, health... )
 
 	Defines the Entities for Quake3
 */
 #ifndef __QUAKE3_FACTORY__H_INCLUDED__
 #define __QUAKE3_FACTORY__H_INCLUDED__
-
-#include <irrlicht.h>
-
 
 using namespace irr;
 using namespace scene;
@@ -81,12 +78,12 @@ const SItemElement * getItemElement ( const stringc& key );
 	Takes the mesh buffers and creates scenenodes for their associated shaders
 */
 void Q3ShaderFactory (	Q3LevelLoadParameter &loadParam,
-						IrrlichtDevice *device, 
-						IQ3LevelMesh* mesh, 
+						IrrlichtDevice *device,
+						IQ3LevelMesh* mesh,
 						eQ3MeshIndex meshIndex,
 						ISceneNode *parent,
 						IMetaTriangleSelector *meta,
-						bool showShaderName 
+						bool showShaderName
 					);
 
 
@@ -94,8 +91,8 @@ void Q3ShaderFactory (	Q3LevelLoadParameter &loadParam,
 	Creates Model based on the entity list
 */
 void Q3ModelFactory (	Q3LevelLoadParameter &loadParam,
-						IrrlichtDevice *device, 
-						IQ3LevelMesh* masterMesh, 
+						IrrlichtDevice *device,
+						IQ3LevelMesh* masterMesh,
 						ISceneNode *parent,
 						bool showShaderName
 					);

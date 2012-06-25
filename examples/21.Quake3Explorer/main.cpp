@@ -19,9 +19,10 @@ ftp://ftp.idsoftware.com/idstuff/quake3/win32/q3ademo.exe
 This file is copyright 2006-2010 Burningwater, Thomas Alten
 */
 
+#include "driverChoice.h"
+#include <irrlicht.h>
 #include "q3factory.h"
 #include "sound.h"
-#include "driverChoice.h"
 
 /*
 	Game Data is used to hold Data which is needed to drive the game
