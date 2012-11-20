@@ -714,7 +714,7 @@ void CIrrDeviceSDL::closeDevice()
 //! \return Pointer to a list with all video modes supported
 video::IVideoModeList* CIrrDeviceSDL::getVideoModeList()
 {
-	if (!VideoModeList.getVideoModeCount())
+	if (!VideoModeList->getVideoModeCount())
 	{
 		// enumerate video modes.
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
@@ -726,12 +726,12 @@ video::IVideoModeList* CIrrDeviceSDL::getVideoModeList()
 			else
 			{
 				for (u32 i=0; modes[i]; ++i)
-					VideoModeList.addMode(core::dimension2d<u32>(modes[i]->w, modes[i]->h), vi->vfmt->BitsPerPixel);
+					VideoModeList->addMode(core::dimension2d<u32>(modes[i]->w, modes[i]->h), vi->vfmt->BitsPerPixel);
 			}
 		}
 	}
 
-	return &VideoModeList;
+	return VideoModeList;
 }
 
 

@@ -19,8 +19,8 @@ namespace irr
 CIrrDeviceStub::CIrrDeviceStub(const SIrrlichtCreationParameters& params)
 : IrrlichtDevice(), VideoDriver(0), GUIEnvironment(0), SceneManager(0),
 	Timer(0), CursorControl(0), UserReceiver(params.EventReceiver), Logger(0), Operator(0),
-	FileSystem(0), InputReceivingSceneManager(0), CreationParams(params),
-	Close(false)
+	FileSystem(0), InputReceivingSceneManager(0), VideoModeList(0),
+	CreationParams(params), Close(false)
 {
 	Timer = new CTimer();
 	if (os::Printer::Logger)
@@ -39,6 +39,8 @@ CIrrDeviceStub::CIrrDeviceStub(const SIrrlichtCreationParameters& params)
 	os::Printer::Logger = Logger;
 
 	FileSystem = io::createFileSystem();
+	VideoModeList = new video::CVideoModeList();
+
 	core::stringc s = "Irrlicht Engine version ";
 	s.append(getVersion());
 	os::Printer::log(s.c_str(), ELL_INFORMATION);
@@ -49,6 +51,7 @@ CIrrDeviceStub::CIrrDeviceStub(const SIrrlichtCreationParameters& params)
 
 CIrrDeviceStub::~CIrrDeviceStub()
 {
+	VideoModeList->drop();
 	FileSystem->drop();
 
 	if (GUIEnvironment)
@@ -148,7 +151,7 @@ gui::ICursorControl* CIrrDeviceStub::getCursorControl()
 //! by the gfx adapter.
 video::IVideoModeList* CIrrDeviceStub::getVideoModeList()
 {
-	return &VideoModeList;
+	return VideoModeList;
 }
 
 

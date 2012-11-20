@@ -165,7 +165,7 @@ namespace irr
 			EMOUSE_INPUT_EVENT LastMouseInputEvent;
 		};
 		SMouseMultiClicks MouseMultiClicks;
-		video::CVideoModeList VideoModeList;
+		video::CVideoModeList* VideoModeList;
 		SIrrlichtCreationParameters CreationParams;
 		bool Close;
 	};
