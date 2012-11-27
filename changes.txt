@@ -1,6 +1,8 @@
 -----------------------------
 Changes in 1.7.4 (not yet released)
 
+ - Backport const fix for operator -= in both core::list iterators
+
  - fixed getDepthFunction in IQ3Shader which always returned ECFN_EQUAL due to missing break (found by the cppcheck tool)
 
  - STL loader improved to handle arbitrary file starts
