@@ -90,3 +90,9 @@ ELSEIF( APPLE )
 ENDIF(  )
 SET_TARGET_PROPERTIES( irrlicht_static PROPERTIES LIBRARY_OUTPUT_NAME irrlicht ARCHIVE_OUTPUT_NAME irrlicht )
 TARGET_LINK_LIBRARIES( irrlicht_shared ${IRRLICHT_LINK_LIBS} )
+
+################################################################################
+# Export Irrlicht link libraries & include directory
+SET( IRRLICHT_LINK_LIBS ${IRRLICHT_LINK_LIBS} PARENT_SCOPE )
+SET( IRRLICHT_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" PARENT_SCOPE )
+################################################################################
