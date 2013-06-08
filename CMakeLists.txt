@@ -95,6 +95,8 @@ TARGET_LINK_LIBRARIES( irrlicht_shared ${IRRLICHT_LINK_LIBS} )
 
 ################################################################################
 # Export Irrlicht link libraries & include directory
-SET( IRRLICHT_LINK_LIBS ${IRRLICHT_LINK_LIBS} PARENT_SCOPE )
-SET( IRRLICHT_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" PARENT_SCOPE )
+IF( NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR) )
+	SET( IRRLICHT_LINK_LIBS ${IRRLICHT_LINK_LIBS} PARENT_SCOPE )
+	SET( IRRLICHT_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" PARENT_SCOPE )
+ENDIF(  )
 ################################################################################
