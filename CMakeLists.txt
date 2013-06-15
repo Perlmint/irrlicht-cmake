@@ -86,9 +86,11 @@ ADD_LIBRARY( irrlicht_shared SHARED ${IRRLICHT_SRC_FILES} ${IRRLICHT_LIB_FILES} 
 IF( WIN32 )
 	SET_TARGET_PROPERTIES( irrlicht_shared PROPERTIES RUNTIME_OUTPUT_NAME irrlicht )
 ELSEIF( APPLE )
-	# To compile irrlicht on osx, we need to use llvm gcc
-	SET_TARGET_PROPERTIES( irrlicht_static PROPERTIES XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvmgcc42" )
-	SET_TARGET_PROPERTIES( irrlicht_shared PROPERTIES XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvmgcc42" )
+	IF( XCODE_VERSION MATCHES ^4\\. )
+		# To compile irrlicht on Xcode4, we need to use llvm gcc
+		SET_TARGET_PROPERTIES( irrlicht_static PROPERTIES XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvmgcc42" )
+		SET_TARGET_PROPERTIES( irrlicht_shared PROPERTIES XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvmgcc42" )
+	ENDIF(  )
 ENDIF(  )
 SET_TARGET_PROPERTIES( irrlicht_static PROPERTIES LIBRARY_OUTPUT_NAME irrlicht ARCHIVE_OUTPUT_NAME irrlicht )
 TARGET_LINK_LIBRARIES( irrlicht_shared ${IRRLICHT_LINK_LIBS} )
