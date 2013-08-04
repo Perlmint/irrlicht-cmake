@@ -1390,6 +1390,7 @@ void CIrrDeviceMacOSX::initKeycodes()
 	KeyCodes[kVK_F20]	= irr::KEY_F20;
 	KeyCodes[kVK_Home]	= irr::KEY_HOME;
 	KeyCodes[kVK_End]	= irr::KEY_END;
+    KeyCodes[50]        = irr::KEY_OEM_3;
 	KeyCodes[NSInsertFunctionKey] = irr::KEY_INSERT;
 	KeyCodes[kVK_ForwardDelete] = irr::KEY_DELETE;
 	KeyCodes[kVK_Help] = irr::KEY_HELP;
