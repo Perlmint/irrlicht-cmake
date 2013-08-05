@@ -1009,7 +1009,7 @@ bool CIrrDeviceMacOSX::run()
 
 				if (IsShiftDown != ievent.KeyInput.Shift)
 				{
-					ievent.KeyInput.Char = irr::KEY_SHIFT;
+					ievent.KeyInput.Char = 0;
 					ievent.KeyInput.Key = irr::KEY_SHIFT;
 					ievent.KeyInput.PressedDown = ievent.KeyInput.Shift;
 
@@ -1020,7 +1020,7 @@ bool CIrrDeviceMacOSX::run()
 
 				if (IsControlDown != ievent.KeyInput.Control)
 				{
-					ievent.KeyInput.Char = irr::KEY_CONTROL;
+					ievent.KeyInput.Char = 0;
 					ievent.KeyInput.Key = irr::KEY_CONTROL;
 					ievent.KeyInput.PressedDown = ievent.KeyInput.Control;
 
